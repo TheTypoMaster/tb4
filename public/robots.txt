@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 User-agent: *
 Disallow: /administrator/
 Disallow: /cache/
@@ -14,6 +13,3 @@ Disallow: /plugins/
 Disallow: /templates/
 Disallow: /tmp/
 Disallow: /xmlrpc/
-=======
-User-agent: * Allow: /
->>>>>>> framework/develop
