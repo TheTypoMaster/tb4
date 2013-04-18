@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install version="1.5" type="plugin" group="system">
+	<name>System Income Access</name>
+	<author>Fei Sun</author>
+	<creationDate>Nov 2011</creationDate>
+	<copyright>Copyright (C) 2011 MobileActive Ltd</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>fei@mobileactive.com</authorEmail>
+	<authorUrl>www.mobileactive.com</authorUrl>
+	<version>1.0.0</version>
+	<description>This plugin will store btag as a cookie for income access.</description>
+	<files>
+		<filename plugin="incomeaccess">incomeaccess.php</filename>
+	</files>
+</install>

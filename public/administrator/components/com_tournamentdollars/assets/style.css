@@ -1,0 +1,70 @@
+.hide {
+	display: none;
+}
+
+div.error {
+	color: #CC0000;
+}
+
+div.positive {
+	color: #0000CC;
+}
+
+div.negative {
+	color: #CC0000;
+}
+
+div#email_variables {
+	float: right;
+}
+
+div#variable_list {
+	padding-left: 15px;
+	border: 1px dashed #CCCCCC 
+}
+
+div#variable_close {
+	text-align: right;
+}
+
+table.adminlist tbody tr td.view_icon {
+	text-align: center;
+}
+
+ul.autocompleter-choices
+{
+	position:				absolute;
+	margin:					0;
+	padding:				0;
+	list-style:				none;
+	border:					1px solid #7c7c7c;
+	border-left-color:		#c3c3c3;
+	border-right-color:		#c3c3c3;
+	border-bottom-color:	#ddd;
+	background-color:		#fff;
+	text-align:				left;
+	font-family:			Verdana, Geneva, Arial, Helvetica, sans-serif;
+	z-index:				100;
+	background-color:		#fff;
+}
+
+ul.autocompleter-choices li
+{
+	position:				relative;
+	margin:					-2px 0 0 0;
+	padding:				0.2em 1.5em 0.2em 1em;
+	display:				block;
+	float:					none !important; 
+	cursor:					pointer;
+	font-weight:			normal;
+	white-space:			nowrap;
+	font-size:				1em;
+	line-height:			1.5em;
+}
+
+ul.autocompleter-choices li:hover
+{
+	
+	background-color:		#444;
+	color:					#fff;
+}

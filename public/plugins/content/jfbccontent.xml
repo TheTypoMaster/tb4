@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="content" method="upgrade">
+    <name>Content - JFBCContent</name>
+    <version>4.2.1</version>
+    <creationDate>2012/07/23</creationDate>
+    <author>SourceCoast | www.sourcecoast.com</author>
+    <authorEmail>support@sourcecoast.com</authorEmail>
+    <authorUrl>http://www.sourcecoast.com</authorUrl>
+    <copyright>Copyright (C) 2010-2012 SourceCoast. All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <description>A plugin to automatically add the JFBC System tags for like and comments to an article, section blog, category blog or frontpage layout.</description>
+    <files>
+        <filename plugin="jfbccontent">jfbccontent.php</filename>
+    </files>
+</install>

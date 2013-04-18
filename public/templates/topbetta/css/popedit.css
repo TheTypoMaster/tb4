@@ -1,0 +1,330 @@
+/* CSS Reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	background: transparent;
+	border: 0;			/* This removes the border around the viewport in old versions of IE */
+	font-family: inherit;
+	font-size: 100%;
+	font-style: inherit;
+	font-weight: inherit;
+	margin: 0;
+	padding: 0;
+	outline: 0;
+	vertical-align: baseline;
+	}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+body {
+	color:#000;
+	font: 62.5%/1.2 Arial, Helvetica, sans-serif;
+	width:100%;
+	}
+
+
+/* turn debug off */
+#system-debug{ display:none; } /*make sure debug is off in popup*/
+
+/* confirm bet pop */
+.contentpane {
+	background:#666;
+}
+
+div.clear { clear:both; }
+div#sbox-content{
+	background: #ccc;
+	margin: 0;
+}
+
+
+div#bettixPopWrap table td.upperCase {
+	text-transform: uppercase;
+}
+
+div.mainbdr2{
+	border: 0px solid #555;
+	margin: 0;
+}
+
+div#bettixPopWrap {
+	margin: 10px;
+}
+div#bettixPopWrap div.bettixPanel {
+	background: #e4efcf;
+	border: 1px solid #73b500;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead {
+	background: #558500 url(/components/com_ucbetman/images/bettixHeadLogoG.jpg) no-repeat 8px 50%;
+	display: block;
+	height: 66px;
+	margin: 0 0 5px 0;
+}
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadTitle {
+	color: #e4efcf;
+	font-weight: bold;
+	font-size: 19px;
+	line-height: 28px;
+	padding: 8px 0 0 80px;
+}
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadRace {
+	color: #fff;
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 18px;
+	padding: 2px 0 2px 85px;
+}
+div#bettixPopWrap div.bettixTpanel {
+	margin: 15px 15px 0px 15px;
+	padding: 2px;
+	background: #e9e9e9;
+	border: 1px solid #222222;
+}
+
+div#bettixPopWrap div.bettixTpanel table {
+	border-collapse: separate;
+}
+div#bettixPopWrap div.bettixTpanel table td {
+	padding: 4px 5px 4px 10px;
+	color: #222222;
+	font-size: 14px;
+	font-weight: bold;
+	border-top: 1px solid #fbfbfb;
+	border-left: 1px solid #fbfbfb;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+div#bettixPopWrap div.bettixTpanel table td.selHead {
+	padding: 3px 10px 3px 5px;
+	color: #436518;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: right;
+	width: 120px;
+	border-top: 1px solid #fbfbfb;
+	border-left: 1px solid #fbfbfb;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+
+div#bettixPopWrap div.bettixFoot {
+	margin: 15px 10px 5px 10px;
+	color: #0097E9;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+}
+div#bettixPopWrap div.bettixFootMsg {
+	margin: 5px 10px 5px 10px;
+	color: #333;
+	font-size: 13px;
+	font-weight: bold;
+	text-align: center;
+}
+
+input {
+	margin: 0;
+	width:300px;
+}
+div#bettixPopWrap div.bettixPanel div.buttwrap {
+	display:block;
+	margin: 15px 15px;
+}
+div#bettixPopWrap div.bettixPanel #updatebets,
+div#bettixPopWrap div.bettixPanel #confirmBets,
+div#bettixPopWrap div.bettixPanel #cancelBets {
+	margin: 10px 15px;
+	padding: 0 35px;
+	display: block;
+	height: 40px;
+	font-size:20px;
+	color:#fff;
+	border: none;
+	cursor:pointer;
+	text-align:center;
+	vertical-align:middle;
+	font-weight: bold;
+}
+div#bettixPopWrap div.bettixPanel #updatebets {
+	margin: 10px 0;
+	width:100%;
+	background: url(/components/com_ucbetman/images/buttBlu40.jpg) repeat-x 0 50%;
+	border:1px solid #0081e6;
+	float: left;
+}
+div#bettixPopWrap div.bettixPanel #confirmBets {
+	background: url(/components/com_ucbetman/images/buttBlu40.jpg) repeat-x 0 50%;
+	border:1px solid #0081e6;
+	float: right;
+}
+div#bettixPopWrap div.bettixPanel #cancelBets {
+	background: url(/components/com_ucbetman/images/cancelBetButtBg.jpg) repeat-x 0 50%;
+	border:1px solid #710c0c;
+	float: left;
+}
+
+
+/* live bet ticket - blue */
+div.livetix div#bettixPopWrap div.bettixPanel div.bettixHead {
+	background: #500 url(/components/com_ucbetman/images/bettixHeadLogoB.jpg) no-repeat 8px 50%;
+}
+
+div.livetix div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadTitle {
+	color: #005993;
+}
+div.livetix div#bettixPopWrap div.bettixPanel {
+	background: #300;
+	border: 1px solid #500;
+	min-height:374px;
+	height:auto !important;
+	height:374px;
+}
+div.livetix div#bettixPopWrap div.bettixTpanel table td.selHead {
+	color: #0073cc;
+}
+div.livetix div#bettixPopWrap div.bettixFoot {
+	color: #0097E9;
+}
+div.livetix div#bettixPopWrap div.freebets {
+	color: #fff;
+}
+div.livetix div#bettixPopWrap div.bettixFootMsg {
+	color: #999;
+}
+
+div.livetix div#freebetsWrap{
+	height:48px;
+	border-top:2px solid #0b2235;
+	border-bottom:2px solid #0b2235;
+	font-weight:bold;
+	color:#fff;
+	margin:10px 35px 0 35px;
+	padding:0 30px;
+}
+div.livetix div.freebetstxtWrap{
+	margin:0;
+	width:320px;
+	float:right;
+}
+div.livetix div.freebetstxt1no,
+div.livetix div.freebetstxt1{
+	padding:4px 0 0 0;
+	font-size:18px;
+	line-height:23px;
+}
+div.livetix div.freebetstxt2no,
+div.livetix div.freebetstxt2{
+	font-size:13px;
+	line-height:18px;
+	color:#999;
+}
+div.livetix div.freebetstxt1no{
+	color:#334656;
+}
+div.livetix div.freebetstxt2no{
+	color:#1f3242;
+}
+div.livetix div#freeChkno,
+div.livetix div#freeChk{
+	background: url(/components/com_ucbetman/images/sprite_bluchk2.png) no-repeat 0 0;
+	width: 33px;
+	height: 28px;
+	float:left;
+	margin:7px 0 0 22px;
+}
+div.livetix div.freebetstxtWrap,
+div.livetix div#freeChk{
+	cursor:pointer;
+}
+div.livetix div.freebetstxt1no,
+div.livetix div.freebetstxt2no,
+div.livetix div#freeChkno a,
+div.livetix div#freeChkno{
+	cursor:wait;
+}
+div.livetix div#freeChkno a,
+div.livetix div#freeChk a {
+	width: 33px;
+	height: 28px;
+	text-decoration:none;
+	display:block;
+}
+div.livetix div#freeChkno{
+	background: url(/components/com_ucbetman/images/sprite_bluchk2.png) no-repeat 0 -56px;
+}
+div#bettixPopWrap div#betprocessing {
+	background:#e9e9e9;
+	border-top:4px solid #0081E6;
+	border-bottom:4px solid #0081E6;
+	margin:15px 10px 90px 10px;
+	display:none;
+}
+div#bettixPopWrap div#betprocessing div.betprocessingtxt{
+	font-size:24px;
+	font-weight:bold;
+	color:#004F79;
+	margin:20px 0 5px 0;
+	text-align:center;
+}
+div#bettixPopWrap div#betprocessing div.betprocessingimg{
+	background: url(/components/com_ucbetman/images/bs_ball_flasher.gif) no-repeat 50% 50%;
+	display:block;
+	margin:0 0 20px 0;
+	height:73px;
+}
+
+div#bettixPopWrap div.bettixMessage {
+	margin:15px 15px 10px 15px;
+	padding: 0;
+}
+div#bettixPopWrap div.bettixMessage div.bettixMessageTxt {
+	background: #e9e9e9;
+	font-size: 24px;
+	font-weight: bold;
+	margin: 10px 0;
+	padding: 15px 5px 20px 5px;
+	line-height: 36px;
+	text-align: center;
+}
+div#bettixPopWrap div.bettixMessage div.notice {
+	border-top: 4px solid #0081E6;
+	border-bottom: 4px solid #0081E6;
+	color: #004F79;
+}
+div#bettixPopWrap div.bettixMessage div.error {
+	border-top: 4px solid #880000;
+	border-bottom: 4px solid #880000;
+	color: #990000;
+}
+
+/* System Messages */
+#system-message    { margin:15px 15px 10px 15px; padding: 0;}
+#system-message dt { font-weight: bold; }
+#system-message dd { margin: 5px 0 10px 0; font-weight: bold; text-indent: 0; }
+
+/* System Standard Messages */
+#system-message dt.message { display: none;}
+#system-message dd.message { text-indent: 0;margin-bottom: 10px}
+#system-message dd.message ul { color: #558500; background: #e9e9e9; list-style: none; margin: 0; border-top: 4px solid #999999; border-bottom: 4px solid #999999;}
+#system-message dd.message li { color: #558500; font-size: 24px; font-weight: bold; margin: 10px 0 10px 10px; line-height: 36px; text-align: center;}
+
+/* System Error Messages */
+#system-message dt.error { display: none; }
+#system-message dd.error ul { color: #990000; background: #e9e9e9; list-style: none; margin: 0; border-top: 4px solid #880000; border-bottom: 4px solid #880000;}
+#system-message dd.error li { color: #990000; font-size: 24px; font-weight: bold; margin: 10px 0 10px 10px; line-height: 36px; text-align: center;}
+
+
+#system-message dt.notice { display: none; }
+#system-message dd.notice ul { color: #004F79; background: #e9e9e9; list-style: none; margin: 0; border-top: 4px solid #0081E6; border-bottom: 4px solid #0081E6;}
+#system-message dd.notice li { color: #004F79; font-size: 24px; font-weight: bold; margin: 10px 0 10px 10px; line-height: 36px; text-align: center;}
+
+#system-message dd.notice li .betprocessingtxt2,
+#system-message dd.error li .betprocessingtxt2,
+#bettixPopWrap .betprocessingtxt2{
+	font-size:16px;
+	line-height:20px;
+	font-weight:bold;
+	color:#666;
+	text-align:center;
+}
+

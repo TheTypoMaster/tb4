@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="xmlrpc">
+   <name>XMLRPC - Tournament Dollars</name>
+   <author>Fei Sun</author>
+   <creationDate>September 2010</creationDate>
+   <copyright>Copyright (C) 2010</copyright>
+   <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+   <authorEmail>fei.sun@mobileactive.com</authorEmail>
+   <authorUrl>www.mobileactive.com</authorUrl>
+   <version>1.5</version>
+   <description>This service is used to increment/decrement a user's Tournament Dollars balance.</description>
+   <files>
+      <filename plugin="foobar">tournamentdollars.php</filename>
+   </files>
+   <params>
+   </params>
+</install>

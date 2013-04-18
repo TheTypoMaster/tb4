@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install version="1.5" type="plugin" group="user">
+	<name>User Referral</name>
+	<author>Fei Sun</author>
+	<creationDate>Nov 2010</creationDate>
+	<copyright>Copyright (C) 2010 MobileActive Ltd</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>fei.sun@mobileactive.com</authorEmail>
+	<authorUrl>www.mobileactive.com</authorUrl>
+	<version>1.0.0</version>
+	<description>This plugin will implement referral functions.</description>
+	<files>
+		<filename plugin="referral">referral.php</filename>
+	</files>
+</install>

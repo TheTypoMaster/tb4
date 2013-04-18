@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<install version="1.5" type="module" client="administrator">
+	<name>APQuickLaunch</name>
+	<version>1.1</version>
+	<creationDate>2009/02/23</creationDate>
+	<author>www.sourcecoast.com | www.joomlapraise.com</author>
+	<authorEmail>support@sourcecoast.com | support@joomlapraise.com</authorEmail>
+	<authorUrl>http://www.sourcecoast.com | http://www.joomlapraise.com</authorUrl>
+	<copyright>SourceCoast | JoomlaPraise</copyright>
+	<license>SourceCoast | JoomlaPraise</license>
+	<description>APQucikLaunch is the quick launch module used in AdminPraise.</description>
+	<files>
+		<filename>mod_apquicklaunch.xml</filename>
+		<filename>index.html</filename>
+		<filename>tmpl/index.html</filename>
+		<filename module="mod_apquicklaunch">mod_apquicklaunch.php</filename>
+		<filename>helper.php</filename>
+		<filename>tmpl/default.php</filename>
+	</files>
+	<languages>
+		<language tag="en-GB">en-GB.mod_apquicklaunch.ini</language>
+	</languages>
+	<params>
+		<param name="moduleclass_sfx" type="text" label="MODULE CLASS SUFFIX" description="PARAMMODULECLASSSUFFIX" default="" />
+		<param name="type" type="radio" label="TYPE" description="PARAMTYPE" default="components">
+			<option value="components">Components</option>
+			<option value="modules">Modules</option>
+		</param>
+		<param name="iconsShownPerRow" type="text" default="7" size="30" label="ICONS SHOWN PER ROW" description="PARAMICONSSHOWNPERROW" />
+		<param name="spacercomponents" type="spacer" default="&lt;hr /&gt;&lt;B&gt;Components&lt;/B&gt;" label="" />
+		<param name="spacermodules" type="spacer" default="&lt;hr /&gt;&lt;B&gt;Modules&lt;/B&gt;" label="" />
+		<param name="modulesType" type="radio" label="MODULES TYPE" description="PARAMMODULESTYPE" default="both">
+			<option value="both">Both</option>
+			<option value="site">Site</option>
+			<option value="admin">Admin</option>
+		</param>
+	</params>
+</install>

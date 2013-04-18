@@ -1,0 +1,139 @@
+#facebox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  text-align: left;
+ 
+}
+
+
+#facebox .popup{
+  position:relative;
+  border:3px solid rgba(0,0,0,0);
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+  -webkit-box-shadow:0 0 18px rgba(0,0,0,0.4);
+  -moz-box-shadow:0 0 18px rgba(0,0,0,0.4);
+  box-shadow:0 0 18px rgba(0,0,0,0.4);
+ 
+}
+
+#facebox .content {
+  display:table;
+  width: auto;
+  
+  background: #fff;
+  -webkit-border-radius:4px;
+  -moz-border-radius:4px;
+  border-radius:4px;
+  padding-bottom: 28px;
+}
+
+#facebox .content > p:first-child{
+  margin-top:0;
+}
+#facebox .content > p:last-child{
+  margin-bottom:0;
+}
+
+#facebox .close{
+  position:absolute;
+  top:5px;
+  right:5px;
+  padding:2px;
+  background:#fff;
+}
+#facebox .close img{
+  opacity:0.3;
+}
+#facebox .close:hover img{
+  opacity:1.0;
+}
+
+#facebox .loading {
+  text-align: center;
+}
+
+#facebox .image {
+  text-align: center;
+}
+
+#facebox img {
+  border: 0;
+  margin: 0;
+}
+
+#facebox_overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height:100%;
+  width:100%;
+}
+
+.facebox_hide {
+  z-index:-100;
+}
+
+.facebox_overlayBG {
+  background-color: #000;
+  z-index: 99;
+}
+
+
+
+/*CUSTOM*/
+#facebox #content, #facebox input, #facebox p{
+	color:#000;
+}
+
+#facebox .content{
+	background:#FFF;
+}
+
+#facebox h4{
+	font-weight: 500;
+	margin: 0px auto;
+	color:#1c1c1c;
+}
+
+#login-wrapper h4{
+	margin-bottom: 10px!important;
+}
+
+#facebox header{
+	display:none;
+}
+#facebox .form_inputs ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+#facebox input[type="text"], input[type="password"], textarea {
+	font-size:14px;
+	padding: 8px;
+	outline:none!important;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	width: 200px;
+	margin-top: 2px;
+}
+
+#facebox label {
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: normal;
+	color:#1c1c1c;
+}
+
+
+#signup-wrapper{
+	padding: 30px;
+	width: 500px;
+}
+
+#login-wrapper{
+	padding: 30px;
+	/*width: 220px;*/
+}

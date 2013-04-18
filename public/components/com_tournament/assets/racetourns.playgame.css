@@ -1,0 +1,310 @@
+/*------------------------------------------------------------------------
+# Copyright (C) 2010 TopBetta Pty Ltd. All Rights Reserved.
+# @license - Copyrighted Commercial Software
+# Author: uc-technologies Pty. Ltd.
+# Website:  http://www.TopBetta.com
+# This file may not be redistributed in whole or significant part.
+-------------------------------------------------------------------------*/
+
+div#bettaWrap div#tournHdrBar {
+	/*border: 2px solid #c30;*/
+	background: #4CC111 url('../images/leftnav-bg-green.jpg') repeat-x 0 0;
+	border: 0 solid #172308;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	height: 29px;
+	line-height: 29px;
+	margin: 0;
+	padding: 0 0 0 10px;
+	text-transform: uppercase;
+}
+div#bettaWrap div.todaysRaceDetailsRow {
+  border:1px solid #646464;
+}
+div#bettaWrap table.todaysRaceDetailsTbl .ContentTableHeader td {
+  background: #646464;
+  height:18px;
+}
+div#bettaWrap div.gSep {
+  background: #c30;
+}
+div#bettaWrap div.one2tippr {
+  background: #76B40A url(../images/sprite_pc.jpg) repeat-x 0 -92px;
+  border: 1px solid #558500;
+}
+
+
+div#bettaWrap div.typeButts {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -40px;
+}
+div#bettaWrap div.typeButts:hover {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -66px;
+}
+
+div#bettaWrap div.typeRefresh {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -436px;
+}
+div#bettaWrap div.typeRefresh:hover {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -462px;
+}
+
+div#bettaWrap tr.ContentTableRow1:hover td,
+div#bettaWrap tr.ContentTableRow2:hover td {
+  background: #E2EAF4;
+}
+
+div#bettaWrap div.eventNumberG,
+div#bettaWrap div.eventNumber {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 0;
+}
+div#bettaWrap div.active {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -20px;
+}
+div#bettaWrap div.activeG {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 0;
+}
+
+/* confirm bet pop */
+div.clear { clear:both; }
+div#sbox-content{
+  background: #ccc;
+  margin: 0;
+}
+
+div#bettixPopWrap table td.upperCase {
+  text-transform: uppercase;
+}
+
+div.mainbdr2{
+  border: 0px solid #555;
+  margin: 0;
+}
+
+div#bettixPopWrap {
+  margin: 10px;
+}
+div#bettixPopWrap div.bettixPanel {
+  background: #fefefe;
+  border: 1px solid #414141;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead {
+  background-color: #558500;
+  display: block;
+  margin: 0 0 5px 0;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead-blue {
+  background-color: #0e80b9;
+  display: block;
+  margin: 0 0 5px 0;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadTitle, 
+div#bettixPopWrap div.bettixPanel div.bettixHead-blue div.bettixHeadTitle {
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 28px;
+  padding: 8px 0 0 8px;
+}
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadRace,
+div#bettixPopWrap div.bettixPanel div.bettixHead-blue div.bettixHeadRace {
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 2px 0 10px 8px;
+}
+
+.bettixHead-icon{
+	float:right;
+	margin:10px;
+	}
+
+div#bettixPopWrap div.bettixTpanel {
+  margin: 10px 10px 0px 10px;
+  padding: 0;
+  background: #e9e9e9;
+  /*border: 1px solid #222222;*/
+}
+
+div#bettixPopWrap div.bettixTpanel table {
+  border-collapse: separate;
+  border-spacing:1px;
+  background:#fff;
+}
+div#bettixPopWrap div.bettixTpanel table td {
+  padding: 3px 5px;
+  color: #222222;
+  font-size: 10px;
+  font-weight: bold;
+  /*border-top: 1px solid #fbfbfb;
+  border-left: 1px solid #fbfbfb;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;*/
+  text-align: center;
+  background:#efefef;
+}
+div#bettixPopWrap div.bettixTpanel table td.selHead {
+  padding: 3px 5px;
+  color: #414141;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  /*border-top: 1px solid #fbfbfb;
+  border-left: 1px solid #e7f1d6;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #8ba65d;*/
+  background: #ccc;
+}
+div#bettixPopWrap div.bettixTpanel table td.lft {
+  text-align: left;
+}
+div#bettixPopWrap div.bettixTpanel table td.rgt {
+  text-align: right;
+}
+div#bettixPopWrap div.bettixTpanel table td.cap {
+  text-transform: uppercase;
+}
+div#bettixPopWrap div.bettixTpanel table td.w40 {
+  width: 35px;
+}
+div#bettixPopWrap div.bettixTpanel table td.w60 {
+  width: 62px;
+}
+
+div#bettixPopWrap div.bettixFoot {
+  margin: 25px 10px 5px 10px;
+  color: #414141;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+span.bettixFootAmount{
+	font-weight:bold;
+	font-size:22px;
+	}
+
+div#bettixPopWrap div.bettixFootMsg {
+  margin: 5px 10px 10px 10px;
+  color: #333;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+}
+
+input {
+  margin: 0;
+}
+
+div#bettixPopWrap div.bettixPanel #closepoptix,
+div#bettixPopWrap div.bettixPanel #confirmBets,
+div#bettixPopWrap div.bettixPanel #cancelBets {
+  margin: 10px 15px;
+  padding: 0 35px;
+  display: block;
+  height: 40px;
+  font-size:20px;
+  color:#fff;
+  border: none;
+  cursor:pointer;
+  text-align:center;
+  vertical-align:middle;
+  font-weight: bold;
+}
+div#bettixPopWrap div.bettixPanel #confirmBets {
+  background:#6ca227 url(../images/sprite_pc.jpg) repeat-x 0 -376px;
+  border:1px solid #436518;
+  float: right;
+}
+div#bettixPopWrap div.bettixPanel #closepoptix,
+div#bettixPopWrap div.bettixPanel #cancelBets {
+  background:#b71414 url(../images/sprite_pc.jpg) repeat-x 0 -338px;
+  border:1px solid #710c0c;
+  float: left;
+}
+div#bettixPopWrap div.bettixPanel div.buttwrap {
+  display:block;
+  margin: 15px 15px;
+}
+div#bettixPopWrap div.bettixPanel #closepoptix {
+  margin: 10px 0;
+  width:100%;
+}
+div#bettixPopWrap div.bettixPanel #confirmBets,
+div#bettixPopWrap div.bettixPanel #cancelBets {
+  padding: 0;
+  width: 220px;
+}
+
+div#bettixPopWrap div.bettixMessage {
+  margin:15px 15px 10px 15px;
+  padding: 0;
+}
+div#bettixPopWrap div.bettixMessage div.bettixMessageTxt {
+  background: #e9e9e9;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 15px 5px 20px 5px;
+  line-height: 36px;
+  text-align: center;
+}
+div#bettixPopWrap div.bettixMessage span.bettixMessageTxtSml {
+  color:#550000;
+  font-size: 17px;
+  font-style:italic;
+}
+div#bettixPopWrap div.bettixMessage div.notice {
+  border-top: 4px solid #0081E6;
+  border-bottom: 4px solid #0081E6;
+  color: #004F79;
+}
+div#bettixPopWrap div.bettixMessage div.error {
+  border-top: 4px solid #880000;
+  border-bottom: 4px solid #880000;
+  color: #990000;
+}
+
+.tool-tip {
+   float: left;
+   background: #ffc;
+   border: 1px solid #D4D5AA;
+   padding: 5px;
+   max-width: 200px;
+}
+
+div#turnover {
+  color: red;
+  font-size: 0.5em;
+  display: inline;
+  float:left;
+}
+
+/*div#myturnover {
+  color:#333;
+}*/
+
+div.tote-disclaimer {
+  font-size:12px;
+  text-align:center;
+  width:100%;
+}
+
+tr.scratched td.runnerName, tr.scratched td.betType, tr.scratched td.betAmount {
+text-decoration:line-through;
+color:#AAA;
+}
+
+tr.scratched td.paid {
+font-weight:normal;
+}
+
+.tournHdrBar-title{
+	display:block;
+	float:left;
+	}
+

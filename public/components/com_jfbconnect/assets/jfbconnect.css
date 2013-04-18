@@ -1,0 +1,12 @@
+div.scsocialbuttons{
+    width:100%
+}
+div.scsocialbuttons div{
+    float:left;
+    margin-right:5px;
+}
+.jfbclogin {
+	/*width: 500px;
+	height: 20px;*/
+	margin-top: 5px;
+}

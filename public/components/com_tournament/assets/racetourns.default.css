@@ -1,0 +1,273 @@
+/*------------------------------------------------------------------------
+# TopBetta - Race Tournaments
+# ------------------------------------------------------------------------
+# Copyright (C) 2009 TopBetta. All Rights Reserved.
+# @license - Copyrighted Commercial Software
+# Author: uc-technologies Pty. Ltd.
+# Website:  http://www.TopBetta.com
+# This file may not be redistributed in whole or significant part.
+-------------------------------------------------------------------------*/
+#racing-tourns-wrap {
+    border: 1px solid #000000;
+}
+
+.racing-tourns-filter-wrap {
+    display: block;
+    margin: 5px;
+    width: 100%;
+}
+.racing-tourns-filter-wrap form select {
+    margin: 0 5px 0 0;
+    width: 32%;
+}
+
+div#bettaWrap div.subModuleL {
+  width:681px;
+  float:left;
+}
+div#bettaWrap div.subModuleR {
+  width:275px;
+  float:right;
+}
+div#bettaWrap div.subModuleR h3 {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 29px;
+  color: #fff;
+  height: 29px;
+  margin:0;
+  padding:0 0 0 10px;
+  border:0px solid #172308;
+  text-transform:uppercase;
+  background: #004c88 url('/templates/topbetta/images/bg_mod_Dblu.jpg') repeat-x left center;
+  text-align:center;
+}
+
+div#bettaWrap div.homeContent {
+  margin:2px 2px 2px 2px;
+  padding:1px;
+  border:1px solid #666;
+  background:#eee;
+  color:#4B6C1D;
+  height:350px;
+  overflow:auto;
+}
+div#bettaWrap div.toggWrap {
+  border:2px solid #000;
+    margin: 2px;
+}
+div#bettaWrap div.accordHead {
+  background: #676767 url('../images/sprite_tourninfo.png') repeat-x 0 -122px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #fff;
+  text-transform: uppercase;
+}
+div#bettaWrap div.accordHead:hover {
+  background: #676767 url('../images/sprite_tourninfo.png') repeat-x 0 -146px;
+  cursor: pointer;
+}
+div#bettaWrap div.accordHeadL div,
+div#bettaWrap div.accordHeadL {
+  float: left;
+}
+div#bettaWrap div.accordHeadL div.dogimg,
+div#bettaWrap div.accordHeadL div.trotimg,
+div#bettaWrap div.horseimg {
+  width: 37px;
+  height: 20px;
+}
+div#bettaWrap div.accordHeadL div.horseimg {
+  background: url('../images/sprite_tourninfo.png') no-repeat 0 -2px;
+}
+
+div#bettaWrap div.accordHeadL div.trotimg {
+  background: url('../images/sprite_tourninfo.png') no-repeat 0 -26px;
+}
+div#bettaWrap div.accordHeadL div.dogimg {
+  background: url('../images/sprite_tourninfo.png') no-repeat 0 -50px;
+}
+
+div#bettaWrap div.accordHeadR div,
+div#bettaWrap div.accordHeadR {
+  float: right;
+  color: #ccc;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: none;
+}
+div#bettaWrap div.accordHeadR div.track,
+div#bettaWrap div.accordHeadR div.weather {
+  width: 100px;
+}
+div#bettaWrap div.accordHeadR div.time {
+  width: 70px;
+  color: #efc069;
+}
+div#bettaWrap div.accordHeadR div.timeP {
+  width: 70px;
+  color: #ff5353;
+}
+div#bettaWrap div.accordHeadR div.Aarrow {
+  background: url('../images/sprite_tourninfo.png') no-repeat 0 -74px;
+  width: 20px;
+  height: 20px;
+  margin: 0 5px 0 10px;
+}
+
+div#bettaWrap div.accordHeadL div,
+div#bettaWrap div.accordHeadR div {
+  display: inline;
+}
+div#bettaWrap table.tournDetailsTbl {
+  border-collapse:separate;
+  border-spacing:1px;
+}
+div#bettaWrap table.tournDetailsTbl tr.sectiontableheader td{
+  background: #8e8e8e;
+  color: #fff;
+  font-weight: bold;
+  line-height: 12px;
+  padding: 0 2px 1px 2px;
+}
+
+div#bettaWrap table.tournDetailsTbl td {
+  font-size:9px;
+  text-align:center;
+  color: #333;
+  font-weight: bold;
+  line-height: 14px;
+  padding: 0 2px 1px 2px;
+}
+
+div#bettaWrap table.tournDetailsTbl td.entrButt {
+  width: 132px;
+  padding: 0;
+}
+div#bettaWrap table.tournDetailsTbl td.entrButt a.entrButt {
+  background: #d86023 url('../images/sprite_tourninfo.png') repeat-x 0 -169px;
+  border: 1px solid #c30;
+  width: 130px;
+  height: 14px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  display: block;
+  text-shadow: #111 1px 1px 1px;
+  text-decoration:none;
+}
+div#bettaWrap table.tournDetailsTbl td.entrButt a.entrButt:hover {
+  background: #df801c url('../images/sprite_tourninfo.png') repeat-x 0 -185px;
+  text-shadow: #fc0 1px 1px 1px;
+}
+
+
+div#bettaWrap div.tixlinks {
+  margin: 3px;
+  color:#4B6C1D;
+  background: #2872d9;
+  border: 1px solid;
+  border-top-color: #406595;
+  border-right-color: #113461;
+  border-bottom-color: #113361;
+  border-left-color: #3f6596;
+}
+div#bettaWrap div.tixlinks:hover {
+  background: #E2EAF4;
+}
+div#bettaWrap table.tournInfo_2,
+div#bettaWrap table.tournInfo_1 {
+  border-collapse:separate;
+  border-spacing:1px;
+  color:#4B6C1D;
+  padding: 3px 3px 0 3px;
+}
+div#bettaWrap table.tournInfo_2 {
+  border-spacing: 1px 0;
+  padding: 0 3px 4px 3px;
+}
+div#bettaWrap table.tournInfo_2 td,
+div#bettaWrap table.tournInfo_1 td{
+  font-size: 9px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #fff;
+}
+div#bettaWrap table.tournInfo_2 td a,
+div#bettaWrap table.tournInfo_1 td a {
+  color:#fff;
+  text-decoration:none;
+}
+
+div#bettaWrap table.tournInfo_1 td.up_type {
+  background: #1c5097;
+  width: 50px;
+}
+div#bettaWrap table.tournInfo_1 td.up_location {
+  background: #bfd5f4;
+  color: #111;
+}
+div#bettaWrap table.tournInfo_1 td.up_statusO,
+div#bettaWrap table.tournInfo_1 td.up_statusC,
+div#bettaWrap table.tournInfo_1 td.up_status {
+  background: #1c5097;
+  width: 70px;
+  text-transform: none;
+}
+div#bettaWrap table.tournInfo_1 td.up_statusO {
+  background: #08682b;
+}
+div#bettaWrap table.tournInfo_1 td.up_statusC {
+  background: #5a172b;
+}
+div#bettaWrap table.tournInfo_1 td.rgt {
+  text-align: right;
+}
+div#bettaWrap table.tournInfo_2 td.up_tourns {
+  background: #1c5097;
+  width: 100px;
+}
+div#bettaWrap table.tournInfo_2 td.up_value {
+  background: #1c5097;
+  width: 40px;
+}
+div#bettaWrap table.tournInfo_2 td.up_poolhdr {
+  background: #bfd5f4;
+  color: #1c5097;
+  width: 60px;
+}
+div#bettaWrap table.tournInfo_2 td.up_pool {
+  background: #fff;
+  color: #111;
+}
+div#bettaWrap table.tournInfo_2 td.up_buckhdr {
+  background: #bfd5f4;
+  color: #1c5097;
+  width: 97px;
+  text-align: right;
+}
+div#bettaWrap table.tournInfo_2 td.up_buck {
+  background: #fff;
+  color: #111;
+  text-align: right;
+}
+
+.sectiontableentry1 td, td.sectiontableentry1 {
+    background: none repeat scroll 0 0 #D6D6D6;
+    padding: 2px;
+}
+
+div.fixed350 {
+  margin:2px 2px 2px 2px;
+  padding:0;
+  background:#ccc;
+  height:354px;
+  overflow:auto;
+}
+
+a.ticketLink, a.meetingLink {
+display:block;
+text-decoration:none;
+}

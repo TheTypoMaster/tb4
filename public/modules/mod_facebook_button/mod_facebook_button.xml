@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="module" version="1.5.0">
+	<name>Facebook button</name>
+	<author>Bala</author>
+	<creationDate>October 2012</creationDate>
+	<copyright>Copyright (C) 2012 Open Source Matters. All rights reserved.</copyright>
+	<authorEmail>bala@gobigmedia.com.au</authorEmail>
+	<authorUrl>www.gobigmedia.com.au</authorUrl>
+	<version>1.0.0</version>
+	<description>This module shows the Facebook button</description>
+	<files>
+		<filename module="mod_facebook_button">mod_facebook_button.php</filename>
+	</files>
+	<params>
+	</params>
+</install>

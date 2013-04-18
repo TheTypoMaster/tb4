@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="module" client="administrator">
+	<name>My Theme</name>
+	<version>1.1</version>
+	<creationDate>2009/02/18</creationDate>
+	<author>Tobias Kuhn</author>
+	<authorEmail>support@joomlapraise.com</authorEmail>
+	<authorUrl>http://www.joomlapraise.com</authorUrl>
+	<copyright>Tobias Kuhn</copyright>
+	<license>JoomlaPraise Subscriber License</license>
+	<description>Easily switch between the AP2 themes.</description>
+	<files>
+        <filename module="mod_mytheme">mod_mytheme.php</filename>
+		<filename>mod_mytheme.xml</filename>
+		<filename>index.html</filename>
+	</files>
+	<languages>
+	</languages>
+</install>

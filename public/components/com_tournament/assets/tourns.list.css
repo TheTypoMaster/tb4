@@ -1,0 +1,24 @@
+/*################### TOURNAMENT LIST PAGE #####################*/
+
+
+/*Tournament Filter form Styles*/
+
+.sports-tourns-filter-wrap{
+	margin:5px;
+	width:100%;
+	display:block;
+	}
+
+.sports-tourns-filter-wrap form select{
+	margin:0 5px 0 0;
+	width:32%;
+	}
+
+
+
+
+/*Tournament Filter table Styles*/
+.sports-tourns-wrap{
+	border:solid 1px #000;
+	}
+

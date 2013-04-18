@@ -1,0 +1,110 @@
+div#bettaWrap div.innerWrap {
+	background:none repeat scroll 0 0 #EEEEEE;
+	border:1px solid #676767;
+	color:#333333;
+	margin:2px;
+	padding:5px;
+}
+
+form#refer_friend table tr td, form#refer_friend table tr th {
+	padding: 5px;
+	vertical-align: top;
+}
+
+form#refer_friend input, form#refer_friend textarea {
+	border: 1px solid #e7e7e7;
+	vertical-align: top;
+	background-color: white;
+	
+}
+
+div.error {
+	color:#990000;
+}
+
+div#refer-friend {
+	background-color:white;
+	padding-left:15px;
+	padding-right:15px;
+	font-size: 14px;
+	border: 1px solid #E7E7E7;
+}
+
+div#refer-friend h4 {
+	font-size: 1.5em;
+	color: #0097e9;
+}
+
+div#refer-friend div.option {
+	background-color: #F2F2F2;
+	border: 1px solid #E7E7E7;
+	margin-bottom: 15px;
+	width: 100%;
+	line-height: 25px;
+	padding-bottom: 15px;
+}
+
+div#refer-friend div.option p, div#refer-friend div.option h4, div#refer-friend div.option p, div#referral-email-txt {
+	padding-left: 15px;
+	padding-right: 15px;	
+}
+
+div#referral-email-txt {
+	line-height: 15px;	
+}
+
+div#refer-friend div#referral-email-txt h4 {
+	padding-left: 0px;
+}
+
+div#refer-friend div.option table th {
+	padding-left: 130px;
+	vertical-align: top;
+	text-align: right;
+	padding-right: 5px;
+}
+
+#referral-table input, #referral-table textarea {
+	border: 1px solid #E7E7E7;
+	background-color: white;
+	width: 340px;
+}
+
+#referral-table input {
+	height: 25px;
+}
+
+div#refer-friend p.middle {
+	text-align: center;
+}
+
+div#refer-friend input.button {
+	background-image: url(../images/send_message_btn.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color: #F2F2F2;
+	border: none;
+	cursor: pointer;
+	width: 105px;
+	height: 20px;
+}
+
+div#refer-friend input#regoButton {
+  background: url("../images/bg_regoButt.jpg") repeat-x scroll 0 -30px transparent;
+  border: 1px solid #22588F;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: bold;
+  height: 30px;
+  margin: 0 0 0 5px;
+  padding: 0 2px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 230px;
+}
+
+div#refer-friend input#regoButton:hover {
+    background: url("../images/bg_regoButt.jpg") repeat-x scroll 0 0 #0097E9;
+    border: 1px solid #22588F;
+}
+

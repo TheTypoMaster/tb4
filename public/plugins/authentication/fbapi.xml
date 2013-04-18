@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="authentication">
+	<name>Facebook via API</name>
+	<author>Go Big Media</author>
+	<creationDate>August 2012</creationDate>
+	<copyright>Copyright (C) 2012 Go Big Media. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>michael@gobigmedia.com.au</authorEmail>
+	<authorUrl>www.gobigmedia.com.au</authorUrl>
+	<version>1.5</version>
+	<description>Used by the API for Facebook login</description>
+	<files>
+		<filename plugin="fbapi">fbapi.php</filename>
+	</files>
+	<params/>
+</install>

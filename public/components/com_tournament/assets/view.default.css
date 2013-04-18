@@ -1,0 +1,538 @@
+/*------------------------------------------------------------------------
+# TopBetta - default homepage view
+# ------------------------------------------------------------------------
+# Copyright (C) 2009 TopBetta. All Rights Reserved.
+# @license - Copyrighted Commercial Software
+# Author: uc-technologies Pty. Ltd.
+# Website:  http://www.TopBetta.com
+# This file may not be redistributed in whole or significant part.
+-------------------------------------------------------------------------*/
+div#bettaWrap div.subModuleL {
+  width:681px;
+  float:left;
+}
+div#bettaWrap div.subModuleR {
+  float:right;
+  padding-top: 5px;
+}
+div#bettaWrap div.subModuleR h3 {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 29px;
+  color: #fff;
+  height: 29px;
+  margin:0;
+  padding:0 0 0 10px;
+  border:0px solid #172308;
+  text-transform:uppercase;
+  background: #004c88 url('/templates/topbetta/images/bg_mod_Dblu.jpg') repeat-x left center;
+  text-align:center;
+}
+div#bettaWrap div.atpPoolButt,
+div#bettaWrap div.homeButt {
+  margin:5px;
+  float: left;
+  background: #fff;
+  width: 198px;
+  height: 153px;
+  overflow:hidden;
+  border:black 1px solid;
+}
+div#bettaWrap div.atpResult {
+  height: 214px;
+}
+div#bettaWrap div.atpPoolButt {
+  width: 626px;
+  float: left
+}
+div#bettaWrap div.atpPoolButtInr,
+div#bettaWrap div.homeButtInr {
+  background: #eee;
+  width: 180px;
+  height: 135px;
+  border: 1px solid #b9b9b9;
+  clear: all;
+}
+div#bettaWrap div.butt7, div#bettaWrap div.butt8 {
+  height: 214px;
+  border: none;
+}
+
+div#bettaWrap div.atpPoolButtInr {
+  width: 624px;
+}
+div#bettaWrap div#homeButts {
+  background: url(../images/ball_grab_grid51.png) no-repeat 50% 50%;
+}
+
+div#bettaWrap div.homeButt div.butt1 a,
+div#bettaWrap div.homeButt div.butt2 a,
+div#bettaWrap div.homeButt div.butt3 a {
+  background: url(../images/butt_racetourn.jpg) no-repeat 0 0;
+  display: block;
+  width: 200px;
+  height: 155px;
+  margin:-2px 0 0 -2px;
+  text-decoration: none;
+}
+div#bettaWrap div.homeButt div.butt2 a {
+  background: #500 url(../images/butt_topbetta.jpg) no-repeat 0 0;
+}
+
+div#bettaWrap div.homeButt div.butt3 a {
+  background: url(../images/butt_howto.jpg) no-repeat 0 0;
+}
+div#bettaWrap div.homeButt div.butt4 {
+  background: none;
+}
+div#bettaWrap div.homeButt div.butt5 {
+  background: none;
+}
+div#bettaWrap div.homeButt div.butt6 {
+  background: none;
+}
+
+div#bettaWrap div.atpPoolButt a.butt7 {
+  float: left;
+  background: url(../images/butt_refer.gif) no-repeat;
+  margin: 0;
+  width: 347px;
+  display: block;
+  height: 214px;
+}
+
+div#bettaWrap div.atpPoolButt a.butt8 {
+  width: 279px;
+  float: right;
+  margin: 0;
+  background: url(../images/butt_winner.gif) no-repeat;
+  display: block;
+  height: 214px;
+}
+
+div#bettaWrap div.atpPoolButt div.atpPoolAmnt {
+  color:white;
+  font-size: 22px;
+  font-weight: bolder;
+  font-style:italic;
+  line-height: 24px;
+  text-align: right;
+  width: 150px;
+  height: 28px;
+  margin: 110px 0 0 260px;
+  float: left;
+  padding: 0 10px;
+}
+
+div#bettaWrap div.homeButt a.setdflt2,
+div#bettaWrap div.homeButt a.setdflt1 {
+  width: 110px;
+  height: 23px;
+  margin: 108px 5px 0 0;
+  color: #fff;
+  float: right;
+  text-decoration: none;
+}
+div#bettaWrap div.homeButt a.setdflt1 {
+  background: url(../images/butt_default1.png) no-repeat 0 0;
+}
+div#bettaWrap div.homeButt a.setdflt1:hover {
+  background: url(../images/butt_default1.png) no-repeat 0 -23px;
+}
+div#bettaWrap div.homeButt a.setdflt2 {
+  background: url(../images/butt_default2.png) no-repeat 0 0;
+}
+div#bettaWrap div.homeButt a.setdflt2:hover {
+  background: url(../images/butt_default2.png) no-repeat 0 -23px;
+}
+
+div#bettaWrap div.homeContent {
+  margin:2px 2px 2px 2px;
+  padding:1px;
+  border:1px solid #666;
+  background:#eee;
+  color:#4B6C1D;
+  height:350px;
+  overflow:auto;
+}
+div#bettaWrap table.tournDetailsTbl {
+  border-collapse:separate;
+  border-spacing:2px;
+}
+
+div#bettaWrap table.tournDetailsTbl td {
+  font-size:9px;
+  text-align:center;
+}
+
+
+div#bettaWrap div.upcoming {
+  margin: 3px;
+  color:#4B6C1D;
+  background: #2872d9;
+  border: 1px solid;
+  border-top-color: #406595;
+  border-right-color: #113461;
+  border-bottom-color: #113361;
+  border-left-color: #3f6596;
+}
+div#bettaWrap div.upcoming:hover {
+  background: #E2EAF4;
+}
+
+div#bettaWrap table.tournInfo_2,
+div#bettaWrap table.tournInfo_1 {
+  border-collapse:separate;
+  border-spacing:1px;
+  color:#4B6C1D;
+  padding: 3px 3px 0 3px;
+}
+div#bettaWrap table.tournInfo_2 {
+  border-spacing: 1px 0;
+  padding: 0 3px 4px 3px;
+}
+div#bettaWrap table.tournInfo_2 td,
+div#bettaWrap table.tournInfo_1 td{
+  font-size: 9px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #fff;
+  padding: 1px 3px;
+}
+div#bettaWrap table.tournInfo_2 td a,
+div#bettaWrap table.tournInfo_1 td a {
+  color:#fff;
+  text-decoration:none;
+}
+
+div#bettaWrap table.tournInfo_1 td.up_type {
+  background: #1c5097;
+  width: 50px;
+}
+div#bettaWrap table.tournInfo_1 td.up_location {
+  background: #bfd5f4;
+  color: #111;
+  font-weight: bold;
+}
+div#bettaWrap table.tournInfo_1 td.up_statusO,
+div#bettaWrap table.tournInfo_1 td.up_statusC,
+div#bettaWrap table.tournInfo_1 td.up_status {
+  background: #1c5097;
+  width: 70px;
+  text-transform: none;
+}
+div#bettaWrap table.tournInfo_1 td.up_statusO {
+  background: #08682b;
+}
+div#bettaWrap table.tournInfo_1 td.up_statusC {
+  background: #5a172b;
+}
+div#bettaWrap table.tournInfo_1 td.rgt,
+div#bettaWrap table.tournInfo_2 td.rgt {
+  text-align: right;
+}
+div#bettaWrap table.tournInfo_2 td.up_tourns {
+  background: #1c5097;
+  width: 90px;
+}
+div#bettaWrap table.tournInfo_2 td.up_poolhdr {
+  background: #bfd5f4;
+  color: #1c5097;
+  width: 60px;
+}
+div#bettaWrap table.tournInfo_2 td.up_pool {
+  background: #fff;
+  color: #111;
+  text-align: right;
+}
+div#bettaWrap table.tournInfo_2 td.up_buckhdr {
+  background: #bfd5f4;
+  color: #1c5097;
+  width: 97px;
+  text-align: right;
+}
+div#bettaWrap table.tournInfo_2 td.up_buck {
+  background: #fff;
+  color: #111;
+  text-align: right;
+}
+
+div#bettaWrap table.tournInfo_1 td.lft,
+div#bettaWrap table.tournInfo_2 td.lft,
+div#bettaWrap table.tournDetailsTbl td.lft {
+  text-align:left;
+}
+div#bettaWrap table.tournInfo_2 td.rght {
+  text-align: right;
+}
+div#bettaWrap table.tournDetailsTbl td.upr,
+div#bettaWrap table.tournInfo_1 td.upr {
+  text-transform:uppercase;
+}
+
+div.fixed350 {
+  margin:2px 2px 2px 2px;
+  padding:0;
+  background:#ccc;
+  height:354px;
+  overflow:auto;
+}
+
+div.front-banner {
+  margin-left: 5px;
+  border: 1px solid black;
+  float: left;
+}
+
+
+div.front-banner img {
+  margin:0;
+  padding:0;
+}
+
+div#left-banner {
+  float:left;
+  width:347px;
+}
+
+div#right-banner {
+  float:left;
+  width:279px;
+}
+
+
+
+/* Sample 1*/
+#box1{
+	position:absolute;
+}
+#box1 span{
+	display:block;
+	float:left;
+}
+
+/* Sample 2*/
+#box2{
+	position:absolute;
+}
+#box2 span{
+	display:block;
+	float:left;
+}
+
+/* Sample 3*/
+#box3{
+	position:absolute;
+}
+#box3 span{
+	display:block;
+	float:left;
+}
+
+/* Sample 4*/
+#box4{
+	position:absolute;
+}
+#box4 div{
+	width:480px;
+	height:240px;
+	float:left;
+	background:#eee;
+}
+
+#box4 h3, #box4 p, #box4 ul{
+	padding:5px 10px;
+}
+#box4 p{
+	text-indent:16px;
+}
+#box4 img{
+	width:200px;
+	width:150px;
+	float:left;
+	margin:0 10px 10px 15px;
+}
+#info4{
+	background:#fff !important;
+	color:red !important;
+	cursor:default
+}
+
+/* Sample 5*/
+#box5{
+	position:absolute;
+	width:240px;
+}
+#box5 span{
+	display:block;
+}
+#info5{
+	bottom:0;
+}
+
+/* Sample 6*/
+#box6{
+	position:absolute;
+	width:240px;
+}
+#box6 span{
+	display:block;
+}
+#handles6_1{
+	float:left
+}
+#handles6_2{
+	float:right
+}
+.mask6{
+	position:absolute;
+	left:50%;
+	margin-left:-120px;
+	width:240px;
+	height:180px;
+	overflow:hidden;
+}
+.sample6 .buttons{
+	clear:both;
+	text-align:center;
+}
+
+/* Sample 7*/
+#box7{
+	position:absolute;
+}
+#box7 span{
+	display:block;
+	float:left;
+}
+
+#thumbs7{
+	position:relative;
+	width:486px;
+	clear:both;
+	height:41px;
+	overflow:hidden;
+	margin-top:200px;
+}
+#thumbs7 .thumbs, #thumbs_handles7, #thumbs_mask7{
+	position:absolute;
+	top:0;
+	width:100%;
+	height:41px;
+}
+#thumbs7 .thumbs div, #thumbs_handles7 span{
+	display:block;
+	width:60px;
+	height:41px;
+	margin:0;
+	float:left;
+	cursor:pointer;
+}
+#thumbs7 .thumbs div img{
+	width:54px;
+	float:right;
+}
+#thumbs_handles7 span{
+	background:url(thumb_invisible.gif) no-repeat;
+}
+#thumbs_mask7{
+	width:1200px;
+	background:url(thumbs_mask.gif) no-repeat center top;
+}
+
+/* Sample 8*/
+#box8{
+	position:absolute;
+}
+#box8 div{
+	width:480px;
+	float:left;
+}
+#box8 .buttons{
+	text-align:left
+}
+#box8 .next{
+	float:right
+}
+.sample8 .buttons{
+	text-align:center;
+	clear:both;
+}
+.sample8 .mask1{
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+/* ********************
+
+.thumbs{
+	width:54px;
+}
+.thumbs div{
+	display:block;
+	width:54px;
+	height:41px;
+	margin:3px 0;
+	cursor:pointer;
+}
+
+.thumbs div img{
+	display:block;
+	width:100%;
+	height:100%;
+	border:none
+}
+
+.info{
+	width:240px;
+	height:50px;
+	background:#000;
+	position:absolute;
+}
+.info p, .info h4{
+	color:#fff;
+	padding:3px 8px;
+	font-family:Arial;
+}
+.info h4{
+	font-size:14px;
+}
+.info h4 a{
+	float:right;
+	background:#fff;
+	color:#000;
+	font-size:10px;
+	padding:0 3px;
+	text-decoration:none
+}
+************** */
+.mask1{
+	position:relative;
+	width:240px;
+	height:180px;
+	overflow:hidden;
+}
+.mask2{
+	position:relative;
+	width:240px;
+	height:180px;
+	overflow:hidden;
+}
+.mask3{
+	position:relative;
+	width:480px;
+	height:240px;
+	overflow:hidden;
+}
+
+.mask-tb{
+	position:relative;
+	width:473px;
+	height:201px;
+	overflow:hidden;
+}
+
+.mask-tb span img{
+	display:block;
+	border:none;
+}

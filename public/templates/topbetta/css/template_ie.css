@@ -1,0 +1,9 @@
+/* custom styles for ie6 and 7 */
+div#sportsbetting div#betpanel table.betsTbl td input{
+	margin:1px 5px; /*ie6/7 hack*/
+}
+
+
+
+
+

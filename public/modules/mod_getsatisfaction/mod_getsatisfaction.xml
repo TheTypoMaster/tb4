@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="module" version="1.5.0">
+	<name>Get Satisfaction</name>
+	<author>Joomla! Project</author>
+	<creationDate>April 2011</creationDate>
+	<copyright>Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.5.0</version>
+	<description>This module shows the Joomla! Copyright information</description>
+	<files>
+		<filename module="mod_getsatisfaction">mod_footer.php</filename>
+	</files>
+	<params>
+		<param name="community_domain" type="text" default="" label="Community Domain" description="COMMUNITYDOMAIN" />
+		<param name="fastpass_key" type="text" default="" label="Fastpass Key" description="FASTPASSKEY" />
+		<param name="fastpass_secret" type="text" default="" label="Fastpass Secret" description="FASTPASSKEY" />
+		<param name="widget_js" type="textarea" cols="30" rows="5" default="" label="Widget Javascript" description="WIDGETJS" />
+		<param name="cache" type="list" default="1" label="Caching" description="Select whether to cache the content of this module">
+			<option value="1">Use global</option>
+			<option value="0">No caching</option>
+		</param>
+	</params>
+</install>

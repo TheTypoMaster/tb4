@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<install version="1.5" type="module" client="administrator">
+	<name>APDock</name>
+	<version>1.2</version>
+	<creationDate>2009/02/28</creationDate>
+	<author>www.sourcecoast.com | www.joomlapraise.com</author>
+	<authorEmail>support@sourcecoast.com | support@joomlapraise.com</authorEmail>
+	<authorUrl>http://www.sourcecoast.com | http://www.joomlapraise.com</authorUrl>
+	<copyright>SourceCoast | JoomlaPraise</copyright>
+	<license>SourceCoast | JoomlaPraise</license>
+	<description>APDock is the dock module used in AdminPraise.</description>
+	<files>
+		<filename>mod_apdock.xml</filename>
+		<filename>index.html</filename>
+		<filename>tmpl/index.html</filename>
+		<filename module="mod_apdock">mod_apdock.php</filename>
+		<filename>tmpl/default.php</filename>
+		<filename>tmpl/ifisheye-full.js</filename>
+		<filename>tmpl/ifisheye.js</filename>
+		<filename>tmpl/images/index.html</filename>
+		<filename>tmpl/images/blank.gif</filename>
+	</files>
+	<languages>
+		<language tag="en-GB">en-GB.mod_apdock.ini</language>
+	</languages>
+	<params>
+	</params>
+</install>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install version="1.5" type="plugin" group="user">
+	<name>Get Satisfaction</name>
+	<author>Geoff Wellman</author>
+	<creationDate>Apr 2011</creationDate>
+	<copyright>Copyright (C) 2011 MobileActive Ltd</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>geoff.wellman@mobileactive.com</authorEmail>
+	<authorUrl>www.mobileactive.com</authorUrl>
+	<version>1.0.0</version>
+	<description>This plugin will login a user to get satisfaction and log them out.</description>
+	<files>
+		<filename plugin="getsatisfacrtion.php">getsatisfaction.php</filename>
+	</files>
+</install>

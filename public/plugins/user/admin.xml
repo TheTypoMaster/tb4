@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.0" type="plugin" group="user">
+	<name>Admin User Plugin</name>
+	<author>Geoff Wellman</author>
+	<creationDate>March 2011</creationDate>
+	<copyright>Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>geoff.wellman@gmail.com</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.0</version>
+	<description>Modify delete user in admin</description>
+	<files>
+		<filename plugin="admin">admin.php</filename>
+	</files>
+	<params/>
+</install>

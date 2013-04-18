@@ -1,0 +1,331 @@
+* { 
+font-family: 'Arimo','Droid Sans', Helvetica, Arial, sans-serif;
+font-style:normal;
+font-weight: 400;
+/*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; line-height: 1.231; */
+text-rendering: optimizeLegibility; font-size: 100%; -webkit-text-size-adjust: 100%; 
+-ms-text-size-adjust: 100%; }
+html{
+	-webkit-font-smoothing: antialiased;
+}
+html, body { height: 100%; }
+body { background: url(../img/bg_fabric.jpg) fixed repeat; margin: 0; padding: 0; width: 100%; 
+overflow-x: hidden; }
+body, button, input, select, textarea { color: #fff; }
+
+/* Give paragraphs some default styling. */
+p { font-size: 12px; color: #fff; font-weight: normal; line-height: 18px; margin-top: 0; 
+margin-bottom: 18px;  }
+p small { font-size: 11px; color: #bfbfbf; }
+
+/*LINKA*/
+a { color: #861c00; font-weight: bold; text-decoration: none; -webkit-transition: 250ms linear all; 
+-moz-transition: 250ms linear all; transition: 250ms linear all; }
+a:hover { color: #DD1251; }
+a:active { color: #000000; margin-top: 1px; }
+a:focus { outline: 0; }
+
+/* Improve readability when focused/hovered in all bgridsers */
+a:hover, a:active { outline: 0; }
+
+p{
+	text-align:justify;
+}
+
+b,strong{
+	font-weight:bold;
+}
+
+li {
+line-height: 15px;
+color: #808080;
+}
+
+/* Give headings some default styling. */
+h1, h2, h3, h4, h5, h6, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { 
+	color: #fff; 
+}
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { color: #616a73; }
+
+/* Set individual heading styles */
+h1 { font-size: 38px; line-height: 36px; text-align:center; margin:0px auto;  }
+h1 small { font-size: 24px; color:#fff}
+
+h2 { font-size: 20px; line-height: 36px; color: #dadada; text-align:center; margin-top:0px; }
+h2 small { font-size: 16px;}
+
+h3 { font-size: 16px; line-height: 20px; }
+h3 small { font-size: 11px; color:#fff}
+
+h4 { font-size: 24px; line-height: 28px; }
+h4 small { font-size: 12px; }
+
+h5 { font-size: 20px; line-height: 24px; }
+h5 small { font-size: 12px; }
+
+h6 { font-size: 18px; line-height: 22px; }
+h6 small { font-size: 12px; }
+
+
+.clear{
+	clear:both;
+	display:block;
+}
+
+.hide{
+	display:none;
+}
+
+.container {
+    width: 960px;
+    margin: 0 auto;
+}
+
+#content{
+	clear:both;
+	display:block;
+}
+
+#main{
+	padding-top: 40px;
+}
+
+#main2{
+	margin-top: 10px;
+}
+
+.col{
+	border:0px solid #ccc;
+}
+#col1 {
+    float: left;
+    width: 220px;
+}
+
+#col2 {
+    float: left;
+    width: 490px;
+}
+
+#col3 {
+    float: left;
+    width: 250px;
+}
+
+#footer {
+	padding-top: 20px;
+	margin-bottom: 15px;
+}
+
+
+header, #content, footer {
+	
+}
+header {
+	height: 60px;
+}
+
+#content {
+	clear: both;
+	padding: 0 0 15px 0;
+}
+
+#winners {
+	width: 340px;
+	margin: 15px 35px 0 115px;
+}
+.winner-head {
+	font-size: 20px;
+	line-height: 32px;
+	margin: 0 0 0 0;
+}
+
+#winners-list {
+	width: 340px;
+}
+
+#winners-list span{
+}
+#winners-list div{
+	font-size: 18px;
+	padding-bottom: 5px;
+	display: block;
+}
+.wnr-num {
+	padding: 0 10px;
+}
+.wnr-user {
+}
+
+
+footer {
+	height: 60px;
+	width: 100%;
+}
+
+#logo {
+	margin: 0 auto;
+	margin-top: 15px;
+	float: left;
+}
+
+/* MAIN STYLING - TOPBETTA */
+#partners{
+	float:right;
+	margin-top: 5px;
+}
+
+#partners img{
+	margin: 0px 10px;
+}
+#content{
+	background:#0a0a0a url(../img/bg_car.jpg) no-repeat center 0px; 	
+	min-height: 600px;
+}
+
+#buttons{
+	margin:320px auto 0px;
+	width: 500px;
+	border:0px solid;
+}
+
+#buttons a{
+	margin: 0px 3px;
+}
+
+.num{
+	font-size:14px;
+	font-weight:800;
+}
+
+/*FORMS*/
+#regForm ul li{
+	float:left;
+	display:inline;
+	width:56%;
+	margin-top:10px;
+}
+
+#regForm ul li.even{
+	width:44%;
+}
+
+.success{
+	color:#1481bd;
+	font-weight:bold;
+}
+.error{
+	font-size:12px;
+	margin:5px auto;
+	/*color:#861c00;*/
+	color:#DD1251;
+}
+
+#submit{
+	border:none;
+	background: url('../img/btn-signup.jpg');
+	width:162px;
+	height:32px;
+	float:right;
+	margin: 15px 2px 0px 0px;
+}
+
+
+#login-submit {
+	border: none;
+	background: url('../img/btn-signup2.jpg');
+	width: 162px;
+	height: 32px;
+	float: right;
+	margin: 15px 2px 10px 0px;
+	color: #fff!important;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#twitter{
+	margin-top:20px;
+}
+#twitter_img, #fb_img{
+	float:left;
+	display:inline;
+	width: 23px;
+	opacity:0.25;
+	padding:2px;
+}
+
+#fb_img{
+	padding-bottom:0px;
+}
+
+
+
+#follow_ctr{
+	float:left;
+}
+#twitter #follow, #facebook{
+	font-size:9px;
+	font-family:Tahoma, Geneva, sans-serif;
+}
+#twitter #follow a, #facebook a{
+	color:white;
+	font-weight:normal;
+}
+
+ul.tweet_list{
+	margin-top:5px;
+}
+
+#fb_like{
+	padding-top:9px;
+}
+
+#mundine{
+	margin-top:20px;
+	position:relative;
+}
+
+#mundine h5{
+	font-size:14px;
+	font-weight:bold;
+	color:white;
+	margin:0;
+	font-family: 'Arimo','Droid Sans', Helvetica, Arial, sans-serif;
+}
+
+#mundine_like{
+	position:absolute;
+	left: 780px;
+	top:0px;
+}
+
+#mundine_img{
+	float:left;
+	display:inline;
+	width: 30px;
+}
+
+footer{
+	margin-top:50px;
+}
+#license{
+	float:left;
+	display:inline;
+	font-size:11px;
+	color:#949292;
+}
+
+#copyright{
+	float:right;
+	font-size: 14px;
+}
+
+footer a{
+	color:#861c00!important;
+}
+
+
+/*
+
+

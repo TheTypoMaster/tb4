@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="system">
+	<name>System - User activity log</name>
+	<author>Tobias Kuhn</author>
+	<creationDate>2009/02</creationDate>
+	<copyright>Copyright (C) 2009 Joomlapraise. All rights reserved.</copyright>
+	<license>Joomlapraise Subscriber Agreement</license>
+	<authorEmail>support@joomlapraise.com</authorEmail>
+	<authorUrl>www.joomlapraise.com</authorUrl>
+	<version>1.0.1</version>
+	<description>Records backend user activity</description>
+	<files>
+		<filename plugin="ualog">ualog.php</filename>
+	</files>
+	<params>
+	</params>
+</install>

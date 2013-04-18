@@ -1,0 +1,195 @@
+/*------------------------------------------------------------------------
+# TopBetta: com_topbetta_user - myaccount.default.css
+-------------------------------------------------------------------------*/
+
+div#bettaWrap div.innerWrap {
+	background:#eee;
+	border:1px solid #676767;
+	margin:2px;
+	padding:5px;
+	color:#333;
+}
+div#bettaWrap div.hdrBar {
+	background:#f1f1f1 url('../../com_payment/images/bg_lgry_rnd.jpg') repeat-x left center;
+	border:1px solid #b9b9b9;
+	margin:5px;
+	padding: 0 7px;
+	height:30px;
+	line-height:30px;
+	color:#333;
+	font-size:16px;
+}
+div#bettaWrap div.hdrBar div{
+	width:22px;
+	height:22px;
+	margin:4px 8px 4px 5px;
+	float:left;
+}
+div#bettaWrap div.hdrBar div#hdrBar_account{
+	background:url('../../com_payment/images/icon_account.png') no-repeat center center;
+}
+div#bettaWrap div.hdrBar div#hdrBar_settings{
+	background:url('../../com_payment/images/icon_settings.png') no-repeat center center;
+}
+div#bettaWrap div.hdrBar div#hdrBar_admin{
+	background:url('../../com_payment/images/icon_admin.png') no-repeat center center;
+}
+
+div#bettaWrap div.accountButts{
+	clear:both;
+	display:inline;
+	padding:5px;
+}
+div#bettaWrap div.accountButts div.accountButt{
+	background:#f1f1f1 url('../../com_payment/images/bg_lgry_rnd.jpg') repeat-x left top;
+	float:left;
+	border:1px solid #b9b9b9;
+	margin:5px;
+	padding:0 5px 3px 5px;
+	width:106px;
+	height:97px;
+}
+div#bettaWrap div.accountButts div.accountButt:hover {
+	background:#f1f9e8;
+}
+div#bettaWrap div.accountButts div.accountButt a{
+	text-decoration:none;
+	text-align:center;
+	color:#333;
+	font-size:12px;
+	font-weight:bold;
+	line-height:14px;
+	display:block;
+	padding:0 3px;
+}
+div#bettaWrap div.accountButts div.accountButt img{
+	margin:7px 0 5px 0;
+}
+
+/* pw reset style */
+div.resetForm div.pwresetFormInr {
+  background:#eee;
+  border:1px solid #676767;
+  margin:2px auto;
+  padding:5px;
+  color:#333;
+  width:790px;
+}
+
+div.resetForm div.frm{
+  margin:15px 0 0 0;
+  padding:5px 20px;
+}
+div.resetForm div.frmL {
+	width: 472px;
+	float: left;
+}
+div.resetForm div.frmL label {
+  float:left;
+  width:165px;
+  text-align:left;
+  line-height: 30px;
+  margin: 4px 0;
+  color: #555;
+  font-size: 14px;
+  font-weight: bold;
+  clear: left;
+}
+
+div.resetForm div.frmL input{
+  font-size: 14px;
+  font-weight: bold;
+  color: #006da7;
+  height:17px;
+	background:#f3ffe8;
+	border: 1px solid #bbb;
+    margin: 4px 0;
+    padding:4px 10px;
+	width: 280px;
+	float: right;
+}
+div.resetForm div.frmL input:focus{
+  border: 4px solid #0097E9;
+  background:#ffffff;
+  margin: 3px 0;
+  padding: 2px 8px;
+}
+
+div.resetForm div.frmR {
+	width: 240px;
+	float: right;
+	color: #300;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 18px;
+	font-weight: bold;
+	padding: 10px 0 20px 20px;
+	margin: 0 0 10px 0;
+	border-left: 1px solid #bbb;
+}
+div.resetForm div.frmR h4 {
+	color: #900;
+	font-size: 14px;
+	line-height: 18px;
+	font-weight: bold;
+	margin-left: -5px;
+}
+div.resetForm #complexity {
+	font-size: 13px;
+	font-weight: bold;
+	padding:5px;
+	width: 190px;
+	float: right;
+	margin:4px 0 7px 0;
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#999;
+	height:15px;
+}
+div.resetForm div.hidebox {
+	float: right;
+	width: 100px;
+}
+div.resetForm div.hidebox input{
+	width: 12px;
+	margin: 10px 5px 5px 10px;
+	float: right;
+}
+div.resetForm div.hidebox div.hideboxtxt{
+	margin: 11px 10px 4px 3px;
+	float: right;
+	width: 25px;
+}
+div.resetForm .dispnone {
+	display: none;
+}
+div.resetForm #scorebar {
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#111;
+	float: right;
+	padding: 1px 5px;
+	margin:5px 0 7px 0;
+	background: url(bg_strength_gradient.jpg) no-repeat 0 0;
+	width: 200px;
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 24px;
+	text-align: center;
+	height: 24px;
+}
+div.resetForm div.frmL .validate{
+	background:#00467c;
+	border: 1px solid #0081e6;
+	width: 80px;
+	height: 28px;
+	float: right;
+	margin:5px 0 7px 10px;
+	padding: 1px 5px 3px 5px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #fff;
+}
+
+
+

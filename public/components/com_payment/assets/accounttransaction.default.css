@@ -1,0 +1,626 @@
+/*------------------------------------------------------------------------
+# TopBetta: com_payment - accounttransaction.default.css
+-------------------------------------------------------------------------*/
+/* common */
+div#bettaWrap div.innerWrap {
+	background:#eee;
+	border:1px solid #676767;
+	margin:2px;
+	padding:15px 10px;
+	color:#333;
+}
+div#bettaWrap div.hrzspr{
+	margin:0 0 15px 0;
+	display: block;
+	clear:both;
+}
+div#bettaWrap div.hdrBar {
+	background:#f1f1f1 url('../../com_payment/images/bg_lgry_rnd.jpg') repeat-x left center;
+	border:1px solid #b9b9b9;
+	margin:0;
+	padding: 0 0 0 7px;
+	height:30px;
+	line-height:30px;
+	color:#333;
+	font-size:16px;
+}
+div#bettaWrap div.hdrBar div#hdrBar_trans{
+	background: url(../images/icon_transactions.png) no-repeat 50% 50%;
+	width:22px;
+	height:22px;
+	margin:4px 8px 4px 2px;
+	float:left;
+}
+div#bettaWrap div.accordHead{
+	background:#e9e9e9 url(../images/account_spr_v1.png) repeat-x 0 -140px;
+	border:1px solid #b9b9b9;
+	margin:0;
+	color:#333;
+	height:30px;
+	display: block;
+}
+div#bettaWrap div.accordHead:hover {
+	background:#F6F9F2;
+	cursor:pointer;
+}
+
+div#bettaWrap div.accordHead div.Alogo{
+	border-right: 1px solid #ddd;
+	width: 142px;
+	height: 30px;
+	float: left;
+}
+div#bettaWrap div.accordHead div.Atitle{
+	color:#333;
+	font-size: 16px;
+	border-left: 1px solid #fff;
+	width: 650px;
+	float: left;
+	line-height: 29px;
+	padding: 0 0 0 15px;
+}
+div#bettaWrap div.accordHead div.Aarrow{
+	color:#333;
+	font-size: 16px;
+	float: right;
+	margin: 6px 7px 5px 7px;
+	width: 28px;
+	height: 19px;
+	background:url(../images/account_spr_v1.png) no-repeat -50px -48px;
+}
+
+div#bettaWrap div.accordBody{
+	background:#f1f1f1 url(../images/account_spr_v1.png) repeat-x 0 -171px;
+	border:1px solid #b9b9b9;
+	border-top:none;
+	padding:10px 10px 10px 10px;
+	color:#333;
+	display: block;
+	margin: 0 2px 0 2px;
+}
+div#bettaWrap div.accordBody h5{
+	color:#333;
+	font-size: 14px;
+	font-weight: bold;
+	margin: 0 0 6px 0;
+	padding: 0;
+}
+div#bettaWrap div.accordBody div.accForm,
+div#bettaWrap div.accordBody div.accInfo{
+	margin: 0;
+	padding: 0;
+	float: left;
+	height:257px;
+}
+div#bettaWrap div.accordBody div.accForm{
+	border-right: 1px solid #ddd;
+	padding: 7px 20px 10px 10px;
+	width: 480px;
+}
+div#bettaWrap div.accordBody div.accInfo{
+	border-right: 1px solid #fff;
+	padding: 7px 10px 10px 20px;
+	width: 345px;
+}
+div#bettaWrap div.accordBody div.accInfo_paypal{
+	border-right: 1px solid #fff;
+	width: 345px;
+}
+
+div#bettaWrap div.accordBody label {
+	float:left;
+	width:165px;
+	text-align: right;
+	line-height: 24px;
+	padding:0 10px 0 10px;
+	margin:3px 2px 3px 0;
+	color: #fff;
+	font-size: 12px;
+	font-weight: bold;
+	background:#0084e2;
+}
+div#bettaWrap div.accordBody select,
+div#bettaWrap div.accordBody textarea,
+div#bettaWrap div.accordBody input {
+	font-size: 13px;
+	font-weight: bold;
+	color: #0084e2;
+	padding:3px 10px;
+	width:270px;
+	border: 1px solid #0084e2;
+	background: #F1f6ff;
+	margin:3px 0 12px 0;
+}
+div#bettaWrap div.accordBody input:focus {
+	border: 4px solid #0084e2;
+	background:#ffffff;
+	margin:0 -3px 9px -3px;
+	padding:3px 10px;
+}
+
+div#bettaWrap div.accordBody input.bigBluButt{
+	width: 302px;
+	margin: 10px 0;
+	padding: 0 5px;
+	height: 40px;
+	font-size:19px;
+	font-weight: bold;
+	color:#fff;
+	cursor:pointer;
+	text-align:center;
+	vertical-align:middle;
+	background: #0097e9 url(../../com_ucbetman/images/blue_bg_hover.jpg) repeat-x 0 -40px;
+	border:1px solid #0081e6;
+	float: right;
+}
+div#bettaWrap div.accordBody input.bigBluButt:hover{
+	border:1px solid #22588f;
+	background: #0097e9 url(../../com_ucbetman/images/blue_bg_hover.jpg) repeat-x 0 0;
+}
+
+
+div#bettaWrap div.accordHead div.Lpaypal,
+div#bettaWrap div.paypalLogo{
+	background: url(../images/account_spr_v1.png) no-repeat 0 0;
+	width:112px;
+	height:24px;
+	display: block;
+	margin: 10px 0 10px -15px;
+}
+
+div#bettaWrap div.accordHead div.Lmoneybookers,
+div#bettaWrap div.moneybookersLogo{
+	background: url(../images/skrill_142x24.png) no-repeat 0 0;
+	width:130px;
+	height:24px;
+	display: block;
+	margin: 10px 0 10px -5px;
+}
+div#bettaWrap div.accordHead div.Alogo div{
+	margin: 4px 15px;
+	width: 142px;
+	height:24px;
+}
+div#bettaWrap div.accordHead div.Lbank{
+	background: url(../images/account_spr_v1.png) no-repeat 0 -24px;
+}
+div#bettaWrap div.accordHead div.Lcard{
+	background: url(../images/account_spr_v1.png) no-repeat 0 -115px;
+}
+div#bettaWrap div.accordHead div.Lbankdeposit{
+	background: url(../images/bank-deposit-page-icon.gif) no-repeat 0 0;
+}
+div#bettaWrap div.accordHead div.Lbpay{
+	background: url(../images/bpay-page-icon.gif) no-repeat 0 0;
+}
+
+
+div#bettaWrap div.accordBody div.plsnote{
+	background: #ffe6e6;
+	border: 1px solid #c00;
+	color: #300;
+	font-size: 14px;
+	margin: 9px 0 0 0;
+	padding: 10px;
+}
+
+div#bettaWrap div.accordBody div.plsnote a{
+	color: #880000;
+}
+
+div#bettaWrap div.accordBody div.plsnote div.plsHdr{
+	color: #c00;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 12px;
+	margin: 0 0 5px 0;
+}
+
+
+/* instant deposit */
+div#bettaWrap div.accordBody div.accFormS{
+	width: 400px;
+}
+div#bettaWrap div.accordBody div.accInfoS{
+	width: 430px;
+}
+div#bettaWrap div.accordBody input.w238 {
+	width:220px;
+}
+div#bettaWrap div.accordBody input.w260{
+	width: 252px;
+}
+div#bettaWrap div.accordBody input.w208{
+	width: 190px;
+}
+div#bettaWrap div.accordBody input.w70{
+	width: 70px;
+}
+
+div#bettaWrap div.accordBody div.accRadios label{
+	background: none;
+	color: #333;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 34px;
+	text-align: left;
+	width: 230px;
+}
+div#bettaWrap div.accordBody div.accRadios div.cardlogo{
+	width: 36px;
+	height: 24px;
+	margin: 8px 15px;
+}
+div#bettaWrap div.accordBody div.accRadios div.accCrdVisa{
+	background: url(../images/account_spr_v1.png) no-repeat 0 -67px;
+}
+div#bettaWrap div.accordBody div.accRadios div.accCrdMstr{
+	background: url(../images/account_spr_v1.png) no-repeat -38px -67px;
+}
+div#bettaWrap div.accordBody div.accRadios div.accCrdAmex{
+	background: url(../images/account_spr_v1.png) no-repeat -76px -67px;
+}
+
+div#bettaWrap div.accordBody div.accRadios {
+	border-top: 1px solid #ddd;
+	display: block;
+	clear: both;
+	margin: 0 10px;
+	padding: 0 5px 0 20px;
+}
+div#bettaWrap div.accordBody div.accRadios:hover {
+	background:#DCE9FF;
+}
+div#bettaWrap div.accordBody div.accRadios div,
+div#bettaWrap div.accordBody div.accRadios label,
+div#bettaWrap div.accordBody div.accRadios input{
+	float: left;
+}
+div#bettaWrap div.accordBody div.accRadios div:hover,
+div#bettaWrap div.accordBody div.accRadios label:hover,
+div#bettaWrap div.accordBody div.accRadios input:hover,
+div#bettaWrap div.accordBody div.accRadios:hover {
+	cursor: pointer;
+}
+
+div#bettaWrap div.accordBody input[type="radio"] {
+	padding: 0;
+	margin: 0;
+	height: 40px;
+	width: 13px;
+	float: left;
+}
+div#bettaWrap div.accordBody select{
+	font-size: 12px;
+	height: 24px;
+	font-weight: bold;
+	padding: 1px 1px 1px 3px;
+	width: 65px;
+}
+
+/* withdrawal */
+
+
+
+/* instant deposit */
+div#bettaWrap div#deposit div.bankdetailsWrap{
+	color:#333;
+	width:650px;
+	margin:5px 0;
+	border-bottom:1px solid #fff;
+}
+div#bettaWrap div#deposit div.bankimg{
+	margin:5px;
+	width:220px;
+	height:70px;
+	float:left;
+}
+
+div#bettaWrap div#deposit div.bigarrow{
+	margin:10px 11px 15px 0;
+	background: url(../images/bg_bigarrow.png) no-repeat 50% 50%;
+	width:400px;
+	height:90px;
+	font-size:14px;
+	line-height:18px;
+	float:right;
+}
+div#bettaWrap div#deposit div.bankdetailsH{
+	margin:12px 5px 0 35px;
+	padding:0 0 0 10px;
+	font-size:16px;
+	font-weight:bold;
+	display:block;
+	border-bottom:1px solid #eee;
+}
+div#bettaWrap div#deposit div.bankdetails{
+	margin:0 5px 0 50px;
+	padding:2px 0 0 0;
+	font-size:15px;
+	line-height:22px;
+}
+div#bettaWrap div#deposit div.depnote{
+	font-size:16px;
+	font-weight:bold;
+	line-height:18px;
+	color:#900;
+	margin:10px 5px;
+}
+div#bettaWrap div#deposit span.depdeat{
+	color:#666;
+}
+div#bettaWrap div#deposit div.foottxt{
+	font-size:14px;
+	line-height:18px;
+	color:#555;
+	margin:10px 5px;
+}
+
+/* bpay */
+div#bettaWrap h3.bpayhdr{
+	text-transform: none;
+}
+div#bettaWrap div#bpay{
+	background:#fff;
+	border:1px solid #002e67;
+	margin:10px;
+	color:#002e67;
+	width:375px;
+}
+div#bettaWrap div#bpayrefwrap{
+	background:#fff;
+	border:2px solid #002e67;
+	margin:15px 0;
+	padding:10px 0 0 0;
+	color:#002e67;
+	width:272px;
+	height:73px;
+	float:left;
+}
+div#bettaWrap div#bpaylogo{
+	width:55px;
+	height:87px;
+	background: url(../images/logo_bpay_55.gif) no-repeat 50% 50%;
+	margin:15px 10px 15px 15px;
+	float:left;
+}
+div#bettaWrap div#bpay div.bpayref{
+	font-size:20px;
+	line-height:28px;
+	margin:0 0 0 8px;
+	font-weight:bold;
+}
+div#bettaWrap div#bpay div.bpaytxt1{
+	font-size:18px;
+	line-height:28px;
+	font-weight:bold;
+	margin:0 0 0 15px;
+}
+div#bettaWrap div#bpay div.bpaytxt2{
+	font-size:14px;
+	line-height:18px;
+	margin:0 0 15px 17px;
+}
+
+table#receipt {
+	border: 1px solid black;	
+}
+
+table#receipt th {
+	font-weight: bold;
+	padding: 3px;
+}
+
+table#receipt td {
+	padding: 3px;
+}
+
+
+
+/* transactions */
+div#bettaWrap div.RhdrWrap {
+	height: 120px;
+	background: #e2e2e2;
+	border: 1px solid #bbb;
+	margin: 0 0 10px 0;
+	padding: 4px 0 0 0;
+}
+div#bettaWrap div.Rperiod {
+	width: 630px;
+	border-right: 1px solid #d9d9d9;
+	padding: 10px;
+	float: left;
+}
+div#bettaWrap div.Rbuttons {
+	width: 100px;
+	height: 96px;
+	border-left: 1px solid #f3f3f3;
+	padding: 10px;
+	float: left;
+}
+div#bettaWrap div.RhdrWrap label {
+  float:left;
+  width:105px;
+  text-align:left;
+  line-height: 22px;
+  margin: 4px 0;
+  padding: 0 5px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  clear: left;
+  background: #999
+}
+div#bettaWrap div.RhdrWrap select#disp_period,
+div#bettaWrap div.RhdrWrap input {
+	font-size: 14px;
+	font-weight: bold;
+	color: #334666;
+	padding:3px 10px;
+	width:118px;
+	border: 1px solid #999;
+	background: #efefef;
+	margin:3px 0 6px 2px;
+}
+div#bettaWrap div.RhdrWrap select#disp_period {
+	margin: 2px 0 6px 2px;
+	height: 22px;
+	padding:0 0 0 10px;
+	width: 165px;
+}
+
+
+div#bettaWrap div.RhdrWrap div.cal_select {
+	width: 20px;
+	height: 20px;
+	margin:5px 201px 0 0;
+	background: url('../images/icon_cal_select.jpg') no-repeat 50% 50%;
+	float: right;
+}
+div#bettaWrap div.RhdrWrap div.cal_select a {
+	display: block;
+	height: 20px;
+}
+div#bettaWrap div.RhdrWrap h5 {
+	width: 133px;
+	float: left;
+	color: #334666;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 7px 0 0 15px;
+}
+div#bettaWrap div.RhdrWrap button#show_report{
+	border:1px solid #22588f;
+	background: #ddd url('../images/bg_report_butt.jpg') repeat-x 0 50%;
+	margin:0 0 0 20px;
+	padding: 0 2px;
+	font-size:15px;
+	font-weight:bold;
+	color:#334666;
+	text-transform:uppercase;
+	text-align:center;
+	width:170px;
+	height:30px;
+}
+div#bettaWrap div.RhdrWrap button#show_report:hover{
+	border:1px solid #22588f;
+	background:#eee;
+}
+
+
+div#bettaWrap div#date_select {
+	margin: 5px 5px 0 5px;
+	width: 167px;
+	height: 20px;
+	float: right;
+	border: 1px solid #e2e2e2;
+	background: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 20px;
+	color: #334666;
+}
+div#bettaWrap div#date_select .date_select_txt {
+	padding: 0 10px;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 20px;
+	color: #999;
+}
+
+
+
+div#bettaWrap table.mytrans {
+	border-collapse:separate;
+	margin: 5px 0;
+	border-spacing:2px;
+	clear:both;
+}
+div#bettaWrap table.mytrans th{
+	background:#8e8e8e;
+	color:#fff;
+	font-size:9px;
+	font-weight:bold;
+	text-align:left;
+	padding: 2px;
+}
+div#bettaWrap table.mytrans td {
+	border-collapse:separate;
+	border-spacing:2px;
+	background:#ddd;
+	color:#222;
+	font-size:10px;
+	padding:2px 5px;
+	text-align:left;
+}
+div#bettaWrap table.mytrans tr.odds td {
+	background:#F9F9F9;
+}
+div#bettaWrap table.mytrans tr.odds td div.scratched {
+	color: #AAA;
+	text-decoration: line-through;
+}
+div#bettaWrap table.mytrans td.nobets{
+	font-size:16px;
+	color:#500;
+	padding:15px 0;
+}
+div#bettaWrap table.mytrans tr.ContentTableRow1 td{
+	background: #d6d6d6;
+}
+div#bettaWrap table.mytrans tr.mbWon td{
+	color: #006600;
+}
+div#bettaWrap table.mytrans tr.mbLoss td{
+	color: #990000;
+}
+div#bettaWrap table.mytrans tr.ContentTableRow2 td{
+	background: #e2e2e2;
+}
+div#bettaWrap tr.ContentTableRow1:hover td,div#bettaWrap tr.ContentTableRow2:hover td {
+	background: #eafdc8;
+}
+div#bettaWrap table.mytrans td.lft {
+	text-align:left;
+}
+div#bettaWrap table.mytrans td.rgt {
+	text-align:right;
+}
+div#bettaWrap div.balance_disp {
+	width: 217px;
+	line-height: 20px;
+	background: #fafafa;
+	border: 1px solid #b9b9b9;
+	float: right;
+	margin: 5px 0;
+	padding: 2px 5px;
+	color: #334666;
+	font-size: 12px;
+	font-weight: bold;
+}
+div#bettaWrap div.balance_disp span.balance_amnt {
+	float: right;
+	text-align: right;
+	width: 110px;
+}
+
+div.positive {
+	color: green;
+}
+
+div.negative {
+	color: red;	
+}
+
+div#bettaWrap div.hdrBar span.transaction_title{
+	float: left;	
+}
+
+div#bettaWrap div.hdrBar span.tournament_title_link a {
+    -moz-border-radius: 3px 3px 3px 3px;
+    background: none repeat scroll 0 0 #6D89B0 !important;
+    color: #FFFFFF;
+    font-size: 12px;
+    padding: 2px 5px;
+    text-decoration: none;
+}

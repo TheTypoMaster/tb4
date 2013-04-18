@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+ <params>
+  <param name="header_banner" type="textarea" default="" label="Header Banner" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="left_banner" type="textarea" default="" label="Left Banner" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="center_small_left_banner" type="textarea" default="" label="Center Left Banner" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="center_small_right_banner" type="textarea" default="" label="Center Right Banner" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="center_large_banner" type="textarea" default="" label="Center Large Banner" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="right_banner" type="textarea" default="" label="Right Banner" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="slide_banner_1" type="textarea" default='' label="Slider Banner 1" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="slide_banner_2" type="textarea" default='' label="Slider Banner 2" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="slide_banner_3" type="textarea" default='' label="Slider Banner 3" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="slide_banner_4" type="textarea" default='' label="Slider Banner 4" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+  <param name="slide_banner_5" type="textarea" default='' label="Slider Banner 5" description="This the banner source code which will be displayed on the splash page." rows="5" cols="50"></param>
+ </params>
+</config>

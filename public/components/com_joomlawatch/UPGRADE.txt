@@ -1,0 +1,7 @@
+
+When you are doing an UPGRADE from some older version
+====================================================
+Uninstall from the admin backend #!ERASES!# all the database tables that belong
+to JoomlaWatch. But, you can backup these tables with tools like phpMyAdmin, or some 
+database tools that comes with your webhosting. After the upgrade, you can restore them back.
+

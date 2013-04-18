@@ -1,0 +1,636 @@
+/*------------------------------------------------------------------------
+# TopBetta
+# ------------------------------------------------------------------------
+# Copyright (C) 2009 TopBetta. All Rights Reserved.
+# @license - Copyrighted Commercial Software
+# Author: uc-technologies Pty. Ltd.
+# Website:  http://www.TopBetta.com
+# This file may not be redistributed in whole or significant part.
+-------------------------------------------------------------------------*/
+
+div#bettaWrap {
+	color:#333;
+}
+div#bettaWrap div#tournHdrBar {
+	margin:5px 0 0 0;
+	padding:3px 2px 3px 5px;
+	color:#fff;
+	font-size:14px;
+	font-weight:bold;
+}
+div#bettaWrap div#raceHeadr {
+	margin:5px 0 0 0;
+}
+
+
+div#bettaWrap div.raceDetailsTitleNums {
+	float:left;
+}
+div#bettaWrap div.raceDetailsTitle {
+	margin: 5px 0 5px 5px;
+	font-size: 12px;
+	color: #222;
+	font-weight: bold;
+}
+
+div#bettaWrap div.jockeyIcon {
+	padding-left: 35px;
+	background:url("../images/spr_race_icons_org.png") no-repeat scroll 0 0px transparent;
+}
+
+div#bettaWrap div.greyhoundsIcon {
+	padding-left: 35px;
+	background:url("../images/spr_race_icons_org.png") no-repeat scroll 0 -20px transparent;
+}
+
+div#bettaWrap div.harnessIcon {
+	padding-left: 35px;
+	background:url("../images/spr_race_icons_org.png") no-repeat scroll 0 -40px transparent;
+}
+
+div#bettaWrap div#raceDetailsPanel {
+	color: #222;
+	float: right;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 15px;
+	padding: 2px 5px 0 0;
+	text-align: right;
+	width: 220px;
+}
+div#bettaWrap div#raceDetailsPanel div.raceDetailsJump{
+	line-height:21px;
+	color:#c30;
+}
+div#bettaWrap div#raceDetailsPanel span.closingTitle{
+	color:#222;
+}
+div#bettaWrap div#raceDetailsPanel div.raceDetailsTime{
+	color:#802000;
+}
+div#bettaWrap div#raceDetailsPanel div.raceDetailsWeather{
+	font-size:11px;
+	color:#222;
+}
+
+div#bettaWrap div.raceDetailsNums {
+	float:left;
+	padding:1px 0 0 5px;
+}
+div#bettaWrap div.eventNumberG,
+div#bettaWrap div.eventNumber {
+	display: inline;
+	width: 28px;
+	height: 20px;
+	text-align: center;
+	float: left;
+	margin: 2px 2px 0 2px;
+	vertical-align: middle;
+	border:1px solid #8E7F78;
+}
+div#bettaWrap div.eventNumberG a,
+div#bettaWrap div.eventNumber a {
+	font-size: 16px;
+	font-weight: bold;
+	color: #222;
+	vertical-align: middle;
+	line-height:20px;
+	text-decoration: none;
+	display: block;
+}
+div#bettaWrap div.active {
+	border:1px solid #C63506;
+}
+div#bettaWrap div.activeG {
+	border:1px solid #C63506;
+}
+div#bettaWrap div.eventNumberG a {
+	color: #E3E0DF;
+}
+div#bettaWrap div.activeG a,
+div#bettaWrap div.active a {
+	color:#fff;
+}
+
+
+
+
+div#bettaWrap div.gSep {
+	height:5px;
+	margin:5px 0 0 0;
+	clear:both;
+}
+
+div#bettaWrap div.betTypeButts {
+	margin:7px -5px 0 0;
+}
+
+div#bettaWrap div.betTypeButts td.refresh-odds{
+	width:155px;
+	}
+
+div#bettaWrap div.typeButtsG,
+div#bettaWrap div.typeButts,
+div#bettaWrap div.typeRefresh {
+	color: #fff;
+	margin: 0 4px 0 0;
+	padding: 3px 5px;
+	display: block;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	height:20px;
+}
+
+
+
+/* ### TODO: NEED TO LOOK AT MAKING BUTTONS a tags ????? with hover states preloaded ???*/
+div#bettaWrap div.typeButts, div#bettaWrap div.typeRefresh {
+	cursor:pointer;
+	border: 1px solid #ccc;
+}
+div#bettaWrap div.typeButts:hover, div#bettaWrap div.typerefresh:hover {
+	border: 1px solid #ccc;
+}
+div#bettaWrap div.typeButtsG {
+	border: 1px solid #ddd;
+	background: #e4e4e4;
+}
+
+
+/* runners table */
+/* atp table styles */
+div#bettaWrap div#raceTable {
+	margin:5px 0 0 0;
+}
+
+.raceTable-refreshing{
+	/* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+
+  /* IE 5-7 */
+  filter: alpha(opacity=40);
+
+  /* Netscape */
+  -moz-opacity: 0.4;
+
+  /* Safari 1.x */
+  -khtml-opacity: 0.4;
+
+  /* Good browsers */
+  opacity: 0.4;
+}
+
+
+div#bettaWrap table.todaysRaceDetailsTbl td {
+	color: #333;
+	font-weight: bold;
+	font-size: 10px;
+	padding:2px 5px;
+	vertical-align: middle;
+}
+div#bettaWrap div.todaysRaceDetailsRow {
+	margin:7px 0;
+}
+div#bettaWrap table.todaysRaceDetailsTbl .ContentTableHeader td {
+	color: #fff;
+	line-height:10px;
+	padding:1px 5px 5px 5px;
+}
+
+div#bettaWrap td.selBoxesH {
+	width: 16px;
+	padding: 0 5px;
+	margin: 0;
+	text-align: center;
+}
+div#bettaWrap td.selBoxes {
+	width:;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+
+div#bettaWrap div.todaysRaceDetailsRow input.chkbox {
+	padding: 0;
+	margin: 0;
+	font-size: 10px;
+	width: 13px;
+	margin: 0;
+	padding: 0;
+	outline: 0;
+}
+
+
+div#bettaWrap td.jockey2 {
+	width: 90px;
+}
+div#bettaWrap table td.rltCntr {
+	text-align: center;
+}
+div#bettaWrap table td.rltRight {
+	text-align: right;
+}
+div#bettaWrap table th.bdrRight {
+	border-right: 1px solid #fff;
+}
+div#bettaWrap table td.bdrLeft {
+	border-left: 1px solid #F9EFDE;
+	border-bottom: 0px solid #F9EFDE;
+}
+div#bettaWrap table td.bdrRight {
+	border-right: 1px solid #F9EFDE;
+}
+div#bettaWrap table td.bld {
+	font-weight: bold;
+}
+
+div#bettaWrap .scratched td.runnerNo,
+div#bettaWrap .scratched td.runnerName,
+div#bettaWrap .scratched td.jockey {
+	text-decoration: line-through;
+	color: #aaaaaa;
+}
+
+div#bettaWrap div.resultsPanel table td.scratched {
+	color: #aaaaaa;
+}
+
+div#bettaWrap .vacant td.runnerNo,
+div#bettaWrap .vacant td.runnerName,
+div#bettaWrap .vacant td.jockey {
+	color: #aaaaaa;
+}
+div#bettaWrap div.todaysRaceDetailsRow table.todaysRaceDetailsTbl .vacant td {
+	color: #aaaaaa;
+}
+
+div#bettaWrap tr.div2,
+div#bettaWrap .ContentTableRow2 td {
+	background: #ddd;
+}
+div#bettaWrap tr.ContentTableRow1,
+div#bettaWrap .ContentTableRow1 td {
+	background: #eee;
+}
+
+div#bettaWrap .selFieldRow td {
+	line-height: 30px;
+}
+
+div#bettaWrap td.runnerNo,
+div#bettaWrap td.form,
+div#bettaWrap td.runnerName,
+div#bettaWrap td.silks,
+div#bettaWrap td.jockey,
+div#bettaWrap td.one2tips,
+div#bettaWrap td.winOdds,
+div#bettaWrap td.placeOdds,
+div#bettaWrap td.betLive {
+	border-left: 1px solid #fff;
+	border-right: 1px solid #fff;
+	text-align: center;
+}
+div#bettaWrap td.runnerNo {
+	border-left: 0;
+}
+div#bettaWrap td.runnerName,
+div#bettaWrap td.jockey {
+	text-align: left;
+}
+
+div#bettaWrap td.runnerNo {
+	width: 25px;
+}
+div#bettaWrap td.form {
+	width: 50px;
+}
+div#bettaWrap td.silks {
+	width: 40px;
+}
+div#bettaWrap td.jockey {
+	width: 150px;
+}
+div#bettaWrap td.one2tips {
+	width: 143px;
+}
+div#bettaWrap td.winOdds {
+	width: 50px;
+}
+div#bettaWrap td.placeOdds {
+	width: 60px;
+}
+
+div#bettaWrap div.one2tips {
+	font-size: 1px;
+	height: 16px;
+}
+div#bettaWrap div.one2tippr {
+	font-size: 1px;
+	height: 16px;
+	float: left;
+	vertical-align:top;
+}
+
+div#bettaWrap img.percentTip {
+	vertical-align:top;
+	margin:0;
+}
+/* one2tippr tooltip */
+.bsrating-tip {
+	color: #000;
+	width: 130px;
+	z-index: 13000;
+}
+ 
+.bsrating-title {
+	font-weight: bold;
+	font-size: 11px;
+	margin: 0;
+	color: #3E4F14;
+	padding: 8px 8px 4px;
+	background: #C3DF7D;
+	border-bottom: 1px solid #B5CF74;
+}
+ 
+.bsrating-text {
+	font-size: 11px;
+	padding: 4px 8px 8px;
+	background: #CFDFA7;
+}
+
+
+/* results and selections panel */
+div#bettaWrap div.resultsPanel {
+	color: #333;
+	font-size: 12px;
+	margin:5px 0 0 0;
+}
+div#bettaWrap div.resultsPanel h3 {
+	background: #D2481B;
+	display: block;
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: bold;
+	height: 20px;
+	text-transform: uppercase;
+	margin: 5px 0 2px 0;
+	padding: 0 0 0 10px;
+	line-height: 20px;
+}
+div#bettaWrap div.resultsPanel table td {
+	border-bottom: solid 1px #F9EFDE;
+	/*padding: 2px 15px;*/
+}
+div#bettaWrap div.resultsPanel table th {
+	border-bottom: solid 1px #fff;
+	color: #cc3300;
+	font-weight: bold;
+	text-align: center;
+	padding: 0 15px 2px 15px;
+}
+div#bettaWrap div.resultsPanel table td.excombo {
+	padding-left: 30px;
+}
+div#bettaWrap div.resultsPanel table td.exodds {
+	padding-right: 30px;
+}
+
+div#bettaWrap div.selectionsPanel {
+	color: #46597A;
+	font-size: 10px;
+	margin:5px 0 0 0;
+	padding:1px;
+}
+div#bettaWrap div.selectionsPanel h3.mbLive,
+div#bettaWrap div.selectionsPanel h3 {
+	background: #0e80b9;
+	display: block;
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: bold;
+	height: 20px;
+	text-transform: uppercase;
+	margin: 0 0 2px 0;
+	padding: 0 0 0 10px;
+	line-height: 20px;
+}
+
+div#bettaWrap div.selectionsPanel1 {
+	background: #fff;
+	border: 2px solid #646464;;
+}
+
+div#bettaWrap div#selectionsPanelLive {
+	margin:5px 0 0 0;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel {
+	color: #0073cc;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel h3.mbLive {
+	background: #0073cc;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel div.mbLive {
+	border: 2px solid #0073cc;
+}
+
+div#bettaWrap div.selectionsPanel th {
+	color:#002200;
+	background: #ccc;
+	border: 1px solid #fff;
+	padding: 0 5px;
+	text-align: center;
+	font-weight: bold;
+	padding: 2px 5px;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel th {
+	color:#000022;
+}
+div#bettaWrap div.selectionsPanel td {
+	border: 1px solid #fff;
+	text-transform: uppercase;
+	padding: 2px 5px;
+	text-align: center;
+}
+div#bettaWrap div.selectionsPanel tr.mbrow1 td {
+	background: #eee;
+}
+div#bettaWrap div.selectionsPanel tr.mbrow2 td {
+	background: #e6e6e6;
+}
+div#bettaWrap div.selectionsPanel tr.mbrow1:hover td,
+div#bettaWrap div.selectionsPanel tr.mbrow2:hover td {
+	background: #E2EAF4;
+}
+div#bettaWrap div.selectionsPanel1 table th.w60,
+div#bettaWrap div.selectionsPanel table th.w60 {
+	width: 60px;
+}
+div#bettaWrap div.selectionsPanel1 table th.w70,
+div#bettaWrap div.selectionsPanel table th.w70 {
+	width: 70px;
+}
+div#bettaWrap div.selectionsPanel1 table th.w40,
+div#bettaWrap div.selectionsPanel table th.w40 {
+	width: 44px;
+}
+div#bettaWrap div.resultsPanel table th.w70 {
+	width: 70px;
+}
+div#bettaWrap div.resultsPanel table th.w40 {
+	width: 40px;
+}
+div#bettaWrap div.selectionsPanel table th.w20,
+div#bettaWrap div.resultsPanel table th.w20 {
+	width: 20px;
+}
+div#bettaWrap div.selectionsPanel table td.selwdth {
+	width: 374px;
+}
+div#bettaWrap div.selectionsPanel1 table th.rltLeft,
+div#bettaWrap div.selectionsPanel table th.rltLeft,
+div#bettaWrap div.selectionsPanel table td.rltLeft,
+div#bettaWrap div.resultsPanel table th.rltLeft,
+div#bettaWrap div.resultsPanel table td.rltLeft {
+	text-align: left;
+}
+
+div#bettaWrap div.selectionsPanel1 table td.scratched {
+	text-decoration: line-through;
+	color: #aaaaaa;
+}
+
+div#bettaWrap div.resultsPanel table td.rltLeft
+
+div#bettixPopWrap table td.upperCase,
+div#bettaWrap table td.upperCase {
+	text-transform: uppercase;
+}
+
+div#bettaWrap div.resultsPanel1 {
+	background: #F5D6CC;
+	border: 2px solid #cc3300;
+	padding: 5px 25px;
+}
+div#bettaWrap div.resultsPanel2 {
+	background: #F5D6CC;
+	border: 2px solid #cc3300;
+	width: 310px;
+	float: right;
+	padding: 5px 25px;
+	margin:0;
+}
+
+div#bettaWrap div.selectionsPanel table td.totals {
+	color:#002200;
+	background: #bbb;
+	border: 1px solid #fff;
+	border-top: 5px solid #fff;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel table td.totals {
+	color:#000022;
+}
+
+div#bettaWrap div.selectionsPanel table td.subbie {
+	font-size:12px;
+	font-weight:bolder;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel table td.paid,
+div#bettaWrap div.selectionsPanel table td.paid {
+	font-weight: bold;
+	color: #006600;
+}
+div#bettaWrap div#selectionsPanelLive div.selectionsPanel table td.notpaid,
+div#bettaWrap div.selectionsPanel table td.notpaid {
+	font-weight: bold;
+	color: #990000;
+}
+div#bettaWrap div.selectionsPanel table td.noresult {
+	font-weight: bold;
+}
+div#bettaWrap table td.rltCntr {
+	text-align: center;
+}
+div#bettaWrap table td.rltRight {
+	text-align: right;
+}
+div#bettaWrap table th.bdrRight {
+	border-right: 1px solid #fff;
+}
+div#bettaWrap table td.bdrLeft {
+	border-left: 1px solid #F9EFDE;
+	border-bottom: 0px solid #F9EFDE;
+}
+div#bettaWrap table td.bdrRight {
+	border-right: 1px solid #F9EFDE;
+}
+div#bettaWrap div.resultsPanel table td.noBdr {
+	border: none;
+}
+div#bettaWrap table td.bld {
+	font-weight: bold;
+}
+
+
+div#bettaWrap table.todaysRaceDetailsTbl td.silks div {
+	width: 24px;
+	height: 18px;
+	margin: 0 auto;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog1 {
+	background: url('../images/spr_dogBibs.png') no-repeat center 0;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog2 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -20px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog3 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -40px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog4 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -60px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog5 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -80px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog6 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -100px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog7 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -120px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog8 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -140px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog9 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -160px;
+}
+div#bettaWrap table.todaysRaceDetailsTbl div.dog10 {
+	background: url('../images/spr_dogBibs.png') no-repeat center -180px;
+}
+/*table#mybucks {
+	color:#FFFFFF;
+	font-size:20px;
+	font-weight:bold;
+	float: left;
+}
+#mybuckstext {
+	padding:20px 0 0 20px;
+}
+#mybucksnumber {
+	color:#96C840;
+	margin-left:10px;
+}
+#myturnover {
+	font-size:10px;
+	color: #FF0000;
+	text-align: right;
+	padding-top: 0;
+}
+#tournInfoButt {
+	float: right;	
+}*/
+
+
+
+

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="template">
+	<name>Topbetta</name>
+	<version>1.5.1</version>
+	<creationDate>July 2010</creationDate>
+	<author>www.uc-technologies.net</author>
+	<authorEmail>dev@uc-joomla.net</authorEmail>
+	<authorUrl>www.uc-joomla.net</authorUrl>
+	<copyright>Copyright (c) 20010 TopBetta Pty Ltd. All rights reserved.</copyright>
+    <description>
+			<![CDATA[
+			<h1>TopBetta v1.5.1</h1>
+			<img src="../templates/topbetta/template_thumbnail.gif" align="left" style="margin:5px 20px 5px 10px;" />New conversion of the Bettasport template over to the new 'Blue' style TopBetta template.
+			<br /><br />
+			<i>A template by uc-technologies. Native to Joomla 1.5.x.</i>
+			<br /><br />
+			<b>Changelog</b><br />
+			&nbsp;&nbsp;&bull;&nbsp;Version 1.5.1<br />
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Initial Release.<br /><br />
+			]]>  	
+    </description>
+	<files>
+		<filename>index.html</filename>
+		<filename>index.php</filename>
+		<filename>params.ini</filename>
+		<filename>readme.txt</filename>
+		<filename>template_thumbnail.png</filename>
+		<filename>templateDetails.xml</filename>
+		<folder>css/</folder>
+		<folder>html/</folder>
+		<folder>images/</folder>
+	</files>
+	<positions>
+		<position>login</position>
+		<position>menu</position>
+		<position>top</position>
+		<position>search</position>
+		<position>newsflash</position>
+		<position>left</position>
+		<position>right</position>
+		<position>banner</position>
+		<position>advert1</position>
+		<position>bottom</position>
+		<position>footer</position>
+		<position>credits</position>
+	</positions>
+	<params>
+		<param name="defaultJS" type="radio" default="on" label="Default Joomla JavaScript" description="By default, Joomla loads several JavaScript files whether they are needed or not. These files are around 75KB in size. To decrease page load time you can try turning these files off, but make sure to test your website after you do as some extensions won't function properly without them.">
+			<option value="on">On</option>
+			<option value="off">Off</option>
+		</param>
+	</params>
+</install>

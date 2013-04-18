@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<install version="1.5" type="module" client="administrator">
+	<name>APIcons</name>
+	<version>1.2</version>
+	<creationDate>2009/02/23</creationDate>
+	<author>www.sourcecoast.com | www.joomlapraise.com</author>
+	<authorEmail>support@sourcecoast.com | support@joomlapraise.com</authorEmail>
+	<authorUrl>http://www.sourcecoast.com | http://www.joomlapraise.com</authorUrl>
+	<copyright>SourceCoast | JoomlaPraise</copyright>
+	<license>SourceCoast | JoomlaPraise</license>
+	<description>APIcons is the icons module used in AdminPraise.</description>
+	<files>
+		<filename>mod_apicons.xml</filename>
+		<filename>index.html</filename>
+		<filename>tmpl/index.html</filename>
+		<filename module="mod_apicons">mod_apicons.php</filename>
+		<filename>helper.php</filename>
+		<filename>tmpl/default.php</filename>
+		<filename>elements/adminaccesslevel.php</filename>
+		<filename>elements/index.html</filename>
+	</files>
+	<languages>
+		<language tag="en-GB">en-GB.mod_apicons.ini</language>
+	</languages>
+	<params addpath="/administrator/modules/mod_apicons/elements">
+		<param name="moduleclass_sfx" type="text" label="MODULE CLASS SUFFIX" description="PARAMMODULECLASSSUFFIX" default="" />
+
+		<param name="toolbar" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;Toolbar&lt;/B&gt;" />
+		<param name="toolbar_home_adminaccesslevel" type="adminaccesslevel" label="HOME ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_yourprofile_adminaccesslevel" type="adminaccesslevel" label="YOUR PROFILE ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_adminparams_adminaccesslevel" type="adminaccesslevel" label="ADMIN PARAMS ACCESS" description="PARAMADMINACCESSLEVEL" default="25" />
+		<param name="toolbar_checkin_adminaccesslevel" type="adminaccesslevel" label="CHECKIN ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="toolbar_sysinfo_adminaccesslevel" type="adminaccesslevel" label="SYSINFO ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_setstart_adminaccesslevel" type="adminaccesslevel" label="SET START ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_fileexplorer_adminaccesslevel" type="adminaccesslevel" label="FILE EXPLORER ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_newarticle_adminaccesslevel" type="adminaccesslevel" label="NEW ARTICLE ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_legacy_adminaccesslevel" type="adminaccesslevel" label="LEGACY ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_preview_adminaccesslevel" type="adminaccesslevel" label="PREVIEW ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_positions_adminaccesslevel" type="adminaccesslevel" label="POSITIONS ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_debug_adminaccesslevel" type="adminaccesslevel" label="DEBUG ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_messages_adminaccesslevel" type="adminaccesslevel" label="MESSAGES ACCESS" description="PARAMADMINACCESSLEVEL" default="25" />
+		<param name="toolbar_sessioncount_adminaccesslevel" type="adminaccesslevel" label="SESSION COUNT ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="toolbar_logout_adminaccesslevel" type="adminaccesslevel" label="LOGOUT ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_fullscreen_adminaccesslevel" type="adminaccesslevel" label="FULL SCREEN ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="toolbar_version_adminaccesslevel" type="adminaccesslevel" label="VERSION ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+
+
+		<param name="createnew" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;Create New&lt;/B&gt;" />
+		<param name="createnew_section_adminaccesslevel" type="adminaccesslevel" label="SECTION ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="createnew_category_adminaccesslevel" type="adminaccesslevel" label="CATEGORY ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="createnew_article_adminaccesslevel" type="adminaccesslevel" label="ARTICLE ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="createnew_menu_adminaccesslevel" type="adminaccesslevel" label="MENU ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="createnew_user_adminaccesslevel" type="adminaccesslevel" label="USER ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+
+		<param name="management" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;Management&lt;/B&gt;" />
+		<param name="management_sections_adminaccesslevel" type="adminaccesslevel" label="SECTIONS ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="management_categories_adminaccesslevel" type="adminaccesslevel" label="CATEGORIES ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="management_articles_adminaccesslevel" type="adminaccesslevel" label="ARTICLES ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="management_frontpage_adminaccesslevel" type="adminaccesslevel" label="FRONT PAGE ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="management_menus_adminaccesslevel" type="adminaccesslevel" label="MENUS ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="management_users_adminaccesslevel" type="adminaccesslevel" label="USERS ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="management_files_adminaccesslevel" type="adminaccesslevel" label="FILES ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="management_languages_adminaccesslevel" type="adminaccesslevel" label="LANGUAGES ACCESS" description="PARAMADMINACCESSLEVEL" default="25" />
+		<param name="management_media_adminaccesslevel" type="adminaccesslevel" label="MEDIA ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+
+		<param name="content" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;Content&lt;/B&gt;" />
+		<param name="content_sections_adminaccesslevel" type="adminaccesslevel" label="SECTIONS ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_newsection_adminaccesslevel" type="adminaccesslevel" label="NEW SECTION ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_categories_adminaccesslevel" type="adminaccesslevel" label="CATEGORIES ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_newcategory_adminaccesslevel" type="adminaccesslevel" label="NEW CATEGORY ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_articles_adminaccesslevel" type="adminaccesslevel" label="ARTICLES ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_newarticle_adminaccesslevel" type="adminaccesslevel" label="NEW ARTICLE ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_frontpage_adminaccesslevel" type="adminaccesslevel" label="FRONT PAGE ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="content_articletrash_adminaccesslevel" type="adminaccesslevel" label="ARTICLE TRASH ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+
+		<param name="extend" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;Extend&lt;/B&gt;" />
+		<param name="extend_components_adminaccesslevel" type="adminaccesslevel" label="COMPONENTS ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="extend_sitemodules_adminaccesslevel" type="adminaccesslevel" label="SITE MODULES ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="extend_newmodule_adminaccesslevel" type="adminaccesslevel" label="NEW MODULE ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="extend_adminmodules_adminaccesslevel" type="adminaccesslevel" label="ADMIN MODULES ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="extend_newadminmodule_adminaccesslevel" type="adminaccesslevel" label="NEW ADMIN MODULE ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="extend_publishedmodules_adminaccesslevel" type="adminaccesslevel" label="PUBLISHED MODULES ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="extend_plugins_adminaccesslevel" type="adminaccesslevel" label="PLUGINS ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="extend_templates_adminaccesslevel" type="adminaccesslevel" label="TEMPLATES ACCESS" description="PARAMADMINACCESSLEVEL" default="25" />
+		<param name="extend_admintemplates_adminaccesslevel" type="adminaccesslevel" label="ADMIN TEMPLATES ACCESS" description="PARAMADMINACCESSLEVEL" default="25" />
+		<param name="extend_installer_adminaccesslevel" type="adminaccesslevel" label="INSTALLER ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+
+		<param name="installers" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;Installers&lt;/B&gt;" />
+		<param name="installers_installer_adminaccesslevel" type="adminaccesslevel" label="INSTALLER ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="installers_components_adminaccesslevel" type="adminaccesslevel" label="COMPONENTS ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="installers_modules_adminaccesslevel" type="adminaccesslevel" label="MODULES ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="installers_plugins_adminaccesslevel" type="adminaccesslevel" label="PLUGINS ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+		<param name="installers_languages_adminaccesslevel" type="adminaccesslevel" label="LANGUAGES ACCESS" description="PARAMADMINACCESSLEVEL" default="25" />
+		<param name="installers_templates_adminaccesslevel" type="adminaccesslevel" label="TEMPLATES ACCESS" description="PARAMADMINACCESSLEVEL" default="24" />
+
+		<param name="userdefined" type="spacer" label="" description="" default="&lt;hr /&gt;&lt;B&gt;User Defined&lt;/B&gt;" />
+		<param name="userdefined_link1_name" type="text" size="80" label="LINK1 NAME" description="PARAMLINKNAME" default="" />
+		<param name="userdefined_link1_url" type="text" size="80" label="LINK1 URL" description="PARAMLINKURL" default="" />
+		<param name="userdefined_link1_adminaccesslevel" type="adminaccesslevel" label="LINK1 ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="userdefined_link2_name" type="text" size="80" label="LINK2 NAME" description="PARAMLINKNAME" default="" />
+		<param name="userdefined_link2_url" type="text" size="80" label="LINK2 URL" description="PARAMLINKURL" default="" />
+		<param name="userdefined_link2_adminaccesslevel" type="adminaccesslevel" label="LINK2 ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="userdefined_link3_name" type="text" size="80" label="LINK3 NAME" description="PARAMLINKNAME" default="" />
+		<param name="userdefined_link3_url" type="text" size="80" label="LINK3 URL" description="PARAMLINKURL" default="" />
+		<param name="userdefined_link3_adminaccesslevel" type="adminaccesslevel" label="LINK3 ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="userdefined_link4_name" type="text" size="80" label="LINK4 NAME" description="PARAMLINKNAME" default="" />
+		<param name="userdefined_link4_url" type="text" size="80" label="LINK4 URL" description="PARAMLINKURL" default="" />
+		<param name="userdefined_link4_adminaccesslevel" type="adminaccesslevel" label="LINK4 ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+		<param name="userdefined_link5_name" type="text" size="80" label="LINK5 NAME" description="PARAMLINKNAME" default="" />
+		<param name="userdefined_link5_url" type="text" size="80" label="LINK5 URL" description="PARAMLINKURL" default="" />
+		<param name="userdefined_link5_adminaccesslevel" type="adminaccesslevel" label="LINK5 ACCESS" description="PARAMADMINACCESSLEVEL" default="23" />
+	</params>
+</install>

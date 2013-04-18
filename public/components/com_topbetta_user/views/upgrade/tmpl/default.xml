@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="DEFAULT UPGRADE LAYOUT">
+		<message>
+			<![CDATA[DEFAULT UPGRADE LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>DEFAULT UPGRADE LAYOUT</name>
+		<description>DEFAULT UPGRADE LAYOUT DESC</description>
+	</state>
+</metadata>

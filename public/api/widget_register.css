@@ -1,0 +1,111 @@
+@charset "utf-8";
+/* CSS Document */
+@font-face {
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arimo'), url(https://themes.googleusercontent.com/static/fonts/arimo/v4/wZLYhRRxZWGToTRP78bqJQ.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Sans'), local('DroidSans'), url(https://themes.googleusercontent.com/static/fonts/droidsans/v3/s-BiyweUPV0v-yRb-cjciBsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+
+* { 
+	font-family: 'Arimo','Droid Sans', Helvetica, Arial, sans-serif;
+	font-style:normal;
+	font-weight: 400;
+	/*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; line-height: 1.231; */
+	text-rendering: optimizeLegibility; font-size: 100%; -webkit-text-size-adjust: 100%; 
+	-ms-text-size-adjust: 100%; 
+}
+
+body{
+	margin:0!important;
+	padding:0;
+}
+#regForm{
+	/*margin-top:-10px;*/
+}
+
+#regForm ul{
+	padding: 0
+}
+
+#regForm ul li, #errors li{
+	float:left;
+	display:inline;
+	width:55%;	
+}
+
+#regform ul li{
+	margin-top:10px;
+}
+
+
+#regForm ul li.even, #errors li.even{
+	width:44%;
+}
+.error{
+	font-size:0.75em;
+	position: absolute;
+    bottom:  -8px;
+}
+#errors{
+    margin-left: 0px;
+    padding-left: 0px;
+    padding-right: 10px;
+}
+.success{
+	color:#1481bd;
+	font-weight:bold;
+}
+.error{
+	font-size:12px;
+	margin:5px auto;
+	/*color:#861c00;*/
+	color:#DD1251;
+	clear:both;
+	display:block;
+}
+
+.form_inputs ul{
+	list-style:none;
+}
+input[type="text"], input[type="password"], textarea {
+	font-size:14px;
+	padding: 8px;
+	outline:none!important;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	width: 200px;
+	margin-top: 2px;
+}
+
+label {
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: normal;
+	color:#1c1c1c;
+}
+a {
+	color:#DD1251;
+}
+.join-now-btn {
+margin-left: 180px;
+}
+#submit{
+	border:none;
+	background: url('btn-signup2.jpg');
+	width:162px;
+	height:32px;
+	float:right;
+	margin: 15px 2px 0px 0px;
+	
+	color: #fff;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: bold;
+}

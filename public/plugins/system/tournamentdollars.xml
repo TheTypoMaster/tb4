@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="system">
+	<name>System - Tournament Dollars</name>
+	<author>Fei Sun</author>
+	<creationDate>August 2010</creationDate>
+	<copyright>Copyright (C) 2010 MobileActive Ltd</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>fei.sun@mobileactive.com</authorEmail>
+	<authorUrl>www.mobileactive.com</authorUrl>
+	<version>1.0</version>
+	<description>This plugin injects the tournament dollars model into the user object</description>
+	<files>
+		<filename plugin="tournamentdollars">tournamentdollars.php</filename>
+	</files>
+	<params></params>
+</install>

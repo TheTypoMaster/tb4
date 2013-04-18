@@ -1,0 +1,151 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{
+	background:#000!important;
+	
+}
+*{
+	text-decoration:none;
+	text-shadow:none;
+	outline:none;
+	color:#fff;
+}
+
+/*LINKS*/
+*/
+
+a { color: #0b3655!important; font-weight: bold; text-decoration: none; }
+a:hover { color: #0b3655; }
+a:active { color: #000000; margin-top: 1px; }
+a:focus { outline: 0; }
+
+/* Improve readability when focused/hovered in all bgridsers */
+a:hover, a:active { outline: 0; }
+
+
+p { font-size: 12px; color: #fff; font-weight: normal; line-height: 18px; margin-top: 0; 
+margin-bottom: 18px;  }
+p small { font-size: 11px; color: #bfbfbf; }
+
+/* Give headings some default styling. */
+h1, h2, h3, h4, h5, h6, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { 
+	color: #fff;
+	font-family: 'Arimo','Droid Sans', Helvetica, Arial, sans-serif;
+}
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { color: #616a73; }
+
+/* Set individual heading styles */
+h1 { font-size: 26px; line-height: 20px; text-align:center; margin:0px auto;  }
+h1 small { font-size: 18px; color:#fff}
+
+h2 { font-size: 16px; line-height: 16px; color: #dadada; text-align:center; margin-top:5px; }
+h2 small { font-size: 16px;}
+
+h3 { font-size: 14px; line-height: 14px; margin: 5px auto;}
+h3 small { font-size: 11px; color:#fff}
+
+h4 { font-size: 24px; line-height: 28px; margin:0px auto 10px; }
+h4 small { font-size: 12px; }
+
+h5 { font-size: 20px; line-height: 24px; }
+h5 small { font-size: 12px; }
+
+h6 { font-size: 18px; line-height: 22px; }
+h6 small { font-size: 12px; }
+
+
+
+#content, #footer{
+	margin:0;
+	padding:0;
+	
+	background:#000;
+}
+
+#wrapper, #wrapper-home{
+	
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	padding:0px;
+	margin:0px 0px;
+	
+	position:relative;
+	width: 100%;
+}
+
+#wrapper{
+	background:url(../img/bg_car.jpg) no-repeat center -50px; 
+}
+
+
+
+/*HOME*/
+#wrapper-home{
+	background:url(../img/hyundai_i20.jpg) no-repeat center center; 
+	margin: 0px 10px;
+	padding-top: 20px;
+	text-align:center;
+}
+
+#countdown{
+	margin: 120px auto 0px;
+	display:block;
+	clear:both;
+	padding: 0px 0px 30px 10px;	
+}
+
+
+#buttons{
+	margin-top: 30px;
+}
+
+
+#desc{
+	padding-top: 20px;
+	margin: 20px;
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+	text-align:justify;
+}
+
+
+/*SIGNUP and LOGIN pages*/
+
+#frame{
+	background:#000;
+	padding: 20px 20px 0px;
+	zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
+	
+	height:450px;
+}
+
+#signupFrame{
+	position:absolute;
+	top: 20px;
+	left: 50%;
+	margin-left: -100px;
+}
+
+#loginFrame{
+	position:absolute;
+	top: 20%;
+	left: 50%;
+	margin-left: -150px;
+	width: 300px;
+}
+
+
+
+#footer{
+	text-shadow:none;
+	color:white;
+	font-size:12px;
+	margin:0px auto;
+	text-align:center;
+	padding:20px;
+}

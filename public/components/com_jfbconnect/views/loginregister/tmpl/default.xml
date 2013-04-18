@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="DEFAULT LAYOUT">
+		<message>
+			<![CDATA[DEFAULT LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>XDRECEIVER VIEW DEFAULT LAYOUT</name>
+		<description>XDRECEIVER VIEW DEFAULT LAYOUT DESC</description>
+	</state>
+</metadata>

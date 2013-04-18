@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="module" version="1.5.0" client="administrator">
+	<name>Recent Activity</name>
+	<author>Tobias Kuhn</author>
+	<creationDate>2009/02</creationDate>
+	<copyright>Copyright (C) 2009 Joomlapraise. All rights reserved.</copyright>
+	<license>Joomlapraise Subscriber License</license>
+	<authorEmail>support@joomlapraise.com</authorEmail>
+	<authorUrl>www.joomlapraise.com</authorUrl>
+	<version>1.0</version>
+	<description>This module shows the recorded user activity</description>
+    <languages>
+        <language tag="en-GB">en-GB.mod_ualog.ini</language>
+        <language tag="de-DE">de-DE.mod_ualog.ini</language>
+    </languages>
+	<files>
+		<filename module="mod_ualog">mod_ualog.php</filename>
+	</files>
+    <params>
+        <param type="text" size="10" name="limit" value="25" default="25" label="Number of items" description="The amount of items you want to show"/>
+        <param type="list" name="conf_name" default="name" label="Name settings" description="Decide whether you want to display the name or username">
+            <option value="u.name">Name</option>
+            <option value="u.username AS name">Username</option>
+        </param>
+        <param type="list" name="show_date" default="1" label="Display date" description="Display date below the activity?">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </param>
+        <param type="text" size="10" name="dateformat" value="m/d Y, H:i" default="m/d Y, H:i" label="Date format" description=""/>
+        <param type="list" name="show_filter" default="1" label="Show filter" description="Show advanced filter settings?">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </param>
+    </params>
+</install>

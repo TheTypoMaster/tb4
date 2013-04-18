@@ -1,0 +1,376 @@
+/*------------------------------------------------------------------------
+# TopBetta - registration form
+# ------------------------------------------------------------------------
+# Copyright (C) 2009 TopBetta. All Rights Reserved.
+# @license - Copyrighted Commercial Software
+# Author: uc-technologies Pty. Ltd.
+# Websites:  http://www.TopBetta.com
+# This file may not be redistributed in whole or significant part.
+-------------------------------------------------------------------------*/
+
+/* rego form styling */
+div#basicReg {
+	margin:10px;
+}
+div#basicReg fieldset {
+	border: 1px solid #ccc;
+	color: #333;
+	margin:0 0 10px 0;
+	padding:0 10px 5px 10px;
+	background:#fff;
+}
+div#basicReg fieldset div {
+	width: 410px;
+	_width: 420px;
+	float: left;
+}
+div#basicReg fieldset.nohdr {
+	padding:5px 10px 0 10px;
+}
+div#basicReg legend {
+	border: 1px solid #ccc;
+	background:#f2f2f2;
+	color: #111;
+	font-size: 10px;
+	font-weight: bold;
+	padding:2px 10px;
+	margin:0 0 4px 0;
+}
+div#basicReg div.Mrgt,
+div#basicReg div.Mlft {
+	width:445px;
+}
+div#basicReg div.Mlft{
+	float:left;
+}
+div#basicReg div.Mrgt{
+	float:right;
+}
+div#basicReg div {
+	display:block;
+}
+div#basicReg div.radiolbl1,
+div#basicReg div.radiolbl2,
+div#basicReg div.radiolbl {
+	width:390px;
+	margin:5px 0 10px 0;
+	padding:4px 5px;
+	border-top:1px solid #0097e9;
+	border-bottom:1px solid #0097e9;
+	float: left;
+}
+
+div#basicReg label {
+	float:left;
+	width:150px;
+	text-align: right;
+	line-height: 21px;
+	padding:0 5px;
+	margin:2px 2px 0 0;
+	color: #333;
+	font-size: 12px;
+	font-weight: bold;
+	/*background:#0097e9;*/
+}
+div#basicReg .chklbl {
+	float:none;
+	text-align:left;
+	padding:0 2px;
+	margin:0 2px 0 0;
+	color: #333;
+	font-size: 12px;
+	font-weight: bold;
+	background:none;
+}
+div#basicReg textarea,
+div#basicReg input {
+	font-size: 12px;
+	font-weight: bold;
+	color: #006da7;
+	padding:2px 5px;
+	width:235px;
+	border: 1px solid #0097e9;
+	background: #f1f6ff;
+	margin:2px 0 7px 0;
+}
+div#basicReg input.chk {
+	padding:2px 5px;
+	width:20px;
+	border: 0px;
+	background: none;
+	margin:0 0 5px 0;
+}
+
+div#basicReg select{
+	font-size: 12px;
+	height: 21px;
+	font-weight: bold;
+	color: #006da7;
+	border: 1px solid #0097e9;
+	background: #f1f6ff;
+	margin:2px 0 7px 0;
+	width: 247px;
+}
+div#basicReg input:hover {
+	background:#ffffff;
+}
+div#basicReg input:focus {
+	border: 4px solid #0097e9;
+	background:#ffffff;
+	margin:0px -3px 5px -3px;
+	padding:1px 5px;
+}
+
+
+div#basicReg fieldset.gry label {
+	background:#ddd;
+	width:165px;
+}
+div#basicReg div.lgry div.pwmsg {
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#000;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	line-height: 16px;
+	float: right;
+	width: 239px;
+	padding: 5px 2px 7px 5px;
+	margin:2px 0 7px 0;
+}
+div#basicReg div.lgry #complexity, div#basicReg div.noteditable {
+	font-size: 12px;
+	font-weight: bold;
+	padding:3px 5px 2px 5px;
+	width:135px;
+	margin:2px 0 7px 0;
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#999;
+}
+
+div#basicReg div.noteditable {
+	width:235px;
+}
+
+div#basicReg div.Mrgt fieldset.gry div.noteditable {
+	width:210px;
+}
+
+div#basicReg div input.lgry {
+	font-size: 12px;
+	font-weight: bold;
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#999;
+}
+div#basicReg div.hidebox {
+	float: right;
+	width: 100px;
+}
+div#basicReg div.hidebox input{
+	width: 12px;
+	margin: 5px 5px 5px 10px;
+	float: right;
+}
+div#basicReg div.hidebox div.hideboxtxt{
+	margin: 4px 10px 4px 3px;
+	float: right;
+	width: 25px;
+}
+div#basicReg .dispnone {
+	display: none;
+}
+div#basicReg #scorebar {
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#111;
+	float: left;
+	padding: 1px 5px;
+	margin:2px 0 7px 0;
+	background: url(bg_strength_gradient.jpg) no-repeat 0 0;
+	width: 235px;
+	font-weight: bold;
+	font-size: 14px;
+	text-align: center;
+}
+
+
+
+div#basicReg div.optin {
+	float: left;
+	width:170px;
+	margin: -26px 0 0 0;
+}
+div#basicReg div.optin input#optbox{
+	width: 12px;
+	margin: 5px 0;
+	float: left;
+}
+div#basicReg div.optin div{
+	width: 120px;
+	float: left;
+	margin: 4px 8px;
+	font-size: 12px;
+}
+
+div#basicReg div.lgry label {
+	background:#ddd;
+	color:#666;
+}
+div#basicReg #user_pin{
+	border: 1px solid #ccc;
+	background:#eee;
+	color:#aaa;
+}
+div#basicReg fieldset.gry textarea,
+div#basicReg fieldset.gry input {
+	border: 1px solid #999;
+	width:210px;
+	color:#777;
+	background:#eee;
+}
+div#basicReg fieldset.gry textarea:focus,
+div#basicReg fieldset.gry input:focus {
+	border: 4px solid #999;
+	background:#ffffff;
+	margin:0 -3px 5px -3px;
+	padding:1px 5px;
+}
+div#basicReg fieldset.gry select{
+	width: 222px;
+	color: #777;
+	border: 1px solid #999;
+	background:#eee;
+}
+div#basicReg span.ast,
+div#basicReg span.astg,
+div#basicReg span.ast2{
+	font-size:14px;
+	font-weight:bold;
+	/*float:right;*/
+	margin:1px 0 0 2px;
+	display:inline;
+	width: 15px;
+	text-align: left;
+	/*color: #0097e9;*/
+	color:red;
+}
+div#basicReg span.ast2{
+	margin:12px 0 0 0;
+}
+div#basicReg span.astg{
+	color: #aaa;
+}
+div#basicReg span.ast3{
+	color: red;
+	font-size:22px;
+	font-weight:bold;
+	margin:30px 3px 0 3px;
+	vertical-align:middle;
+	display:inline;
+	text-align: left;
+}
+
+div#basicReg span.ast-agree{
+	font-size:14px;
+	font-weight:bold;
+	float:left;
+	margin:1px 0 0 2px;
+	display:inline;
+	width: 15px;
+	text-align: left;
+	/*color: #0097e9;*/
+	color:red;
+}
+
+div#basicReg div.regoButt{
+	margin:10px 0 30px 0;
+	text-align:center;
+	float:;
+	width:;
+}
+div#basicReg div.regoButt div.butt_lbl{
+	
+	font-size:11px;
+	font-weight:bold;
+	line-height:0.9;
+	margin:0 auto 0 auto;
+	width:200px;
+}
+div#basicReg div.regoButt #saveUserButton,
+div#basicReg div.regoButt input#regoButton{
+	border:1px solid #22588f;
+	background:url(bg_regoButt.jpg) repeat-x 0 -30px;;
+	margin:0 auto 0 auto;
+	padding: 0 2px;
+	font-size:15px;
+	font-weight:bold;
+	color:#fff;
+	text-transform:uppercase;
+	text-align:center;
+	width:230px;
+	height:30px;
+	float:;
+	cursor:pointer;
+}
+div#basicReg div.regoButt #saveUserButton:hover,
+div#basicReg div.regoButt input#regoButton:hover{
+	border:1px solid #22588f;
+	background:#0097e9 url(bg_regoButt.jpg) repeat-x 0 0;
+}
+
+
+div#basicReg select.titl,
+div#basicReg select.dobd{
+	width:65px;
+}
+div#basicReg select.dobm{
+	width:101px;
+}
+div#basicReg select.doby{
+	width:75px;
+}
+
+
+div#basicReg input.acode{
+	width:25px;
+	margin:0 5px 0 0;
+}
+
+div#basicReg input.chk:focus {
+	border: 0;
+	background:none;
+	margin:0 0 5px 0;
+	padding:2px 5px;
+}
+
+
+div#basicReg div#formMsgWrap{
+	margin:0;
+	height:;
+	display:block;
+}
+div#basicReg div#formMsg{
+	font-size:12px;
+	font-weight:bold;
+	line-height:18px;
+	color:#B50311;
+	text-align:center;
+	padding:1px 5px;
+	background:#FAEFF1;
+	border-top:1px solid #B50311;
+	border-bottom:1px solid #B50311;
+	display:none;
+}
+
+
+.details-changed{
+	margin:10px 0;
+	font-size:11px;
+	}
+	
+div.rego-input-error {
+	padding-left: 160px;
+}

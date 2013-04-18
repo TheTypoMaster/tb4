@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="module" client="administrator">
+	<name>My Editor</name>
+	<version>1.0</version>
+	<creationDate>2009/01/22</creationDate>
+	<author>www.sourcecoast.com | www.joomlapraise.com</author>
+	<authorEmail>support@sourcecoast.com | support@joomlapraise.com</authorEmail>
+	<authorUrl>http://www.sourcecoast.com | http://www.joomlapraise.com</authorUrl>
+	<copyright>SourceCoast | JoomlaPraise</copyright>
+	<license>SourceCoast | JoomlaPraise</license>
+	<description>Easily switch your editor with a drop-down box.</description>
+	<files>
+		<filename>mod_myeditor.xml</filename>
+		<filename>index.html</filename>
+		<filename>tmpl/index.html</filename>
+		<filename module="mod_myeditor">mod_myeditor.php</filename>
+		<filename>helper.php</filename>
+		<filename>tmpl/default.php</filename>
+		<filename>assets/cmsmarketconnect/cmsmarketconnect.php</filename>
+		<filename>assets/cmsmarketconnect/cmsmconnect_logo.png</filename>
+		<filename>assets/cmsmarketconnect/index.html</filename>
+		<filename>assets/cmsmarketconnect/template.php</filename>
+	</files>
+	<languages>
+	</languages>
+	<params addpath="/administrator/modules/mod_myeditor/assets/cmsmarketconnect">
+		<param name="moduleclass_sfx" type="text" label="MODULE CLASS SUFFIX" description="PARAMMODULECLASSSUFFIX" default="" />
+		<param name="mod_myeditor" label="Version Information" description="Up to date version, support, and review information from CMS Market." type="cmsmarketconnect" />
+	</params>
+</install>

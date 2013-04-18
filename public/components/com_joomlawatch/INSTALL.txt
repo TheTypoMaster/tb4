@@ -1,0 +1,99 @@
+INSTALLATION INSTRUCTIONS
+=========================
+
+To install the JoomlaWatch, 
+!!! first make sure you have enough space on your hosting, approximately 20 MB !!! 
+This is because of the large ip to country resolving database tables
+
+When you are doing an UPGRADE from some older version
+====================================================
+Uninstall from the admin backend #!ERASES!# all the database tables that belong
+to JoomlaWatch. But, you can backup these tables with tools like phpMyAdmin, or some 
+database tools that comes with your webhosting. After the upgrade, you can restore them back.
+
+
+Joomla 1.5
+==========
+Since version 1.2.4 you don't need to enable the legacy mode. Just install it the usual way.
+
+Component installation
+======================
+
+1. Log into the joomla administration
+
+2. Choose Installers->Components
+
+3. Click "Browse..."
+
+4. Choose the com_joomlawatch.zip you downloaded
+
+5. Click "Upload File & Install"
+
+6. You should see the Installation procedure and the "Installation finished".
+
+
+Module installation - JoomlaWatch Agent 
+=======================================
+
+This module shows a little monitoring icon with JoomlaWatch logo on your website. 
+This way you can identify a browser of your visitor or whether it's a bot.
+Without this icon there won't be any user-Agent information available!!
+
+*IMPORTANT*: !!!!This module has to be everywhere, where you want the visit to be recorded!!!
+So, you have to publish it on ALL pages. The best option is to put it into the footer of your template.
+Make also sure, that this 'placeholder' exists in your template - after the steps below the JoomlaWatch logo appears there.
+Then, you can switch this logo off in the settings (FRONTEND_HIDE_LOGO)
+
+1. Choose Installers->Modules
+
+2. Click "Browse..."
+
+3. Choose the mod_joomlawatch_agent.zip you downloaded
+
+4. Click "Upload File & Install"
+
+5. Choose Modules->Site modules
+
+6. Find "JoomlaWatch Agent" and click the "X" icon to make it switch from unpublished to published
+
+7. Click the "JoomlaWatch Agent" link, and choose where this module would appear. 
+   The default are footer (prefered), right, left, bottom.. but make sure this position appears in your template.
+   It's also recommended to switch the "Show title" to No.
+   Pages/Items -> MenuItem Link(s) has to be "All".
+
+8. Click the "Save" icon and check whether your site shows the joomlawatch icon on all sub pages. 
+
+
+Module installation - JoomlaWatch Visitors 
+==========================================
+
+This module inserts a small statistical information about where did the visitors came from (Countries) and also some information about amount of visits for today, yesterday, this week, last week, this month and total. It's best to publish it somewhere on the left or right side of your website. 
+
+1. Choose Installers->Modules
+
+2. Click "Browse..."
+
+3. Choose the mod_joomlawatch_visitors.zip you downloaded
+
+4. Click "Upload File & Install"
+
+5. Choose Modules->Site modules
+
+6. Find "JoomlaWatch Visitors" and click the "X" icon to make it switch from unpublished to published
+
+7. Click the "JoomlaWatch Visitors" link, and choose where this module would appear. 
+   The default are right, left, bottom.. but make sure this position appears in your template.
+   It's also recommended to switch the "Show title" to No.
+   Pages/Items -> MenuItem Link(s) has to be "All".
+
+8. Click the "Save" icon and check whether your site shows the joomlawatch statistical information about countries/visitors on all sub pages. 
+
+
+
+Enjoy,
+
+Matej Koval
+www.codegravity.com
+
+
+

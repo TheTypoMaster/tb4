@@ -1,0 +1,177 @@
+.icon-48-jfbconnect {
+    background-image: url('images/jfbconn_icon48.png');
+}
+
+.toolbar .icon-32-config {
+    background-image: url('images/icon-48-config.png');
+    background-size: 32px 32px;
+}
+
+.icon-32-refresh {
+    background-image: url('images/icon-32-refresh.png');
+}
+
+div.pagetitle.icon-48-jfbconnect h2 {
+    margin-left: 20px;
+}
+
+div.header.icon-48-jfbconnect {
+    padding-left: 85px;
+}
+
+div.config_setting {
+    float: left;
+    width: 250px;
+}
+
+div.config_option {
+    float: left;
+    width: 300px;
+}
+
+div.config_setting_option{
+    float:left;
+    width:550px;
+}
+
+div.config_option fieldset {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+
+div.config_description {
+    float: left;
+    width: 20px;
+}
+
+div.config_description2 {
+    float: left;
+    width: 325px;
+    margin-left: 10px;
+}
+
+div.config_setting.header,
+div.config_option.header,
+div.config_description.header,
+div.config_setting_option.header,
+.config_row div.header
+{
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 0px;
+    padding-left: 0px;
+    line-height: 20px;
+}
+
+.config_row {
+    margin-bottom: 10px;
+}
+
+.hasTip {
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    -moz-box-shadow: 0 1px 3px #999999;
+    background-color: #E6E6E6;
+    color: #104D92;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 1;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 2px;
+    margin-left: 4px;
+    font-weight: normal;
+}
+
+table.options {
+    border-width: 0px;
+    border-spacing: 0px;
+    border-style: none;
+    border-color: gray;
+    border-collapse: collapse;
+    background-color: #F0F0F0;
+}
+
+table.options th {
+    border-width: 1px;
+    padding: 5px;
+    border-style: solid;
+    border-color: gray;
+    background-color: #F1F1F1;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+
+table.options td {
+    border-width: 1px;
+    padding: 5px;
+    border-style: solid;
+    border-color: gray;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+
+table.options td.even {
+    background-color: #F9F9F9;
+}
+
+table.options td.odd {
+    background-color: #F1F1F1;
+}
+
+div.autotune,
+div.autotune p,
+div.autotune ul,
+div.autotune ol,
+div.autotune .config_row div.header{
+    font-size: 13px;
+}
+
+.autotuneButton {
+    width: auto;
+    height: 35px;
+    background-color: #025A8D;
+    color: #FFFFFF;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 13px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.autotuneButton:hover {
+    background-color: #FFFFFF;
+    color: #025A8D;
+}
+
+.autotuneGood {
+    color: #00AA00;
+}
+
+.autotuneBad {
+    color: #BB0000;
+    font-weight: bold;
+}
+
+.autotuneYes {
+    background-color: #00AA00;
+}
+
+.autotuneNo {
+    background-color: #BB0000;
+}
+
+div.width-20 {
+width: 20%;
+}
+
+div.width-80 {
+width: 80%;
+}
+
+.fltlft {
+float: left;
+}

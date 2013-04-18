@@ -1,0 +1,113 @@
+* {
+ 
+}
+body {
+  width:98%;
+  background: white;
+  font: 75%/1.2 Helvetica, Arial, sans-serif;
+  color:#000;
+}
+#main {
+  overflow:visible;
+}
+
+div#bettixPopWrap table td.upperCase {
+  text-transform: uppercase;
+}
+
+div.tmpBox{
+  background: #ccc;
+  border: 10px solid #000;
+  margin: 40px auto;
+}
+
+
+div.mainbdr {
+    border: 1px solid #555555;
+    margin: 0px;
+    padding: 5px;
+}
+
+div#bettixPopWrap {
+  margin: 0px;
+}
+div#bettixPopWrap div.bettixPanel {
+  background: #fff;
+  border: 1px solid #999;
+  margin-bottom: 5px;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead {
+  background: #fff;
+  display: block;
+  height: 66px;
+  margin: 0 0 5px 0;
+}
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadLogo {
+  margin: 5px 10px 0 10px;
+  float: left;
+}
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadTitle {
+  color: #666;
+  font-weight: bold;
+  font-size: 19px;
+  line-height: 28px;
+  padding: 8px 0 0 80px;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadRace {
+  color: #000;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 2px 0 2px 80px;
+}
+
+div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadPrintLink a {
+  float: right;
+  padding: 20px 20px 0 0;
+}
+
+@media print
+{
+  div#bettixPopWrap div.bettixPanel div.bettixHead div.bettixHeadPrintLink a {
+  	display: none;
+  }
+}
+
+div#bettixPopWrap div.bettixTpanel {
+  margin: 10px 10px 40px 10px;
+  padding: 0;
+  background: #e9e9e9;
+}
+
+div#bettixPopWrap div.bettixTpanel table {
+  border-collapse: collapse;
+}
+div#bettixPopWrap div.bettixTpanel table td {
+  padding: 3px 5px;
+  color: #000;
+  font-size: 10px;
+  font-weight: normal;
+  border: 1px solid #000;
+  text-align: center;
+  background: #fff;
+}
+div#bettixPopWrap div.bettixTpanel table th {
+  padding: 3px 5px;
+  color: #333;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #666;
+  background: #e5e5e5 !important;
+}
+div#bettixPopWrap div.bettixTpanel table td.lft {
+  text-align: left;
+}
+div#bettixPopWrap div.bettixTpanel table td.rgt {
+  text-align: right;
+}
+div#bettixPopWrap div.bettixTpanel table td.cap {
+  text-transform: uppercase;
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install version="1.5" type="plugin" group="user">
+	<name>Acajoom User Synchronization</name>
+	<author>Joobi Limited</author>
+	<creationDate>July 2009</creationDate>
+	<copyright>Copyright (C) 2009 Joobi Limited All rights reserved</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>support@ijoobi.com</authorEmail>
+	<authorUrl>http://www.ijoobi.com</authorUrl>
+	<version>1.0.0</version>
+	<description>This plugin does the synchronization of Joomla users with Acajoom.</description>
+	<files>
+		<filename plugin="acasyncuser">acasyncuser.php</filename>
+	</files>
+</install>

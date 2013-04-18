@@ -1,0 +1,144 @@
+@charset "utf-8";
+/* CSS for TopBetta Get Satisfaction */
+
+/* CSS Reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, input, table, caption, tbody, tfoot, thead, tr, th, td {
+  background: transparent;
+  border: 0;			/* This removes the border around the viewport in old versions of IE */
+  font-family: inherit;
+  font-size: 100%;
+  font-style: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  vertical-align: baseline;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+form, ul, li{
+  margin: 0px;
+  padding: 0px;
+}
+
+/* Resets font size to 10px. (1.2em will be 12px, etc.). */
+body {
+  color:#000;
+  font: 62.5%/1.2 Arial, Helvetica, sans-serif;
+  text-align: center;
+  width:100%;
+  background: #2a2a2a url('/components/com_topbetta_user/assets/site-bg.jpg') left top;
+  min-width:600px; /* Minimum width of layout - remove line if not required */
+          /* The min-width property does not work in old versions of Internet Explorer */
+
+  }
+
+
+/*################## Login Styles ######################*/
+
+.login-wrap{
+	display:block;
+	margin:0 auto;
+	width:431px;
+	}
+
+.login-head{
+	margin:0;
+	}
+
+.login-main{
+	background:#f7f7f7;
+	width:411px;
+	margin:0 auto;
+	}
+
+#login-form{
+	color: #414141;
+	padding:10px;
+	margin:;
+	width:379px;
+	height:252px;
+	font-size:14px;
+	text-align:left;
+	z-index:500;
+	}
+	
+.login-input{
+	display:block;
+	margin:10px 0 0 20px;
+	}
+
+.login-input label{
+	display:block;
+	margin:;
+	font-size:14px;
+	font-weight:normal;
+	}
+
+label.uc-login-user{
+	margin:0;
+	}
+label.uc-login-password{
+	margin:5px 0 0 3px;
+	}
+
+.login-input label input.input_login{
+	background:#fff;
+	border:solid 1px #c8c8c8;
+	width:200px;
+	height:28px;
+	margin:0 0 0 5px;
+	}
+
+.login-button{
+	background: url('/components/com_topbetta_user/assets/btn-login.gif') no-repeat top left #000;
+	border:0 none;
+	height:39px;
+	width:124px;
+	color:transparent;
+	overflow:hidden;
+	text-indent:-500px;
+	cursor:pointer;
+	margin:10px 0 0 75px;
+	line-height: 100px;
+	display:block;
+	}
+
+.uc-login-links {
+	display:block;
+	height:;
+	width:140px;
+	float:left;
+	margin:40px 0 0 20px;
+	}
+
+.uc-login-links a{
+	display:block;
+	margin:2px;
+	color:#555;
+	font-size:12px;
+	}
+
+.uc-login-createacc{
+	margin:40px 0 0 10px;
+	display:block;
+	float:left;
+	}
+
+a#login-close{
+	color:#555;
+	position:absolute;
+	bottom:5px;
+	right:5px;
+	font-size:12px;
+	font-weight:normal;
+	text-decoration:none;
+	}
+	
+div.message, dl#system-message{
+	color: #fff;
+	font-size: 14px;
+}

@@ -1,0 +1,626 @@
+/*------------------------------------------------------------------------
+# TopBetta - default homepage view
+# ------------------------------------------------------------------------
+# Copyright (C) 2009 TopBetta. All Rights Reserved.
+# @license - Copyrighted Commercial Software
+# Author: uc-technologies Pty. Ltd.
+# Website:  http://www.TopBetta.com
+# This file may not be redistributed in whole or significant part.
+-------------------------------------------------------------------------*/
+div#bettaWrap div.tournContent {
+  margin:5px 0 7px 0;
+  padding:5px;
+  border:1px solid #666;
+  background:#000;
+  color:#fff;
+}
+
+div#bettaWrap div#tourninfo {
+  width:666px;
+  min-height: 353px;
+  _height: 353px;
+  float:left;
+  background: #eee;
+  border:1px solid #505050;
+}
+div#bettaWrap div#tourninfoInr {
+  float:left;
+  padding:10px;
+  min-height: 245px;
+  _height: 245px;
+}
+div#bettaWrap table.tournInfoTbl {
+  border-collapse:separate;
+  border-spacing:2px 3px;
+  margin:-3px -2px 8px -2px;
+  width:410px;
+}
+div#bettaWrap table.tournInfoTbl td {
+  font-size:12px;
+  font-weight:bold;
+  padding:5px 10px;
+  color:#333;
+}
+div#bettaWrap table.tournInfoTbl .subheader td {
+    background: none repeat scroll 0 0 #79b044;
+    color: #FFFFFF;
+    font-size: 16px;
+}
+div#bettaWrap table.tournInfoTbl td.sub2 {
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold !important;
+}
+div#bettaWrap table.tournInfoTbl td.sub {
+  color:#666;
+  width: 130px;
+}
+
+div#bettaWrap div.moreInfo {
+    background: none repeat scroll 0 0 #FBFBFB;
+    color: #333333;
+    font-size: 12px;
+    margin: 0 0 10px;
+    padding: 10px;
+    width: 385px;
+}
+
+div#bettaWrap div#tournentrants {
+  width:270px;
+  float:right;
+  background: #ccc;
+  border:1px solid #505050;
+}
+div#bettaWrap div#tournentrantsInr {
+  overflow-x:hidden;
+  overflow-y:scroll;
+  height:330px;
+  margin:0 0 3px 0;
+}
+div#bettaWrap table.entrantsTbl {
+  border-collapse:separate;
+  border-spacing:2px;
+  color:#152000;
+  padding:5px;
+  margin-left:auto;
+  margin-right:auto;
+  table-layout: fixed;
+}
+div#bettaWrap table.entrantsTbl td {
+    background: none repeat scroll 0 0 #E6E6E5;
+    color: #333333;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 3px;
+    text-align: left;
+}
+div#bettaWrap table.entrantsTbl td.cntr {
+    text-align:center;
+}
+div#bettaWrap table.entrantsTbl td.pos {
+  width:30px;
+  text-align:center;
+}
+div#bettaWrap table.entrantsTbl td.bucks {
+  text-align:right;
+}
+div#bettaWrap table.entrantsTbl .sectiontableheader td {
+    background: none repeat scroll 0 0 #8E8E8E;
+    color: #FFFFFF;
+    font-size: 9px;
+}
+
+div#bettaWrap table.entrantsTbl td.notes {
+  text-align:center;
+}
+
+.tourn-middle-col{
+	width:215px;
+	float:right;
+	}
+
+div#bettaWrap div#prizepool {
+  width:215px;
+  float:right;
+  background: #ccc;
+  border:1px solid #999;
+  overflow:hidden;
+
+  margin:10px 10px 10px 0;
+}
+div#bettaWrap div#prizepoolInr {
+  width:207px;
+  float:right;
+  background: #fff;
+  border:1px solid #aaa;
+  overflow:auto;
+  height:193px;
+  margin:4px 3px 3px 3px;
+}
+div#bettaWrap div#prizepool .poolInfo {
+  text-align:center;
+  display:block;
+  color:#333;
+  font-weight:bold;
+  margin:4px 0 0 0;
+  font-size: 10px;
+}
+div#bettaWrap table.prizepoolTbl {
+  border-collapse:separate;
+  border-spacing:2px;
+  padding:0;
+}
+div#bettaWrap table.prizepoolTbl .sectiontableheader td {
+  color:#fff;
+  font-size:10px;
+  padding:2px 10px;
+  background:#b2b2b2;
+}
+div#bettaWrap table.prizepoolTbl td {
+  font-weight:bold;
+  padding:3px 10px;
+  text-align:left;
+  color:#333;
+}
+
+div#bettaWrap div.blueButt a,
+div#bettaWrap div.gryButt a,
+div#bettaWrap div.greenButt a {
+  color:#fff;
+  text-decoration:none;
+  font-size: 18px;
+  font-weight:bold;
+  margin:10px 6px 0 0;
+  padding:7px 10px;
+  text-align:center;
+  width:190px;
+  display:block;
+  float: left;
+  border:1px solid #436518;
+}
+div#bettaWrap div.greenButt a:visited,
+div#bettaWrap div.greenButt a:link,
+div#bettaWrap div.greenButt a {
+  background: #568A01 url('../images/buttGrn40.jpg') repeat-x left center;
+}
+div#bettaWrap div.blueButt a:visited,
+div#bettaWrap div.blueButt a:link,
+div#bettaWrap div.blueButt a {
+  background: #568A01 url('../images/buttBlu40.jpg') repeat-x left center;
+  border:1px solid #0081e6;
+  margin:10px 0 0 0;
+  width:250px;
+}
+div#bettaWrap div.greenButt a:hover {
+  background: url('../images/buttGrn40H.jpg') repeat-x left center;
+}
+div#bettaWrap div.blueButt a:hover {
+  background: url('../images/buttBlu40H.jpg') repeat-x left center;
+}
+div#bettaWrap div.gryButt a {
+  color:#333;
+  border:1px solid #121212;
+  background: url('../images/buttGryDis.jpg') repeat-x left center;
+}
+div#bettaWrap div.lftbuttwrap{
+  float:left;
+  width:648px;
+}
+div#bettaWrap div.gotoButt a{
+  margin-right:0;
+}
+div#bettaWrap div.regoButt {
+}
+div#bettaWrap div#lobbyButt {
+  float:right;
+  clear:none;
+}
+
+div#bettaWrap div#tourninfo h4,
+div#bettaWrap div#tournentrants h4 {
+  font-size: 12px;
+  font-weight:bold;
+  line-height: 18px;
+  color: #fff;
+  height: 20px;
+  padding:0 0 0 10px;
+  border:0px;
+  text-transform:uppercase;
+  text-align:left;
+  background: #5b5b5b url('../images/buttGry40.jpg') repeat-x left center;
+}
+div#bettaWrap div#tournentrants h4 {
+  text-align:center;
+  padding:0 15px 0 0;
+}
+div#bettaWrap div#prizepool h4 {
+  text-align:center;
+  font-size: 16px;
+  padding:3px 0 1px 0;
+}
+div#bettaWrap div.tournInfoButt {
+  font-size: 14px;
+  font-weight:bold;
+  margin:0px 10px 0 0;
+  padding:4px 5px;
+  text-align:center;
+  width:230px;
+  border:1px solid #333;
+  background: #5b5b5b url('../images/buttGry40.jpg') repeat-x left center;
+  cursor:pointer;
+}
+div#bettaWrap div.tournInfoButt:hover {
+  background: #5b5b5b url('../images/buttGry40H.jpg') repeat-x left center;
+}
+
+div#bettaWrap div#privatetournButt {
+  border:1px solid #ce3b08;
+  display:block;
+  height:24px;
+  font-size:12px;
+  line-height:2;
+  float:right;
+  width:205px;
+  background: #5b5b5b url('../images/buttOrg40.jpg') repeat-x left center;
+}
+
+div#bettaWrap div#privatetournButt:hover {
+  background: #5b5b5b url('../images/buttOrg40H.jpg') repeat-x left center;
+}
+
+div#bettaWrap div#jackpotButt{
+	display:block;
+	height:24px;
+	font-size:14px;
+	line-height:1.7;
+	float:right;
+	width:205px;
+	margin-top:5px;
+}
+
+div#bettaWrap table td.cntr {
+  text-align:center;
+}
+
+/* THE SLEDGE styles */
+
+#tournament-sledge-box{
+	float:left;
+	width:646px;
+	display:block;
+	margin:10px 0 10px 10px;
+	color:#333;
+	}
+
+#sledge-head{
+	display:block;
+	}
+
+#sledge-box{
+	width:100%;
+	background:#fff;
+	border:solid 1px #8e8e8e;
+	font-size:12px;
+	color:#575757;
+	height:92px;
+	overflow:auto;
+	}
+
+#sledge-box .sledge-comment{
+	padding:5px;
+	}
+
+#sledge-box .sledge-comment .sledge-user{
+	color:#2484e0;
+	font-weight:bold;
+	padding:0 5px 0 0;
+	}
+
+#sledge-rules{
+	margin:5px 0 0 0;
+	}
+
+#sledge-comment-wrap{
+	width:100%;
+	display:block;
+	margin:3px 0 10px 0;
+	}
+
+#sledge-comment-wrap input.sledge-input{
+	width:85%;
+	background:#fff;
+	border:solid 1px #838383;
+	padding:0;
+	font-size:12px;
+	color:#575757;
+	display:block;
+	float:left;
+	text-indent:10px;
+	height:28px;
+	margin:0 0 0 0;
+	border-collapse:collapse;
+	line-height:2;
+	}
+
+#sledge-comment-wrap input.sledge-submit{
+	width:14%;
+	border:1px solid #ce3b08;
+	background: #5b5b5b url('../images/buttOrg40.jpg') repeat-x left center;
+	cursor:pointer;
+	padding:0;
+	height:30px;
+	font-size:14px;
+	font-weight:bold;
+	color:#fff;
+	display:block;
+	float:right;
+	margin:0px 0 0 0;
+
+	}
+
+#sledge-comment-wrap input.sledge-submit:hover {
+  background: #5b5b5b url('../images/buttOrg40H.jpg') repeat-x left center;
+}
+
+#sledge-error{
+	display: none;
+	color: red;
+	font-weight: bold;
+}
+
+/* tourntix styles */
+#selectTournWrap{
+width: 598px;
+margin: 0;
+padding:0;
+}
+div#selectTourn{
+background: #ddd url(../images/ticket_bg2.jpg) 50% 50% no-repeat;
+margin: 0;
+padding:0;
+height: 220px;
+color: #000;
+}
+#selectTournIn{
+background: none;
+margin: 0 auto;
+padding: 7px 0 0 0;
+width: 400px;
+height:210px;
+}
+#selectTourn div.selectTournLogo{
+float:left;
+width:68px;
+height:98px;
+}
+#selectTourn div.selectTournLogo img{
+margin: 0;
+padding: 0;
+}
+#selectTourn div.selectTournInfo{
+float:right;
+width: 310px;
+}
+
+
+
+#selectTourn div.selectTournName{
+font-size: 24px;
+line-height: 35px;
+padding: 2px 0 0 0;
+}
+#selectTourn div.selectTournType{
+font-size: 16px;
+font-weight: bold;
+line-height: 20px;
+color: #558500;
+}
+#selectTourn div.selectTournGame{
+font-size: 16px;
+font-weight: bold;
+line-height: 36px;
+}
+
+#selectTourn div.selectTournGameTime{
+text-align:center;
+font-size: 14px;
+font-weight: bold;
+line-height: 16px;
+color: #802000;
+}
+
+#selectTourn div.selectTournConfrim{
+border-top:solid 2px #000;
+border-bottom:solid 2px #000;
+margin:2px 0 4px 0;
+padding:1px 7px 1px 7px;
+clear:both;
+}
+
+#selectTourn div.selectTournError div.error {
+font-size:24px;
+font-weight:bold;
+border-top: 4px solid #880000;
+border-bottom: 4px solid #880000;
+color: #990000;
+text-align:center;
+margin-top:10px;
+}
+
+#selectTourn div#confirmChk{
+background: url(../images/sprite_tourntix.png) 0 0;
+width: 33px;
+height: 28px;
+float:left;
+}
+#selectTourn div#confirmChk a {
+width: 33px;
+height: 28px;
+text-decoration:none;
+}
+#selectTourn div.selectTournConfrimTxt{
+float:left;
+font-size: 15px;
+line-height: 28px;
+font-weight:bold;
+color:#802000;
+text-transform:uppercase;
+padding-top:2px;
+}
+#selectTourn div#confirmChk:hover,
+#selectTourn div#confirmChk a:hover,
+#selectTourn div.selectTournConfrimTxt:hover{
+cursor:pointer;
+}
+#selectTourn div.selectTournConfrim input.confirmButt{
+margin-top:4px;
+background: url(../images/sprite_tourntix.png) -33px -28px;
+width: 100px;
+height: 22px;
+float:right;
+clear:none;
+border:none;
+cursor:pointer;
+}
+#selectTourn div.selectTournConfrim input[disabled].confirmButt{
+background: url(../images/sprite_tourntix.png) -33px 0;
+cursor:wait;
+}
+
+
+#selectTourn div.selectTournDetails{
+clear: both;
+}
+#selectTourn div.selectTournDetails div{
+display: block;
+font-size: 12px;
+font-weight: bold;
+line-height: 18px;
+color: #333;
+}
+#selectTourn div.selectTournDetailsL{
+float:left;
+width: 190px;
+text-align:left;
+}
+#selectTourn div.selectTournDetailsR{
+float:right;
+width: 190px;
+text-align:right;
+}
+
+td.disclaimer { text-align:center; }
+
+a#jackpotLink, a#privatetournLink {
+text-decoration:none;
+color:white;
+}
+
+aprivatetournLink
+
+table.tournInfo_1 {
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+.tournInfo_1 td {
+    color: #222222;
+    font-size: 10px;
+    text-align: left;
+}
+.tournInfo_1 td.headr {
+    text-align: center;
+}
+.tournInfo_1 td.cntr {
+    text-align: center;
+    width: 40px;
+}
+.tournInfo_1 td.lft {
+    text-align: left;
+}
+.sectiontableheader td {
+    background: none repeat scroll 0 0 #8E8E8E;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-align: center;
+}
+.sectiontableheader, .sectiontableheader a {
+    color: #333333;
+    text-transform: uppercase;
+}
+.sectiontableentry1 td, td.sectiontableentry1 {
+    background: none repeat scroll 0 0 #D6D6D6;
+    padding: 2px;
+}
+.sectiontableentry2 td, td.sectiontableentry2 {
+    background: none repeat scroll 0 0 #E2E2E2;
+    padding: 2px;
+}
+div#bettaWrap tr.tournlink td {
+    cursor: pointer;
+}
+div#bettaWrap tr.tournlink:hover td {
+    background: none repeat scroll 0 0 #E2EAF4;
+}
+div#bettaWrap table, div#bettaWrap table.tournInfo_1 td, div#bettaWrap table.tournInfo_2 td {
+    cursor: pointer;
+}
+.sectiontableentry1d td, td.sectiontableentry1d {
+    background: none repeat scroll 0 0 #B7B7B7;
+    padding: 2px 5px;
+}
+.sectiontableentry2d td, td.sectiontableentry2d {
+    background: none repeat scroll 0 0 #C2C2C2;
+    padding: 2px 5px;
+}
+.sectiontableentry2 td img, td.sectiontableentry2 img, .sectiontableentry1 td img, td.sectiontableentry1 img {
+    float: left;
+    margin: 5px 0 0;
+}
+
+td.sportstourn-info-but{
+ background:#d3d3d3 !important;
+ color:#46597a;
+ border:solid 1px #46597a;
+ padding:2px 7px;
+ font-weight:bold;
+ font-size:10px;
+ text-decoration:none;
+ width:80px;
+ }
+
+td.sportstourn-info-but a{
+ color:#46597A;
+ font-weight:bold;
+ text-decoration:none;
+ width:80px;
+ display:block;
+ }
+
+td.sportstourn-reg-but{
+ background:#6d89b0 !important;
+ color:#fff;
+ border:solid 1px #46597a;
+ padding:2px 11px;
+ font-weight:bold;
+ font-size:10px;
+ text-decoration:none;
+ width:80px;
+ }
+
+td.sportstourn-reg-but a{
+ color:#fff;
+ font-weight:bold;
+ text-decoration:none;
+ width:80px;
+ display:block;
+ }
+ 
+ #ticketWrap{
+ 	background-image: url(../images/ticketbgrpt.jpg);
+ }
+
+ div.trophy {
+ 	background: url(../images/trophy_icon.gif) no-repeat scroll left top transparent;
+ 	padding-left: 18px;
+ }

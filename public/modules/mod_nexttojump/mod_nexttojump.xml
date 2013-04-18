@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="module" version="1.5.0">
+	<name>Next To Jump</name>
+	<author>Fei Sun</author>
+	<creationDate>Jun 2011</creationDate>
+	<copyright>Copyright (C) 2005 - 2011 Open Source Matters. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>fei.sun@mobileactive.com</authorEmail>
+	<version>1.0</version>
+	<description>Next To Jump</description>
+	<files>
+		<filename module="mod_nexttojump">mod_nexttojump.php</filename>
+		<filename>index.html</filename>
+		<filename>helper.php</filename>
+		<folder>tmpl/</folder>
+	</files>
+	<params>
+	</params>
+</install>

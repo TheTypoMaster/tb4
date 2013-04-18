@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="module" version="1.5.0">
+	<name>HomePage Selector</name>
+	<author>uc-joomla</author>
+	<creationDate>July 2008</creationDate>
+	<copyright>Copyright (C) 2005 - 2008 uc-joomla. All rights reserved.</copyright>
+	<license>http://www.uc-joomla.net</license>
+	<authorEmail>dev@uc-joomla.net</authorEmail>
+	<authorUrl>www.uc-joomla.net</authorUrl>
+	<version>1.5.1</version>
+	<description>Upcoming Tournaments Lists</description>
+	<files>
+		<filename module="mod_uctournaments">mod_uctournaments.php</filename>
+	</files>
+	<params>
+	</params>
+</install>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--HTML5 doctype-->
+<html>
+	     
+	<head>
+		<title>Top Betta</title>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<script	type="text/javascript" charset="utf-8" src="jq.mobi.js"></script>
+		<script type="text/javascript" charset="utf-8" src="/ui/jq.ui.min1.js"></script>
+		<script type="text/javascript" charset="utf-8" src="/app/account/login1.js"></script>	
+		<script>
+function doJSON1(method, fnc) {
+	console.log('method: ' + method+' fnc: ' + fnc);
+	// url for json data file
+	var dataURL = "http://topbetta.com/api/?method=";
+
+	//adding variable to the url (pointing to the exact file)
+	var useUrl = dataURL + method;
+
+	//function for getting json file
+	$.getJSON(useUrl, function(data) {
+
+		//console.log(data.login_hash);
+		//console.log(data);
+		if (fnc === 'checkLogin') {
+			console.log('checkLogin called');
+			//console.log(data);
+		}
+
+		if (fnc === 'login') {
+			console.log(data);
+			$("#results").html(data.msg);
+			//checkLogin();
+			//doJSON('checkLogin', 'checkLogin');
+		}
+
+		if (fnc === 'hash') {
+			console.log('hash called');
+			doJSON1('doUserLogin&username=admin&password=password&req_method=get&' + data.login_hash + '=1', 'login');
+
+		}
+		//console.log(data);
+		//return data;
+	});
+
+	//getJSON end here
+
+}			
+		</script>
+</head>
+<body>
+<header id="custom_header">
+	<img id='header_img' src="images/topBetta_logo_small.png" />
+</header>
+
+<!--main content here -->
+<div style="margin-top: 30px;">
+	<div style="text-align: center;">
+		<a href="#main" id="auth-loginlink" class="facebook_button"> &#10004; Signin with facebook </a>
+	</div>
+
+	<div style="text-align: center;display:block;margin-top:5px;" id="login_form" class="account_form">
+		Please enter your details<br>
+		<input type="text" name="email" id="email" placeholder="email address" value="admin"/><br>
+		<input type="password" name="password" id="password" placeholder="password" value="password"/>
+	</div>
+		
+	<div style="text-align: center;" id="loginBtnWrapper">
+		<a href="#" class="topbetta_button" id="loginBtn"  onClick="doJSON1('getLoginHash', 'hash');"> &#10004; Login to Account </a>
+	</div>
+
+	<div style="text-align: center;display:none;margin-top:5px;" id="account_form" class="account_form">
+		Please enter your details<br>
+		<input type="text" name="email" id="create_email" placeholder="email address"/><br>
+		<input type="password" name="password" id="create_password" placeholder="password"/>
+	</div>
+	
+	<div style="text-align: center;">
+		<a href="#" class="topbetta_button" onclick="doCreateUserForm();"> &#10004; Create an Account </a>
+	</div>
+
+	<div style="text-align: center;display:none;margin-top:5px;" id="corp_form" class="account_form">
+		Please enter your details<br>
+		<input type="text" name="email" id="corp_email" placeholder="email address"/><br>
+		<input type="password" name="password" id="corp_password" placeholder="password"/>
+	</div>
+	
+	<div style="text-align: center;">
+		<a href="#" class="topbetta_button" onclick="doCreateCorpForm();"> &#10004; Create Corporate Account </a>
+	</div>
+</div>
+<!-- end main content here -->
+	</body>
+</html>

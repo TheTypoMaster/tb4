@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+ <params>
+  <param name="mailFrom" type="text" default="" label="From Email" description="The from email which is used in emails."></param>
+  <param name="fromName" type="text" default="" label="From Name" description="The email from name."></param>
+  <param name="welcomeEmailSubject" type="text" default="Account Details for [name] at TopBetta" label="Welcome email subject" description="The subject of the email which is sent to users after user's registration."></param>
+  <param name="welcomeEmailText" type="textarea" default="" label="Welcome email text" description="The text of the email which is sent to users after user's registration." rows="5" cols="50"></param>  
+  <param name="forgotPasswordEmailSubject" type="text" default="Your TopBetta password reset request" label="Forgot password email subject" description="The subject of the email which is sent to users when users request to re-send their passwords."></param>
+  <param name="forgotPasswordEmailText" type="textarea" default="" label="Forgot password email text" description="The text of the email which is sent to users when users request to re-send their passwords." rows="5" cols="50"></param>
+  <param name="forgotUsernameEmailSubject" type="text" default="Your TopBetta username" label="Forgot username email subject" description="The subject of the email which is sent to users when users request to re-send their usernames."></param>
+  <param name="forgotUsernameEmailText" type="textarea" default="" label="Forgot username email text" description="The text of the email which is sent to users when users request to re-send their usernames." rows="5" cols="50"></param>
+  <param name="referFriendEmailText" type="textarea" default="" label="Refer a friend invitation email text" description="The text of the email which is sent to user's friends using referral form." rows="5" cols="50"></param>
+  <param name="winnerNotificationEmailSubject" type="text" default="TopBetta Winner Notification" label="Winner notification email subject" description="The subject of the email which is sent to tournament winners."></param>
+  <param name="winnerNotificationEmailText" type="textarea" default="" label="Winner notification email text" description="The text of the email which is sent to tournament winners." rows="5" cols="50"></param>
+  <param name="privateTournamentInvitationEmailSubject" type="text" default="You're invited to join my Private TopBetta Tournament" label="Private tournament invitation email subject" description="The subject of the email which is sent when users invite people to join their private tournaments."></param>
+  <param name="privateTournamentInvitationEmailText" type="textarea" default="" label="Private tournament invitation email text" description="The text of the email which is sent when users invite people to join their private tournaments." rows="5" cols="50"></param>
+  <param name="excludeEmailSubject" type="text" default="Temporary Exclusion from TopBetta" label="Exclusion email subject" description="The subject of the email which is sent to users upon requesting self-exclusion."></param>
+  <param name="excludeEmailText" type="textarea" default="" label="Exclusion email text" description="The text of the email which is sent to users upon requesting self-exclusion." rows="5" cols="50"></param>
+  <param name="bettingReminderEmailSubject" type="text" default="TopBetta - Betting is now open for your jackpot tournament" label="Jackpot Tournament betting start reminder email subject " description="The subject of the email is sent to users who registered to a Jackpot Tournament 48 hr before the betting starts."></param>
+  <param name="bettingReminderEmailText" type="textarea" default="" label="Jackpot Tournament betting start reminder email text " description="The text of the email is sent to users who registered to a Jackpot Tournament 48 hr before the betting starts." rows="5" cols="50"></param>
+  <param name="disclaimerText" type="textarea" default="" label="Disclaimer text" description="This disclaimer will be displayed in all the user emails." rows="5" cols="50"></param>
+  <param name="blacklistWords" type="textarea" default="" label="Blacklist Words" description="Add each word in separate line which will appear as asterisks." rows="5" cols="50"></param>
+  <param type="text" name="referral_payment" size="3" label="Referral Payment (cents):" description="Please enter the referral payment" />
+  <param type="text" name="referral_payout_threshold" size="3" label="Referral Payout Threshold (cents):" description="Please enter the referral payment" />
+  <param name="registrationTrackingCode" type="textarea" default="" label="Registration Tracking Code" description="The affiliate tracking code which is used in registration page." rows="5" cols="50"></param>
+  <param name="registrationActivationTrackingCode" type="textarea" default="" label="Registration Activation Tracking Code" description="The affiliate tracking code which is used in registration activation page." rows="5" cols="50"></param>
+  <param name="openxBanner" type="textarea" default="" label="OpenX banner" description="The OpenX banner is used in the registration page to display different banners" rows="5" cols="50"></param>
+ </params>
+</config>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<install version="1.5" type="module" client="administrator">
+	<name>APMenu</name>
+	<version>1.3</version>
+	<creationDate>2009/03/14</creationDate>
+	<author>www.sourcecoast.com | www.joomlapraise.com</author>
+	<authorEmail>support@sourcecoast.com | support@joomlapraise.com</authorEmail>
+	<authorUrl>http://www.sourcecoast.com | http://www.joomlapraise.com</authorUrl>
+	<copyright>SourceCoast | JoomlaPraise</copyright>
+	<license>SourceCoast | JoomlaPraise</license>
+	<description>APMenu is the menu module used in AdminPraise.</description>
+	<files>
+		<filename>mod_apmenu.xml</filename>
+		<filename>index.html</filename>
+		<filename>tmpl/index.html</filename>
+		<filename module="mod_apmenu">mod_apmenu.php</filename>
+		<filename>helper.php</filename>
+		<filename>tmpl/default.php</filename>
+		<filename>dynamic/components.php</filename>
+		<filename>dynamic/menus.php</filename>
+		<filename>dynamic/sample.php</filename>
+		<filename>dynamic/user.php</filename>
+		<filename>dynamic/usermanager.php</filename>
+	</files>
+	<languages>
+		<language tag="en-GB">en-GB.mod_apmenu.ini</language>
+	</languages>
+	<params>
+		<param name="moduleclass_sfx" type="text" label="MODULE CLASS SUFFIX" description="PARAMMODULECLASSSUFFIX" default="" />
+		<param name="menutype" type="mos_menu" default="z-adminpraise-menu" label="Menu Name" description="The name of the menu (default is z-adminpraise-menu)" />
+	</params>
+</install>

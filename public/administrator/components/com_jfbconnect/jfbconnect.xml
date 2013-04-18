@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="component" method="upgrade">
+    <name>JFBConnect</name>
+    <version>4.2.4</version>
+    <creationDate>2012/07/23</creationDate>
+    <author>SourceCoast | www.sourcecoast.com</author>
+    <authorEmail>support@sourcecoast.com</authorEmail>
+    <authorUrl>http://www.sourcecoast.com</authorUrl>
+    <copyright>Copyright (C) 2009-2012 SourceCoast. All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <description>This component uses the Facebook Connect API to map Joomla users to their corresponding Facebook
+        account, with flexibility to create new Joomla users automatically.
+    </description>
+    <installfile>install/jfbconnect.install.php</installfile>
+    <uninstallfile>install/jfbconnect.uninstall.php</uninstallfile>
+    <install>
+        <sql folder="admin">
+            <file driver="mysql" charset="utf8">install/sql/install.jfbconnect.sql</file>
+        </sql>
+    </install>
+    <files folder="component">
+        <filename>index.html</filename>
+        <filename>controller.php</filename>
+        <filename>jfbconnect.php</filename>
+        <filename>assets/jfbcchannel.php</filename>
+        <filename>assets/jfbconnect.css</filename>
+        <filename>assets/poweredBy.php</filename>
+        <filename>controllers/index.html</filename>
+        <filename>controllers/loginregister.php</filename>
+        <filename>controllers/request.php</filename>
+        <filename>controllers/social.php</filename>
+        <filename>includes/index.html</filename>
+        <filename>includes/jfbconnect.js</filename>
+        <filename>libraries/index.html</filename>
+        <filename>libraries/canvas.php</filename>
+        <filename>libraries/facebook.php</filename>
+        <filename>libraries/profile.php</filename>
+        <filename>libraries/request.php</filename>
+        <filename>models/index.html</filename>
+        <filename>models/loginregister.php</filename>
+        <filename>models/notification.php</filename>
+        <filename>models/request.php</filename>
+        <filename>views/index.html</filename>
+        <filename>views/loginregister/index.html</filename>
+        <filename>views/loginregister/metadata.xml</filename>
+        <filename>views/loginregister/view.html.php</filename>
+        <filename>views/loginregister/tmpl/default.php</filename>
+        <filename>views/loginregister/tmpl/default.xml</filename>
+        <filename>views/loginregister/tmpl/index.html</filename>
+        <filename>views/loginregister/tmpl/loginregister.css</filename>
+    </files>
+    <languages folder="translations/frontend">
+        <language tag="en-GB">en-GB.com_jfbconnect.ini</language>
+        <language tag="de-DE">de-DE.com_jfbconnect.ini</language>
+        <language tag="fr-FR">fr-FR.com_jfbconnect.ini</language>
+        <language tag="he-IL">he-IL.com_jfbconnect.ini</language>
+        <language tag="pt-BR">pt-BR.com_jfbconnect.ini</language>
+        <language tag="zh-TW">zh-TW.com_jfbconnect.ini</language>
+    </languages>
+    <administration>
+        <menu img="components/com_jfbconnect/assets/images/jfbconn_icon.png">JFBConnect</menu>
+        <submenu>
+            <menu>Overview</menu>
+            <menu controller="config">Configuration</menu>
+            <menu controller="social">Social</menu>
+            <menu controller="canvas">Page Tab/Canvas</menu>
+            <menu controller="request">Requests</menu>
+            <menu controller="profiles">Profiles</menu>
+            <menu controller="usermap">User Map</menu>
+        </submenu>
+        <files folder="admin">
+            <file>install/jfbconnect.install.php</file>
+            <file>install/jfbconnect.uninstall.php</file>
+            <file>install/sql/install.jfbconnect.sql</file>
+            <file>admin.jfbconnect.php</file>
+            <file>controller.php</file>
+            <file>index.html</file>
+            <file>toolbar.jfbconnect.html.php</file>
+            <file>toolbar.jfbconnect.php</file>
+            <file>assets/index.html</file>
+            <file>assets/default.css</file>
+            <file>assets/jfbconnect-admin.js</file>
+            <file>assets/sourcecoast.php</file>
+            <file>assets/facebook-api/facebook.php</file>
+            <file>assets/facebook-api/base_facebook.php</file>
+            <file>assets/facebook-api/fb_ca_chain_bundle.crt</file>
+            <file>assets/facebook-api/index.html</file>
+            <file>assets/facebook-api/jsonwrapper/index.html</file>
+            <file>assets/facebook-api/jsonwrapper/jsonwrapper_inner.php</file>
+            <file>assets/facebook-api/jsonwrapper/JSON/JSON.php</file>
+            <file>assets/facebook-api/jsonwrapper/JSON/LICENSE</file>
+            <file>assets/facebook-api/jsonwrapper/JSON/index.html</file>
+            <file>assets/footer/index.html</file>
+            <file>assets/footer/footer.php</file>
+            <file>assets/footer/SourceCoast_Logo.png</file>
+            <file>assets/images/index.html</file>
+            <file>assets/images/jfbconn.png</file>
+            <file>assets/images/jfbconn_icon.png</file>
+            <file>assets/images/jfbconn_icon48.png</file>
+            <file>assets/images/icon-16-allow.png</file>
+            <file>assets/images/icon-16-deny.png</file>
+            <file>assets/images/icon-16-notice-note.png</file>
+            <file>assets/images/icon-32-refresh.png</file>
+            <file>assets/images/icon-48-config.png</file>
+            <file>common/scconfig.php</file>>
+            <file>controllers/autotune.php</file>
+            <file>controllers/index.html</file>
+            <file>controllers/canvas.php</file>
+            <file>controllers/config.php</file>
+            <file>controllers/notification.php</file>
+            <file>controllers/profiles.php</file>
+            <file>controllers/request.php</file>
+            <file>controllers/social.php</file>
+            <file>controllers/usermap.php</file>
+            <file>models/autotune.php</file>
+            <file>models/index.html</file>
+            <file>models/config.php</file>
+            <file>models/notification.php</file>
+            <file>models/request.php</file>
+            <file>models/usermap.php</file>
+            <file>tables/config.php</file>
+            <file>tables/index.html</file>
+            <file>tables/jfbconnectnotification.php</file>
+            <file>tables/jfbconnectrequest.php</file>
+            <file>tables/usermap.php</file>
+            <file>views/index.html</file>
+            <file>views/autotune/index.html</file>
+            <file>views/autotune/view.html.php</file>
+            <file>views/autotune/tmpl/basicinfo.php</file>
+            <file>views/autotune/tmpl/default.php</file>
+            <file>views/autotune/tmpl/errors.php</file>
+            <file>views/autotune/tmpl/fbapp.php</file>
+            <file>views/autotune/tmpl/fbappnew.php</file>
+            <file>views/autotune/tmpl/finish.php</file>
+            <file>views/autotune/tmpl/index.html</file>
+            <file>views/autotune/tmpl/siteconfig.php</file>
+            <file>views/autotune/tmpl/step_sidebar.php</file>
+            <file>views/autotune/tmpl/subscription_status.php</file>
+            <file>views/config/index.html</file>
+            <file>views/config/view.html.php</file>
+            <file>views/config/tmpl/default.php</file>
+            <file>views/config/tmpl/index.html</file>
+            <file>views/jfbconnect/index.html</file>
+            <file>views/jfbconnect/view.html.php</file>
+            <file>views/jfbconnect/tmpl/default.php</file>
+            <file>views/jfbconnect/tmpl/index.html</file>
+            <file>views/canvas/index.html</file>
+            <file>views/canvas/view.html.php</file>
+            <file>views/canvas/tmpl/default.php</file>
+            <file>views/canvas/tmpl/index.html</file>
+            <file>views/profiles/index.html</file>
+            <file>views/profiles/view.html.php</file>
+            <file>views/profiles/tmpl/default.php</file>
+            <file>views/profiles/tmpl/index.html</file>
+            <file>views/request/index.html</file>
+            <file>views/request/view.html.php</file>
+            <file>views/request/tmpl/default.php</file>
+            <file>views/request/tmpl/edit.php</file>
+            <file>views/request/tmpl/index.html</file>
+            <file>views/request/tmpl/send.php</file>
+            <file>views/notification/index.html</file>
+            <file>views/notification/view.html.php</file>
+            <file>views/notification/tmpl/default.php</file>
+            <file>views/notification/tmpl/index.html</file>
+            <file>views/social/index.html</file>
+            <file>views/social/view.html.php</file>
+            <file>views/social/tmpl/default.php</file>
+            <file>views/social/tmpl/index.html</file>
+            <file>views/usermap/index.html</file>
+            <file>views/usermap/view.html.php</file>
+            <file>views/usermap/tmpl/index.html</file>
+            <file>views/usermap/tmpl/list.php</file>
+            <file>views/usermap/tmpl/select_request.php</file>
+            <file>install/packages/mod_sclogin_j1.5_v1.1.3.zip</file>
+            <file>install/packages/plg_authentication_jfbconnectauth_j1.5_v4.2.0.zip</file>
+            <file>install/packages/plg_user_jfbconnectuser_j1.5_v4.2.1.zip</file>
+            <file>install/packages/plg_system_jfbcsystem_j1.5_v4.2.4.zip</file>
+            <file>install/packages/plg_content_jfbccontent_j1.5_v4.2.1.zip</file>
+            <file>install/packages/lib_sourcecoast_j1.5_v1.0.5.zip</file>
+        </files>
+        <languages folder="admin">
+        </languages>
+    </administration>
+</install>

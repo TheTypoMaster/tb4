@@ -1,0 +1,62 @@
+/* Styelsheet for Login / Register page
+ *
+ *** To edit ****
+ * Copy this file to: /templates/<YOUR_TEMPLATE>/html/com_jfbconnect/loginregister/loginregister.css
+ * Edit there.
+ * Otherwise, your changes will be overwritten when you upgrade this extension!
+ */
+
+/* General Styles */
+#jfbc_loginregister legend
+{
+    font-size: 125%;
+    font-weight: bold;
+}
+
+/* Side-by-side display styles */
+#jfbc_loginregister_userinfo.horizontal #jfbc_loginregister_existinguser
+{
+    width: 40%;
+    float:left;
+}
+#jfbc_loginregister_userinfo.horizontal #jfbc_loginregister_newuser
+{
+    width: 55%;
+    float:right;
+}
+
+/* Top/Bottom display styles */
+#jfbc_loginregister_userinfo.vertical #jfbc_loginregister_existinguser
+{
+    width: 100%;
+    border-bottom: 1px solid #AAA;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+#jfbc_loginregister_userinfo.vertical #jfbc_loginregister_newuser
+{
+    width: 100%;
+    float:right;
+}
+
+#jfbc_loginregister_userinfo.vertical #jfbc_loginregister_existinguser dt
+{
+    float: left;
+    clear: none;
+    width: auto;
+}
+#jfbc_loginregister_userinfo.vertical #jfbc_loginregister_existinguser dd
+{
+    margin: 0 15px;
+}
+#jfbc_loginregister_userinfo.vertical #jfbc_loginregister_existinguser fieldset
+{
+    margin: 0;
+    padding: 5px 0;
+}
+
+/* Register Only (hide the login portion) */
+#jfbc_loginregister_userinfo.register-only #jfbc_loginregister_existinguser
+{
+    display:none;
+}

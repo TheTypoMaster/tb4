@@ -1,0 +1,3101 @@
+@charset "utf-8";
+/* TOP BAR STYLES */
+
+/* CSS Reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, input, table, caption, tbody, tfoot, thead, tr, th, td {
+  background: transparent;
+  border: 0;			/* This removes the border around the viewport in old versions of IE */
+  font-family: inherit;
+  font-size: 100%;
+  font-style: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  vertical-align: baseline;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+form, ul, li{
+  margin: 0px;
+  padding: 0px;
+}
+
+/* Resets font size to 10px. (1.2em will be 12px, etc.). */
+body {
+  color:#000;
+  font: 62.5%/1.2 Arial, Helvetica, sans-serif;
+  text-align: center;
+  width:100%;
+  background: #2a2a2a url('../images/site-bg.jpg') left top;
+  min-width:600px; /* Minimum width of layout - remove line if not required */
+          /* The min-width property does not work in old versions of Internet Explorer */
+
+  }
+
+
+/*########################################*/
+
+  /* General styles */
+  table td {
+    text-align:left;
+  }
+  a {
+    color:#0084e2;
+  }
+  h1, h2, h3 {
+    margin:.8em 0 .2em 0;
+    padding:0;
+  }
+  p {
+    margin:.4em 0 .8em 0;
+    padding:0;
+  }
+  img {
+
+  }
+
+.clear, .clr{clear:both; height:0;}
+.clear-left{clear:left; height:0;}
+.clear-right{clear:right; height:0;}
+
+  /* fixed width */
+  #fixed {
+     margin:0 auto;
+     width:980px;   /* you can use px, em or % */
+     text-align:left;
+	 background:#fff;
+	 position:relative;
+	 padding:37px 0 5px 0;
+	 _padding: 0 0 5px 0;
+	 overflow:hidden;
+  }
+
+.contentpaneopen{
+	 width:100%;
+	 }
+
+/*########## START: NEW HOMEPAGE STYLES ##########*/
+#newHP{
+	margin: 0 auto;
+	margin-bottom: 10px;
+	width: 980px;
+	position: relative;
+	padding: 37px 0 5px 0;
+	text-align: center;
+	color: #fff;
+	font-family: 'Raleway', Helvetica, Arial, sans-serif;
+	font-weight: 400;
+}
+#HPlogo{
+	margin: 0 auto;
+	margin-top: 10px;
+	background: url("../images/TopBetta_logo_HP.png") no-repeat center top;
+	width: 368px;
+	height: 80px;
+	z-index: 10;
+}
+.HPbuttWrap{
+	margin-top: -17px;
+	z-index: 100;
+}
+.HPbuttWrap a div{
+	width: 306px;
+	float: left;
+	background: #000;
+	margin-bottom: 30px;
+	position: relative;
+}
+.HPbuttWrap a{
+	text-decoration: none;
+	color: #fff;
+}
+.HPbuttWrap a:hover{
+	color: #ff9900;
+}
+
+.HPbuttWrap .HPbuttLeft, .HPbuttWrap .HPbuttRight{
+	height: 198px;
+}
+.HPbuttWrap .HPbuttCntr{
+	margin-left: 30px;
+	margin-right: 30px;
+	height: 169px;
+}
+.HPbuttWrap #HPbutt1{
+	background: url("../images/HPbutt_RTv3.jpg") no-repeat center center;
+}
+.HPbuttWrap #HPbutt2{
+	background: url("../images/HPbutt_TRv3.jpg") no-repeat center center;
+	margin-top: 29px;
+}
+.HPbuttWrap #HPbutt3{
+	background: url("../images/HPbutt_ST_v4.jpg") no-repeat center center;
+}
+.HPbuttWrap #HPbutt4{
+	background: url("../images/HPbutt_blogv3.jpg") no-repeat center center;
+}
+.HPbuttWrap #HPbutt5{
+	background: url("../images/HPbutt_SB_coming_soon.jpg") no-repeat center center;
+}
+.HPbuttWrap #HPbutt6{
+	background: url("../images/HPbutt_TTv3.jpg") no-repeat center center;
+}
+.HPbuttWrap div{
+	opacity: 1;
+}
+.HPbuttWrap div:hover{
+	opacity: .9;
+}
+.HPbuttWrap #HPbutt5:hover{
+	opacity: 1;
+	font-weight: 400;
+	cursor: default;
+}
+
+
+.HPbuttWrap .HPbuttLabel, .HPbuttWrap .HPbuttLabelOff{
+	background: rgba(0, 0, 0);
+	background: rgba(0, 0, 0, 0.6);
+	margin: 0 4px;
+	width: 298px;
+	position: absolute;
+	font-size: 28px;
+	line-height: 35px;
+	height: 40px;
+	text-shadow: 2px 2px 3px rgba(0,0,0,0.8);
+	display: block;
+}
+.HPbuttWrap .HPbuttLabelOff{
+	color: #999;
+}
+
+.HPbuttWrap .HPbuttTop{
+	bottom: 5px;
+}
+.HPbuttWrap .HPbuttBot{
+	top: 5px;
+}
+
+
+/*########## END: NEW HOMEPAGE STYLES ##########*/
+
+
+
+/*################### SITE HEADERS STYLES #####################*/
+
+#fixed h3 {
+    background: url("../images/bg_mod_blu.jpg") repeat-x scroll left center #008DFA;
+	border: 0 solid #172308;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    height: 29px;
+    line-height: 29px;
+    margin: 0;
+    padding: 0 0 0 10px;
+    text-transform: uppercase;
+}
+
+.componentheading {
+  padding:10px 0;
+  font-size: 1.6em;
+  font-weight: bold;
+}
+.contentheading {
+  padding:10px 0 5px 0;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+.componentheading a{
+  text-decoration: none;
+  color: #006da7;
+}
+
+
+
+/*################### SITE HEADERS MESSAGES #####################*/
+
+#fixed h3, table.contentpaneopen td.contentheading {
+    background: url("../images/leftnav-bg-blue.jpg") repeat-x scroll left center #008DFA;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    height: 29px;
+    line-height: 29px;
+    margin: 0;
+    padding: 0 0 0 10px;
+    text-transform: uppercase;
+	position: relative;
+}
+
+h3.tournaments, #tournHdrBar {
+    background: url("../images/leftnav-bg-green.jpg") repeat-x scroll left center #3a8116 !important;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    height: 29px;
+    line-height: 29px;
+    margin: 0;
+    padding: 0 0 0 10px;
+    text-transform: uppercase;
+	position: relative;
+}
+
+/*################### SYSTEM MESSAGES #####################*/
+#system-message {
+    margin-bottom: 10px;
+    margin-top: 5px;
+    padding: 0;
+}
+
+#system-message dt.error, #system-message dt.message {
+    display: none;
+}
+
+#system-message dt {
+    font-weight: bold;
+}
+
+#system-message dd {
+    font-weight: normal;
+    margin: 5px 0 10px;
+    text-indent: 0;
+	font-size:14px;
+	text-indent:10px;
+}
+
+/* System Standard Messages */
+#system-message dd.message ul {
+    background: #cef1b5;
+    /*border-bottom: 3px solid #558500;
+    border-top: 3px solid #558500;*/
+    color: #4e7818;
+    list-style: none outside none;
+    margin: 0;
+ 	padding:3px 0;
+ 	border:solid 1px #97ce45;
+}
+
+/* System Error Messages */
+#system-message dd.error ul {
+    background: #f7c6c7;
+    /*border-bottom: 1px solid #880000;
+    border-top: 1px solid #880000;*/
+    color: #923939;
+    list-style: none outside none;
+    margin: 0;
+ 	padding:3px 0;
+ 	border:solid 1px #e39697;
+}
+
+/*################### TOP BAR STYLES #####################*/
+
+.top-bar{
+	 width:100%;
+	 height:35px;
+	 display:block;
+	 position:fixed;
+	 top:0;
+	 left:0;
+	 background:#01aced url(../images/top-bar.gif) repeat-x top left;
+	 z-index:1000;
+ }
+.top-bar-container{
+	width:980px;
+	margin:0 auto;
+	height:40px;
+	/*overflow-y: hidden;*/
+	overflow-x:visible;
+	
+}
+.fbCustom
+{
+position:absolute;
+margin:-5px 0 0 300px;
+}
+.top-bar-container[class]{
+	position: relative;
+	}
+.top-bar-container .login-button a{
+    float:right;
+    font-weight:bold;
+    font-size:16px;
+    color:#fff;
+    line-height:2;
+    text-shadow: 1px 1px 1px #ad5f14;
+    text-decoration:none;
+    text-align:left;
+    display:block;
+    height:35px;
+    background: url(../images/btn-top-orange.gif) repeat-x top left #e87505;
+    padding:0 5px;
+    width:115px;
+    overflow:hidden;
+    position:relative;
+    border-left: solid 1px #ec590c;
+    border-right: solid 1px #f79e3e;
+    }
+
+span#button-arrow, span#button-arrow-tickets, span#button-arrow-bets {
+    height:10px;
+    width:16px;
+    display:block;
+    position:absolute;
+    top:12px;
+    right:5px;
+    background: url(../images/arrow-orange.gif) no-repeat top left transparent;
+    overflow:hidden;
+    border:0;
+    }
+
+/*Tournament Tickets button*/
+
+.top-bar-container .tourn-tickets-button a {
+	float: left;
+	font-weight: bold;
+	font-size: 14px;
+	color: white;
+	line-height: 34px;
+	text-shadow: 1px 1px 1px #AD5F14;
+	text-decoration: none;
+	text-align: left;
+	text-indent: 5px;
+	display: block;
+	height: 35px;
+	background: url(../images/btn-top-orange.gif) repeat-x top left #E87505;
+	padding: 0 5px;
+	width: 152px;
+	overflow: hidden;
+	position: relative;
+	border-left: solid 1px #EC590C;
+	border-right: solid 1px #F79E3E;
+}
+.top-bar-container a.create-account-button {
+	float: left;
+	font-weight: bold;
+	font-size: 14px;
+	color: white;
+	line-height: 34px;
+	text-shadow: 1px 1px 1px #AD5F14;
+	text-decoration: none;
+	text-align: center;
+	display: block;
+	height: 35px;
+	background: url(../images/btn-top-orange.gif) repeat-x top left #E87505;
+	padding: 0 5px;
+	margin-top: -6px;
+	width: 152px;
+	overflow: hidden;
+	position: relative;
+	border-left: solid 1px #EC590C;
+	border-right: solid 1px #F79E3E;
+}
+.top-bar-container a.create-account-button:hover {
+	background: #f48722;
+}
+.top-bar-container .my-bets-button a{
+	float:left;
+	font-weight:bold;
+	font-size:14px;
+	color:#fff;
+	line-height:34px;
+	text-shadow: 1px 1px 1px #ad5f14;
+	text-decoration:none;
+	text-align:left;
+	text-indent:5px;
+	display:block;
+	height:35px;
+	background: url(../images/btn-top-orange.gif) repeat-x top left #e87505;
+	padding:0 5px;
+	width:92px;
+	margin:0 0 0 10px;
+	overflow:hidden;
+	position:relative;
+	border-left: solid 1px #ec590c;
+	border-right: solid 1px #f79e3e;
+	}
+
+/*Tourn Tickets & Bet Tickets no active tickets - BLUE*/
+.top-bar-container .tourn-tickets-button a.inactive, .top-bar-container .my-bets-button a.inactive{
+	background: url(../images/btn-top-blue.gif) repeat-x top left #1274ac !important;
+	border-left: solid 1px #057abf !important;
+	border-right: solid 1px #12a3d6 !important;
+	text-shadow: 1px 1px 1px #0c5f8d !important;
+}
+
+.top-bar-container .useracc-button a{
+	float:right;
+	font-weight:bold;
+	font-size:14px;
+	color:#fff;
+	line-height:34px;
+	text-shadow: 1px 1px 1px #0c5f8d;
+	text-decoration:none;
+	text-align:left;
+	text-indent:5px;
+	display:block;
+	height:35px;
+	background: url(../images/btn-top-blue.gif) repeat-x top left #1274ac;
+	padding:0 5px;
+	width:116px;
+	overflow:hidden;
+	position:relative;
+	border-left: solid 1px #057abf;
+	border-right: solid 1px #12a3d6;
+	}
+
+span#button-arrow-blue, .inactive span#button-arrow-bets, .inactive span#button-arrow-tickets {
+    height:10px;
+    width:16px;
+    display:block;
+    position:absolute;
+    top:12px;
+    right:5px;
+    background: url(../images/arrow-blue.gif) no-repeat top left transparent;
+    overflow:hidden;
+    border:0;
+    }
+
+/*user account short info*/
+
+.user-top-acc-info{
+	display:block;
+	float:right;
+	color:#ffffff;
+	font-size:12px;
+	padding:0 12px;
+	line-height:37px;
+	height:100%;
+	background: url(../images/topb-bar-divider-blue.gif) no-repeat top left transparent;
+	}
+
+.user-top-acc-info span.user-top-amount{
+	font-size:14px;
+	font-weight:bold;
+	}
+
+.top-bar-shadow[class]{
+	width:100%;
+	height:5px;
+	display:block;
+	position:fixed;
+	top:35px;
+	background: url(../images/top-bar-shadow.png) repeat-x top left;
+	-moz-opacity:.6;
+	-webkit-opacity:.6;
+	opacity:.6;
+	z-index: 600;
+}
+
+/*################### LOGIN FLYOUT STYLES #####################*/
+
+.toggle-links{
+	text-align:left;
+	width:100% ;
+	}
+
+.toggle-links a{
+	font-size:14px;
+	font-weight:bold;
+	color:#fff;
+	}
+
+#uc-login {
+	background:#f7f7f7;
+	color: #414141;
+	padding:10px;
+	margin:;
+	border:4px solid #ec7c10;
+	width:379px;
+	height:252px;
+	font-size:14px;
+	position:absolute;
+	top:34px;
+	text-align:left;
+	z-index:500;
+	box-shadow:5px 5px 10px #222;
+	-moz-box-shadow:5px 5px 10px #222;
+	-webkit-box-shadow:5px 5px 10px #222;
+	display:none;
+	_right: 100px;
+}
+#uc-login[id]{
+	right: -10px;
+}
+.login-input{
+	display:block;
+	margin:10px 0 0 20px;
+	}
+
+.login-input label{
+	display:block;
+	margin:;
+	font-size:14px;
+	font-weight:normal;
+	}
+
+label.uc-login-user{
+	margin:0;
+	}
+label.uc-login-password{
+	margin:5px 0 0 3px;
+	}
+
+.login-input label input.input_login{
+	background:#fff;
+	border:solid 1px #c8c8c8;
+	width:200px;
+	height:28px;
+	margin:0 0 0 5px;
+	}
+
+.loginbut{
+	background: url(../images/btn-login.gif) no-repeat top left #000;
+	border:0 none;
+	height:39px;
+	width:124px;
+	color:transparent;
+	overflow:hidden;
+	text-indent:-500px;
+	cursor:pointer;
+	margin:10px 0 0 75px;
+	line-height: 100px;
+
+	}
+
+.uc-login-links {
+	display:block;
+	height:;
+	width:140px;
+	float:left;
+	margin:40px 0 0 20px;
+	}
+
+.uc-login-links a{
+	display:block;
+	margin:2px;
+	color:#555;
+	font-size:12px;
+	}
+
+.uc-login-createacc{
+	margin:40px 0 0 10px;
+	display:block;
+	float:left;
+	}
+
+a#login-close{
+	color:#555;
+	position:absolute;
+	bottom:5px;
+	right:5px;
+	font-size:12px;
+	font-weight:normal;
+	text-decoration:none;
+	}
+
+/*################### USER ACCOUNT FLYOUT STYLES #####################*/
+
+#uc-useraccount {
+	background:#f6f6f6;
+	color: #414141;
+	padding:0;
+	margin:;
+	border:4px solid #01a9ea;
+	width:490px;
+	height:350px;
+	font-size:14px;
+	position:absolute;
+	top:35px;
+	right:-10px;
+	_right:100px;
+	text-align:left;
+	z-index:500;
+	box-shadow:5px 5px 10px #222;
+	-moz-box-shadow:5px 5px 10px #222;
+	-webkit-box-shadow:5px 5px 10px #222;
+	display: none;
+}
+
+#uc-useraccount a{
+	text-decoration:none;
+	}
+
+#uc-useraccount .clear{
+	_display: none;
+}
+
+.useracc-title{
+	width:100%;
+	padding:5px 0;
+	/*border:solid 1px #dfdfdf;*/
+	margin:0 auto;
+	background:url(../images/icon_account.png) no-repeat 5px 5px #e1e1e1;
+	}
+
+.useracc-title span.user-name{
+	float:left;
+	display:block;
+	padding:5px;
+	margin:0 0 0 33px;
+	width:330px;
+	}
+
+.useracc-title a.user-logout {
+float: right;
+display: block;
+padding: 5px;
+color: #555;
+margin-right: 10px;
+}
+
+.useracc-links {
+padding: 0;
+margin: 10px 0 0px 12px;
+float: left;
+}
+
+.useracc-links-title{
+	color:#656565;
+	font-size:14px;
+	text-indent:5px;
+	font-weight:bold;
+	}
+
+.useracc-links ul{
+
+	}
+
+.useracc-links ul li{
+	list-style-type:none;
+	background:#f5f5f5;
+	text-align:center;
+	/*border:solid 1px #dcdcdc;*/
+	float:left;
+	padding:0px;
+	margin: 0px;
+	margin:2px;
+	display:block;
+	}
+
+.useracc-links ul li:hover{
+	background:#fcfcfc;
+	}
+
+.useracc-links ul li a{
+	display:block;
+	margin:3px;
+	width:80px;
+	height:94px;
+	text-decoration:none;
+	font-size:10px;
+	color:#333333;
+	}
+
+.useracc-links ul li a img{
+	display:block;
+	margin:5px auto 4px auto;
+	}
+
+.useracc-bottom-links{
+    margin:10px 0 0 0;
+    width:100%;
+	font-size:12px;
+	background:#e1e1e1;
+	position:absolute;
+	bottom:0;
+	height:33px;
+	}
+
+a.user-acc-feedback{
+	float:left;
+	color:#555;
+	margin:5px;
+	}
+
+a.user-acc-close {
+	float: right;
+	color: #555;
+	margin: 5px 0 0 0;
+	padding: 0 10px 0 0;
+	display: block;
+	width: ;
+	line-height: 0;
+}
+
+a.user-acc-close span{
+	line-height:-5px;
+	float:left;
+	}
+
+/*################### TOUNAMENT TICKETS FLYOUT STYLES #####################*/
+
+#uc-tourn-tickets {
+    background:#FCCEAD;
+    color: #414141;
+    padding:0;
+    margin:0;
+    border:4px solid #ec7c10;
+    width:458px;
+    height:449px;
+    overflow:hidden;
+    font-size:14px;
+    position:absolute;
+    top:34px;
+    left:-10px;
+    _left: 100px;
+    text-align:left;
+    z-index:500;
+    box-shadow:5px 5px 10px #222;
+    -moz-box-shadow:5px 5px 10px #222;
+    -webkit-box-shadow:5px 5px 10px #222;
+    display: none;
+}
+
+.tourn-tickets-buttons{
+    width:100%;
+    height:45px;
+    background:url(../images/btn-tourn-tickets.gif) repeat-x bottom left #c15809;
+    }
+
+.tourn-tickets-buttons a.active{
+    background-position:top left;
+    }
+
+.btn-open-tourn{
+    width:229px;
+    height:45px;
+    display:block;
+    float:left;
+    background:url(../images/btn_open-tourn.gif) no-repeat bottom left #c15809;
+    text-indent:-5000px;
+    }
+
+.btn-recent-tourn{
+    width:229px;
+    height:45px;
+    display:block;
+    float:right;
+    background:url(../images/btn_recent-tourn.gif) no-repeat bottom left #c15809;
+    text-indent:-5000px;
+    }
+
+
+.tournament-tickets-wrap {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 3px solid #FCCEAD;
+}
+
+.tournament-tickets-title{
+    color:#666666;
+    font-weight:bold;
+    margin:5px auto;
+    width:99%;
+
+    display:block;
+    border-bottom:solid 1px #f1e9e3;
+    }
+
+span.tourn-flyout-title{
+    float:left;
+    padding:5px;
+    }
+
+div.tournament-tickets-title span.instruction {
+    font-size:10px;
+    color:#999;
+    float:right;
+    padding:5px;
+    }
+
+.tickets-tables{
+    clear:both;
+    background:;
+    width:100%;
+    height:340px;
+    padding:2px;
+    overflow:auto;
+    font-size:11px;
+    border:;
+    }
+
+.tournament-tickets-group{
+    margin:5px auto;
+    border:solid 1px #30588c;
+    }
+
+table.tournament-tickets-table, table.tournament-tickets-table tr, table.tournament-tickets-table tr td{
+    vertical-align:middle;
+    }
+
+table.tournament-tickets-table{
+    border:solid 3px #3d80dd;
+    background:#3d80dd;
+    color:#1a5097;
+    border-collapse:;
+    border-spacing:0px !important;
+    width:100%;
+    }
+
+table.tournament-tickets-table tr{}
+
+table.tournament-tickets-table tr td{
+    background:#bfd5f4;
+    border:solid 1px #e0ebfa;
+    padding:2px;
+    text-align:center;
+    }
+
+table.tournament-tickets-table tr td.betting-open{
+    background:#267c31;
+    font-weight:bold;
+    color:#ffffff;
+    width:111px;
+    }
+
+table.tournament-tickets-table tr td.betting-closed{
+    background:#f27c31;
+    font-weight:bold;
+    color:#ffffff;
+    width:111px;
+    }
+
+table.tournament-tickets-table tr td.betting-completed{
+    background:#c92b31;
+    font-weight:bold;
+    color:#ffffff;
+    width:111px;
+    }
+
+table.tournament-tickets-table tr td.ticket-bettabucks-amount{
+    background:#ffffff;
+    font-weight:bold;
+    color:#333333;
+    width:111px;
+    }
+
+table.tournament-tickets-table tr td.ticket-qualified{
+    font-weight:bold;
+    color:#267c31;
+    }
+
+table.tournament-tickets-table tr td.ticket-pending{
+    font-weight:bold;
+    color:#f27c31;
+    }
+
+table.tournament-tickets-table tr td span.tourn-light-text{
+    color:#5b85bc;
+    }
+
+.tournament-bottom-links{
+    margin:2px auto;
+    width:98%;
+
+    }
+
+.tournament-bottom-links a{
+    color:#be6001;
+    font-weight:bold;
+    font-size:11px;
+
+    }
+
+.tournament-bottom-links a.tourn-close-link{
+    color:#be6001;
+    font-weight:bold;
+    float:right;
+    padding:0px;
+    }
+
+.tournament-bottom-links a.view-full-tourn-hist{
+    color:#be6001;
+    font-weight:bold;
+    float:left;
+    padding:0px;
+    }
+
+/*################### MY BET TICKETS FLYOUT STYLES #####################*/
+
+#uc-my-bets {
+    background:#FCCEAD;
+    color: #414141;
+    padding:0;
+    margin:0;
+    border:4px solid #ec7c10;
+    width:458px;
+    height:449px;
+    overflow:hidden;
+    font-size:14px;
+    position:absolute;
+    top:34px;
+    left:185px;
+    _left: 100px;
+    text-align:left;
+    z-index:500;
+    box-shadow:5px 5px 10px #222;
+    -moz-box-shadow:5px 5px 10px #222;
+    -webkit-box-shadow:5px 5px 10px #222;
+    display: none;
+}
+
+.bet-tickets-buttons{
+    width:100%;
+    height:45px;
+    background:url(../images/btn-tourn-tickets.gif) repeat-x bottom left #c15809;
+    }
+
+.bet-tickets-buttons a.active{
+    background-position:top left;
+    }
+
+.btn-open-bet{
+    width:229px;
+    height:45px;
+    display:block;
+    float:left;
+    background:url(../images/btn_unresulted-bets.gif) no-repeat bottom left #c15809;
+    text-indent:-5000px;
+    }
+
+.btn-recent-bet{
+    width:229px;
+    height:45px;
+    display:block;
+    float:right;
+    background:url(../images/btn_recent-bets.gif) no-repeat bottom left #c15809;
+    text-indent:-5000px;
+    }
+
+table.tournament-tickets-table tr.bet-result-win{
+	font-weight:bold;
+	color:#267C31;
+	}
+
+table.tournament-tickets-table tr.bet-result-loss{
+	font-weight:bold;
+	color:#C92B31;
+	}
+	
+table.tournament-tickets-table tr.bet-result-refund{
+	font-weight:bold;
+	color:;
+	}
+
+table.tournament-tickets-table tr td.bet-result-left{
+	text-align:left;
+	text-transform:uppercase;
+	}
+
+table.tournament-tickets-table tr td.bet-result-right{
+	text-align:right;
+	}
+
+
+/*################### HEADER STYLES #####################*/
+
+#header {
+    background:url(../images/head-bg.jpg) repeat-x top left #c8e1ec;
+    height:71px;
+    overflow:hidden;
+	width:970px;
+	margin:5px 5px 0 5px;
+	display:block;
+	position:relative;
+}
+
+.logo{
+
+	}
+
+.logo a{
+	 height:71px;
+	 width:208px;
+	 display:block;
+	 float:left;
+	 background:url(../images/topbetta-logo.jpg) no-repeat top left #c8e1ec;
+	 overflow:hidden;
+	 text-indent:-5000px;
+	 margin:0 0 0 10px;
+}
+
+.header-ad{
+	display:block;
+	float:left;
+	height:44px;
+	width:525px;
+	margin:13px 0 0 24px;
+	}
+
+.header-refer-friend{
+	float:right;
+	display:block;
+	margin:25px 7px 0px 0px;
+	}
+
+.header-social-links{
+	float:right;
+	display:block;
+	margin:12px 7px 0px 0px;
+	}
+
+.header-social-links span.header-links-social-title{
+	font-size:10px;
+	color:#666;
+	}
+
+/*################### GLOBAL NAVIGATION STYLES #####################*/
+
+
+#menu{
+	background:url(../images/gnav-bg.gif) repeat-x top left #111111;
+    height:29px;
+    overflow:hidden;
+	width:970px;
+	margin:0px 5px 0 5px;
+	display:block;
+	position:relative;
+	font-size:12px;
+	font-weight:normal;
+	}
+
+#menu .menu-contact{
+	float:right;
+	}
+
+#menu .menu-contact:hover{
+	opacity:0.8;
+	}
+
+#menu ul {
+    clear: left;
+    float: left;
+    list-style: none outside none;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+	}
+
+#menu ul li {
+    display: block;
+    float: left;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+	background:url(../images/gnav-divider.gif) no-repeat top right transparent;
+	}
+
+#menu li.active a, #menu li a:hover {
+    color: #fff;
+    text-shadow: 0 0 5px #DDDDDD;
+	}
+
+#menu ul li a {
+    background: none repeat scroll 0 0 transparent;
+    color: #26b7ed;
+    display: block;
+    float: left;
+    line-height: 28px;
+    margin: 0 0px 0 0;
+    padding:0 10px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+	height:29px;
+	}
+
+#menu ul li.item1 a {
+    background:url(../images/gnav-home.gif) no-repeat 0 0 transparent;
+    display:block;
+    float:left;
+    margin:0;
+    padding:0;
+    width:35px;
+    height:29px;
+    overflow:hidden;
+    text-indent:-5000px;
+    line-height:500px;
+    }
+
+#menu ul li.item1 a:hover, #menu ul li#current a[href$="topbetta.com/"] {
+    background:url(../images/gnav-home.gif) no-repeat 0 -29px transparent;
+    }
+
+
+
+/*################### MAIN CONTENT CONTAINER STYLES #####################*/
+
+
+.content-wrap {
+    width:970px;
+	display:block;
+	margin:5px;
+	clear:both;
+	}
+	
+.content-wrap .min-height-360 {
+	min-height: 360px;	
+}
+
+.col-left{
+	width:678px;
+	_width: 673px;
+	float:left;
+	display:block;
+	}
+
+.col-right{
+	width:287px;
+	float:right;
+	display:block;
+	}
+
+
+.home-left-col{
+	display:block;
+	float:left;
+	width:201px;
+	margin:0 5px 0 0;
+	_margin: 0 1px 0 0;
+	background:#d6d6d6;
+	text-align:center;
+	}
+
+.left-menu-head-betting{
+	width:201px;
+	padding:0 0 0 0;
+	height:32px;
+	color:#fff;
+	font-size:14px;
+	background:#02aaeb url(../images/leftnav-bg-blue.jpg) repeat-x top left; 
+	display:block;
+	text-decoration:none;
+	line-height:32px;
+	}
+
+.left-menu-head-tournaments{
+	width:201px;
+	padding:0 0 0 0;
+	height:32px;
+	color:#fff;
+	font-size:14px;
+	background:#4cc111 url(../images/leftnav-bg-green.jpg) repeat-x top left; 
+	display:block;
+	text-decoration:none;
+	line-height:32px;
+	}
+
+.home-left-col .left-menu ul{
+	text-align:left;
+	margin:0 0 10px 0;
+	}
+
+.home-left-col .left-menu ul li{
+	margin:1px 0 0 0;
+	width:201px;
+	overflow:hidden;
+	}
+
+.home-left-col .left-menu ul li a{
+	width:201px;
+	padding:0 0 0 10px;
+	height:32px;
+	color:#eee;
+	font-size:14px;
+	background:#616161;
+	display:block;
+	text-decoration:none;
+	line-height:32px;
+	}
+
+.home-left-col .left-menu ul li a:hover{
+	background:#757575;
+	padding:0 0 0 15px;
+	}
+
+.home-left-col .left-menu ul li.special a{
+	width:201px;
+	padding:0 0 0 10px;
+	height:32px;
+	color:#eee;
+	font-size:14px;
+	background:url(../images/left-nav-special-bg.gif) repeat-x top left #1b78ad;
+	display:block;
+	text-decoration:none;
+	line-height:32px;
+	}
+
+.home-left-col .left-menu ul li.special a:hover{
+	background:url(../images/left-nav-special-bg.gif) repeat-x top left #1b78ad;
+	padding:0 0 0 15px;
+	}
+
+.home-left-ad{
+	display:block;
+	margin: 45px auto 10px auto;
+	}
+
+.home-middle-col{
+	display:block;
+	float:right;
+	width:472px;
+	_width:468px;
+	_padding-left: 3px;
+	overflow: hidden;
+	}
+
+.home-ads-small{
+	width:472px;
+	clear:both;
+	margin:5px 0 0 0;
+	}
+
+.home-ads-small-left{float:left;}
+.home-ads-small-right{float:right;}
+
+.home-ads-large{
+	width:472px;
+	clear:both;
+	padding:5px 0 0 0;
+	}
+
+.right-col-ad{
+	margin: 0 0 5px;
+	}
+
+/*################### NEXT TO JUMP STYLES #####################*/
+
+.next-to-jump{
+	margin:5px 0 0 0;
+	color:#414141;
+	}
+
+
+.next-to-jump-head{
+	height:32px;
+	color:#fff;
+	font-size:14px;
+	background:#02aaeb url(../images/leftnav-bg-blue.jpg) repeat-x top left;
+	width:100%;
+	line-height:32px;
+	text-indent:10px;
+	border-bottom:solid 1px #fff;
+	}
+
+.next-to-jump-table{
+	width:100%;
+	}
+	
+.next-to-jump-border{
+	border-right:solid 1px #fff;
+	}
+		
+.next-to-jump-info{
+	width:100%;
+	}
+
+.next-to-jump-info tr td{
+	padding:4px;
+	}
+
+.next-to-jump-info tr td a{
+	text-decoration:none;
+	color:#414141;
+	}
+
+.next-to-jump-info tr td a:hover{
+	text-decoration:underline;
+	}
+
+.next-to-jump-info-head{
+	font-size:12px;
+	font-weight:bold;
+	}
+	
+.next-to-jump-info td.odd{
+	background:#e6e6e6;
+	}
+
+.next-to-jump-info td.even{
+	background:#f6f6f6;
+	}
+	
+.next-to-jump-info td.odd .next-to-jump-item, .next-to-jump-info td.even .next-to-jump-item{
+	white-space: nowrap;
+	width: 148px;
+	overflow: hidden;
+	}
+
+span.jumps-time {
+	color: #C92B31;
+	font-weight: bold;
+	text-align: right;
+	display: block;
+	float: left;
+	width: 30px;
+	padding-right: 3px;
+}
+/*################### UPCOMING TOURNAMENTS - STYLES #####################*/
+
+.upcoming-tournaments{
+	margin:5px 0 0 0;
+	padding:0 0 5px 0;
+	color:#414141;
+	}
+
+.upcoming-tournaments-head{
+	height:32px;
+	color:#fff;
+	font-size:14px;
+	background:#02aaeb url(../images/leftnav-bg-green.jpg) repeat-x top left;
+	width:100%;
+	line-height:32px;
+	text-indent:10px;
+	border-bottom:solid 1px #fff;
+	}
+
+.upcoming-tournaments-table, .upcoming-tournament-details{
+	width:100%;
+	}
+
+.upcoming-tournament-details{
+	margin:0 0 5px 0;
+	}
+
+.upcoming-tournaments-table td.odd{
+	background:#e6e6e6;
+	}
+
+.upcoming-tournaments-table th{
+	background:#f6f6f6;
+	}
+
+.upcoming-tournaments-info-head{
+	font-size:12px;
+	font-weight:bold;
+	padding:5px;
+	}
+
+.upcoming-tournament-details tr th, .upcoming-tournament-details tr td{
+	padding:3px;
+	border:1px solid #e6e6e6;
+	}
+
+.upcoming-tournament td:hover, .upcoming-tournament-details tr:hover td, .upcoming-tournament-details:hover td, .upcoming-tournament-details tr:hover td{
+	background:#E2EAF4 !important;
+	}	
+
+/*################### QUICK SIGNUP FORM - RIGHT COL - STYLES #####################*/
+
+.quick-signup-right{
+width:287px;
+height:372px;
+display:block;
+overflow:hidden;
+background:url(../images/join-bg.jpg) repeat-x top left #1e78ac;
+text-align:center;
+margin:0 0 5px 0;
+position:relative;
+}
+
+.right-col-imgheader{
+text-align:center;
+margin:0px auto 10px auto;
+}
+
+.right-col-bottom-imgheader{
+text-align:center;
+margin:12px auto 10px auto;
+}
+
+form.quick-signup{
+text-align:center;
+}
+
+form.quick-signup label{
+display:block;
+margin:3px auto;
+width:270px;
+text-align:right;
+vertical-align:middle;
+color:#fff;
+/*text-shadow:1px 1px 0px #29c3fd;*/
+}
+
+form.quick-signup input.quick-signup-input{
+width:142px;
+padding:0 0 0 2px;
+height:20px;
+margin:0 0 4px 0;
+font-size:14px;
+color:#444444;
+background:#e1f7ff;
+border:solid 1px #e1f7ff;
+vertical-align:middle;
+}
+
+form.quick-signup input.quick-signup-input:focus{
+background:#fff;
+border:solid 1px #4b6a7c;
+}
+
+form.quick-signup input.quick-signup-submit{
+width:124px;
+height:39px;
+/*margin:10px auto 0 auto;*/
+position:absolute;
+top:320px;
+left:145px;
+text-indent:-5000px;
+overflow:hidden;
+color:transparent;
+display:block;
+line-height:100px;
+border:0 none;
+cursor:pointer;
+background:url(../images/btn_join-start.png) no-repeat top left transparent;
+}
+
+form.quick-signup input.quick-signup-submit:hover{
+position:absolute;
+top:320px;
+left:146px;
+}
+
+.quick-signup-links{
+color:#ffffff;
+text-align:left;
+position:absolute;
+top:325px;
+left:15px;
+}
+
+.quick-signup-links a{
+color:#ffffff;
+text-decoration:none;
+display:block;
+}
+
+.quick-signup-links a:hover{
+text-decoration:underline;
+}
+
+form.quick-signup input.quick-signup-error {
+border: 1px solid #FF0000;	
+}
+
+/*################### FIND PRIVATE TOURNAMENT PANEL - RIGHT COL - STYLES #####################*/
+
+.private-tourn-right{
+	width:285px;
+	height:156px;
+	display:block;
+	overflow:hidden;
+	background:#e6e6e6;
+	border:1px solid #ababab;
+	text-align:center;
+	}
+
+.green-border-left{
+	width:5px;
+	background:#45a515;
+	height:100%;
+	display:block;
+	float:left;
+	}
+
+.right-col-bottom-imgheader {
+text-align: center;
+margin: 12px auto 10px auto;
+}
+
+form.private-tourn label{
+	display:block;
+	margin:3px auto;
+	width:270px;
+	text-align:right;
+	vertical-align:middle;
+	text-shadow:1px 1px 0px #fff;
+	}
+
+form.private-tourn input.private-tourn-input{
+	width:180px;
+	padding:0 0 0 2px;
+	height:27px;
+	margin:0 0 0px 0;
+	font-size:16px;
+	color:#444444;
+	background:#ffffff;
+	vertical-align:middle;
+	border:solid 1px #bdbdbd;
+	}
+
+form.private-tourn input.private-tourn-find{
+	width:124px;
+	height:39px;
+	margin:10px auto 0 auto;
+	text-indent:-5000px;
+	overflow:hidden;
+	color:transparent;
+	display:block;
+	line-height:100px;
+	border:0 none;
+	cursor:pointer;
+	background:url(../images/btn_find.png) no-repeat top left transparent;
+	}
+
+.private-tourn-links{
+	color:#444;
+	width:95%;
+	text-align:center;
+	margin:10px auto;
+	}
+
+.private-tourn-links a{
+	color:#444;
+	text-decoration:none;
+	}
+
+.private-tourn-links a:hover{
+	text-decoration:underline;
+	}
+
+/*################### GENERAL LIGHTBOX STYLES #####################*/
+
+.error-text{
+	font-size:10px;
+	color:#d21818;
+	display:block;
+	height:12px;
+	}
+
+/*################### CREATE PRIVATE TOURNAMENT LIGHTBOX STYLES #####################*/
+
+.private-tournament-box-content{
+	background:url(../images/join-bg.jpg) repeat-x top left #1a75aa;
+	border:solid 2px #fff;
+	min-height: 482px;
+	min-width: 384px;
+}
+.lightbox-title{
+	margin:5px auto;
+	display:block;
+}
+
+.create-tourn-wrap{
+	display:block;
+	width:95%;
+	margin:5px auto;
+	overflow:hidden;
+	}
+
+.create-tourn-wrap p{
+	font-size:19px;
+	color:#fff;
+	}
+
+.create-tourn-wrap p a{
+	color:#FCFCB4;
+	font-weight:bold;
+	text-decoration:none;
+ }
+
+.lightbox-form-split{
+	text-align:left;
+	}
+
+.lightbox-form-split .label-left{
+	float:left;
+	display:block;
+	margin:0 20px 10px 10px;
+	width: 155px;
+	}
+
+.lightbox-form-split .label-right{
+	float:left;
+	display:block;
+	margin:0 0 10px 0;
+	width: 155px;
+	}
+
+.lightbox-form-split select{
+	display:block;
+	width:155px;
+	}
+
+.lightbox-form-full-width{
+	text-align:left;
+	}
+
+.lightbox-form-full-width label{
+	margin:0 0 6px 6px;
+	display:block;
+	}
+
+.lightbox-form-full-width select{
+	display:block;
+	width:338px;
+	margin:0 0 10px 0px;
+	}
+
+.lightbox-form-full-width input{
+	line-height:20px;
+	text-indent:5px;
+	}
+
+.lightbox-form-full-width input.tournament-name{
+	display:block;
+	width:338px;
+	height:22px;
+	background:#fff;
+	margin:0 0 10px 0px;
+	font-size:12px;
+	}
+
+.lightbox-form-full-width label.tourn-require-pass{
+	display:block;
+	width:338px;
+	height:22px;
+	color:#fff;
+	margin:0 0 10px 10px;
+	}
+.padTop{
+	padding-top: 10px;
+}
+.lightbox-form-full-width label.tourn-require-pass span.req-password-text{
+	display:block;
+	float:left;
+	color:#fff;
+	margin:3px 5px;
+	height:22px;
+	}
+
+.lightbox-form-full-width label.tourn-require-pass input.checkbox-require-pass{
+	display:block;
+	float:left;
+	padding:5px;
+	margin:auto 5px;
+	width:20px;
+	height:22px;
+	}
+
+.lightbox-form-full-width input.private-tourn-pass{
+	display:inline;
+	margin:0 0 10px 10px;
+	background:#fff;
+	width:236px;
+	height:22px;
+	font-size:12px;
+	}
+
+.lightbox-form-full-width label span.req-password-title{
+	display:block;
+	float:left;
+	padding:4px 0 0 0;
+	height:22px;
+	}
+
+input.create-private-tourn-submit{
+	width:264px;
+	height:39px;
+	margin:10px auto 0 auto;
+	text-indent:-5000px;
+	overflow:hidden;
+	color:transparent;
+	display:block;
+	line-height:100px;
+	border:0 none;
+	cursor:pointer;
+	background:url(../images/btn_create-tourn.png) no-repeat top left transparent;
+	}
+
+.lightbox-bottom-links{
+	color:#fff;
+	width:95%;
+	text-align:center;
+	margin:10px auto;
+	}
+
+.lightbox-bottom-links a{
+	color:#fff;
+	text-decoration:none;
+	}
+
+.lightbox-bottom-links a:hover{
+	text-decoration:underline;
+	}
+
+
+/*################### CONTACT US FORM STYLES #####################*/
+
+div#contactForm {
+    margin: 0 0 2px;
+}
+div.col1 .moduletable .formcontent {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #AAAAAA;
+    color: #222222;
+    margin: 5px;
+    padding: 5px;
+}
+div#contactForm fieldset#usrDetails {
+    background: none repeat scroll 0 0 #FFFFFF;
+    margin: 2px 0 0;
+}
+div#contactForm fieldset {
+    background: none repeat scroll 0 0 #550000;
+    border: 1px solid #CCCCCC;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 0;
+    padding: 20px 0 0 30px;
+}
+div#contactForm fieldset div {
+    clear: left;
+    font-size: 11px;
+    margin: 0;
+    padding: 0 5px;
+    vertical-align: middle;
+}
+div#contactForm div.contimg {
+    background: url("../images/contact_us_pic.jpg") no-repeat scroll right bottom transparent;
+    clear: none;
+    float: right;
+    height: 500px;
+    margin: 0 0 0 10px;
+    width: 310px;
+    color: #555555;
+}
+div.resetForm label, div#contactForm label {
+    color: #555555;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 30px;
+    margin: 0 10px 0 0;
+    text-align: left;
+    width: 150px;
+}
+div.resetForm input, div#contactForm input {
+    background: none repeat scroll 0 0 #F3FFE8;
+    border: 1px solid #BBBBBB;
+    color: #006DA7;
+    font-size: 14px;
+    font-weight: bold;
+    height: 17px;
+    margin: 4px 0;
+    padding: 4px 10px;
+    width: 365px;
+}
+div.resetForm input:hover, div#contactForm input:hover {
+    background: none repeat scroll 0 0 #FFFFFF;
+}
+div#contactForm textarea {
+    background: none repeat scroll 0 0 #F1F6FF;
+    border: 1px solid #BBBBBB;
+    color: #006DA7;
+    font-size: 12px;
+    font-weight: normal;
+    margin: 4px 0 14px;
+    padding: 4px 10px;
+    width: 525px;
+}
+div.resetForm input:focus, div#contactForm input:focus {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 4px solid #0097E9;
+    margin: -1px;
+    padding: 2px 8px;
+}
+div#contactForm textarea:focus {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 4px solid #0097E9;
+    margin: 3px 0 13px;
+    padding: 2px 8px;
+}
+div.contact_email_checkbox {
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    vertical-align: middle;
+    width: 547px;
+}
+div#contactForm label#copy_email_label {
+    color: #555555;
+    display: inline;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 30px;
+    margin: 2px 10px;
+    text-align: left;
+    width: 380px;
+}
+div#contactForm input#contact_email_copy {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    display: inline;
+    float: right;
+    margin: 8px 0 0;
+    width: 50px;
+}
+div#contactForm button {
+    float: right;
+    margin: 10px 10px 15px 0;
+}
+div#contactForm label#contact_textmsg {
+    margin: 10px 0 0;
+}
+div.resetForm {
+    background: none repeat scroll 0 0 #050505;
+    border: 1px solid #172308;
+    margin: 5px 0 7px;
+    padding: 5px;
+}
+div.resetForm div.resetFormInr {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #676767;
+    color: #333333;
+    margin: 2px auto;
+    padding: 5px;
+    width: 600px;
+}
+div.resetForm div.hdrBar {
+    background: url("/components/com_ucbetman/images/bg_lgry_rnd.jpg") repeat-x scroll left center #F1F1F1;
+    border: 1px solid #B9B9B9;
+    color: #333333;
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px;
+    margin: 5px;
+    padding: 0 7px;
+}
+div.resetForm div.hdrBar div#hdrBar_account {
+    background: url("/components/com_ucbetman/images/icon_account.png") no-repeat scroll center center transparent;
+    float: left;
+    height: 22px;
+    margin: 4px 8px 4px 5px;
+    width: 22px;
+}
+div.resetForm div.desc {
+    font-size: 13px;
+    padding: 5px 10px;
+}
+div.resetForm div.frm {
+    margin: 5px 0 0;
+    padding: 5px 0 5px 20px;
+}
+div.resetForm label {
+    width: 120px;
+}
+div.resetForm input {
+    float: left;
+    margin: 0;
+    width: 290px;
+}
+div.resetForm .sbut {
+    margin: 1px 25px 20px 10px;
+}
+
+
+/*################### GLOBAL FOOTER STYLES #####################*/
+
+
+.container-shadow{
+     width:980px;
+     margin:0 auto;
+     height:34px;
+     background:url(../images/container-shadow.png) repeat-x top center transparent;
+     }
+
+
+.global-footer {
+   clear: both;
+   color: #FFFFFF;
+   font-size: 1.1em;
+   line-height: 22px;
+   margin: 0 auto;
+   padding-bottom: 40px;
+   position: relative;
+   text-align: center;
+   width: 980px;
+}
+
+.global-footer a{
+     color:#fff;
+     text-decoration:none;
+     }
+
+.footer-info{
+     width:980px;
+     display:block;
+     margin:0 auto;
+     padding:10px 0;
+     font-size:11px;
+     color:#aaa;
+     text-align:center;
+     line-height:1;
+     }
+
+.global-footer-links{
+     width:980px;
+     display:block;
+     margin:0 auto;
+     padding:0 0 20px 0;
+     }
+
+
+/*################### GLOBAL FOOTER STYLES #####################*/
+
+.container-shadow{
+	width:980px;
+	margin:0 auto;
+	height:34px;
+	background:url(../images/container-shadow.png) repeat-x top center transparent;
+	}
+
+
+.global-footer {
+    clear: both;
+    color: #FFFFFF;
+    font-size: 1.1em;
+    line-height: 22px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    position: relative;
+    text-align: center;
+    width: 980px;
+}
+
+.footer-info {
+    color: #AAAAAA;
+    display: block;
+    font-size: 11px;
+    line-height: 1;
+    margin: 0 auto;
+    padding: 10px 0;
+    text-align: center;
+    width: 980px;
+}
+
+.global-footer-links{
+	width:980px;
+	display:block;
+	margin:0 auto;
+	padding:0 0 20px 0;
+	}
+
+.global-footer-links .footer-icons{
+	display:block;
+	float:right;
+	}
+
+.footer-nav{
+	display:block;
+	width:100%;
+	text-align:center;
+	clear:both;
+
+	}
+
+.footer-nav ul{
+	margin:10px 0;
+	}
+
+.footer-nav ul li{
+	display:inline;
+	color:#fff;
+	padding:0 5px;
+	border-right:solid 1px #eee;
+	}
+
+.footer-nav ul li:last-child{
+	border:0 none;
+	}
+
+.footer-nav ul li a{
+	color:#fff;
+	font-size:14px;
+	text-decoration:none;
+	}
+
+.footer-info a {
+	color: #fff;
+	text-decoration:none;
+}
+
+div#footer-seo-link {
+	text-align: center;
+	padding-bottom: 10px;
+}
+.global-footer-links .footer-icons{
+     display:block;
+     float:right;
+     }
+
+.footer-nav{
+     display:block;
+     width:100%;
+     text-align:center;
+     clear:both;
+
+     }
+
+.footer-nav ul{
+     margin:10px 0;
+     }
+
+.footer-nav ul li{
+     display:inline;
+     color:#fff;
+     padding:0 5px;
+     border-right:solid 1px #eee;
+     }
+
+.footer-nav ul li:last-child{
+     border:0 none;
+     }
+
+.footer-nav ul li a{
+     color:#fff;
+     font-size:14px;
+     text-decoration:none;
+     }
+
+
+.partner-logos {
+	display: block;
+	float: left;
+	margin: 0 0 20px 140px;
+}
+
+.partner-logos span.partner-links-title{
+     display:block;
+     font-weight:bold;
+     font-size:11px;
+     }
+
+
+div#footer-seo-link {
+   padding-bottom: 10px;
+   text-align: center;
+}
+
+/*################### SOCIAL NETWORKING STYLES #####################*/
+
+div#social-networking {
+    float: left;
+    vertical-align: top;
+    width: 230px;
+}
+div#social-networking table tr td {
+    vertical-align: middle;
+}
+div#social-networking table, div#social-networking table tr td.fbshare div {
+    float: left;
+}
+div#social-networking table tr td {
+    padding-right: 6px;
+}
+.FBConnectButton_Small {
+    background-position: -5px -232px !important;
+    border-left: 1px solid #1A356E !important;
+    line-height: 11px !important;
+}
+.FBConnectButton_Text {
+    margin-left: 12px !important;
+    padding: 2px 3px 3px !important;
+}
+#custom-tweet-button a {
+    background: url("../images/tweetbtn.gif") no-repeat scroll left top transparent;
+    display: block;
+    height: 20px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    text-indent: -2000px;
+    width: 55px;
+}
+#custom-tweet-button a:hover {
+    background-position: left bottom;
+}
+
+#custom-tweet-button a {
+    background: url("../images/tweetbtn.gif") no-repeat scroll left top transparent;
+    display: block;
+    height: 20px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    text-indent: -2000px;
+    width: 55px;
+}
+
+#custom-tweet-button a:hover {
+	background-position:bottom left;
+	}
+
+/*########## HOW TO PLAY STYLES ##########*/
+
+.article{
+  display:block;
+  /*width:94%;*/
+  font-size:16px;
+  color:#636363;
+  margin:2px auto;
+  border:solid 1px #bcbcbc;
+  }
+
+.article a{
+  color:#0097e9;
+  text-decoration:none;
+  }
+
+.article img.link-arrow{
+  display:block;
+  float:left;
+  padding:5px 5px 0 0;
+  margin:0 0 0 0;
+  }
+
+.article p{
+  margin:10px 0 20px 20px;
+  }
+
+.article span.article-top-img img{
+  display:block;
+  margin:0 auto;
+  }
+
+.article span.title-img img{
+  display:block;
+  margin:10px 0;
+  }
+
+.article span.article-img{
+  display:block;
+  margin:0 0 20px 20px !important;
+}
+
+.article span.title-img{
+	display:block;
+	margin:10px 0;
+}
+
+.article span.subhead{
+	font-size:16px;
+	font-weight:bold;
+	display:block;
+	margin:20px;
+}
+
+
+.ticket-tip {
+	color: #ffffff;
+	width: 150px;
+	z-index: 13000;
+	border:1px solid #64769E;
+	text-align: justify;
+}
+
+.ticket-title {
+	font-weight: bold;
+	font-size: 11px;
+	margin: 0;
+	color: #3E4F14;
+	padding: 8px 8px 4px;
+	background: #E8783C;
+	border-bottom: 1px solid #B5CF74;
+}
+
+.ticket-text {
+	font-size: 11px;
+	padding: 4px 8px 8px;
+	background: #E8783C;
+	border: 2px solid #ffffff;
+}
+
+ /*Pagination Styles*/
+
+ul.pagination {
+  margin: 15px auto;
+  padding: 8px 0;
+  background: #e1e1e1;
+  text-align:center;
+  border: 1px solid #ccc;
+}
+ul.pagination li {
+  margin: 0 2px;
+  padding: 0;
+  display: inline;
+  color: #aaa;
+}
+ul.pagination li span{
+  padding: 2px 5px;
+}
+ul.pagination a {
+  background: #fff;
+  padding: 2px 10px;
+  border: 1px solid #d9d9d9;
+}
+ul.pagination a:hover, ul.pagination a:active, ul.pagination a:focus {
+  border: 1px solid #ECECEC;
+  background: #006da7;
+  color: #fff;
+}
+.prevnext,
+.prevnext a{
+  color: #777;
+}
+/*
+	CSS for v2.1
+*/
+.register-private-tourn{
+	width:144px;
+	height:39px;
+	margin:10px auto 0 auto;
+	text-indent:-5000px;
+	overflow:hidden;
+	color:transparent;
+	display:block;
+	line-height:100px;
+	border:0 none;
+	cursor:pointer;
+	background:url(../images/btn_register.png) no-repeat top left transparent;
+}
+.lightbox-message-full {
+    margin: 15px auto;
+    text-align: left;
+    width: 95%;
+}
+.private-tournament-box-password{
+	background:url(../images/join-bg.jpg) repeat-x top left #1a75aa;
+	border:solid 2px #fff;
+	padding: 22px;
+}
+/*################### PRIVATE TOURNAMENT INFO PAGE STYLES #####################*/
+
+#fixed h3.head-green {
+    background: url("../images/buttGrn40.jpg") repeat-x scroll left center #568A01;
+	padding:5px 10px;
+}
+.head-green-wrap{
+	background: url("../images/buttGrn40.jpg") repeat-x scroll left top #6EA428;
+	padding:5px 10px;
+	width:950px;
+	position:relative;
+	margin:0 0 5px 0;
+}
+.head-green-title{
+	font-size:16px;
+	font-weight:bold;
+	color:#fff;
+	float:left;
+	padding:5px;
+	display:block;
+}
+.head-green-small{
+	font-size:12px;
+	font-weight:bold;
+	color:#fff;
+
+	padding:0 0 5px 0;
+	display:block;
+}
+.head-green-small a{
+	font-size:10px;
+	font-weight:normal;
+	color:#fff;
+	text-decoration:none;
+}
+span.promote-tourn-links{
+	float:right;
+	display:block;
+	margin:5px 15px 0 0;
+}
+span.promote-tourn-links a {
+	margin:0 10px 0 0;
+}
+span.promote-tourn-links a:hover {
+	opacity:0.85;
+}
+a{
+	cursor:pointer;
+}
+
+/*################### PROMOTE YOUR PRIVATE TOURNAMENT LIGHTBOX STYLES #####################*/
+
+.promote-tourn-wrap{
+	display:block;
+	margin:0px auto;
+	padding: 5px;
+	overflow:hidden;
+}
+.promote-tourn-input-info{
+	display:block;
+	float:left;
+	width:160px;
+}
+.promote-tourn-wrap label.label-right select{
+	width:185px;
+}
+.promote-tourn-wrap textarea{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+.promote-tourn-wrap textarea.promote-tourn-textarea-full{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	width:340px;
+}
+.private-tourn-email-output {
+	display: block;
+	height: 80px;
+	width:340px;
+	padding: 2px;
+	overflow: auto;
+	background: #ddd;
+	color: #666;
+	margin-left: 5px;
+}
+input.promote-private-tourn-submit{
+	width:144px;
+	height:39px;
+	margin:8px auto 0 auto;
+	text-indent:-5000px;
+	overflow:hidden;
+	color:transparent;
+	display:block;
+	line-height:80px;
+	border:0 none;
+	cursor:pointer;
+	background:url(../images/btn_send-email.png) no-repeat top left transparent;
+}
+.error-lightbox {
+    background: #f7c6c7;
+    color: #923939;
+ 	padding:2px;
+ 	border:solid 1px #e39697;
+}
+
+/*################### H3 Tourn info, Next to Jump, Listen Now Buttons #####################*/
+
+
+
+h3 .info-button {
+	
+	display:block;
+	width:136px;
+	text-align:center;
+}
+
+h3 .pos1{
+	position:absolute;
+	top:6px;
+	right:10px;
+	}
+
+h3 .pos2{
+	position:absolute;
+	top:6px;
+	right:152px;
+	}
+
+h3 .pos3{
+	position:absolute;
+	top:6px;
+	right:295px;
+	}
+
+.info-button a{
+    background: url(../images/sprite_tourninfo.png) repeat-x scroll 0 -122px #676767;
+    border: 1px solid #424242;
+    color: #FFFFFF;
+    display:block;
+    font-size: 10px;
+    height: 14px;
+    line-height: 14px;
+    padding: 1px auto;
+    text-decoration: none;
+    text-transform: capitalize;
+    margin: 0px 3px 0 3px;
+    font-weight:normal;
+    position: relative;
+}
+
+.info-button a:hover, .all-races-button a:hover {
+    background-position: 0 -146px;
+}
+
+.tourn-info-listen-now {
+    /*position: relative;*/ 
+	position:absolute;
+	right:140px;
+	top:4px;
+}
+
+.tourn-info-listen-now a {
+    padding-right: 15px;    
+}
+
+.tourn-info-listen-now a img {
+    position: absolute;
+    top: 2px;
+    right: 15px;
+}
+
+div#next_to_jump {
+	display: none;
+}
+
+.jump-flyout{
+	position:absolute;
+	top:16px;
+	right:0;
+	background:#666666;
+	font-size:11px;
+	border:solid 1px #414141;
+	font-weight:normal;
+	z-index:820;
+	}
+
+.jump-flyout table{
+	width:200px;
+	margin:2px;
+	}
+
+.jump-flyout table tr td{
+	color:#414141;
+	text-align:center;
+	padding:0;
+	}
+
+.jump-flyout table tr td.odd{background:#e6e6e6;}
+
+.jump-flyout table tr td.even{background:#f6f6f6;}
+
+.jump-flyout table tr td.left{text-align:left;}
+
+.jump-flyout a{
+	font-size:11px;
+	color:#0084E2;
+	text-decoration:underline;
+	float:none;
+	background:none;
+	border:0 none;
+	padding:0;
+	margin:0;
+	}
+	
+
+/***####################### TOURNAMENT & BETTING TOGGLE SLIDERS #########################****/
+
+div.toggWrap {
+    border: 2px solid #000000;
+    margin: 2px;
+}
+
+div.accordHead {
+    background: url(../images/sprite_tourninfo.png) repeat-x scroll 0 -122px #676767;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    line-height: 18px;
+    text-transform: uppercase;
+	overflow:hidden;
+}
+
+div.accordHead:hover {
+    background: url(../images/sprite_tourninfo.png) repeat-x scroll 0 -146px #676767;
+    cursor: pointer;
+}
+
+div.accordHeadL div.accord-title-sports{
+	width:360px;
+	overflow:hidden;
+	}
+div.accordHeadL div.accord-title-racing{
+	width:310px;
+	overflow:hidden;
+	}
+
+div.accordHeadL div, div.accordHeadL {
+    float: left;
+}
+
+.accordHeadL .sports-img{
+	padding-top:2px;
+	padding-right: 5px;
+	}
+
+div.accordHeadL div, div.accordHeadR div {
+    display: inline;
+}
+
+div.accordHeadR div, div.accordHeadR {
+    color: #CCCCCC;
+    float: right;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: none;
+}
+
+div.accordHeadR div.Aarrow {
+    background: url(../images/sprite_tourninfo.png) no-repeat scroll 0 -74px transparent;
+    height: 20px;
+    margin: 0 5px 0 10px;
+    width: 20px;
+}
+
+div.accordHeadR div.track, div.accordHeadR div.weather {
+    width: 100px;
+	padding:0 0 0 5px;
+}
+
+div.accordHeadR div.time {
+    color: #EFC069;
+    width: 70px;
+}
+
+div.accordHeadR div.timeP {
+  width: 70px;
+  color: #ff5353;
+}
+
+table.tournDetailsTbl {
+    border-collapse: separate;
+    border-spacing: 1px;
+}
+
+table.tournDetailsTbl td {
+    color: #333333;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 0 2px 1px;
+    text-align: center;
+}
+
+.sectiontableheader, .sectiontableheader a {
+    color: #333333;
+    text-transform: uppercase;
+}
+
+table.tournDetailsTbl tr.sectiontableheader td {
+    background: none repeat scroll 0 0 #8E8E8E;
+    color: #FFFFFF;
+    font-weight: bold;
+    line-height: 12px;
+    padding: 0 2px 1px;
+}
+
+
+table.sports-tourn-details{
+	border-collapse: separate;
+    border-spacing: 1px;
+	}
+
+table.sports-tourn-details tr{
+	background-color:#989898;
+	border-bottom:solid 1px #fff;
+	}
+
+
+table.sports-tourn-details tr.sectiontableentry1 td,
+td.sectiontableentry1 {
+  background:#d6d6d6;
+ /* border-bottom:solid 1px #fff;*/
+}
+
+tr.tournlink td {
+  cursor:pointer;
+}
+
+table.sports-tourn-details tr.tournlink:hover td {
+  background:#E2EAF4 !important;
+}
+
+
+table.sports-tourn-details tr th{
+	background: none repeat scroll 0 0 #8E8E8E;
+    color: #FFFFFF;
+    font-weight: bold;
+    line-height: 12px;
+    padding: 0 2px 1px;
+	text-align:center;
+	}
+
+table.sports-tourn-details tr td{
+	color: #333333;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 0 2px 1px;
+    text-align: center;
+	}
+
+table.sports-tourn-details tr:hover, table.sports-tourn-details tr td:hover{
+	background:#E2EAF4 !important;
+	cursor:pointer;
+	}
+
+td span.sportstourn-details-title{
+	background:#eaeaea;
+	color:#333333;
+	border:solid 1px #767676;
+	padding:3px 10px;
+	}
+
+td span.sportstourn-details-info{
+	background:#cccccc;
+	color:#333;
+	border-top:solid 1px #767676;
+	border-bottom:solid 1px #767676;
+	border-right:solid 1px #767676;
+	padding:3px 10px;
+	}
+
+tr td.buy-in, tr td.buy-in:hover{
+	background:#efefef !important;
+	width:104px;
+	}
+
+td.sportstourn-info-but{
+	background:#d3d3d3 !important;
+	color:#46597a;
+	border:solid 1px #46597a;
+	padding:2px 7px;
+	font-weight:bold;
+	font-size:10px;
+	text-decoration:none;
+	}
+
+td.sportstourn-info-but a{
+	color:#46597A;
+	font-weight:bold;
+	text-decoration:none;
+	}
+
+td.sportstourn-reg-but{
+	background:#6d89b0 !important;
+	color:#fff;
+	border:solid 1px #46597a;
+	padding:2px 11px;
+	font-weight:bold;
+	font-size:10px;
+	text-decoration:none;
+	}
+
+td.sportstourn-reg-but a{
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}
+
+td.sportstourn-reg-but:hover a, tr:hover td.sportstourn-reg-but a{
+	color:#46597A;
+	}
+
+td.sportstourn-bet-but{
+	background:#92a5c6 !important;
+	color:#fff;
+	border:solid 1px #46597a;
+	padding:2px 11px;
+	font-weight:bold;
+	font-size:10px;
+	text-decoration:none;
+	}
+
+td.sportstourn-bet-but a{
+	color:#fff;
+	font-weight:bold;
+	text-decoration:none;
+	}
+
+td.sportstourn-bet-but:hover a, tr:hover td.sportstourn-bet-but a{
+	color:#46597A;
+	}
+.accListItm {
+	display:none
+}
+
+
+
+/***####################### RACING DETAILS STYLES #########################****/
+
+div#bettaWrap div.raceDetails {
+background: #F5D6CC;
+height: 56px;
+border: 2px solid #C30;
+float: left;
+margin: 0;
+width: 673px;
+}
+
+/***** Bet Amount Input Boxes *****/
+
+div#bettaWrap div#betBoxG, div#bettaWrap div#betBoxB {
+float: right;
+text-align: center;
+width: 285px;
+height: 56px;
+border: 2px solid #111;
+background: #020;
+overflow: hidden;
+}
+
+div#bettaWrap div.betBoxInrB {
+margin: 3px;
+padding-top: 3px;
+background: #0991cd;
+height: 47px;
+font-weight: bold;
+overflow: hidden;
+color: white;
+}
+
+div#bettaWrap div.betBoxInrG {
+margin: 3px;
+padding-top: 3px;
+background: #46A515;
+height: 47px;
+font-weight: bold;
+overflow: hidden;
+color: white;
+}
+
+div#bettaWrap div.betValueB input {
+float: left;
+width: 135px;
+height: 22px;
+margin: 3px 0 0 7px;
+background: white;
+border: solid 1px #172308;
+color: #324B12;
+font-size: 18px;
+font-weight: bold;
+text-align: center;
+}
+
+div#bettaWrap div.betValueG input {
+float: left;
+width: 135px;
+height: 22px;
+margin: 3px 0 0 7px;
+background: white;
+border: solid 1px #172308;
+color: #324B12;
+font-size: 18px;
+font-weight: bold;
+text-align: center;
+}
+
+div#bettaWrap div.betButtB a, div#bettaWrap div.betButtG a{
+float: right;
+width: 103px;
+height: 22px;
+margin: 3px 7px 0 0;
+border: solid 1px #333;
+color: white;
+font-size: 12px;
+font-weight: bold;
+line-height: 21px;
+text-align: center;
+text-decoration: none;
+text-transform: uppercase;
+}
+
+div#bettaWrap div.betButtB a {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -131px;
+}
+div#bettaWrap div.betButtB a:hover {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -153px;
+}
+div#bettaWrap div.betButtG a {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -175px;
+}
+div#bettaWrap div.betButtG a:hover {
+  background:url(../images/sprite_pc.jpg) repeat-x 0 -197px;
+}
+
+
+
+/**############ Data Unavailable Message ############**/
+
+.data-unavail{
+	padding:10px;
+	font-size:14px;
+	}
+	
+/* Sports Tournament Bet Details Bucks Available and Tourninfo button */
+
+/*2 dif widths for this bit*/
+
+.tourn-bet-wrap-full{
+	width:970px;
+	display:block;
+	margin:5px 0 0 0;
+	overflow:hidden;
+	}
+
+.tourn-bet-wrap-ad{
+	width:687px;
+	display:block;
+	}
+
+div#bettaWrap div#bucksbar {
+  margin:5px 0 0 0;
+}
+
+/********/
+
+div#bettaWrap div.tournDetails {
+	background:#414141;
+	height: 56px;
+	border: 2px solid #172308;
+	width: 673px;
+	float: left;
+	}
+
+div#bettaWrap div.wideHdr {
+width: 966px;
+}
+
+.tourn-bet-wrap-full .sports_tournDetails {
+   background: #414141;
+    border:2px solid #172308;
+    height:56px;
+    width:100%;
+	margin:0 auto;
+	display:block;
+}
+
+table#mybucks {
+    color: #FFFFFF;
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#mybuckstext {
+    padding: 15px 0 0 20px;
+}
+
+#mybucksnumber {
+    color: #96C840;
+    margin-left: 10px;
+}
+
+#myturnover {
+    color:#ceeca9;
+    font-size: 10px;
+    padding-top: 0;
+    text-align: right;
+}
+
+#tournInfoButt {
+    float: right;
+}
+
+.sports_tournDetails .sports_tournInfoButt{
+	/*border:solid 1px #222;
+	background:#73b500;*/
+	padding:2px;
+	}
+
+.sports_tournDetails .sports_tournInfoButt a {
+    background: url(../../../templates/topbetta/images/sprite_pc.jpg) repeat-x scroll 0 -219px #679825;
+    border: 1px solid #436518;
+    color: #FFFFFF;
+    float: right;
+    font-size: 16px;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    margin: 12px 20px 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 205px;
+}
+
+.tourn-detials-note p{
+	color:#eee;
+	padding:10px;
+	width:250px;
+	float:right;
+	font-size:12px;
+}
+
+.sports_tournDetails .sports_tournInfoButt a:hover {
+    background: url(../../../templates/topbetta/images/sprite_pc.jpg) repeat-x scroll 0 -249px #94B71B;
+}
+
+ /*******************Bet / Tourn Tickets - Processing styles************************/
+
+.bettixPanel #processingBets{
+ background: #333;
+ margin: 10px;
+ padding: 10px 20px 20px 20px;
+ text-align: center;
+ color: white;
+ font-size:18px;
+ }
+
+.bettixPanel #processingBets img{
+ padding: 0 10px;
+ position: relative;
+ top: 10px;
+ }
+ 
+/*******************Meeting Bets page styles************************/
+.selectionsPanel .panel-header a {  
+	text-decoration:none; 
+	z-index: 1;
+}
+
+.selectionsPanel .panel-header a span.panel-header-text {
+    display: block;
+    float: left;
+}  
+
+.selectionsPanel .panel-header a span.arrow-up{
+    background: url(../../../templates/topbetta/images/arrow-white.png) no-repeat scroll left top transparent;
+    border: 0 none;
+    display:block;
+	float:left;
+    height: 9px;
+    width: 9px;
+	margin:5px 0 0 10px;
+}
+
+.selectionsPanel .panel-header a span.arrow-down{
+    background: url(../../../templates/topbetta/images/arrow-white.png) no-repeat scroll left bottom transparent;
+    border: 0 none;
+    display:block;
+	float:left;
+    height: 9px;
+    width: 9px;
+	margin:5px 0 0 10px;
+}
+
+a.print-ticket-button {
+    background-color: #53741b;
+    border: 1px solid #466314;
+    color: #FFFFFF;
+    float: right;
+    font-size: 11px;
+    height: 16px;
+    line-height: 17px;
+    padding: 1px 12px;
+    text-decoration: none;
+	text-align:center;
+    text-transform: capitalize;
+    width: 100px;
+    position: relative;
+    z-index: 8000;
+	font-weight: bold;
+}
+
+a.print-ticket-button:hover{
+	background-color: #719d27;
+}
+	
+a#print_racing_bets {
+	background-color: #155f84;
+}
+
+a#print_racing_bets:hover {
+	background-color: #186c96;
+}
+
+.resultsPanel {
+    margin: 5px auto 0;
+}
+.resultsPanel .panel-header {
+    background: none repeat scroll 0 0 #D2481B;
+    color: #FFFFFF;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    line-height: 20px;
+    margin: 5px 0 2px;
+    /*padding: 0 0 0 10px;*/
+    text-transform: uppercase;
+}
+.resultsPanel .panel-header a {
+    color: #FFFFFF;
+    display: block;
+    height: 20px;
+    position: relative;
+    text-decoration: none;
+    width: 100%;
+}
+.resultsPanel .panel-header a span.panel-header-text {
+    display: block;
+    float: left;
+}
+.resultsPanel .panel-header a span.arrow-up {
+    background: url("../images/arrow-white.png") no-repeat scroll left top transparent;
+    border: 0 none;
+    display: block;
+    float: left;
+    height: 9px;
+    margin: 5px 0 0 10px;
+    width: 9px;
+}
+.resultsPanel .panel-header a span.arrow-down {
+    background: url("../images/arrow-white.png") no-repeat scroll left bottom transparent;
+    border: 0 none;
+    display: block;
+    float: left;
+    height: 9px;
+    margin: 5px 0 0 10px;
+    width: 9px;
+}
+table.results-table-wrap {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 2px solid #C92E00;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+}
+table.results-table-wrap tr td {
+    border-right: 2px solid #C92E00;
+}
+table.results-table-wrap tr td:last-child, table.results-table-wrap tr td table tr td {
+    border-right: 0 none;
+}
+table.results-table {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #333333;
+    font-size: 11px;
+    table-layout: fixed;
+    width: 100%;
+}
+table.results-table {
+    border-spacing: 1px;
+    color: #333333;
+    width: 100%;
+}
+table.results-table tr th {
+    background: none repeat scroll 0 0 #DDDDDD;
+    font-weight: bold;
+    padding: 2px 5px;
+}
+table.results-table tr td {
+    background: none repeat scroll 0 0 #EEEEEE;
+    margin: 1px;
+    padding: 2px 5px;
+}
+table.results-table tr td.even {
+    background: none repeat scroll 0 0 #E6E6E6;
+}
+
+
+

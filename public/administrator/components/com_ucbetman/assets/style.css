@@ -1,0 +1,32 @@
+.hide {
+	display: none;
+}
+
+div.error {
+	color: #CC0000;
+}
+
+div.positive {
+	color: #00CC00;
+}
+
+div.negative {
+	color: #CC0000;
+}
+
+div#email_variables {
+	float: right;
+}
+
+div#variable_list {
+	padding-left: 15px;
+	border: 1px dashed #CCCCCC 
+}
+
+div#variable_close {
+	text-align: right;
+}
+
+table.adminlist tbody tr td.view_icon {
+	text-align: center;
+}

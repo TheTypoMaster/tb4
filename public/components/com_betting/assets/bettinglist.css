@@ -1,0 +1,782 @@
+/*################### FILTERED SPORTS TOURNAMENT STYLES #####################*/
+
+
+/*Tournament Filter form Styles*/
+
+.sports-tourns-filter-wrap{
+	margin:5px;
+	width:100%;
+	display:block;
+	}
+
+.sports-tourns-filter-wrap form select{
+	margin:0 5px 0 0;
+	width:32%;
+	}
+
+/*Tournament Filter table Styles*/
+
+.betting-wrap{
+	border:solid 1px #000;
+	min-height: 300px;
+	}
+
+
+	
+	
+/*################### TOURNAMENT PLAY PAGES STYLES #####################*/
+
+
+
+/*Sports round select*/
+
+.sports-round-select{
+	background:#f9eae7;
+	border:solid 2px #ce3c0b;
+	width:966px;
+	margin:3px auto 0 auto;
+	padding:;
+	
+	}
+
+.sports-round-title{
+	font-size:14px;
+	font-weight:bold;
+	color:#333;
+	margin:4px;
+	}
+
+.sports-round-title img{
+	display: block;
+    float: left;
+	}
+	
+.betting-closes{
+	float:right;
+	height:18px;
+	background:#fff;
+	display:block;
+	color:#cc3300;
+	font-size:12px;
+	text-decoration:none;
+	line-height:17px;
+	padding:1px 7px;
+	border:solid 1px #ce3c0b;
+	}
+
+table.sports-round-match-table{
+	font-size:12px;
+	color:#fff;
+	font-weight:bold;
+	text-align:center;
+	background:transparent;
+	margin:0 auto;
+	border-spacing:5px;
+	border-collapse:separate;
+	width:100%;
+	}
+	
+table.sports-round-match-table tr{
+	border-spacing:10px;
+	margin:10px;
+	border-collapse:separate;
+	}
+	
+table.sports-round-match-table tr td{
+	background:url(../images/buttGry40.jpg) repeat-x scroll 0 #676767;
+	height:50px;
+	border:solid 1px #333;
+	padding:2px;
+	margin:10px;
+	text-align:center;
+	border-collapse:separate;
+	width:187px;
+	vertical-align:center;
+	overflow:hidden;
+	}
+
+
+
+
+
+table.sports-round-match-table tr td:hover{
+	background:url(../images/buttGry40H.jpg) repeat-x scroll 0 #676767;
+	}
+
+table.sports-round-match-table tr td.selected{
+	background:url(../images/buttOrng40.jpg) repeat-x scroll 0 #fe850a;
+	border:solid 1px #cc6600;
+	}
+
+table.sports-round-match-table tr td a, table.sports-round-match-table tr td.selected a span.bet-amount{
+	color:#fff;
+	text-decoration:none;
+	display:block;
+	height:100%;
+	width:100%;
+	overflow:hidden;
+	}
+
+table.sports-round-match-table tr td.selected a{
+	color:#fff;
+	}
+
+table.sports-round-match-table tr td a span.round-match{
+	display:block;
+	}
+
+table.sports-round-match-table tr td a span.bet-amount{
+	display:block;
+	color:#fe850a;
+	font-size:14px;
+	}
+
+/*Results Status Panel*/
+
+.sports-resultsPanel{
+	margin:5px auto 0 auto;
+	}
+
+.sports-resultsPanel .panel-header {
+    background: none repeat scroll 0 0 #D2481B;
+    color: #FFFFFF;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    line-height: 20px;
+    margin: 5px 0 2px;
+    padding: 0 0 0 10px;
+    text-transform: uppercase;
+}
+
+.sports-resultsPanel .panel-header a{
+	color:#fff;
+	text-decoration:none;
+	position:relative;
+	display:block;
+	width:100%;
+	height:20px;
+	}
+	
+.sports-resultsPanel .panel-header a span.panel-header-text{
+	display:block;
+	float:left;
+	}	
+
+.sports-resultsPanel .panel-header a span.arrow-up{
+    background: url(../images/arrow-white.png) no-repeat scroll left top transparent;
+    border: 0 none;
+    display:block;
+	float:left;
+    height: 9px;
+    width: 9px;
+	margin:5px 0 0 10px;
+}
+
+.sports-resultsPanel .panel-header a span.arrow-down{
+    background: url(../images/arrow-white.png) no-repeat scroll left bottom transparent;
+    border: 0 none;
+    display:block;
+	float:left;
+    height: 9px;
+    width: 9px;
+	margin:5px 0 0 10px;
+}
+
+table.results-table-wrap /*results wrapping table*/{
+	width:100%;
+	margin:0 auto 0 auto;
+	padding:0;
+	background:#eee;
+	border:2px solid #c92e00;
+	}
+
+table.results-table-wrap tr td{
+	border-right:2px solid #c92e00;
+	}
+
+table.results-table-wrap tr td:last-child, table.results-table-wrap tr td table tr td{
+	border-right:0 none;
+	}
+
+table.results-table{
+	color:#333;
+	width:100%;
+	border-spacing:1px;
+	border-collapse:separate;
+	table-layout: fixed;
+	font-size:11px;
+	background:#fff;
+	}
+
+table.results-table{
+	color:#333;
+	width:100%;
+	border-spacing:1px;
+	
+	}
+
+table.results-table tr th{
+	background:#ddd;
+	padding:2px 5px;
+	font-weight:bold;
+	}
+
+table.results-table tr td{
+	background:#eee;
+	padding: 2px 5px;
+	margin:1px;
+	}
+
+table.results-table tr td.even{background:#e6e6e6;}
+	
+
+
+/*Bets Selections Panel*/
+
+.sports-betsPanel{
+	margin:5px auto 0 auto;
+	}
+
+.sports-betsPanel .panel-header {
+    background: none repeat scroll 0 0 #4e6d20;
+    color: #FFFFFF;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    line-height: 20px;
+    margin: 5px 0 2px;
+    padding: 0 0 0 10px;
+    text-transform: uppercase;
+}
+
+
+
+.sports-betsPanel .panel-header a.bet-selection-accordion{
+	color:#fff;
+	text-decoration:none;
+	position:relative;
+	display:block;
+	width:700px;
+	height:20px;
+	}
+	
+.sports-betsPanel .panel-header a.bet-selection-accordion span.panel-header-text{
+	display:block;
+	float:left;
+	}	
+
+.sports-betsPanel .panel-header a.bet-selection-accordion span.arrow-up{
+    background: url(../images/arrow-white.png) no-repeat scroll left top transparent;
+    border: 0 none;
+    display:block;
+	float:left;
+    height: 9px;
+    width: 9px;
+	margin:5px 0 0 10px;
+}
+
+.sports-betsPanel .panel-header a.bet-selection-accordion span.arrow-down{
+    background: url(../images/arrow-white.png) no-repeat scroll left bottom transparent;
+    border: 0 none;
+    display:block;
+	float:left;
+    height: 9px;
+    width: 9px;
+	margin:5px 0 0 10px;
+}
+
+a.print-ticket-button {
+    background: url(../images/sprite_pc.jpg) repeat-x scroll 0 -197px #53741b;
+    border: 1px solid #466314;
+    color: #FFFFFF;
+    float: right;
+    font-size: 11px;
+    height: 16px;
+    line-height: 17px;
+    padding: 1px 12px;
+    text-decoration: none;
+	text-align:center;
+    text-transform: capitalize;
+    width: 100px;
+	font-weight: bold;
+}
+
+a.print-ticket-button:hover{
+	background-position:0 -414px;
+	}
+
+table.bets-table-wrap /*bets wrapping table*/{
+	width:100%;
+	margin:0 auto 0 auto;
+	padding:0;
+	background:#eee;
+	border:2px solid #558500;
+	}
+
+table.bets-table-wrap tr td:last-child, table.bets-table-wrap tr td table tr td{
+	}
+
+table.bets-table{
+	color:#333;
+	width:100%;
+	border-spacing:1px;
+	border-collapse:separate;
+	table-layout:fixed;
+	font-size:11px;
+	background:#fff;
+	}
+
+table.bets-table{
+	color:#333;
+	width:100%;
+	border-spacing:1px;
+	border:2px solid #558500;
+	}
+
+table.bets-table tr th{
+	background:#ddd;
+	padding:2px 5px;
+	font-weight:bold;
+	}
+
+table.bets-table tr td{
+	background:#eee;
+	padding: 2px 5px;
+	margin:1px;
+	color:#436518;
+	}
+
+table.bets-table tr td.loss{color:#c92e00;}
+	
+	
+table.bets-table tr.bet-totals td{
+	background:#ddd;
+	padding: 2px 5px;
+	margin:1px;
+	font-weight:bold;
+	}
+	
+
+/*Bet Types select*/
+
+.bet-types{
+	width:970px;
+	margin:5px auto 0 auto;
+	}
+	
+table.bet-types-table{
+	font-size:14px;
+	color:#fff;
+	font-weight:bold;
+	text-align:center;
+	background:#eee;
+	margin:0 auto;
+	border:solid 1px #ddd;
+	border-spacing:3px;
+	border-collapse:separate;
+	width:100%;
+	table-layout: fixed;
+	}
+	
+table.bet-types-table tr{
+	border-spacing:3px;
+	margin:3px;
+	border-collapse:separate;
+	}
+	
+table.bet-types-table tr td{
+	background:url(../images/buttDrkGry40.jpg) repeat-x scroll 0 #676767;
+	height:36px;
+	border:solid 1px #333;
+	padding:2px;
+	margin:3px;
+	text-align:center;
+	border-spacing:5px;
+	border-collapse:separate;
+	overflow:hidden;
+	font-size:12px;
+	
+	}
+
+table.bet-types-table tr td:hover{
+	background:url(../images/buttGry40H.jpg) repeat-x scroll 0 #676767;
+	}
+
+table.bet-types-table tr td.selected{
+	background:url(../images/buttGrn40H.jpg) repeat-x scroll 0 #a7e000;
+	border:solid 1px #719900;
+	}
+
+table.bet-types-table tr td a, table.bet-types-table tr td.selected a span.bet-amount{
+	color:#fff;
+	text-decoration:none;
+	display:block;
+	height:100%;
+	width:100%;
+	overflow:hidden;
+	}
+
+table.bet-types-table tr td.selected a{
+	color:#fff;
+	}
+
+table.bet-types-table tr td a span.round-match{
+	display:block;
+	}
+
+table.bet-types-table tr td a span.bet-amount{
+	display:block;
+	color:#a7e000;
+	}
+
+
+/* Sports Tournament Bet Details Bucks Available and Tourninfo button */
+
+/*2 dif widths for this bit*/
+
+.tourn-bet-wrap-full{
+	width:970px;
+	display:block;
+	margin:5px 0 0 0;
+	overflow:hidden;
+	}
+
+.tourn-bet-wrap-ad{
+	width:687px;
+	display:block;
+	}
+
+/********/
+
+.tourn-bet-wrap-full .sports_tournDetails {
+    background:url(../images/sprite_pc.jpg) repeat-x scroll 0 -279px #4A6E1B;
+    border:2px solid #172308;
+    height:56px;
+    width:100%;
+	margin:0 auto;
+	display:block;
+}
+
+table#mybucks {
+    color: #FFFFFF;
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#mybuckstext {
+    padding: 15px 0 0 20px;
+}
+
+#mybucksnumber {
+    color: #96C840;
+    margin-left: 10px;
+}
+
+#myturnover {
+    color:#ceeca9;
+    font-size: 10px;
+    padding-top: 0;
+    text-align: right;
+}
+
+#tournInfoButt {
+    float: right;
+}
+
+.sports_tournDetails .sports_tournInfoButt{
+	border:solid 1px #222;
+	background:#73b500;
+	padding:2px;
+	}
+
+.sports_tournDetails .sports_tournInfoButt a {
+    background: url(../images/sprite_pc.jpg) repeat-x scroll 0 -219px #679825;
+    border: 1px solid #436518;
+    color: #FFFFFF;
+    float: right;
+    font-size: 16px;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    margin: 12px 20px 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 205px;
+}
+
+.sports_tournDetails .sports_tournInfoButt a:hover {
+    background: url(../images/sprite_pc.jpg) repeat-x scroll 0 -249px #94B71B;
+}
+
+
+/*SPORTS BET OPTIONS MAKE BETS DIV AND TABLE*/
+
+.sports-bets-options{
+	margin:5px auto 0 auto;
+	clear:both;
+	background:#e4efcf;
+	border:solid 1px #000;
+	}
+
+.sports-bets-options .panel-header {
+    background:#436518;
+    color: #FFFFFF;
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    line-height: 20px;
+    margin: 0 0 2px;
+    padding: 0 0 0 10px;
+    text-transform: uppercase;
+}
+
+
+.sports-bets-options .panel-header span{
+	}
+
+a.refresh-odds-button {
+    background: url(../images/sprite_pc.jpg) repeat-x scroll 0 -197px #53741b;
+    border: 1px solid #466314;
+    color: #FFFFFF;
+    float: right;
+    font-size: 11px;
+    height: 16px;
+    line-height: 17px;
+    padding: 1px 12px;
+    text-decoration: none;
+	text-align:center;
+    text-transform: capitalize;
+    width: 100px;
+}
+
+a.refresh-odds-button:hover{
+	background-position:0 -414px;
+	}
+
+a.refresh-odds-button img{
+	float:left;
+	}
+
+table.make-bets-table{
+	color:#131f00;
+	width:100%;
+	border-spacing:2px;
+	border-collapse:separate;
+	table-layout:;
+	font-size:11px;
+	
+	}
+
+table.make-bets-table tr th{
+	background:#558500;
+	padding:2px 5px;
+	font-weight:bold;
+	color:#fff;
+	}
+
+table.make-bets-table tr td{
+	background:#b7cb99;
+	padding: 2px 5px;
+	margin:1px;
+	font-weight:bold;
+	}
+	
+/*TD TEXT ALIGN STYLES*/
+
+.text-left{text-align:left;}
+.text-right{text-align:right;}
+.text-center{text-align:center;}
+
+/*####################*/
+
+table.make-bets-table tr td.to-win{
+	font-weight:bold;
+	color:#456a00;
+	text-align:right;
+	}
+
+table.make-bets-table tr.even td{
+	background:#cbdbb1;}	
+	
+table.make-bets-table tr.bet-totals td{
+	background:#ddd;
+	padding: 2px 5px;
+	margin:1px;
+	font-weight:bold;
+	}
+
+table.make-bets-table tr td input.sports-bet-input{
+	background:#fff;
+	border:1px solid #568501;
+	text-align:right;
+	padding-right: 10px;
+	}
+	
+table.make-bets-table tr td input.disabled{
+	background:#dfe6d3 !important;
+	}
+	
+
+table.make-bets-table tr td.bet-amount-cell{
+	width:156px;
+	text-align:center;
+	}
+
+/*#########SPORTS TOURNS BOTTOM MESSAGE###########*/
+
+
+.sports-bet-message{
+	display:block;
+	width:970px;
+	margin:10px auto;
+	font-size:11px;
+	color:#333;
+	clear:both;
+	text-align:center;
+	}
+	
+/*#########EMPTY CELLS FIX###########*/	
+
+table tr td.empty, table tr td.empty:hover{
+	border:0 none;
+	overflow:hidden;
+	background:transparent;
+	}
+
+
+.todaysRacesRow {
+border: 1px solid #8C8C92;
+margin: 2px 0 0 0;
+display: none;
+}
+
+.todaysRacesRow table.todaysRacesTbl {
+background: #FEFEFE;
+font-size: 11px;
+font-weight: normal;
+color: #414141;
+vertical-align: middle;
+border-collapse:separate;
+border-spacing:2px;
+}
+
+.todaysRacesRow table.todaysRacesTbl tr td{
+
+	}
+
+table.todaysRacesTbl tr.todaysRacesHead td{
+background: #E2EAF4;
+font-size: 14px;
+font-weight: bold;
+color: #414141;
+vertical-align: middle;
+}
+
+table.todaysRacesTbl tr.todaysRacesHead td{
+padding:5px;
+text-align:center;
+
+}
+
+tr.todaysRacesMeetInfo{
+	
+	}
+
+tr.todaysRacesMeetInfo td{
+	background:#fafafa;
+	text-align:center;
+}
+
+table.todaysRacesTbl tr td.meetingName {
+width: 180px;
+font-weight:bold;
+font-size:12px;
+text-align:left;
+padding-left:5px;
+}
+
+tr.todaysRacesMeetInfo td a{
+padding:;
+text-decoration:none;
+}
+
+tr.todaysRacesMeetInfo td.racePast{
+background:#eee;
+border:solid 1px #aaa;
+}
+
+tr.todaysRacesMeetInfo td.racePast a{
+padding:5px;
+color:#666;
+display:block;
+background:#eee;
+}
+
+tr.todaysRacesMeetInfo td.racePresent{
+background:#0991cd;
+border:solid 1px #0b5d81;
+}
+
+tr.todaysRacesMeetInfo td.racePresent a{
+padding:5px;
+color:#fff;
+display:block;
+background:#0991cd;
+font-weight:bold;
+}
+
+tr.todaysRacesMeetInfo td.racePresent a:hover{
+	background:#1aa5e3;
+	}
+
+tr.todaysRacesMeetInfo td.raceFuture {
+background: #EEE;
+border: solid 1px #46597A;
+}
+
+tr.todaysRacesMeetInfo td.raceFuture a {
+padding: 5px;
+color: #46597A;
+display: block;
+background: #EEE;
+font-weight: normal;
+}
+
+tr.todaysRacesMeetInfo td.raceFuture:hover{
+background:#1aa5e3;
+border:solid 1px #0b5d81;
+}
+
+tr.todaysRacesMeetInfo td.raceFuture a:hover{
+padding:5px;
+color:#fff;
+display:block;
+background:#1aa5e3;
+}
+
+.bet_link_tips-tip {
+    width: 250px;
+    border: 1px solid #0b5d81;
+    background-color: #dff1f9;
+	color:#0b5d81;
+    text-align: left;
+    font-size: 12px;
+	padding:10px;
+}
+
+.bet_link_tips-title {
+ font-weight: bold;
+}
+
+.bet_link_tips-result {
+	margin-top: 5px;	
+}
+
+.bet_link_tips-result tr td.bet_link_tips-result-left {
+	width: 140px;
+}
