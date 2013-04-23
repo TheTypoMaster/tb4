@@ -44,6 +44,27 @@ Route::filter('auth.basic', function()
 	return Auth::basic();
 });
 
+Route::filter('apiauth', function()
+{
+ 
+    // Test against the presence of Basic Auth credentials
+    $creds = array(
+        'username' => Request::getUser(),
+        'password' => Request::getPassword(),
+    );
+ 
+    if ( ! Auth::attempt($creds) ) {
+ 
+        return Response::json(array(
+            'error' => true,
+            'message' => 'Unauthorized Request'),
+            401
+        );
+ 
+    }
+ 
+});
+
 /*
 |--------------------------------------------------------------------------
 | Guest Filter

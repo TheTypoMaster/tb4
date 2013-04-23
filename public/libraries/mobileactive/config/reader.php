@@ -309,8 +309,7 @@ class ConfigReader extends JObject
 				$path = 'C:';
 			}
 
-			//$path .= DS . 'mnt' . DS . 'web' . DS . 'server.xml';
-			$path = '/Users/mic/server.xml';
+			$path .= DS . 'mnt' . DS . 'web' . DS . 'server.xml';
 			$xml = simplexml_load_file($path);
 		}
 

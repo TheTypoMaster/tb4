@@ -15,3 +15,23 @@ Route::get('/', function()
 {
 	return View::make('hello');
 });
+
+// Route group for backend API.
+Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
+	// incoming race data and results
+	Route::resource('racing', 'RacingController');
+	// incoming sports data and results
+	Route::resource('sports', 'SportsController');
+	// incoming results for bet's placed
+	Route::resource('betresults', 'BetResultsController');
+});
+
+// Route group for consumer API
+Route::group(array('prefix' => '/api/v1', 'before' => 'apiauth'), function() {
+	// incoming bet placements from website
+	Route::resource('betting', 'BettingController');
+});
+
+
+
+	
