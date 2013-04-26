@@ -1,6 +1,6 @@
 <?php
 
-class RacingController extends BaseController {
+class SportsController extends BaseController {
 
 	/**
 	 * Display a listing of the resource.
@@ -30,6 +30,15 @@ class RacingController extends BaseController {
 	public function store()
 	{
 		//
+		$raceMeeting = new User;
+		$raceMeeting->username = "test";
+		$raceMeeting->save;
+		return Response::json(array(
+				'error' => false,
+				'message' => 'meeting created'),
+				201
+		);
+		
 	}
 
 	/**
