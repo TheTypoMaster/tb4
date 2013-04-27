@@ -1,5 +1,5 @@
 <?php
-class RaceEvents extends Eloquent {
+class RaceEvent extends Eloquent {
 
 	protected $table = 'tbdb_event';
 	
