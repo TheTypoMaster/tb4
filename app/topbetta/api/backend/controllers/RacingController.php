@@ -224,158 +224,173 @@ class RacingController extends BaseController {
 					case "RunnerList":
 						echo"CASE: $key\n";
 						foreach ($racingArray as $dataArray){
-
+							$raceExists = $runnerExists = 0;
 							// Check all required data is available in the JSON for the runner
 							if(isset($dataArray['MeetingId'])  &&  isset($dataArray['RaceNo']) && isset($dataArray['RunnerNo']) ){
 								$meetingId = $dataArray['MeetingId'];
 								$raceNo = $dataArray['RaceNo'];
 								$runnerNo = $dataArray['RunnerNo'];
+									
+								// TODO: check that race exists before moving on - Eloquent?
+								$raceExists = DB::table('tbdb_event')
+								->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+								->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+								->where('tbdb_event_group.external_event_group_id', $meetingId )
+								->where('tbdb_event.number', $raceNo)->pluck('tbdb_event.id');
+									
+								//TODO: add error output to a log
+								if($raceExists){
+									
+									// TODO: check if runner is in the DB
+									$runnerExists = DB::table('tbdb_selection')
+									->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+									->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+									->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+									->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+									->where('tbdb_event_group.external_event_group_id',$meetingId )
+									->where('tbdb_event.number', $raceNo)
+									->where('tbdb_selection.number', $runnerNo)->pluck('tbdb_selection.id');
+										
+									// if runner exists update that record
+									if($runnerExists){
+										echo "Runner:  Already in DB:". $runnerExists ." $meetingId.\n";
+										$raceRunner = RaceSelection::find($runnerExists);
+									}else{
+										echo "Runner:  Added to DB:". $runnerExists ." $meetingId.\n";
+										$raceRunner = new RaceSelection;
+											
+										// check if market for event exists
+										$marketID = DB::table('tbdb_market')->where('event_id', $raceExists)
+																			->where('market_type_id', '110')->pluck('id');
+											
+										if(!$marketID){
+											// add market record
+											$runnerMarket = new RaceMarket;
+											$runnerMarket->event_id = $raceExists;
+											$runnerMarket->market_type_id = 110; //TODO: this needs to come from db
+											$runnerMarket->save();
+											$marketID = $runnerMarket->id;
+											
+											echo "Runner: Add market record for event: $raceExists\n";
+										}
+										$raceRunner->market_id = $marketID;
+									}
+											
+									//TODO: SILK DATA REQUIRED
+									// if(isset($dataArray['SilkNo'])){
+									//	$raceEvent->silk = $dataArray['SilkNo'];
+									//}
+										
+									if(isset($dataArray['BarrierNo'])){
+										$raceRunner->barrier = $dataArray['BarrierNo'];
+									}
+									if(isset($dataArray['Name'])){
+										$raceRunner->name = $dataArray['Name'];
+									}
+									if(isset($dataArray['RunnerNo'])){
+										$raceRunner->number = $dataArray['RunnerNo'];
+									}
+									if(isset($dataArray['JTD'])){
+										$raceRunner->associate = $dataArray['JTD'];
+									}
+									if(isset($dataArray['Scratched'])){
+										$raceRunner->selection_status_id = $dataArray['Scratched'];
+									}
+									if(isset($dataArray['Weight'])){
+										$raceRunner->weight = $dataArray['Weight'];
+									}
+										
+									// save or update the record
+								
+									$raceRunnerSave = $raceRunner->save();
+									$raceRunnerID = $raceRunner->id;
+													
+									echo"Runner: Record Added/Updated. MID:$meetingId , Race:$raceNo, Runner:$runnerNo \n\n";
+									
+								}else {
+									echo"Runner: No race found for this runner\n";
+								}
 							}else {
 								echo "Runner: Missing Runner data. Can't process";
-								break;
 							}
-							
-							// TODO: check that race exists before moving on - Eloquent?
-							$raceExists = DB::table('tbdb_event')
-							->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-							->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-							->where('tbdb_event_group.external_event_group_id',$meetingId )
-							->where('tbdb_event.number', $raceNo)->pluck('tbdb_event.id');
-							
-							//TODO: add error output to a log
-							if(!$raceExists){
-								echo"Runner: No race found for this runner\n";
-								break;
-							}
-							
-							// TODO: check if runner is in the DB
-							$runnerExists = DB::table('tbdb_selection')
-							->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
-							->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
-							->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-							->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-							->where('tbdb_event_group.external_event_group_id',$meetingId )
-							->where('tbdb_event.number', $raceNo)
-							->where('tbdb_selection.number', $runnerNo)->pluck('tbdb_event.id');
-								
-							// if runner exists update that record
-							if($runnerExists){
-								echo "Runner:  Already to DB:". $runnerExists ." $meetingId.\n";
-								$raceRunner = RaceSelection::find($runnerExists);
-							}else{
-								echo "Runner:  Added to DB:". $runnerExists ." $meetingId.\n";
-								$raceRunner = new RaceSelection;
-							}
-							
-							//TODO: SILK DATA REQUIRED
-							// if(isset($dataArray['SilkNo'])){
-							//	$raceEvent->silk = $dataArray['SilkNo'];
-							//}
-													
-							if(isset($dataArray['BarrierNo'])){
-								$raceRunner->barrier = $dataArray['BarrierNo'];
-							}
-							if(isset($dataArray['Name'])){
-								$raceRunner->name = $dataArray['Name'];
-							}
-							if(isset($dataArray['JTD'])){
-								$raceRunner->associate = $dataArray['JTD'];
-							}
-							if(isset($dataArray['Scratched'])){
-								$raceRunner->selection_status_id = $dataArray['Scratched'];
-							}
-							if(isset($dataArray['Weight'])){
-								$raceRunner->weight = $dataArray['Weight'];
-							}
-										
-							// save or update the record
-							$raceRunnerSave = $raceRunner->save();
-							$raceRunnerID = $raceRunner->id;
-								
-							echo"Runner: Record Added/Updated\n\n";
 						}
 						break;
 						
-					// Result Data - the actua results of the race
+					// Result Data - the actual results of the race
 					case "ResultList":
 						echo"CASE: $key\n";
 						foreach ($racingArray as $dataArray){
 							echo"Results Object: ";
 							print_r($dataArray);
 							echo "\n";
+							$selectionsExists = $resultExists = 0;
 							
 							// Check required data to update a Result is in the JSON
-							if(isset($dataArray['MeetingId'])  &&  isset($dataArray['RaceNo']) && isset($dataArray['Selection']) && isset($dataArray['BetType'])      ){
+							if(isset($dataArray['MeetingId'])  &&  isset($dataArray['RaceNo']) && isset($dataArray['Selection']) && isset($dataArray['BetType']) && isset($dataArray['PriceType']) && isset($dataArray['PlaceNo']) && isset($dataArray['Payout'])   ){
 								$meetingId = $dataArray['MeetingId'];
 								$raceNo = $dataArray['RaceNo'];
-								$dataArray['BetType'];
+								$betType = $dataArray['BetType'];
+								$priceType = $dataArray['PriceType'];
 								$selection = $dataArray['Selection'];
+								$placeNo = $dataArray['PlaceNo'];
+								$payout = $dataArray['Payout'];
 								
-							}else {
-								echo "Results: Missing Results data. Can't process";
-								break;
-							}
-							
-							// TODO: Check JSON data is valid
-							
-							// Check required records exist in the DB to store this result
-							//- Meeting/Race/Selection exist
-							$runnerExists = DB::table('tbdb_selection')
-							->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
-							->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
-							->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-							->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-							->where('tbdb_event_group.external_event_group_id',$meetingId )
-							->where('tbdb_event.number', $raceNo)
-							->where('tbdb_selection.number', $runnerNo)->pluck('tbdb_selection.id');
+								// TODO: Check JSON data is valid
+									
+								// Check required records exist in the DB to store this result
+								//- Meeting/Race/Selection exist
+								$selectionsExists = DB::table('tbdb_selection')
+								->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+								->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+								->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+								->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+								->where('tbdb_event_group.external_event_group_id',$meetingId )
+								->where('tbdb_event.number', $raceNo)
+								->where('tbdb_selection.number', $selection)->pluck('tbdb_selection.id');
 								
-							// if runner exists update that record
-							if($runnerExists){
-								echo "Result:  Already to DB:". $runnerExists ." $meetingId - $raceNo\n";
-								$raceRunner = RaceSelection::find($runnerExists);
-							}else{
-								echo "Result:  Added to DB:". $runnerExists ." $meetingId - $raceNo\n";
-								$raceRunner = new RaceSelection;
+								if ($selectionsExists){
+									echo "Result: Selection exists in DB: $selectionsExists\n";
+									$resultExists = DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
+								
+									// if result exists update that record
+									if($resultExists){
+										echo "Result: Already in DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
+										$raceResult = RaceResult::find($resultExists);
+										//$raceResult = RaceResult::where('selection_id', $selectionsExists);
+									}else{
+										echo "Result: Added to DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
+										$raceResult = new RaceResult;
+										$raceResult->selection_id = $selectionsExists;
+									}
+									
+									// process 1st 4 places
+									switch($betType) {
+										// 1st place
+										case "WIN":
+											$raceResult->position = $placeNo;
+											$raceResult->win_dividend = $payout / 100;
+											break;
+										case "PLC":
+											$raceResult->position = $placeNo;
+											$raceResult->place_dividend = $payout / 100;
+											break;
+												
+										default:
+											echo "Result: No valid betType found:$betType\n";
+									}
+										
+									// save or update the record
+									$raceResultSave = $raceResult->save();
+									$raceResultID = $raceResult->id;
+									
+									echo"Result: Record Added/Updated: $raceResultID\n\n";
+								}else{
+									echo "Result: No Selection found. Results not updated\n";
+								}
+							}else { // not all required data available
+								echo "Result: Missing Results data. Can't process";
 							}
-															
-							if(isset($dataArray['BarrierNo'])){
-								$raceRunner->barrier = $dataArray['BarrierNo'];
-							}
-							if(isset($dataArray['Name'])){
-								$raceRunner->name = $dataArray['Name'];
-							}
-							if(isset($dataArray['JTD'])){
-								$raceRunner->associate = $dataArray['JTD'];
-							}
-							if(isset($dataArray['Scratched'])){
-								$raceRunner->selection_status_id = $dataArray['Scratched'];
-							}
-							if(isset($dataArray['Weight'])){
-								$raceRunner->weight = $dataArray['Weight'];
-							}
-						
-							// save or update the record
-							$raceRunnerSave = $raceRunner->save();
-							$raceRunnerID = $raceRunner->id;
-						
-							echo"Result: Record Added/Updated\n\n";
-							
-							
-							
-							
-							
-							
-							
-							
-							
 						}
-	/* 					$resultMeetingID = $param;
-						$resultRacenNo= $param;
-						$resultBetType = $param;
-						$resultPriceType = $param;
-						$resultSelection = $param;
-						$resultPlaceNo = $param;
-						$resultPayout = $param; */
 						break; 
 							
 					// Price Data
@@ -385,6 +400,61 @@ class RacingController extends BaseController {
 							echo"Price Object: ";
 							print_r($dataArray);
 							echo "\n";
+							// reset counters
+							$selectionsExists = $resultExists = 0;
+														
+							if(isset($dataArray['MeetingId'])  &&  isset($dataArray['RaceNo']) && isset($dataArray['BetType']) && isset($dataArray['PriceType']) && isset($dataArray['PoolAmount']) && isset($dataArray['OddString'])){
+								$meetingId = $dataArray['MeetingId'];
+								$raceNo = $dataArray['RaceNo'];
+								$betType = $dataArray['BetType'];
+								$priceType = $dataArray['PriceType'];
+								$selection = $dataArray['PoolAmount'];
+								$placeNo = $dataArray['OddString'];
+								
+								// TODO: Check JSON data is valid
+									
+								// Check required records exist in the DB to store this result
+								//- Meeting/Race/Selection exist
+								$selectionsExists = DB::table('tbdb_selection')
+								->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+								->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+								->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+								->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+								->where('tbdb_event_group.external_event_group_id',$meetingId )
+								->where('tbdb_event.number', $raceNo)
+								->where('tbdb_selection.number', $selection)->pluck('tbdb_selection.id');
+								
+								if ($selectionsExists){
+									echo "Price: Selection exists in DB: $selectionsExists\n";
+									$priceExists = DB::table('tbdb_selection_price')->where('selection_id', $selectionsExists)->pluck('id');
+								
+									// if result exists update that record
+									if($priceExists){
+										echo "Price: Already in DB:$priceExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
+										$raceResult = RaceResult::find($resultExists);
+									//$raceResult = RaceResult::where('selection_id', $selectionsExists);
+									}else{
+										echo "Price: Added to DB:$priceExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
+										$raceResult = new RaceResult;
+										$raceResult->selection_id = $selectionsExists;
+									}
+										
+								
+								
+								}
+								
+								
+								
+								
+							}else{
+								echo "Price: Missing Price Data. Can't process\n";
+							}
+							
+							
+							
+							
+							
+							
 						}
 	/* 					$priceMeetingId = $param;
 						$priceRaceno = $param;
