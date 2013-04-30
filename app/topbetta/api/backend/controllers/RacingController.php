@@ -102,9 +102,26 @@ class RacingController extends BaseController {
 							if(isset($dataArray['Name'])){
 								$raceMeet->name = $dataArray['Name'];
 							}
-							if(isset($dataArray['RaceType'])){
-								$raceMeet->type_code = $dataArray['RaceType'];
+							if(isset($dataArray['Sport'])){
+								switch($dataArray['Sport']){
+									case "HORSE RACING":
+										$raceMeet->type_code = 'R';
+										$raceMeet->tournament_competition_id = '31';
+										break;
+									case "Harness":
+										$raceMeet->type_code = 'H';
+										$raceMeet->tournament_competition_id = '32';
+										break;
+									case "Greyhounds":
+										$raceMeet->type_code = 'G';
+										$raceMeet->tournament_competition_id = '33';
+										break;
+								}
 							}
+							// TODO: what do we do with country
+							//if(isset($dataArray['Country'])){
+							//	$raceMeet->type_code = $dataArray['Country'];
+							//}
 							if(isset($dataArray['EventCount'])){
 								$raceMeet->events = $dataArray['EventCount'];
 							}
@@ -171,10 +188,20 @@ class RacingController extends BaseController {
 									$raceEvent->start_date = $dataArray['JumpTime'];
 								}
 								
-								//TODO: check race status code from code table?
-								//if(isset($dataArray['RaceStatus'])){
-								//	$raceEvent->name = $dataArray['RaceStatus'];
-								//}
+								//TODO: check race status code from code table and get codes from IGAS?
+								if(isset($dataArray['RaceStatus'])){
+									switch($dataArray['RaceStatus']){
+										case "O":
+											$raceEvent->event_status_id = '1';
+											break;
+										case "C":
+											$raceEvent->event_status_id = '5';
+											break;
+										default:
+											echo "Race|ERROR: No race status. Can't process\n";
+									}
+								
+								}
 								
 								// TODO: Where is runner count currently?
 								//if(isset($dataArray['RunnerCount'])){
@@ -213,7 +240,7 @@ class RacingController extends BaseController {
 									echo"EGE: In DB\n\n";
 								}
 							}else{
-								echo "Meeting for race does not exist\n";
+								echo "Meeting|ERROR: Meeting for race does not exist\n";
 							}	
 							
 						}
@@ -308,10 +335,10 @@ class RacingController extends BaseController {
 									echo"Runner: Record Added/Updated. MID:$meetingId , Race:$raceNo, Runner:$runnerNo \n\n";
 									
 								}else {
-									echo"Runner: No race found for this runner\n";
+									echo"Runner|ERROR: No race found for this runner\n";
 								}
 							}else {
-								echo "Runner: Missing Runner data. Can't process";
+								echo "Runner|ERROR: Missing Runner data. Can't process";
 							}
 						}
 						break;
@@ -320,9 +347,9 @@ class RacingController extends BaseController {
 					case "ResultList":
 						echo"CASE: $key\n";
 						foreach ($racingArray as $dataArray){
-							echo"Results Object: ";
-							print_r($dataArray);
-							echo "\n";
+							//echo"Results Object: ";
+							//print_r($dataArray);
+							//echo "\n";
 							$selectionsExists = $resultExists = 0;
 							
 							// Check required data to update a Result is in the JSON
@@ -376,7 +403,7 @@ class RacingController extends BaseController {
 											break;
 												
 										default:
-											echo "Result: No valid betType found:$betType\n";
+											echo "Result|ERROR: No valid betType found:$betType\n";
 									}
 										
 									// save or update the record
@@ -385,10 +412,10 @@ class RacingController extends BaseController {
 									
 									echo"Result: Record Added/Updated: $raceResultID\n\n";
 								}else{
-									echo "Result: No Selection found. Results not updated\n";
+									echo "Result|ERROR: No Selection found. Results not updated\n";
 								}
 							}else { // not all required data available
-								echo "Result: Missing Results data. Can't process";
+								echo "Result|ERROR: Missing Results data. Can't process";
 							}
 						}
 						break; 
@@ -397,71 +424,103 @@ class RacingController extends BaseController {
 					case "PriceList":
 						echo"CASE: $key\n";
 						foreach ($racingArray as $dataArray){
-							echo"Price Object: ";
-							print_r($dataArray);
-							echo "\n";
+							//echo"Price Object: ";
+							//print_r($dataArray);
+							//echo "\n";
 							// reset counters
-							$selectionsExists = $resultExists = 0;
+							$selectionExists = $resultExists = 0;
 														
 							if(isset($dataArray['MeetingId'])  &&  isset($dataArray['RaceNo']) && isset($dataArray['BetType']) && isset($dataArray['PriceType']) && isset($dataArray['PoolAmount']) && isset($dataArray['OddString'])){
 								$meetingId = $dataArray['MeetingId'];
 								$raceNo = $dataArray['RaceNo'];
 								$betType = $dataArray['BetType'];
 								$priceType = $dataArray['PriceType'];
-								$selection = $dataArray['PoolAmount'];
-								$placeNo = $dataArray['OddString'];
+								$poolAmount = $dataArray['PoolAmount'];
+								$oddsString = $dataArray['OddString'];
+								
+								$oddsArray = explode(';', $oddsString);
 								
 								// TODO: Check JSON data is valid
 									
-								// Check required records exist in the DB to store this result
-								//- Meeting/Race/Selection exist
-								$selectionsExists = DB::table('tbdb_selection')
-								->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
-								->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
-								->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-								->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-								->where('tbdb_event_group.external_event_group_id',$meetingId )
-								->where('tbdb_event.number', $raceNo)
-								->where('tbdb_selection.number', $selection)->pluck('tbdb_selection.id');
-								
-								if ($selectionsExists){
-									echo "Price: Selection exists in DB: $selectionsExists\n";
-									$priceExists = DB::table('tbdb_selection_price')->where('selection_id', $selectionsExists)->pluck('id');
-								
-									// if result exists update that record
-									if($priceExists){
-										echo "Price: Already in DB:$priceExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
-										$raceResult = RaceResult::find($resultExists);
-									//$raceResult = RaceResult::where('selection_id', $selectionsExists);
+								// TODO: Through eloquent?
+								$raceExists = DB::table('tbdb_event')
+									->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+									->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+									->where('tbdb_event_group.external_event_group_id',$meetingId )
+									->where('tbdb_event.number',$raceNumber)->pluck('tbdb_event.id');
+									//->select('tbdb_event.id');
+
+								// if race exists update that record
+								if($raceExists){
+									// check for odds
+									if(is_array($oddsArray)){
+										//loop on odds array
+										$runnerCount = 1;
+										foreach($oddsArray as $runnerOdds){
+											// get selectionID for runner
+											$selectionExists = DB::table('tbdb_selection')
+											->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+											->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+											->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+											->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+											->where('tbdb_event_group.external_event_group_id',$meetingId )
+											->where('tbdb_event.number', $raceNo)
+											->where('tbdb_selection.number', $runnerCount)->pluck('tbdb_selection.id');
+											
+
+											if ($selectionExists){
+												echo "Price: Selection exists in DB: $selectionExists\n";
+												$priceExists = DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
+											
+												// if result exists update that record otherwise create a new one
+												if($priceExists){
+													echo "Price: Already in DB:$priceExists, MID:$meetingId, Race:$raceNo, SEL:$selectionExists, Runner:$runnerCount, ODD:$runnerOdds\n";
+													$runnerPrice = RaceSelectionPrice::find($priceExists);
+												}else{
+													echo "Price: Added to DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selectionExists, Runner:$runnerCount, ODD:$runnerOdds\n";
+													$runnerPrice = new RaceSelectionPrice;
+													$runnerPrice->selection_id = $selectionExists;
+												}
+												$oddsSet = 0;
+												// update the correct field
+												switch($betType){
+													case "WIN":
+														$runnerPrice->win_odds = $runnerOdds / 100;
+														$oddsSet = 1;
+														break;
+													case "PLC":
+														$runnerPrice->place_odds = $runnerOdds / 100;
+														$oddsSet = 1;
+														break;
+													case "QIN":
+														echo "Price: Where do I update QIN odds\n";
+														break;
+													default:
+														echo "Price|ERROR: bet Type not valid: $betType. Can't process\n";
+												}
+												// save/update the price record
+												if ($oddsSet){
+													$runnerPrice->save();
+												}else{
+													echo "PRICE|ERROR: WIN/PLC Odds not saved\n";
+												}
+											}else{
+												echo "Price|ERROR: No selction for Price in DB. Can't process\n";
+											}
+											$runnerCount++;
+										}
+										} else {
+											echo "Price|ERROR: No odds array found. Can't process\n";
+										}
 									}else{
-										echo "Price: Added to DB:$priceExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
-										$raceResult = new RaceResult;
-										$raceResult->selection_id = $selectionsExists;
+										echo "Price|ERROR: No race found. Can't store results\n";
 									}
-										
-								
-								
-								}
-								
-								
-								
-								
 							}else{
-								echo "Price: Missing Price Data. Can't process\n";
+								echo "Price|ERROR: Missing Price Data. Can't process\n";
 							}
-							
-							
-							
-							
-							
-							
+							echo "\n\n";
 						}
-	/* 					$priceMeetingId = $param;
-						$priceRaceno = $param;
-						$priceBetType = $param;
-						$pricePriceType = $param;
-						$pricePoolAmount = $param;
-						$priceOddString = $param; */
+	
 						break;
 						
 						
