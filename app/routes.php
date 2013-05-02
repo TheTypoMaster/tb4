@@ -27,9 +27,11 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), functi
 });
 
 // Route group for consumer API
-Route::group(array('prefix' => '/api/v1', 'before' => 'apiauth'), function() {
-	// incoming bet placements from website
-	Route::resource('betting', 'BettingController');
+Route::group(array('prefix' => '/api/v1'), function() {
+	
+	Route::resource('users','UsersController');
+	Route::get('users/login','UsersController@login');
+
 });
 
 
