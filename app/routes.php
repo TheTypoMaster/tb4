@@ -17,7 +17,8 @@ Route::get('/', function()
 });
 
 // Route group for backend API.
-Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
+//Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
+Route::group(array('prefix' => '/api/backend/v1'), function() {
 	// incoming race data and results
 	Route::resource('racing', 'RacingController');
 	// incoming sports data and results
@@ -34,6 +35,8 @@ Route::group(array('prefix' => '/api/v1'), function() {
 
 });
 
-
-
+	Route::group(array('prefix' => 'api/backend/test'), function() {
 	
+		Route::resource('url', 'UrlController');
+	
+	});
