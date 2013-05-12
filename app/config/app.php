@@ -178,7 +178,9 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-		'FrontRacing'	=> 'TopBetta\frontend\RacingController'
+		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
+		'FrontRaces'	=> 'TopBetta\frontend\FrontRacesController',
+		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController'
 	),
 
 );

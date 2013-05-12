@@ -1,22 +1,20 @@
-<?php namespace TopBetta\frontend;
+<?php
+namespace TopBetta\frontend;
 
-class RacingController extends \BaseController {
+use TopBetta;
+use Illuminate\Support\Facades\Input;
+
+class FrontRunnersController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($meetingId, $raceId)
 	{
 		//
-		return "Racing index";
-	}
-
-	public function mic()
-	{
-		//
-		return "Racing mic";
+		return "Getting runners for meeting id: $meetingId, race id: $raceId";
 	}
 
 	/**
@@ -48,7 +46,6 @@ class RacingController extends \BaseController {
 	public function show($id)
 	{
 		//
-		return "Showing id: $id";
 	}
 
 	/**

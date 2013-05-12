@@ -29,10 +29,16 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 
 // Route group for consumer API
 Route::group(array('prefix' => '/api/v1'), function() {
-		
-	Route::get('racing/mic', 'FrontRacing@mic');
-	Route::resource('racing','FrontRacing');
-	//Route::get('users/login','UsersController@login');
+				
+	//Racing Meetings
+	Route::resource('racing/meetings','FrontMeetings');
+	Route::resource('racing/meetings.races','FrontRaces');
+	Route::resource('racing/meetings.races.runners','FrontRunners');
+	
+	//Racing Races
+	Route::get('/racing/races/next-to-jump', 'FrontRaces@nextToJump');
+	Route::resource('racing/races','FrontRaces');
+
 
 });
 

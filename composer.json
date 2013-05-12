@@ -11,6 +11,7 @@
 			"app/database/migrations",
 			"app/database/seeds",
 			"app/tests/TestCase.php",
+			"app/topbetta/models",
 			"app/topbetta/api/backend/controllers",
 			"app/topbetta/api/backend/models",
 			"app/topbetta/api/frontend/controllers",
