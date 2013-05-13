@@ -36,6 +36,8 @@ class FrontMeetingsController extends \BaseController {
 				$meetingRaces = array();
 
 				$races = TopBetta\RaceMeeting::find($event -> id) -> raceevents;
+				$weather = 'n/a';
+				$track = 'n/a';
 
 				foreach ($races as $race) {
 
@@ -47,8 +49,9 @@ class FrontMeetingsController extends \BaseController {
 
 					$meetingRaces[] = array("id" => $race -> id, "race_number" => $race -> number, "to_go" => $toGo, "start_datetime" => $startDatetime, "results" => false, "status" => $race -> status);
 
-					$weather = $race -> weather;
-					$track = $race -> track;
+					$weather = ($race -> weather) ? $race -> weather : 'n/a' ;
+					$track = ($race -> track) ? $race -> track : 'n/a';
+					
 				}
 
 				$meetingAndRaces = array('id' => $event -> id, 'name' => $event -> name, 'weather' => $weather, 'track' => $track, 'races' => $meetingRaces);

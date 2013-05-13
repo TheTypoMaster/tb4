@@ -1,4 +1,5 @@
 <?php namespace TopBetta;
+
 class RaceSelection extends \Eloquent {
 
 	protected $table = 'tbdb_selection';
@@ -26,6 +27,50 @@ class RaceSelection extends \Eloquent {
 		//return self::racemeetings;
 	}
 	
+	//TODO: this query is straight from joomla. Rebuild in Eloquent
+	static public function getRunnersForRaceId ($raceId) {
+		$query = "SELECT
+                        s.*,
+                        sp.win_odds,
+                        sp.place_odds,
+                        sp.bet_product_id,
+                        sp.w_product_id,
+                        sp.p_product_id,
+                        sp.override_odds,
+                        ss.name AS status,
+                        sr.win_dividend,
+                        sr.place_dividend
+			  FROM
+			                        `tbdb_selection` AS s
+			  INNER JOIN
+			                        `tbdb_market` AS m
+			  ON
+			                        s.market_id = m.id
+			  LEFT JOIN
+			                        `tbdb_selection_price` AS sp
+			  ON
+			                        s.id = sp.selection_id
+			  LEFT JOIN
+			                        `tbdb_selection_result` AS sr
+			  ON
+			                        sr.selection_id = s.id
+			  INNER JOIN
+			                        `tbdb_selection_status` AS ss
+			  ON
+			                        s.selection_status_id = ss.id
+			  INNER JOIN
+			                        `tbdb_event` AS e
+			  ON
+			                        m.event_id = e.id
+			  WHERE
+			                        e.id = $raceId
+			  ORDER
+			                        BY NUMBER ASC";		
 	
+		$result = \DB::select($query);
+		  
+		return $result;
+		
+		}
 
 }

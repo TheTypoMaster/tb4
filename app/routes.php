@@ -38,6 +38,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	//Racing Races
 	Route::get('/racing/races/next-to-jump', 'FrontRaces@nextToJump');
 	Route::resource('racing/races','FrontRaces');
+	
+	//Racing Runners
+	Route::resource('racing/runners','FrontRunners');
 
 
 });
