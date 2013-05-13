@@ -10,7 +10,10 @@ abstract class WageringApi
 		API_UNITAB = 'unitab',
 		API_DEFAULT = 'tob',
 		API_BM = 'bm',
-		API_TOB = 'tob';
+		API_TOB = 'tob',
+		API_IGASRACING = 'igasracing',
+		API_IGASSPORTS = 'igassports';
+	
 		
 	static public $service = self::API_DEFAULT;
 	
