@@ -1,5 +1,5 @@
-<?php
-class RaceMarket extends Eloquent {
+<?php namespace TopBetta;
+class RaceMarket extends \Eloquent {
 
 	protected $table = 'tbdb_market';
 	

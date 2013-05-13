@@ -28,13 +28,22 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 });
 
 // Route group for consumer API
-Route::group(array('prefix' => '/api/v1', 'before' => 'apiauth'), function() {
-	// incoming bet placements from website
-	Route::resource('betting', 'BettingController');
+Route::group(array('prefix' => '/api/v1'), function() {
+				
+	//Racing Meetings
+	Route::resource('racing/meetings','FrontMeetings');
+	Route::resource('racing/meetings.races','FrontRaces');
+	Route::resource('racing/meetings.races.runners','FrontRunners');
+	
+	//Racing Races
+	Route::get('/racing/races/next-to-jump', 'FrontRaces@nextToJump');
+	Route::resource('racing/races','FrontRaces');
+
+
 });
 
-	Route::group(array('prefix' => 'api/backend/test'), function() {
-	
-		Route::resource('url', 'UrlController');
-	
-	});
+Route::group(array('prefix' => 'api/backend/test'), function() {
+
+	Route::resource('url', 'UrlController');
+
+});

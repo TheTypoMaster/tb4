@@ -1,5 +1,5 @@
-<?php
-class RaceSelection extends Eloquent {
+<?php namespace TopBetta;
+class RaceSelection extends \Eloquent {
 
 	protected $table = 'tbdb_selection';
 	

@@ -17,6 +17,7 @@ class RacingController extends BaseController {
 	{
 		//
 		// return RaceMeetings::all();
+		return "Racing 2nd index";
 	}
 
 	/**
