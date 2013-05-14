@@ -13,7 +13,22 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	// return all events for meeting with id of 1
+	$events = RaceMeeting::find(1)->raceevents;
+	return $events;
+	
+	// return the meeting for event with id of 1
+	//$meetings = RaceEvent::find(1)->racemeetings;
+    //return $meetings;
+	
+	//$api = WageringApi::getInstance(WageringApi::API_IGAS);
+	//$api_con=$api->checkConnection();
+	
+	//return (string)$api_con;
+	
+	
+	
+	//return View::make('hello');
 });
 
 // Route group for backend API.
