@@ -11,10 +11,35 @@ class FrontRunnersController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index($meetingId, $raceId)
-	{
-		//
-		return "Getting runners for meeting id: $meetingId, race id: $raceId";
+	public function index($meetingId = false, $raceId = false) {
+			
+		//special case to allow for runners to be called directly with the race id passed in
+		$raceId = Input::get('race', $raceId);
+
+		// store runners in cache for 1 min at a time
+		$data = \Cache::remember('runners-' . $raceId, 1, function() use (&$raceId) {
+			$runners = TopBetta\RaceSelection::getRunnersForRaceId($raceId);
+			//return $nextToJump;
+
+			$ret = array();
+			$ret['success'] = true;
+
+			$result = array();
+
+			foreach ($runners as $runner) {
+				$scratched = ($runner -> status == "Scratched") ? true : false;
+				$pricing = array('win' => number_format($runner -> win_odds, 2), 'place' => number_format($runner -> place_odds, 2));
+
+				$result[] = array('id' => $runner -> id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => $runner -> associate, 'weight' => $runner -> weight, 'saddle' => $runner -> number, 'barrier' => $runner -> barrier, 'scratched' => $scratched, 'form' => false, 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id);
+
+			}
+
+			$ret['result'] = $result;
+
+			return $ret;
+		});
+
+		return $data;
 	}
 
 	/**
@@ -22,8 +47,7 @@ class FrontRunnersController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create()
-	{
+	public function create() {
 		//
 	}
 
@@ -32,8 +56,7 @@ class FrontRunnersController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
-	{
+	public function store() {
 		//
 	}
 
@@ -43,8 +66,7 @@ class FrontRunnersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
-	{
+	public function show($id) {
 		//
 	}
 
@@ -54,8 +76,7 @@ class FrontRunnersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
-	{
+	public function edit($id) {
 		//
 	}
 
@@ -65,8 +86,7 @@ class FrontRunnersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
-	{
+	public function update($id) {
 		//
 	}
 
@@ -76,8 +96,7 @@ class FrontRunnersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
-	{
+	public function destroy($id) {
 		//
 	}
 
