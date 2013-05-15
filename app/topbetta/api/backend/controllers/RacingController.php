@@ -1,6 +1,9 @@
 <?php
+namespace TopBetta\backend;
 
-class RacingController extends BaseController {
+use TopBetta;
+
+class RacingController extends \BaseController {
 
 	public function __construct()
 	{
@@ -92,15 +95,15 @@ class RacingController extends BaseController {
 								$meetingId = $dataArray['Id'];
 								
 								// check if meeting exists in DB
-								$meetingExists = RaceMeeting::meetingExists($meetingId);
+								$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 								
 								// if meeting exists update that record
 								if($meetingExists){
 									echo "Meeting: In DB: ". $meetingExists ."\n";
-									$raceMeet = RaceMeeting::find($meetingExists);
+									$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
 								}else{
 									echo "Meeting: Added to DB: ". $meetingExists ."\n";
-									$raceMeet = new RaceMeeting;
+									$raceMeet = new TopBetta\RaceMeeting;
 									if(isset($dataArray['Id'])){
 										$raceMeet->external_event_group_id = $dataArray['Id'];
 									}
@@ -168,12 +171,12 @@ class RacingController extends BaseController {
 								$raceNo = $dataArray['RaceNo'];
 							
 								// make sure the meeting this race is in exists 1st
-								$meetingExists = RaceMeeting::meetingExists($meetingId);
+								$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 	
 								// if meeting exists update that record then continue to add/update the race record
 								if($meetingExists){
 									//check if race exists
-									$raceExists = RaceEvent::eventExists($meetingId, $raceNo);
+									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 	
 									// if race exists update that record
 									if($raceExists){
@@ -270,27 +273,27 @@ class RacingController extends BaseController {
 								$runnerNo = $dataArray['RunnerNo'];
 									
 								//check if race exists in DB
-								$raceExists = RaceEvent::eventExists($meetingId, $raceNo);
+								$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 									
 								//TODO: add error output to a log
 								if($raceExists){
 									
 									// check if selection exists in the DB
-									$selectionsExists = RaceSelection::selectionExists($meetingId, $raceNo, $runnerNo);
+									$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerNo);
 										
 									// if runner exists update that record
 									if($selectionsExists){
 										echo "Runner:  Already in DB:". $selectionsExists ." $meetingId.\n";
-										$raceRunner = RaceSelection::find($selectionsExists);
+										$raceRunner = TopBetta\RaceSelection::find($selectionsExists);
 									}else{
 										echo "Runner:  Added to DB:". $selectionsExists ." $meetingId.\n";
-										$raceRunner = new RaceSelection;
+										$raceRunner = new TopBetta\RaceSelection;
 
 										// get market ID
-										$marketTypeID = RaceMarketType::where('name', '=', $marketName)->pluck('id');
+										$marketTypeID = TopBetta\RaceMarketType::where('name', '=', $marketName)->pluck('id');
 										
 										// check if market for event exists
-										$marketID = RaceMarket::marketExists($raceExists, $marketTypeID);
+										$marketID = TopBetta\RaceMarket::marketExists($raceExists, $marketTypeID);
 										
 										if(!$marketID){
 											// add market record
@@ -367,7 +370,7 @@ class RacingController extends BaseController {
 								// TODO: Check JSON data is valid
 									
 								// check if selection exists in the DB
-								$selectionsExists = RaceSelection::selectionExists($meetingId, $raceNo, $selection);
+								$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $selection);
 								
 								if ($selectionsExists){
 									echo "Result: Selection exists in DB: $selectionsExists\n";
@@ -376,11 +379,11 @@ class RacingController extends BaseController {
 									// if result exists update that record
 									if($resultExists){
 										echo "Result: Already in DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
-										$raceResult = RaceResult::find($resultExists);
+										$raceResult = TopBetta\RaceResult::find($resultExists);
 										//$raceResult = RaceResult::where('selection_id', $selectionsExists);
 									}else{
 										echo "Result: Added to DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
-										$raceResult = new RaceResult;
+										$raceResult = new TopBetta\RaceResult;
 										$raceResult->selection_id = $selectionsExists;
 									}
 									
@@ -441,7 +444,7 @@ class RacingController extends BaseController {
 								
 								
 								// check if race exists in DB
-								$raceExists = RaceEvent::eventExists($meetingId, $raceNo);
+								$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 								
 								// if race exists update that record
 								if($raceExists){
@@ -456,7 +459,7 @@ class RacingController extends BaseController {
 											// get selectionID for runner
 											
 											// check if selection exists in the DB
-											$selectionExists = RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
+											$selectionExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
 										
 											if ($selectionExists){
 												echo "Selection in DB. ";
@@ -465,10 +468,10 @@ class RacingController extends BaseController {
 												// if result exists update that record otherwise create a new one
 												if($priceExists){
 													echo "Price in DB, ODDS:$runnerOdds, ";
-													$runnerPrice = RaceSelectionPrice::find($priceExists);
+													$runnerPrice = TopBetta\RaceSelectionPrice::find($priceExists);
 												}else{
 													echo "Price Added to DB, ODD:$runnerOdds, ";
-													$runnerPrice = new RaceSelectionPrice;
+													$runnerPrice = new TopBetta\RaceSelectionPrice;
 													$runnerPrice->selection_id = $selectionExists;
 												}
 												$oddsSet = 0;

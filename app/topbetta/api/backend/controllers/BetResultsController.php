@@ -1,16 +1,20 @@
 <?php
+namespace TopBetta\backend;
 
-class BetResultsController extends BaseController {
+use TopBetta;
+
+class BetResultsController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index()
-	{
+//	public function index()
+//	{
 		//
-	}
+//		return "In index function";
+//	}
 
 	/**
 	 * Show the form for creating a new resource.
@@ -40,7 +44,12 @@ class BetResultsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		$betObject = Bet::where('invoice_id', '=', $id)->get();
+		return $betObject->toArray();
+		
+		//return "In show Function";
+		
+		
 	}
 
 	/**
@@ -54,6 +63,7 @@ class BetResultsController extends BaseController {
 		//
 	}
 
+	
 	/**
 	 * Update the specified resource in storage.
 	 *
@@ -62,7 +72,19 @@ class BetResultsController extends BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		//TODO: Update existing bet records
+		// Get bet details. Need to cater for free and real bet amounts
+		
+		
+		
+		
+		
+		
+		$betObject = Bet::where('invoice_id', '=', $id)->get();
+		
+		
+		
+		return "Record updated";
 	}
 
 	/**
@@ -75,5 +97,12 @@ class BetResultsController extends BaseController {
 	{
 		//
 	}
+	
+	
+	// Increment users balance
+	
+	// Decriment users balance
+	
+	
 
 }

@@ -1,6 +1,10 @@
 <?php
+namespace TopBetta\backend;
 
-class SportsController extends BaseController {
+use TopBetta;
+
+
+class SportsController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
