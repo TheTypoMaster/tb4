@@ -14,8 +14,8 @@
 Route::get('/', function()
 {
 	// return all events for meeting with id of 1
-	$events = RaceMeeting::find(1)->raceevents;
-	return $events;
+	//$events = RaceMeeting::find(1)->raceevents;
+	//return $events;
 	
 	// return the meeting for event with id of 1
 	//$meetings = RaceEvent::find(1)->racemeetings;
@@ -28,18 +28,21 @@ Route::get('/', function()
 	
 	
 	
-	//return View::make('hello');
+	return View::make('hello');
+	
+	//return FreeTransactions::all();
+	
 });
 
 // Route group for backend API.
 //Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
 Route::group(array('prefix' => '/api/backend/v1'), function() {
 	// incoming race data and results
-	Route::resource('racing', 'RacingController');
+	Route::resource('racing', 'TopBetta\backend\RacingController');
 	// incoming sports data and results
-	Route::resource('sports', 'SportsController');
+	Route::resource('sports', 'TopBetta\backend\SportsController');
 	// incoming results for bet's placed
-	Route::resource('betresults', 'BetResultsController');
+	Route::resource('betresults', 'TopBetta\backend\BetResultsController');
 });
 
 // Route group for consumer API
