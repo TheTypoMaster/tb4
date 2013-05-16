@@ -65,7 +65,7 @@ class RacingController extends \BaseController {
 	{
 		//
 		// return RaceMeetings::all();
-		return "Racing 2nd index";
+		return "Racing API Index";
 	}
 
 	/**
@@ -598,7 +598,7 @@ class RacingController extends \BaseController {
 		
 		return \Response::json(array(
 				'error' => false,
-				'message' => 'OK: Processed Sucessfully'),
+				'message' => 'OK: Processed Successfully'),
 				200
 		);
 		//return RaceMeetings::all();
