@@ -28,7 +28,11 @@ $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
 	'ol_development' => array('UBUNTU-XPS-M1530'),
-	'testing1' => array('topbetta-dvmh-test-01'),
+	'testing1' => array('testing1.*'),
+	'testing2' => array('testing2.*'),
+	'testing3' => array('testing3.*'),
+
+		
 
 ));
 

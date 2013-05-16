@@ -183,7 +183,7 @@ return array(
 		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
-		'BackBets'	=> 'TopBetta\backend\BetResultsController'
+		'BackBets'		=> 'TopBetta\backend\BetResultsController'
 	),
 
 );
