@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class FreeTransactions extends Eloquent {
+class FreeTransactions extends \Eloquent {
 	
 	protected $table = 'tbdb_tournament_transaction';
 	

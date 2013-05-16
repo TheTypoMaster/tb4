@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class AccountTransactions extends Eloquent {
+class AccountTransactions extends \Eloquent {
 	
 	protected $table = 'tbdb_account_transaction';
 	
