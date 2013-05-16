@@ -26,7 +26,9 @@ $app = new Illuminate\Foundation\Application;
 
 $env = $app->detectEnvironment(array(
 
-	'local' => array('UBUNTU-XPS-M1530'),
+	'local' => array('your-machine-name'),
+	'ol_development' => array('UBUNTU-XPS-M1530'),
+	'testing1' => array('topbetta-dvmh-test-01'),
 
 ));
 
