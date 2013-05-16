@@ -38,11 +38,11 @@ Route::get('/', function()
 //Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
 Route::group(array('prefix' => '/api/backend/v1'), function() {
 	// incoming race data and results
-	Route::resource('racing', 'TopBetta\backend\RacingController');
+	Route::resource('racing', 'BackRacing');
 	// incoming sports data and results
-	Route::resource('sports', 'TopBetta\backend\SportsController');
+	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
-	Route::resource('betresults', 'TopBetta\backend\BetResultsController');
+	Route::resource('betresults', 'BackBets');
 });
 
 // Route group for consumer API
