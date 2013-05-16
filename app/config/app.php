@@ -180,7 +180,10 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
 		'FrontRaces'	=> 'TopBetta\frontend\FrontRacesController',
-		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController'
+		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController',
+		'BackRacing'	=> 'TopBetta\backend\RacingController',
+		'BackSports'	=> 'TopBetta\backend\SportsController',
+		'BackBets'	=> 'TopBetta\backend\BetResultsController'
 	),
 
 );
