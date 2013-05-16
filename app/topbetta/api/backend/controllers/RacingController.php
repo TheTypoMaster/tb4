@@ -293,7 +293,7 @@ class RacingController extends \BaseController {
 									$egeExists = \DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->pluck('event_id');
 									
 									if(!$egeExists){
-										$eventGroupEvent = new RaceEventGroupEvent;
+										$eventGroupEvent = new TopBetta\RaceEventGroupEvent;
 										$eventGroupEvent->event_id = $raceEventID;
 										$eventGroupEvent->event_group_id = $meetingExists;
 										$eventGroupEvent->save();
