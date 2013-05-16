@@ -298,7 +298,6 @@ class RacingController extends \BaseController {
 										$eventGroupEvent->event_group_id = $meetingExists;
 										$eventGroupEvent->save();
 										$this->l("BackAPI: Racing - Processing Race, EGE in DB",1);
-										echo "EGE: Added event_group_event record\n\n";
 										// Add event_group event record
 									}else{
 										$this->l("BackAPI: Racing - Processing Race, EGE in DB",1);
