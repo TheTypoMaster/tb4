@@ -348,7 +348,7 @@ class RacingController extends \BaseController {
 										
 										if(!$marketID){
 											// add market record
-											$runnerMarket = new RaceMarket;
+											$runnerMarket = new TopBetta\RaceMarket;
 											$runnerMarket->event_id = $raceExists;
 											$runnerMarket->market_type_id = 110; //TODO: this needs to come from db
 											$runnerMarket->save();
