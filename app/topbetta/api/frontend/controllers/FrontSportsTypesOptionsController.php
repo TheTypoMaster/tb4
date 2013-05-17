@@ -4,34 +4,33 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class FrontRunnersController extends \BaseController {
+class FrontSportsTypesOptionsController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index($meetingId = false, $raceId = false) {
-			
-		//special case to allow for runners to be called directly with the race id passed in
-		$raceId = Input::get('race', $raceId);
+	public function index($compId = false, $eventId = false) {
 
-		// store runners in cache for 1 min at a time
-		$data = \Cache::remember('runners-' . $raceId, 1, function() use (&$raceId) {
-			$runners = TopBetta\RaceSelection::getRunnersForRaceId($raceId);
-			//return $nextToJump;
+		//special case to allow for types & options to be called directly with the event id passed in
+		$eventId = Input::get('event_id', $eventId);
+
+		// store sports types & options in cache for 10 min at a time
+		$data = \Cache::remember('sportsTypesOptions-' . $eventId, 10, function() use (&$eventId) {
+			$sportsOptions = new TopBetta\SportsTypesOptions;
+			$options = $sportsOptions -> getTypesAndOptions($eventId);
+
+			//var_dump(\DB::getQueryLog());
 
 			$ret = array();
 			$ret['success'] = true;
 
 			$result = array();
 
-			foreach ($runners as $runner) {
-				$scratched = ($runner -> status == "Scratched") ? true : false;
-				$pricing = array('win' => (float)number_format($runner -> win_odds, 2), 'place' => (float)number_format($runner -> place_odds, 2));
+			foreach ($options as $option) {
 
-				$result[] = array('id' => (int)$runner -> id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => $runner -> associate, 'weight' => (float)$runner -> weight, 'saddle' => (int)$runner -> number, 'barrier' => (int)$runner -> barrier, 'scratched' => $scratched, 'form' => "21x43", 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id);
-
+				$result[] = array('id' => $option -> selection_id, 'bet_type' => $option -> bet_type, 'bet_selection' => $option -> bet_selection, 'odds' => $option -> odds, 'bet_place_ref' => $option -> bet_place_ref, 'bet_type_ref' => $option -> bet_type_ref, 'external_selection_id' => $option -> external_selection_id);
 
 			}
 
