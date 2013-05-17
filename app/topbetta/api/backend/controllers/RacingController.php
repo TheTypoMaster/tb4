@@ -102,7 +102,7 @@ class RacingController extends \BaseController {
 		// make sure JSON was received
 		$keyCount = count($racingJSON);
 		if(!$keyCount){
-			return Response::json(array(
+			return \Response::json(array(
 					'error' => true,
 					'message' => 'Error: No JSON data received'),
 					400
