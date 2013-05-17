@@ -45,7 +45,7 @@ class RacingController extends \BaseController {
 	 *
 	 * @var boolean
 	 */
-	private $debug = false;
+	private $debug = true;
 	
 	
 	
