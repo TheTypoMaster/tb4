@@ -102,6 +102,7 @@ class RacingController extends \BaseController {
 		// make sure JSON was received
 		$keyCount = count($racingJSON);
 		if(!$keyCount){
+			$this->l("BackAPI: Racing - No Data In POST",2);
 			return \Response::json(array(
 					'error' => true,
 					'message' => 'Error: No JSON data received'),
