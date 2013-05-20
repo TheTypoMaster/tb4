@@ -4,34 +4,39 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class FrontRunnersController extends \BaseController {
+class FrontSportsEventsController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index($meetingId = false, $raceId = false) {
-			
-		//special case to allow for runners to be called directly with the race id passed in
-		$raceId = Input::get('race', $raceId);
+	public function index($compId = false) {
 
-		// store runners in cache for 1 min at a time
-		$data = \Cache::remember('runners-' . $raceId, 1, function() use (&$raceId) {
-			$runners = TopBetta\RaceSelection::getRunnersForRaceId($raceId);
-			//return $nextToJump;
+		//special case to allow for events to be called directly with the comp id passed in
+		$compId = Input::get('comp_id', $compId);
+		$date = Input::get('date', null);
+		$limit = Input::get('limit', null);
+
+		// store sports events in cache for 10 min at a time
+		$data = \Cache::remember('sportsEvents-' . $compId . $date . $limit, 10, function() use (&$compId, &$date, &$limit) {
+			$sportsEvents = new TopBetta\SportsEvents;
+			$events = $sportsEvents -> getEvents($limit, $compId, $date);
+
+			//var_dump(\DB::getQueryLog());
 
 			$ret = array();
 			$ret['success'] = true;
 
 			$result = array();
 
-			foreach ($runners as $runner) {
-				$scratched = ($runner -> status == "Scratched") ? true : false;
-				$pricing = array('win' => (float)number_format($runner -> win_odds, 2), 'place' => (float)number_format($runner -> place_odds, 2));
+			foreach ($events as $event) {
 
-				$result[] = array('id' => (int)$runner -> id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => $runner -> associate, 'weight' => (float)$runner -> weight, 'saddle' => (int)$runner -> number, 'barrier' => (int)$runner -> barrier, 'scratched' => $scratched, 'form' => "21x43", 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id);
+				//convert the date to ISO 8601 format
+				$startDatetime = new \DateTime($event -> event_start_time);
+				$startDatetime = $startDatetime -> format('c');
 
+				$result[] = array('id' => $event -> id, 'name' => $event -> event_name, 'start_time' => $startDatetime, 'ext_event_id' => $event -> ext_event_id);
 
 			}
 

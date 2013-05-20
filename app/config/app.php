@@ -181,9 +181,12 @@ return array(
 		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
 		'FrontRaces'	=> 'TopBetta\frontend\FrontRacesController',
 		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController',
+		'FrontSports'	=> 'TopBetta\frontend\FrontSportsController',
+		'FrontSportsEvents'	=> 'TopBetta\frontend\FrontSportsEventsController',
+		'FrontSportsTypesOptions'	=> 'TopBetta\frontend\FrontSportsTypesOptionsController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
-		'BackBets'		=> 'TopBetta\backend\BetResultsController'
+		'BackBets'		=> 'TopBetta\backend\BetResultsController'	
 	),
 
 );

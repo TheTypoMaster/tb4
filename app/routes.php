@@ -47,6 +47,8 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 
 // Route group for consumer API
 Route::group(array('prefix' => '/api/v1'), function() {
+	
+	// ::: RACING :::
 				
 	//Racing Meetings
 	Route::resource('racing/meetings','FrontMeetings');
@@ -59,8 +61,22 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	
 	//Racing Runners
 	Route::resource('racing/runners','FrontRunners');
+	
+	// ::: SPORTS :::
 
+	//Sports events
+	Route::resource('sports/events','FrontSportsEvents');
+	
+	//Sports types & options
+	Route::resource('sports/types-options','FrontSportsTypesOptions');	
+		
+	//Sports and comps
+	Route::resource('sports','FrontSports');
+	Route::resource('sports.events','FrontSportsEvents');
+	Route::resource('sports.events.types-options','FrontSportsTypesOptions');
+	
 
+	
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {
