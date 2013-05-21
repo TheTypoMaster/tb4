@@ -200,7 +200,9 @@ class RacingController extends \BaseController {
 								if(isset($dataArray['Track'])){
 									$raceMeet->track = $dataArray['Track'];
 								}
-								
+								if(isset($dataArray['State'])){
+									$raceMeet->state = $dataArray['State'];
+								}
 								
 								// save or update the record
 								$raceMeetSave = $raceMeet->save();
@@ -419,6 +421,9 @@ class RacingController extends \BaseController {
 								// check if selection exists in the DB
 								$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $selection);
 								
+								// Get ID of event record - used to store exotic results/divs if required
+								$eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+								
 								if ($selectionsExists){
 									$this->l("BackAPI: Racing - Processing Result. Selection Exixts for result",1);
 									$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
@@ -433,16 +438,48 @@ class RacingController extends \BaseController {
 										$raceResult->selection_id = $selectionsExists;
 									}
 									
-									// process 1st 4 places
+									// process places
 									switch($betType) {
-										// 1st place
-										case "WIN":
+										case "W": // Win
 											$raceResult->position = $placeNo;
 											$raceResult->win_dividend = $payout / 100;
 											break;
-										case "PLC":
+										case "P": // Place
 											$raceResult->position = $placeNo;
 											$raceResult->place_dividend = $payout / 100;
+											break;
+										// process exotics - Stored in serialised array in event table
+										case "Q": // Quinella
+											$raceEvent = TopBetta\RaceEvent::find($raceExists);
+											$arrayKey = str_replace('-', '/', $selection);
+											$arrayValue = $payout;
+											$quinellaArray = array($arrayKey => $arrayValue);
+											$raceEvent->quinella_dividend = serialize($quinellaArray);
+											$raceEvent->save();
+											break;
+										case "E": // Exacta
+											$raceEvent = TopBetta\RaceEvent::find($raceExists);
+											$arrayKey = str_replace('-', '/', $selection);
+											$arrayValue = $payout;
+											$exactaArray = array($arrayKey => $arrayValue);
+											$raceEvent->exacta_dividend = serialize($exactaArray);
+											$raceEvent->save();
+											break;
+										case "T": // Trifecta
+											$raceEvent = TopBetta\RaceEvent::find($raceExists);
+											$arrayKey = str_replace('-', '/', $selection);
+											$arrayValue = $payout;
+											$trifectaArray = array($arrayKey => $arrayValue);
+											$raceEvent->trifecta_dividend = serialize($trifectaArray);
+											$raceEvent->save();
+											break;
+										case "F": // First Four
+											$raceEvent = TopBetta\RaceEvent::find($raceExists);
+											$arrayKey = str_replace('-', '/', $selection);
+											$arrayValue = $payout;
+											$firstfourArray = array($arrayKey => $arrayValue);
+											$raceEvent->firstfour_dividend = serialize($firstfourArray);
+											$raceEvent->save();
 											break;
 										default:
 											$this->l("BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
