@@ -172,15 +172,15 @@ class RacingController extends \BaseController {
 								}
 								if(isset($dataArray['Sport'])){
 									switch($dataArray['Sport']){
-										case "HORSE RACING":
+										case "R":
 											$raceMeet->type_code = 'R';
 											$raceMeet->tournament_competition_id = '31';
 											break;
-										case "Harness":
+										case "T":
 											$raceMeet->type_code = 'H';
 											$raceMeet->tournament_competition_id = '32';
 											break;
-										case "Greyhounds":
+										case "G":
 											$raceMeet->type_code = 'G';
 											$raceMeet->tournament_competition_id = '33';
 											break;
