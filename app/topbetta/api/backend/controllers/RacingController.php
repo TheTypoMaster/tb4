@@ -189,9 +189,9 @@ class RacingController extends \BaseController {
 								}
 								
 								// TODO: what do we do with country
-								if(isset($dataArray['Country'])){
-									$raceMeet->type_code = $dataArray['Country'];
-								}
+								//if(isset($dataArray['Country'])){
+								//	$raceMeet->type_code = $dataArray['Country'];
+								//}
 								if(isset($dataArray['EventCount'])){
 									$raceMeet->events = $dataArray['EventCount'];
 								}
