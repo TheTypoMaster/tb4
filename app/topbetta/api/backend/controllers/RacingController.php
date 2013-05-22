@@ -382,7 +382,7 @@ class RacingController extends \BaseController {
 										$raceRunner->associate = $dataArray['JTD'];
 									}
 									if(isset($dataArray['Scratched'])){
-										$raceRunner->selection_status_id = $dataArray['Scratched'];
+										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
 									}
 									if(isset($dataArray['Weight'])){
 										$raceRunner->weight = $dataArray['Weight'];
