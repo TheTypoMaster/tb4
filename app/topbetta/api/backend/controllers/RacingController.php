@@ -230,7 +230,12 @@ class RacingController extends \BaseController {
 	
 								// if meeting exists update that record then continue to add/update the race record
 								if($meetingExists){
-									//check if race exists
+									
+									$meetingRecord = TopBetta\RaceMeeting::find('$meetingId');
+									$meetingWeather = $meetingRecord->weather;
+									$meetingTrack = $meetingRecord->track_condition;
+									
+									// check if race exists
 									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 	
 									// if race exists update that record
@@ -285,9 +290,10 @@ class RacingController extends \BaseController {
 									if(isset($dataArray['RaceClass'])){
 										$raceEvent->class = $dataArray['RaceClass'];
 									}
-									
 								
 									// save or update the record
+									$raceEvent->weather = $meetingWeather;
+									$raceEvent->track_condition = $meetingTrack;
 									$raceEventSave = $raceEvent->save();
 									$raceEventID = $raceEvent->id;
 									
@@ -378,8 +384,11 @@ class RacingController extends \BaseController {
 									if(isset($dataArray['RunnerNo'])){
 										$raceRunner->number = $dataArray['RunnerNo'];
 									}
-									if(isset($dataArray['JTD'])){
-										$raceRunner->associate = $dataArray['JTD'];
+									if(isset($dataArray['Jockey'])){
+										$raceRunner->associate = $dataArray['Jockey'];
+									}
+									if(isset($dataArray['Trainer'])){
+										$raceRunner->trainer = $dataArray['Trainer'];
 									}
 									if(isset($dataArray['Scratched'])){
 										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
