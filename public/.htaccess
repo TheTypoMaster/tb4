@@ -6,7 +6,7 @@
 	RewriteRule ^(.+)/$ http://%{HTTP_HOST}/$1 [R=301,L]
 
     RewriteCond %{QUERY_STRING} !^method=(.*)$
-    RewriteCond %{REQUEST_URI} !(.*)administrator
+    RewriteCond %{REQUEST_URI} !^\/administrator
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
