@@ -384,19 +384,34 @@ class RacingController extends \BaseController {
 									if(isset($dataArray['RunnerNo'])){
 										$raceRunner->number = $dataArray['RunnerNo'];
 									}
-									if(isset($dataArray['Jockey'])){
-										$raceRunner->associate = $dataArray['Jockey'];
-									}
-									if(isset($dataArray['Trainer'])){
-										$raceRunner->trainer = $dataArray['Trainer'];
-									}
+									
+									//TODO: Code Table Lookup/Provider matching table							
 									if(isset($dataArray['Scratched'])){
 										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
 									}
 									if(isset($dataArray['Weight'])){
 										$raceRunner->weight = $dataArray['Weight'];
 									}
+
+									// Get meeting type
+									$meetingRecord = TopBetta\RaceMeeting::find('$meetingId');
+									$meetingType = $meetingRecord->type_code;
+
+									// LEGACY DB storage area
+									if($meetingType == "G"){
+										if(isset($dataArray['Trainer'])){
+											$raceRunner->associate = $dataArray['Trainer'];
+										}
 										
+									} else {
+										if(isset($dataArray['Jockey'])){
+											$raceRunner->associate = $dataArray['Jockey'];
+										}
+										if(isset($dataArray['Trainer'])){
+											$raceRunner->trainer = $dataArray['Trainer'];
+										}
+									}
+									
 									// save or update the record
 								
 									$raceRunnerSave = $raceRunner->save();
