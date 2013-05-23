@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\backend;
+<?php namespace TopBetta\backend;
 
 use TopBetta;
 
@@ -231,10 +230,8 @@ class RacingController extends \BaseController {
 								// if meeting exists update that record then continue to add/update the race record
 								if($meetingExists){
 									
-									$meetingRecord = TopBetta\RaceMeeting::find('$meetingId');
-									$meetingWeather = $meetingRecord->weather;
-									$meetingTrack = $meetingRecord->track_condition;
-									
+									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
+								
 									// check if race exists
 									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 	
@@ -257,8 +254,6 @@ class RacingController extends \BaseController {
 									if(isset($dataArray['JumpTime'])){
 										$raceEvent->start_date = $dataArray['JumpTime'];
 									}
-									
-									
 									
 									//TODO: Code Table lookup on different race status
 									//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
@@ -292,8 +287,8 @@ class RacingController extends \BaseController {
 									}
 								
 									// save or update the record
-									$raceEvent->weather = $meetingWeather;
-									$raceEvent->track_condition = $meetingTrack;
+									$raceEvent->weather = $meetingRecord->weather;
+									$raceEvent->track_condition = $meetingRecord->track;
 									$raceEventSave = $raceEvent->save();
 									$raceEventID = $raceEvent->id;
 									
@@ -393,10 +388,13 @@ class RacingController extends \BaseController {
 										$raceRunner->weight = $dataArray['Weight'];
 									}
 
+									// get the meeting record ID
+									$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
+									
 									// Get meeting type
-									$meetingRecord = TopBetta\RaceMeeting::find('$meetingId');
-									$meetingType = $meetingRecord->type_code;
-
+									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
+									$meetingType = $meetingRecord->type_code;		
+									
 									// LEGACY DB storage area
 									if($meetingType == "G"){
 										if(isset($dataArray['Trainer'])){
@@ -413,7 +411,6 @@ class RacingController extends \BaseController {
 									}
 									
 									// save or update the record
-								
 									$raceRunnerSave = $raceRunner->save();
 									$raceRunnerID = $raceRunner->id;
 													
@@ -509,12 +506,6 @@ class RacingController extends \BaseController {
 									// save the exotic dividend
 									$raceEvent->save();
 								}		
-
-		
-								
-								
-								
-								
 							
 							}else { // not all required data available
 								$this->l("BackAPI: Racing - Processing Result. Missing Results data. Can't process", 2);
