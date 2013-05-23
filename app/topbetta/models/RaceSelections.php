@@ -63,7 +63,7 @@ class RaceSelection extends \Eloquent {
 			  ON
 			                        m.event_id = e.id
 			  WHERE
-			                        e.id = '$raceId'
+			                        e.id = $raceId
 			  ORDER
 			                        BY NUMBER ASC";		
 	
