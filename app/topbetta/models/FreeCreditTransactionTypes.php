@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta;
 
 class FreeCreditTransactionTypes extends \Eloquent {
 	protected $table = 'tbdb_tournament_transaction_types';
@@ -28,10 +28,7 @@ class FreeCreditTransactionTypes extends \Eloquent {
      */
     function getTransactionType($transactionType)
     {
-    	
-    	return FreeCreditTransactionTypes::where('keyword', '=', $keyword) -> get();
-    	
-    	
+    	return FreeCreditTransactionTypes::where('keyword', '=', $transactionType) -> get();
     }
     
 }

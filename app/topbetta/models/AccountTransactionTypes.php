@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta;
 
 class AccountTransactionTypes extends \Eloquent {
 	protected $table = 'tbdb_account_transaction_types';
@@ -28,10 +28,7 @@ class AccountTransactionTypes extends \Eloquent {
      */
     function getTransactionType($transactionType)
     {
-    	
-    	return AccountTransactionTypes::where('keyword', '=', $keyword) -> get();
-    	
-    	
+    	return AccountTransactionTypes::where('keyword', '=', $transactionType) -> get();
     }
     
 }
