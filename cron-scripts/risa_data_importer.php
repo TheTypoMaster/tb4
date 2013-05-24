@@ -1,7 +1,6 @@
 <?php
 require_once '../common/shell-bootstrap.php';
 
-
 class RisaDataImporter extends TopBettaCLI{
 
 	/**
@@ -10,8 +9,8 @@ class RisaDataImporter extends TopBettaCLI{
 	 * @var string
 	 */
 	const LOCK_FILE = '/tmp/risa_data_importer.lck';
-	
-	const DATA_LOCATION = '/home/oshan/git/tb4/cron-scripts/risa_data/';
+
+	const DATA_LOCATION = 'risa_data/';
 	
 	final public function initialise(){
 		// Set the database access information as constants.
@@ -25,12 +24,12 @@ class RisaDataImporter extends TopBettaCLI{
 		
 		
 		DEFINE ('DB_USER', 'topbetta_testing');
-		DEFINE ('DB_PASSWORD', 't0pb3tt@mysqlp@ss');
+		DEFINE ('DB_PASSWORD', 'mysqlp@ss');
 		DEFINE ('DB_HOST', 'localhost');
 		DEFINE ('DB_NAME', 'topbetta_igas');
 		
 		// Make the connnection and then select the database.
-		$dbc = @mysql_connect (DB_HOST, DB_USER, DB_PASSWORD) OR customDie ('Could not connect to MySQL.');
+		$dbc = @mysql_connect (DB_HOST, DB_USER, DB_PASSWORD) OR Die ('Could not connect to MySQL.');
 		mysql_select_db (DB_NAME) OR Die ('Could not select the database.');
 	}
 	
@@ -67,7 +66,7 @@ class RisaDataImporter extends TopBettaCLI{
 		$outputfile = "dl.html";
 		$cmd = "wget --mirror -nd -nv -P ".self::DATA_LOCATION." --ftp-user=topbetta --ftp-password=topracing \"$url\" 2>&1";
 		$output = shell_exec($cmd);
-		echo "Output:".$output;
+		$this->l("Output: ".$output);
 
 		// get the list of files in the data directory
 		//$dataDirectory = '/home/oshan/git/tb4/cron-scripts/risa_data';
@@ -75,10 +74,8 @@ class RisaDataImporter extends TopBettaCLI{
 
 		// loop on each file in directory
 		foreach($xmlFiles as $fileName){
-			//echo pathinfo($fileName, PATHINFO_EXTENSION);
-
 			if(pathinfo($fileName, PATHINFO_EXTENSION) == 'xml'){
-				echo "FileName:$fileName\n ";
+				$this->l("Processing FileName: ".$fileName);
 
 				// Check if filename is in DB
 				$fileNameExist = "SELECT id from `tb_racing_data_risa_list` where `file_name` = '$fileName' LIMIT 1";
@@ -120,6 +117,7 @@ class RisaDataImporter extends TopBettaCLI{
 		while ($row = mysql_fetch_array($unprocessedFilesResult, MYSQL_ASSOC)) {
 			//print_r($row);
 			$xmlFile = self::DATA_LOCATION . $row['file_name'];
+			$xmlFileID = $row['id'];
 			// echo "Working on : ". $xmlFile . "\n";
 			$risaXML = new SimpleXMLElement(file_get_contents($xmlFile));
 			
@@ -140,13 +138,14 @@ class RisaDataImporter extends TopBettaCLI{
 					echo "Silk File Name: $silkFileName\n";
 					
 					$runnerCode = $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber;
-					echo $runnerCode."\n";
+					$this->l("Processing: ".$runnerCode."\n");
 					
 					// Check if filename is in DB
 					$runnerCodeExist = "SELECT id from `tb_racing_data_risa_silk_map` where `runner_code` = '$runnerCode' LIMIT 1";
 					if ($debug){
 						$this->l("Runner Code Exists table query: $runnerCodeExist");
 					}
+					
 					$RunnerCodeExistResult = mysql_query($runnerCodeExist);
 					$RunnerCodeExistnum_rows = mysql_num_rows($RunnerCodeExistResult);
 					// if not add it
@@ -169,7 +168,7 @@ class RisaDataImporter extends TopBettaCLI{
 			}
 			
 			// Mark the file as processed
-			$updateQuery = " UPDATE `tb_racing_data_risa_silk_map` SET `processed` = 1 WHERE id = '".$row['id']."'";
+			$updateQuery = " UPDATE `tb_racing_data_risa_list` SET `processed` = 1 WHERE id = '$xmlFileID'";
 			mysql_query($updateQuery);
 			$this->l("File Marked Processed: $updateQuery");
 		}
