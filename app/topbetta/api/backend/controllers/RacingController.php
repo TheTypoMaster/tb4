@@ -364,12 +364,7 @@ class RacingController extends \BaseController {
 										}
 										$raceRunner->market_id = $marketID;
 									}
-											
-									//TODO: SILK DATA REQUIRED
-									// if(isset($dataArray['SilkNo'])){
-									//	$raceEvent->silk = $dataArray['SilkNo'];
-									//}
-										
+								
 									if(isset($dataArray['BarrierNo'])){
 										$raceRunner->barrier = $dataArray['BarrierNo'];
 									}
@@ -393,8 +388,35 @@ class RacingController extends \BaseController {
 									
 									// Get meeting type
 									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
-									$meetingType = $meetingRecord->type_code;		
-									
+									$meetingType = $meetingRecord->type_code;
+
+									// Get silkID for runner from RISA table
+									if($meetingType == "R"){
+										// get silk ID from RISA data: tb_racing_data_risa_silk_map
+										// check if meeting exists in DB
+										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
+										
+										if($meetingExists){
+											// if meeting exists get the record
+											$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
+											// Grab the date from the date/time field
+											$meetDate = substr($raceMeet, 0, 10);
+											// default to Racing atm
+											$codeType = 'R';
+											// get the venue name
+											$venueName = $raceMeet->name;
+											// make sure the numbers are 2 digits
+											($raceNo < 10) ? $raceNumber = '0' . $raceNo : $raceNumber = $raceNo;
+											($runnerNo < 10) ? $runnerNumber = '0' . $runnerNo : $runnerNumber = $runnerNo;
+											// Build the runner code
+											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
+											
+											// Get Silk ID for this runner
+											$raceRunner->silk_id = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->pluck('silk_file_name');
+										}
+											
+												
+									}
 									// LEGACY DB storage area
 									if($meetingType == "G"){
 										if(isset($dataArray['Trainer'])){
