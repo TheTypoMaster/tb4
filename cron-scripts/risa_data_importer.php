@@ -21,8 +21,7 @@ class RisaDataImporter extends TopBettaCLI{
 		DEFINE ('DB_PASSWORD', (string)$dbconfig->database->password);
 		DEFINE ('DB_HOST', (string)$dbconfig->database->host);
 		DEFINE ('DB_NAME', (string)$dbconfig->database->name); */
-		
-		
+				
 		DEFINE ('DB_USER', 'topbetta_testing');
 		DEFINE ('DB_PASSWORD', 'mysqlp@ss');
 		DEFINE ('DB_HOST', 'localhost');
