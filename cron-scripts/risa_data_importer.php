@@ -15,13 +15,19 @@ class RisaDataImporter extends TopBettaCLI{
 	
 	final public function initialise(){
 		// Set the database access information as constants.
-		$dbconfig = $this->getConfigSection('ol-database');
+		//$dbconfig = $this->getConfigSection('oldatabase');
 		
 		//if("dbtb01"==(string)$dbconfig->database->attributes()->name){
-		DEFINE ('DB_USER', (string)$dbconfig->database->user);
+/* 		DEFINE ('DB_USER', (string)$dbconfig->database->user);
 		DEFINE ('DB_PASSWORD', (string)$dbconfig->database->password);
 		DEFINE ('DB_HOST', (string)$dbconfig->database->host);
-		DEFINE ('DB_NAME', (string)$dbconfig->database->name);
+		DEFINE ('DB_NAME', (string)$dbconfig->database->name); */
+		
+		
+		DEFINE ('DB_USER', 'topbetta_testing');
+		DEFINE ('DB_PASSWORD', 't0pb3tt@mysqlp@ss');
+		DEFINE ('DB_HOST', 'localhost');
+		DEFINE ('DB_NAME', 'topbetta_igas');
 		
 		// Make the connnection and then select the database.
 		$dbc = @mysql_connect (DB_HOST, DB_USER, DB_PASSWORD) OR customDie ('Could not connect to MySQL.');
@@ -143,11 +149,6 @@ class RisaDataImporter extends TopBettaCLI{
 					}
 					$RunnerCodeExistResult = mysql_query($runnerCodeExist);
 					$RunnerCodeExistnum_rows = mysql_num_rows($RunnerCodeExistResult);
-					$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`) VALUES ";
-					$silkQuery .= " ('', '$runnerCode', '$silkFileName'); ";
-					mysql_query($silkQuery);
-					$silkID = mysql_insert_id();
-					$this->l("Added to DB");
 					// if not add it
 					if ($RunnerCodeExistnum_rows){
 						$this->l("Already in DB");
@@ -170,7 +171,7 @@ class RisaDataImporter extends TopBettaCLI{
 			// Mark the file as processed
 			$updateQuery = " UPDATE `tb_racing_data_risa_silk_map` SET `processed` = 1 WHERE id = '".$row['id']."'";
 			mysql_query($updateQuery);
-			$this->l("File Processed");
+			$this->l("File Marked Processed: $updateQuery");
 		}
 	}
 	
@@ -226,7 +227,7 @@ class RisaDataImporter extends TopBettaCLI{
 		static $sectionList = array();
 	
 		if(!isset($sectionList[$sectionName])) {
-			$xml = $this->getServerXML();
+			$xml = simplexml_load_file('/mnt/web/server.xml');
 			$section = $xml->xpath("/setting/section[@name='{$sectionName}']");
 	
 			if(empty($section)) {
