@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\backend;
+<?php namespace TopBetta\backend;
 
 use TopBetta;
 
@@ -46,7 +45,8 @@ class BetResultsController extends \BaseController {
 	 * @var boolean
 	 */
 	private $debug = true;
-	
+
+	// iGAS Transacation status' - //TODO: Code table?
 	const TRANSACTION_STATUS_WON = 'W',
 	TRANSACTION_STATUS_LOST = 'L',
 	TRANSACTION_STATUS_CANCELLED = 'C',
@@ -54,16 +54,11 @@ class BetResultsController extends \BaseController {
 	TRANSACTION_STATUS_INVALID = 'V',
 	TRANSACTION_STATUS_UNDECIDED = 'U',
 	
-	
 	// BM ones
 	TRANSACTION_STATUS_FAILED = 'F',
 	TRANSACTION_STATUS_NEW = 'N',
 	TRANSACTION_STATUS_SUBMITTED = 'S',
 	TRANSACTION_STATUS_ERROR = 'E';
-	
-	
-	
-	
 	
 	private $status_process_unresulted_list = array(
 			self::TRANSACTION_STATUS_WON,
