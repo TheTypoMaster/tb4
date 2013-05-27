@@ -47,7 +47,7 @@ class RaceEvent extends \Eloquent {
 		
 		
 		//TODO: can this be done outsideuery builder
-		return DB::table('tbdb_event')
+		return \DB::table('tbdb_event')
 		->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
 		->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
 		->where('tbdb_event_group.external_event_group_id',$meetingId )

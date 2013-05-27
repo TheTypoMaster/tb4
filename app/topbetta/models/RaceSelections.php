@@ -14,7 +14,7 @@ class RaceSelection extends \Eloquent {
 	
 	
 		//TODO: can this be done outsideuery builder
-		return DB::table('tbdb_selection')
+		return \DB::table('tbdb_selection')
 					->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
 					->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
 					->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')

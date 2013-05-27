@@ -188,7 +188,10 @@ return array(
 		'FrontSportsEvents'	=> 'TopBetta\frontend\FrontSportsEventsController',
 		'FrontSportsTypesOptions'	=> 'TopBetta\frontend\FrontSportsTypesOptionsController',
 		'FrontTournaments'	=> 'TopBetta\frontend\FrontTournamentsController',
-		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController'
+		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController',
+		'BackRacing'	=> 'TopBetta\backend\RacingController',
+		'BackSports'	=> 'TopBetta\backend\SportsController',
+		'BackBets'		=> 'TopBetta\backend\BetResultsController'	
 	),
 
 );
