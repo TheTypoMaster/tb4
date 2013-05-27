@@ -19,14 +19,11 @@ class FrontSportsEventsController extends \BaseController {
 		$limit = Input::get('limit', null);
 
 		// store sports events in cache for 10 min at a time
-		$data = \Cache::remember('sportsEvents-' . $compId . $date . $limit, 10, function() use (&$compId, &$date, &$limit) {
+		return \Cache::remember('sportsEvents-' . $compId . $date . $limit, 10, function() use (&$compId, &$date, &$limit) {
 			$sportsEvents = new TopBetta\SportsEvents;
 			$events = $sportsEvents -> getEvents($limit, $compId, $date);
 
 			//var_dump(\DB::getQueryLog());
-
-			$ret = array();
-			$ret['success'] = true;
 
 			$result = array();
 
@@ -36,16 +33,13 @@ class FrontSportsEventsController extends \BaseController {
 				$startDatetime = new \DateTime($event -> event_start_time);
 				$startDatetime = $startDatetime -> format('c');
 
-				$result[] = array('id' => $event -> id, 'name' => $event -> event_name, 'start_time' => $startDatetime, 'ext_event_id' => $event -> ext_event_id);
+				$result[] = array('id' => (int)$event -> id, 'name' => $event -> event_name, 'start_time' => $startDatetime, 'ext_event_id' => (int)$event -> ext_event_id);
 
 			}
 
-			$ret['result'] = $result;
-
-			return $ret;
+			return array('status' => true, 'result' => $result);
 		});
 
-		return $data;
 	}
 
 	/**

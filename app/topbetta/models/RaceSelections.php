@@ -26,9 +26,15 @@ class RaceSelection extends \Eloquent {
 		//return $this::where('number', $raceNo)->where('external_event_group_id', '=', $meetingId)->racemeetings;
 		//return self::racemeetings;
 	}
-	
-	//TODO: this query is straight from joomla. Rebuild in Eloquent
-	static public function getRunnersForRaceId ($raceId) {
+	/**
+	 * Get the list of runners for a race id
+	 *
+	 * @param integer $raceId
+	 * @return array
+	 */
+	public static function getRunnersForRaceId($raceId) {
+			
+		//TODO: this query is straight from joomla. Rebuild in Eloquent
 		$query = "SELECT
                         s.*,
                         sp.win_odds,
@@ -63,14 +69,24 @@ class RaceSelection extends \Eloquent {
 			  ON
 			                        m.event_id = e.id
 			  WHERE
-			                        e.id = $raceId
+			                        e.id = '$raceId'
 			  ORDER
 			                        BY NUMBER ASC";		
 	
-		$result = \DB::select($query);
-		  
-		return $result;
-		
+		$runners = \DB::select($query);
+
+		$result = array();
+
+		foreach ($runners as $runner) {
+			$scratched = ($runner -> status == "Scratched") ? true : false;
+			$pricing = array('win' => (float)number_format($runner -> win_odds, 2), 'place' => (float)number_format($runner -> place_odds, 2));
+
+			$result[] = array('id' => (int)$runner -> id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => null, 'weight' => (float)$runner -> weight, 'saddle' => (int)$runner -> number, 'barrier' => (int)$runner -> barrier, 'scratched' => $scratched, 'form' => "21x43", 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id);
+
 		}
+
+		return $result;
+	}	
+
 
 }

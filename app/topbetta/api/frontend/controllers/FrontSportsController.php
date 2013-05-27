@@ -17,19 +17,16 @@ class FrontSportsController extends \BaseController {
 		$sid = Input::get('sport_id', null);
 
 		// store sports and comps in cache for 10 min at a time
-		$data = \Cache::remember('sportsComps-', 10, function() use (&$date, &$sid) {
+		return \Cache::remember('sportsComps-', 10, function() use (&$date, &$sid) {
 			$sportsComps = new TopBetta\SportsComps;
 			$sports = $sportsComps -> getSportAndComps($date, $sid);
 
 			//var_dump(\DB::getQueryLog());
 
-			$ret = array();
-			$ret['success'] = true;
-
-			$result = array();
-
 			$sportName = '';
 			$eachSport = array();
+			
+			// Group the sports and comps which come through as one list
 			foreach ($sports as $sport) {
 
 				if ($sportName != $sport -> sportName) {
@@ -44,20 +41,17 @@ class FrontSportsController extends \BaseController {
 							$startDatetime = new \DateTime($comp -> start_date);
 							$startDatetime = $startDatetime -> format('c');
 
-							$comps[] = array('id' => $comp -> id, 'name' => $comp -> name, 'start_date' => $startDatetime);
+							$comps[] = array('id' => (int)$comp -> id, 'name' => $comp -> name, 'start_date' => $startDatetime);
 						}
 
 					}
-					$eachSport[] = array('id' => $sportId, 'name' => $sportName, 'competitions' => $comps);
+					$eachSport[] = array('id' => (int)$sportId, 'name' => $sportName, 'competitions' => $comps);
 				}
 			}
 
-			$ret['result'] = $eachSport;
-
-			return $ret;
+			return array('status' => true, 'result' => $eachSport);
 		});
 
-		return $data;
 	}
 
 	/**

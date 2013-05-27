@@ -47,9 +47,18 @@ class FrontRacesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index($meetingId) {
-		//
-		return "Getting races for meeting id: $meetingId";
+	public function index($meetingId = false) {
+
+		//special case to allow for race list to be called directly with the meeting id passed in
+		$meetingId = Input::get('meeting_id', $meetingId);
+
+		// store sports types & options in cache for 10 min at a time
+		return \Cache::remember('racesForMeeting-' . $meetingId, 1, function() use (&$meetingId) {
+				
+			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($meetingId);
+
+			return array('success' => true, 'result' => $races);
+		});
 	}
 
 	/**

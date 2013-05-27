@@ -4,31 +4,26 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class FrontRunnersController extends \BaseController {
+class UsersProfileController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index($meetingId = false, $raceId = false) {
+	public function index($username) {
 
-		//special case to allow for runners to be called directly with the race id passed in
-		$raceId = Input::get('race', $raceId);
+		$l = new \TopBetta\LegacyApiHelper;
+		$user = $l -> query('getUser', array('username' => Input::get('username', $username)));
 
-		//TODO: make sure we have a race id
-
-		// store runners in cache for 1 min at a time
-		return \Cache::remember('runners-' . $raceId, 1, function() use (&$raceId) {
-			
-			$runners = \TopBetta\RaceSelection::getRunnersForRaceId($raceId);
-
-			return array('success' => true, 'result' => $runners);
-		});
+		if ($user['status'] == 200) {
+			return array("success" => true, "result" => array('id' => $user['id'], "username" => $user['username'], "first_name" => $user['first_name'], "last_name" => $user['last_name'], "full_account" => $user['tb_user']));
+			//return $user;
+		} else {
+			return array("success" => false, "error" => $user['error_msg']);
+		}
 
 	}
-
-
 
 	/**
 	 * Show the form for creating a new resource.

@@ -54,7 +54,7 @@ class TimeHelper {
 
 		for ($i = count($remainders) - 1; $i >= 0; $i--) {
 			if ($remainders[$i]) {
-				$string .= $remainders[$i] . " " . $periods[$i];
+				$string .= $remainders[$i] . $periods[$i];
 
 				if ($remainders[$i] != 1) {
 					//$string .= "s";

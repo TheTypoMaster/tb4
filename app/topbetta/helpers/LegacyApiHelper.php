@@ -1,8 +1,8 @@
-<?php
+<?php namespace TopBetta;
 
-class LegacyApi {
+class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post');
 
 	/*
 	 * @param string $method
@@ -26,26 +26,33 @@ class LegacyApi {
 
 					//2. perform login
 					$payload[$login_hash['login_hash']] = 1;
-					$ret = $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
+					return $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
 
 					break;
+					
+				case 'saveBet' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('saveBet', $this -> allowed_methods['saveBet'], $payload);
+
+					break;					
 
 				default :
 
 					//pass api call straight through
-					$ret = $this -> curl($method, $this -> allowed_methods[$method], $payload);
+					return $this -> curl($method, $this -> allowed_methods[$method], $payload);
 
 					break;
 			}
 
-			//we have an array of data to return now
-			return $ret;
 
 		} else {
-			$ret['status'] = 500;
-			$ret['error_msg'] = 'Invalid legacy method';
 
-			return $ret;
+			return array('status' => 500, 'error_msg' => 'Invalid legacy method');
 		}
 	}
 
@@ -59,7 +66,7 @@ class LegacyApi {
 
 		//TODO: we should have a cookie file prepared for us unique to this users session
 
-		$url = URL::to('/api/?method=') . $method;
+		$url = \URL::to('/api/?method=') . $method;
 
 		$ch = curl_init();
 		if ($type == 'post') {
@@ -71,8 +78,8 @@ class LegacyApi {
 			$url .= '&' . http_build_query($payload);
 		}
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_COOKIEJAR, '/tmp/' . $payload['username'] . '.txt');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, '/tmp/' . $payload['username'] . '.txt');
+		curl_setopt($ch, CURLOPT_COOKIEJAR, 'tmp/' . $payload['username'] . '.txt');
+		curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/' . $payload['username'] . '.txt');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 

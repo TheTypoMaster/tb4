@@ -17,29 +17,37 @@ class FrontSportsTypesOptionsController extends \BaseController {
 		$eventId = Input::get('event_id', $eventId);
 
 		// store sports types & options in cache for 10 min at a time
-		$data = \Cache::remember('sportsTypesOptions-' . $eventId, 10, function() use (&$eventId) {
+		return \Cache::remember('sportsTypesOptions-' . $eventId, 10, function() use (&$eventId) {
 			$sportsOptions = new TopBetta\SportsTypesOptions;
-			$options = $sportsOptions -> getTypesAndOptions($eventId);
+			$types = $sportsOptions -> getTypesAndOptions($eventId);
 
 			//var_dump(\DB::getQueryLog());
 
-			$ret = array();
-			$ret['success'] = true;
+			$typeId = 0;
 
-			$result = array();
+			// Group the types with options which come through as one list
+			foreach ($types as $type) {
 
-			foreach ($options as $option) {
+				if ($typeId != $type -> type_id) {
+					$typeId = $type -> type_id;
 
-				$result[] = array('id' => $option -> selection_id, 'bet_type' => $option -> bet_type, 'bet_selection' => $option -> bet_selection, 'odds' => $option -> odds, 'bet_place_ref' => $option -> bet_place_ref, 'bet_type_ref' => $option -> bet_type_ref, 'external_selection_id' => $option -> external_selection_id);
+					foreach ($types as $option) {
 
+						if ($option -> type_id == $typeId) {
+
+							$options[] = array('id' => (int)$option -> selection_id, 'bet_selection' => $option -> bet_selection, 'odds' => (int)$option -> odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'bet_type_ref' => $option -> bet_type_ref, 'external_selection_id' => (int)$option -> external_selection_id);
+						}
+					}
+
+					// our single type parent with all children options
+					$eachType[] = array('id' => (int)$typeId, 'name' => $type -> bet_type, 'options' => $options);
+				}
 			}
 
-			$ret['result'] = $result;
+			return array('status' => true, 'result' => $eachType);
 
-			return $ret;
 		});
 
-		return $data;
 	}
 
 	/**
