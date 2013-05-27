@@ -381,7 +381,7 @@ class RacingController extends \BaseController {
 										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
 									}
 									if(isset($dataArray['Weight'])){
-										$raceRunner->weight = $dataArray['Weight'];
+										$raceRunner->weight = $dataArray['Weight'] / 10;
 									}
 
 									// get the meeting record ID
