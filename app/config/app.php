@@ -178,12 +178,17 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
+		'Users'			=> 'TopBetta\frontend\UsersController',
+		'UsersProfile'	=> 'TopBetta\frontend\UsersProfileController',
+		'FrontBets'		=> 'TopBetta\frontend\FrontBetsController',
 		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
 		'FrontRaces'	=> 'TopBetta\frontend\FrontRacesController',
 		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController',
 		'FrontSports'	=> 'TopBetta\frontend\FrontSportsController',
 		'FrontSportsEvents'	=> 'TopBetta\frontend\FrontSportsEventsController',
-		'FrontSportsTypesOptions'	=> 'TopBetta\frontend\FrontSportsTypesOptionsController'
+		'FrontSportsTypesOptions'	=> 'TopBetta\frontend\FrontSportsTypesOptionsController',
+		'FrontTournaments'	=> 'TopBetta\frontend\FrontTournamentsController',
+		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController'
 	),
 
 );

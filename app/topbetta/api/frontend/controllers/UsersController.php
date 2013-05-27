@@ -1,15 +1,10 @@
 <?php
-class UsersController extends BaseController {
+namespace TopBetta\frontend;
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function login() {
-		//
-		return View::make('hello');
-	}
+use TopBetta;
+use Illuminate\Support\Facades\Input;
+
+class UsersController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
@@ -19,31 +14,29 @@ class UsersController extends BaseController {
 	public function index() {
 		//
 
-		//TODO: fetch/store the users legacy api cookie in the database
+		//TODO: fetch/store the users legacy api cookie in the laravel session
 		// - pass this through with each legacy api call if needed
 		if (Input::get('action') == 'login') {
-			$l = new LegacyApi;
+				
+			$l = new \TopBetta\LegacyApiHelper;
 			$login = $l -> query('doUserLogin', array('username' => Input::get('username'), 'password' => 'password'));
 
 			if ($login['status'] == 200) {
-				$json = array("success" => true, "result" => array("username" => $login['userInfo']['username'], "name" => $login['userInfo']['name'], "account_type" => $login['userInfo']['accountType']));
-			} else {
-				$json = array("success" => false, "error" => $login['error_msg']);
-			}
-			
-		} else {
-			$l = new LegacyApi;
-			$user = $l -> query('getUser', array('username' => Input::get('username')));
+					
+				// TODO: store the username/id in the laravel session
+				return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => $login['userInfo']['first_name'], "last_name" => $login['userInfo']['last_name'], "full_account" => $login['userInfo']['full_account']));
 
-			if ($user['status'] == 200) {
-				$json = $user;
 			} else {
-				$json = array("success" => false, "error" => $user['error_msg']);
-			}			
-			
+
+				return array("success" => false, "error" => $login['error_msg']);
+
+			}
+		} else {
+
+			// they called this resource without trying to do a login
+			return array("success" => false, "error" => "Please login first");
 		}
-		
-		return Response::json($json);
+
 	}
 
 	/**
