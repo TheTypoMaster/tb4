@@ -378,7 +378,11 @@ class RacingController extends \BaseController {
 									
 									//TODO: Code Table Lookup/Provider matching table							
 									if(isset($dataArray['Scratched'])){
-										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
+										if ($dataArray['Scratched'] == 1){
+											$raceRunner->selection_status_id = '2';
+										}else{
+											$raceRunner->selection_status_id = '1';
+										}
 									}
 									if(isset($dataArray['Weight'])){
 										$raceRunner->weight = $dataArray['Weight'] / 10;
