@@ -565,15 +565,15 @@ class WageringApiIgasracingService extends ConfigReader{
 	private function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
-		$myFile = "/home/sites/topbetta.com/document-root/logs/bm_curl.log";
+		$myFile = "~/git/tb4/public/logs/bm_curl.log";
 		
-		/*
+		
 		if ($fh = fopen($myFile, 'a')) {
 			fwrite($fh, date('Y-m-d H:i:s') . "\n" . $msg);
 			fwrite($fh, "\n");
 			fclose($fh);					
 		}
-		*/
+		
 		
 		/*$file_path = "/var/www/vhosts/topbetta.com/logs/bm_".date("Ymd").".log";
 		//print_r($this->getRESTService());
