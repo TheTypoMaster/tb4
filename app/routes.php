@@ -32,7 +32,17 @@ Route::get('/', function()
 	
 	//return FreeTransactions::all();
 	
+	// return FreeCreditBalance::getFreeCreditBalance(6996);
+	
 });
+
+//Route group for admin stuff
+Route::group(array('prefix' => '/api/admin/v1'), function() {
+	// Data importer calls
+	Route::resource('dataimporter', 'AdminDataImporter');
+	
+});
+
 
 // Route group for backend API.
 //Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
