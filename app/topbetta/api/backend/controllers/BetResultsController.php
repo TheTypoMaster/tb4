@@ -108,7 +108,7 @@ class BetResultsController extends \BaseController {
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @return Response
+	 * @return Response$resultsJSON
 	 */
 	public function store()
 	{
@@ -118,7 +118,7 @@ class BetResultsController extends \BaseController {
 		
 		// get the JSON POST
 		$resultsJSON = \Input::json();
-		$jsonSerialized = serialize($racingJSON);
+		$jsonSerialized = serialize($resultsJSON);
 	
 		if($this->debug){
 			$timeStamp = date("YmdHis");
