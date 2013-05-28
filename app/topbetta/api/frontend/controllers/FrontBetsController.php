@@ -85,8 +85,11 @@ class FrontBetsController extends \BaseController {
 
 		// change these rules as required
 		$rules = array('id' => 'required|integer', 'race_id' => 'required', 'bet_type_id' => 'required', 'value' => 'required|integer', 'selection' => 'required', 'pos' => 'required|integer', 'bet_origin' => 'required|alpha', 'bet_product' => 'required|integer', 'wager_id' => 'required|integer');
-
-		$validator = \Validator::make(Input::all(), $rules);
+		$input = Input::json()->all();
+		//temp username
+		$input['username'] = 'miccos';
+		
+		$validator = \Validator::make($input, $rules);		
 
 		if ($validator -> fails()) {
 
@@ -95,7 +98,7 @@ class FrontBetsController extends \BaseController {
 		} else {
 			// POST bet data to legacy API
 			$l = new \TopBetta\LegacyApiHelper;
-			$bet = $l -> query('saveBet', Input::all());
+			$bet = $l -> query('saveBet', $input);
 
 			if ($bet['status'] == 200) {
 				return array('success' => true, 'result' => $bet['success']);
