@@ -1,4 +1,5 @@
 <?php namespace TopBetta;
+
 class RaceMarket extends \Eloquent {
 
 	protected $table = 'tbdb_market';

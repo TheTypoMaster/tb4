@@ -22,46 +22,27 @@ class FrontMeetingsController extends \BaseController {
 		$typeCode = Input::get('type', 'r');
 
 		// store meetings & races in cache for 1 min at a time
-		$data = \Cache::remember('meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
+		return \Cache::remember('meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
 
 			//fetch our meetings for the specified type i.e. r = racing, g = greyhouds, h = harness
 			$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . '"') -> get();
 
 			//TODO: make sure we have rows
-			$result['success'] = true;
 			$meetingAndRaces = array();
 			$eachMeeting = array();
 
 			foreach ($events as $event) {
-				$meetingRaces = array();
 
-				$races = TopBetta\RaceMeeting::find($event -> id) -> raceevents;
+				$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);
 
-				foreach ($races as $race) {
-
-					$toGo = \TimeHelper::nicetime(strtotime($race -> start_date), 2);
-
-					//convert the date to ISO 8601 format
-					$startDatetime = new \DateTime($race -> start_date);
-					$startDatetime = $startDatetime -> format('c');
-
-					$meetingRaces[] = array("id" => $race -> id, "race_number" => $race -> number, "to_go" => $toGo, "start_datetime" => $startDatetime, "results" => false, "status" => $race -> status);
-
-					$weather = $race -> weather;
-					$track = $race -> track;
-				}
-
-				$meetingAndRaces = array('id' => $event -> id, 'name' => $event -> name, 'weather' => $weather, 'track' => $track, 'races' => $meetingRaces);
+				$meetingAndRaces = array('id' => $event -> id, 'name' => $event -> name, 'weather' => $event -> weather, 'track' => $event -> track, 'races' => $races);
 				$eachMeeting[] = $meetingAndRaces;
 			}
 
-			$result['result'] = $eachMeeting;
-
-			return $result;
+			return array('success' => true, 'result' => $eachMeeting);
 
 		});
 
-		return $data;
 	}
 
 	/**

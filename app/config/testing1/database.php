@@ -55,13 +55,12 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'topbetta_application',
-			'username'  => 'root',
-			'password'  => 'root',
+			'database'  => 'topbetta_igas',
+			'username'  => 'topbetta_testing',
+			'password'  => 'mysqlp@ss',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
-			'profile'	=> true,
 		),
 
 		'pgsql' => array(

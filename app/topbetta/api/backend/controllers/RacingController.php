@@ -1,7 +1,54 @@
-<?php
+<?php namespace TopBetta\backend;
 
-class RacingController extends BaseController {
+use TopBetta;
 
+class RacingController extends \BaseController {
+
+	/**
+	 * Default log message type
+	 *
+	 * @var integer
+	 */
+	const LOG_TYPE_NORMAL = 0;
+	
+	/**
+	 * Debug log message type
+	 *
+	 * @var integer
+	 */
+	const LOG_TYPE_DEBUG = 1;
+	
+	/**
+	 * Log message type for errors
+	 *
+	 * @var integer
+	 */
+	const LOG_TYPE_ERROR = 2;
+	
+	/**
+	 * Default time formatting string for log messages
+	 *
+	 * @var string
+	 */
+	const LOG_TIME_FORMAT_DEFAULT = 'r';
+	
+	/**
+	 * Show time string in log messages
+	 *
+	 * @var string
+	 */
+	const LOG_TIME_SHOWN = false;
+		
+	/**
+	 * Debugging mode flag
+	 *
+	 * @var boolean
+	 */
+	private $debug = true;
+	
+	
+	
+	
 	public function __construct()
 	{
 	 	//$this->beforeFilter('apiauth');
@@ -17,7 +64,7 @@ class RacingController extends BaseController {
 	{
 		//
 		// return RaceMeetings::all();
-		return "Racing 2nd index";
+		return "Racing API Index";
 	}
 
 	/**
@@ -37,13 +84,25 @@ class RacingController extends BaseController {
 	 */
 	public function store()
 	{
+		
+		// Log this
+		TopBetta\LogHelper::l("BackAPI: Racing - Reciving POST");
+		
 		// get the JSON POST
-		$racingJSON = Input::json();
+		$racingJSON = \Input::json();
+		$jsonSerialized = serialize($racingJSON);
+
+		
+		if($this->debug){
+			$timeStamp = date("YmdHis");
+			\File::append('/tmp/backAPIracing-'.$timeStamp, $jsonSerialized);
+		}
 		
 		// make sure JSON was received
 		$keyCount = count($racingJSON);
 		if(!$keyCount){
-			return Response::json(array(
+			TopBetta\LogHelper::l("BackAPI: Racing - No Data In POST",2);
+			return \Response::json(array(
 					'error' => true,
 					'message' => 'Error: No JSON data received'),
 					400
@@ -70,11 +129,10 @@ class RacingController extends BaseController {
 		exit; */
 		// JSON objects MeetingList/RaceList/RunnerList/ResultList/PriceList/OutcomeList
 		
-
-		echo "Key Count: $keyCount\n";
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing '$keyCount' Objects");
+		$objectCount=1;
 		// loop on objects in data
 		foreach($racingJSON as $key => $racingArray){
-			echo "Working on KEY: $key\n";
 			
 			// Make sure we have some data to process in the array
 			if(is_array($racingArray)){
@@ -84,23 +142,22 @@ class RacingController extends BaseController {
 					
 					// Meeting Data - the meeting/venue
 					case "MeetingList":
-						echo"CASE: $key\n";
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, Object:$objectCount");
 						foreach ($racingArray as $dataArray){
-
 							// store data from array
 							if(isset($dataArray['Id'])){
 								$meetingId = $dataArray['Id'];
 								
 								// check if meeting exists in DB
-								$meetingExists = RaceMeeting::meetingExists($meetingId);
+								$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 								
 								// if meeting exists update that record
 								if($meetingExists){
-									echo "Meeting: In DB: ". $meetingExists ."\n";
-									$raceMeet = RaceMeeting::find($meetingExists);
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, In DB: $meetingExists", 1);
+									$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
 								}else{
-									echo "Meeting: Added to DB: ". $meetingExists ."\n";
-									$raceMeet = new RaceMeeting;
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, Added to DB: $meetingExists", 1);
+									$raceMeet = new TopBetta\RaceMeeting;
 									if(isset($dataArray['Id'])){
 										$raceMeet->external_event_group_id = $dataArray['Id'];
 									}
@@ -112,17 +169,19 @@ class RacingController extends BaseController {
 								if(isset($dataArray['Name'])){
 									$raceMeet->name = $dataArray['Name'];
 								}
-								if(isset($dataArray['Sport'])){
-									switch($dataArray['Sport']){
-										case "HORSE RACING":
+								
+								
+								if(isset($dataArray['RaceType'])){
+									switch($dataArray['RaceType']){
+										case "R":
 											$raceMeet->type_code = 'R';
 											$raceMeet->tournament_competition_id = '31';
 											break;
-										case "Harness":
+										case "T":
 											$raceMeet->type_code = 'H';
 											$raceMeet->tournament_competition_id = '32';
 											break;
-										case "Greyhounds":
+										case "G":
 											$raceMeet->type_code = 'G';
 											$raceMeet->tournament_competition_id = '33';
 											break;
@@ -142,46 +201,48 @@ class RacingController extends BaseController {
 								if(isset($dataArray['Track'])){
 									$raceMeet->track = $dataArray['Track'];
 								}
-								
+								if(isset($dataArray['State'])){
+									$raceMeet->state = $dataArray['State'];
+								}
 								
 								// save or update the record
 								$raceMeetSave = $raceMeet->save();
 								$raceMeetID = $raceMeet->id;
+								TopBetta\LogHelper::l("BackAPI: Racing - Processed Meeting. MID:$meetingId, Date:$raceMeet->start_date, Name:$raceMeet->name, Type:$raceMeet->type_code, Events:$raceMeet->events, Weather:$raceMeet->weather, Track:$raceMeet->track");
 								
-								echo "Meeting: Record Added/Updated\n\n";
 							}else{
-								echo "Meeting: No Meeting ID, can't preocess";
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. No Meeting ID, Can't process", 1);
 							}								
 						}
 						break;
 						
 					// Race data - the races in the meeting
 					case "RaceList":
-						echo"CASE: $key\n";
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Race");
 						foreach ($racingArray as $dataArray){
-							echo"Race Object: ";
-							//print_r($dataArray);
-							echo "\n";
-							
+													
 							if(isset($dataArray['MeetingId']) && $dataArray['RaceNo']){
 								$meetingId = $dataArray['MeetingId'];
 								$raceNo = $dataArray['RaceNo'];
 							
 								// make sure the meeting this race is in exists 1st
-								$meetingExists = RaceMeeting::meetingExists($meetingId);
+								$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 	
 								// if meeting exists update that record then continue to add/update the race record
 								if($meetingExists){
-									//check if race exists
-									$raceExists = RaceEvent::eventExists($meetingId, $raceNo);
+									
+									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
+								
+									// check if race exists
+									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 	
 									// if race exists update that record
 									if($raceExists){
-										echo "Race: In DB: ". $raceExists ."\n";
-										$raceEvent = RaceEvent::find($raceExists);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, In DB: $raceExists", 1);
+										$raceEvent = TopBetta\RaceEvent::find($raceExists);
 									}else{
-										echo "Race:  Added to DB:". $raceExists ."$meetingId.\n";
-										$raceEvent = new RaceEvent;
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB: $raceExists", 1);
+										$raceEvent = new TopBetta\RaceEvent;
 										if(isset($dataArray['MeetingId'])){
 											$raceEvent->external_event_id = $meetingId;
 										}
@@ -195,7 +256,8 @@ class RacingController extends BaseController {
 										$raceEvent->start_date = $dataArray['JumpTime'];
 									}
 									
-									//TODO: check race status code from code table and get codes from IGAS?
+									//TODO: Code Table lookup on different race status
+									//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
 									if(isset($dataArray['RaceStatus'])){
 										switch($dataArray['RaceStatus']){
 											case "O":
@@ -205,15 +267,15 @@ class RacingController extends BaseController {
 												$raceEvent->event_status_id = '1';
 												break;
 											default:
-												echo "Race|ERROR: No race status. Can't process\n";
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process", 2);
 										}
 									
 									}
 									
-									// TODO: Where is runner count currently?
-									//if(isset($dataArray['RunnerCount'])){
-									//	$raceEvent->type_code = $dataArray['RunnerCount'];
-									//}
+									// TODO: Not stored or needed?
+									/* if(isset($dataArray['RunnerCount'])){
+										$raceEvent->type_code = $dataArray['RunnerCount'];
+									} */
 									
 									if(isset($dataArray['RaceName'])){
 										$raceEvent->name = $dataArray['RaceName'];
@@ -224,43 +286,42 @@ class RacingController extends BaseController {
 									if(isset($dataArray['RaceClass'])){
 										$raceEvent->class = $dataArray['RaceClass'];
 									}
-									
 								
 									// save or update the record
+									$raceEvent->weather = $meetingRecord->weather;
+									$raceEvent->track_condition = $meetingRecord->track;
 									$raceEventSave = $raceEvent->save();
 									$raceEventID = $raceEvent->id;
 									
-									echo"Race: Record Added/Updated\n";
-									
+									TopBetta\LogHelper::l("BackAPI: Racing - Processed Race. MID:$meetingId, RaceNo:$raceNo, Name: $raceEvent->name, JumpTime:$raceEvent->start_date, Status:$raceEvent->event_status_id");
+																	
 									// Add the event_group_event record if adding race
 									
 									// TODO: maybe through eloquent check if the race already exists in DB also need to check what event_id field stores
-									$egeExists = DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->pluck('event_id');
+									$egeExists = \DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->pluck('event_id');
 									
 									if(!$egeExists){
-										$eventGroupEvent = new RaceEventGroupEvent;
+										$eventGroupEvent = new TopBetta\RaceEventGroupEvent;
 										$eventGroupEvent->event_id = $raceEventID;
 										$eventGroupEvent->event_group_id = $meetingExists;
 										$eventGroupEvent->save();
-										echo "EGE: Added event_group_event record\n\n";
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB",1);
 										// Add event_group event record
 									}else{
-										echo"EGE: In DB\n\n";
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, EGE in DB",1);
 									}
 								}else{
-									echo "Race|ERROR: Meeting for race does not exist\n";
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process", 2);
 								}
 							}else{
-								echo "Race|ERROR: MeetingID or RaceNo not set. Can't process\n";
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. MeetingID or RaceNo not set. Can't process", 2);
 							}
-							
 						}
-	
 						break;
 											
 					// Selection/Runner Data - The runners in the race
 					case "RunnerList":
-						echo"CASE: $key\n";
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Runner");
 						foreach ($racingArray as $dataArray){
 							$raceExists = $selectionsExists = 0;
 							// Check all required data is available in the JSON for the runner
@@ -270,46 +331,41 @@ class RacingController extends BaseController {
 								$runnerNo = $dataArray['RunnerNo'];
 									
 								//check if race exists in DB
-								$raceExists = RaceEvent::eventExists($meetingId, $raceNo);
+								$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 									
 								//TODO: add error output to a log
 								if($raceExists){
 									
 									// check if selection exists in the DB
-									$selectionsExists = RaceSelection::selectionExists($meetingId, $raceNo, $runnerNo);
+									$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerNo);
 										
 									// if runner exists update that record
 									if($selectionsExists){
-										echo "Runner:  Already in DB:". $selectionsExists ." $meetingId.\n";
-										$raceRunner = RaceSelection::find($selectionsExists);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, In DB: $selectionsExists", 1);
+										$raceRunner = TopBetta\RaceSelection::find($selectionsExists);
 									}else{
-										echo "Runner:  Added to DB:". $selectionsExists ." $meetingId.\n";
-										$raceRunner = new RaceSelection;
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Added to DB: $selectionsExists", 1);
+										$raceRunner = new TopBetta\RaceSelection;
 
 										// get market ID
-										$marketTypeID = RaceMarketType::where('name', '=', $marketName)->pluck('id');
+										$marketTypeID = TopBetta\RaceMarketType::where('name', '=', $marketName)->pluck('id');
 										
 										// check if market for event exists
-										$marketID = RaceMarket::marketExists($raceExists, $marketTypeID);
+										$marketID = TopBetta\RaceMarket::marketExists($raceExists, $marketTypeID);
 										
 										if(!$marketID){
 											// add market record
-											$runnerMarket = new RaceMarket;
+											$runnerMarket = new TopBetta\RaceMarket;
 											$runnerMarket->event_id = $raceExists;
 											$runnerMarket->market_type_id = 110; //TODO: this needs to come from db
 											$runnerMarket->save();
 											$marketID = $runnerMarket->id;
 											
-											echo "Runner: Add market record for event: $raceExists\n";
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
 										}
 										$raceRunner->market_id = $marketID;
 									}
-											
-									//TODO: SILK DATA REQUIRED
-									// if(isset($dataArray['SilkNo'])){
-									//	$raceEvent->silk = $dataArray['SilkNo'];
-									//}
-										
+								
 									if(isset($dataArray['BarrierNo'])){
 										$raceRunner->barrier = $dataArray['BarrierNo'];
 									}
@@ -319,39 +375,83 @@ class RacingController extends BaseController {
 									if(isset($dataArray['RunnerNo'])){
 										$raceRunner->number = $dataArray['RunnerNo'];
 									}
-									if(isset($dataArray['JTD'])){
-										$raceRunner->associate = $dataArray['JTD'];
-									}
+									
+									//TODO: Code Table Lookup/Provider matching table							
 									if(isset($dataArray['Scratched'])){
-										$raceRunner->selection_status_id = $dataArray['Scratched'];
+										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
 									}
 									if(isset($dataArray['Weight'])){
 										$raceRunner->weight = $dataArray['Weight'];
 									}
+
+									// get the meeting record ID
+									$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
+									
+									// Get meeting type
+									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
+									$meetingType = $meetingRecord->type_code;
+
+									// Get silkID for runner from RISA table
+									if($meetingType == "R"){
+										// get silk ID from RISA data: tb_racing_data_risa_silk_map
+										// check if meeting exists in DB
+										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 										
+										if($meetingExists){
+											// if meeting exists get the record
+											$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
+											// Grab the date from the date/time field
+											$meetDate = substr($raceMeet, 0, 10);
+											// default to Racing atm
+											$codeType = 'R';
+											// get the venue name
+											$venueName = $raceMeet->name;
+											// make sure the numbers are 2 digits
+											($raceNo < 10) ? $raceNumber = '0' . $raceNo : $raceNumber = $raceNo;
+											($runnerNo < 10) ? $runnerNumber = '0' . $runnerNo : $runnerNumber = $runnerNo;
+											// Build the runner code
+											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
+											
+											// Get Silk ID for this runner
+											$raceRunner->silk_id = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->pluck('silk_file_name');
+										}
+											
+												
+									}
+									// LEGACY DB storage area
+									if($meetingType == "G"){
+										if(isset($dataArray['Trainer'])){
+											$raceRunner->associate = $dataArray['Trainer'];
+										}
+										
+									} else {
+										if(isset($dataArray['Jockey'])){
+											$raceRunner->associate = $dataArray['Jockey'];
+										}
+										if(isset($dataArray['Trainer'])){
+											$raceRunner->trainer = $dataArray['Trainer'];
+										}
+									}
+									
 									// save or update the record
-								
 									$raceRunnerSave = $raceRunner->save();
 									$raceRunnerID = $raceRunner->id;
 													
-									echo"Runner: Record Added/Updated. MID:$meetingId , Race:$raceNo, Runner:$runnerNo \n\n";
-									
+									TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId , RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
+																	
 								}else {
-									echo"Runner|ERROR: No race found for this runner\n";
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. No race found for this runner. MID:$meetingId, Race:$raceNo, Runner:$runnerNo Can't process", 2);
 								}
 							}else {
-								echo "Runner|ERROR: Missing Runner data. Can't process";
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Missing Runner data. Can't process", 2);
 							}
 						}
 						break;
 						
 					// Result Data - the actual results of the race
 					case "ResultList":
-						echo"CASE: $key\n";
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Result");
 						foreach ($racingArray as $dataArray){
-							echo"Results Object: ";
-							print_r($dataArray);
-							echo "\n";
 							$selectionsExists = $resultExists = 0;
 							
 							// Check required data to update a Result is in the JSON
@@ -367,56 +467,78 @@ class RacingController extends BaseController {
 								// TODO: Check JSON data is valid
 									
 								// check if selection exists in the DB
-								$selectionsExists = RaceSelection::selectionExists($meetingId, $raceNo, $selection);
+								$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $selection);
 								
-								if ($selectionsExists){
-									echo "Result: Selection exists in DB: $selectionsExists\n";
-									$resultExists = DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
+								// Get ID of event record - used to store exotic results/divs if required
+								$eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 								
-									// if result exists update that record
-									if($resultExists){
-										echo "Result: Already in DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
-										$raceResult = RaceResult::find($resultExists);
-										//$raceResult = RaceResult::where('selection_id', $selectionsExists);
-									}else{
-										echo "Result: Added to DB:$resultExists, MID:$meetingId, Race:$raceNo, SEL:$selection\n";
-										$raceResult = new RaceResult;
-										$raceResult->selection_id = $selectionsExists;
-									}
+								// Processs win and place bets
+								if($betType == 'W' || $betType == 'P'){
+									if ($selectionsExists){
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result",1);
+										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
 									
-									// process 1st 4 places
-									switch($betType) {
-										// 1st place
-										case "WIN":
-											$raceResult->position = $placeNo;
-											$raceResult->win_dividend = $payout / 100;
-											break;
-										case "PLC":
-											$raceResult->position = $placeNo;
-											$raceResult->place_dividend = $payout / 100;
-											break;
-												
-										default:
-											echo "Result|ERROR: No valid betType found:$betType\n";
-									}
+										// if result exists update that record
+										if($resultExists){
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, In DB", 1);
+											$raceResult = TopBetta\RaceResult::find($resultExists);
+										}else{
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Added to DB", 1);
+											$raceResult = new TopBetta\RaceResult;
+											$raceResult->selection_id = $selectionsExists;
+										}
 										
-									// save or update the record
-									$raceResultSave = $raceResult->save();
-									$raceResultID = $raceResult->id;
+										
+										$raceResult->position = $placeNo;
+										($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
+										
+										// save win or place odds to DB
+										$raceResultSave = $raceResult->save();
+										$raceResultID = $raceResult->id;
+											
+										TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+									}else{
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No Selection found. Results not updated", 2);
+									}									 
 									
-									echo"Result: Record Added/Updated: $raceResultID\n\n";
+								// Process exotics = stored as serialsed arrays in the tbdb_event table
 								}else{
-									echo "Result|ERROR: No Selection found. Results not updated\n";
-								}
+									
+									// grab the event
+									$raceEvent = TopBetta\RaceEvent::find($eventID);
+									$arrayKey = str_replace('-', '/', $selection);
+									$arrayValue = $payout;
+									$exoticArray = array($arrayKey => $arrayValue);
+									
+									switch($betType) {
+										case "Q": // Quinella
+											$raceEvent->quinella_dividend = serialize($exoticArray);
+											break;
+										case "E": // Exacta
+											$raceEvent->exacta_dividend = serialize($exoticArray);
+											break;
+										case "T": // Trifecta
+											$raceEvent->trifecta_dividend = serialize($exoticArray);
+											break;
+										case "F": // First Four
+											$raceEvent->firstfour_dividend = serialize($exoticArray);
+											break;
+										default:
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
+									}
+									// save the exotic dividend
+									$raceEvent->save();
+								}		
+							
 							}else { // not all required data available
-								echo "Result|ERROR: Missing Results data. Can't process";
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Missing Results data. Can't process", 2);
 							}
 						}
 						break; 
 							
 					// Price Data
 					case "PriceList":
-						echo"Processing: $key\n";
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Odds");
 						foreach ($racingArray as $dataArray){
 							//echo"Price Object: ";
 							//print_r($dataArray);
@@ -434,84 +556,89 @@ class RacingController extends BaseController {
 								
 								$oddsArray = explode(';', $oddsString);
 								
-								echo "* MID: $meetingId, Race: $raceNo, BT: $betType, PT: $priceType, PA: $poolAmount\n";
 								
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. MID: $meetingId, Race: $raceNo, BT: $betType, PT: $priceType, PA: $poolAmount",1);
+																
 								// TODO: Check JSON data is valid
-
-								
-								
-								// check if race exists in DB
-								$raceExists = RaceEvent::eventExists($meetingId, $raceNo);
-								
-								// if race exists update that record
-								if($raceExists){
-									// check for odds
-									if(is_array($oddsArray)){
-										//loop on odds array
-										$runnerCount = 1;
-										
-										foreach($oddsArray as $runnerOdds){
+				
+								// TODO: Cater properly for other odds type's 
+								if ($priceType == "TOP"){
+									// check if race exists in DB
+									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+									
+									// if race exists update that record
+									if($raceExists){
+										// check for odds
+										if(is_array($oddsArray)){
+											//loop on odds array
+											$runnerCount = 1;
 											
-											echo "RC: $runnerCount, ";
-											// get selectionID for runner
+											foreach($oddsArray as $runnerOdds){
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds for Runner: $runnerCount", 1);
+												// echo "RC: $runnerCount, ";
+												// get selectionID for runner
+												
+												// check if selection exists in the DB
+												$selectionExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
 											
-											// check if selection exists in the DB
-											$selectionExists = RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
-										
-											if ($selectionExists){
-												echo "Selection in DB. ";
-												$priceExists = DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
-											
-												// if result exists update that record otherwise create a new one
-												if($priceExists){
-													echo "Price in DB, ODDS:$runnerOdds, ";
-													$runnerPrice = RaceSelectionPrice::find($priceExists);
+												if ($selectionExists){
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. In DB", 1);
+													$priceExists = \DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
+												
+													// if result exists update that record otherwise create a new one
+													if($priceExists){
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, In DB: $priceExists", 1);
+														//echo "Price in DB, ODDS:$runnerOdds, ";
+														$runnerPrice = TopBetta\RaceSelectionPrice::find($priceExists);
+													}else{
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, Added to DB: $priceExists", 1);
+														$runnerPrice = new TopBetta\RaceSelectionPrice;
+														$runnerPrice->selection_id = $selectionExists;
+													}
+													$oddsSet = 0;
+													// update the correct field
+													switch($betType){
+														case "W":
+															$runnerPrice->win_odds = $runnerOdds / 100;
+															$oddsSet = 1;
+															//echo "Win odds set: $runnerOdds, ";
+															break;
+														case "P":
+															$runnerPrice->place_odds = $runnerOdds / 100;
+															$oddsSet = 1;
+															//echo "Place odds set: $runnerOdds, ";
+															break;
+														case "Q":
+															//echo "QIN odds, ";
+															break;
+														default:
+															TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+													}
+													// save/update the price record
+													if ($oddsSet){
+														$runnerPrice->save();
+														TopBetta\LogHelper::l("BackAPI: Racing - Processed Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds");
+													}else{
+														TopBetta\LogHelper::l("BackAPI: Racing - Can't process. No Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds ", 2);
+													}
 												}else{
-													echo "Price Added to DB, ODD:$runnerOdds, ";
-													$runnerPrice = new RaceSelectionPrice;
-													$runnerPrice->selection_id = $selectionExists;
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No selction for Odds in DB. Can't process", 2);
 												}
-												$oddsSet = 0;
-												// update the correct field
-												switch($betType){
-													case "WIN":
-														$runnerPrice->win_odds = $runnerOdds / 100;
-														$oddsSet = 1;
-														echo "Win odds set: $runnerOdds, ";
-														break;
-													case "PLC":
-														$runnerPrice->place_odds = $runnerOdds / 100;
-														$oddsSet = 1;
-														echo "Place odds set: $runnerOdds, ";
-														break;
-													case "QIN":
-														echo "QIN odds, ";
-														break;
-													default:
-														echo "Price|ERROR: bet Type not valid: $betType. Can't process\n";
-												}
-												// save/update the price record
-												if ($oddsSet){
-													$runnerPrice->save();
-													echo "Price: Record updated/added\n";
-												}else{
-													echo "Price|ERROR: WIN/PLC Odds not saved\n";
-												}
-											}else{
-												echo "Price|ERROR: No selction for Price in DB. Can't process\n";
+												$runnerCount++;
 											}
-											$runnerCount++;
+											} else {
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No odds array found. Can't process", 2);
+											}
+										}else{
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No race found. Can't store results", 2);
 										}
-										} else {
-											echo "Price|ERROR: No odds array found. Can't process\n";
-										}
-									}else{
-										echo "Price|ERROR: No race found. Can't store results\n";
-									}
+								}else{
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not TOPT:$priceType.", 2);
+								}
 							}else{
-								echo "Price|ERROR: Missing Price Data. Can't process\n";
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. Missing Odds Data. Can't process", 2);
 							}
-							echo "\n\n";
+							//echo "\n\n";
 						}
 	
 						break;
@@ -519,33 +646,39 @@ class RacingController extends BaseController {
 						
 					// Outcome Data
 					case "OutcomeList":
-						echo"CASE: $key\n";
-						
-							foreach ($racingArray as $dataArray){
-								echo"Outcome Object: ";
-								print_r($dataArray);
-								echo "\n";
-							}
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Outcome");
+							//foreach ($racingArray as $dataArray){
+							//	echo"Outcome Object: ";
+							//	print_r($dataArray);
+							//	echo "\n";
+							//}
 			
 						break;
 					
 					default :
-						return Response::json(array(
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key", 2);
+						return \Response::json(array(
 							'error' => true,
 							'message' => 'Error: Data format not recognised: '. $key),
 							400
 						);
 				}
 			}else{
+				TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key. No Data. Can't Process", 2);
 				/* return Response::json(array(
 						'error' => true,
 						'message' => 'Error: No Data found'),
 						400
 				); */
 			}
+			$objectCount++;
 		}
 		
-		
+		return \Response::json(array(
+				'error' => false,
+				'message' => 'OK: Processed Successfully'),
+				200
+		);
 		//return RaceMeetings::all();
 		
 	}
@@ -594,4 +727,6 @@ class RacingController extends BaseController {
 		//
 	}
 
+	
+	
 }

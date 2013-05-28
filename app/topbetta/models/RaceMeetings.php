@@ -21,5 +21,25 @@ class RaceMeeting extends \Eloquent {
 	static public function meetingExists($meetingId) {
 		return RaceMeeting::where('external_event_group_id', '=', $meetingId) -> pluck('id');
 	}
+	
+	static public function getRacesForMeetingId($meetingId) {
+		$races = RaceMeeting::find($meetingId) -> raceevents;
+
+		$result = array();
+
+		foreach ($races as $race) {
+			
+			$toGo = \TimeHelper::nicetime(strtotime($race -> start_date), 2);
+
+			//convert the date to ISO 8601 format
+			$startDatetime = new \DateTime($race -> start_date);
+			$startDatetime = $startDatetime -> format('c');				
+
+			$result[] = array('id' => $race -> id, 'race_number' => $race -> number, 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'results' => false, 'satus' => $race -> status);
+
+		}	
+		
+		return $result;	
+	}
 
 }

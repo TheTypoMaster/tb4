@@ -72,7 +72,8 @@ class Api_User extends JController {
 													'block' 	=> $user->block,
 													'tb_user' 	=> $tb_user);				
 			} else {				
-			$result = OutputHelper::json(200, array('first_name'=> $first_name, 
+			$result = OutputHelper::json(200, array('id'		=> (int)$user->id,
+													'first_name'=> $first_name, 
 													'last_name' => $last_name, 
 													'username' 	=> $user->username, 
 													'email' 	=> $user->email,
@@ -131,11 +132,20 @@ class Api_User extends JController {
 						   $account_type = 'corporate';
 						}elseif( $user->isTopBetta && !$user->isCorporate ){
 						   $account_type = 'topbetta';
+						   $full_account = true;
 						}else{
 						   $account_type = 'basic';
+						   $full_account = false;
+						}			
+						
+						if (!class_exists('TopbettaUserModelTopbettaUser')) {
+							JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
 						}
 						
-						$result = OutputHelper::json(200, array('msg' => 'Login successful','userInfo' => array('username' => $user->username , 'name' => $user->name, 'accountType' => $account_type ) ));
+						$tb_model = new TopbettaUserModelTopbettaUser();	
+						$tbuser = $tb_model->getUser();	
+						
+						$result = OutputHelper::json(200, array('msg' => 'Login successful','userInfo' => array('id' => (int)$user->id, 'username' => $user->username , 'name' => $user->name, 'first_name' => $tbuser->first_name, 'last_name' => $tbuser->last_name, 'accountType' => $account_type, 'full_account' => $full_account ) ));
 					}else{
 
                          $result = OutputHelper::json(500, array('error_msg' => 'Account not activated or blocked' ));
