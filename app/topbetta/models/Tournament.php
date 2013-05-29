@@ -114,6 +114,8 @@ class Tournament extends \Eloquent {
 				case 'racing' :
 					$query .= ' AND LOWER(s.name) IN ("galloping", "harness", "greyhounds")';
 					break;
+			default:
+				return array();
 			}
 		}
 
