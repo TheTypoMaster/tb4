@@ -1105,7 +1105,7 @@ class Api_Betting extends JController {
 				}
 				
 				 
-				$api = WageringApi::getInstance(WageringApi::API_TOB);
+				$api = WageringApi::getInstance(WageringApi::API_IGASRACING);
 				
 				$api_con=$api->checkConnection();
 				if(is_null($api_con))
