@@ -3,7 +3,7 @@
 class WageringApiIgasracingService extends ConfigReader{
 	// Command paths
 	private $service_login_path = 'login'; // login path to get token
-	private $service_quickbet_path = 'quickbet'; // quickbet path
+	private $service_quickbet_path = 'Betinput.aspx'; // quickbet path
 	private $service_bets_path = 'bets'; // bet lookup path
 	private $service_token_validator_path = 'checkauth'; // Token validator path
 
@@ -75,10 +75,10 @@ class WageringApiIgasracingService extends ConfigReader{
 		$this->_setHostId();
 		
 		// get token from DB. Will throw error if token hasn't loaded from DB
-		$this->getToken();
+		//$this->getToken();
 		
 		// check token. will return another token if invalid or keep the current token if valid
-		$this->_checkLoginToken();
+		//$this->_checkLoginToken();
 
 	}
 	

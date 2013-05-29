@@ -82,7 +82,7 @@ class WageringApiIgasracing extends WageringApi
 	}
 	
 	private function _getAccountService(){
-		return new WageringApiIgasracing();
+		return new WageringApiIgasracingService();
 	}
 /*	
 	public function getPushService(){
