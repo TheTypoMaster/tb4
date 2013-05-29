@@ -621,7 +621,7 @@ class WageringApiIGassportsService extends ConfigReader{
 	private function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
-		$myFile = "/home/oshan/git/topbetta.com/document-root/logs/bm_curl.log";
+		$myFile = "/tmp/igassports_curl.log";
 		
 		
 		if ($fh = fopen($myFile, 'a')) {
