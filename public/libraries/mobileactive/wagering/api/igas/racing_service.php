@@ -67,12 +67,12 @@ class WageringApiIgasracingService extends ConfigReader{
 			}
 		}
 
-		$this->token_model	=& JModel::getInstance('Token', 'BettingModel');
+		//$this->token_model	=& JModel::getInstance('Token', 'BettingModel');
 		$this->runner_model	=& JModel::getInstance('Runner', 'TournamentModel');
 
 		
 		//should get a unique id for this node
-		$this->_setHostId();
+		//$this->_setHostId();
 		
 		// get token from DB. Will throw error if token hasn't loaded from DB
 		//$this->getToken();
@@ -96,11 +96,17 @@ class WageringApiIgasracingService extends ConfigReader{
 	 */
 	public function placeBetList(Array $bet_data)
 	{
-		$this->setLogger();
+		
+		//$o= print_r($bet_data,true);
+		//$this->setLogger("$o");
+		
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 
 		$params = $this->_buildBetList($bet_list);
+		//$this->setLogger("here");
+		
+		//return OutputHelper::json(500, array('error_msg' => 'here' ));
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		/*ob_start(); // Test output
 		print_r($params);
