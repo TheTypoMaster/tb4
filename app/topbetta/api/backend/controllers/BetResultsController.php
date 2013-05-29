@@ -119,12 +119,11 @@ class BetResultsController extends \BaseController {
 		// get the JSON POST
 		$resultsJSON = \Input::json();
 		$jsonSerialized = serialize($resultsJSON);
-	
+		
 		if($this->debug){
 			$timeStamp = date("YmdHis");
 			\File::append('/tmp/backAPIresults-'.$timeStamp, $jsonSerialized);
 		}
-		
 		
 		// make sure JSON was received
 		$keyCount = count($resultsJSON);
