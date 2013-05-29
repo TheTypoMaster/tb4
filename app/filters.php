@@ -33,9 +33,10 @@ App::after(function($request, $response)
 |
 */
 
+// frontend api is using laravel auth after the legacy login
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::route('login');
+	if (Auth::guest()) return array("success" => false, "error" => "Please login first.");
 });
 
 

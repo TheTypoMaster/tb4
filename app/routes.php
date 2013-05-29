@@ -11,6 +11,13 @@
 |
 */
 
+
+
+//TODO: ****** this is not safe to be here for production - find a better fix ******
+header('Access-Control-Allow-Origin: *');
+
+
+
 Route::get('/', function()
 {
 	// return all events for meeting with id of 1
@@ -49,8 +56,13 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 Route::group(array('prefix' => '/api/v1'), function() {
 		
 	// ::: USER :::
-	Route::resource('users','Users');
-	Route::resource('users.profile','UsersProfile');
+	// 2 custom routes for users auth	
+	Route::post('users/login', 'FrontUsers@login');
+	Route::get('users/logout', 'FrontUsers@logout');
+		
+	Route::resource('users','FrontUsers');
+	Route::resource('users.profile', 'FrontUsersProfile');
+	Route::resource('users.balances','FrontUsersBalances');
 	
 	// ::: BETS :::
 	Route::resource('bets','FrontBets');	
