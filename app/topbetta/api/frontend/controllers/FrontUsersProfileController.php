@@ -18,7 +18,7 @@ class FrontUsersProfileController extends \BaseController {
 	public function index($username) {
 
 		$l = new \TopBetta\LegacyApiHelper;
-		$user = $l -> query('getUser', array('username' => Input::get('username', $username)));
+		$user = $l -> query('getUser', array('username' => \Auth::user() -> username));
 
 		if ($user['status'] == 200) {
 

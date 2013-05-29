@@ -12,8 +12,8 @@ class FrontBetsController extends \BaseController {
 	 * @return Response
 	 */
 	public function index() {
-		// return active bets & recent bets	
-		
+		// return active bets & recent bets
+
 		// active SQL
 		$query = "SELECT
 	      		b.*,
@@ -63,7 +63,7 @@ class FrontBetsController extends \BaseController {
 			
 			GROUP BY
 				b.id";
-							
+
 		return 'Get users bets';
 	}
 
@@ -83,13 +83,15 @@ class FrontBetsController extends \BaseController {
 	 */
 	public function store() {
 
+		$this -> beforeFilter('auth');
+
 		// change these rules as required
 		$rules = array('id' => 'required|integer', 'race_id' => 'required', 'bet_type_id' => 'required', 'value' => 'required|integer', 'selection' => 'required', 'pos' => 'required|integer', 'bet_origin' => 'required|alpha', 'bet_product' => 'required|integer', 'wager_id' => 'required|integer');
-		$input = Input::json()->all();
-		//temp username
-		$input['username'] = 'miccos';
-		
-		$validator = \Validator::make($input, $rules);		
+		$input = Input::json() -> all();
+
+		$input['username'] = \Auth::user() -> username;
+
+		$validator = \Validator::make($input, $rules);
 
 		if ($validator -> fails()) {
 
@@ -101,9 +103,13 @@ class FrontBetsController extends \BaseController {
 			$bet = $l -> query('saveBet', $input);
 
 			if ($bet['status'] == 200) {
+				
 				return array('success' => true, 'result' => $bet['success']);
+				
 			} else {
+					
 				return array('success' => false, 'error' => $bet['error_msg']);
+				
 			}
 
 		}
