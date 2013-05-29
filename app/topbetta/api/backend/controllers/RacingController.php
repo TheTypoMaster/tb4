@@ -90,9 +90,9 @@ class RacingController extends \BaseController {
 		
 		// get the JSON POST
 		$racingJSON = \Input::json();
+		//$racingJSON = unserialize(file_get_contents('/tmp/backAPIracing-20130524203203'));
 		$jsonSerialized = serialize($racingJSON);
 
-		
 		if($this->debug){
 			$timeStamp = date("YmdHis");
 			\File::append('/tmp/backAPIracing-'.$timeStamp, $jsonSerialized);
@@ -378,10 +378,14 @@ class RacingController extends \BaseController {
 									
 									//TODO: Code Table Lookup/Provider matching table							
 									if(isset($dataArray['Scratched'])){
-										($dataArray['Scratched']) ? $raceRunner->selection_status_id = '0' : $raceRunner->selection_status_id = '1';
+										if ($dataArray['Scratched'] == 1){
+											$raceRunner->selection_status_id = '2';
+										}else{
+											$raceRunner->selection_status_id = '1';
+										}
 									}
 									if(isset($dataArray['Weight'])){
-										$raceRunner->weight = $dataArray['Weight'];
+										$raceRunner->weight = $dataArray['Weight'] / 10;
 									}
 
 									// get the meeting record ID
@@ -391,17 +395,18 @@ class RacingController extends \BaseController {
 									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
 									$meetingType = $meetingRecord->type_code;
 
+									
 									// Get silkID for runner from RISA table
 									if($meetingType == "R"){
 										// get silk ID from RISA data: tb_racing_data_risa_silk_map
 										// check if meeting exists in DB
 										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
-										
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk");
 										if($meetingExists){
 											// if meeting exists get the record
 											$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
 											// Grab the date from the date/time field
-											$meetDate = substr($raceMeet, 0, 10);
+											$meetDate = substr($raceMeet->start_date, 0, 10);
 											// default to Racing atm
 											$codeType = 'R';
 											// get the venue name
@@ -411,9 +416,12 @@ class RacingController extends \BaseController {
 											($runnerNo < 10) ? $runnerNumber = '0' . $runnerNo : $runnerNumber = $runnerNo;
 											// Build the runner code
 											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
-											
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
 											// Get Silk ID for this runner
-											$raceRunner->silk_id = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->pluck('silk_file_name');
+											$runnerSilk = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->pluck('silk_file_name');
+											if($runnerSilk){
+												$raceRunner->silk_id = $runnerSilk;
+											}
 										}
 											
 												
