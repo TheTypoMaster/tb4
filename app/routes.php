@@ -56,6 +56,7 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 Route::group(array('prefix' => '/api/v1'), function() {
 		
 	// ::: USER :::
+	
 	// 2 custom routes for users auth	
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
@@ -101,6 +102,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	
 	//tournaments details
 	Route::resource('tournaments.details','FrontTournamentsDetails');
+	
+	//tournaments tickets
+	Route::resource('tournaments.tickets','FrontTournamentsTickets');	
 	
 });
 

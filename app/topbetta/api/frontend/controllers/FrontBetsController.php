@@ -83,7 +83,6 @@ class FrontBetsController extends \BaseController {
 	 */
 	public function store() {
 
-		$this -> beforeFilter('auth');
 
 		// change these rules as required
 		$rules = array('id' => 'required|integer', 'race_id' => 'required', 'bet_type_id' => 'required', 'value' => 'required|integer', 'selection' => 'required', 'pos' => 'required|integer', 'bet_origin' => 'required|alpha', 'bet_product' => 'required|integer', 'wager_id' => 'required|integer');
