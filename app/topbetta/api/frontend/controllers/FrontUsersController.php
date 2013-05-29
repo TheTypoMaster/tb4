@@ -3,6 +3,7 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Lang;
 
 class FrontUsersController extends \BaseController {
 
@@ -25,7 +26,7 @@ class FrontUsersController extends \BaseController {
 
 			} else {
 
-				return array("success" => false, "error" => "There was a problem with your login");
+				return array("success" => false, "error" => Lang::get('users.login_problem'));
 
 			}
 
@@ -44,14 +45,14 @@ class FrontUsersController extends \BaseController {
 
 		if (\Auth::check()) {
 
-			return array("success" => false, "error" => "There was a problem trying to log you out");
+			return array("success" => false, "error" => Lang::get('users.logout_problem'));
 
 		} else {
 
 			//kill our laravel session which joomla is relying on
 			\Session::regenerate();
 
-			return array("success" => true, "result" => "You have been logged out");
+			return array("success" => true, "result" => Lang::get('users.logout_success'));
 
 		}
 	}
