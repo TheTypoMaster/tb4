@@ -33,11 +33,12 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store() {			
+	public function store() {
 
 		$tournaments = Input::json() -> all();
 
-		$errorMessages = array();
+		$messages = array();
+		$errors = 0;
 
 		foreach ($tournaments['tournaments'] as $tournamentId) {
 
@@ -45,24 +46,20 @@ class FrontTournamentsTicketsController extends \BaseController {
 			$l = new \TopBetta\LegacyApiHelper;
 			$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId, 'username' => \Auth::user() -> username));
 
-			if ($ticket['status'] != 200) {
+			if ($ticket['status'] == 200) {
 
-				$errorMessages[] = array("id" => $tournamentId, "error" => $ticket['error_msg']);
+				$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
+
+			} else {
+
+				$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
+				$errors++;
 
 			}
 
 		}
 
-		//TODO: how should we handle partial success - some tickets ok
-		if (count($errorMessages) > 0) {
-
-			return array("success" => false, "error" => $errorMessages);
-
-		} else {
-
-			return array("success" => true, "result" => "Tournament tickets purchased.");
-
-		}
+		return array("success" => ($errors > 0) ? false : true, ($errors > 0) ? "error" : "result" => $messages);
 
 	}
 
