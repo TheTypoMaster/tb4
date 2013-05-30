@@ -9,30 +9,44 @@ class FrontUsersController extends \BaseController {
 
 	public function login() {
 
-		$l = new \TopBetta\LegacyApiHelper;
-		$login = $l -> query('doUserLogin', array('username' => Input::get('username'), 'password' => 'password'));
+		$input = Input::json() -> all();
 
-		if ($login['status'] == 200) {
+		$rules = array('username' => 'required', 'password' => 'required');
 
-			// we do a standard laravel auth with the joomla user id in the DB
-			\Auth::loginUsingId($login['userInfo']['id']);
+		$validator = \Validator::make($input, $rules);
 
-			if (\Auth::check()) {
+		if ($validator -> fails()) {
 
-				//TODO: fetch/store the users legacy api cookie (/public/tmp/{username}.txt) in the laravel session
-				// - pass this through with each legacy api call if needed
+			return array("success" => false, "error" => $validator -> messages() -> all());
 
-				return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => $login['userInfo']['first_name'], "last_name" => $login['userInfo']['last_name'], "full_account" => $login['userInfo']['full_account']));
+		} else {
+			
+			$l = new \TopBetta\LegacyApiHelper;
+			$login = $l -> query('doUserLogin', $input);
+
+			if ($login['status'] == 200) {
+
+				// we do a standard laravel auth with the joomla user id in the DB
+				\Auth::loginUsingId($login['userInfo']['id']);
+
+				if (\Auth::check()) {
+
+					//TODO: fetch/store the users legacy api cookie (/public/tmp/{username}.txt) in the laravel session
+					// - pass this through with each legacy api call if needed
+
+					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => $login['userInfo']['first_name'], "last_name" => $login['userInfo']['last_name'], "full_account" => $login['userInfo']['full_account']));
+
+				} else {
+
+					return array("success" => false, "error" => Lang::get('users.login_problem'));
+
+				}
 
 			} else {
 
-				return array("success" => false, "error" => Lang::get('users.login_problem'));
+				return array("success" => false, "error" => $login['error_msg']);
 
 			}
-
-		} else {
-
-			return array("success" => false, "error" => $login['error_msg']);
 
 		}
 
