@@ -89,8 +89,8 @@ class LegacyApiHelper {
 			$url .= '&' . http_build_query($payload);
 		}
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_COOKIEJAR, 'tmp/' . $payload['username'] . '.txt');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/' . $payload['username'] . '.txt');
+		curl_setopt($ch, CURLOPT_COOKIEJAR, 'tmp/' . session_id() . '.txt');
+		curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/' . session_id() . '.txt');		
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 

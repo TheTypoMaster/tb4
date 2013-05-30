@@ -44,7 +44,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			// save tournament tickets via legacy API
 			$l = new \TopBetta\LegacyApiHelper;
-			$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId, 'username' => \Auth::user() -> username));
+			$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId));
 
 			if ($ticket['status'] == 200) {
 

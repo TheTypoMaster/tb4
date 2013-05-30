@@ -88,8 +88,6 @@ class FrontBetsController extends \BaseController {
 		$rules = array('id' => 'required|integer', 'race_id' => 'required', 'bet_type_id' => 'required', 'value' => 'required|integer', 'selection' => 'required', 'pos' => 'required|integer', 'bet_origin' => 'required|alpha', 'bet_product' => 'required|integer', 'wager_id' => 'required|integer');
 		$input = Input::json() -> all();
 
-		$input['username'] = \Auth::user() -> username;
-
 		$validator = \Validator::make($input, $rules);
 
 		if ($validator -> fails()) {
