@@ -87,13 +87,17 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	//Sports events
 	Route::resource('sports/events','FrontSportsEvents');
 	
-	//Sports types & options
-	Route::resource('sports/types-options','FrontSportsTypesOptions');	
+	//Sports types
+	Route::resource('sports/types','FrontSportsTypes');	
+
+	//Sports options
+	Route::resource('sports/options','FrontSportsOptions');
 		
 	//Sports and comps
 	Route::resource('sports','FrontSports');
 	Route::resource('sports.events','FrontSportsEvents');
-	Route::resource('sports.events.types-options','FrontSportsTypesOptions');
+	Route::resource('sports.events.types','FrontSportsTypes');
+	Route::resource('sports.events.types.options','FrontSportsOptions');
 	
 	// ::: TOURNAMENTS :::
 	

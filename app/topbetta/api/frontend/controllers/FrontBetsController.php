@@ -83,9 +83,8 @@ class FrontBetsController extends \BaseController {
 	 */
 	public function store() {
 
-
 		// change these rules as required
-		$rules = array('id' => 'required|integer', 'race_id' => 'required', 'bet_type_id' => 'required', 'value' => 'required|integer', 'selection' => 'required', 'pos' => 'required|integer', 'bet_origin' => 'required|alpha', 'bet_product' => 'required|integer', 'wager_id' => 'required|integer');
+		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer');
 		$input = Input::json() -> all();
 
 		$validator = \Validator::make($input, $rules);
@@ -95,19 +94,82 @@ class FrontBetsController extends \BaseController {
 			return array("success" => false, "error" => $validator -> messages() -> all());
 
 		} else {
-			// POST bet data to legacy API
-			$l = new \TopBetta\LegacyApiHelper;
-			$bet = $l -> query('saveBet', $input);
 
-			if ($bet['status'] == 200) {
-				
-				return array('success' => true, 'result' => $bet['success']);
-				
-			} else {
-					
-				return array('success' => false, 'error' => $bet['error_msg']);
-				
+			// POST bet data to legacy API
+			//$l = new \TopBetta\LegacyApiHelper;
+			$betModel = new \TopBetta\Bet;
+
+			$messages = array();
+			$errors = 0;
+
+			switch ($input['type_id']) {
+				case 1 :
+					// win
+
+					foreach ($input['selections'] as $selection) {
+
+						// assemble win bet data such as meeting_id, race_id etc
+						$legacyData = $betModel -> getLegacyBetData($selection);
+
+						if (count($legacyData) > 0) {
+
+							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => 1, 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> barrier, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+							$this -> placeBet($betData, $messages, $errors);
+							/*
+							 $bet = $l -> query('saveBet', $betData);
+
+							 if ($bet['status'] == 200) {
+
+							 $messages[] = array("id" => $selection, "success" => true, "result" => $bet['success']);
+
+							 } else {
+
+							 $messages[] = array("id" => $selection, "success" => false, "error" => $bet['error_msg']);
+							 $errors++;
+
+							 }
+							 */
+
+						} else {
+
+							$messages[] = array("id" => $selection, "success" => false, "error" => "selection not found");
+							$errors++;
+
+						}
+
+					}
+
+					break;
+
+				case 2 :
+					// place
+
+					break;
+
+				default :
+					break;
 			}
+
+			return array("success" => ($errors > 0) ? false : true, ($errors > 0) ? "error" : "result" => $messages);
+
+		}
+
+	}
+
+	private function placeBet($betData, &$messages, &$errors) {
+
+		$l = new \TopBetta\LegacyApiHelper;
+
+		$bet = $l -> query('saveBet', $betData);
+
+		if ($bet['status'] == 200) {
+
+			$messages[] = array("id" => $betData['selection'], "success" => true, "result" => $bet['success']);
+
+		} else {
+
+			$messages[] = array("id" => $betData['selection'], "success" => false, "error" => $bet['error_msg']);
+			$errors++;
 
 		}
 
