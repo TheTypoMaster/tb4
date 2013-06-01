@@ -96,17 +96,21 @@ class WageringApiIgasracingService extends ConfigReader{
 	 */
 	public function placeBetList(Array $bet_data)
 	{
-		
-		//$o= print_r($bet_data,true);
-		//$this->setLogger("$o");
-		
+		$o= print_r($bet_data,true);
+		$this->setLogger("racing_service: Entering placeBetList. bet_data: $o");
+		$this->setLogger();
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 
-		$params = $this->_buildBetList($bet_list);
-		//$this->setLogger("here");
 		
-		//return OutputHelper::json(500, array('error_msg' => 'here' ));
+		// formats the bet request and puts it in $this->send_bet
+		$params = $this->_buildBetList($bet_list);
+		$p = print_r($params,true);
+		$this->setLogger("racing_service: placeBetList. Bet List Params:$p");
+		
+		
+		
+		
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		/*ob_start(); // Test output
 		print_r($params);
@@ -163,7 +167,9 @@ class WageringApiIgasracingService extends ConfigReader{
 	 */
 	private function _buildBetList($bet_list, $return_multiple = true){
 
-		if(is_null($this->meeting_code) || is_null($this->type_code)){
+		//TODO OS: Do we need a meeting code? It's meeting name in caps with no spaces and type_code appended
+		// if(is_null($this->meeting_code) || is_null($this->type_code)){
+		if(is_null($this->type_code)){
 			throw new Exception('Meeting code and type code must be set to place bet');
 		}
 
@@ -217,7 +223,8 @@ class WageringApiIgasracingService extends ConfigReader{
 				{
 					$bet_product_id = $runner[0]->p_product_id;
 				}			
-					
+
+				$bet_product_id = 6; // TODO OS: This is the TOTE
 				$bm_bet_product = null;
 				switch ($bet_product_id){
 					case 5: // TopTote
@@ -420,29 +427,60 @@ class WageringApiIgasracingService extends ConfigReader{
 		return false;
 	}
 
+	
+	// Make the curl request and return the response
 	private function curlRequest($command=null, $params=null)
 	{
+		$this->setLogger("racing_service: Entering curlRequest. Command:$command");
+		$p = print_r($params,true);
+		$this->setLogger("racing_service: action. Params:$p");
+		
+		
+		
 		if($params!=null){
 			$post_string = $this->formatUrlString($params);
 		}
 		
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL,$this->service_url."/".$command);
+		$ch = curl_init($this->service_url."/".$command);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($post_string))
+		);
+		
+		
+		$c = print_r($ch,true);
+		$this->setLogger("racing_service: action. Curl Instance:$c");
+		
+		
+		 
+		
+		//$ch = curl_init();
+		//curl_setopt($ch,CURLOPT_URL,$this->service_url."/".$command);
 		//curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$post_string);
-		$size = sizeof(split("&",$post_string));
-		if($size > 0){
-			curl_setopt($ch, CURLOPT_POST, $size);
-		}
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch,CURLOPT_POSTFIELDS,$post_string);
+		//$size = sizeof(split("&",$post_string));
+		//if($size > 0){
+		//	curl_setopt($ch, CURLOPT_POST, $size);
+		//}
+		//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5-'.$_SERVER['SERVER_ADDR']);
-		curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+		//curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+		
+		
 		$error = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		
+		
 		$res = curl_exec($ch);
 		
 		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------");		
 		
 		$response = json_decode($res);
+		$r = print_r($response,true);
+		$this->setLogger("racing_service: curlRequest. Response :$r");
+		
 		curl_close($ch);
 		if ($response == "") {
 			//throw new ApiException("Server has returned nothing.<br>Token Response: ".$error." ".$this->token."<br/>".$this->service_url."/".$command."<br/>".$post_string);
@@ -456,13 +494,17 @@ class WageringApiIgasracingService extends ConfigReader{
 
 	public function action($params=array(), $command=null)
 	{
-		$this->setLogger();
+		$this->setLogger("racing_service: Entering action. Command:$command");
+		$p = print_r($params,true);
+		$this->setLogger("racing_service: action. Params:$p");
+		
 		if($command == "quickbet")
 		{
 				//$params['token'] = $this->token;
 
 				$response = $this->curlRequest($command."?token=".$this->token, $params);
-
+				
+				
 				if ($response->result == "success" || $response->result == "processing") 
 				{
 					$bet = new stdClass;
@@ -568,14 +610,14 @@ class WageringApiIgasracingService extends ConfigReader{
 		return $fields_string;
 	}
 	
-	private function setLogger($msg="")
+	public function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
 		$myFile = "/tmp/igasracing_curl.log";
 		
 		
 		if ($fh = fopen($myFile, 'a')) {
-			fwrite($fh, date('Y-m-d H:i:s') . "\n" . $msg);
+			fwrite($fh, date('Y-m-d H:i:s') . ": " . $msg);
 			fwrite($fh, "\n");
 			fclose($fh);					
 		}

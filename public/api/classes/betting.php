@@ -854,8 +854,9 @@ class Api_Betting extends JController {
 			
 	/**
 	 * Validate racing bet selection and save/place bet
-	 *
-	 * 
+	 * - Changed to use IGAS wagering provider
+	 * - NOTE: ONLY WIN and PLACE bets are catered for. 
+	 * - NOTE: Exotics must use the saveRacing Bet function 
 	 */
 	public function saveBet()
 	{

@@ -37,7 +37,7 @@ class FrontSportsEventsController extends \BaseController {
 
 			}
 
-			return array('status' => true, 'result' => $result);
+			return array('success' => true, 'result' => $result);
 		});
 
 	}

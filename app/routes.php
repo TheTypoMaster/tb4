@@ -11,6 +11,13 @@
 |
 */
 
+
+
+//TODO: ****** this is not safe to be here for production - find a better fix ******
+header('Access-Control-Allow-Origin: *');
+
+
+
 Route::get('/', function()
 {
 	// return all events for meeting with id of 1
@@ -59,8 +66,14 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 Route::group(array('prefix' => '/api/v1'), function() {
 		
 	// ::: USER :::
-	Route::resource('users','Users');
-	Route::resource('users.profile','UsersProfile');
+	
+	// 2 custom routes for users auth	
+	Route::post('users/login', 'FrontUsers@login');
+	Route::get('users/logout', 'FrontUsers@logout');
+		
+	Route::resource('users','FrontUsers');
+	Route::resource('users.profile', 'FrontUsersProfile');
+	Route::resource('users.balances','FrontUsersBalances');
 	
 	// ::: BETS :::
 	Route::resource('bets','FrontBets');	
@@ -84,13 +97,17 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	//Sports events
 	Route::resource('sports/events','FrontSportsEvents');
 	
-	//Sports types & options
-	Route::resource('sports/types-options','FrontSportsTypesOptions');	
+	//Sports types
+	Route::resource('sports/types','FrontSportsTypes');	
+
+	//Sports options
+	Route::resource('sports/options','FrontSportsOptions');
 		
 	//Sports and comps
 	Route::resource('sports','FrontSports');
 	Route::resource('sports.events','FrontSportsEvents');
-	Route::resource('sports.events.types-options','FrontSportsTypesOptions');
+	Route::resource('sports.events.types','FrontSportsTypes');
+	Route::resource('sports.events.types.options','FrontSportsOptions');
 	
 	// ::: TOURNAMENTS :::
 	
@@ -99,6 +116,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	
 	//tournaments details
 	Route::resource('tournaments.details','FrontTournamentsDetails');
+	
+	//tournaments tickets
+	Route::resource('tournaments.tickets','FrontTournamentsTickets');	
 	
 });
 

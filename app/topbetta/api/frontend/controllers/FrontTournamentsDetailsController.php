@@ -3,6 +3,7 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Lang;
 
 class FrontTournamentsDetailsController extends \BaseController {
 
@@ -22,7 +23,7 @@ class FrontTournamentsDetailsController extends \BaseController {
 
 		if (is_null($tournament)) {
 
-			return array('success' => false, 'error' => "Tournament id: $tournamentId not found");
+			return array('success' => false, 'error' => Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
 			
 		}
 

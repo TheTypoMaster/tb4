@@ -4,25 +4,19 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class UsersProfileController extends \BaseController {
+class FrontTournamentsTicketsController extends \BaseController {
+
+	public function __construct() {
+		$this -> beforeFilter('auth');
+	}
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index($username) {
-
-		$l = new \TopBetta\LegacyApiHelper;
-		$user = $l -> query('getUser', array('username' => Input::get('username', $username)));
-
-		if ($user['status'] == 200) {
-			return array("success" => true, "result" => array('id' => $user['id'], "username" => $user['username'], "first_name" => $user['first_name'], "last_name" => $user['last_name'], "full_account" => $user['tb_user']));
-			//return $user;
-		} else {
-			return array("success" => false, "error" => $user['error_msg']);
-		}
-
+	public function index() {
+		//
 	}
 
 	/**
@@ -40,7 +34,33 @@ class UsersProfileController extends \BaseController {
 	 * @return Response
 	 */
 	public function store() {
-		//
+
+		$tournaments = Input::json() -> all();
+
+		$messages = array();
+		$errors = 0;
+
+		foreach ($tournaments['tournaments'] as $tournamentId) {
+
+			// save tournament tickets via legacy API
+			$l = new \TopBetta\LegacyApiHelper;
+			$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId));
+
+			if ($ticket['status'] == 200) {
+
+				$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
+
+			} else {
+
+				$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
+				$errors++;
+
+			}
+
+		}
+
+		return array("success" => ($errors > 0) ? false : true, ($errors > 0) ? "error" : "result" => $messages);
+
 	}
 
 	/**
