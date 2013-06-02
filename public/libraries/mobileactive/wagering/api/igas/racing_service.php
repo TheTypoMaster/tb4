@@ -104,9 +104,11 @@ class WageringApiIgasracingService extends ConfigReader{
 
 		
 		// formats the bet request and puts it in $this->send_bet
-		$params = $this->_buildBetList($bet_list);
-		$p = print_r($params,true);
-		$this->setLogger("racing_service: placeBetList. Bet List Params:$p");
+		// $params = $this->_buildBetList($bet_list);
+		// $p = print_r($params,true);
+		// $this->setLogger("racing_service: placeBetList. Bet List Params:$p");
+		
+		
 		
 		
 		
@@ -118,6 +120,19 @@ class WageringApiIgasracingService extends ConfigReader{
 		ob_end_flush();
 		throw new ApiException("Outputting: ".$output);*/
 
+		return $response;
+	}
+	
+	
+	public function placeRacingBet($clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection)
+	{
+		
+		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
+		$this->send_bet = array('clientID' => "$clientID", 'betID' => "$betID",'amount' => "$amount",
+						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
+						'betType' => "$priceType",'selection' => "$selection");
+		
+		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		return $response;
 	}
 
@@ -273,7 +288,39 @@ class WageringApiIgasracingService extends ConfigReader{
 						'racePoolId' => $bet->race_number[$bet_type_external]
 				);
 
-				// To send to BM
+				// To send to IGAS
+				
+
+
+				$formatted_bet['request'] = array(
+						'referenceID' => $bet->id,
+						'clientID' => $userID,
+						'amount' => $bet->amount,
+						'flexi' => $bet->isFlexiBet(),
+						'betType' => $bet_type,
+						'meetingID' => $bm_bet_product,
+						'raceNO' => $raceNumber,
+						'PriceType' => 'TOP',
+						'Selection' => $optionId[0]
+				);
+				
+				
+				/*
+				 * 
+$ReferenceID = "33";
+$ClientID = "6996";
+$Amount = 100;
+$Flexi = 0;
+$MeetingId = "14510270";
+$RaceNo = "1";
+$BetType = "W";
+$PriceType = "TOP";
+$Selection = "1";
+
+				 */
+
+				/* 
+				
 				$formatted_bet['request'] = array(
 					'eventId' => $event_id,
 					'betAmount' => ($bet->amount/100),
@@ -282,7 +329,7 @@ class WageringApiIgasracingService extends ConfigReader{
 					'betType' => $bet_type,
 					'special' => $bm_bet_product
 				);
-
+ */
 			} else {
 				// Exotic Bet, internal
 				$formatted_bet['bet'] = array(
@@ -497,6 +544,8 @@ class WageringApiIgasracingService extends ConfigReader{
 		$this->setLogger("racing_service: Entering action. Command:$command");
 		$p = print_r($params,true);
 		$this->setLogger("racing_service: action. Params:$p");
+		
+		
 		
 		if($command == "Betinput.aspx")
 		{
