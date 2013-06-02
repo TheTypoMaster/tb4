@@ -127,15 +127,47 @@ class WageringApiIgasracingService extends ConfigReader{
 	public function placeRacingBet($clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection)
 	{
 		
+		$userName = "APIuser";
+		$userPassword = "APIpwd"; 
+		$companyID = "TopBetta";
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
-		$this->send_bet = array('clientID' => "$clientID", 'betID' => "$betID",'amount' => "$amount",
+		$params = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
 						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
 		
+		$betDataKey = getDataKey($userName, $userPassword, $companyID, $params, '(*&j2zoez');
+		$this->send_bet = formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
+		
+		$this->setLogger("racing_service: placeRacingBet. iGAS JSON POST: $this->send_bet");
+		
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
+		
+		
 		return $response;
 	}
 
+	
+	function getDataKey($params, $secretKey){
+		// Get input object params
+	
+		$paramList = '';
+		foreach($params as $param){
+			$paramList .= $param;
+		}
+		// join params together
+		// concatinate with secret key
+		$paramsPlusSecret = $paramList . $secretKey;
+		// generate HASH
+		$hashedParams = md5($paramsPlusSecret);
+	
+		return $hashedParams;
+	
+		// append generated sequence to function call request
+	
+	
+	}
+	
+	
 	/**
 	 * Lookup bets
 	 *
@@ -480,6 +512,8 @@ $Selection = "1";
 	{
 		$this->setLogger("racing_service: Entering curlRequest. Command:$command");
 		
+		
+		
 		if($params!=null){
 			$post_string = json_encode($params);
 		}
@@ -684,15 +718,14 @@ $Selection = "1";
 	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $params, $DataKey){
 		
 		
-		$json = '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$ReferenceID.'",
-"ClientId": "'.$params->clientID.'",  "Amount": '.$params->amount.', "Flexi": '.$params->flexi.', "DataKey": "'.$DataKey.'",
+		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$ReferenceID.'",
+				"ClientId": "'.$params->clientID.'",  "Amount": '.$params->amount.', "Flexi": '.$params->flexi.', "DataKey": "'.$DataKey.'",
 		
-  "BetList": [
-  	{ "MeetingId": '.$params->meetingID.', "RaceNo": '.Rparams->raceNo.', "BetType": "'.$params->betType.'", "PriceType": "'.$PriceType.'",
-      "Selection": "'.$Selection.'" }
-		
-  ]
-}';
+ 				 "BetList": [
+  					{ "MeetingId": '.$params->meetingID.', "RaceNo": '.$params->raceNo.', "BetType": "'.$params->betType.'", "PriceType": "'.$params->priceType.'",
+      				"Selection": "'.$params->selection.'" }
+		 			]
+				}';
 	}
 	
 }
