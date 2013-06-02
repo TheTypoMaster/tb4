@@ -127,21 +127,26 @@ class WageringApiIgasracingService extends ConfigReader{
 	public function placeRacingBet($clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection)
 	{
 		
+		// TOpbetta related params
 		$userName = "APIuser";
 		$userPassword = "APIpwd"; 
 		$companyID = "TopBetta";
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
+		
+		// Bet related Paramaters
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
 						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
 		
+		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
 		$this->setLogger("racing_service: placeRacingBet. JSON dataKey: $betDataKey");
 		
+		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $paramslist, $betDataKey );
-		
 		$this->setLogger("racing_service: placeRacingBet. iGAS JSON POST: $this->send_bet");
 		
+		// POST JSON to iGAS
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		
 		
@@ -522,7 +527,7 @@ $Selection = "1";
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 			'Content-Type: application/json',
-			'Content-Length: ' . strlen($post_string))
+			'Content-Length: ' . strlen($params))
 		);
 		
 		
@@ -567,7 +572,7 @@ $Selection = "1";
 		
 	}
 
-	public function action(&$params=array(), $command=null)
+	public function action(&$paramslist=array(), $command=null)
 	{
 		$this->setLogger("racing_service: Entering action. Command:$command");
 		$p = print_r($params,true);
