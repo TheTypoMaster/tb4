@@ -130,7 +130,7 @@ class WageringApiIgasracingService extends ConfigReader{
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
 		$this->send_bet = array('clientID' => "$clientID", 'betID' => "$betID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
-						'betType' => "$priceType",'selection' => "$selection");
+						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
 		
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		return $response;
@@ -556,7 +556,7 @@ $Selection = "1";
 				{
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
-					$bet->wagerId = $response->results[0]->TransactionID;
+					$bet->wagerId = $response->results->TransactionID;
 					$bet->status = "S";
 
 					return $bet;
@@ -564,9 +564,9 @@ $Selection = "1";
 				else 
 				{
 					$this->setLogger("racing_service: curlRequest Failed.");
-					return true;
 					
-					//throw new ApiException("Bet could not be posted. ".$response->detail);
+					
+					throw new ApiException("Bet could not be posted. ".$response->ErrorText);
 
 				}
 
@@ -679,6 +679,20 @@ $Selection = "1";
     	else{
 			$this->fhandle = $handle;
     	}*/
+	}
+	
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $params, $DataKey){
+		
+		
+		$json = '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$ReferenceID.'",
+"ClientId": "'.$params->clientID.'",  "Amount": '.$params->amount.', "Flexi": '.$params->flexi.', "DataKey": "'.$DataKey.'",
+		
+  "BetList": [
+  	{ "MeetingId": '.$params->meetingID.', "RaceNo": '.Rparams->raceNo.', "BetType": "'.$params->betType.'", "PriceType": "'.$PriceType.'",
+      "Selection": "'.$Selection.'" }
+		
+  ]
+}';
 	}
 	
 }
