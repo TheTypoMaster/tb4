@@ -479,12 +479,11 @@ $Selection = "1";
 	private function curlRequest($command=null, $params=null)
 	{
 		$this->setLogger("racing_service: Entering curlRequest. Command:$command");
-		$p = print_r($params,true);
-		$this->setLogger("racing_service: action. Params:$p");
 		
 		if($params!=null){
 			$post_string = json_encode($params);
 		}
+		$this->setLogger("racing_service: curlRequest. post_string:$post_string");
 		
 		$ch = curl_init($this->service_url."/".$command);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -497,7 +496,7 @@ $Selection = "1";
 		
 		
 		$c = print_r($ch,true);
-		$this->setLogger("racing_service: action. Curl Instance:$c");
+		$this->setLogger("racing_service: curlRequest. Curl Instance:$c");
 		
 		
 		 
@@ -553,11 +552,11 @@ $Selection = "1";
 				$r = print_r($response, true);
 				$this->setLogger("racing_service: Response from curlRequest:$r");
 				
-				if ($response->result == "success") 
+				if ($response->ErrorNo == "0") 
 				{
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
-					$bet->wagerId = $response->results[0]->transactionID;
+					$bet->wagerId = $response->results[0]->TransactionID;
 					$bet->status = "S";
 
 					return $bet;
