@@ -149,7 +149,7 @@ class WageringApiIgasracingService extends ConfigReader{
 	}
 
 	
-	function getDataKey($params, $secretKey){
+	private function getDataKey($userName, $userPassword, $companyID, $params, $secretKey){
 		// Get input object params
 	
 		$paramList = '';
