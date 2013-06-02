@@ -19,7 +19,7 @@ class WageringApiIgasracing extends WageringApi
 	public function placeRacingBet($clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection)
 	{
 		$account = $this->_getAccountService();
-		return $this->_callOperation('placeRacingBet', $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection);
+		return $this->_callOperation('placeRacingBet', $account, $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection);
 	}
 	
 	
