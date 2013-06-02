@@ -498,12 +498,13 @@ class WageringApiIgasracingService extends ConfigReader{
 		$p = print_r($params,true);
 		$this->setLogger("racing_service: action. Params:$p");
 		
-		if($command == "quickbet")
+		if($command == "Betinput.aspx")
 		{
 				//$params['token'] = $this->token;
 
 				$response = $this->curlRequest($command."?token=".$this->token, $params);
-				
+				$r = print_r($response, true);
+				$this->setLogger("racing_service: Response from curlRequest:$r");
 				
 				if ($response->result == "success" || $response->result == "processing") 
 				{
@@ -521,6 +522,7 @@ class WageringApiIgasracingService extends ConfigReader{
 					$output = ob_get_contents();
 					ob_end_flush();
 					throw new ApiException("Outputting: ".$output."<br>".json_encode($params));*/
+					$this->setLogger("racing_service: curlRequest Failed.");
 					throw new ApiException("Bet could not be posted. ".$response->detail);
 
 				}
