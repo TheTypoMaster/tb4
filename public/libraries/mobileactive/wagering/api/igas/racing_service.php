@@ -127,12 +127,17 @@ class WageringApiIgasracingService extends ConfigReader{
 	public function placeRacingBet($clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection)
 	{
 		
-		// TOpbetta related params
+		// Topbetta related params
 		$userName = "APIuser";
 		$userPassword = "APIpwd"; 
 		$companyID = "TopBetta";
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
 		
+		if($betType == "win"){
+			$betType = "W";
+		}elseif($betType == "place"){
+			$betType = "P";
+		}
 		// Bet related Paramaters
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
