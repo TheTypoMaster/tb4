@@ -721,7 +721,7 @@ $Selection = "1";
 	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
 		
 		
-		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$ReferenceID.'",
+		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist->betID.'",
 				"ClientId": "'.$paramslist->clientID.'",  "Amount": '.$paramslist->amount.', "Flexi": '.$paramslist->flexi.', "DataKey": "'.$DataKey.'",
 		
  				 "BetList": [
