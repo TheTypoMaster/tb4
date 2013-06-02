@@ -131,14 +131,14 @@ class WageringApiIgasracingService extends ConfigReader{
 		$userPassword = "APIpwd"; 
 		$companyID = "TopBetta";
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
-		$params = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
+		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
 						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
 		
-		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, '(*&j2zoez');
+		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
 		$this->setLogger("racing_service: placeRacingBet. JSON dataKey: $betDataKey");
 		
-		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
+		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $paramslist, $betDataKey );
 		
 		$this->setLogger("racing_service: placeRacingBet. iGAS JSON POST: $this->send_bet");
 		
