@@ -577,7 +577,7 @@ $Selection = "1";
 	public function action(&$paramslist=array(), $command=null)
 	{
 		$this->setLogger("racing_service: Entering action. Command:$command");
-		$p = print_r($params,true);
+		$p = print_r($paramslist,true);
 		$this->setLogger("racing_service: action. Params:$p");
 		
 		
@@ -586,7 +586,7 @@ $Selection = "1";
 		{
 				//$params['token'] = $this->token;
 
-				$response = $this->curlRequest($command, $params);
+				$response = $this->curlRequest($command, $paramslist);
 				$r = print_r($response, true);
 				$this->setLogger("racing_service: Response from curlRequest:$r");
 				
