@@ -517,13 +517,10 @@ class WageringApiIgasracingService extends ConfigReader{
 				} 
 				else 
 				{
-					/*ob_start(); // Test output
-					print_r($response);
-					$output = ob_get_contents();
-					ob_end_flush();
-					throw new ApiException("Outputting: ".$output."<br>".json_encode($params));*/
 					$this->setLogger("racing_service: curlRequest Failed.");
-					throw new ApiException("Bet could not be posted. ".$response->detail);
+					return true;
+					
+					//throw new ApiException("Bet could not be posted. ".$response->detail);
 
 				}
 
