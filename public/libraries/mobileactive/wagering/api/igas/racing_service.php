@@ -160,12 +160,12 @@ class WageringApiIgasracingService extends ConfigReader{
 	
 		
 		$paramList = $userName . $userPassword . $companyID;
-		foreach($paramList as $param){
+		foreach($paramslist as $param){
 			$paramList .= $param;
 		}
 		// join params together
 		// concatinate with secret key
-		$paramsPlusSecret = $paramList . $secretKey;
+		$paramsPlusSecret = $paramList . $paramList . $secretKey;
 		// generate HASH
 		$hashedParams = md5($paramsPlusSecret);
 	
