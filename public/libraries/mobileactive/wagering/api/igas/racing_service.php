@@ -539,7 +539,7 @@ $Selection = "1";
 		
 	}
 
-	public function action($params=array(), $command=null)
+	public function action(&$params=array(), $command=null)
 	{
 		$this->setLogger("racing_service: Entering action. Command:$command");
 		$p = print_r($params,true);
