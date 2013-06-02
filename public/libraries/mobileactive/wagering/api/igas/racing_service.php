@@ -718,7 +718,7 @@ $Selection = "1";
     	}*/
 	}
 	
-	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, &$paramslist, $DataKey){
 		
 		
 		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist->betID.'",
