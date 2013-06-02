@@ -1348,18 +1348,11 @@ class Api_Betting extends JController {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	//TODO: TEMPORARY IGAS BETTING IS BELOW
 	
 	/**
 	 * IGAS - RACE BETTING!
-	 *
+	 * - Exotics only
 	 *
 	 */
 	public function saveRacingBet()
