@@ -137,7 +137,8 @@ class WageringApiIgasracingService extends ConfigReader{
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
 						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
-		$this->setLogger("racing_service: placeRacingBet. Params List: $paramslist");
+		$p = print_r($paramslist,true);
+		$this->setLogger("racing_service: placeRacingBet. Params List: $p");
 		
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
@@ -718,10 +719,10 @@ $Selection = "1";
     	}*/
 	}
 	
-	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, &$paramslist, $DataKey){
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
 		
 		
-		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist->betID.'",
+		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
 				"ClientId": "'.$paramslist->clientID.'",  "Amount": '.$paramslist->amount.', "Flexi": '.$paramslist->flexi.', "DataKey": "'.$DataKey.'",
 		
  				 "BetList": [
