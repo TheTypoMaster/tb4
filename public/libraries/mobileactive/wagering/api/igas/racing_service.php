@@ -723,11 +723,11 @@ $Selection = "1";
 		
 		
 		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
-				"ClientId": "'.$paramslist->clientID.'",  "Amount": '.$paramslist->amount.', "Flexi": '.$paramslist->flexi.', "DataKey": "'.$DataKey.'",
+				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "Flexi": '.$paramslist['flexi'].', "DataKey": "'.$DataKey.'",
 		
  				 "BetList": [
-  					{ "MeetingId": '.$paramslist->meetingID.', "RaceNo": '.$paramslist->raceNo.', "BetType": "'.$paramslist->betType.'", "PriceType": "'.$paramslist->priceType.'",
-      				"Selection": "'.$paramslist->selection.'" }
+  					{ "MeetingId": '.$paramslist['meetingID'].', "RaceNo": '.$paramslist['raceNo'].', "BetType": "'.$paramslist['betType'].'", "PriceType": "'.$paramslist['priceType'].'",
+      				"Selection": "'.$paramslist['selection'].'" }
 		 			]
 				}';
 	}
