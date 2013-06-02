@@ -137,6 +137,7 @@ class WageringApiIgasracingService extends ConfigReader{
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
 						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
+		$this->setLogger("racing_service: placeRacingBet. Params List: $paramslist");
 		
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
@@ -154,12 +155,12 @@ class WageringApiIgasracingService extends ConfigReader{
 	}
 
 	
-	private function getDataKey($userName, $userPassword, $companyID, $params, $secretKey){
+	private function getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey){
 		// Get input object params
 	
 		
 		$paramList = $userName . $userPassword . $companyID;
-		foreach($params as $param){
+		foreach($paramList as $param){
 			$paramList .= $param;
 		}
 		// join params together
