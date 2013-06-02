@@ -502,7 +502,7 @@ class WageringApiIgasracingService extends ConfigReader{
 		{
 				//$params['token'] = $this->token;
 
-				$response = $this->curlRequest($command."?token=".$this->token, $params);
+				$response = $this->curlRequest($command, $params);
 				$r = print_r($response, true);
 				$this->setLogger("racing_service: Response from curlRequest:$r");
 				
