@@ -513,17 +513,11 @@ $Selection = "1";
 	private function curlRequest($command=null, $params=null)
 	{
 		$this->setLogger("racing_service: Entering curlRequest. Command:$command");
-		
-		
-		
-		if($params!=null){
-			$post_string = json_encode($params);
-		}
-		$this->setLogger("racing_service: curlRequest. post_string:$post_string");
+		$this->setLogger("racing_service: curlRequest. post_string:$params");
 		
 		$ch = curl_init($this->service_url."/".$command);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 			'Content-Type: application/json',
