@@ -152,7 +152,8 @@ class WageringApiIgasracingService extends ConfigReader{
 	private function getDataKey($userName, $userPassword, $companyID, $params, $secretKey){
 		// Get input object params
 	
-		$paramList = '';
+		
+		$paramList = $userName . $userPassword . $companyID;
 		foreach($params as $param){
 			$paramList .= $param;
 		}
@@ -711,15 +712,15 @@ $Selection = "1";
     	}*/
 	}
 	
-	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $params, $DataKey){
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
 		
 		
 		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$ReferenceID.'",
-				"ClientId": "'.$params->clientID.'",  "Amount": '.$params->amount.', "Flexi": '.$params->flexi.', "DataKey": "'.$DataKey.'",
+				"ClientId": "'.$paramslist->clientID.'",  "Amount": '.$paramslist->amount.', "Flexi": '.$paramslist->flexi.', "DataKey": "'.$DataKey.'",
 		
  				 "BetList": [
-  					{ "MeetingId": '.$params->meetingID.', "RaceNo": '.$params->raceNo.', "BetType": "'.$params->betType.'", "PriceType": "'.$params->priceType.'",
-      				"Selection": "'.$params->selection.'" }
+  					{ "MeetingId": '.$paramslist->meetingID.', "RaceNo": '.$paramslist->raceNo.', "BetType": "'.$paramslist->betType.'", "PriceType": "'.$paramslist->priceType.'",
+      				"Selection": "'.$paramslist->selection.'" }
 		 			]
 				}';
 	}
