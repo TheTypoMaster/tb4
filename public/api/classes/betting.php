@@ -889,7 +889,7 @@ class Api_Betting extends JController {
 		
 		//Get the position of the runner
 		$pos = JRequest::getVar('pos', '0');
-
+		
 		JRequest::setVar('bet_product', array('first' => array($pos => JRequest::getVar('bet_product',null)))); // Runner wager ID - runner_list
 		JRequest::setVar('wager_id', array('first' => array($pos => array(0 => JRequest::getVar('wager_id',null))))); // Runner wager ID - runner_list
 		$b = print_r(JRequest::getVar('wager_id'),true);
@@ -1282,7 +1282,7 @@ class Api_Betting extends JController {
 					$api_error		= null;
 					$bet_confirmed	= false;
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
-						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, 'TOP', $pos);
+						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, 'TOP', $selection_list);
 						$api_error		= $api->getErrorList(true);
 						
 						//$external_bet = 'test123';
