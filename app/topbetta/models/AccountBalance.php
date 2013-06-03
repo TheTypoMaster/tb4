@@ -117,7 +117,7 @@ class AccountBalance extends \Eloquent {
     			'account_transaction_type' 	=> $keyword,
     	);
     
-    	return AccountBalance::newTransaction($params);
+    	return $this->newTransaction($params);
     }
     
     /**
