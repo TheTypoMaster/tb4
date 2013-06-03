@@ -43,7 +43,7 @@ class AccountBalance extends \Eloquent {
     	$transaction->recipient_id = $params['recipient_id'];
     	$transaction->giver_id = $params['giver_id'];
     	$transaction->session_tracking_id = $params['session_tracking_id'];
-    	$transaction->account_transaction_type = $params['account_transaction_type'];
+    	$transaction->account_transaction_type_id = $params['account_transaction_type'];
     	$transaction->amount = (int)$params['amount'];
     	$transaction->notes = $params['notes'];
     	
