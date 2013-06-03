@@ -88,7 +88,7 @@ class AccountBalance extends \Eloquent {
     	if(null == $desc) {
     		$transactionTypeRec = AccountTransactionTypes::getTransactionType($keyword);
     		$t = print_r($transactionTypeRec,true);
-    		TopBetta\LogHelper::l("AccountBalance Desc: $t.");
+    		LogHelper::l("AccountBalance Desc: $t.");
     		$desc = $transactionTypeRec->description;
     	}
     
