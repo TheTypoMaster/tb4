@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Input;
 
 class FrontBetsController extends \BaseController {
 
+	public function __construct() {
+		$this -> beforeFilter('auth');
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -82,6 +86,8 @@ class FrontBetsController extends \BaseController {
 	 * @return Response
 	 */
 	public function store() {
+			
+		//TODO: **** WHAT ARE WE DOING WITH BET_PRODUCT (TOTE)?
 
 		// change these rules as required
 		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer');
@@ -108,27 +114,14 @@ class FrontBetsController extends \BaseController {
 
 					foreach ($input['selections'] as $selection) {
 
-						// assemble win bet data such as meeting_id, race_id etc
+						// assemble bet data such as meeting_id, race_id etc
 						$legacyData = $betModel -> getLegacyBetData($selection);
 
 						if (count($legacyData) > 0) {
 
 							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => 1, 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> barrier, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
 							$this -> placeBet($betData, $messages, $errors);
-							/*
-							 $bet = $l -> query('saveBet', $betData);
 
-							 if ($bet['status'] == 200) {
-
-							 $messages[] = array("id" => $selection, "success" => true, "result" => $bet['success']);
-
-							 } else {
-
-							 $messages[] = array("id" => $selection, "success" => false, "error" => $bet['error_msg']);
-							 $errors++;
-
-							 }
-							 */
 
 						} else {
 
@@ -144,6 +137,26 @@ class FrontBetsController extends \BaseController {
 				case 2 :
 					// place
 
+					foreach ($input['selections'] as $selection) {
+
+						// assemble bet data such as meeting_id, race_id etc
+						$legacyData = $betModel -> getLegacyBetData($selection);
+
+						if (count($legacyData) > 0) {
+
+							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => 2, 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> barrier, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+							$this -> placeBet($betData, $messages, $errors);
+
+
+						} else {
+
+							$messages[] = array("id" => $selection, "success" => false, "error" => "selection not found");
+							$errors++;
+
+						}
+
+					}					
+					
 					break;
 
 				default :
@@ -156,6 +169,14 @@ class FrontBetsController extends \BaseController {
 
 	}
 
+	/**
+	 * Place the bet via the legacy api, generally called within a list of bets
+	 * 
+	 * @param $betData array
+	 * @param $messages array
+	 * @param $errors int
+	 * 
+	 */
 	private function placeBet($betData, &$messages, &$errors) {
 
 		$l = new \TopBetta\LegacyApiHelper;
