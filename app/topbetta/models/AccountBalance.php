@@ -34,7 +34,7 @@ class AccountBalance extends \Eloquent {
      * @param  array increment params
      * @return int transaction id
      */
-    function newTransaction($params)
+    private function newTransaction($params)
     {
     	// instansiate the model
     	$transaction = new TopBetta\AccountBalance;
@@ -68,7 +68,7 @@ class AccountBalance extends \Eloquent {
      */
 
     //TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
-    function _increment($userID, $amount, $keyword, $desc = null)
+    static public function _increment($userID, $amount, $keyword, $desc = null)
     {
     	
     	// Grab the ID for the keyword
@@ -124,7 +124,7 @@ class AccountBalance extends \Eloquent {
      * @param string transaction description
      * @return int transaction id
      */
-    function _decrement($amount, $keyword, $desc = null)
+    static public function _decrement($amount, $keyword, $desc = null)
     {
     	return TopBetta\AccountBalance::_increment(-$amount, $keyword, $desc);
     }
@@ -137,7 +137,7 @@ class AccountBalance extends \Eloquent {
      * @param 	string		the keyword of deposit type
      * @return	boolean		true on valid deposit type
      */
-    function validateTransactionType($transactionType)
+    public function validateTransactionType($transactionType)
     {
     	return (bool)TopBetta\AccountTransactionTypes::getTransactionType($transactionType);
     }
