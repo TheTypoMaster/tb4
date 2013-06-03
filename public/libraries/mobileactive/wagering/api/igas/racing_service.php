@@ -603,7 +603,9 @@ $Selection = "1";
 					$bet->isSuccess = "true";
 					$bet->wagerId = $response['TransactionId'];
 					$bet->status = "S";
-
+					
+					$this->setLogger("racing_service: action. Bet Placed!");
+					
 					return $bet;
 				} 
 				else 
