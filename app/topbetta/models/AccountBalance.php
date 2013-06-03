@@ -72,7 +72,7 @@ class AccountBalance extends \Eloquent {
     {
     	
     	// Grab the ID for the keyword
-    	$transactionTypeId = TopBetta\AccountTransactionTypes::getTransactionTypeId($keyword);
+    	$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($keyword);
        	$tracking_id = -1;
      	
       	// TODO: Changed to cater for laravel sessions
@@ -86,7 +86,7 @@ class AccountBalance extends \Eloquent {
     	}
     
     	if(null == $desc) {
-    		$transactionTypeRec = TopBetta\AccountTransactionTypes::getTransactionType($keyword);
+    		$transactionTypeRec = AccountTransactionTypes::getTransactionType($keyword);
     		$desc = $transactionTypeRec->description;
     	}
     
@@ -113,7 +113,7 @@ class AccountBalance extends \Eloquent {
     			'account_transaction_type' 	=> $keyword,
     	);
     
-    	return TopBetta\AccountBalance::newTransaction($params);
+    	return AccountBalance::newTransaction($params);
     }
     
     /**
