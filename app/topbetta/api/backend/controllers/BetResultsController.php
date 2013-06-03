@@ -385,7 +385,7 @@ class BetResultsController extends \BaseController {
 				$this->l('Paid partial refund: ' . $refund_amount . ' cents');
 			} else {
 				//no free credit was used - refund full amount to account
-				$betRecord->refund_transaction_id = $this->awardBetRefund($betArray['user_id'], $transaction['ReturnAmount']);
+				$betRecord->refund_transaction_id = $this->awardBetRefund($betArray['user_id'], $transaction['returnAmount']);
 				$this->l('Paid refund: ' . $transaction['returnAmount'] . ' cents');
 			}
 			$betRecord->refunded_flag = 1;
@@ -402,15 +402,15 @@ class BetResultsController extends \BaseController {
 				$betRecord->result_transaction_id = $this->awardBetWin($betArray['user_id'], $actual_win_amount);
 	
 				if ($betArray['bet_freebet_flag'] == 1) {
-					$this->l('Paid win: ' . $transaction['ReturnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
+					$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
 				} else {
-					$this->l('Paid win: ' . $transaction['ReturnAmount'] . ' cents');
+					$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents');
 				}
 			}
 	
 			if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_SUBMITTED){
 				$result_status = TopBetta\BetResultStatus::STATUS_UNRESULTED;
-				$this->l('Submitted: ' . $transaction['ReturnAmount'] . ' cents');
+				$this->l('Submitted: ' . $transaction['returnAmount'] . ' cents');
 				$betRecord->resulted_flag = 0;
 			}
 	
