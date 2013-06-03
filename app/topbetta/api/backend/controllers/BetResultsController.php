@@ -414,7 +414,7 @@ class BetResultsController extends \BaseController {
 				$bet->resulted_flag = 0;
 			}
 	
-			$this->l('Resulted Bet ID: ' . $bet['id']);
+			$this->l('Resulted Bet ID: ' . $betArray['id']);
 			$bet->bet_result_status_id = $this->bet_status->getBetResultStatusByName($result_status)->id;
 			
 			
