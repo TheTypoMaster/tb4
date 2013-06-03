@@ -114,7 +114,7 @@ class AccountBalance extends \Eloquent {
     			'session_tracking_id' 		=> $tracking_id,
     			'amount' 					=> $amount,
     			'notes' 					=> $desc,
-    			'account_transaction_type' 	=> $keyword,
+    			'account_transaction_type' 	=> $transactionTypeId,
     	);
     
     	return AccountBalance::newTransaction($params);
