@@ -363,7 +363,7 @@ class BetResultsController extends \BaseController {
 		// get a model instance of the bet table
 		$betRecord = TopBetta\Bet::find($betArray['id']);
 			
-		$this->l('Processing Bet ID: ' . $bet['id']);
+		$this->l('Processing Bet ID: ' . $betArray['id']);
 		$result_status = TopBetta\BetResultStatus::STATUS_PAID;
 		$betRecord->resulted_flag = 1;
 		$this->l('Bet free flag: ' . $betArray['bet_freebet_flag']);
