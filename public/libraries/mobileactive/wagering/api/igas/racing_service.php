@@ -601,7 +601,7 @@ $Selection = "1";
 				{
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
-					$bet->wagerId = $response->results->TransactionID;
+					$bet->wagerId = $response->TransactionId;
 					$bet->status = "S";
 
 					return $bet;
