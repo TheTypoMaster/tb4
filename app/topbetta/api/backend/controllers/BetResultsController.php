@@ -191,13 +191,16 @@ class BetResultsController extends \BaseController {
 										// get the bet record based on the transactionID
 										$betObject = TopBetta\Bet::getBetDetails($transaction['transactionID'])->toArray();
 										
-										// check it can be processed based on status?
+									
 										$b = print_r($betObject,true);
 
 										Topbetta\LogHelper::l("racing_service: Entering placeBetList. bet_data: $b");
-																				
-										// process bet result
-										$this->processTransaction($transaction, $betObject[0]);
+										
+										// check it can be processed
+										if($betObject[0][resulted_flag]){
+											// process unresulted bets
+											$this->processTransaction($transaction, $betObject[0]);
+										}	
 									
 									} else{
 										return \Response::json(array(
