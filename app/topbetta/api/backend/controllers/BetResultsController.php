@@ -372,20 +372,20 @@ class BetResultsController extends \BaseController {
 		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_CANCELLED || $transaction['betOutcome'] == self::TRANSACTION_STATUS_INVALID || $transaction['betOutcome'] == self::TRANSACTION_STATUS_REFUNDED){
 			//full bet amount was on free credit
 			if ($betArray['bet_freebet_flag'] == 1 && $betArray['bet_freebet_amount'] == $transaction['returnAmount']) {
-				$betRecord->refund_freebet_transaction_id = TopBetta\BetResultStatus::awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
+				$betRecord->refund_freebet_transaction_id = $this->awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
 				$this->l('Free Bet full refund: ' . $betArray['bet_freebet_amount'] . ' cents');
 			} else if ($betArray['bet_freebet_flag'] == 1 && $betArray['bet_freebet_amount'] < $transaction['returnAmount']) {
 				//free bet amount was less then refund
 				$refund_amount = $transaction['returnAmount'] - $betArray['bet_freebet_amount'];
 				//refund free bet amount
-				$betRecord->refund_freebet_transaction_id = TopBetta\BetResultStatus::awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
+				$betRecord->refund_freebet_transaction_id = $this->awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
 				$this->l('Free Bet partial refund: ' . $betArray['bet_freebet_amount'] . ' cents');
 				//refund balance to account
-				$betRecord->refund_transaction_id =TopBetta\BetResultStatus::awardBetRefund($betArray['user_id'], $refund_amount);
+				$betRecord->refund_transaction_id =$this->awardBetRefund($betArray['user_id'], $refund_amount);
 				$this->l('Paid partial refund: ' . $refund_amount . ' cents');
 			} else {
 				//no free credit was used - refund full amount to account
-				$betRecord->refund_transaction_id = TopBetta\BetResultStatus::awardBetRefund($betArray['user_id'], $transaction['ReturnAmount']);
+				$betRecord->refund_transaction_id = $this->awardBetRefund($betArray['user_id'], $transaction['ReturnAmount']);
 				$this->l('Paid refund: ' . $transaction['returnAmount'] . ' cents');
 			}
 			$betRecord->refunded_flag = 1;
@@ -399,7 +399,7 @@ class BetResultsController extends \BaseController {
 				if ($betArray['bet_freebet_flag'] == 1) {
 					$actual_win_amount -= $betArray['bet_freebet_amount'];
 				}
-				$betRecord->result_transaction_id = TopBetta\BetResultStatus::awardBetWin($betArray['user_id'], $actual_win_amount);
+				$betRecord->result_transaction_id = $this->awardBetWin($betArray['user_id'], $actual_win_amount);
 	
 				if ($betArray['bet_freebet_flag'] == 1) {
 					$this->l('Paid win: ' . $transaction['ReturnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
