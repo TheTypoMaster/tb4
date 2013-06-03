@@ -359,7 +359,7 @@ class BetResultsController extends \BaseController {
 	private function processTransaction($transaction, $bet)
 	{
 	
-		$this->l('Processing Bet ID: ' . $bet['id']);
+		$this->l('Processing Bet ID: ' . $bet[0]['id']);
 		$result_status = TopBetta\BetResultStatus::STATUS_PAID;
 		$bet->resulted_flag = 1;
 		$this->l('Bet free flag: ' . $bet['bet_freebet_flag']);
