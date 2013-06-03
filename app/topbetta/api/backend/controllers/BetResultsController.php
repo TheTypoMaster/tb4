@@ -393,7 +393,7 @@ class BetResultsController extends \BaseController {
 				
 			}
 	
-			if ($transaction['ReturnAmount'] > 0 && $transaction['betOutcome'] == self::TRANSACTION_STATUS_WON){
+			if ($transaction['teturnAmount'] > 0 && $transaction['betOutcome'] == self::TRANSACTION_STATUS_WON){
 				$actual_win_amount = $transaction['ReturnAmount'];
 				//for free bets places, deduct the stake amount from the winnings first
 				if ($betArray['bet_freebet_flag'] == 1) {
