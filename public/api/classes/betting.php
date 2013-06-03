@@ -854,8 +854,9 @@ class Api_Betting extends JController {
 			
 	/**
 	 * Validate racing bet selection and save/place bet
-	 *
-	 * 
+	 * - Changed to use IGAS wagering provider
+	 * - NOTE: ONLY WIN and PLACE bets are catered for. 
+	 * - NOTE: Exotics must use the saveRacing Bet function 
 	 */
 	public function saveBet()
 	{
@@ -882,11 +883,18 @@ class Api_Betting extends JController {
 		//JRequest::setVar('bet_product', '0'); // Bet product Id - runner_list
 		//JRequest::setVar('wager_id', '1383248'); // Runner wager ID - runner_list
 		
+		$postVars = JRequest::get('POST');
+		file_put_contents('/tmp/postvars', $postVars, FILE_APPEND | LOCK_EX);
+		//return OutputHelper::json(500, "$postVars");
+		
 		//Get the position of the runner
 		$pos = JRequest::getVar('pos', '0');
-
+		
 		JRequest::setVar('bet_product', array('first' => array($pos => JRequest::getVar('bet_product',null)))); // Runner wager ID - runner_list
 		JRequest::setVar('wager_id', array('first' => array($pos => array(0 => JRequest::getVar('wager_id',null))))); // Runner wager ID - runner_list
+		$b = print_r(JRequest::getVar('wager_id'),true);
+		//$b = print_r($betData, true);
+		file_put_contents('/tmp/postvars3', $b, FILE_APPEND | LOCK_EX);
 		
 		//Get free bet in cents
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
@@ -920,6 +928,8 @@ class Api_Betting extends JController {
 					return OutputHelper::json(500, array('error_msg' => $validation->error ));
 				}
 				
+				$meetingID = $meeting->external_event_group_id;
+				
 				$race_id = JRequest::getVar('race_id', null);
 				if (is_null($race_id)) {
 					$validation->error = JText::_('No race specified');
@@ -929,6 +939,8 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'race.php');
 				$race_model = new TournamentModelRace();
 				$race = $race_model->getRaceApi($race_id);
+				
+				$raceNumber = $race->number;
 				
 				//MC fix to get the correct race id to place a bet
 				//$race->id = $race_model->getRaceIdByEventIdRaceNum($id, $race_id)->id;
@@ -1105,7 +1117,7 @@ class Api_Betting extends JController {
 				}
 				
 				 
-				$api = WageringApi::getInstance(WageringApi::API_TOB);
+				$api = WageringApi::getInstance(WageringApi::API_IGASRACING);
 				
 				$api_con=$api->checkConnection();
 				if(is_null($api_con))
@@ -1270,7 +1282,7 @@ class Api_Betting extends JController {
 					$api_error		= null;
 					$bet_confirmed	= false;
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
-						$external_bet	= $api->placeBet($wagering_bet, $meeting, $bet_id);
+						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, 'TOP', $runner_number);
 						$api_error		= $api->getErrorList(true);
 						
 						//$external_bet = 'test123';
@@ -1336,18 +1348,11 @@ class Api_Betting extends JController {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	//TODO: TEMPORARY IGAS BETTING IS BELOW
 	
 	/**
 	 * IGAS - RACE BETTING!
-	 *
+	 * - Exotics only
 	 *
 	 */
 	public function saveRacingBet()
@@ -1377,7 +1382,7 @@ class Api_Betting extends JController {
 	
 		//Get the position of the runner
 		$pos = JRequest::getVar('pos', '0');
-	
+		
 		JRequest::setVar('bet_product', array('first' => array($pos => JRequest::getVar('bet_product',null)))); // Runner wager ID - runner_list
 		JRequest::setVar('wager_id', array('first' => array($pos => array(0 => JRequest::getVar('wager_id',null))))); // Runner wager ID - runner_list
 	
@@ -1598,7 +1603,7 @@ class Api_Betting extends JController {
 	}
 	
 		
-	$api = WageringApi::getInstance(WageringApi::API_TOB);
+	$api = WageringApi::getInstance(WageringApi::API_IGASRACING);
 	
 	$api_con=$api->checkConnection();
 				if(is_null($api_con))

@@ -6,12 +6,17 @@ use TopBetta;
 
 class DataKey {
 	
-	public function getDataKey(){
+	public function getDataKey($params, $secretKey){
 		// Get input object params
+		
 		// join params together
 		// concatinate with secret key
+		$paramsPlusSecret = $joinedParams . $secretKey;
 		// generate HASH
-		// convert hash to BASE16 number sequence
+		$hashedParams = md5($paramsPlusSecret);
+		
+		return $hashedParams;
+		
 		// append generated sequence to function call request
 		
 		

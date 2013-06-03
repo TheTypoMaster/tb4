@@ -34,8 +34,8 @@ class JConfig {
 	public $dbtype = 'mysql';
 	public $host = 'localhost';
 	public $user = 'root';
-	public $db = 'topbetta_application';
-	public $password = 'root';
+	public $db = 'topbetta_staging';
+	public $password = 'mysqlp@ss';
 	public $dbprefix = 'tbdb_';
 	public $mailer = 'mail';
 	public $mailfrom = 'help@topbetta.com';

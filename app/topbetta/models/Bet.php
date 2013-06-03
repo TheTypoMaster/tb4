@@ -39,7 +39,7 @@ class Bet extends \Eloquent {
 		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id') 
 		-> join('tbdb_event_group_event AS e', 'm.event_id', '=', 'e.event_id')  
 		-> where('s.id', '=', $selectionId) 
-		-> select('s.market_id', 's.wager_id', 's.barrier', 'm.event_id AS race_id', 'e.event_group_id AS meeting_id') -> get();
+		-> select('s.market_id', 's.wager_id', 's.barrier', 's.number', 'm.event_id AS race_id', 'e.event_group_id AS meeting_id') -> get();
 
 	}
 

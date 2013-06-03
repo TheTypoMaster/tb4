@@ -12,6 +12,8 @@
 			"app/database/seeds",
 			"app/tests/TestCase.php",
 			"app/topbetta/models",
+			"app/topbetta/api/admin/controllers",
+			"app/topbetta/api/admin/models",
 			"app/topbetta/api/backend/controllers",
 			"app/topbetta/api/backend/models",
 			"app/topbetta/api/frontend/controllers",

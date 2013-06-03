@@ -194,7 +194,8 @@ return array(
 		'FrontTournamentsTickets'	=> 'TopBetta\frontend\FrontTournamentsTicketsController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
-		'BackBets'		=> 'TopBetta\backend\BetResultsController'	
+		'BackBets'		=> 'TopBetta\backend\BetResultsController',
+		'AdminDataImporter' => 'TopBetta\admin\DataImporter'
 	),
 
 );

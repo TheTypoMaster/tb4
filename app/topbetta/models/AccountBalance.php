@@ -134,12 +134,12 @@ class AccountBalance extends \Eloquent {
     /**
      * Validate if a deposit type is valid
      *
-     * @param 	string		the keyword of withdrawal type
-     * @return	boolean		true on valid withdrawal type
+     * @param 	string		the keyword of deposit type
+     * @return	boolean		true on valid deposit type
      */
     function validateTransactionType($transactionType)
     {
-    	return (bool)AccountTransactionTypes::getTransactionType($transactionType);
+    	return (bool)TopBetta\AccountTransactionTypes::getTransactionType($transactionType);
     }
     
     
