@@ -435,12 +435,12 @@ class BetResultsController extends \BaseController {
 	
 		private function awardBetWin($user_id, $amount)
 		{
-			return TopBetta\AccountBalance::awardCash($user_id, $amount, TopBetta\AccountBalance::TYPE_BETWIN);
+			return $this->awardCash($user_id, $amount, TopBetta\AccountBalance::TYPE_BETWIN);
 		}
 	
 		private function awardBetRefund($user_id, $amount)
 		{
-			return TopBetta\AccountBalance::awardCash($user_id, $amount, TopBetta\AccountBalance::TYPE_BETREFUND);
+			return $this->awardCash($user_id, $amount, TopBetta\AccountBalance::TYPE_BETREFUND);
 		}
 	
 		private function awardFreeBetRefund($user_id, $amount)
