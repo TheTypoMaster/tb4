@@ -34,7 +34,7 @@ class AccountBalance extends \Eloquent {
      * @param  array increment params
      * @return int transaction id
      */
-    private function newTransaction($params)
+    static private function newTransaction($params)
     {
     	// instansiate the model
     	$transaction = new TopBetta\AccountBalance;
@@ -117,7 +117,7 @@ class AccountBalance extends \Eloquent {
     			'account_transaction_type' 	=> $keyword,
     	);
     
-    	return $this->newTransaction($params);
+    	return AccountBalance::newTransaction($params);
     }
     
     /**
