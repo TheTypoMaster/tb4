@@ -15,7 +15,7 @@ class FreeCreditTransactionTypes extends \Eloquent {
      * @param  string transaction type
      * @return integer
      */
-    function getTransactionTypeId($keyword)
+    static public function getTransactionTypeId($keyword)
     {
     	return FreeCreditTransactionTypes::where('keyword', '=', $keyword) -> pluck('id');
     }
@@ -26,7 +26,7 @@ class FreeCreditTransactionTypes extends \Eloquent {
      * @param  string transaction type
      * @return integer
      */
-    function getTransactionType($transactionType)
+    static public function getTransactionType($transactionType)
     {
     	return FreeCreditTransactionTypes::where('keyword', '=', $transactionType) -> get();
     }

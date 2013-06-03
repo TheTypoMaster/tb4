@@ -26,7 +26,7 @@ class FreeCreditBalance extends \Eloquent {
 	* @param  array parameters of a new transaction
 	* @return int transaction id
 	*/
-	function newTransaction($params) {
+	private function newTransaction($params) {
 			
 		// instansiate the model
 		$transaction = new TopBetta\FreeCreditBalance;
@@ -56,7 +56,7 @@ class FreeCreditBalance extends \Eloquent {
 
 
 	//TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
-	function _increment($userID, $amount, $keyword, $desc = null)
+	static public function _increment($userID, $amount, $keyword, $desc = null)
 	{
 
 		// Grab the ID for the keyword
@@ -118,7 +118,7 @@ class FreeCreditBalance extends \Eloquent {
 	 * @param string an optional description for the transaction
 	 * @return int transaction id
 	 */
-	function _increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {
+	static public function _increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {
 		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($keyword);
 
 		$tracking_id = -1;
@@ -159,7 +159,7 @@ class FreeCreditBalance extends \Eloquent {
 	 * @param string transaction description
 	 * @return int transaction id
 	 */
-	function _decrement($userId, $amount, $keyword, $desc = null) {
+	static public function _decrement($userId, $amount, $keyword, $desc = null) {
 		$decrementAccountAmount = 0;
 		$totalTournamentAmount 	= FreeCreditBalance::getFreeCreditBalance($userId);
 		$transactionId 			= null;
