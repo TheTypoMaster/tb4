@@ -197,7 +197,7 @@ class BetResultsController extends \BaseController {
 										Topbetta\LogHelper::l("racing_service: Entering placeBetList. bet_data: $b");
 																				
 										// process bet result
-										$this->processTransaction($transaction, $betObject);
+										$this->processTransaction($transaction, $betObject[0]);
 									
 									} else{
 										return \Response::json(array(
