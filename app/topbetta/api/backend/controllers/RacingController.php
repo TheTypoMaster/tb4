@@ -364,7 +364,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
 										}
 										$raceRunner->market_id = $marketID;
-										$raceRunner->wager_id = $raceRunner->id;;
+										
 									}
 								
 									if(isset($dataArray['BarrierNo'])){
@@ -445,7 +445,8 @@ class RacingController extends \BaseController {
 									// save or update the record
 									$raceRunnerSave = $raceRunner->save();
 									$raceRunnerID = $raceRunner->id;
-									
+									$raceRunner->wager_id = $raceRunner->id;
+									$raceRunnerSave = $raceRunner->save();
 													
 									TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId , RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
 																	
