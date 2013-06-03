@@ -394,7 +394,7 @@ class BetResultsController extends \BaseController {
 			}
 	
 			if ($transaction['returnAmount'] > 0 && $transaction['betOutcome'] == self::TRANSACTION_STATUS_WON){
-				$actual_win_amount = $transaction['ReturnAmount'];
+				$actual_win_amount = $transaction['returnAmount'];
 				//for free bets places, deduct the stake amount from the winnings first
 				if ($betArray['bet_freebet_flag'] == 1) {
 					$actual_win_amount -= $bet['bet_freebet_amount'];
@@ -417,13 +417,8 @@ class BetResultsController extends \BaseController {
 			$this->l('Resulted Bet ID: ' . $betArray['id']);
 			$betRecord->bet_result_status_id = TopBetta\BetResultStatus::getBetResultStatusByName($result_status);
 			
-			
-			
-			
-			
 			// change
 			$betRecord->save();
-			
 		}
 	
 		/**
