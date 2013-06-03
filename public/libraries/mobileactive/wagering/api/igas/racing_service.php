@@ -597,12 +597,12 @@ $Selection = "1";
 				$r = print_r($response, true);
 				$this->setLogger("racing_service: action: Response from curlRequest:$r");
 				
-				if ($response['ErrorNo'] == "0") 
+				if ($response->ErrorNo == "0") 
 				{
 					$this->setLogger("racing_service: action. No Errors!");
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
-					$bet->wagerId = $response['TransactionId'];
+					$bet->wagerId = $response->TransactionId;
 					$bet->status = "S";
 					
 					$this->setLogger("racing_service: action. Bet Placed!");
@@ -614,7 +614,7 @@ $Selection = "1";
 					$this->setLogger("racing_service: curlRequest Failed.");
 					
 					
-					throw new ApiException("Bet could not be posted. ".$response['ErrorText']);
+					throw new ApiException("Bet could not be posted. ".$response->ErrorText);
 
 				}
 
