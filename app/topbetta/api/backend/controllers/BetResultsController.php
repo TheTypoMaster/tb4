@@ -359,32 +359,32 @@ class BetResultsController extends \BaseController {
 	private function processTransaction($transaction, $bet)
 	{
 	
-		$this->l('Processing Bet ID: ' . $bet->id);
+		$this->l('Processing Bet ID: ' . $bet['id']);
 		$result_status = TopBetta\BetResultStatus::STATUS_PAID;
 		$bet->resulted_flag = 1;
-		$this->l('Bet free flag: ' . $bet->bet_freebet_flag);
-		$this->l('Bet free amount: ' . $bet->bet_freebet_amount);
+		$this->l('Bet free flag: ' . $bet['bet_freebet_flag']);
+		$this->l('Bet free amount: ' . $bet['bet_freebet_amount']);
 		// if bet should be refunded
 		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_CANCELLED || $transaction['betOutcome'] == self::TRANSACTION_STATUS_INVALID || $transaction['betOutcome'] == self::TRANSACTION_STATUS_REFUNDED){
 			//full bet amount was on free credit
-			if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $transaction['ReturnAmount']) {
-				$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
-				$this->l('Free Bet full refund: ' . $bet->bet_freebet_amount . ' cents');
-			} else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $transaction['ReturnAmount']) {
+			if ($bet['bet_freebet_flag'] == 1 && $bet['bet_freebet_amount'] == $transaction['ReturnAmount']) {
+				$bet['refund_freebet_transaction_id'] = $this->awardFreeBetRefund($bet['user_id'], $bet['bet_freebet_amount']);
+				$this->l('Free Bet full refund: ' . $bet['bet_freebet_amount'] . ' cents');
+			} else if ($bet['bet_freebet_flag'] == 1 && $bet['bet_freebet_amount'] < $transaction['ReturnAmount']) {
 				//free bet amount was less then refund
-				$refund_amount = $transaction['ReturnAmount'] - $bet->bet_freebet_amount;
+				$refund_amount = $transaction['ReturnAmount'] - $bet['bet_freebet_amount'];
 				//refund free bet amount
 				$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
-				$this->l('Free Bet partial refund: ' . $bet->bet_freebet_amount . ' cents');
+				$this->l('Free Bet partial refund: ' . $bet['bet_freebet_amount'] . ' cents');
 				//refund balance to account
-				$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refund_amount);
+				$bet->refund_transaction_id = $this->awardBetRefund($bet['user_id'], $refund_amount);
 				$this->l('Paid partial refund: ' . $refund_amount . ' cents');
 			} else {
 				//no free credit was used - refund full amount to account
-				$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $transaction['ReturnAmount']);
+				$bet->refund_transaction_id = $this->awardBetRefund($bet['user_id'], $transaction['ReturnAmount']);
 				$this->l('Paid refund: ' . $transaction['ReturnAmount'] . ' cents');
 			}
-			$bet->refunded_flag = 1;
+			$bet['refunded_flag'] = 1;
 			$result_status = TopBetta\BetResultStatus::STATUS_FULL_REFUND;
 				
 			}
@@ -392,13 +392,13 @@ class BetResultsController extends \BaseController {
 			if ($transaction['ReturnAmount'] > 0 && $transaction['betOutcome'] == self::TRANSACTION_STATUS_WON){
 				$actual_win_amount = $transaction['ReturnAmount'];
 				//for free bets places, deduct the stake amount from the winnings first
-				if ($bet->bet_freebet_flag == 1) {
-					$actual_win_amount -= $bet->bet_freebet_amount;
+				if ($bet['bet_freebet_flag'] == 1) {
+					$actual_win_amount -= $bet['bet_freebet_amount'];
 				}
-				$bet->result_transaction_id = $this->awardBetWin($bet->user_id, $actual_win_amount);
+				$bet['result_transaction_id'] = $this->awardBetWin($bet['user_id'], $actual_win_amount);
 	
-				if ($bet->bet_freebet_flag == 1) {
-					$this->l('Paid win: ' . $transaction['ReturnAmount'] . ' cents - ' . $bet->bet_freebet_amount . ' cents free credit = ' . $actual_win_amount . ' cents');
+				if ($bet['bet_freebet_flag'] == 1) {
+					$this->l('Paid win: ' . $transaction['ReturnAmount'] . ' cents - ' . $bet['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
 				} else {
 					$this->l('Paid win: ' . $transaction['ReturnAmount'] . ' cents');
 				}
@@ -407,11 +407,11 @@ class BetResultsController extends \BaseController {
 			if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_SUBMITTED){
 				$result_status = TopBetta\BetResultStatus::STATUS_UNRESULTED;
 				$this->l('Submitted: ' . $transaction['ReturnAmount'] . ' cents');
-				$bet->resulted_flag = 0;
+				$bet['resulted_flag'] = 0;
 			}
 	
-			$this->l('Resulted Bet ID: ' . $bet->id);
-			$bet->bet_result_status_id = $this->bet_status->getBetResultStatusByName($result_status)->id;
+			$this->l('Resulted Bet ID: ' . $bet['id']);
+			$bet['bet_result_status_id'] = $this->bet_status->getBetResultStatusByName($result_status)->id;
 			$this->_save($bet);
 		}
 	
