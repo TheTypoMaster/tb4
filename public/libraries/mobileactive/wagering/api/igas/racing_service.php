@@ -597,11 +597,11 @@ $Selection = "1";
 				$r = print_r($response, true);
 				$this->setLogger("racing_service: Response from curlRequest:$r");
 				
-				if ($response->ErrorNo == "0") 
+				if ($response['ErrorNo'] == "0") 
 				{
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
-					$bet->wagerId = $response->TransactionId;
+					$bet->wagerId = $response['TransactionId'];
 					$bet->status = "S";
 
 					return $bet;
