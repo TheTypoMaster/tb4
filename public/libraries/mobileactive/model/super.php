@@ -825,7 +825,7 @@ abstract class SuperModel extends JModel
 		$this->_transformMembers();
 
 		$this->_emptyCheck();
-		$this->_typeCheck();
+		// $this->_typeCheck();
 
 		$this->_valueCheck();
 
