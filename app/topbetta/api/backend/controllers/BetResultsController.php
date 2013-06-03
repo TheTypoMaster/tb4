@@ -189,7 +189,7 @@ class BetResultsController extends \BaseController {
 									if($transactionExists){
 										
 										// get the bet record based on the transactionID
-										$betObject = TopBetta\Bet::getBetDetails($transaction['transactionID']);
+										$betObject = TopBetta\Bet::getBetDetails($transaction['transactionID'])->toArray();
 										
 										// check it can be processed based on status?
 										$b = print_r($betObject,true);
