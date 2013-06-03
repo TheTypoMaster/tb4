@@ -415,7 +415,7 @@ class BetResultsController extends \BaseController {
 			}
 	
 			$this->l('Resulted Bet ID: ' . $betArray['id']);
-			$bet->bet_result_status_id = $this->bet_status->getBetResultStatusByName($result_status)->id;
+			$bet->bet_result_status_id = TopBetta\BetResultStatus::getBetResultStatusByName($result_status);
 			
 			
 			

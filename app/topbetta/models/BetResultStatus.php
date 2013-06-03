@@ -42,4 +42,15 @@ class BetResultStatus extends \Eloquent {
      */
     const STATUS_PENDING = 'pending';
     
+    /**
+     * get bet result ID for status
+     * @param $result_status
+     * @return int
+     * - text of the result status
+     */
+    static public function getBetResultStatusByName($result_status) {
+    	return Bet::where('name', '=', $result_status) -> pluck('id');
+    }
+    
+    
 }
