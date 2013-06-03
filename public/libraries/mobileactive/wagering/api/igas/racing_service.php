@@ -595,10 +595,11 @@ $Selection = "1";
 
 				$response = $this->curlRequest($command, $paramslist);
 				$r = print_r($response, true);
-				$this->setLogger("racing_service: Response from curlRequest:$r");
+				$this->setLogger("racing_service: action: Response from curlRequest:$r");
 				
 				if ($response['ErrorNo'] == "0") 
 				{
+					$this->setLogger("racing_service: action. No Errors!");
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
 					$bet->wagerId = $response['TransactionId'];
