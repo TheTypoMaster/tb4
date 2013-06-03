@@ -192,7 +192,10 @@ class BetResultsController extends \BaseController {
 										$betObject = TopBetta\Bet::getBetDetails($transaction['transactionID']);
 										
 										// check it can be processed based on status?
-										
+										$b = print_r($betObject,true);
+
+										LogHelper::l("racing_service: Entering placeBetList. bet_data: $b");
+																				
 										// process bet result
 										$this->processTransaction($transaction, $betObject);
 									
