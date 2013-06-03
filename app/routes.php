@@ -14,7 +14,8 @@
 
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:9778');
+header('Access-Control-Allow-Credentials: true');
 
 
 
