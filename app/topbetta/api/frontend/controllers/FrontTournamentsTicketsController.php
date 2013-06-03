@@ -17,6 +17,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 */
 	public function index() {
 		//
+		return array("success" => true, "result" => array());
 	}
 
 	/**
