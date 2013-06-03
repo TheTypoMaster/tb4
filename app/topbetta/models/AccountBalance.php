@@ -37,7 +37,7 @@ class AccountBalance extends \Eloquent {
     static private function newTransaction($params)
     {
     	// instansiate the model
-    	$transaction = new TopBetta\AccountBalance;
+    	$transaction = new AccountBalance;
     	
     	// add the transaction data
     	$transaction->recipient_id = $params['recipient_id'];
@@ -130,7 +130,7 @@ class AccountBalance extends \Eloquent {
      */
     static public function _decrement($amount, $keyword, $desc = null)
     {
-    	return TopBetta\AccountBalance::_increment(-$amount, $keyword, $desc);
+    	return AccountBalance::_increment(-$amount, $keyword, $desc);
     }
     
    
@@ -143,7 +143,7 @@ class AccountBalance extends \Eloquent {
      */
     public function validateTransactionType($transactionType)
     {
-    	return (bool)TopBetta\AccountTransactionTypes::getTransactionType($transactionType);
+    	return (bool)AccountTransactionTypes::getTransactionType($transactionType);
     }
     
     
