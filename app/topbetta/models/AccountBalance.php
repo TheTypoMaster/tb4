@@ -39,11 +39,14 @@ class AccountBalance extends \Eloquent {
     	// instansiate the model
     	$transaction = new AccountBalance;
     	
+    	// get the id for the transaction type
+    	$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($params['account_transaction_type']);
+    	
     	// add the transaction data
     	$transaction->recipient_id = $params['recipient_id'];
     	$transaction->giver_id = $params['giver_id'];
     	$transaction->session_tracking_id = $params['session_tracking_id'];
-    	$transaction->account_transaction_type_id = $params['account_transaction_type'];
+    	$transaction->account_transaction_type_id = $transactionTypeId;
     	$transaction->amount = (int)$params['amount'];
     	$transaction->notes = $params['notes'];
     	
@@ -114,7 +117,7 @@ class AccountBalance extends \Eloquent {
     			'session_tracking_id' 		=> $tracking_id,
     			'amount' 					=> $amount,
     			'notes' 					=> $desc,
-    			'account_transaction_type' 	=> $transactionTypeId,
+    			'account_transaction_type' 	=> $keyword,
     	);
     
     	return AccountBalance::newTransaction($params);
