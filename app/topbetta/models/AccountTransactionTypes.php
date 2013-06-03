@@ -1,7 +1,7 @@
 <?php namespace TopBetta;
 
 class AccountTransactionTypes extends \Eloquent {
-	protected $table = 'tbdb_account_transaction_types';
+	protected $table = 'tbdb_account_transaction_type';
     protected $guarded = array();
 
     public static $rules = array();

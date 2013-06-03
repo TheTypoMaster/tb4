@@ -1,7 +1,7 @@
 <?php namespace TopBetta;
 
 class FreeCreditTransactionTypes extends \Eloquent {
-	protected $table = 'tbdb_tournament_transaction_types';
+	protected $table = 'tbdb_tournament_transaction_type';
     protected $guarded = array();
 
     public static $rules = array();
