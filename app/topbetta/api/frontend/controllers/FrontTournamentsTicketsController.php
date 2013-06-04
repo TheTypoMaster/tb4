@@ -16,8 +16,33 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 * @return Response
 	 */
 	public function index() {
-		//
-		return array("success" => true, "result" => array());
+
+		$ticketModel = new \TopBetta\TournamentTicket;
+
+		// active tourn tickets
+		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID(\Auth::user() -> id);
+
+		$activeTickets = array();
+
+		foreach ($activeTicketList as $activeTicket) {
+
+			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'sport_name' => $activeTicket -> sport_name, 'start_date' => $activeTicket -> start_date, 'end_date' => $activeTicket -> end_date, 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false);
+
+		}
+
+		// recent tourn tickets
+		$recentTicketList = $ticketModel -> getTournamentTicketRecentListByUserID(\Auth::user() -> id, time() - 48 * 60 * 60, time(), 1, 't.end_date DESC, t.start_date DESC');
+
+		$recentTickets = array();
+
+		foreach ($recentTicketList as $recentTicket) {
+
+			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'sport_name' => $recentTicket -> sport_name, 'start_date' => $recentTicket -> start_date, 'end_date' => $recentTicket -> end_date, 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false);
+
+		}
+
+		return array('success' => true, 'result' => array('active' => $activeTickets, 'recent' => $recentTickets));
+
 	}
 
 	/**

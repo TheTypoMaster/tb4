@@ -188,6 +188,8 @@ class Bet extends \Eloquent {
 			$query .= ' ORDER BY e.start_date ASC, b.created_date DESC';
 		}
 		
+		//TODO: limit to 15 max or what they asked for
+		
 		$result = \DB::select($query);
 
 		return $result;			

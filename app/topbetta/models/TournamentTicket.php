@@ -21,6 +21,130 @@ class TournamentTicket extends \Eloquent {
 	}
 
 	/**
+	 * Get a user's tournament tickets
+	 *
+	 * @param integer $userId
+	 * @return object
+	 */
+	public function getTournamentTicketActiveListByUserID($userId, $order = false, $includeRefunded = false)
+	{
+
+		$query =
+			'SELECT
+				tk.id,
+				tk.tournament_id,
+				tk.result_transaction_id,
+				t.buy_in,
+				t.entry_fee,
+				s.name AS sport_name,
+				t.start_date,
+				t.end_date,
+				t.cancelled_flag,
+				t.name AS tournament_name
+			FROM
+				tbdb_tournament_ticket AS tk
+			INNER JOIN
+				tbdb_tournament AS t
+			ON
+				t.id = tk.tournament_id
+			INNER JOIN
+				tbdb_event_group AS eg
+			ON
+				t.event_group_id = eg.id
+			INNER JOIN
+				tbdb_tournament_sport AS s
+			ON
+				t.tournament_sport_id = s.id
+			WHERE
+				user_id = "' . $userId . '"
+				AND t.paid_flag <> 1
+				AND t.cancelled_flag = 0';
+
+		if(!$includeRefunded) {
+			$query .= ' AND tk.refunded_flag != 1';
+		}
+
+		if($order) {
+			$query .= ' ORDER BY ' . $order;
+		} else {
+			$query .= ' ORDER BY t.start_date ASC, tk.created_date DESC';
+		}
+
+		$result = \DB::select($query);
+
+		return $result;
+	}
+	
+	/**
+	 * Get a user's tournament tickets
+	 *
+	 * @param integer $user_id
+	 * @return object
+	 */
+	public function getTournamentTicketRecentListByUserID($userId, $fromTime = false, $endTime = false, $paidFlag = null, $order = false, $includeRefunded = false)
+	{
+		
+		$query =
+			'SELECT
+				tk.id,
+				tk.tournament_id,
+				tk.result_transaction_id,
+				tk.winner_alert_flag,
+				t.buy_in,
+				t.entry_fee,
+				s.name AS sport_name,
+				t.jackpot_flag,
+				t.start_date,
+				t.end_date,
+				t.cancelled_flag,
+				t.name AS tournament_name
+			FROM
+				tbdb_tournament_ticket AS tk
+			INNER JOIN
+				tbdb_tournament AS t
+			ON
+				t.id = tk.tournament_id
+			INNER JOIN
+				tbdb_event_group AS eg
+			ON
+				t.event_group_id = eg.id
+			INNER JOIN
+				tbdb_tournament_sport AS s
+			ON
+				t.tournament_sport_id = s.id
+			WHERE
+				user_id = "' . $userId . '"';
+
+		if($fromTime) {
+			$query.= ' AND t.end_date > FROM_UNIXTIME(' . $fromTime . ')';
+		}
+
+		if($endTime) {
+			$query.= ' AND t.end_date < FROM_UNIXTIME(' . $endTime . ')';
+		}
+
+		if(!is_null($paidFlag)) {
+			$query.= ' AND t.paid_flag = ' . $paidFlag;
+		}
+
+		if(!$includeRefunded) {
+			$query .= ' AND tk.refunded_flag != 1';
+		}
+
+		if($order) {
+			$query .= ' ORDER BY ' . $order;
+		} else {
+			$query .= ' ORDER BY t.start_date ASC, tk.created_date DESC';
+		}
+
+		//TODO: limit to 15 max or what they asked for
+		
+		$result = \DB::select($query);
+
+		return $result;
+	}	
+	
+	/**
 	 * Get a single tournament ticket record by tournament and user ID.
 	 *
 	 * @param integer $id
