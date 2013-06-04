@@ -197,7 +197,7 @@ class BetResultsController extends \BaseController {
 										Topbetta\LogHelper::l("racing_service: Entering placeBetList. bet_data: $b");
 										
 										// check it can be processed
-										if($betObject[0]['resulted_flag']){
+										if(!$betObject[0]['resulted_flag']){
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
 										}	
