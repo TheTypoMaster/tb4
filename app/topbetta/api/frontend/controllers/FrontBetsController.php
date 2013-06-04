@@ -42,7 +42,7 @@ class FrontBetsController extends \BaseController {
 
 			foreach ($recentBetList as $recentBet) {
 
-				$recentBets[] = array('id' => (int)$recentBet -> id, 'freebet' => ($recentBet -> freebet) ? true : false, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 'selection_id' => (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_total' => (int)$recentBet -> bet_total, 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $activeBet -> created_date, 'invoice_id' => $activeBet -> invoice_id);
+				$recentBets[] = array('id' => (int)$recentBet -> id, 'freebet' => ($recentBet -> freebet) ? true : false, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 'selection_id' => (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_total' => (int)$recentBet -> bet_total, 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date, 'invoice_id' => $recentBet -> invoice_id);
 
 			}
 
