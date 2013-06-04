@@ -186,6 +186,7 @@ class BetResultsController extends \BaseController {
 									// check if transaction ID exists in DB if not throw error
 									$transactionExists = TopBetta\Bet::getBetExists($transaction['transactionID']);
 									
+									// If there is a matching bet
 									if($transactionExists){
 										
 										// get the bet record based on the transactionID
@@ -411,7 +412,9 @@ class BetResultsController extends \BaseController {
 				$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
 			} else {
 				$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents');
+				$this->l("Transaction ID for Bet Win record: $betRecord->result_transaction_id");
 			}
+			
 			
 			// Is this used in racing or for tournaments? 
 			//$betRecord->resulted_flag = 1;
