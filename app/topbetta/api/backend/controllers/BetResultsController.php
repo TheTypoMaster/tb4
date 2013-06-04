@@ -371,7 +371,9 @@ class BetResultsController extends \BaseController {
 		$betRecord->resulted_flag = 1;
 		$this->l('Bet free flag: ' . $betArray['bet_freebet_flag']);
 		$this->l('Bet free amount: ' . $betArray['bet_freebet_amount']);
-		// if bet should be refunded
+		
+		
+		// Bet should be refunded
 		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_CANCELLED || $transaction['betOutcome'] == self::TRANSACTION_STATUS_INVALID || $transaction['betOutcome'] == self::TRANSACTION_STATUS_REFUNDED){
 			//full bet amount was on free credit
 			if ($betArray['bet_freebet_flag'] == 1 && $betArray['bet_freebet_amount'] == $transaction['returnAmount']) {
@@ -394,35 +396,44 @@ class BetResultsController extends \BaseController {
 			$betRecord->refunded_flag = 1;
 			$result_status = TopBetta\BetResultStatus::STATUS_FULL_REFUND;
 				
-			}
-	
-			if ($transaction['returnAmount'] > 0 && $transaction['betOutcome'] == self::TRANSACTION_STATUS_WON){
-				$actual_win_amount = $transaction['returnAmount'];
-				//for free bets places, deduct the stake amount from the winnings first
-				if ($betArray['bet_freebet_flag'] == 1) {
-					$actual_win_amount -= $betArray['bet_freebet_amount'];
-				}
-				$betRecord->result_transaction_id = $this->awardBetWin($betArray['user_id'], $actual_win_amount);
-	
-				if ($betArray['bet_freebet_flag'] == 1) {
-					$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
-				} else {
-					$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents');
-				}
-			}
-	
-			if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_SUBMITTED){
-				$result_status = TopBetta\BetResultStatus::STATUS_UNRESULTED;
-				$this->l('Submitted: ' . $transaction['returnAmount'] . ' cents');
-				$betRecord->resulted_flag = 0;
-			}
-	
-			$this->l('Resulted Bet ID: ' . $betArray['id']);
-			$betRecord->bet_result_status_id = TopBetta\BetResultStatus::getBetResultStatusByName($result_status);
-			
-			// change
-			$betRecord->save();
 		}
+	
+		// Winning bets
+		if ($transaction['returnAmount'] > 0 && $transaction['betOutcome'] == self::TRANSACTION_STATUS_WON){
+			$actual_win_amount = $transaction['returnAmount'];
+			//for free bets places, deduct the stake amount from the winnings first
+			if ($betArray['bet_freebet_flag'] == 1) {
+				$actual_win_amount -= $betArray['bet_freebet_amount'];
+			}
+			$betRecord->result_transaction_id = $this->awardBetWin($betArray['user_id'], $actual_win_amount);
+
+			if ($betArray['bet_freebet_flag'] == 1) {
+				$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
+			} else {
+				$this->l('Paid win: ' . $transaction['returnAmount'] . ' cents');
+			}
+			
+			// Is this used in racing or for tournaments? 
+			//$betRecord->resulted_flag = 1;
+		}
+	
+		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_SUBMITTED){
+			$result_status = TopBetta\BetResultStatus::STATUS_UNRESULTED;
+			$this->l('Submitted: ' . $transaction['returnAmount'] . ' cents');
+			$betRecord->resulted_flag = 0;
+		}
+	
+		
+		
+		$this->l('Resulted Bet ID: ' . $betArray['id']);
+		$betRecord->bet_result_status_id = TopBetta\BetResultStatus::getBetResultStatusByName($result_status);
+		
+		$br = print_r($betRecord,true);
+		$this->l("Bet Record: $br");
+				
+		// change
+		$betRecord->save();
+	}
 	
 		/**
 		 * Increment a user's account balance
