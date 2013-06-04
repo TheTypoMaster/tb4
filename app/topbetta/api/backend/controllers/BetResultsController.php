@@ -465,7 +465,7 @@ class BetResultsController extends \BaseController {
 		
 		private function _canTransactionBeProcessed($transaction,$status_process_list)
 		{
-			return in_array($transaction->status, $status_process_list);
+			return in_array($transaction['status']', $status_process_list);
 		}
 	
 
