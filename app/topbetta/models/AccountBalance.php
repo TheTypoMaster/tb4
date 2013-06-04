@@ -40,7 +40,7 @@ class AccountBalance extends \Eloquent {
     	$transaction = new AccountBalance;
     	
     	// get the id for the transaction type
-    	$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($params['account_transaction_type']);
+    	$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($params['account_transaction_type']);
     	
     	// add the transaction data
     	$transaction->recipient_id = $params['recipient_id'];
