@@ -64,7 +64,7 @@ class BetResultsController extends \BaseController {
 			self::TRANSACTION_STATUS_WON,
 			self::TRANSACTION_STATUS_LOST,
 			self::TRANSACTION_STATUS_CANCELLED,
-			self::TRANSACTION_STATUS_FAILED
+			self::TRANSACTION_STATUS_REFUNDED
 	);
 	
 	private $status_process_pending_list = array(
@@ -197,10 +197,10 @@ class BetResultsController extends \BaseController {
 										Topbetta\LogHelper::l("racing_service: Entering placeBetList. bet_data: $b");
 										
 										// check it can be processed
-										if(!$betObject[0]['resulted_flag']){
+										if($this->_canTransactionBeProcessed($transaction,$this->status_process_unresulted_list)){
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
-										}	
+										}
 									
 									} else{
 										return \Response::json(array(
@@ -461,6 +461,11 @@ class BetResultsController extends \BaseController {
 		{
 			//$this->tournament_balance->setUserId($user_id);
 			return TopBetta\FreeCreditBalance::_increment($user_id, $amount, TopBetta\FreeCreditBalance::TYPE_FREEBETREFUND);
+		}
+		
+		private function _canTransactionBeProcessed($transaction,$status_process_list)
+		{
+			return in_array($transaction->status, $status_process_list);
 		}
 	
 
