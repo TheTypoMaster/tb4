@@ -56,8 +56,13 @@ class AccountBalance extends \Eloquent {
     	// return false if save fails
     	if($transaction->id) {
     		return false;
+    		LogHelper::l("AccountBalance newTransaction: Save Failed");
     	}
     	// return the new transaction ID
+    	
+    	$o = print_r($transaction,true);
+    	
+    	LogHelper::l("AccountBalance newTransaction: Saved: ID:$transaction->id. Trans Object:$o");
     	return $transaction->id;
     }
     
@@ -93,7 +98,7 @@ class AccountBalance extends \Eloquent {
     		
     		$t = print_r($transactionTypeRec,true);
     		
-    		LogHelper::l("AccountBalance Desc: $t.");
+    		LogHelper::l("AccountBalance _increment: Desc: $t.");
     		$desc = $transactionTypeRec[0]['description'];
     	}
     

@@ -175,6 +175,8 @@ class BetResultsController extends \BaseController {
 						if($dataKey){
 							
 							foreach ($resultsArray as $dataArray){
+								
+								$transaction = array();
 								// store data from array
 								if(isset($dataArray['TransactionId'])){
 
