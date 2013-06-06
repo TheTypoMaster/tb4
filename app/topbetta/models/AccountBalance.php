@@ -59,7 +59,7 @@ class AccountBalance extends \Eloquent {
     	
     	// return false if save fails
     	if($transaction->id) {
-    		LogHelper::l("AccountBalance newTransaction: Save Failed");
+    		LogHelper::l("AccountBalance newTransaction: Save Failed: ID:$transaction->id.");
     		return false;
     	}
     	// return the new transaction ID
