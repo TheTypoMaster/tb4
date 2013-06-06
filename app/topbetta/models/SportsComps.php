@@ -8,7 +8,19 @@ class SportsComps extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
-	
+    
+    
+    /**
+     * Check if a comp exists.
+     *
+     * @return Integer
+     * - The record ID if a record is found
+     */
+    static public function compExists($compName) {
+    	return SportsComps::where('name', '=', $compName) -> pluck('id');
+    }
+    
+    	
 	public function getSportAndComps($date = NULL, $sid = NULL) {
 
 			//construct the date query string

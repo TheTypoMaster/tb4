@@ -42,7 +42,7 @@ class SportsController extends \BaseController {
 
 		if($this->debug){
 			$timeStamp = date("YmdHis");
-			\File::append('/tmp/backAPIracing-'.$timeStamp, $jsonSerialized);
+			\File::append('/tmp/backAPIsports-'.$timeStamp, $jsonSerialized);
 		}
 
 		// make sure JSON was received
@@ -77,81 +77,83 @@ class SportsController extends \BaseController {
 					// Meeting Data - the meeting/venue
 					case "EventList":
 						TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, Object:$objectCount");
+						// Loop on each EventList JSOn object 
 						foreach ($sportsArray as $dataArray){
-							// store data from array
-							if(isset($dataArray['Id'])){
-								$eventId = $dataArray['Id'];
 
-								// check if meeting exists in DB
-								$eventExists = TopBetta\RaceMeeting::eventExists($eventId);
+							// Check minimum required data is available (EventID is unique key)
+							if(isset($dataArray['EventId'])){
+								$eventId = $dataArray['EventId'];
 
-								// if meeting exists update that record
+								// Process Sport
+								if(isset($dataArray['Sport'])){
+									$sportName = $dataArray['Sport'];
+									// Check if Sport exists in DB
+									$sportExists = TopBetta\SportsSportName::sportExists($sportName);
+									// if sport exists update that record
+									if($sportExists){
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Sport, In DB: $sportExists", 1);
+										//$sportModel = TopBetta\SportsSportName::find($sportExists);
+										// if not add it and grab id
+									}else{
+										$sportModel = new TopBetta\SportsSportName;
+										$sportModel->name = $sportName;
+										$sportModel->save();
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Sport, Added to DB: $sportExists", 1);
+									}
+								}
+								
+								// Process League/Competition
+								if(isset($dataArray['League'])){
+									$competition = $dataArray['League'];
+									// Check if comp/league exists in DB
+									$compExists = TopBetta\SportsComps::compExists($competition);
+									// if comp/league exists update that record
+									if($compExists){
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, In DB: $compExists", 1);
+										//$compModel = TopBetta\SportsComps::find($compExists);
+										// if not create a new record
+									}else{
+										$compModel = new TopBetta\SportsComps;
+										$compModel->name = $competition;
+										$compModel->save();
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, Added to DB: $compExists", 1);
+									}
+									
+								}
+									
+								// Process Event
+								$eventExists = TopBetta\SportsEvents::eventExists($eventId);
+								// if event exists update that record
 								if($eventExists){
-									TopBetta\LogHelper::l("BackAPI: Sports - Processing Meeting, In DB: $eventExists", 1);
-									$raceMeet = TopBetta\RaceMeeting::find($eventExists);
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, In DB: $eventExists", 1);
+									$eventModel = TopBetta\RaceMeeting::find($eventExists);
+								// if not create a new record
 								}else{
-									TopBetta\LogHelper::l("BackAPI: Sports - Processing Meeting, Added to DB: $eventExists", 1);
-									$raceMeet = new TopBetta\RaceMeeting;
-									if(isset($dataArray['Id'])){
-										$raceMeet->external_event_group_id = $dataArray['Id'];
-									}
-								}
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, Added to DB: $eventExists", 1);
+									$eventModel = new TopBetta\RaceMeeting;
+									$eventModel->external_event_id = $eventId;
+							    }
 
-								if(isset($dataArray['Date'])){
-									$raceMeet->start_date = $dataArray['Date'];
+								if(isset($dataArray['EventTime'])){
+									$eventModel->start_date = $dataArray['Date'];
 								}
-								if(isset($dataArray['Name'])){
-									$raceMeet->name = $dataArray['Name'];
-								}
-
-
-								if(isset($dataArray['RaceType'])){
-									switch($dataArray['RaceType']){
-										case "R":
-											$raceMeet->type_code = 'R';
-											$raceMeet->tournament_competition_id = '31';
-											break;
-										case "T":
-											$raceMeet->type_code = 'H';
-											$raceMeet->tournament_competition_id = '32';
-											break;
-										case "G":
-											$raceMeet->type_code = 'G';
-											$raceMeet->tournament_competition_id = '33';
-											break;
-									}
-								}
-
-								// TODO: what do we do with country
-								//if(isset($dataArray['Country'])){
-								//	$raceMeet->type_code = $dataArray['Country'];
-								//}
-								if(isset($dataArray['EventCount'])){
-									$raceMeet->events = $dataArray['EventCount'];
-								}
-								if(isset($dataArray['Weather'])){
-									$raceMeet->weather = $dataArray['Weather'];
-								}
-								if(isset($dataArray['Track'])){
-									$raceMeet->track = $dataArray['Track'];
-								}
-								if(isset($dataArray['State'])){
-									$raceMeet->state = $dataArray['State'];
+								if(isset($dataArray['EventName'])){
+									$eventModel->name = $dataArray['Name'];
 								}
 
 								// save or update the record
-								$raceMeetSave = $raceMeet->save();
-								$raceMeetID = $raceMeet->id;
-								TopBetta\LogHelper::l("BackAPI: Sports - Processed Meeting. MID:$eventId, Date:$raceMeet->start_date, Name:$raceMeet->name, Type:$raceMeet->type_code, Events:$raceMeet->events, Weather:$raceMeet->weather, Track:$raceMeet->track");
+								$eventSave = $eventModel->save();
+								$EventDBID = $eventModel->id;
+								TopBetta\LogHelper::l("BackAPI: Sports - Processed Event. Event:$eventId, Date:$eventModel->start_date, Name:$eventModel->name");
 
 							}else{
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Meeting. No Meeting ID, Can't process", 1);
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Event. No Event ID, Can't process", 1);
 							}
 						}
 						break;
 
 						// Race data - the races in the meeting
-					case "RaceList":
+					case "MarketList":
 						TopBetta\LogHelper::l("BackAPI: Sports - Processing $objectCount: Race");
 						foreach ($sportsArray as $dataArray){
 								
