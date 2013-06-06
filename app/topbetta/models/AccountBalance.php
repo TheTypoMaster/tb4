@@ -50,12 +50,14 @@ class AccountBalance extends \Eloquent {
     	$transaction->amount = (int)$params['amount'];
     	$transaction->notes = $params['notes'];
     	
-    	$o = print_r($transaction,true);
-    	
-    	LogHelper::l("AccountBalance newTransaction: About to save transaction:  Object:$o");
     	
     	// save the model
     	$transaction->save();
+    	
+
+    	$o = print_r($transaction,true);
+    	 
+    	LogHelper::l("AccountBalance newTransaction: About to save transaction:  Object:$o");
     	
     	// return false if save fails
     	if($transaction->id) {
