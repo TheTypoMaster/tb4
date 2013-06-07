@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class SportSelection extends \Eloquent {
+class SportsSelection extends \Eloquent {
 
 	protected $table = 'tbdb_selection';
 	
@@ -11,6 +11,6 @@ class SportSelection extends \Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function selectionExists($selectionId){
-		return \DB::table('tbdb_selection')->where('external_selection_id', $selectionId)->pluck('id');
+		return SportsSelection::where('external_selection_id', $selectionId)->pluck('id');
 	}
 }

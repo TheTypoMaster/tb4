@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class SportMarket extends \Eloquent {
+class SportsMarket extends \Eloquent {
 
 	protected $table = 'tbdb_market';
 	
@@ -11,7 +11,7 @@ class SportMarket extends \Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function marketExists($marketID){
-		return SportMarket::where('external_market_id', '=', $marketID )->pluck('id');
+		return SportsMarket::where('external_market_id', '=', $marketID )->pluck('id');
 	}
 
 }

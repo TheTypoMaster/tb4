@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class SportMarketType extends \Eloquent {
+class SportsMarketType extends \Eloquent {
 
 	protected $table = 'tbdb_market_type';
 	
@@ -11,7 +11,7 @@ class SportMarketType extends \Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function marketTypeExists($betType) {
-		return SportMarketType::where('name', '=', $betType) -> pluck('id');
+		return SportsMarketType::where('name', '=', $betType) -> pluck('id');
 	}
 
 }
