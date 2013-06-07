@@ -11,10 +11,32 @@
 |
 */
 
-
+apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
-header('Access-Control-Allow-Origin: http://localhost:9778');
+$requestHeaders        = apache_request_headers();
+if ( array_key_exists('Origin', $requestHeaders) ) {
+
+	$httpOrigin            = $requestHeaders['Origin'];
+	$allowedHttpOrigins   = array(
+                            "http://localhost:9778",
+                            "http://beta.mugbookie.com",
+                            "http://localhost",
+                            "http://beta.tb4.dev",
+                          );
+
+	if (in_array($httpOrigin, $allowedHttpOrigins)){  
+	
+		@header("Access-Control-Allow-Origin: " . $httpOrigin);
+		
+	}
+	
+} else {
+
+	header('Access-Control-Allow-Origin: http://localhost:9778');
+	
+}
+
 header('Access-Control-Allow-Credentials: true');
 
 

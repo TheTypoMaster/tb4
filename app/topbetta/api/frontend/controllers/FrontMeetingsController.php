@@ -21,7 +21,7 @@ class FrontMeetingsController extends \BaseController {
 
 		$typeCode = Input::get('type', 'r');
 
-		// store meetings & races in cache for 1 min at a time
+		// store meetings & races in cache for 1 min at a time		
 		return \Cache::remember('meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
 
 			//fetch our meetings for the specified type i.e. r = racing, g = greyhouds, h = harness
@@ -33,7 +33,7 @@ class FrontMeetingsController extends \BaseController {
 
 			foreach ($events as $event) {
 
-				$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);
+				$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);				
 
 				$meetingAndRaces = array('id' => $event -> id, 'name' => $event -> name, 'weather' => $event -> weather, 'track' => $event -> track, 'races' => $races);
 				$eachMeeting[] = $meetingAndRaces;
