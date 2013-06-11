@@ -51,7 +51,7 @@ class Bet extends \Eloquent {
 	 */	
 	public function getActiveLiveBetsForUserId($userId) {
 		
-		$query = "SELECT b.id, b.bet_freebet_flag AS freebet, bt.id AS bet_type, rs.name AS result_status,
+		$query = "SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, rs.name AS result_status,
 	      		e.id AS event_id,
 	      		e.name AS event_name,
 	      		e.number AS event_number,
@@ -65,6 +65,10 @@ class Bet extends \Eloquent {
 				tbdb_bet_type AS bt
 			ON
 				bt.id = b.bet_type_id
+			INNER JOIN
+				tbdb_bet_origin AS bo
+			ON
+				b.bet_origin_id = bo.id				
 			INNER JOIN
 				tbdb_bet_result_status AS rs
 			ON
@@ -113,7 +117,7 @@ class Bet extends \Eloquent {
 	{
 
 		$query = '
-			SELECT b.id, b.bet_freebet_flag AS freebet, bt.id AS bet_type, rs.name AS result_status,
+			SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, rs.name AS result_status,
 	      		e.id AS event_id,
 	      		e.external_event_id,
 	      		e.name AS event_name,
@@ -130,6 +134,10 @@ class Bet extends \Eloquent {
 				tbdb_bet_type AS bt
 			ON
 				bt.id = b.bet_type_id
+			INNER JOIN
+				tbdb_bet_origin AS bo
+			ON
+				b.bet_origin_id = bo.id						
 			INNER JOIN
 				tbdb_bet_result_status AS rs
 			ON
