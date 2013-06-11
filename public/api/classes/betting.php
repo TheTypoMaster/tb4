@@ -965,10 +965,10 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
 				$bet_model	= new BettingModelBet();
 				
-				if ((time() - $bet_model->getLastBetTimeStampByUserIDApi($user->id)->created_date) < 2) {
-					$validation->error = JText::_('Please wait a second to make another bet');
-					return OutputHelper::json(500, array('error_msg' => $validation->error ));
-				}
+				//if ((time() - $bet_model->getLastBetTimeStampByUserIDApi($user->id)->created_date) < 2) {
+				//	$validation->error = JText::_('Please wait a second to make another bet');
+				//	return OutputHelper::json(500, array('error_msg' => $validation->error ));
+				//}
 				
 				
 				$bet_type_id = JRequest::getVar('bet_type_id', null);
