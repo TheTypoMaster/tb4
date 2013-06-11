@@ -62,7 +62,7 @@ class FreeCreditBalance extends \Eloquent {
 	 * @param string an optional description for the transaction
 	 * @return int transaction id
 	 */
-	function increment($amount, $keyword, $desc = null) {
+	function _increment($amount, $keyword, $desc = null) {
 		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($keyword);
 
 		$tracking_id = -1;
@@ -105,7 +105,7 @@ class FreeCreditBalance extends \Eloquent {
 
 
 	//TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
-	function increment($userID, $amount, $keyword, $desc = null)
+	function __increment($userID, $amount, $keyword, $desc = null)
 	{
 
 		// Grab the ID for the keyword
@@ -207,7 +207,7 @@ class FreeCreditBalance extends \Eloquent {
 	 * @param string transaction description
 	 * @return int transaction id
 	 */
-	function decrement($amount, $keyword, $desc = null) {
+	function _decrement($amount, $keyword, $desc = null) {
 		$decrementAccountAmount = 0;
 		$totalTournamentAmount 	= $this->getTotal();
 		$transactionId 			= null;

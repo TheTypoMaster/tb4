@@ -68,7 +68,7 @@ class AccountBalance extends \Eloquent {
      */
 
     //TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
-    function increment($userID, $amount, $keyword, $desc = null)
+    function _increment($userID, $amount, $keyword, $desc = null)
     {
     	
     	// Grab the ID for the keyword
@@ -124,7 +124,7 @@ class AccountBalance extends \Eloquent {
      * @param string transaction description
      * @return int transaction id
      */
-    function decrement($amount, $keyword, $desc = null)
+    function _decrement($amount, $keyword, $desc = null)
     {
     	return TopBetta\AccountBalance::increment(-$amount, $keyword, $desc);
     }
