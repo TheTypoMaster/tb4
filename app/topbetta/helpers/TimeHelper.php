@@ -75,4 +75,17 @@ class TimeHelper {
 
 	}
 
+	/**
+	 * Convert time to ISO 8601 time format
+	 *
+	 * @param string $date
+	 * @return string
+	 */
+	public static function isoDate($date) {
+		//convert the date to ISO 8601 format
+		$newDatetime = new \DateTime($date);
+		return $newDatetime -> format('c');	
+		
+	}
+
 }
