@@ -50,8 +50,13 @@ class RaceResult extends \Eloquent {
 				// win-place
 				$positions = array();
 				$count = 1;
+				$resultString = "";
 								
 				foreach ($result_display_list['rank'] as $result) {
+						
+					if ($count != 1) {
+						$resultString .= ($result['position'] == $prevPosition) ? ',' : '/';
+					}	
 					
 					if ($result['win_dividend']) {
 							
@@ -61,7 +66,10 @@ class RaceResult extends \Eloquent {
 
 						$positions[$count] = array('position' => $result['position'], 'number' => $result['number'], 'name' => $result['name'], 'place_dividend' => $this->toCents($result['place_dividend']));
 					
-					}
+					}					
+					
+					$resultString .= $result['number'];					
+					$prevPosition = $result['position'];					
 					
 					$count++;
 				}
@@ -80,9 +88,6 @@ class RaceResult extends \Eloquent {
 					}
 					
 				}
-
-				//temp until sorted
-				$resultString = (count($exotics) == 4) ? $exotics[1]['firstfour_dividend']['selections'] : '';
 
 				$results = array('results_string' => $resultString, 'exotics' => $exotics, 'positions' => $positions);
 				
