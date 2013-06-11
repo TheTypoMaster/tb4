@@ -517,22 +517,54 @@ class RacingController extends \BaseController {
 									
 									// grab the event
 									$raceEvent = TopBetta\RaceEvent::find($eventID);
+									
+									// build the serialised result data for this result
 									$arrayKey = str_replace('-', '/', $selection);
 									$arrayValue = $payout;
 									$exoticArray = array($arrayKey => $arrayValue);
-									
+									$previousDivArray = array();
+									// work on each exotic type
 									switch($betType) {
 										case "Q": // Quinella
-											$raceEvent->quinella_dividend = serialize($exoticArray);
+											if(!$raceEvent->quinella_dividend == serialize($exoticArray)){
+												// unserialise the existing dividend
+												$previousDivArray = unserialize($raceEvent->quinella_dividend);
+												// add the new dividends
+												$raceEvent->quinella_dividend = serialize(array_merge($previousDivArray,$exoticArray));
+											}else{
+												$raceEvent->quinella_dividend = serialize($exoticArray);
+											}
 											break;
 										case "E": // Exacta
-											$raceEvent->exacta_dividend = serialize($exoticArray);
+											if(!$raceEvent->exacta_dividend  == serialize($exoticArray)){
+												// unserialise the existing dividend
+												$previousDivArray = unserialize($raceEvent->exacta_dividend);
+												// add the new dividends
+												$raceEvent->exacta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											}else{
+												$raceEvent->exacta_dividend = serialize($exoticArray);
+											}
 											break;
 										case "T": // Trifecta
-											$raceEvent->trifecta_dividend = serialize($exoticArray);
+											if(!$raceEvent->trifecta_dividend  == serialize($exoticArray)){
+												// unserialise the existing dividend
+												$previousDivArray = unserialize($raceEvent->trifecta_dividend);
+												// add the new dividends
+												$raceEvent->trifecta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											}else{
+												$raceEvent->trifecta_dividend = serialize($exoticArray);
+											}
 											break;
 										case "F": // First Four
-											$raceEvent->firstfour_dividend = serialize($exoticArray);
+											if(!$raceEvent->firstfour_dividend  == serialize($exoticArray)){
+												// unserialise the existing dividend
+												$previousDivArray = unserialize($raceEvent->firstfour_dividend);
+												// add the new dividends
+												$raceEvent->firstfour_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											}else{
+												$raceEvent->firstfour_dividend = serialize($exoticArray);
+											}
+											
 											break;
 										default:
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
