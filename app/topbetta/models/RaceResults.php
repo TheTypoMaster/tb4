@@ -80,8 +80,11 @@ class RaceResult extends \Eloquent {
 					}
 					
 				}
-				
-				$results = array('exotics' => $exotics, 'positions' => $positions);
+
+				//temp until sorted
+				$resultString = (count($exotics) == 4) ? $exotics[1]['firstfour_dividend']['selections'] : '';
+
+				$results = array('results_string' => $resultString, 'exotics' => $exotics, 'positions' => $positions);
 				
 				return $results;
 				

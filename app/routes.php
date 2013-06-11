@@ -14,7 +14,12 @@
 apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
-$requestHeaders        = apache_request_headers();
+
+if (function_exists('apache_request_headers')) {
+	$requestHeaders        = apache_request_headers();
+} else {
+	$requestHeaders = array();
+}	
 if ( array_key_exists('Origin', $requestHeaders) ) {
 
 	$httpOrigin            = $requestHeaders['Origin'];
@@ -38,6 +43,7 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 }
 
 header('Access-Control-Allow-Credentials: true');
+
 
 
 

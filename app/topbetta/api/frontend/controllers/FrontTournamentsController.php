@@ -60,13 +60,13 @@ class FrontTournamentsController extends \BaseController {
 							//this requires several tournament models to be implemented first
 							//Tournament, TournamentPlacesPaid, TournamentLeaderboard
 
-							//$placesPaid = \TopBetta\Tournament::calculateTournamentPlacesPaid($tourn, $numEntries, $prizePool);
+							$placesPaid = $tournamentModel -> calculateTournamentPlacesPaid($tourn, $numEntries, $prizePool);
 
 							//convert the date to ISO 8601 format
 							$startDatetime = new \DateTime($tourn -> start_date);
 							$startDatetime = $startDatetime -> format('c');
 
-							$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => $numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => 3, 'start_date' => $startDatetime);
+							$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_date' => $startDatetime);
 						}
 
 					}

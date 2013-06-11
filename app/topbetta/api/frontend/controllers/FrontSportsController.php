@@ -41,7 +41,7 @@ class FrontSportsController extends \BaseController {
 							$startDatetime = new \DateTime($comp -> start_date);
 							$startDatetime = $startDatetime -> format('c');
 
-							$comps[] = array('id' => (int)$comp -> id, 'name' => $comp -> name, 'start_date' => $startDatetime);
+							$comps[] = array('id' => (int)$comp -> eventGroupId, 'name' => $comp -> name, 'start_date' => $startDatetime);
 						}
 
 					}
@@ -49,7 +49,7 @@ class FrontSportsController extends \BaseController {
 				}
 			}
 
-			return array('status' => true, 'result' => $eachSport);
+			return array('success' => true, 'result' => $eachSport);
 		});
 
 	}

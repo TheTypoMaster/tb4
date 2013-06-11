@@ -185,6 +185,26 @@ class Tournament extends \Eloquent {
 		$current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants;
 		return ($current_prize_pool > $tournament -> minimum_prize_pool) ? $current_prize_pool : $tournament -> minimum_prize_pool;
 	}
+	
+	/**
+	 * Calculate the number of places paid for a tournament, and the payout if cash.
+	 *
+	 * @param object 	$tournament
+	 * @param object 	$entrant_count
+	 * @param int 		$prize_pool
+	 * @return array
+	 */
+	public function calculateTournamentPlacesPaid($tournament, $entrant_count, $prize_pool)
+	{
+		$payout_model = new \TopBetta\TournamentPlacesPaid;
+		$final = $this->isFinished($tournament);
+
+		if($final) {
+			return $payout_model->getPrizeDistribution($tournament, $prize_pool);
+		}
+
+		return $payout_model->getPlaceList($tournament, $entrant_count, $prize_pool);
+	}	
 
 	/**
 	 * Check out if a tournament is racing
@@ -210,5 +230,16 @@ class Tournament extends \Eloquent {
 
 		return in_array($sport_name, $this -> excludeSports);
 	}
+	
+	/**
+	 * Determine if a tournament has finished
+	 *
+	 * @param object $tournament
+	 * @return bool
+	 */
+	public function isFinished($tournament)
+	{
+		return (!empty($tournament->cancelled_flag) || strtotime($tournament->end_date) < time());
+	}	
 
 }
