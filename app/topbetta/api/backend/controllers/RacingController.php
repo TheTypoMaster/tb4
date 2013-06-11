@@ -539,7 +539,7 @@ class RacingController extends \BaseController {
 											
 											break;
 										case "E": // Exacta
-											if(!$raceEvent->quinella_dividend == NULL){
+											if(!$raceEvent->exacta_dividend == NULL){
 												if(!$raceEvent->exacta_dividend  == serialize($exoticArray) && $raceEvent->exacta_dividend == NULL){
 													// unserialise the existing dividend
 													$previousDivArray = unserialize($raceEvent->exacta_dividend);
@@ -551,7 +551,7 @@ class RacingController extends \BaseController {
 											}
 											break;
 										case "T": // Trifecta
-											if(!$raceEvent->quinella_dividend == NULL){
+											if(!$raceEvent->trifecta_dividend == NULL){
 												if(!$raceEvent->trifecta_dividend  == serialize($exoticArray) && $raceEvent->trifecta_dividend == NULL){
 													// unserialise the existing dividend
 													$previousDivArray = unserialize($raceEvent->trifecta_dividend);
@@ -563,7 +563,7 @@ class RacingController extends \BaseController {
 											}
 											break;
 										case "F": // First Four
-											if(!$raceEvent->quinella_dividend == NULL){
+											if(!$raceEvent->firstfour_dividend == NULL){
 												if(!$raceEvent->firstfour_dividend  == serialize($exoticArray) && $raceEvent->firstfour_dividend == NULL){
 													// unserialise the existing dividend
 													$previousDivArray = unserialize($raceEvent->firstfour_dividend);
