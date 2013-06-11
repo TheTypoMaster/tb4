@@ -526,42 +526,50 @@ class RacingController extends \BaseController {
 									// work on each exotic type
 									switch($betType) {
 										case "Q": // Quinella
+											if(!$raceEvent->quinella_dividend == NULL){
+												if(!$raceEvent->quinella_dividend == serialize($exoticArray)){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->quinella_dividend);
+													// add the new dividends
+													$raceEvent->quinella_dividend = serialize(array_merge($previousDivArray,$exoticArray));
+													}	
+												}else{
+													$raceEvent->quinella_dividend = serialize($exoticArray);
+												}
 											
-											if(!$raceEvent->quinella_dividend == serialize($exoticArray) && $raceEvent->quinella_dividend == NULL){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->quinella_dividend);
-												// add the new dividends
-												$raceEvent->quinella_dividend = serialize(array_merge($previousDivArray,$exoticArray));
-											}else{
-												$raceEvent->quinella_dividend = serialize($exoticArray);
-											}
 											break;
 										case "E": // Exacta
-											if(!$raceEvent->exacta_dividend  == serialize($exoticArray) && $raceEvent->exacta_dividend == NULL){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->exacta_dividend);
-												// add the new dividends
-												$raceEvent->exacta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											if(!$raceEvent->quinella_dividend == NULL){
+												if(!$raceEvent->exacta_dividend  == serialize($exoticArray) && $raceEvent->exacta_dividend == NULL){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->exacta_dividend);
+													// add the new dividends
+													$raceEvent->exacta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+												}
 											}else{
 												$raceEvent->exacta_dividend = serialize($exoticArray);
 											}
 											break;
 										case "T": // Trifecta
-											if(!$raceEvent->trifecta_dividend  == serialize($exoticArray) && $raceEvent->trifecta_dividend == NULL){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->trifecta_dividend);
-												// add the new dividends
-												$raceEvent->trifecta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											if(!$raceEvent->quinella_dividend == NULL){
+												if(!$raceEvent->trifecta_dividend  == serialize($exoticArray) && $raceEvent->trifecta_dividend == NULL){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->trifecta_dividend);
+													// add the new dividends
+													$raceEvent->trifecta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+												}
 											}else{
 												$raceEvent->trifecta_dividend = serialize($exoticArray);
 											}
 											break;
 										case "F": // First Four
-											if(!$raceEvent->firstfour_dividend  == serialize($exoticArray) && $raceEvent->firstfour_dividend == NULL){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->firstfour_dividend);
-												// add the new dividends
-												$raceEvent->firstfour_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											if(!$raceEvent->quinella_dividend == NULL){
+												if(!$raceEvent->firstfour_dividend  == serialize($exoticArray) && $raceEvent->firstfour_dividend == NULL){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->firstfour_dividend);
+													// add the new dividends
+													$raceEvent->firstfour_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+												}
 											}else{
 												$raceEvent->firstfour_dividend = serialize($exoticArray);
 											}
