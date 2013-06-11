@@ -526,7 +526,8 @@ class RacingController extends \BaseController {
 									// work on each exotic type
 									switch($betType) {
 										case "Q": // Quinella
-											if(!$raceEvent->quinella_dividend == serialize($exoticArray)){
+											
+											if(!$raceEvent->quinella_dividend == serialize($exoticArray) && $raceEvent->quinella_dividend == ""){
 												// unserialise the existing dividend
 												$previousDivArray = unserialize($raceEvent->quinella_dividend);
 												// add the new dividends
@@ -536,7 +537,7 @@ class RacingController extends \BaseController {
 											}
 											break;
 										case "E": // Exacta
-											if(!$raceEvent->exacta_dividend  == serialize($exoticArray)){
+											if(!$raceEvent->exacta_dividend  == serialize($exoticArray && $raceEvent->exacta_dividend == "")){
 												// unserialise the existing dividend
 												$previousDivArray = unserialize($raceEvent->exacta_dividend);
 												// add the new dividends
@@ -546,7 +547,7 @@ class RacingController extends \BaseController {
 											}
 											break;
 										case "T": // Trifecta
-											if(!$raceEvent->trifecta_dividend  == serialize($exoticArray)){
+											if(!$raceEvent->trifecta_dividend  == serialize($exoticArray && $raceEvent->trifecta_dividend == "")){
 												// unserialise the existing dividend
 												$previousDivArray = unserialize($raceEvent->trifecta_dividend);
 												// add the new dividends
@@ -556,7 +557,7 @@ class RacingController extends \BaseController {
 											}
 											break;
 										case "F": // First Four
-											if(!$raceEvent->firstfour_dividend  == serialize($exoticArray)){
+											if(!$raceEvent->firstfour_dividend  == serialize($exoticArray && $raceEvent->firstfour_dividend == "")){
 												// unserialise the existing dividend
 												$previousDivArray = unserialize($raceEvent->firstfour_dividend);
 												// add the new dividends
