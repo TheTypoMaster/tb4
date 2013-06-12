@@ -379,7 +379,7 @@ class RacingController extends \BaseController {
 									
 									//TODO: Code Table Lookup/Provider matching table							
 									if(isset($dataArray['Scratched'])){
-										if ($dataArray['Scratched'] == 1){
+										if ($dataArray['Scratched'] == '1'){
 											$raceRunner->selection_status_id = '2';
 										}else{
 											$raceRunner->selection_status_id = '1';
