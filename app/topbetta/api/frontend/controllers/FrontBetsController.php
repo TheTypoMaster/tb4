@@ -186,6 +186,30 @@ class FrontBetsController extends \BaseController {
 
 						break;
 
+					case 2 :
+						// place
+
+						foreach ($input['selections'] as $selection) {
+
+							// assemble bet data such as meeting_id, race_id etc
+							$legacyData = $betModel -> getLegacyBetData($selection);
+
+							if (count($legacyData) > 0) {
+
+								$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => 2, 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+								$this -> placeTournamentBet($betData, $messages, $errors);
+
+							} else {
+
+								$messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+								$errors++;
+
+							}
+
+						}
+
+						break;
+
 					default :
 						break;
 				}
