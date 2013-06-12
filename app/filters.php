@@ -48,6 +48,9 @@ Route::filter('auth.basic', function()
 Route::filter('apiauth', function()
 {
  
+	Config::set('auth.table', 'tb_api_users');
+	Config::set('auth.model', 'APIUser');
+	
     // Test against the presence of Basic Auth credentials
     $creds = array(
         'username' => Request::getUser(),
@@ -64,6 +67,14 @@ Route::filter('apiauth', function()
  
     }
  
+});
+
+// stateless HTTP Basic login for API
+Route::filter('basic.once', function()
+{
+	Config::set('auth.table', 'tb_api_users');
+	Config::set('auth.model', 'APIUser');
+	return Auth::onceBasic('username');
 });
 
 /*
