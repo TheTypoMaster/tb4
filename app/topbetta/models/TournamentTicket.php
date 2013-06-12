@@ -187,7 +187,7 @@ class TournamentTicket extends \Eloquent {
 	public function getTournamentEntrantList($tournamentId) {
 
 		$query = 'SELECT
-				tt.user_id,
+				tt.user_id AS id,
 				us.username,
 				tu.city
 			FROM

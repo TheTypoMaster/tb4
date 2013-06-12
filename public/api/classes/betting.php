@@ -2363,7 +2363,7 @@ class Api_Betting extends JController {
 			$tournament = $tournament_model->getTournamentRacingByTournamentID($id);
 			
 			if(is_null($tournament)) {
-				return OutputHelper::json(500, array('Tournament not found'), $save);
+				return OutputHelper::json(500, array('error_msg' => 'Tournament not found'), $save);
 			}
 	
 			$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
