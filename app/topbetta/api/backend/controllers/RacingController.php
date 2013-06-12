@@ -614,9 +614,12 @@ class RacingController extends \BaseController {
 								// TODO: Check JSON data is valid
 				
 								// TODO: Cater properly for other odds type's 
-								if ($priceType == "TOP"){
+								if ($priceType == "TOP" || $priceType == "MID"){
 									// check if race exists in DB
 									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+									
+									// grab the race type code
+									$raceTypeCode = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 									
 									// if race exists update that record
 									if($raceExists){
@@ -649,23 +652,45 @@ class RacingController extends \BaseController {
 													}
 													$oddsSet = 0;
 													// update the correct field
-													switch($betType){
-														case "W":
-															$runnerPrice->win_odds = $runnerOdds / 100;
-															$oddsSet = 1;
-															//echo "Win odds set: $runnerOdds, ";
-															break;
-														case "P":
-															$runnerPrice->place_odds = $runnerOdds / 100;
-															$oddsSet = 1;
-															//echo "Place odds set: $runnerOdds, ";
-															break;
-														case "Q":
-															//echo "QIN odds, ";
-															break;
-														default:
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
-													}
+													
+													if($priceType == "TOP" && $raceTypeCode == "R" ){
+														
+														switch($betType){
+															case "W":
+																$runnerPrice->win_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Win odds set: $runnerOdds, ";
+																break;
+															case "P":
+																$runnerPrice->place_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Place odds set: $runnerOdds, ";
+																break;
+															default:
+																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+														}
+														
+													}elseif($priceType == "MID" && $raceTypeCode != "R" ){
+														switch($betType){
+															case "W":
+																$runnerPrice->win_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Win odds set: $runnerOdds, ";
+																break;
+															case "P":
+																$runnerPrice->place_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Place odds set: $runnerOdds, ";
+																break;
+															default:
+																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+															}
+														}
+														
+													
+													
+													
+
 													// save/update the price record
 													if ($oddsSet){
 														$runnerPrice->save();
@@ -685,7 +710,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No race found. Can't store results", 2);
 										}
 								}else{
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not TOPT:$priceType.", 2);
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not TOP or MID:$priceType.", 2);
 								}
 							}else{
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. Missing Odds Data. Can't process", 2);
