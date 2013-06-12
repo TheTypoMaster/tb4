@@ -264,8 +264,21 @@ class RacingController extends \BaseController {
 												$raceEvent->event_status_id = '1';
 												break;
 											case "C":
-												$raceEvent->event_status_id = '1';
+												$raceEvent->event_status_id = '5';
 												break;
+											case "S":
+												$raceEvent->event_status_id = '5'; // no suspended status in code table
+												break;
+											case "I":
+												$raceEvent->event_status_id = '6';
+												break;
+											case "R":
+												$raceEvent->event_status_id = '2';
+												break;
+											case "A":
+												$raceEvent->event_status_id = '3';
+												break;
+
 											default:
 												TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process", 2);
 										}
