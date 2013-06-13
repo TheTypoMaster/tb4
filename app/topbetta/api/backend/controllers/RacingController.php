@@ -439,7 +439,7 @@ class RacingController extends \BaseController {
 											if(isset($runnerSilkObject->last_starts)){
 												$raceRunner->last_starts = $runnerSilkObject->last_starts;
 											}
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$runnerSilkObject->last_starts.");
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts.");
 										}
 											
 												
