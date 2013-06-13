@@ -89,6 +89,10 @@ switch($method) {
 		echo $save_bet -> saveTournamentBet();
 		break;
 
+	case 'saveRacingBet' :
+		$save_bet = new Api_Betting();
+		echo $save_bet -> saveRacingBet();
+		break;
 	
 
 	/* TOURNAMENTS */

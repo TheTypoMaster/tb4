@@ -34,27 +34,36 @@ class AccountBalance extends \Eloquent {
      * @param  array increment params
      * @return int transaction id
      */
-    function newTransaction($params)
+    static private function newTransaction($params)
     {
     	// instansiate the model
-    	$transaction = new TopBetta\AccountBalance;
+    	$transaction = new AccountBalance;
+    	
+    	// get the id for the transaction type
+    	$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($params['account_transaction_type']);
     	
     	// add the transaction data
     	$transaction->recipient_id = $params['recipient_id'];
     	$transaction->giver_id = $params['giver_id'];
     	$transaction->session_tracking_id = $params['session_tracking_id'];
-    	$transaction->account_transaction_type = $params['account_transaction_type'];
+    	$transaction->account_transaction_type_id = $transactionTypeId;
     	$transaction->amount = (int)$params['amount'];
     	$transaction->notes = $params['notes'];
     	
-    	// save the model
+     	// save the model
     	$transaction->save();
+     	
+    	// debugging
+    	$o = print_r($transaction,true);
+    	LogHelper::l("AccountBalance newTransaction: About to save transaction:  Object:$o", 1);
     	
     	// return false if save fails
-    	if($transaction->id) {
+    	if(!$transaction->id) {
+    		LogHelper::l("AccountBalance newTransaction: Save Failed: ID:$transaction->id.");
     		return false;
     	}
     	// return the new transaction ID
+     	LogHelper::l("AccountBalance newTransaction: Saved: ID:$transaction->id.");
     	return $transaction->id;
     }
     
@@ -68,11 +77,11 @@ class AccountBalance extends \Eloquent {
      */
 
     //TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
-    function increment($userID, $amount, $keyword, $desc = null)
+    static public function _increment($userID, $amount, $keyword, $desc = null)
     {
     	
     	// Grab the ID for the keyword
-    	$transactionTypeId = TopBetta\AccountTransactionTypes::getTransactionTypeId($keyword);
+    	$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($keyword);
        	$tracking_id = -1;
      	
       	// TODO: Changed to cater for laravel sessions
@@ -86,8 +95,12 @@ class AccountBalance extends \Eloquent {
     	}
     
     	if(null == $desc) {
-    		$transactionTypeRec = TopBetta\AccountTransactionTypes::getTransactionType($keyword);
-    		$desc = $transactionTypeRec->description;
+    		$transactionTypeRec = AccountTransactionTypes::getTransactionType($keyword)->toArray();
+    		
+    		$t = print_r($transactionTypeRec,true);
+    		
+    		LogHelper::l("AccountBalance _increment: Desc: $t.");
+    		$desc = $transactionTypeRec[0]['description'];
     	}
     
     	$giver_id = -1;
@@ -113,7 +126,7 @@ class AccountBalance extends \Eloquent {
     			'account_transaction_type' 	=> $keyword,
     	);
     
-    	return TopBetta\AccountBalance::newTransaction($params);
+    	return AccountBalance::newTransaction($params);
     }
     
     /**
@@ -124,9 +137,9 @@ class AccountBalance extends \Eloquent {
      * @param string transaction description
      * @return int transaction id
      */
-    function decrement($amount, $keyword, $desc = null)
+    static public function _decrement($amount, $keyword, $desc = null)
     {
-    	return TopBetta\AccountBalance::increment(-$amount, $keyword, $desc);
+    	return AccountBalance::_increment(-$amount, $keyword, $desc);
     }
     
    
@@ -137,9 +150,9 @@ class AccountBalance extends \Eloquent {
      * @param 	string		the keyword of deposit type
      * @return	boolean		true on valid deposit type
      */
-    function validateTransactionType($transactionType)
+    public function validateTransactionType($transactionType)
     {
-    	return (bool)TopBetta\AccountTransactionTypes::getTransactionType($transactionType);
+    	return (bool)AccountTransactionTypes::getTransactionType($transactionType);
     }
     
     

@@ -3,6 +3,7 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Lang;
 
 class FrontTournamentsDetailsController extends \BaseController {
 
@@ -22,7 +23,7 @@ class FrontTournamentsDetailsController extends \BaseController {
 
 		if (is_null($tournament)) {
 
-			return array('success' => false, 'error' => "Tournament id: $tournamentId not found");
+			return array('success' => false, 'error' => Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
 			
 		}
 
@@ -35,7 +36,7 @@ class FrontTournamentsDetailsController extends \BaseController {
 
 		//get the users tournament ticket (line 198)
 		//TODO: pass in the current logged in user id
-		$ticketModel = new \TopBetta\TournamentTicket;
+		//$ticketModel = new \TopBetta\TournamentTicket;
 		//$ticket = $ticketModel -> getTournamentTicketByUserAndTournamentID(1, $tournamentId);
 
 		//get entries/player list
@@ -83,11 +84,11 @@ class FrontTournamentsDetailsController extends \BaseController {
 			//get race and results for race number
 
 			//our data to send back
-			return array('status' => true, 'result' => array('tournament' => null, 'meeting_id' => $meetingId, 'race_number' => (int)$raceNumber, 'next_race' => $nextRace, 'ticket' => $ticket, 'place_list' => null, 'prize_pool' => null, 'leaderboard_rank' => null, 'players' => $playerList, 'leaderboard' => null, 'runners' => $runnersList, 'tournament_bet_list' => null, 'places_paid' => null, 'races_and_results' => $raceList, 'available_currency' => null, 'private' => $tournament -> private_flag, 'password_protected' => null));
+			return array('success' => true, 'result' => array('tournament' => null, 'meeting_id' => $meetingId, 'race_number' => (int)$raceNumber, 'next_race' => $nextRace, 'place_list' => null, 'prize_pool' => null, 'leaderboard_rank' => null, 'players' => $playerList, 'leaderboard' => null, 'runners' => $runnersList, 'tournament_bet_list' => null, 'places_paid' => null, 'races_and_results' => $raceList, 'available_currency' => null, 'private' => $tournament -> private_flag, 'password_protected' => null));
 			
 		} else {
 			// ::: sports related data :::
-			return array('status' => true, 'result' => array());
+			return array('success' => true, 'result' => array());
 
 		}				
 

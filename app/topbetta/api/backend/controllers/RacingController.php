@@ -264,8 +264,21 @@ class RacingController extends \BaseController {
 												$raceEvent->event_status_id = '1';
 												break;
 											case "C":
-												$raceEvent->event_status_id = '1';
+												$raceEvent->event_status_id = '5';
 												break;
+											case "S":
+												$raceEvent->event_status_id = '5'; // no suspended status in code table
+												break;
+											case "I":
+												$raceEvent->event_status_id = '6';
+												break;
+											case "R":
+												$raceEvent->event_status_id = '2';
+												break;
+											case "A":
+												$raceEvent->event_status_id = '3';
+												break;
+
 											default:
 												TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process", 2);
 										}
@@ -364,6 +377,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
 										}
 										$raceRunner->market_id = $marketID;
+										
 									}
 								
 									if(isset($dataArray['BarrierNo'])){
@@ -378,7 +392,7 @@ class RacingController extends \BaseController {
 									
 									//TODO: Code Table Lookup/Provider matching table							
 									if(isset($dataArray['Scratched'])){
-										if ($dataArray['Scratched'] == 1){
+										if ($dataArray['Scratched'] == '1'){
 											$raceRunner->selection_status_id = '2';
 										}else{
 											$raceRunner->selection_status_id = '1';
@@ -444,6 +458,8 @@ class RacingController extends \BaseController {
 									// save or update the record
 									$raceRunnerSave = $raceRunner->save();
 									$raceRunnerID = $raceRunner->id;
+									$raceRunner->wager_id = $raceRunner->id;
+									$raceRunnerSave = $raceRunner->save();
 													
 									TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId , RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
 																	
@@ -523,41 +539,50 @@ class RacingController extends \BaseController {
 									// work on each exotic type
 									switch($betType) {
 										case "Q": // Quinella
-											if(!$raceEvent->quinella_dividend == serialize($exoticArray)){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->quinella_dividend);
-												// add the new dividends
-												$raceEvent->quinella_dividend = serialize(array_merge($previousDivArray,$exoticArray));
-											}else{
-												$raceEvent->quinella_dividend = serialize($exoticArray);
-											}
+											if(!$raceEvent->quinella_dividend == NULL){
+												if(!$raceEvent->quinella_dividend == serialize($exoticArray)){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->quinella_dividend);
+													// add the new dividends
+													$raceEvent->quinella_dividend = serialize(array_merge($previousDivArray,$exoticArray));
+													}	
+												}else{
+													$raceEvent->quinella_dividend = serialize($exoticArray);
+												}
+											
 											break;
 										case "E": // Exacta
-											if(!$raceEvent->exacta_dividend  == serialize($exoticArray)){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->exacta_dividend);
-												// add the new dividends
-												$raceEvent->exacta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											if(!$raceEvent->exacta_dividend == NULL){
+												if(!$raceEvent->exacta_dividend  == serialize($exoticArray)){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->exacta_dividend);
+													// add the new dividends
+													$raceEvent->exacta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+												}
 											}else{
 												$raceEvent->exacta_dividend = serialize($exoticArray);
 											}
 											break;
 										case "T": // Trifecta
-											if(!$raceEvent->trifecta_dividend  == serialize($exoticArray)){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->trifecta_dividend);
-												// add the new dividends
-												$raceEvent->trifecta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											if(!$raceEvent->trifecta_dividend == NULL){
+												if(!$raceEvent->trifecta_dividend  == serialize($exoticArray)){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->trifecta_dividend);
+													// add the new dividends
+													$raceEvent->trifecta_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+												}
 											}else{
 												$raceEvent->trifecta_dividend = serialize($exoticArray);
 											}
 											break;
 										case "F": // First Four
-											if(!$raceEvent->firstfour_dividend  == serialize($exoticArray)){
-												// unserialise the existing dividend
-												$previousDivArray = unserialize($raceEvent->firstfour_dividend);
-												// add the new dividends
-												$raceEvent->firstfour_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+											if(!$raceEvent->firstfour_dividend == NULL){
+												if(!$raceEvent->firstfour_dividend  == serialize($exoticArray)){
+													// unserialise the existing dividend
+													$previousDivArray = unserialize($raceEvent->firstfour_dividend);
+													// add the new dividends
+													$raceEvent->firstfour_dividend  = serialize(array_merge($previousDivArray,$exoticArray));
+												}
 											}else{
 												$raceEvent->firstfour_dividend = serialize($exoticArray);
 											}
@@ -602,9 +627,12 @@ class RacingController extends \BaseController {
 								// TODO: Check JSON data is valid
 				
 								// TODO: Cater properly for other odds type's 
-								if ($priceType == "TOP"){
+								if ($priceType == "TOP" || $priceType == "MID"){
 									// check if race exists in DB
 									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+									
+									// grab the race type code
+									$raceTypeCode = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 									
 									// if race exists update that record
 									if($raceExists){
@@ -637,29 +665,47 @@ class RacingController extends \BaseController {
 													}
 													$oddsSet = 0;
 													// update the correct field
-													switch($betType){
-														case "W":
-															$runnerPrice->win_odds = $runnerOdds / 100;
-															$oddsSet = 1;
-															//echo "Win odds set: $runnerOdds, ";
-															break;
-														case "P":
-															$runnerPrice->place_odds = $runnerOdds / 100;
-															$oddsSet = 1;
-															//echo "Place odds set: $runnerOdds, ";
-															break;
-														case "Q":
-															//echo "QIN odds, ";
-															break;
-														default:
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
-													}
+													
+													if($priceType == "TOP" && $raceTypeCode == "R" ){
+														
+														switch($betType){
+															case "W":
+																$runnerPrice->win_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Win odds set: $runnerOdds, ";
+																break;
+															case "P":
+																$runnerPrice->place_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Place odds set: $runnerOdds, ";
+																break;
+															default:
+																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+														}
+														
+													}elseif($priceType == "MID" && $raceTypeCode != "R" ){
+														switch($betType){
+															case "W":
+																$runnerPrice->win_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Win odds set: $runnerOdds, ";
+																break;
+															case "P":
+																$runnerPrice->place_odds = $runnerOdds / 100;
+																$oddsSet = 1;
+																//echo "Place odds set: $runnerOdds, ";
+																break;
+															default:
+																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+															}
+														}
+										
 													// save/update the price record
 													if ($oddsSet){
 														$runnerPrice->save();
 														TopBetta\LogHelper::l("BackAPI: Racing - Processed Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds");
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Can't process. No Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds ", 2);
+														TopBetta\LogHelper::l("BackAPI: Racing - Not processed. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds ", 2);
 													}
 												}else{
 													TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No selction for Odds in DB. Can't process", 2);
@@ -673,7 +719,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No race found. Can't store results", 2);
 										}
 								}else{
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not TOPT:$priceType.", 2);
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not TOP or MID:$priceType.", 2);
 								}
 							}else{
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. Missing Odds Data. Can't process", 2);

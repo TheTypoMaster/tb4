@@ -6,65 +6,62 @@ use Illuminate\Support\Facades\Input;
 
 class FrontBetsController extends \BaseController {
 
+	public function __construct() {
+		$this -> beforeFilter('auth');
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
 	public function index() {
-		// return active bets & recent bets	
-		
-		// active SQL
-		$query = "SELECT
-	      		b.*,
-	      		bt.name AS bet_type,
-	      		rs.name AS bet_result_status,
-	      		e.id AS event_id,
-	      		e.name AS event_name,
-	      		e.number AS event_number,
-	      		s.id AS selection_id,
-	      		s.name AS selection_name,
-	      		s.number AS selection_number,
-	      		bat.amount AS bet_total
-			FROM
-				tbdb_bet AS b
-			INNER JOIN
-				tbdb_bet_type AS bt
-			ON
-				bt.id = b.bet_type_id
-			INNER JOIN
-				tbdb_bet_result_status AS rs
-			ON
-				b.bet_result_status_id = rs.id
-			INNER JOIN
-				tbdb_bet_selection AS bs
-			ON 
-				b.id = bs.bet_id
-			INNER JOIN
-				tbdb_selection AS s
-			ON 
-				s.id = bs.selection_id
-			INNER JOIN
-				tbdb_market AS m
-			ON
-				m.id = s.market_id
-			INNER JOIN
-				tbdb_event AS e
-			ON
-				e.id = m.event_id
-			LEFT JOIN
-				tbdb_account_transaction AS bat
-			ON
-				bat.id = b.bet_transaction_id
-			WHERE
-				b.user_id = $userId
-			AND
-				b.resulted_flag = 0
-			
-			GROUP BY
-				b.id";
-							
-		return 'Get users bets';
+
+		$type = Input::get('type', 'live');
+
+		if ($type == 'live') {
+
+			$betModel = new \TopBetta\Bet;
+
+			// active live bets
+			$activeBetList = $betModel -> getActiveLiveBetsForUserId(\Auth::user() -> id);
+
+			$activeBets = array();
+
+			foreach ($activeBetList as $activeBet) {
+					
+				$betGroup = ($activeBet -> origin == 'betting') ? 'racing' : $activeBet -> origin; 
+
+				$activeBets[] = array('id' => (int)$activeBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeBet -> freebet) ? true : false, 'type' => (int)$activeBet -> bet_type, 'result_status' => $activeBet -> result_status, 'event_id' => (int)$activeBet -> event_id, 'event_name' => $activeBet -> event_name, 'event_number' => (int)$activeBet -> event_number, 'selection_id' => (int)$activeBet -> selection_id, 'selection_name' => $activeBet -> selection_name, 'selection_number' => (int)$activeBet -> selection_number, 'bet_total' => (int)$activeBet -> bet_total, 'created_date' => $activeBet -> created_date, 'invoice_id' => $activeBet -> invoice_id);
+
+			}
+
+			// recent live bets
+			$recentBetList = $betModel -> getRecentLiveBetsForUserId(\Auth::user() -> id, time() - 48 * 60 * 60, time(), 1, 'e.start_date DESC');
+			//$recentBetList = $betModel -> getRecentLiveBetsForUserId(\Auth::user() -> id, null, null, 1, 'e.start_date DESC');
+
+			$recentBets = array();
+
+			foreach ($recentBetList as $recentBet) {
+				
+				$betGroup = ($recentBet -> origin == 'betting') ? 'racing' : $recentBet -> origin;
+
+				$recentBets[] = array('id' => (int)$recentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($recentBet -> freebet) ? true : false, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 'selection_id' => (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_total' => (int)$recentBet -> bet_total, 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date, 'invoice_id' => $recentBet -> invoice_id);
+
+			}
+
+		} else if ($type == 'tournament') {
+
+			$activeBets = array();
+			$recentBets = array();
+
+		} else {
+
+			return array("success" => false, "error" => "Invalid Type");
+
+		}
+
+		return array('success' => true, 'result' => array('active' => $activeBets, 'recent' => $recentBets));
 	}
 
 	/**
@@ -83,25 +80,108 @@ class FrontBetsController extends \BaseController {
 	 */
 	public function store() {
 
-		// change these rules as required
-		$rules = array('id' => 'required|integer', 'race_id' => 'required', 'bet_type_id' => 'required', 'value' => 'required|integer', 'selection' => 'required', 'pos' => 'required|integer', 'bet_origin' => 'required|alpha', 'bet_product' => 'required|integer', 'wager_id' => 'required|integer');
+		//TODO: **** WHAT ARE WE DOING WITH BET_PRODUCT (TOTE)?
 
-		$validator = \Validator::make(Input::all(), $rules);
+		// change these rules as required
+		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer');
+		$input = Input::json() -> all();
+
+		$validator = \Validator::make($input, $rules);
 
 		if ($validator -> fails()) {
 
 			return array("success" => false, "error" => $validator -> messages() -> all());
 
 		} else {
-			// POST bet data to legacy API
-			$l = new \TopBetta\LegacyApiHelper;
-			$bet = $l -> query('saveBet', Input::all());
 
-			if ($bet['status'] == 200) {
-				return array('success' => true, 'result' => $bet['success']);
-			} else {
-				return array('success' => false, 'error' => $bet['error_msg']);
+			// POST bet data to legacy API
+			//$l = new \TopBetta\LegacyApiHelper;
+			$betModel = new \TopBetta\Bet;
+
+			$messages = array();
+			$errors = 0;
+
+			switch ($input['type_id']) {
+				case 1 :
+					// win
+
+					foreach ($input['selections'] as $selection) {
+
+						// assemble bet data such as meeting_id, race_id etc
+						$legacyData = $betModel -> getLegacyBetData($selection);
+
+						if (count($legacyData) > 0) {
+
+							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => 1, 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+							$this -> placeBet($betData, $messages, $errors);
+
+						} else {
+
+							$messages[] = array("id" => $selection, "success" => false, "error" => "selection not found");
+							$errors++;
+
+						}
+
+					}
+
+					break;
+
+				case 2 :
+					// place
+
+					foreach ($input['selections'] as $selection) {
+
+						// assemble bet data such as meeting_id, race_id etc
+						$legacyData = $betModel -> getLegacyBetData($selection);
+
+						if (count($legacyData) > 0) {
+
+							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => 2, 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+							$this -> placeBet($betData, $messages, $errors);
+
+						} else {
+
+							$messages[] = array("id" => $selection, "success" => false, "error" => "selection not found");
+							$errors++;
+
+						}
+
+					}
+
+					break;
+
+				default :
+					break;
 			}
+
+			return array("success" => ($errors > 0) ? false : true, ($errors > 0) ? "error" : "result" => $messages);
+
+		}
+
+	}
+
+	/**
+	 * Place the bet via the legacy api, generally called within a list of bets
+	 *
+	 * @param $betData array
+	 * @param $messages array
+	 * @param $errors int
+	 *
+	 */
+	private function placeBet($betData, &$messages, &$errors) {
+
+		$l = new \TopBetta\LegacyApiHelper;
+
+		$bet = $l -> query('saveBet', $betData);
+
+		if ($bet['status'] == 200) {
+
+			$messages[] = array("id" => $betData['selection'], "success" => true, "result" => $bet['success']);
+
+		} else {
+
+			$messages[] = array("id" => $betData['selection'], "success" => false, "error" => $bet['error_msg']);
+			$errors++;
 
 		}
 

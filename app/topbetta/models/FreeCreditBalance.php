@@ -26,13 +26,13 @@ class FreeCreditBalance extends \Eloquent {
 	* @param  array parameters of a new transaction
 	* @return int transaction id
 	*/
-	function newTransaction($params) {
+	private function newTransaction($params) {
 			
 		// instansiate the model
 		$transaction = new TopBetta\FreeCreditBalance;
 			
 		// get the id for the transaction type
-		$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($params['tournament_transaction_type']);
+		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($params['tournament_transaction_type']);
 			
 		// add the transaction data
 		$transaction->recipient_id = $params['recipient_id'];
@@ -54,58 +54,9 @@ class FreeCreditBalance extends \Eloquent {
 	}
 
 
-	/**
-	 * Add Tournament Dollars to a user's balance.
-	 *
-	 * @param int the amount in cents to add
-	 * @param keyword the keyword identifying the type of transaction
-	 * @param string an optional description for the transaction
-	 * @return int transaction id
-	 */
-	function increment($amount, $keyword, $desc = null) {
-		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($keyword);
-
-		$tracking_id = -1;
-		/* if(PHP_SAPI != 'cli') {
-			$session =& JFactory::getSession();
-			$tracking_id = $session->get('sessionTrackingId');
-		} */
-
-		if(!$transactionTypeId) {
-			return false;
-		}
-
-		if(null == $desc) {
-			$transactionTypeRec = FreeCreditTransactionTypes::getTransactionType($keyword);
-			$desc = $transactionTypeRec->description;
-		}
-
-		$giver_id = -1;
-		/* if(PHP_SAPI != 'cli') {
-			$loginUser =& JFactory::getUser();
-			$giver_id = $loginUser->id;
-		} */
-
-		$recipient_id = $this->user_id;
-		if(null == $recipient_id) {
-			$recipient_id = $giver_id;
-		}
-
-		$params = array(
-				'recipient_id' 					=> $recipient_id,
-				'giver_id' 						=> $giver_id,
-				'session_tracking_id' 			=> $tracking_id,
-				'amount' 						=> $amount,
-				'notes' 						=> $desc,
-				'tournament_transaction_type' 	=> $keyword,
-		);
-
-		return FreeCreditBalance::newTransaction($params);
-	}
-
 
 	//TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
-	function increment($userID, $amount, $keyword, $desc = null)
+	static public function _increment($userID, $amount, $keyword, $desc = null)
 	{
 
 		// Grab the ID for the keyword
@@ -167,8 +118,8 @@ class FreeCreditBalance extends \Eloquent {
 	 * @param string an optional description for the transaction
 	 * @return int transaction id
 	 */
-	function increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {
-		$transactionTypeId = $this->getTransactionTypeId($keyword);
+	static public function _increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {
+		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($keyword);
 
 		$tracking_id = -1;
 		//if(PHP_SAPI != 'cli') {
@@ -181,7 +132,7 @@ class FreeCreditBalance extends \Eloquent {
 		}
 
 		if(null == $desc) {
-			$transactionTypeRec = $this->getTransactionType($keyword);
+			$transactionTypeRec = FreeCreditTransactionTypes::getTransactionType($keyword);
 			$desc = $transactionTypeRec->description;
 		}
 
@@ -194,7 +145,7 @@ class FreeCreditBalance extends \Eloquent {
 				'tournament_transaction_type' 	=> $keyword,
 		);
 
-		return $this->newTransaction($params);
+		returnFreeCreditBalance::newTransaction($params);
 	}
 
 	/**
@@ -202,29 +153,29 @@ class FreeCreditBalance extends \Eloquent {
 	 * If the requested amount is not available, an additional check will be made to determine
 	 * if the user can make up the remaining amount from their Account Balance. The method will return false if both of these checks fail.
 	 *
+	 * @param int user id
 	 * @param int transaction amount
 	 * @param string transaction type keyword
 	 * @param string transaction description
 	 * @return int transaction id
 	 */
-	function decrement($amount, $keyword, $desc = null) {
+	static public function _decrement($userId, $amount, $keyword, $desc = null) {
 		$decrementAccountAmount = 0;
-		$totalTournamentAmount 	= $this->getTotal();
+		$totalTournamentAmount 	= FreeCreditBalance::getFreeCreditBalance($userId);
 		$transactionId 			= null;
 
 		if($amount > $totalTournamentAmount) {
-			$accountModel = JModel::getInstance('AccountTransaction', 'PaymentModel');
+			// $accountModel = JModel::getInstance('AccountTransaction', 'PaymentModel');
 
-			$loginUser 	=& JFactory::getUser();
-			$giver_id 	= $loginUser->id;
+			//$loginUser 	=& JFactory::getUser();
+			//$giver_id 	= $loginUser->id;
+			$recipient_id = $recipient_id = $userId;
+			//if(null == $recipient_id) {
+			//	$recipient_id = $giver_id;
+			//}
 
-			$recipient_id = $this->user_id;
-			if(null == $recipient_id) {
-				$recipient_id = $giver_id;
-			}
-
-			$accountModel->setUserId($recipient_id);
-			$totalAccountAmount = $accountModel->getTotal();
+			// $accountModel->setUserId($recipient_id);
+			$totalAccountAmount = AccountBalance::getFreeCreditBalance($userId);
 
 			$decrementAccountAmount =  $amount - $totalTournamentAmount;
 			if($decrementAccountAmount > $totalAccountAmount) {
@@ -233,25 +184,25 @@ class FreeCreditBalance extends \Eloquent {
 		}
 
 		if($decrementAccountAmount > 0) {
-			if( !$accountModel->getTransactionTypeId($keyword)) {
+			if( !AccountBalance::getTransactionTypeId($keyword)) {
 				$keyword = 'tournamentdollars';
 			}
 
-			if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc)) {
+			if(!AccountBalance::_decrement($decrementAccountAmount, $keyword, $desc)) {
 				return false;
 			}
 
-			if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance')) {
-				if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!')) {
+			if(!FreeCreditBalance::_increment($decrementAccountAmount, 'purchase', 'Transferred from account balance')) {
+				if(!AccountBalance::_increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!')) {
 					// :TODO: send email to tech!
 				}
 				return false;
 			}
 		}
 
-		if(!$transactionId = $this->increment(-$amount, $keyword, $desc)) {
+		if(!$transactionId = FreeCreditBalance::_increment(-$amount, $keyword, $desc)) {
 			if($decrementAccountAmount > 0) {
-				if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance')) {
+				if(!FreeCreditBalance::_increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance')) {
 					//TO DO : send email to tech!
 				}
 
@@ -265,56 +216,7 @@ class FreeCreditBalance extends \Eloquent {
 		return $transactionId;
 	}
 
-	/**
-	 * Get transaction type id
-	 *
-	 * @param  string transaction type
-	 * @return integer
-	 */
-	function getTransactionTypeId($keyword) {
-		$transactionTypeId = NULL;
-		$db =& Jfactory::getDBO();
-		$query =
-		'SELECT
-				id
-				FROM
-				' . $db->nameQuote('#__tournament_transaction_type') . '
-						WHERE
-						keyword = ' . $db->quote($keyword) . '
-								LIMIT 1';
-
-		$db->setQuery($query);
-		$rs = $db->loadObject();
-
-		if($rs) {
-			$transactionTypeId = $rs->id;
-		}
-
-		return $transactionTypeId;
-	}
-
-	/**
-	 * Get transaction type record
-	 *
-	 * @param  string transaction type
-	 * @return integer
-	 */
-	function getTransactionType($transactionType) {
-		$db =& JFactory::getDBO();
-		$query =
-		'SELECT
-				*
-				FROM
-				' . $db->nameQuote('#__tournament_transaction_type') . '
-						WHERE
-						keyword = ' . $db->quote($transactionType) . '
-								LIMIT 1';
-
-		$db->setQuery($query);
-		$rs = $db->loadObject();
-		return $rs;
-	}
-
+	
 
 
 }

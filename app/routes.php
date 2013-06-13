@@ -11,6 +11,36 @@
 |
 */
 
+apc_clear_cache("user");
+
+//TODO: ****** this is not safe to be here for production - find a better fix ******
+/*$requestHeaders        = apache_request_headers();
+if ( array_key_exists('Origin', $requestHeaders) ) {
+
+	$httpOrigin            = $requestHeaders['Origin'];
+	$allowedHttpOrigins   = array(
+                            "http://localhost:9778",
+                            "http://beta.mugbookie.com",
+                            "http://localhost",
+                            "http://beta.tb4.dev",
+                          );
+
+	if (in_array($httpOrigin, $allowedHttpOrigins)){  
+	
+		@header("Access-Control-Allow-Origin: " . $httpOrigin);
+		
+	}
+	
+} else {
+
+	header('Access-Control-Allow-Origin: http://localhost:9778');
+	
+}
+*/
+header('Access-Control-Allow-Credentials: true');
+
+
+
 Route::get('/', function()
 {
 	// return all events for meeting with id of 1
@@ -26,8 +56,8 @@ Route::get('/', function()
 	
 	//return (string)$api_con;
 	
-	
-	
+	$it = Hash::make('igast3st1ng');
+	return $it;
 	return View::make('hello');
 	
 	//return FreeTransactions::all();
@@ -44,9 +74,8 @@ Route::group(array('prefix' => '/api/admin/v1'), function() {
 });
 
 
-// Route group for backend API.
-//Route::group(array('prefix' => '/api/backend/v1', 'before' => 'apiauth'), function() {
-Route::group(array('prefix' => '/api/backend/v1'), function() {
+// Route group for backend API. Uses basic stateless auth filter
+Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { 
 	// incoming race data and results
 	Route::resource('racing', 'BackRacing');
 	// incoming sports data and results
@@ -59,8 +88,14 @@ Route::group(array('prefix' => '/api/backend/v1'), function() {
 Route::group(array('prefix' => '/api/v1'), function() {
 		
 	// ::: USER :::
-	Route::resource('users','Users');
-	Route::resource('users.profile','UsersProfile');
+	
+	// 2 custom routes for users auth	
+	Route::post('users/login', 'FrontUsers@login');
+	Route::get('users/logout', 'FrontUsers@logout');
+		
+	Route::resource('users','FrontUsers');
+	Route::resource('users.profile', 'FrontUsersProfile');
+	Route::resource('users.balances','FrontUsersBalances');
 	
 	// ::: BETS :::
 	Route::resource('bets','FrontBets');	
@@ -84,13 +119,17 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	//Sports events
 	Route::resource('sports/events','FrontSportsEvents');
 	
-	//Sports types & options
-	Route::resource('sports/types-options','FrontSportsTypesOptions');	
+	//Sports types
+	Route::resource('sports/types','FrontSportsTypes');	
+
+	//Sports options
+	Route::resource('sports/options','FrontSportsOptions');
 		
 	//Sports and comps
 	Route::resource('sports','FrontSports');
 	Route::resource('sports.events','FrontSportsEvents');
-	Route::resource('sports.events.types-options','FrontSportsTypesOptions');
+	Route::resource('sports.events.types','FrontSportsTypes');
+	Route::resource('sports.events.types.options','FrontSportsOptions');
 	
 	// ::: TOURNAMENTS :::
 	
@@ -99,6 +138,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	
 	//tournaments details
 	Route::resource('tournaments.details','FrontTournamentsDetails');
+	
+	//tournaments tickets
+	Route::resource('tournaments.tickets','FrontTournamentsTickets');	
 	
 });
 

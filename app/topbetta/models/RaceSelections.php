@@ -32,7 +32,7 @@ class RaceSelection extends \Eloquent {
 	 * @param integer $raceId
 	 * @return array
 	 */
-	public static function getRunnersForRaceId($raceId) {
+	public static function getRunnersForRaceId($raceId, $formatted = true) {
 			
 		//TODO: this query is straight from joomla. Rebuild in Eloquent
 		$query = "SELECT
@@ -74,6 +74,10 @@ class RaceSelection extends \Eloquent {
 			                        BY NUMBER ASC";		
 	
 		$runners = \DB::select($query);
+		
+		if ($formatted == false) {
+			return $runners;
+		}
 
 		$result = array();
 
