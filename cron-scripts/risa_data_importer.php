@@ -134,6 +134,7 @@ class RisaDataImporter extends TopBettaCLI{
 					($raceEntry->TabNumber < 10) ? $runnerNumber = '0' . $raceEntry->TabNumber : $runnerNumber = $raceEntry->TabNumber;
 					echo "Runner Number: $runnerNumber\n";
 					$silkFileName = $raceEntry->JockeySilksImage->attributes()->FileName_NoExt;
+					$lastStarts = $raceEntry->Form->LastStartsSummary;
 					echo "Silk File Name: $silkFileName\n";
 					
 					$runnerCode = $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber;
@@ -154,8 +155,8 @@ class RisaDataImporter extends TopBettaCLI{
 						$fileNameID = $row['id'];
 					}else {
 						// add new file_name
-						$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`) VALUES ";
-						$silkQuery .= " ('', '$runnerCode', '$silkFileName'); ";
+						$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`, `last_starts`) VALUES ";
+						$silkQuery .= " ('', '$runnerCode', '$silkFileName', '$lastStarts'); ";
 						mysql_query($silkQuery);
 						$silkID = mysql_insert_id();
 						$this->l("Added to DB");
