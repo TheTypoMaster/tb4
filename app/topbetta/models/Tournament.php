@@ -155,6 +155,44 @@ class Tournament extends \Eloquent {
 	}
 
 	/**
+	 * Get a user's tournament tickets
+	 *
+	 * @param integer $userId
+	 * @return object
+	 */
+	public function getMyTournamentListByUserID($userId, $order = false, $includeRefunded = false)
+	{
+
+		$query =
+			'SELECT
+				t.id
+			FROM
+				tbdb_tournament_ticket AS tk
+			INNER JOIN
+				tbdb_tournament AS t
+			ON
+				t.id = tk.tournament_id
+			WHERE
+				user_id = "' . $userId . '"
+				AND t.paid_flag <> 1
+				AND t.cancelled_flag = 0';
+
+		if(!$includeRefunded) {
+			$query .= ' AND tk.refunded_flag != 1';
+		}
+
+		if($order) {
+			$query .= ' ORDER BY ' . $order;
+		} else {
+			$query .= ' ORDER BY t.start_date ASC, tk.created_date DESC';
+		}
+
+		$result = \DB::select($query);
+
+		return $result;
+	}
+
+	/**
 	 * Use the number of tickets purchased for a tournament to determine the current prize pool
 	 * in cents.
 	 *
