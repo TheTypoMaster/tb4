@@ -2,7 +2,7 @@
 
 class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentTicket' =>'post');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentTicket' =>'post');
 
 	/*
 	 * @param string $method
@@ -27,6 +27,28 @@ class LegacyApiHelper {
 					//2. perform login
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
+
+					break;
+
+				case 'doUserRegisterBasic' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. perform login
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doUserRegisterBasic', $this -> allowed_methods['doUserRegisterBasic'], $payload);
+
+					break;
+
+				case 'doUserRegisterTopBetta' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. perform login
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doUserRegisterTopBetta', $this -> allowed_methods['doUserRegisterTopBetta'], $payload);
 
 					break;
 					
