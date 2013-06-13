@@ -408,7 +408,6 @@ class RacingController extends \BaseController {
 									// Get meeting type
 									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
 									$meetingType = $meetingRecord->type_code;
-
 									
 									// Get silkID and Last Starts for runner from RISA table
 									if($meetingType == "R"){
@@ -432,7 +431,7 @@ class RacingController extends \BaseController {
 											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
 											// Get Silk ID for this runner
-											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->get();
+											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', "$runnerCode" )->get();
 											if(isset($runnerSilkObject->silk_file_name)){
 												$raceRunner->silk_id = $runnerSilkObject->silk_file_name;
 											}
@@ -441,10 +440,7 @@ class RacingController extends \BaseController {
 											}
 											$o = print_r($runnerSilkObject, true);
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts. Object:$o.");
-											
 										}
-											
-												
 									}
 									// LEGACY DB storage area
 									if($meetingType == "G"){
