@@ -173,7 +173,7 @@ class FrontBetsController extends \BaseController {
 
 			} else {
 
-				$messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+				$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.selection_not_found'));
 				$errors++;
 
 			}
