@@ -35,7 +35,7 @@ class FrontMeetingsController extends \BaseController {
 
 				$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);				
 
-				$meetingAndRaces = array('id' => $event -> id, 'name' => $event -> name, 'weather' => $event -> weather, 'track' => $event -> track, 'races' => $races);
+				$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'weather' => $event -> weather, 'track' => $event -> track, 'races' => $races);
 				$eachMeeting[] = $meetingAndRaces;
 			}
 
@@ -71,6 +71,24 @@ class FrontMeetingsController extends \BaseController {
 	 */
 	public function show($id) {
 		//
+		$meetingDetails = TopBetta\RaceMeeting::find($id);
+		
+		if ($meetingDetails) {
+				
+			$races = Input::get('races', false);	
+			
+			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
+			
+			return array('success' => true, 'result' => $meeting);			
+			
+		} else {
+			
+			return array('success' => false, 'error' => \Lang::get('racing.meeting_not_found'));
+			
+		}
+		
+		
+		
 	}
 
 	/**
