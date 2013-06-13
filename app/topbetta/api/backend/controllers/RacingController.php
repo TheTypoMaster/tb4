@@ -280,7 +280,7 @@ class RacingController extends \BaseController {
 												break;
 
 											default:
-												TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process", 2);
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process. ", 2);
 										}
 									
 									}
@@ -410,12 +410,12 @@ class RacingController extends \BaseController {
 									$meetingType = $meetingRecord->type_code;
 
 									
-									// Get silkID for runner from RISA table
+									// Get silkID and Last Starts for runner from RISA table
 									if($meetingType == "R"){
 										// get silk ID from RISA data: tb_racing_data_risa_silk_map
 										// check if meeting exists in DB
 										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk");
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
 										if($meetingExists){
 											// if meeting exists get the record
 											$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
@@ -432,10 +432,14 @@ class RacingController extends \BaseController {
 											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
 											// Get Silk ID for this runner
-											$runnerSilk = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->pluck('silk_file_name');
-											if($runnerSilk){
-												$raceRunner->silk_id = $runnerSilk;
+											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', $runnerCode )->get();
+											if(isset($runnerSilkObject->silk_file_name)){
+												$raceRunner->silk_id = $runnerSilkObject->silk_file_name;
 											}
+											if(isset($runnerSilkObject->last_starts)){
+												$raceRunner->last_starts = $runnerSilkObject->last_starts;
+											}
+											
 										}
 											
 												

@@ -17,6 +17,7 @@ class CreateTbRacingDataRisaSilkMapTable extends Migration {
 			$table->increments('id');
 			$table->string('runner_code', 128);
 			$table->string('silk_file_name', 32);
+			$table->string('last_starts', 32);
 			$table->timestamps();
 		});
 	}
