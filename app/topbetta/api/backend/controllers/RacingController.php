@@ -699,17 +699,13 @@ class RacingController extends \BaseController {
 																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
 															}
 														}
-														
-													
-													
-													
-
+										
 													// save/update the price record
 													if ($oddsSet){
 														$runnerPrice->save();
 														TopBetta\LogHelper::l("BackAPI: Racing - Processed Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds");
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Can't process. No Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds ", 2);
+														TopBetta\LogHelper::l("BackAPI: Racing - Not processed. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds ", 2);
 													}
 												}else{
 													TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No selction for Odds in DB. Can't process", 2);
