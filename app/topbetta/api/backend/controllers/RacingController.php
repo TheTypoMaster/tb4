@@ -89,8 +89,8 @@ class RacingController extends \BaseController {
 		TopBetta\LogHelper::l("BackAPI: Racing - Reciving POST");
 		
 		// get the JSON POST
-		$racingJSON = \Input::json();
-		//$racingJSON = unserialize(file_get_contents('/tmp/backAPIracing-20130524203203'));
+		//$racingJSON = \Input::json();
+		$racingJSON = unserialize(file_get_contents('/tmp/backAPIracing-20130614072624'));
 		$jsonSerialized = serialize($racingJSON);
 
 		if($this->debug){
@@ -439,7 +439,9 @@ class RacingController extends \BaseController {
 											if(isset($runnerSilkObject->last_starts)){
 												$raceRunner->last_starts = $runnerSilkObject->last_starts;
 											}
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts.");
+											$o = print_r($runnerSilkObject, true);
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts. Object:$o.");
+											
 										}
 											
 												
