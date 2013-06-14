@@ -14,7 +14,12 @@
 apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
-$requestHeaders        = apache_request_headers();
+
+if (function_exists('apache_request_headers')) {
+	$requestHeaders        = apache_request_headers();
+} else {
+	$requestHeaders = array();
+}	
 if ( array_key_exists('Origin', $requestHeaders) ) {
 
 	$httpOrigin            = $requestHeaders['Origin'];
@@ -39,6 +44,7 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 }
 
 header('Access-Control-Allow-Credentials: true');
+
 
 
 
@@ -97,6 +103,8 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	Route::resource('users','FrontUsers');
 	Route::resource('users.profile', 'FrontUsersProfile');
 	Route::resource('users.balances','FrontUsersBalances');
+	Route::resource('users.betting', 'FrontUsersBetting');
+	Route::resource('users.tournaments', 'FrontUsersTournaments');
 	
 	// ::: BETS :::
 	Route::resource('bets','FrontBets');	

@@ -1493,7 +1493,7 @@ class Api_Betting extends JController {
 				foreach ($selections as $selection_id) {
 					if (!isset($runner_list_by_id[$selection_id])) {
 						$validation->error = JText::_('One or more selected runners were not found in this race');
-						return $validation;
+						return OutputHelper::json(500, array('error_msg' => $validation->error ));
 					}
 				}
 			}
@@ -1546,7 +1546,7 @@ class Api_Betting extends JController {
 
 						if (!$bet->isValid()) {
 							$validation->error = JText::_($bet->getErrorMessage());
-							return $validation;
+							return OutputHelper::json(500, array('error_msg' => $validation->error ));
 						} else {
 							$wagering_bet_list[] = $bet;
 							$bet_total	+= $bet->getTotalBetAmount();
@@ -2340,7 +2340,7 @@ class Api_Betting extends JController {
 			$tournament = $tournament_model->getTournamentRacingByTournamentID($id);
 			
 			if(is_null($tournament)) {
-				return OutputHelper::json(500, array('Tournament not found'), $save);
+				return OutputHelper::json(500, array('error_msg' => 'Tournament not found'), $save);
 			}
 	
 			$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');

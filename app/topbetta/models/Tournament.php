@@ -155,6 +155,44 @@ class Tournament extends \Eloquent {
 	}
 
 	/**
+	 * Get a user's tournament tickets
+	 *
+	 * @param integer $userId
+	 * @return object
+	 */
+	public function getMyTournamentListByUserID($userId, $order = false, $includeRefunded = false)
+	{
+
+		$query =
+			'SELECT
+				t.id
+			FROM
+				tbdb_tournament_ticket AS tk
+			INNER JOIN
+				tbdb_tournament AS t
+			ON
+				t.id = tk.tournament_id
+			WHERE
+				user_id = "' . $userId . '"
+				AND t.paid_flag <> 1
+				AND t.cancelled_flag = 0';
+
+		if(!$includeRefunded) {
+			$query .= ' AND tk.refunded_flag != 1';
+		}
+
+		if($order) {
+			$query .= ' ORDER BY ' . $order;
+		} else {
+			$query .= ' ORDER BY t.start_date ASC, tk.created_date DESC';
+		}
+
+		$result = \DB::select($query);
+
+		return $result;
+	}
+
+	/**
 	 * Use the number of tickets purchased for a tournament to determine the current prize pool
 	 * in cents.
 	 *
@@ -185,6 +223,26 @@ class Tournament extends \Eloquent {
 		$current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants;
 		return ($current_prize_pool > $tournament -> minimum_prize_pool) ? $current_prize_pool : $tournament -> minimum_prize_pool;
 	}
+	
+	/**
+	 * Calculate the number of places paid for a tournament, and the payout if cash.
+	 *
+	 * @param object 	$tournament
+	 * @param object 	$entrant_count
+	 * @param int 		$prize_pool
+	 * @return array
+	 */
+	public function calculateTournamentPlacesPaid($tournament, $entrant_count, $prize_pool)
+	{
+		$payout_model = new \TopBetta\TournamentPlacesPaid;
+		$final = $this->isFinished($tournament);
+
+		if($final) {
+			return $payout_model->getPrizeDistribution($tournament, $prize_pool);
+		}
+
+		return $payout_model->getPlaceList($tournament, $entrant_count, $prize_pool);
+	}	
 
 	/**
 	 * Check out if a tournament is racing
@@ -210,5 +268,16 @@ class Tournament extends \Eloquent {
 
 		return in_array($sport_name, $this -> excludeSports);
 	}
+	
+	/**
+	 * Determine if a tournament has finished
+	 *
+	 * @param object $tournament
+	 * @return bool
+	 */
+	public function isFinished($tournament)
+	{
+		return (!empty($tournament->cancelled_flag) || strtotime($tournament->end_date) < time());
+	}	
 
 }

@@ -938,7 +938,7 @@ class Api_User extends JController {
 
 					} else {
 						
-						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE' ) ));
+						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE' ), 'username' => $username ));
 					}
                     
                     

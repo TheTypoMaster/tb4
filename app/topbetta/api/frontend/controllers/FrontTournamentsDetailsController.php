@@ -30,61 +30,79 @@ class FrontTournamentsDetailsController extends \BaseController {
 		//is this a racing or sports tournament
 		$isRacingTournament = $tournamentModel -> isRacing($tournamentId);
 
-		//NOTE: looks like racing uses meeting_id & sports uses event_group_id ???
-		//as the event_group_id (line 156 racing.php)
+		//looks like racing uses meeting_id & sports uses event_group_id ???
+		//as the event_group_id
 		$meetingId = $tournament -> event_group_id;
 
-		//get the users tournament ticket (line 198)
-		//TODO: pass in the current logged in user id
-		//$ticketModel = new \TopBetta\TournamentTicket;
-		//$ticket = $ticketModel -> getTournamentTicketByUserAndTournamentID(1, $tournamentId);
-
 		//get entries/player list
+		$ticketModel = new \TopBetta\TournamentTicket;		
 		$playerList = $ticketModel -> getTournamentEntrantList($tournamentId);
 
-		//TODO: get leaderboard
+		//leaderboard
+		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+		
+		$leaderboard = array();
+		if (strtotime($tournament->start_date) < time()) {
+				
+			if ($tournament->paid_flag) {
+			
+				$leaderboard = $leaderboardModel->getLeaderBoardRank($tournament, 50, true);
+				
+			} else {
+					
+				$leaderboard = $leaderboardModel->getLeaderBoardRank($tournament, 50);
+				
+			}
+			
+			foreach($leaderboard as $id =>$val) {
+				$leaderboard[$id]->id = (int)$leaderboard[$id]->id;	
+				$leaderboard[$id]->currency = (int)$leaderboard[$id]->currency;
+				$leaderboard[$id]->qualified = ($leaderboard[$id]->qualified == 0) ? false : true;
+				
+				// we don't really need these showing
+				unset($leaderboard[$id]->name);
+				unset($leaderboard[$id]->turned_over);
+			}	
+			
+		}		
 
-		//get prize pool & places paid
-		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId);
+		//get prize pool in cents & places paid
+		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId) * 100;
+		$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
 
-		//TODO: places paid requires some more models yet
-		//$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
+		//work out places paid via place list
+		 $places_paid = 0;
+		 if ($placeList) {
+			foreach($placeList['place'] as $place => $prize) {
+				$place_display[$place] = array();
+				if(isset($prize['ticket']) && !empty($prize['ticket'])) {
+					$place_display[$place][] = '1 Ticket (#' . $prize['ticket'] . ')';
+				}
 
-		//work out places paid via place list (line 338)
+				if(isset($prize['cash']) && !empty($prize['cash'])) {
+					$place_display[$place][] = $prize['cash'];
+				}
 
-		//get tournament buy in, num entries, start time etc (line 355)
+				$place_display[$place] = join(' + ', $place_display[$place]);
+			}
+			$places_paid    = count($place_display);						
+		 }		
+
+        $numRegistrations = count($playerList);	
 
 		//calculate tournament end date/betting open
-
-		//calculate the users betta bucks if logged in (line 372)		
-
-		//get all bets for this ticket and race number
+	
 				
 		if ($isRacingTournament) {
 			// ::: racing related data :::
 
-			//next race
-			//TODO: should this be done with the RaceEvents model instead?
-			//find the event by the tourn id, then lookup race model for next race
-			$tournamentRaceModel = new \TopBetta\TournamentRace;
-			$nextRace = $tournamentRaceModel -> getNextRaceNumberByTournamentID($tournamentId);
-
-			//race list
-			$raceList = $tournamentRaceModel -> getRaceListByTournamentID($tournamentId);
-
-			//are all races finished? Why do we need this?
-
-			//did they pass in a specific race number?
-			$raceNumber = Input::get('race_number', $nextRace);
-
-			//get the runners for this race
-			$raceId = $tournamentRaceModel -> getRaceIdForRaceNumber($tournamentId, $raceNumber);
-			$runnersList = \TopBetta\RaceSelection::getRunnersForRaceId($raceId);
-			
-			//get race and results for race number
-
 			//our data to send back
-			return array('success' => true, 'result' => array('tournament' => null, 'meeting_id' => $meetingId, 'race_number' => (int)$raceNumber, 'next_race' => $nextRace, 'place_list' => null, 'prize_pool' => null, 'leaderboard_rank' => null, 'players' => $playerList, 'leaderboard' => null, 'runners' => $runnersList, 'tournament_bet_list' => null, 'places_paid' => null, 'races_and_results' => $raceList, 'available_currency' => null, 'private' => $tournament -> private_flag, 'password_protected' => null));
+			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 
+			'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date),
+			'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 
+			'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 
+			'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 
+			'password_protected' => false));
 			
 		} else {
 			// ::: sports related data :::

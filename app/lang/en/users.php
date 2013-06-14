@@ -18,6 +18,9 @@ return array(
 	// LOGOUT		
 	"logout_success"    => "You have been logged out",
 
-	"logout_problem"     => "There was a problem trying to log you out",	
+	"logout_problem"     => "There was a problem trying to log you out",
+	
+	// ACCOUNT
+	"account_created"	=> "Account was succesfully created with username: :username",	
 
 );

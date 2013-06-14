@@ -2,7 +2,7 @@
 
 class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post', 'saveTournamentTicket' =>'post');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentTicket' =>'post');
 
 	/*
 	 * @param string $method
@@ -29,6 +29,28 @@ class LegacyApiHelper {
 					return $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
 
 					break;
+
+				case 'doUserRegisterBasic' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. perform login
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doUserRegisterBasic', $this -> allowed_methods['doUserRegisterBasic'], $payload);
+
+					break;
+
+				case 'doUserRegisterTopBetta' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. perform login
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doUserRegisterTopBetta', $this -> allowed_methods['doUserRegisterTopBetta'], $payload);
+
+					break;
 					
 				case 'saveBet' :
 
@@ -40,6 +62,28 @@ class LegacyApiHelper {
 					return $this -> curl('saveBet', $this -> allowed_methods['saveBet'], $payload);
 
 					break;					
+
+				case 'saveRacingBet' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('saveRacingBet', $this -> allowed_methods['saveRacingBet'], $payload);
+
+					break;	
+
+				case 'saveTournamentBet' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save tournament bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('saveTournamentBet', $this -> allowed_methods['saveTournamentBet'], $payload);
+
+					break;	
 
 				case 'saveTournamentTicket' :
 

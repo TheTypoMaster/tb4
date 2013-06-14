@@ -187,7 +187,7 @@ class TournamentTicket extends \Eloquent {
 	public function getTournamentEntrantList($tournamentId) {
 
 		$query = 'SELECT
-				tt.user_id,
+				tt.user_id AS id,
 				us.username,
 				tu.city
 			FROM
@@ -209,6 +209,51 @@ class TournamentTicket extends \Eloquent {
 
 		return $result;
 		//return $db -> loadObjectList('user_id');
+	}
+
+	/**
+	 * Calculate how much remaining currency a user has to spend by taking unresulted bets and subtracting from
+	 * the current leaderboard.
+	 *
+	 * @param integer $tournament_id
+	 * @param integer $user_id
+	 * @return integer
+	 */
+	public function getAvailableTicketCurrency($tournamentId, $userId)
+	{
+		$ticket = $this->getTournamentTicketByUserAndTournamentID($userId, $tournamentId);
+		if(is_null($ticket)) {
+			return -1;
+		}
+
+		$query =
+			'SELECT
+				SUM(IF(b.resulted_flag=0,b.bet_amount,0)) AS unresulted,
+				l.currency AS current
+			FROM
+				tbdb_tournament_ticket AS tt
+			LEFT JOIN
+				tbdb_tournament_bet AS b
+			ON
+				b.tournament_ticket_id = tt.id
+			INNER JOIN
+				tbdb_tournament_leaderboard AS l
+			ON
+				tt.tournament_id = l.tournament_id
+			AND
+				tt.user_id = l.user_id
+			WHERE
+				tt.tournament_id = "' . $tournamentId . '"
+			AND
+				tt.refunded_flag <> 1
+			AND
+				tt.user_id = "' . $userId . '"
+			GROUP BY
+				b.tournament_ticket_id';
+
+		$result = \DB::select($query);
+
+		return $result[0]->current - $result[0]->unresulted;
 	}
 
 }

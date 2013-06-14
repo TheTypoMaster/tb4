@@ -16,17 +16,29 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 * @return Response
 	 */
 	public function index() {
+			
+		$userId = \Auth::user() -> id;	
 
 		$ticketModel = new \TopBetta\TournamentTicket;
 
 		// active tourn tickets
-		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID(\Auth::user() -> id);
+		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID($userId);
 
 		$activeTickets = array();
 
 		foreach ($activeTicketList as $activeTicket) {
+			
+			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($activeTicket -> tournament_id, $userId);
 
-			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'sport_name' => $activeTicket -> sport_name, 'start_date' => $activeTicket -> start_date, 'end_date' => $activeTicket -> end_date, 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false);
+			$tournamentModel = new \TopBetta\Tournament;
+			$tournament = $tournamentModel -> find($activeTicket -> tournament_id);	
+			
+			$leaderboardModel = new \TopBetta\TournamentLeaderboard;		
+			$leaderboardDetails = $leaderboardModel->getLeaderBoardRankByUserAndTournament($userId, $tournament);
+			
+			$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;
+			
+			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false);
 
 		}
 
@@ -36,8 +48,18 @@ class FrontTournamentsTicketsController extends \BaseController {
 		$recentTickets = array();
 
 		foreach ($recentTicketList as $recentTicket) {
+				
+			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($activeTicket -> tournament_id, \Auth::user() -> id);
+			
+			$tournamentModel = new \TopBetta\Tournament;
+			$tournament = $tournamentModel -> find($activeTicket -> tournament_id);	
+			
+			$leaderboardModel = new \TopBetta\TournamentLeaderboard;		
+			$leaderboardDetails = $leaderboardModel->getLeaderBoardRankByUserAndTournament($userId, $tournament);
+			
+			$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;				
 
-			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'sport_name' => $recentTicket -> sport_name, 'start_date' => $recentTicket -> start_date, 'end_date' => $recentTicket -> end_date, 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false);
+			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false);
 
 		}
 
