@@ -132,13 +132,13 @@ class RisaDataImporter extends TopBettaCLI{
 				echo "Race Number: $raceNumber\n";
 				foreach($risaRace->RaceEntries->RaceEntry as $raceEntry){
 					($raceEntry->TabNumber < 10) ? $runnerNumber = '0' . $raceEntry->TabNumber : $runnerNumber = $raceEntry->TabNumber;
-					echo "Runner Number: $runnerNumber\n";
+					//echo "Runner Number: $runnerNumber\n";
 					$silkFileName = $raceEntry->JockeySilksImage->attributes()->FileName_NoExt;
 					$lastStarts = $raceEntry->Form->LastStartsSummary;
-					echo "Silk File Name: $silkFileName\n";
+					//echo "Silk File Name: $silkFileName\n";
 					
 					$runnerCode = $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber;
-					$this->l("Processing: ".$runnerCode."\n");
+					$this->l("Processing: ".$runnerCode." Silk:$silkFileName, LastStarts:$lastStarts");
 					
 					// Check if filename is in DB
 					$runnerCodeExist = "SELECT id from `tb_racing_data_risa_silk_map` where `runner_code` = '$runnerCode' LIMIT 1";
