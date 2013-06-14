@@ -1484,7 +1484,7 @@ class Api_Betting extends JController {
 			//$selection_id = JRequest::getVar('selection', NULL);
 			//$selection_list = array($pos => (int)$selection_id);
 	
-			JRequest::setVar('selection', array('first' => array($pos => JRequest::getVar('selection',null)))); // Runner ID - runner_list
+			//JRequest::setVar('selection', array('first' => array($pos => JRequest::getVar('selection',null)))); // Runner ID - runner_list
 	
 			$selection_list = JRequest::getVar('selection', array());
 	
@@ -1508,7 +1508,7 @@ class Api_Betting extends JController {
 				foreach ($selections as $selection_id) {
 					if (!isset($runner_list_by_id[$selection_id])) {
 						$validation->error = JText::_('One or more selected runners were not found in this race');
-						return $validation;
+						return OutputHelper::json(500, array('error_msg' => $validation->error ));
 					}
 				}
 			}
@@ -1564,7 +1564,7 @@ class Api_Betting extends JController {
 	
 				if (!$bet->isValid()) {
 				$validation->error = JText::_($bet->getErrorMessage());
-				return $validation;
+				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			} else {
 			$wagering_bet_list[] = $bet;
 			$bet_total	+= $bet->getTotalBetAmount();

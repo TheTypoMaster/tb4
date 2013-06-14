@@ -108,9 +108,13 @@ class FrontBetsController extends \BaseController {
 				$input['type_id'] = 2;
 				$this -> placeBet($input, $messages, $errors);
 			
-			} else {
+			} elseif ($input['type_id'] < 3) {
 				
 				$this -> placeBet($input, $messages, $errors);
+				
+			} else {
+				
+				$this -> placeBet($input, $messages, $errors, true);
 				
 			}
 
@@ -129,35 +133,18 @@ class FrontBetsController extends \BaseController {
 	 * @param $errors int
 	 *
 	 */
-	private function placeBet(&$input, &$messages, &$errors) {
+	private function placeBet(&$input, &$messages, &$errors, $exotic = false) {
 
 		$l = new \TopBetta\LegacyApiHelper;
 		$betModel = new \TopBetta\Bet;
 
-		foreach ($input['selections'] as $selection) {
-
-			// assemble bet data such as meeting_id, race_id etc
-			$legacyData = $betModel -> getLegacyBetData($selection);
-
-			if (count($legacyData) > 0) {				
-		
-				if ($input['source'] == 'racing') {
-						
-					$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);	
-					$bet = $l -> query('saveBet', $betData);
-						
-				} elseif ($input['source'] == 'tournament') {
-						
-					$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
-					$bet = $l -> query('saveTournamentBet', $betData);
+		if ($exotic) {	
 					
-				} else {
-						
-					//invalid source
-					$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.invalid_source'));
-					$errors++;					
+				$legacyData = $betModel -> getLegacyBetData($input['selections']['first'][0]);
 					
-				}
+				$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);	
+				
+				$bet = $l -> query('saveRacingBet', $betData);
 				
 				//bet has been placed by now, deal with messages and errors						
 				if ($bet['status'] == 200) {
@@ -170,14 +157,55 @@ class FrontBetsController extends \BaseController {
 					$errors++;
 		
 				}				
-
-			} else {
-
-				$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.selection_not_found'));
-				$errors++;
-
+							
+		} else {
+		
+			foreach ($input['selections'] as $selection) {
+	
+				// assemble bet data such as meeting_id, race_id etc
+				$legacyData = $betModel -> getLegacyBetData($selection);
+	
+				if (count($legacyData) > 0) {				
+			
+					if ($input['source'] == 'racing') {
+							
+						$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);	
+						
+						$bet = $l -> query('saveBet', $betData);
+							
+					} elseif ($input['source'] == 'tournament') {
+							
+						$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+						$bet = $l -> query('saveTournamentBet', $betData);
+						
+					} else {
+							
+						//invalid source
+						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.invalid_source'));
+						$errors++;					
+						
+					}
+					
+					//bet has been placed by now, deal with messages and errors						
+					if ($bet['status'] == 200) {
+			
+						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
+			
+					} else {
+			
+						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
+						$errors++;
+			
+					}				
+	
+				} else {
+	
+					$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+					$errors++;
+	
+				}
+	
 			}
-
 		}
 
 	}
