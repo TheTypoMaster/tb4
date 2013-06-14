@@ -2,9 +2,23 @@
 namespace TopBetta;
 
 class SportsEvents extends \Eloquent {
+	
+	protected $table = 'tbdb_event';
+	
 	protected $guarded = array();
 
 	public static $rules = array();
+	
+	/**
+	 * Check if a event exists.
+	 *
+	 * @return Integer
+	 * - The record ID if a record is found
+	 */
+	static public function eventExists($eventId) {
+		return SportsEvents::where('external_event_id', '=', $eventId) -> pluck('id');
+	}
+	
 
 	public function getEvents($limit = 0, $cid = 0, $date = NULL) {
 
