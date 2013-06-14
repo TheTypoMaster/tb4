@@ -434,14 +434,14 @@ class RacingController extends \BaseController {
 											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', "$runnerCode" )->get();
 												$o = print_r($runnerSilkObject, true);
 												TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner RISA Object:$o.");
-												
-												if(isset($runnerSilkObject[0]->silk_file_name)){
-													$raceRunner->silk_id = $runnerSilkObject[0]->silk_file_name;
+												if(count($runnerSilkObject) > 0){
+													if(isset($runnerSilkObject[0]->silk_file_name)){
+														$raceRunner->silk_id = $runnerSilkObject[0]->silk_file_name;
+													}
+													if(isset($runnerSilkObject[0]->last_starts)){
+														$raceRunner->last_starts = $runnerSilkObject[0]->last_starts;
+													}
 												}
-												if(isset($runnerSilkObject[0]->last_starts)){
-													$raceRunner->last_starts = $runnerSilkObject[0]->last_starts;
-												}
-											
 											
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts. Object:$o.");
 										}
@@ -518,6 +518,11 @@ class RacingController extends \BaseController {
 											$raceResult->selection_id = $selectionsExists;
 										}
 										
+										// show win and place on Aust Gallops @ Best Tote
+										
+										// show win and place on OS gallops as SP?
+										
+										// show win and place on Grey's and Harness @ Mid Tote
 										
 										$raceResult->position = $placeNo;
 										($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
@@ -531,7 +536,7 @@ class RacingController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No Selection found. Results not updated", 2);
 									}									 
 									
-								// Process exotics = stored as serialsed arrays in the tbdb_event table
+								// Process exotics = stored as serialsed arrays in the tbdb_event table - ONLY store SP divs as that's what we pay bets out on
 								}else{
 									
 									// grab the event
