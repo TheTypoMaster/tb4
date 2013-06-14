@@ -432,11 +432,11 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
 											// Get Silk ID for this runner
 											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', "$runnerCode" )->get();
-											if(isset($runnerSilkObject->silk_file_name)){
-												$raceRunner->silk_id = $runnerSilkObject->silk_file_name;
+											if(isset($runnerSilkObject[0]->silk_file_name)){
+												$raceRunner->silk_id = $runnerSilkObject[0]->silk_file_name;
 											}
-											if(isset($runnerSilkObject->last_starts)){
-												$raceRunner->last_starts = $runnerSilkObject->last_starts;
+											if(isset($runnerSilkObject[0]->last_starts)){
+												$raceRunner->last_starts = $runnerSilkObject[0]->last_starts;
 											}
 											
 											$o = print_r($runnerSilkObject, true);
