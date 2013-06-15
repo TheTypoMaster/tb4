@@ -128,17 +128,17 @@ class WageringApiIgasracingService extends ConfigReader{
 	{
 		
 		// Topbetta related params
-		$userName = "APIuser";
-		$userPassword = "APIpwd"; 
+		$userName = "topbetta";
+		$userPassword = "T0pB3tter@AP!"; 
 		$companyID = "TopBetta";
 		// Change to use server.xml
-		$api = 'igasracing';
-		$this->date = new DateTime();
-		$this->api = $this->getApi($api);
-		$this->service_url = 'http://' . $this->api->host . $this->api->url;
-		$userName = $this->api->username;
-		$userPassword = $this->api->password;
-		$companyID = $this->api->companyid;
+		//$api = 'igasracing';
+		//$this->date = new DateTime();
+		//$this->api = $this->getApi($api);
+		//$this->service_url = 'http://' . $this->api->host . $this->api->url;
+		//$userName = $this->api->username;
+		//$userPassword = $this->api->password;
+		//$companyID = $this->api->companyid;
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
 		
 		if($betType == "win"){
