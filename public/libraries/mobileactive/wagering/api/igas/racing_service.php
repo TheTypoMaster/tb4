@@ -131,6 +131,10 @@ class WageringApiIgasracingService extends ConfigReader{
 		$userName = "APIuser";
 		$userPassword = "APIpwd"; 
 		$companyID = "TopBetta";
+		// Change to use server.xml
+		$userName = $this->api->username;
+		$userPassword = $this->api->password;
+		$companyID = $this->api->companyid;
 		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
 		
 		if($betType == "win"){
