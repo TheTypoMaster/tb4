@@ -82,7 +82,7 @@ class WageringApiIgasexotics extends WageringApi
 	}
 	
 	private function _getAccountService(){
-		return new WageringApiTobService();
+		return new WageringApiIgasexoticsService();
 	}
 /*	
 	public function getPushService(){
