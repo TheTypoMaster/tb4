@@ -1581,7 +1581,7 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 
-			$api = WageringApi::getInstance(WageringApi::API_IGASRACING);
+			$api = WageringApi::getInstance(WageringApi::API_IGASEXOTICS);
 
 			$api_con=$api->checkConnection();
 			if(is_null($api_con))
