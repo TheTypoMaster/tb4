@@ -1279,14 +1279,14 @@ class Api_Betting extends JController {
 					$api_error		= null;
 					$bet_confirmed	= false;
 					
+					// TODO: International races need to be catered for. Should configuration or DB driven 
 					// set tote type used for win and place bets on all gallops to TOP and harness/dogs MID
 					if($meetingType == "R"){
 						$toteType = "TOP";
 					}else{
 						$toteType = "MID";
 					}
-					
-					
+								
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, $toteType, $runner_number);
 						$api_error		= $api->getErrorList(true);
@@ -1387,7 +1387,7 @@ class Api_Betting extends JController {
 		//JRequest::setVar('wager_id', '1383248'); // Runner wager ID - runner_list
 
 		$postVars = print_r(JRequest::get('POST'), true);
-		file_put_contents('/tmp/saveRacingBet', $postVars . "\n", FILE_APPEND | LOCK_EX);
+		file_put_contents('/tmp/saveRacingBet', "Post Vars:". $postVars . "\n", FILE_APPEND | LOCK_EX);
 		
 		//Get free bet in cents
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
@@ -1604,6 +1604,8 @@ class Api_Betting extends JController {
 			$validation->data['runner_list_by_number']	= $runner_list_by_number;
 			$validation->data['bet_origin']				= $bet_origin;
 
+			file_put_contents('/tmp/saveRacingBet', "Validation Complete\n", FILE_APPEND | LOCK_EX);
+			
 			// Bet Validation Ends here
 			//http://topbetta.com/api/?method=saveBet&id=1&race_id=3613&bet_type_id=1&selection[]=test&selection[]=testt
 			//return OutputHelper::json(200, array('error' => $validation   ));
@@ -1680,7 +1682,7 @@ class Api_Betting extends JController {
 				//var_dump($bet);
 				//exit;
 				$bet_id = $bet->save();
-
+				file_put_contents('/tmp/saveRacingBet', "TB Bet ID:". $bet_id . "\n", FILE_APPEND | LOCK_EX);
 				if (!$bet_id) {
 
 					if($free_bet_amount >0) {
@@ -1743,6 +1745,7 @@ class Api_Betting extends JController {
 					
 				$api_error		= null;
 				$bet_confirmed	= false;
+				file_put_contents('/tmp/saveRacingBet', "About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 					$external_bet	= $api->placeBet($wagering_bet, $meeting, $bet_id);
 					$api_error		= $api->getErrorList(true);
@@ -1751,6 +1754,7 @@ class Api_Betting extends JController {
 					//$api_error = 'no';
 
 					if (empty($api_error) && isset($external_bet->wagerId)) {
+						file_put_contents('/tmp/saveRacingBet', "Bet Placed\n", FILE_APPEND | LOCK_EX);
 						$bet_confirmed	= true;
 						$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
 						$bet->invoice_id = $external_bet->wagerId;
@@ -1769,7 +1773,9 @@ class Api_Betting extends JController {
 
 						$bet->bet_result_status_id = (int)$bet_status;
 						$bet->save();
+						file_put_contents('/tmp/saveRacingBet', "Bet Status Saved\n", FILE_APPEND | LOCK_EX);
 					}else{
+						file_put_contents('/tmp/saveRacingBet', "Bet NOT Placed\n", FILE_APPEND | LOCK_EX);
 						$bet->external_bet_error_message = (string)$api_error;
 					}
 				}
