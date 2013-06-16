@@ -950,9 +950,6 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'eventstatus.php');
 				$race_status_model	= new TournamentModelEventStatus();
 				$selling_status		=$race_status_model->getEventStatusByKeywordApi('selling');
-				
-				// TODO: remove the below line. Written for testing
-				//$race->event_status_id = '1';
 
 				if ($race->event_status_id != $selling_status->id) {
 					$validation->error = JText::_('Betting was closed');
@@ -1496,7 +1493,10 @@ class Api_Betting extends JController {
 					}
 				}
 			}
-
+			
+			$s = print_r($selection_list,true);
+			file_put_contents('/tmp/saveExoticsBet', "* Selections list". $s. "\n", FILE_APPEND | LOCK_EX);
+			
 			$boxed_flag = $this->_isBoxedBet($bet_type->name, $selection_list);
 			$flexi_flag = $this->_isFlexiBet($bet_type->name, $selection_list);
 
@@ -1512,6 +1512,9 @@ class Api_Betting extends JController {
 
 					$bet = WageringBet::newBet($type, $value, $boxed_flag, $flexi_flag, unserialize($race->external_race_pool_id_list));
 
+					$b = print_r($bet,true);
+					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object". $b. "\n", FILE_APPEND | LOCK_EX);
+					
 					foreach ($selection_list as $pos => $selections) {
 
 						$position_number = null;
@@ -1542,7 +1545,7 @@ class Api_Betting extends JController {
 					foreach ($selection_list['first'] as $selection_id) {
 						$bet = WageringBet::newBet($type, $value, false, 0, unserialize($race->external_race_pool_id_list));
 						$bet->addSelection($runner_list_by_id[$selection_id]->number);
-
+						
 						if (!$bet->isValid()) {
 							$validation->error = JText::_($bet->getErrorMessage());
 							return OutputHelper::json(500, array('error_msg' => $validation->error ));

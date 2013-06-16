@@ -141,7 +141,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	}
 
 	/**
-	 * Build bet list. Set BM data in class property $send_bet
+	 * Build bet list. Set iGAS data in class property $send_bet
 	 *
 	 * @param array $bet_list
 	 * @param bool $return_multiple
@@ -149,6 +149,9 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 */
 	private function _buildBetList($bet_list, $return_multiple = true){
 		
+		$b = print_r($bet_list,true);
+		$this->setLogger("exotics_service: Build Bet List:$b");
+				
 		if(is_null($this->type_code)){ // is_null($this->meeting_code) || 
 			throw new Exception('Meeting code and type code must be set to place bet');
 		}
@@ -320,7 +323,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$this->send_bet = $formatted_bet['request'];
 		
 		$fb = print_r($formatted_bet, true);
-		$this->setLogger("* Build bet list. Formatted bet: $fb");
+		$this->setLogger("* exotic_service. Build bet list. Formatted bet: $fb");
 
 		return ($return_multiple) ? $formatted_bet_list : $formatted_bet;
 	}
@@ -414,7 +417,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		if($params!=null){
 			$post_string = $this->formatUrlString($params);
 		}
-		$this->setLogger("racing_service: curlRequest. Post String:$post_string");
+		$this->setLogger("exotics_service: curlRequest. Post String:$post_string");
 		
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$this->service_url."/".$command);
@@ -457,11 +460,11 @@ class WageringApiIgasexoticsService extends ConfigReader{
 				$bet->wagerId = $response->TransactionId;
 				$bet->status = "S";
 					
-				$this->setLogger("racing_service: action. Bet Placed!");
+				$this->setLogger("exotics_service: action. Bet Placed!");
 				return $bet;
 			}
 			else {
-				$this->setLogger("racing_service: action Failed.");
+				$this->setLogger("exotics_service: action Failed.");
 				throw new ApiException("Bet could not be posted. ".$response->detail);
 			}
 
