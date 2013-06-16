@@ -12,7 +12,9 @@ abstract class WageringApi
 		API_BM = 'bm',
 		API_TOB = 'tob',
 		API_IGASRACING = 'igasracing',
-		API_IGASSPORTS = 'igassports';
+		API_IGASSPORTS = 'igassports',
+		API_IGASEXOTICS = 'igasexotics';
+	
 	
 		
 	static public $service = self::API_DEFAULT;
