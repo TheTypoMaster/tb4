@@ -63,8 +63,8 @@ Route::get('/', function()
 	
 	//return (string)$api_con;
 	
-	$it = Hash::make('igast3st1ng');
-	return $it;
+	//$it = Hash::make('igast3st1ng');
+	//return $it;
 	return View::make('hello');
 	
 	//return FreeTransactions::all();
@@ -82,7 +82,7 @@ Route::group(array('prefix' => '/api/admin/v1'), function() {
 
 
 // Route group for backend API. Uses basic stateless auth filter
-Route::group(array('prefix' => '/api/backend/v1'), function() { //, 'before' => 'basic.once'
+Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
 	// incoming race data and results
 	Route::resource('racing', 'BackRacing');
 	// incoming sports data and results

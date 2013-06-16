@@ -883,19 +883,15 @@ class Api_Betting extends JController {
 		//JRequest::setVar('bet_product', '0'); // Bet product Id - runner_list
 		//JRequest::setVar('wager_id', '1383248'); // Runner wager ID - runner_list
 		
-		$postVars = JRequest::get('POST');
-		file_put_contents('/tmp/postvars', $postVars, FILE_APPEND | LOCK_EX);
-		//return OutputHelper::json(500, "$postVars");
-		
+		$postVars = print_r(JRequest::get('POST'), true);
+		file_put_contents('/tmp/saveBet', $postVars . "\n", FILE_APPEND | LOCK_EX);
+			
 		//Get the position of the runner
 		$pos = JRequest::getVar('pos', '0');
 		
 		JRequest::setVar('bet_product', array('first' => array($pos => JRequest::getVar('bet_product',null)))); // Runner wager ID - runner_list
 		JRequest::setVar('wager_id', array('first' => array($pos => array(0 => JRequest::getVar('wager_id',null))))); // Runner wager ID - runner_list
-		$b = print_r(JRequest::getVar('wager_id'),true);
-		//$b = print_r($betData, true);
-		file_put_contents('/tmp/postvars3', $b, FILE_APPEND | LOCK_EX);
-		
+				
 		//Get free bet in cents
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
 		         
@@ -1390,6 +1386,9 @@ class Api_Betting extends JController {
 		//JRequest::setVar('bet_product', '0'); // Bet product Id - runner_list
 		//JRequest::setVar('wager_id', '1383248'); // Runner wager ID - runner_list
 
+		$postVars = print_r(JRequest::get('POST'), true);
+		file_put_contents('/tmp/saveRacingBet', $postVars . "\n", FILE_APPEND | LOCK_EX);
+		
 		//Get free bet in cents
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
 			
