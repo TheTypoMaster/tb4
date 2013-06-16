@@ -72,16 +72,6 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$this->token_model	=& JModel::getInstance('Token', 'BettingModel');
 		$this->runner_model	=& JModel::getInstance('Runner', 'TournamentModel');
 
-		
-		//should get a unique id for this node
-		$this->_setHostId();
-		
-		// get token from DB. Will throw error if token hasn't loaded from DB
-		$this->getToken();
-		
-		// check token. will return another token if invalid or keep the current token if valid
-		$this->_checkLoginToken();
-
 	}
 	
 	public function checkConnection()
@@ -158,8 +148,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 * @return object
 	 */
 	private function _buildBetList($bet_list, $return_multiple = true){
-
-		if(is_null($this->meeting_code) || is_null($this->type_code)){
+		
+		if(is_null($this->type_code)){ // is_null($this->meeting_code) || 
 			throw new Exception('Meeting code and type code must be set to place bet');
 		}
 
@@ -328,6 +318,9 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			
 		}
 		$this->send_bet = $formatted_bet['request'];
+		
+		$fb = print_r($formatted_bet, true);
+		$this->setLogger("* Build bet list. Formatted bet: $fb");
 
 		return ($return_multiple) ? $formatted_bet_list : $formatted_bet;
 	}
@@ -421,6 +414,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		if($params!=null){
 			$post_string = $this->formatUrlString($params);
 		}
+		$this->setLogger("racing_service: curlRequest. Post String:$post_string");
 		
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$this->service_url."/".$command);
@@ -452,101 +446,93 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 	public function action($params=array(), $command=null)
 	{
-		$this->setLogger();
-		if($command == "quickbet")
+		if($command == "Betinput.aspx")
 		{
-				//$params['token'] = $this->token;
+			$response = $this->curlRequest($command, $params);
 
-				$response = $this->curlRequest($command."?token=".$this->token, $params);
+			if ($response->ErrorNo == "0")
+			{
+				$bet = new stdClass;
+				$bet->isSuccess = "true";
+				$bet->wagerId = $response->TransactionId;
+				$bet->status = "S";
+					
+				$this->setLogger("racing_service: action. Bet Placed!");
+				return $bet;
+			}
+			else {
+				$this->setLogger("racing_service: action Failed.");
+				throw new ApiException("Bet could not be posted. ".$response->detail);
+			}
 
-				if ($response->result == "success" || $response->result == "processing") 
-				{
-					$bet = new stdClass;
-					$bet->isSuccess = "true";
-					$bet->wagerId = $response->results[0]->invoice_id;
-					$bet->status = "S";
-
-					return $bet;
-				} 
-				else 
-				{
-					/*ob_start(); // Test output
-					print_r($response);
-					$output = ob_get_contents();
-					ob_end_flush();
-					throw new ApiException("Outputting: ".$output."<br>".json_encode($params));*/
-					throw new ApiException("Bet could not be posted. ".$response->detail);
-
-				}
-
-		} 
+		}
 		elseif($command == "bets")
 		{
-				//$params['token'] = $this->token;
-				$response = $this->curlRequest($command."?token=".$this->token, $params);
+			//$params['token'] = $this->token;
+			$response = $this->curlRequest($command."?token=".$this->token, $params);
 
-				if ($response->result == "true") {
-					$bet = new stdClass;
+			if ($response->result == "true") {
+				$bet = new stdClass;
 
-					$bet_status = null;
-					//if(strstr($response->rows[0]->BetStatus, 'Return of') != false || strstr($response->rows[0]->BetStatus, 'Return @') != false)
-					if ($response->rows[0]->BetOutcome == "Win")
-					{
-						$bet_status = "Win";
-					} 
-					else if ($response->rows[0]->BetStatus == "Scratched")
-					{
-    					$bet_status = "Refunded";
-					} 
-					else
-					{
-						$bet_status = $response->rows[0]->BetOutcome;
-					}
-
-		            $bet_status_array = array(
-		            	'Win' => 'W',
-		            	'Loss' => 'L',
-		            	'Cancelled' => 'CN',
-		            	'Refunded'	=>	'CN',
-		            	'failed' => 'F',
-		            	'error' => 'E',
-		            	'Accepted' => 'S'
-		            	);										
-		            /*
-		            $bet_status_array = array(
-		            	'win' => 'W',
-		            	'No Return' => 'L',
-		            	'Scratched' => 'CN',
-		            	'failed' => 'F',
-		            	'error' => 'E',
-		            	'Accepted' => 'S'
-		            	);
-		            */
-					$bet->isSuccess = "true";
-					$bet->status = $bet_status_array[$bet_status];
-					$bet->amount = $response->rows[0]->BetAmount*100;
-
-					if($bet->status == "W")
-					{ // winning
-						$bet->amountWon = $response->rows[0]->BetPayout*100;
-					} 
-					elseif($bet->status == "E" || $bet->status == "F") 
-					{
-						$bet->betErrorMessage = $response->rows[0]->BetStatus;
-					} 
-
-					return $bet;
-				} 
-				else 
+				$bet_status = null;
+				//if(strstr($response->rows[0]->BetStatus, 'Return of') != false || strstr($response->rows[0]->BetStatus, 'Return @') != false)
+				if ($response->rows[0]->BetOutcome == "Win")
 				{
-					//ob_start();
-					//print_r($response);
-					//print_r($post_bet_string);
-					//$status = ob_get_contents();
-					//ob_end_flush();
-					$status = $response->hash;
-					throw new ApiException("API Error ".$command.": ".$status);
+					$bet_status = "Win";
 				}
+				else if ($response->rows[0]->BetStatus == "Scratched")
+				{
+					$bet_status = "Refunded";
+				}
+				else
+				{
+					$bet_status = $response->rows[0]->BetOutcome;
+				}
+
+				$bet_status_array = array(
+						'Win' => 'W',
+						'Loss' => 'L',
+						'Cancelled' => 'CN',
+						'Refunded'	=>	'CN',
+						'failed' => 'F',
+						'error' => 'E',
+						'Accepted' => 'S'
+				);
+				/*
+				 $bet_status_array = array(
+				 		'win' => 'W',
+				 		'No Return' => 'L',
+				 		'Scratched' => 'CN',
+				 		'failed' => 'F',
+				 		'error' => 'E',
+				 		'Accepted' => 'S'
+				 );
+				*/
+				$bet->isSuccess = "true";
+				$bet->status = $bet_status_array[$bet_status];
+				$bet->amount = $response->rows[0]->BetAmount*100;
+
+				if($bet->status == "W")
+				{ // winning
+					$bet->amountWon = $response->rows[0]->BetPayout*100;
+				}
+				elseif($bet->status == "E" || $bet->status == "F")
+				{
+					$bet->betErrorMessage = $response->rows[0]->BetStatus;
+				}
+
+				return $bet;
+			}
+			else
+			{
+				//ob_start();
+				//print_r($response);
+				//print_r($post_bet_string);
+				//$status = ob_get_contents();
+				//ob_end_flush();
+				$status = $response->hash;
+				throw new ApiException("API Error ".$command.": ".$status);
+			}
 		}
 
 		throw new ApiException("API error: No api path selected. ");
