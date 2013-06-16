@@ -1581,6 +1581,7 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 
+			file_put_contents('/tmp/saveExoticsBet', "* Get API Instance\n", FILE_APPEND | LOCK_EX);
 			$api = WageringApi::getInstance(WageringApi::API_IGASEXOTICS);
 
 			$api_con=$api->checkConnection();
@@ -1589,6 +1590,7 @@ class Api_Betting extends JController {
 				$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
+			file_put_contents('/tmp/saveExoticsBet', "* API Available\n", FILE_APPEND | LOCK_EX);
 
 			$bet_origin			= JRequest::getVar('bet_origin', null);
 
