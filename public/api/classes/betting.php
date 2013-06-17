@@ -1535,15 +1535,15 @@ class Api_Betting extends JController {
 						foreach ($selections as $selection_id) {
 							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet selection ID:". $selection_id. ". POS:$pos, POSNO:$position_number, RL-ID:".$runner_list_by_id[$selection_id[$pos]]->number."\n", FILE_APPEND | LOCK_EX);
 							$betSelection = $bet->addSelection($runner_list_by_id[$selection_id[$pos]]->number, $position_number);
-						
-							file_put_contents('/tmp/saveExoticsBet', "* Exotic Bet Selection response:". print_r($betSelection,true). "\n", FILE_APPEND | LOCK_EX);
+							
+							file_put_contents('/tmp/saveExoticsBet', "* Exotic Bet Selection runner:".$runner_list_by_id[$selection_id]->number.", response:". print_r($betSelection,true). "\n", FILE_APPEND | LOCK_EX);
+							
 						}
 					}
 
 					$bs = print_r($bet,true);
 					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object with selections:". $bs. "\n", FILE_APPEND | LOCK_EX);
-						
-					
+				
 					if (!$bet->isValid()) {
 						$validation->error = JText::_($bet->getErrorMessage());
 						return OutputHelper::json(500, array('error_msg' => $validation->error ));
