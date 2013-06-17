@@ -190,10 +190,10 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
 	
 		$betObjectArray = array('Username' => $UserName, 'Password' => $UserPassword, 'CompanyID' => $CompanyID, 
-						'ReferenceID' => $paramslist['betID'], 'ClientID' => $paramslist['ClientID'], 
+						'ReferenceID' => $paramslist['ReferenceID'], 'ClientID' => $paramslist['ClientID'], 
 						'Amount' => $paramslist['Amount'], 'Flexi' => $paramslist['Flexi'], 'DataKey' => $DataKey, 
 						'BetList' =>array('MeetingId' => $paramslist['MeetingId'], 'RaceNo' => $paramslist['RaceNo'], 
-						'BetType' => $paramslist['betType'], 'PriceType' => $paramslist['priceType'], 'Selection' => $paramslist['Selection']));
+						'BetType' => $paramslist['BetType'], 'PriceType' => $paramslist['PriceType'], 'Selection' => $paramslist['Selection']));
 		
 		return json_encode($betObjectArray);
 
