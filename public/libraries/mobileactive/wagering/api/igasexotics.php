@@ -13,11 +13,19 @@ class WageringApiIgasexotics extends WageringApi
 		return $this->_callOperation('checkConnection', $account);
 	}
 	
-	public function placeBet(WageringBet $bet, $event, $custom_id, $userID, $raceNO, $priceType)
+	public function placeBet(WageringBet $bet, $event, $custom_id)
 	{
 		
-		return $this->placeBetList(array($bet), $event, $custom_id, $userID, $raceNO, $priceType);
+		return $this->placeBetList(array($bet), $event, $custom_id);
 	}
+	
+	
+	public function placeRacingBet(WageringBet $bet, $event, $custom_id, $userID, $raceNO, $priceType)
+	{
+	
+		return $this->placeRacingBetList(array($bet), $event, $custom_id, $userID, $raceNO, $priceType);
+	}
+	
 	
 	public function placeRacingBetList($bet_list, $event, $custom_id, $userID, $raceNO, $priceType)
 	{
@@ -29,7 +37,7 @@ class WageringApiIgasexotics extends WageringApi
 		// $account->setMeetingCode($event->meeting_code);
 		$account->setCustomId($custom_id);
 		
-		return $this->_callOperation('placeBetList', $account, array('bet_list' => $bet_list, 'event' => $event), $userID, $raceNO, $priceType);
+		return $this->_callOperation('placeRaceBetList', $account, array('bet_list' => $bet_list, 'event' => $event), $userID, $raceNO, $priceType);
 	}
 	
 	public function placeBetList($bet_list, $event, $custom_id)
@@ -41,7 +49,7 @@ class WageringApiIgasexotics extends WageringApi
 		// $account->setMeetingCode($event->meeting_code);
 		$account->setCustomId($custom_id);
 		
-		return $this->_callOperation('placeBetList', $account, array('bet_list' => $bet_list, 'event' => $event), $userID, $raceNO, $priceType);
+		return $this->_callOperation('placeBetList', $account, array('bet_list' => $bet_list, 'event' => $event));
 	}
 	
 	public function getBetInfo($wager_id)
