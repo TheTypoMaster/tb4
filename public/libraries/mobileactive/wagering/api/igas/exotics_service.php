@@ -274,7 +274,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			);
 
 			
-			
+			$this->setLogger("* exotic_service. Build bet list. Before: Formatted bets for iGAS ");
 			// To send to iGAS
 			$formatted_bet['request'] = array(
 					
@@ -298,7 +298,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					//'Selection' => $optionId[0]
 			);
 	
-			$this->setLogger("* exotic_service. Build bet list. Formatted bets for iGAS ");
+			$this->setLogger("* exotic_service. Build bet list. After: Formatted bets for iGAS ");
 			
 			if($bet_type == "quinella")
 			{
