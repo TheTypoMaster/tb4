@@ -294,7 +294,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'betType' => "$bet_type",
 					'meetingID' => "$bm_bet_product",
 					'raceNO' => "$raceNO",
-					'PriceType' => "$priceType", // This should be done here maybe and not later!
+					'PriceType' => "$priceType" // This should be done here maybe and not later!
 					//'Selection' => $optionId[0]
 			);
 	
