@@ -290,11 +290,11 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'referenceID' => $bet->id,
 					'clientID' => $userID,
 					'amount' => $bet->amount,
-					'flexi' => $bet->isFlexiBet(),
+					//'flexi' => $bet->isFlexiBet(),
 					'betType' => $bet_type,
-					'meetingID' => $bm_bet_product,
+					//'meetingID' => $bm_bet_product,
 					'raceNO' => $raceNO,
-					'PriceType' => $priceType // This should be done here maybe and not later!
+					//'PriceType' => $priceType // This should be done here maybe and not later!
 					//'Selection' => $optionId[0]
 			);
 	
