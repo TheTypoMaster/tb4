@@ -88,9 +88,15 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 */
 	public function placeBetList(Array $bet_data)
 	{
-		$this->setLogger();
+		
+		$b = print_r($bet_data,true);
+		$this->setLogger("* exotics_service: placebetList: bet_data:$b");
+		
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
+		
+		$bl = print_r($bet_list,true);
+		$this->setLogger("* exotics_service: placebetList: bet_data_list:$bl");
 
 		$params = $this->_buildBetList($bet_list);
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);

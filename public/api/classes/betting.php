@@ -1495,7 +1495,7 @@ class Api_Betting extends JController {
 			}
 			
 			$s = print_r($selection_list,true);
-			file_put_contents('/tmp/saveExoticsBet', "* Selections list". $s. "\n", FILE_APPEND | LOCK_EX);
+			file_put_contents('/tmp/saveExoticsBet', "* Selections list:". $s. "\n", FILE_APPEND | LOCK_EX);
 			
 			$boxed_flag = $this->_isBoxedBet($bet_type->name, $selection_list);
 			$flexi_flag = $this->_isFlexiBet($bet_type->name, $selection_list);
@@ -1513,7 +1513,7 @@ class Api_Betting extends JController {
 					$bet = WageringBet::newBet($type, $value, $boxed_flag, $flexi_flag, unserialize($race->external_race_pool_id_list));
 
 					$b = print_r($bet,true);
-					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object". $b. "\n", FILE_APPEND | LOCK_EX);
+					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object:". $b. "\n", FILE_APPEND | LOCK_EX);
 					
 					foreach ($selection_list as $pos => $selections) {
 
@@ -1648,6 +1648,10 @@ class Api_Betting extends JController {
 				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal() : 0;
 				$bet_freebet_transaction_id = $bet_freebet_refund_transaction_id =0;
 
+				/*
+				 * Deduct the amount from the user's balances that apply
+				*/
+				
 				if($free_bet_amount >0) {
 					if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
 						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($wagering_bet->getTotalBetAmount(), 'freebetentry'); // introducing freebet-entry keyword for transaction type
@@ -1660,8 +1664,10 @@ class Api_Betting extends JController {
 				else $bet_transaction_id	= $payment_model->decrement($wagering_bet->getTotalBetAmount(), 'betentry');
 					
 				$bet_type_name	= $bet_type_model->getBetTypeByName($wagering_bet->getBetType(), true);
+				
 				$bet_product	= $bet_product_model->getBetProduct($bet_origin->id);
-
+				
+				// build the bet
 				$bet = clone $bet_model;
 					
 				$bet->external_bet_id			= 0;
@@ -1684,9 +1690,12 @@ class Api_Betting extends JController {
 						$bet->bet_freebet_amount	= (float)$free_bet_amount;
 					}
 				}
-				//var_dump($bet);
-				//exit;
+				
 				$bet_id = $bet->save();
+				
+				/*
+				 * problem saving bet - refund the amounts to accounts that apply
+				*/
 				file_put_contents('/tmp/saveExoticsBet', "* TB Bet ID:". $bet_id . "\n", FILE_APPEND | LOCK_EX);
 				if (!$bet_id) {
 

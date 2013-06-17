@@ -15,11 +15,14 @@ class WageringApiIgasexotics extends WageringApi
 	
 	public function placeBet(WageringBet $bet, $event, $custom_id)
 	{
+		
 		return $this->placeBetList(array($bet), $event, $custom_id);
 	}
 	
 	public function placeBetList($bet_list, $event, $custom_id)
 	{
+		$bl = print_r($bet_list,true);
+		file_put_contents('/tmp/saveExoticsBet', "* igasexotcs: PlacebetList. Bet List". $bl . "\n", FILE_APPEND | LOCK_EX);
 		$account = $this->_getAccountService();
 		$account->setTypeCode($event->type_code);
 		$account->setMeetingCode($event->meeting_code);
