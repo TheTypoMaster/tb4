@@ -1494,15 +1494,10 @@ class Api_Betting extends JController {
 				}
 			}
 			
-			$s = print_r($selection_list,true);
-			file_put_contents('/tmp/saveExoticsBet', "* Selections list:". $s. "\n", FILE_APPEND | LOCK_EX);
-			
 			$boxed_flag = $this->_isBoxedBet($bet_type->name, $selection_list);
 			$flexi_flag = $this->_isFlexiBet($bet_type->name, $selection_list);
 			$is_exotic_bet_type = $this->_isExoticBetType($bet_type->name);
 			
-			file_put_contents('/tmp/saveExoticsBet', "* Exotic Bet: Bflag:$boxed_flag, Fflag:$flexi_flag, Eflag:$is_exotic_bet_type\n", FILE_APPEND | LOCK_EX);
-
 			$wagering_bet_list	= array();
 			$bet_total			= 0;
 
@@ -1513,45 +1508,30 @@ class Api_Betting extends JController {
 
 					$bet = WageringBet::newBet($type, $value, $boxed_flag, $flexi_flag, unserialize($race->external_race_pool_id_list));
 
-					$b = print_r($bet,true);
-					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object:". $b. "\n", FILE_APPEND | LOCK_EX);
-					
 					foreach ($selection_list as $pos => $selections) {
 
 						$position_number = null;
 						if (!$boxed_flag) {
 							$position_number = BettingHelper::getPositionNumber($pos);
-							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet: NON BOXED: position number:". $position_number. "\n", FILE_APPEND | LOCK_EX);
-
+						
 							if (is_null($position_number)) {
 								$validation->error = JText::_('Invalid position number');
 								return OutputHelper::json(500, array('error_msg' => $validation->error ));
 							}
 						}
-						
-						$rl = print_r($runner_list_by_id,true);
-						file_put_contents('/tmp/saveExoticsBet', "* Exotic runner list:". $rl. "\n", FILE_APPEND | LOCK_EX);
-						
+							
 						foreach ($selections as $selection_id) {
-							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet selection ID:". $selection_id. ". POS:$pos, POSNO:$position_number, RL-ID:".$runner_list_by_id[$selection_id[$pos]]->number."\n", FILE_APPEND | LOCK_EX);
-							$betSelection = $bet->addSelection($runner_list_by_id[$selection_id[$pos]]->number, $position_number);
-							
-							file_put_contents('/tmp/saveExoticsBet', "* Exotic Bet Selection runner:".$runner_list_by_id[$selection_id]->number.", response:". print_r($betSelection,true). "\n", FILE_APPEND | LOCK_EX);
-							
+							$betSelection = $bet->addSelection($runner_list_by_id[$selection_id]->number, $position_number);
 						}
 					}
 
-					$bs = print_r($bet,true);
-					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object with selections:". $bs. "\n", FILE_APPEND | LOCK_EX);
-				
-					if (!$bet->isValid()) {
+				if (!$bet->isValid()) {
 						$validation->error = JText::_($bet->getErrorMessage());
 						return OutputHelper::json(500, array('error_msg' => $validation->error ));
 
 					} else {
 						$wagering_bet_list[] = $bet;
 						$bet_total	+= $bet->getTotalBetAmount();
-						file_put_contents('/tmp/saveExoticsBet', "* Exotic bet total:". $bet_total. "\n", FILE_APPEND | LOCK_EX);
 					}
 				} else {
 
