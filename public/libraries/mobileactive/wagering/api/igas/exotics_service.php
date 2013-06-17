@@ -109,9 +109,11 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		
 		// Build up the bet parameters
 		$params = $this->_buildBetList($bet_list);
+		$this->setLogger("* exotics_service: placebetList: Bet Params: bet_data:".print_r($params,true));
 		
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, "$secretKey");
+		$this->setLogger("* exotics_service: placebetList: DataKey: $betDataKey");
 		
 		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
@@ -161,16 +163,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 						'BetType' => $paramslist['betType'], 'PriceType' => $paramslist['priceType'], 'Selection' => $paramslist['selection']));
 		
 		return json_encode($betObjectArray);
-		
-			
-		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
-				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "Flexi": '.$paramslist['flexi'].', "DataKey": "'.$DataKey.'",
-	
- 				 "BetList": [
-  					{ "MeetingId": '.$paramslist['meetingID'].', "RaceNo": '.$paramslist['raceNo'].', "BetType": "'.$paramslist['betType'].'", "PriceType": "'.$paramslist['priceType'].'",
-      				"Selection": "'.$paramslist['selection'].'" }
-		 			]
-				}';
+
 	}
 
 	/**
