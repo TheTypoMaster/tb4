@@ -340,7 +340,7 @@ class WageringBet implements iBet{
 						$exotic_display[] = implode(',', $selections);
 					}
 					
-					$bet_display = implode('/', $exotic_display);
+					$bet_display = implode(':', $exotic_display);
 				}
 			break;
 		}
