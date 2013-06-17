@@ -1520,6 +1520,7 @@ class Api_Betting extends JController {
 						$position_number = null;
 						if (!$boxed_flag) {
 							$position_number = BettingHelper::getPositionNumber($pos);
+							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet: BOXED: position number:". $position_number. "\n", FILE_APPEND | LOCK_EX);
 
 							if (is_null($position_number)) {
 								$validation->error = JText::_('Invalid position number');
