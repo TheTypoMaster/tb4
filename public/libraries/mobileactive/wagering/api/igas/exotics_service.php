@@ -121,9 +121,9 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$secretKey = "(*&j2zoez";
 	
 		//TODO: Change to use server.xml
-		$userName = $this->api->username;
-		$userPassword = $this->api->password;
-		$companyID = $this->api->companyid;
+		//$userName = $this->api->username;
+		//$userPassword = $this->api->password;
+		//$companyID = $this->api->companyid;
 		
 		$b = print_r($bet_data,true);
 		$this->setLogger("* exotics_service: placeRacebetList: bet_data:$b");
@@ -278,7 +278,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'betAmount' => ($bet->amount/100),
 					//'optionId' => "0",
 					//'handicap' => "1",
-					'betType' => "$bet_type",
+					'betType' => "$bet_type_external",
 					'flexi' => $bet->isFlexiBet()
 					//'exoticType' => $bet_type_string
 					
