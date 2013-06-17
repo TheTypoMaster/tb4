@@ -86,7 +86,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 * @param array $bet_data
 	 * @return object
 	 */
-	public function placeBetList(Array $bet_data)
+	public function placeBetList(Array $bet_data, $userID, $raceNO, $priceType)
 	{
 		// Topbetta related params //TODO: Change to use server.xml
 		$userName = "topbetta";
@@ -255,8 +255,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'flexi' => $bet->isFlexiBet(),
 					'betType' => $bet_type,
 					'meetingID' => $bm_bet_product,
-					'raceNO' => $raceNumber,
-					'PriceType' => 'SP', // This should be done here maybe and not later!
+					'raceNO' => $raceNO,
+					'PriceType' => $priceType, // This should be done here maybe and not later!
 					//'Selection' => $optionId[0]
 			);
 	
