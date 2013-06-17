@@ -140,6 +140,7 @@ class WageringBet implements iBet{
 
 	final public function addSelection($selection_number, $position = null)
 	{
+		file_put_contents('/tmp/saveExoticsBet', "* ADD Selection. Number:". $selection_number. "\n", FILE_APPEND | LOCK_EX);
 		if ($this->boxed_flag && !is_null($position)){
 			throw new Exception('Selection position must be null if boxed_flag is set');
 		}
@@ -149,6 +150,8 @@ class WageringBet implements iBet{
 		}
 		
 		$selection = $this->getBetSelectionObject();
+		$s = print_r($selection);
+		file_put_contents('/tmp/saveExoticsBet', "* ADD Selection. Object:". $s. "\n", FILE_APPEND | LOCK_EX);
 		
 		if (is_null($position)){
 			$selection->add($selection_number);	
