@@ -1528,6 +1528,7 @@ class Api_Betting extends JController {
 						}
 
 						foreach ($selections as $selection_id) {
+							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet selection:". $selection_id. "\n", FILE_APPEND | LOCK_EX);
 							$bet->addSelection($runner_list_by_id[$selection_id[$pos]]->number, $position_number);
 						}
 					}
