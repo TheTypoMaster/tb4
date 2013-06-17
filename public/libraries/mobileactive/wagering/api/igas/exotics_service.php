@@ -287,14 +287,14 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'exoticType' => $bet_type_string
 					*/
 					
-					'referenceID' => $bet->id,
-					'clientID' => $userID,
-					'amount' => $bet->amount,
-					'flexi' => $bet->isFlexiBet(),
-					'betType' => $bet_type,
-					'meetingID' => $bm_bet_product,
-					'raceNO' => $raceNO,
-					'PriceType' => $priceType, // This should be done here maybe and not later!
+					'referenceID' => "$bet->id",
+					'clientID' => "$userID",
+					'amount' => "$bet->amount",
+					'flexi' => "$bet->isFlexiBet()",
+					'betType' => "$bet_type",
+					'meetingID' => "$bm_bet_product",
+					'raceNO' => "$raceNO",
+					'PriceType' => "$priceType", // This should be done here maybe and not later!
 					//'Selection' => $optionId[0]
 			);
 	
