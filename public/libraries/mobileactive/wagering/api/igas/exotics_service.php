@@ -139,22 +139,22 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		//$userPassword = $this->api->password;
 		//$companyID = $this->api->companyid;
 		$b = print_r($bet_data,true);
-		$this->setLogger("* exotics_service: placebetList: bet_data:$b");
+		$this->setLogger("* exotics_service: placeRacebetList: bet_data:$b");
 	
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 	
 		// Build up the bet parameters
 		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType);
-		$this->setLogger("* exotics_service: placebetList: Bet Params: bet_data:".print_r($params,true));
+		$this->setLogger("* exotics_service: placeRacebetList: Bet Params: bet_data:".print_r($params,true));
 	
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, "$secretKey");
-		$this->setLogger("* exotics_service: placebetList: DataKey: $betDataKey");
+		$this->setLogger("* exotics_service: placeRacebetList: DataKey: $betDataKey");
 	
 		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
-		$this->setLogger("racing_service: placeRacingBet. iGAS JSON POST: $this->send_bet");
+		$this->setLogger("racing_service: placeRacebetList. iGAS JSON POST: $this->send_bet");
 	
 		return $this->action($this->send_bet, $this->service_quickbet_path);
 	
