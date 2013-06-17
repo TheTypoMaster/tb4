@@ -86,7 +86,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 * @param array $bet_data
 	 * @return object
 	 */
-	public function placeBetList(Array $bet_data, $userID, $raceNO, $priceType)
+	public function placeBetList(Array $bet_data)
 	{
 		// Topbetta related params //TODO: Change to use server.xml
 		$userName = "topbetta";
@@ -122,6 +122,44 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		return $this->action($this->send_bet, $this->service_quickbet_path);
 		
 	}
+	
+	public function placeRaceBetList(Array $bet_data, $userID, $raceNO, $priceType)
+	{
+		// Topbetta related params //TODO: Change to use server.xml
+		$userName = "topbetta";
+		$userPassword = "T0pB3tter@AP!";
+		$companyID = "TopBetta";
+		$secretKey = "(*&j2zoez";
+	
+		//$api = 'igasracing';
+		//$this->date = new DateTime();
+		//$this->api = $this->getApi($api);
+		//$this->service_url = 'http://' . $this->api->host . $this->api->url;
+		//$userName = $this->api->username;
+		//$userPassword = $this->api->password;
+		//$companyID = $this->api->companyid;
+		$b = print_r($bet_data,true);
+		$this->setLogger("* exotics_service: placebetList: bet_data:$b");
+	
+		$bet_list = $bet_data['bet_list'];
+		$event = $bet_data['event'];
+	
+		// Build up the bet parameters
+		$params = $this->_buildBetList($bet_list);
+		$this->setLogger("* exotics_service: placebetList: Bet Params: bet_data:".print_r($params,true));
+	
+		// Generate Data Key from all bet params
+		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, "$secretKey");
+		$this->setLogger("* exotics_service: placebetList: DataKey: $betDataKey");
+	
+		// format JSON object for POSTing to iGAS
+		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
+		$this->setLogger("racing_service: placeRacingBet. iGAS JSON POST: $this->send_bet");
+	
+		return $this->action($this->send_bet, $this->service_quickbet_path);
+	
+	}
+	
 
 	/**
 	 * Lookup bets
