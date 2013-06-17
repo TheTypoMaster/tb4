@@ -1514,7 +1514,7 @@ class Api_Betting extends JController {
 
 						$position_number = null;
 						if (!$boxed_flag) {
-							$position_number = getPositionNumber($pos);
+							$position_number = $this->getPositionNumber($pos);
 						
 							if (is_null($position_number)) {
 								$validation->error = JText::_('Invalid position number');
