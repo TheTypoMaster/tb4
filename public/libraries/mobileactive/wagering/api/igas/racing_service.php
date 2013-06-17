@@ -70,16 +70,6 @@ class WageringApiIgasracingService extends ConfigReader{
 		//$this->token_model	=& JModel::getInstance('Token', 'BettingModel');
 		$this->runner_model	=& JModel::getInstance('Runner', 'TournamentModel');
 
-		
-		//should get a unique id for this node
-		//$this->_setHostId();
-		
-		// get token from DB. Will throw error if token hasn't loaded from DB
-		//$this->getToken();
-		
-		// check token. will return another token if invalid or keep the current token if valid
-		//$this->_checkLoginToken();
-
 	}
 	
 	public function checkConnection()
@@ -98,28 +88,12 @@ class WageringApiIgasracingService extends ConfigReader{
 	{
 		$o= print_r($bet_data,true);
 		$this->setLogger("racing_service: Entering placeBetList. bet_data: $o");
-		$this->setLogger();
+		
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 
-		
-		// formats the bet request and puts it in $this->send_bet
-		// $params = $this->_buildBetList($bet_list);
-		// $p = print_r($params,true);
-		// $this->setLogger("racing_service: placeBetList. Bet List Params:$p");
-		
-		
-		
-		
-		
-		
+			
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
-		/*ob_start(); // Test output
-		print_r($params);
-		$output = ob_get_contents();
-		ob_end_flush();
-		throw new ApiException("Outputting: ".$output);*/
-
 		return $response;
 	}
 	
@@ -357,7 +331,7 @@ class WageringApiIgasracingService extends ConfigReader{
 						'betType' => $bet_type,
 						'meetingID' => $bm_bet_product,
 						'raceNO' => $raceNumber,
-						'PriceType' => 'TOP',
+						'PriceType' => 'TOP', // This should be done here maybe and not later!
 						'Selection' => $optionId[0]
 				);
 				

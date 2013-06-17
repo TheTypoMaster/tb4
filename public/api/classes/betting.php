@@ -1419,6 +1419,9 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 
+			$meetingID = $meeting->external_event_group_id;
+			$meetingType = $meeting->type_code;
+			
 			$race_id = JRequest::getVar('race_id', null);
 			if (is_null($race_id)) {
 				$validation->error = JText::_('No race specified');
@@ -1758,7 +1761,7 @@ class Api_Betting extends JController {
 				$bet_confirmed	= false;
 				file_put_contents('/tmp/saveExoticsBet', "* About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
-					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, $priceType);
+					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, $priceType, $meetingID);
 					$api_error		= $api->getErrorList(true);
 
 					//$external_bet = 'test123';

@@ -20,14 +20,14 @@ class WageringApiIgasexotics extends WageringApi
 	}
 	
 	
-	public function placeRacingBet(WageringBet $bet, $event, $custom_id, $userID, $raceNO, $priceType)
+	public function placeRacingBet(WageringBet $bet, $event, $custom_id, $userID, $raceNO, $priceType, $meetingID)
 	{
 	
-		return $this->placeRacingBetList(array($bet), $event, $custom_id, $userID, $raceNO, $priceType);
+		return $this->placeRacingBetList(array($bet), $event, $custom_id, $userID, $raceNO, $priceType, $meetingID);
 	}
 	
 	
-	public function placeRacingBetList($bet_list, $event, $custom_id, $userID, $raceNO, $priceType)
+	public function placeRacingBetList($bet_list, $event, $custom_id, $userID, $raceNO, $priceType, $meetingID)
 	{
 		
 		$bl = print_r($bet_list,true);
@@ -37,7 +37,7 @@ class WageringApiIgasexotics extends WageringApi
 		// $account->setMeetingCode($event->meeting_code);
 		$account->setCustomId($custom_id);
 		
-		return $this->_callOperation('placeRaceBetList', $account, array('bet_list' => $bet_list, 'event' => $event), $userID, $raceNO, $priceType);
+		return $this->_callOperation('placeRaceBetList', $account, array('bet_list' => $bet_list, 'event' => $event), $userID, $raceNO, $priceType, $meetingID);
 	}
 	
 	public function placeBetList($bet_list, $event, $custom_id)

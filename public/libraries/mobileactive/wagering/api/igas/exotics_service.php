@@ -43,6 +43,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$this->api = $this->getApi($api);
 		$this->service_url = 'http://' . $this->api->host . $this->api->url;
 		
+	
+		
 		if (method_exists($this, 'initialise')){
 			$this->initialise();
 		}
@@ -88,19 +90,6 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 */
 	public function placeBetList(Array $bet_data)
 	{
-		// Topbetta related params //TODO: Change to use server.xml
-		$userName = "topbetta";
-		$userPassword = "T0pB3tter@AP!";
-		$companyID = "TopBetta";
-		$secretKey = "(*&j2zoez";
-		
-		//$api = 'igasracing';
-		//$this->date = new DateTime();
-		//$this->api = $this->getApi($api);
-		//$this->service_url = 'http://' . $this->api->host . $this->api->url;
-		//$userName = $this->api->username;
-		//$userPassword = $this->api->password;
-		//$companyID = $this->api->companyid;
 		$b = print_r($bet_data,true);
 		$this->setLogger("* exotics_service: placebetList: bet_data:$b");
 		
@@ -123,41 +112,47 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		
 	}
 	
-	public function placeRaceBetList(Array $bet_data, $userID, $raceNO, $priceType)
+	public function placeRaceBetList(Array $bet_data, $userID, $raceNO, $priceType, $meetingID)
 	{
-		// Topbetta related params //TODO: Change to use server.xml
+		// Topbetta related params 
 		$userName = "topbetta";
 		$userPassword = "T0pB3tter@AP!";
 		$companyID = "TopBetta";
 		$secretKey = "(*&j2zoez";
 	
-		//$api = 'igasracing';
-		//$this->date = new DateTime();
-		//$this->api = $this->getApi($api);
-		//$this->service_url = 'http://' . $this->api->host . $this->api->url;
-		//$userName = $this->api->username;
-		//$userPassword = $this->api->password;
-		//$companyID = $this->api->companyid;
+		//TODO: Change to use server.xml
+		$userName = $this->api->username;
+		$userPassword = $this->api->password;
+		$companyID = $this->api->companyid;
+		
 		$b = print_r($bet_data,true);
 		$this->setLogger("* exotics_service: placeRacebetList: bet_data:$b");
 	
+		// Split up bet and event data
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 	
 		// Build up the bet parameters
 		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType);
 		$this->setLogger("* exotics_service: placeRacebetList: Bet Params: bet_data:".print_r($params,true));
+
+		//TODO: Cater for multibets
+		
+		// Build up bet array for JSON
+		$paramsList = array('ReferenceID' => $params['eventId'], 'ClientID' => $userID,
+				'Amount' => $params['amount'], 'Flexi' => $params['flexi'], 'MeetingId' => $meetingID, 
+				'RaceNo' => $raceNO, 'BetType' => $params['betType'], 
+				'PriceType' => $priceType, 'Selection' => $params['Selection']);
 	
 		// Generate Data Key from all bet params
-		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, "$secretKey");
+		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramList, "$secretKey");
 		$this->setLogger("* exotics_service: placeRacebetList: DataKey: $betDataKey");
 	
 		// format JSON object for POSTing to iGAS
-		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
-		$this->setLogger("racing_service: placeRacebetList. iGAS JSON POST: $this->send_bet");
+		$this->send_bet = $this->formatIgasPOST ($userName, $userPassword, $companyID, $paramsList, $betDataKey );
+		$this->setLogger("* exotics_service: placeRacebetList. iGAS JSON POST: $this->send_bet");
 	
 		return $this->action($this->send_bet, $this->service_quickbet_path);
-	
 	}
 	
 
@@ -195,10 +190,10 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
 	
 		$betObjectArray = array('Username' => $UserName, 'Password' => $UserPassword, 'CompanyID' => $CompanyID, 
-						'ReferenceID' => $paramslist['betID'], 'ClientID' => $paramslist['clientID'], 
-						'Amount' => $paramslist['amount'], 'Flexi' => $paramslist['flexi'], 'DataKey' => $DataKey, 
-						'BetList' =>array('MeetingId' => $paramslist['meetingID'], 'RaceNo' => $paramslist['raceNo'], 
-						'BetType' => $paramslist['betType'], 'PriceType' => $paramslist['priceType'], 'Selection' => $paramslist['selection']));
+						'ReferenceID' => $paramslist['betID'], 'ClientID' => $paramslist['ClientID'], 
+						'Amount' => $paramslist['Amount'], 'Flexi' => $paramslist['Flexi'], 'DataKey' => $DataKey, 
+						'BetList' =>array('MeetingId' => $paramslist['MeetingId'], 'RaceNo' => $paramslist['RaceNo'], 
+						'BetType' => $paramslist['betType'], 'PriceType' => $paramslist['priceType'], 'Selection' => $paramslist['Selection']));
 		
 		return json_encode($betObjectArray);
 
@@ -211,7 +206,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 * @param bool $return_multiple
 	 * @return object
 	 */
-	private function _buildBetList($bet_list, $return_multiple = true, $userID, $raceNO, $priceType){
+	private function _buildBetList($bet_list, $return_multiple = true, $userID, $raceNO, $priceType, $meetingID){
 		
 		$b = print_r($bet_list,true);
 		$this->setLogger("exotics_service: Build Bet List:$b");
@@ -279,12 +274,13 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			$formatted_bet['request'] = array(
 					
 					
-					'eventId' => $event_id,
+					'eventId' => $this->custom_id,
 					'betAmount' => ($bet->amount/100),
-					'optionId' => "0",
-					'handicap' => "1",
-					'betType' => "exotic",
-					'exoticType' => $bet_type_string
+					//'optionId' => "0",
+					//'handicap' => "1",
+					'betType' => "$bet_type",
+					'flexi' => $bet->isFlexiBet()
+					//'exoticType' => $bet_type_string
 					
 					/*
 					'referenceID' => $bet->id,
