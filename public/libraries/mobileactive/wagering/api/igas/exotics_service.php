@@ -88,25 +88,37 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 */
 	public function placeBetList(Array $bet_data)
 	{
+		// Topbetta related params //TODO: Change to use server.xml
+		$userName = "topbetta";
+		$userPassword = "T0pB3tter@AP!";
+		$companyID = "TopBetta";
+		$secretKey = "(*&j2zoez";
 		
+		//$api = 'igasracing';
+		//$this->date = new DateTime();
+		//$this->api = $this->getApi($api);
+		//$this->service_url = 'http://' . $this->api->host . $this->api->url;
+		//$userName = $this->api->username;
+		//$userPassword = $this->api->password;
+		//$companyID = $this->api->companyid;
 		$b = print_r($bet_data,true);
 		$this->setLogger("* exotics_service: placebetList: bet_data:$b");
 		
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 		
-		$bl = print_r($bet_list,true);
-		$this->setLogger("* exotics_service: placebetList: bet_data_list:$bl");
-
+		// Build up the bet parameters
 		$params = $this->_buildBetList($bet_list);
-		$response = $this->action($this->send_bet, $this->service_quickbet_path);
-		/*ob_start(); // Test output
-		print_r($params);
-		$output = ob_get_contents();
-		ob_end_flush();
-		throw new ApiException("Outputting: ".$output);*/
-
-		return $response;
+		
+		// Generate Data Key from all bet params
+		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, "$secretKey");
+		
+		// format JSON object for POSTing to iGAS
+		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
+		$this->setLogger("racing_service: placeRacingBet. iGAS JSON POST: $this->send_bet");
+		
+		return $this->action($this->send_bet, $this->service_quickbet_path);
+		
 	}
 
 	/**
@@ -122,12 +134,6 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$response_bet = $this->action($bet_params, $this->service_bets_path);
 
 		return $response_bet;
-		/*ob_start(); // Test output
-		print_r($this->action($params[0], $this->service_bets_path));
-		$output = ob_get_contents();
-		ob_end_flush();
-		//throw new ApiException("Outputting: ".$output);
-		return $output;*/
 	}
 	
 	public function getAccountBalance(){
@@ -144,6 +150,27 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 	public function setCustomId($value){
 		$this->custom_id = $value;
+	}
+	
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
+	
+		$betObjectArray = array('Username' => $UserName, 'Password' => $UserPassword, 'CompanyID' => $CompanyID, 
+						'ReferenceID' => $paramslist['betID'], 'ClientID' => $paramslist['clientID'], 
+						'Amount' => $paramslist['amount'], 'Flexi' => $paramslist['flexi'], 'DataKey' => $DataKey, 
+						'BetList' =>array('MeetingId' => $paramslist['meetingID'], 'RaceNo' => $paramslist['raceNo'], 
+						'BetType' => $paramslist['betType'], 'PriceType' => $paramslist['priceType'], 'Selection' => $paramslist['selection']));
+		
+		return json_encode($betObjectArray);
+		
+			
+		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
+				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "Flexi": '.$paramslist['flexi'].', "DataKey": "'.$DataKey.'",
+	
+ 				 "BetList": [
+  					{ "MeetingId": '.$paramslist['meetingID'].', "RaceNo": '.$paramslist['raceNo'].', "BetType": "'.$paramslist['betType'].'", "PriceType": "'.$paramslist['priceType'].'",
+      				"Selection": "'.$paramslist['selection'].'" }
+		 			]
+				}';
 	}
 
 	/**
@@ -200,104 +227,44 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			$event_id = JRequest::getVar('event_id', 'post');
 			$race_id = JRequest::getVar('race_id', 'post');
 
-			if($bet_type == "win" || $bet_type == "place"){
-				$bet_product_id = 0;
-				$runner	= $this->runner_model->getRunnerDetailsByRaceIDAndNumber($race_id, $selections);
-
-				if($bet_type == "win")
-				{
-					$bet_product_id = $runner[0]->w_product_id;
-				} 
-				elseif($bet_type == "place")
-				{
-					$bet_product_id = $runner[0]->p_product_id;
-				}			
-					
-				$bm_bet_product = null;
-				switch ($bet_product_id){
-					case 5: // TopTote
-						$bm_bet_product = ($bet_type == "win") ? "BT3" : "BP3";
-						break;
-					case 6: // MidTote
-						$bm_bet_product = ($bet_type == "win") ? "BT1" : "BP1";
-						break;
-					case 7: // BestOrSP
-						$bm_bet_product = "BT5";
-						break;
-					case 4: // VicTote. Don't need this at all, but leave here just in case and for vic exotics.
-						$bm_bet_product = null;
-						break;
-					default: // If no tote selected
-						$bm_bet_product = null;
-						throw new ApiException("No bet product found or invalid product id.");
-						break; 
-				}
-
-				// Conventional bet
-				$wager = JRequest::getVar('wager_id', 'post');
-				$optionId = $wager['first'][$selections];
-
-				/*** Currently falling back directly on MidTote **/
-				// If not midtote or toptote
-				/*if($bm_bet_product == null) {
-					if($bet_type == "win"){
-						$bm_bet_product = "VICWin";
-					} else {
-						$bm_bet_product = "VICPlace";
-					}
-				}*/
-				// Internal
-				$formatted_bet['bet'] = array(
-						'amount' => $bet->amount,
-						'eventId' => $event_id,
-						'betAmount' => ($bet->amount/100),
-						'optionId' => $optionId[0],
-						'handicap' => 1,
-						'betType' => $bet_type,
-						'special' => $bm_bet_product,
-						'clientReferenceId' => $this->custom_id,
-						'flexi' => $bet->isFlexiBet(),
-						'poolType' => $bet_type_external,
-						'racePoolId' => $bet->race_number[$bet_type_external]
-				);
-
-				// To send to BM
-				$formatted_bet['request'] = array(
+			// Exotic Bet, internal
+			$formatted_bet['bet'] = array(
+					'amount' => $bet->amount,
 					'eventId' => $event_id,
 					'betAmount' => ($bet->amount/100),
-					'optionId' => $optionId[0],
+					'optionId' => 0,
+					'handicap' => 1,
+					'betType' => "exotic",
+					'exoticType' => $bet_type_string,
+					'clientReferenceId' => $this->custom_id,
+					'flexi' => $bet->isFlexiBet(),
+					'poolType' => $bet_type_external,
+					'racePoolId' => $bet->race_number[$bet_type_external]
+			);
+
+			// To send to iGAS
+			$formatted_bet['request'] = array(
+					
+					/*
+					'eventId' => $event_id,
+					'betAmount' => ($bet->amount/100),
+					'optionId' => "0",
 					'handicap' => "1",
+					'betType' => "exotic",
+					'exoticType' => $bet_type_string
+					*/
+					
+					'referenceID' => $bet->id,
+					'clientID' => $userID,
+					'amount' => $bet->amount,
+					'flexi' => $bet->isFlexiBet(),
 					'betType' => $bet_type,
-					'special' => $bm_bet_product
-				);
-
-			} else {
-				// Exotic Bet, internal
-				$formatted_bet['bet'] = array(
-						'amount' => $bet->amount,
-						'eventId' => $event_id,
-						'betAmount' => ($bet->amount/100),
-						'optionId' => 0,
-						'handicap' => 1,
-						'betType' => "exotic",
-						'exoticType' => $bet_type_string,
-						'clientReferenceId' => $this->custom_id,
-						'flexi' => $bet->isFlexiBet(),
-						'poolType' => $bet_type_external,
-						'racePoolId' => $bet->race_number[$bet_type_external]
-				);
-
-				// To send to BM
-				$formatted_bet['request'] = array(
-						'eventId' => $event_id,
-						'betAmount' => ($bet->amount/100),
-						'optionId' => "0",
-						'handicap' => "1",
-						'betType' => "exotic",
-						'exoticType' => $bet_type_string
-				);
-			}
-
+					'meetingID' => $bm_bet_product,
+					'raceNO' => $raceNumber,
+					'PriceType' => 'SP', // This should be done here maybe and not later!
+					//'Selection' => $optionId[0]
+			);
+	
 			if($bet_type == "quinella")
 			{
 			 	$rug_count = count($rug_list);
@@ -319,7 +286,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 						$formatted_bet['request']['exoticSels'] .= "/";
 					}
 					$formatted_bet['request']['exoticSels'] .= str_replace("+", ",", $rug_list[$i-1]);*/
-					$formatted_bet['request']['exoticSels'] = $bet->formatBetSelections();
+					$formatted_bet['request']['Selection'] = $bet->formatBetSelections();
 				}
 			}		
 
@@ -420,26 +387,30 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 	private function curlRequest($command=null, $params=null)
 	{
-		if($params!=null){
-			$post_string = $this->formatUrlString($params);
-		}
-		$this->setLogger("exotics_service: curlRequest. Post String:$post_string");
+		$this->setLogger("exotics_service: Entering curlRequest. Command:$command");
+		$this->setLogger("exotics_service: curlRequest. post_string:$params");
 		
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL,$this->service_url."/".$command);
-		//curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$post_string);
-		$size = sizeof(split("&",$post_string));
-		if($size > 0){
-			curl_setopt($ch, CURLOPT_POST, $size);
-		}
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5-'.$_SERVER['SERVER_ADDR']);
-		curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+		/*
+		 * Send the bet object to iGAS for processing
+		 */
+		$ch = curl_init($this->service_url."/".$command);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($params))
+		);
+		
+		
+		
+		$c = print_r($ch,true);
+		$this->setLogger("exotics_service: curlRequest. Curl Instance:$c");
+				
 		$error = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$res = curl_exec($ch);
 		
-		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . ". Post String:".$post_string."\n-------------");		
+		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . ". Post String:".$params."\n-------------");		
 		
 		$response = json_decode($res);
 		curl_close($ch);
@@ -450,15 +421,37 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			return $response;
 		}
 		throw new ApiException("Curl request error");
-		
 	}
 
+	private function getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey){
+		// Get input object params
+	
+		$paramListBetData = '';
+		$headerParams = $userName . $userPassword . $companyID;
+		foreach($paramslist as $param){
+			$paramListBetData .= $param;
+		}
+		// join params together
+		// concatinate with secret key
+		$paramsPlusSecret = $headerParams . $paramListBetData . $secretKey;
+		// generate HASH
+		$hashedParams = md5($paramsPlusSecret);
+	
+		$this->setLogger("exotics_service: getDataKey: params plus secret:$paramsPlusSecret");
+	
+		return $hashedParams;
+	
+		// append generated sequence to function call request
+	
+	
+	}
+	
+	
 	public function action($params=array(), $command=null)
 	{
 		if($command == "Betinput.aspx")
 		{
 			$response = $this->curlRequest($command, $params);
-
 			if ($response->ErrorNo == "0")
 			{
 				$bet = new stdClass;
@@ -473,77 +466,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 				$this->setLogger("exotics_service: action Failed.");
 				throw new ApiException("Bet could not be posted. ".$response->detail);
 			}
-
 		}
-		elseif($command == "bets")
-		{
-			//$params['token'] = $this->token;
-			$response = $this->curlRequest($command."?token=".$this->token, $params);
-
-			if ($response->result == "true") {
-				$bet = new stdClass;
-
-				$bet_status = null;
-				//if(strstr($response->rows[0]->BetStatus, 'Return of') != false || strstr($response->rows[0]->BetStatus, 'Return @') != false)
-				if ($response->rows[0]->BetOutcome == "Win")
-				{
-					$bet_status = "Win";
-				}
-				else if ($response->rows[0]->BetStatus == "Scratched")
-				{
-					$bet_status = "Refunded";
-				}
-				else
-				{
-					$bet_status = $response->rows[0]->BetOutcome;
-				}
-
-				$bet_status_array = array(
-						'Win' => 'W',
-						'Loss' => 'L',
-						'Cancelled' => 'CN',
-						'Refunded'	=>	'CN',
-						'failed' => 'F',
-						'error' => 'E',
-						'Accepted' => 'S'
-				);
-				/*
-				 $bet_status_array = array(
-				 		'win' => 'W',
-				 		'No Return' => 'L',
-				 		'Scratched' => 'CN',
-				 		'failed' => 'F',
-				 		'error' => 'E',
-				 		'Accepted' => 'S'
-				 );
-				*/
-				$bet->isSuccess = "true";
-				$bet->status = $bet_status_array[$bet_status];
-				$bet->amount = $response->rows[0]->BetAmount*100;
-
-				if($bet->status == "W")
-				{ // winning
-					$bet->amountWon = $response->rows[0]->BetPayout*100;
-				}
-				elseif($bet->status == "E" || $bet->status == "F")
-				{
-					$bet->betErrorMessage = $response->rows[0]->BetStatus;
-				}
-
-				return $bet;
-			}
-			else
-			{
-				//ob_start();
-				//print_r($response);
-				//print_r($post_bet_string);
-				//$status = ob_get_contents();
-				//ob_end_flush();
-				$status = $response->hash;
-				throw new ApiException("API Error ".$command.": ".$status);
-			}
-		}
-
 		throw new ApiException("API error: No api path selected. ");
 	}
 
@@ -563,28 +486,24 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
 		$myFile = "/tmp/saveExoticsBet";
-		
-		
+
 		if ($fh = fopen($myFile, 'a')) {
 			fwrite($fh, date('Y-m-d H:i:s') . "\n" . $msg);
 			fwrite($fh, "\n");
 			fclose($fh);					
 		}
-		
-		
-		/*$file_path = "/var/www/vhosts/topbetta.com/logs/bm_".date("Ymd").".log";
-		//print_r($this->getRESTService());
-
-		if (!$handle = fopen($file_path, 'a')) {
-	        //throw new ApiException();
-	        throw new ApiException("Service Not Available");
-			return false;
-    	}
-    	else{
-			$this->fhandle = $handle;
-    	}*/
 	}
 	
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
+		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
+				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "Flexi": '.$paramslist['flexi'].', "DataKey": "'.$DataKey.'",
+	
+ 				 "BetList": [
+  					{ "MeetingId": '.$paramslist['meetingID'].', "RaceNo": '.$paramslist['raceNo'].', "BetType": "'.$paramslist['betType'].'", "PriceType": "'.$paramslist['priceType'].'",
+      				"Selection": "'.$paramslist['selection'].'" }
+		 			]
+				}';
+	}	
 }
 
 class ApiException extends Exception
