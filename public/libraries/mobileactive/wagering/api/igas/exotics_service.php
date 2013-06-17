@@ -145,7 +145,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$event = $bet_data['event'];
 	
 		// Build up the bet parameters
-		$params = $this->_buildBetList($bet_list);
+		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType);
 		$this->setLogger("* exotics_service: placebetList: Bet Params: bet_data:".print_r($params,true));
 	
 		// Generate Data Key from all bet params
@@ -211,7 +211,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 * @param bool $return_multiple
 	 * @return object
 	 */
-	private function _buildBetList($bet_list, $return_multiple = true){
+	private function _buildBetList($bet_list, $return_multiple = true, $userID, $raceNO, $priceType){
 		
 		$b = print_r($bet_list,true);
 		$this->setLogger("exotics_service: Build Bet List:$b");
@@ -287,8 +287,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'exoticType' => $bet_type_string
 					*/
 					
-					'referenceID' => "$bet->id",
-					'clientID' => "$userID",
+					'referenceID' => $bet->id,
+					'clientID' => $userID,
 					'amount' => "$bet->amount",
 					'flexi' => "$bet->isFlexiBet()",
 					'betType' => "$bet_type",
