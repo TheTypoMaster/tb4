@@ -1428,7 +1428,9 @@ class Api_Betting extends JController {
 			require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'race.php');
 			$race_model = new TournamentModelRace();
 			$race = $race_model->getRaceApi($race_id);
-
+			
+			$raceNumber = $race->number;
+			
 			if (is_null($race)) {
 				$validation->error = JText::_('Race was not found');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
@@ -1756,7 +1758,7 @@ class Api_Betting extends JController {
 				$bet_confirmed	= false;
 				file_put_contents('/tmp/saveExoticsBet', "* About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
-					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id);
+					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, $priceType);
 					$api_error		= $api->getErrorList(true);
 
 					//$external_bet = 'test123';
