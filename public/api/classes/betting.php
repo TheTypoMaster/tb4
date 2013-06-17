@@ -1499,8 +1499,9 @@ class Api_Betting extends JController {
 			
 			$boxed_flag = $this->_isBoxedBet($bet_type->name, $selection_list);
 			$flexi_flag = $this->_isFlexiBet($bet_type->name, $selection_list);
-
 			$is_exotic_bet_type = $this->_isExoticBetType($bet_type->name);
+			
+			file_put_contents('/tmp/saveExoticsBet', "* Exotic Bet: Bflag:$boxed_flag, Fflag:$flexi_flag, Eflag:$is_exotic_bet_type\n", FILE_APPEND | LOCK_EX);
 
 			$wagering_bet_list	= array();
 			$bet_total			= 0;
