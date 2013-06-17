@@ -1391,6 +1391,8 @@ class Api_Betting extends JController {
 			
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
 
+			file_put_contents('/tmp/saveExoticsBet', "* Server Token\n", FILE_APPEND | LOCK_EX);
+			
 			$validation = new stdClass();
 			$validation->relogin	= false;
 			$validation->error		= false;
@@ -1512,7 +1514,7 @@ class Api_Betting extends JController {
 
 						$position_number = null;
 						if (!$boxed_flag) {
-							$position_number = BettingHelper::getPositionNumber($pos);
+							$position_number = getPositionNumber($pos);
 						
 							if (is_null($position_number)) {
 								$validation->error = JText::_('Invalid position number');
@@ -2756,6 +2758,27 @@ class Api_Betting extends JController {
 			$text = $days . ' d ' . $text;
 		}
 		return $text;
+	}
+	
+	public static function getPositionNumber($position)
+	{
+		$position_number = null;
+		switch ($position) {
+			case 'first':
+				$position_number = 1;
+				break;
+			case 'second':
+				$position_number = 2;
+				break;
+			case 'third':
+				$position_number = 3;
+				break;
+			case 'fourth':
+				$position_number = 4;
+				break;
+		}
+	
+		return $position_number;
 	}
 }
 ?>
