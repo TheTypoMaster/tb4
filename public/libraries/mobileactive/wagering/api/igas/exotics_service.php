@@ -235,6 +235,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					'racePoolId' => $bet->race_number[$bet_type_external]
 			);
 
+			$this->setLogger("* exotic_service. Build bet list. Formatted bets for iGAS ");
+			
 			// To send to iGAS
 			$formatted_bet['request'] = array(
 					
