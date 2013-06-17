@@ -1529,7 +1529,7 @@ class Api_Betting extends JController {
 							}
 						}
 						
-						$rl = print_r($runner_list_by_id);
+						$rl = print_r($runner_list_by_id,true);
 						file_put_contents('/tmp/saveExoticsBet', "* Exotic runner list:". $rl. "\n", FILE_APPEND | LOCK_EX);
 						
 						foreach ($selections as $selection_id) {
