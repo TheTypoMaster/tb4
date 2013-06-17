@@ -145,7 +145,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 				'PriceType' => $priceType, 'Selection' => $params[0]['Selection']);
 	
 		// Generate Data Key from all bet params
-		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramList, "$secretKey");
+		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramsList, "$secretKey");
 		$this->setLogger("* exotics_service: placeRacebetList: DataKey: $betDataKey");
 	
 		// format JSON object for POSTing to iGAS
