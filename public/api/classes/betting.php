@@ -1532,6 +1532,10 @@ class Api_Betting extends JController {
 						}
 					}
 
+					$bs = print_r($bet,true);
+					file_put_contents('/tmp/saveExoticsBet', "* Exotic bet object with selections:". $bs. "\n", FILE_APPEND | LOCK_EX);
+						
+					
 					if (!$bet->isValid()) {
 						$validation->error = JText::_($bet->getErrorMessage());
 						return OutputHelper::json(500, array('error_msg' => $validation->error ));
@@ -1539,6 +1543,7 @@ class Api_Betting extends JController {
 					} else {
 						$wagering_bet_list[] = $bet;
 						$bet_total	+= $bet->getTotalBetAmount();
+						file_put_contents('/tmp/saveExoticsBet', "* Exotic bet total:". $bet_total. "\n", FILE_APPEND | LOCK_EX);
 					}
 				} else {
 
