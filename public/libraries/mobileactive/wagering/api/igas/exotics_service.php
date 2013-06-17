@@ -274,7 +274,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			);
 
 			
-			$this->setLogger("* exotic_service. Build bet list. Before: Formatted bets for iGAS, ref:$bet->id, cli:$bet->id, ba:$bet->amount, flex:$bet->isFlexiBet(), bt:$bet_type, mid:$bm_bet_product, rn:$raceNO, pt:$priceType.");
+			$this->setLogger("* exotic_service. Build bet list. Before: Formatted bets for iGAS, ref:$bet->id, cli:$bet->id, ba:$bet->amount, bt:$bet_type, mid:$bm_bet_product, rn:$raceNO, pt:$priceType.");
 			// To send to iGAS
 			$formatted_bet['request'] = array(
 					
