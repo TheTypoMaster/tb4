@@ -1521,14 +1521,17 @@ class Api_Betting extends JController {
 						$position_number = null;
 						if (!$boxed_flag) {
 							$position_number = BettingHelper::getPositionNumber($pos);
-							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet: BOXED: position number:". $position_number. "\n", FILE_APPEND | LOCK_EX);
+							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet: NON BOXED: position number:". $position_number. "\n", FILE_APPEND | LOCK_EX);
 
 							if (is_null($position_number)) {
 								$validation->error = JText::_('Invalid position number');
 								return OutputHelper::json(500, array('error_msg' => $validation->error ));
 							}
 						}
-
+						
+						$rl = print_r($runner_list_by_id);
+						file_put_contents('/tmp/saveExoticsBet', "* Exotic runner list:". $rl. "\n", FILE_APPEND | LOCK_EX);
+						
 						foreach ($selections as $selection_id) {
 							file_put_contents('/tmp/saveExoticsBet', "* Exotic bet selection ID:". $selection_id. ". POS:$pos, POSNO:$position_number, RL-ID:".$runner_list_by_id[$selection_id[$pos]]->number."\n", FILE_APPEND | LOCK_EX);
 							$bet->addSelection($runner_list_by_id[$selection_id[$pos]]->number, $position_number);
@@ -1703,12 +1706,13 @@ class Api_Betting extends JController {
 				
 				/*
 				 * problem saving bet - refund the amounts to accounts that apply
-				*/
+				 */
+				
 				file_put_contents('/tmp/saveExoticsBet', "* TB Bet ID:". $bet_id . "\n", FILE_APPEND | LOCK_EX);
 				if (!$bet_id) {
 
 					if($free_bet_amount >0) {
-						//add free bet doallers
+						//add free bet dollars
 						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
 							$tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund'); // introducing freebetrefund keyword for transaction type
 						}
@@ -1720,7 +1724,6 @@ class Api_Betting extends JController {
 					else $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
 
 					return OutputHelper::json(500, array('error_msg' => 'Cannot place this bet' ));
-
 				}
 					
 				$bet->id = $bet_id;
