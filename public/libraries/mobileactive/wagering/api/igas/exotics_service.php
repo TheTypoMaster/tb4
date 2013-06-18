@@ -132,18 +132,20 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 	
-		//TODO: Cater for multibets
-		
 		// Build up the bet parameters
-		$params = $this->send_bet;
-		$bp = print_r($params,true);
-		$this->setLogger("* exotics_service: placeRacebetList: bet params:$bp");
-				
+		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType);
+		
+		//TODO: Cater for multibets
+
+		$betParams = $this->send_bet;
+		$sb = print_r($this->send_bet,true);
+		$this->setLogger("* exotics_service: placeRacebetList: Send bet params:$sb");
+		
 		// Build up bet array for JSON
-		$paramsList = array('ReferenceID' => $params['eventId'], 'ClientID' => $userID,
-				'Amount' => $params['amount'], 'Flexi' => $params['flexi'], 'MeetingId' => $meetingID, 
-				'RaceNo' => $raceNO, 'BetType' => $params['betType'], 
-				'PriceType' => $priceType, 'Selection' => $params['Selection']);
+		$paramsList = array('ReferenceID' => $betParams['eventId'], 'ClientID' => $userID,
+				'Amount' => $betParams['amount'], 'Flexi' => $betParams['flexi'], 'MeetingId' => $meetingID, 
+				'RaceNo' => $raceNO, 'BetType' => $betParams['betType'], 
+				'PriceType' => $priceType, 'Selection' => $betParams['Selection']);
 	
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramsList, "$secretKey");
