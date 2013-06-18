@@ -198,10 +198,9 @@ class BetResultsController extends \BaseController {
 										
 										$b = print_r($betObject[0],true);
 										Topbetta\LogHelper::l("BackAPI: BetResults - Bet data from DB: $b");
-										
-										
+																			
 										// check it can be processed
-										if($this->_canTransactionBeProcessed($transaction,$this->status_process_unresulted_list) && $betObject[0]['bet_result_status_id'] == "0"){
+										if($this->_canTransactionBeProcessed($transaction,$this->status_process_unresulted_list) && $betObject[0]['bet_result_status_id'] == "1"){
 											Topbetta\LogHelper::l("BackAPI: BetResults - Bet status '".$transaction['betOutcome']."' processing ");
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
