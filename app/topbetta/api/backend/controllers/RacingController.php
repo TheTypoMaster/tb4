@@ -502,39 +502,45 @@ class RacingController extends \BaseController {
 								// Get ID of event record - used to store exotic results/divs if required
 								$eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 								
+								// grab the race type code
+								$raceTypeCode = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
+								
 								// Processs win and place bets
+								
 								if($betType == 'W' || $betType == 'P'){
-									if ($selectionsExists){
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result",1);
-										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
-									
-										// if result exists update that record
-										if($resultExists){
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, In DB", 1);
-											$raceResult = TopBetta\RaceResult::find($resultExists);
-										}else{
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Added to DB", 1);
-											$raceResult = new TopBetta\RaceResult;
-											$raceResult->selection_id = $selectionsExists;
-										}
+									if($raceTypeCode == "R" && $priceType =="TOP" || $raceTypeCode != "R" && $priceType =="MID"){
+										if ($selectionsExists){
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result",1);
+											$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
 										
-										// show win and place on Aust Gallops @ Best Tote
-										
-										// show win and place on OS gallops as SP?
-										
-										// show win and place on Grey's and Harness @ Mid Tote
-										
-										$raceResult->position = $placeNo;
-										($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
-										
-										// save win or place odds to DB
-										$raceResultSave = $raceResult->save();
-										$raceResultID = $raceResult->id;
+											// if result exists update that record
+											if($resultExists){
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, In DB", 1);
+												$raceResult = TopBetta\RaceResult::find($resultExists);
+											}else{
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Added to DB", 1);
+												$raceResult = new TopBetta\RaceResult;
+												$raceResult->selection_id = $selectionsExists;
+											}
 											
-										TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
-									}else{
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No Selection found. Results not updated", 2);
-									}									 
+											// show win and place on Aust Gallops @ Best Tote
+											
+											// show win and place on OS gallops as SP?
+											
+											// show win and place on Grey's and Harness @ Mid Tote
+											
+											$raceResult->position = $placeNo;
+											($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
+											
+											// save win or place odds to DB
+											$raceResultSave = $raceResult->save();
+											$raceResultID = $raceResult->id;
+												
+											TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$raceTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+										}else{
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No Selection found. Results not updated", 2);
+										}		
+									}							 
 									
 								// Process exotics = stored as serialsed arrays in the tbdb_event table - ONLY store SP divs as that's what we pay bets out on
 								}else{
