@@ -1761,7 +1761,7 @@ class Api_Betting extends JController {
 				$bet_confirmed	= false;
 				file_put_contents('/tmp/saveExoticsBet', "* About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
-					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, 'SUP', $meetingID);
+					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, 'MID', $meetingID);
 					$api_error		= $api->getErrorList(true);
 
 					//$external_bet = 'test123';
