@@ -139,12 +139,14 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		//TODO: Cater for multibets
 
 		$params = $this->send_bet;
+		$sb = print_r($this->send_bet,true);
+		$this->setLogger("* exotics_service: placeRacebetList: Send bet params:$sb");
 		
 		// Build up bet array for JSON
-		$paramsList = array('ReferenceID' => $params[0]['clientReferenceId'], 'ClientID' => $userID,
-				'Amount' => $params[0]['amount'], 'Flexi' => $params[0]['flexi'], 'MeetingId' => $meetingID, 
+		$paramsList = array('ReferenceID' => $params['clientReferenceId'], 'ClientID' => $userID,
+				'Amount' => $params['amount'], 'Flexi' => $params['flexi'], 'MeetingId' => $meetingID, 
 				'RaceNo' => $raceNO, 'BetType' => $params[0]['betType'], 
-				'PriceType' => $priceType, 'Selection' => $params[0]['Selection']);
+				'PriceType' => $priceType, 'Selection' => $params['Selection']);
 	
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramsList, "$secretKey");
