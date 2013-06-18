@@ -138,7 +138,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 		//TODO: Cater for multibets
 
-		$params = $params['request'];
+		$params = $this->send_bet['request'];
 		
 		// Build up bet array for JSON
 		$paramsList = array('ReferenceID' => $params[0]['eventId'], 'ClientID' => $userID,
