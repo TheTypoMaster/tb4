@@ -282,7 +282,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					//'optionId' => "0",
 					//'handicap' => "1",
 					'betType' => "$bet_type_external",
-					'flexi' => $bet->isFlexiBet()
+					'flexi' => 1
 					//'exoticType' => $bet_type_string
 					
 					/*
