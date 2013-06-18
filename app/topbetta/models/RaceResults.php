@@ -60,11 +60,11 @@ class RaceResult extends \Eloquent {
 					
 					if ($result['win_dividend']) {
 							
-						$positions[$count] = array('position' => $result['position'], 'number' => $result['number'], 'name' => $result['name'], 'win_dividend' => $this->toCents($result['win_dividend']), 'place_dividend' => $this->toCents($result['place_dividend']));
+						$positions[$count] = array('position' => $result['position'], 'number' => $result['number'], 'name' => $result['name'], 'win_dividend' => (float)number_format($result['win_dividend'], 2), 'place_dividend' => (float)number_format($result['place_dividend'], 2));
 						
 					} else {
 
-						$positions[$count] = array('position' => $result['position'], 'number' => $result['number'], 'name' => $result['name'], 'place_dividend' => $this->toCents($result['place_dividend']));
+						$positions[$count] = array('position' => $result['position'], 'number' => $result['number'], 'name' => $result['name'], 'place_dividend' => (float)number_format($result['place_dividend'], 2));
 					
 					}					
 					
@@ -81,7 +81,7 @@ class RaceResult extends \Eloquent {
 							
 						foreach ($exotic_result as $combos => $dividend) {
 								
-							$exotics[] = array($type => array("selections" => $combos, "dividend" => (int)$dividend));	
+							$exotics[] = array($type => array("selections" => $combos, "dividend" => (float)$dividend));	
 							
 						}
 						

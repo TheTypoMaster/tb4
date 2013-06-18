@@ -35,7 +35,7 @@ class FrontMeetingsController extends \BaseController {
 
 				$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);				
 
-				$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'weather' => $event -> weather, 'track' => $event -> track, 'races' => $races);
+				$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'weather' => ucwords($event -> weather), 'track' => ucwords($event -> track), 'races' => $races);
 				$eachMeeting[] = $meetingAndRaces;
 			}
 
