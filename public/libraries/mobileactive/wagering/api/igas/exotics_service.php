@@ -230,7 +230,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			'quinella' => 'Q',
 			'exacta' => 'E',
 			'trifecta' => 'T',
-			'firstfour' => 'FF',
+			'firstfour' => 'F',
 			'quadrella' => 'QD'
 			);
 			
