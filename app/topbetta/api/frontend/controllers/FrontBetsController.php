@@ -83,7 +83,7 @@ class FrontBetsController extends \BaseController {
 		//TODO: **** WHAT ARE WE DOING WITH BET_PRODUCT (TOTE)?
 
 		// change these rules as required
-		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer');
+		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer', 'flexi' => 'required');
 		$input = Input::json() -> all();
 
 		$validator = \Validator::make($input, $rules);
@@ -169,7 +169,7 @@ class FrontBetsController extends \BaseController {
 			
 					if ($input['source'] == 'racing') {
 							
-						$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);	
+						$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id);	
 						
 						$bet = $l -> query('saveBet', $betData);
 							
