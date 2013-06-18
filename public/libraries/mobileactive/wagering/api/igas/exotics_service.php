@@ -143,7 +143,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		
 		// Build up bet array for JSON
 		$paramsList = array('ReferenceID' => $betParams['eventId'], 'ClientID' => $userID,
-				'Amount' => $betParams['amount'], 'Flexi' => $betParams['flexi'], 'MeetingId' => $meetingID, 
+				'Amount' => $betParams['betAmount'], 'Flexi' => $betParams['flexi'], 'MeetingId' => $meetingID, 
 				'RaceNo' => $raceNO, 'BetType' => $betParams['betType'], 
 				'PriceType' => $priceType, 'Selection' => $betParams['Selection']);
 	
@@ -278,7 +278,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 					
 					
 					'eventId' => $this->custom_id,
-					'betAmount' => ($bet->amount/100),
+					'betAmount' => $bet->amount,
 					//'optionId' => "0",
 					//'handicap' => "1",
 					'betType' => "$bet_type_external",
