@@ -136,6 +136,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		
 		// Build up the bet parameters
 		$params = $this->send_bet;
+		$bp = print_r($params,true);
+		$this->setLogger("* exotics_service: placeRacebetList: bet params:$bp");
 				
 		// Build up bet array for JSON
 		$paramsList = array('ReferenceID' => $params['eventId'], 'ClientID' => $userID,
