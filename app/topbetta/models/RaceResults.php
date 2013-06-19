@@ -23,10 +23,10 @@ class RaceResult extends \Eloquent {
 
 			if (count($result_list) > 0) {
 				$exoticList = array(
-					'trifecta_dividend' => $result_list[0]->trifecta_dividend, 
-					'firstfour_dividend' => $result_list[0]->firstfour_dividend, 
-					'quinella_dividend' => $result_list[0]->quinella_dividend, 
-					'exacta_dividend' => $result_list[0]->exacta_dividend);
+					'trifecta' => $result_list[0]->trifecta_dividend, 
+					'firstfour' => $result_list[0]->firstfour_dividend, 
+					'quinella' => $result_list[0]->quinella_dividend, 
+					'exacta' => $result_list[0]->exacta_dividend);
 	
 			} else {
 				
@@ -81,7 +81,8 @@ class RaceResult extends \Eloquent {
 							
 						foreach ($exotic_result as $combos => $dividend) {
 								
-							$exotics[] = array($type => array("selections" => $combos, "dividend" => (float)$dividend));	
+							//$exotics[] = array($type => array("selections" => $combos, "dividend" => (float)$dividend));
+							$exotics[] = array("name" => $type, "selections" => $combos, "dividend" => (float)$dividend);	
 							
 						}
 						
