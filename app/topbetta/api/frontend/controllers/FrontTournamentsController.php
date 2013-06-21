@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Input;
 
 class FrontTournamentsController extends \BaseController {
 
+	protected $racingMap = array('r' => 'galloping', 'g' => 'greyhounds', 'h' => 'harness');
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -17,6 +19,17 @@ class FrontTournamentsController extends \BaseController {
 
 		//sub type e.g. for racing: greyhounds, for sports: nrl
 		$sub_type = Input::get('sub_type', null);
+		
+		//remap our subtype to the legacy keyword
+		if ($sub_type) {
+			
+			if (array_key_exists($sub_type, $this -> racingMap)) {
+				
+				$sub_type = $this -> racingMap[$sub_type];
+				
+			}
+			
+		}
 
 		//do we want a filtered list for the user joined tournaments only
 		$entered = Input::get('entered', false);
@@ -109,9 +122,22 @@ class FrontTournamentsController extends \BaseController {
 
 						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_date' => $startDatetime);
 					}
+					
+					//handle sub_type for racing
+					$flipRacingMap = array_flip($this -> racingMap);
+					
+					if (array_key_exists($tournament -> sport_name, $flipRacingMap)) {
+													
+						$sub_type_name = $flipRacingMap[$tournament -> sport_name];
+						
+					} else {
+						
+						$sub_type_name = $tournament -> sport_name;
+						
+					}
 
 				}
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'num_tournaments' => $numTournaments, 'sub_type' => $tournament -> sport_name, 'tournaments' => $tourns);
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournaments' => $tourns);
 			}
 		}
 
