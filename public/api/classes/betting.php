@@ -1714,7 +1714,9 @@ class Api_Betting extends JController {
 
 					return OutputHelper::json(500, array('error_msg' => 'Cannot place this bet' ));
 				}
-					
+				
+				file_put_contents('/tmp/saveExoticsBet', "* Total Bet Amount:". $wagering_bet->getTotalBetAmount() . "\n", FILE_APPEND | LOCK_EX);
+				
 				$bet->id = $bet_id;
 					
 				$bet_selection_list = $wagering_bet->getBetSelectionList();
