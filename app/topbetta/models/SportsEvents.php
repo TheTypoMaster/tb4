@@ -2,6 +2,9 @@
 namespace TopBetta;
 
 class SportsEvents extends \Eloquent {
+	
+	protected $table = 'tbdb_event_group_event';	
+	
 	protected $guarded = array();
 
 	public static $rules = array();
