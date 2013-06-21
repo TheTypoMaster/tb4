@@ -44,6 +44,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 		// recent tourn tickets
 		$recentTicketList = $ticketModel -> getTournamentTicketRecentListByUserID(\Auth::user() -> id, time() - 48 * 60 * 60, time(), 1, 't.end_date DESC, t.start_date DESC');
+		//$recentTicketList = $ticketModel -> getTournamentTicketRecentListByUserID(\Auth::user() -> id, null, time(), 1, 't.end_date DESC, t.start_date DESC');
 
 		$recentTickets = array();
 
@@ -52,14 +53,34 @@ class FrontTournamentsTicketsController extends \BaseController {
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($activeTicket -> tournament_id, \Auth::user() -> id);
 			
 			$tournamentModel = new \TopBetta\Tournament;
-			$tournament = $tournamentModel -> find($activeTicket -> tournament_id);	
+			$tournament = $tournamentModel -> find($activeTicket -> tournament_id);
 			
 			$leaderboardModel = new \TopBetta\TournamentLeaderboard;		
 			$leaderboardDetails = $leaderboardModel->getLeaderBoardRankByUserAndTournament($userId, $tournament);
 			
-			$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;				
+			
+			
+			$prize = 0;
+			if (!$recentTicket -> cancelled_flag && $recentTicket -> result_transaction_id) {
+				if ($recentTicket -> jackpot_flag) {
 
-			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false);
+					$transactionRecord = \TopBetta\FreeCreditBalance::find($recentTicket -> result_transaction_id);
+					
+				} else {
+
+					$transactionRecord = \TopBetta\AccountBalance::find($recentTicket -> result_transaction_id);
+				}
+
+				if ($transactionRecord && $transactionRecord -> amount > 0) {
+						
+					$prize = $transactionRecord -> amount;
+				}
+			}						
+			
+			
+			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;				
+
+			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false);
 
 		}
 

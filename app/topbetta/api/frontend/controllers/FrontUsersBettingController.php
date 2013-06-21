@@ -17,6 +17,10 @@ class FrontUsersBettingController extends \BaseController {
 	 */
 	public function index()
 	{
+		$limit = \Input::get('per_page', 25);
+		$page = \Input::get('page', 1);
+		
+		$offset = $limit * ($page - 1);	
 			
 		$filter = array(
 			'user_id'		=> \Auth::user() -> id,
@@ -27,7 +31,7 @@ class FrontUsersBettingController extends \BaseController {
 		
 		$betModel = new \TopBetta\Bet;
 		
-		return $betModel->getBetFilterList($filter, 'b.id DESC', 'ASC');
+		return $betModel->getBetFilterList($filter, 'b.id DESC', 'ASC', $limit, $offset);
 			
 	}
 

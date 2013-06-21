@@ -75,6 +75,8 @@ class RaceResult extends \Eloquent {
 				}
 				
 				// exotics
+				$exotics = array();
+				
 				foreach ($result_display_list['exotic'] as $type => $exotic_result) {
 						
 					if (!empty($exotic_result) && is_array($exotic_result)) {

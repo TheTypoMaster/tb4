@@ -115,7 +115,7 @@ class Tournament extends \Eloquent {
 					$query .= ' AND LOWER(s.name) IN ("galloping", "harness", "greyhounds")';
 					break;
 			default:
-				return array();
+				//return array();
 			}
 		}
 

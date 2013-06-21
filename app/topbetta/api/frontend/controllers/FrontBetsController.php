@@ -51,13 +51,50 @@ class FrontBetsController extends \BaseController {
 			}
 
 		} else if ($type == 'tournament') {
+				
+			//lookup this users ticket id for this tournament id	
+			$tournamentId = Input::get('tournament_id', null);
+			
+			if (!$tournamentId) {
+				return array("success" => false, "error" => \Lang::get('tournaments.not_found', array('tournamentId', $tournamentId)));	
+			}
+			
+			// \Auth::user() -> id
+			// fetch the event_id & ticket_id based on the tournament_id
+			$tournament = \TopBetta\Tournament::find($tournamentId);
+			$eventId = $tournament->event_group_id;
+			
+			$ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $tournamentId) -> where('user_id', '=', \Auth::user() -> id) -> get();			
+			//dd($ticket);
+			if (!$ticket) {
+				
+				return array("success" => false, "error" => \Lang::get('tournaments.ticket_not_found'));	
+				
+			} else {
+				
+				$ticketId = ($ticket) ? $ticket -> id : null;
+				
+			}
+			
+			$betModel = new \TopBetta\Bet;
+
+			// active tournament bets
+			$activeTournamentBetList = $betModel -> getTournamentBetListByEventIDAndTicketID($eventId, $ticketId);
 
 			$activeBets = array();
+
+			foreach ($activeTournamentBetList as $activeTournamentBet) {
+
+				$betGroup = ($activeTournamentBet -> origin == 'betting') ? 'racing' : $activeTournamentBet -> origin;
+
+				$activeTournamentBets[] = array('id' => (int)$activeTournamentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeTournamentBet -> freebet) ? true : false, 'type' => (int)$activeTournamentBet -> bet_type, 'result_status' => $activeTournamentBet -> result_status, 'event_id' => (int)$activeTournamentBet -> event_id, 'event_name' => $activeTournamentBet -> event_name, 'event_number' => (int)$activeTournamentBet -> event_number, 'selection_id' => (int)$activeTournamentBet -> selection_id, 'selection_name' => $activeTournamentBet -> selection_name, 'selection_number' => (int)$activeTournamentBet -> selection_number, 'bet_total' => (int)$activeTournamentBet -> bet_total, 'created_date' => $activeTournamentBet -> created_date, 'invoice_id' => $activeTournamentBet -> invoice_id);
+
+			}
 			$recentBets = array();
 
 		} else {
 
-			return array("success" => false, "error" => "Invalid Type");
+			return array("success" => false, "error" => \Lang::get('bets.invalid_type'));
 
 		}
 
@@ -142,7 +179,7 @@ class FrontBetsController extends \BaseController {
 					
 				$legacyData = $betModel -> getLegacyBetData($input['selections']['first'][0]);
 					
-				$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);	
+				$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id);	
 				
 				$bet = $l -> query('saveRacingBet', $betData);
 				
