@@ -2,7 +2,7 @@
 
 class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentTicket' =>'post');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'getLoginHash' => 'get', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post');
 
 	/*
 	 * @param string $method
@@ -82,6 +82,17 @@ class LegacyApiHelper {
 					//2. save tournament bet
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('saveTournamentBet', $this -> allowed_methods['saveTournamentBet'], $payload);
+
+					break;	
+
+				case 'saveTournamentSportsBet' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save tournament bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('saveTournamentSportsBet', $this -> allowed_methods['saveTournamentSportsBet'], $payload);
 
 					break;	
 

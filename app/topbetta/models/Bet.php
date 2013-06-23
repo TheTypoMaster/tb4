@@ -58,7 +58,7 @@ class Bet extends \Eloquent {
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
-	      		bat.amount AS bet_total, b.created_date, b.invoice_id
+	      		bat.amount AS bet_total, b.created_date, b.invoice_id, b.bet_transaction_id
 			FROM
 				tbdb_bet AS b
 			INNER JOIN
@@ -127,7 +127,7 @@ class Bet extends \Eloquent {
 	      		s.id AS selection_id,
 	      		bat.amount AS bet_total,
 	      		rat.amount AS win_amount,
-	      		fat.amount AS refund_amount, b.created_date, b.invoice_id
+	      		fat.amount AS refund_amount, b.created_date, b.invoice_id, b.bet_transaction_id
 			FROM
 				tbdb_bet AS b
 			INNER JOIN

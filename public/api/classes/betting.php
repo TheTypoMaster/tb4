@@ -2532,6 +2532,286 @@ class Api_Betting extends JController {
 	}
 
 	/**
+	 * Validate and save a bet tournament sports bet selection
+	 *
+	 * @return void
+	 */
+	public function saveTournamentSportsBet()
+	{
+		$user =& JFactory::getUser();
+
+		// begin the painstaking task of validating a bet
+		$id			= JRequest::getVar('id', null);
+		$match_id	= JRequest::getVar('match_id', null);
+		$market_id	= JRequest::getVar('market_id', null);
+		$bets		= JRequest::getVar('bets', array());
+
+		//$session				=& JFactory::getSession();
+		//$pending_bet_list		= $session->get('pending_bet_list', array(), 'sports_tournaments');
+		//$market_timestamp_list	= $session->get('market_timestamp_list', array(), 'sports_tournaments');
+		//$bet_ticket_timestamp	= $session->get('bet_ticket_timestamp', array(), 'sports_tournaments');
+
+		if(is_null($id)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('No tournament specified')));
+		}
+
+		if(is_null($match_id)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('No match specified')));
+		}
+
+		$component_list = array('betting', 'tournament', 'tournament_dollars', 'topbetta_user', 'payment');
+		foreach ($component_list as $component) {
+			$path = JPATH_SITE . DS . 'components' . DS . 'com_' . $component . DS . 'models';
+			$this -> addModelPath($path);
+		}
+
+		$tournament_model	=& $this->getModel('TournamentSportEvent', 'TournamentModel');
+		$tournament			= $tournament_model->getTournamentSportsByTournamentID($id);
+
+		if(is_null($tournament)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Tournament not found')));
+		}
+
+		$ticket_model	=& $this->getModel('TournamentTicket', 'TournamentModel');
+		$ticket			= $ticket_model->getTournamentTicketByUserAndTournamentID($user->id, $tournament->id);
+
+		if(is_null($ticket)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('You do not have a ticket for the selected tournament')));
+		}
+		
+		$match_model	=& $this->getModel('Event', 'TournamentModel');
+		$match			= $match_model->getEvent($match_id);
+		$match->tournament_match_id = $match->id;
+
+		if(empty($match)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Match was not found')));
+		}
+
+		if(strtotime($match->start_date) < time()) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
+		}
+
+		if(strtotime($tournament->betting_closed_date) < time()) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Betting is already closed')));
+		}
+
+		$market_model	=& $this->getModel('Market', 'TournamentModel');
+
+		$pending_bet_list[$id][$market_id] = array();
+		foreach($bets as $offer_id => $value) {
+			$pending_bet_list[$id][$market_id][$offer_id] = $value;
+		}
+		
+		//TODO: not sure if this is still needed
+		$market_timestamp_list[$market_id] = time();
+		$bet_ticket_timestamp[$id] = time();
+
+		/*
+		if(!$save) {
+			if(is_null($market_id)) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('No market specified')));
+			}
+
+			$market_list	= $market_model->getMarketListByEventIDAndEventGroupID($match->id, $tournament->event_group_id);
+
+			if(!isset($market_list[$market_id])) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('Market was not found')));
+			}
+			$market = $market_model->getMarket($market_id);
+
+			$pending_bet_list[$id][$market_id] = array();
+			foreach($bets as $offer_id => $value) {
+				$pending_bet_list[$id][$market_id][$offer_id] = $value;
+			}
+			$session->set('pending_bet_list', $pending_bet_list, 'sports_tournaments');
+
+			if(empty($pending_bet_list)) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('No offers specified')));
+			}
+		}
+		*/ 
+
+		$selection_model	=& $this->getModel('Selection', 'TournamentModel');
+		$bet_model			=& $this->getModel('TournamentBet', 'TournamentModel');
+		$bet_list			= array();
+		$bet_total			= 0;
+
+		$offer_updated_list = array();
+		$odds_updated		= false;
+
+		if(isset($pending_bet_list[$tournament->id]) && is_array($pending_bet_list[$tournament->id])) {
+			foreach($pending_bet_list[$tournament->id] as $tournament_market_id => $market_offers) {
+				$updated_list	= $selection_model->getUpdatedSelectionListByMarketID($tournament_market_id, $market_timestamp_list[$tournament_market_id]);
+				$market			= $market_model->getMarket($tournament_market_id);
+
+				if(empty($updated_list) && isset($bet_ticket_timestamp[$tournament->id])) {
+					$updated_list = $selection_model->getUpdatedSelectionListByMarketID($tournament_market_id, $bet_ticket_timestamp[$tournament->id]);
+				}
+
+				if(!empty($updated_list)) {
+					$offer_updated_list[$tournament_market_id] = $updated_list;
+					$odds_updated = true;
+				}
+
+				if ($tournament->bet_limit_flag) {
+					$offer_count = count($selection_model->getSelectionListByMarketID($tournament_market_id));
+					if(isset($market_model->offer_market_limit[$offer_count])) {
+						$market_bet_limit = $market_model->offer_market_limit[$offer_count];
+					} else {
+						$market_bet_limit = $market_model->offer_market_limit[9];
+					}
+					
+					if('unlimited' == $market_bet_limit) {
+						$market_bet_limit = $tournament->start_currency;
+					}
+				}
+	
+				foreach($market_offers as $offer_id => $value) {
+					$offer						= $selection_model->getSelectionDetails($offer_id);
+					$pending_offer_bet_value	= 0;
+
+					if($offer->market_id == $tournament_market_id && $value > 0) {
+						$bet_value					= $value * 100;
+						$bet_list[$offer_id]		= $bet_value;
+						$bet_total					+= $bet_value;
+						$pending_offer_bet_value	+= $bet_value;
+					}
+					
+					if ($tournament->bet_limit_flag) {
+						$offer_betted_value = $bet_model->getTournamentBetTotalsBySelectionIDAndTicketID($offer_id, $ticket->id);
+	
+						$offer_bet_value_credit = $market_bet_limit - $offer_betted_value;
+	
+						if($offer_bet_value_credit < $pending_offer_bet_value) {
+							$maximum_bet = number_format($offer_bet_value_credit / 100, 2);
+							return OutputHelper::json(500, array('error_msg' => JText::_('Your bet for ' . $offer->name . ' (' . $offer->market_type . ') has exceeded the bet limit. You can only bet ' . $maximum_bet)));
+						}
+					}
+				}
+			}
+		}
+
+		if(empty($bet_list)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Please enter at least a bet.')));
+		}
+		//odds has been updated, refresh the bet form
+		if($odds_updated) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Odds have updated.')));	
+			//$this->betRefresh();
+			//return;
+		}
+
+		$current_currency = $ticket_model->getAvailableTicketCurrency($tournament->id, $user->id);
+
+		if($current_currency < $bet_total) {
+			$required = number_format(($bet_total - $current_currency) / 100, 2);
+			return OutputHelper::json(500, array('error_msg' => JText::_('You do not have enough bucks to place that bet (' . $required . ' more needed)')));
+		}
+
+		if(!$tournament->reinvest_winnings_flag) {
+			$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
+			$turnover = $leaderboard_model->getTurnedOverByUserAndTournamentID($user->id, $tournament->id);
+
+			if($turnover + $bet_total > $tournament->start_currency) {
+				$maximum_total_bet = number_format($tournament->start_currency / 100, 2);
+				return OutputHelper::json(500, array('error_msg' => JText::_('Your total bets cannot be more than ' . $maximum_total_bet)));
+			}
+		}
+
+		// validation complete, so save bet
+		$this->storeTournamentSportsBet($tournament,$ticket, $match, $bet_list);
+	}
+
+	/**
+	 * Store a bet selection record
+	 *
+	 * @param object  $tournament
+	 * @param object  $ticket
+	 * @param object  $match
+	 * @param array   $bet_list
+	 * @return void
+	 */
+	private function storeTournamentSportsBet($tournament, $ticket, $match, $bet_list)
+	{
+		$user 					=& JFactory::getUser();
+		$bet_model				=& $this->getModel('TournamentBet', 'TournamentModel');
+		$bet_selection_model	=& $this->getModel('TournamentBetSelection', 'TournamentModel');
+		$bet_status_model		=& $this->getModel('BetResultStatus', 'BettingModel');
+		$offer_model			=& $this->getModel('Selection', 'TournamentModel');
+		$bet_product_model		=& $this->getModel('BetProduct', 'BettingModel');
+		$bet_type_model			=& $this->getModel('BetType', 'BettingModel');
+		$bet_total				= 0;
+		$error					= false;
+		
+		$unitab					= $bet_product_model->getBetProductByKeyword('unitab');
+		$win_bet_type			= $bet_type_model->getBetTypeByName('win');
+		$bet_status_unresulted	= $bet_status_model->getBetResultStatusByName('unresulted');
+		
+		foreach($bet_list as $offer_id => $bet_value) {
+
+			$offer	= $offer_model->getSelectionDetails($offer_id);
+			$odds	= $offer->win_odds;
+			if(!empty($offer->override_odds) && $offer->override_odds < $offer->win_odds) {
+				$odds = $offer->override_odds;
+			}
+			
+			$bet = array(
+				'id'					=> null,
+				'tournament_ticket_id'	=> $ticket->id,
+				'bet_result_status_id'	=> $bet_status_unresulted->id,
+				'bet_type_id'			=> $win_bet_type->id,
+				'bet_product_id'		=> $unitab->id,
+				'bet_amount'			=> $bet_value,
+				'win_amount'			=> 0,
+				'fixed_odds'			=> $odds,
+				'flexi_flag'			=> 0,
+				'resulted_flag'			=> 0,
+			);
+
+			$id	= $bet_model->store($bet);
+			$bet_total += $bet_value;
+			
+			$bet_selection = array(
+				'id'				=> null,
+				'selection_id'		=> $offer->id,
+				'tournament_bet_id'	=> $id,
+				'position'			=> null
+			);
+			$bet_selection_model->store($bet_selection);
+
+			$betting_closed_date = $match->start_date;
+			if(!empty($tournament->betting_closed_date) && ($match->start_date > $tournament->betting_closed_date)) {
+				$betting_closed_date = $tournament->betting_closed_date;
+			}
+
+			if(!$this->confirmAcceptance($id, $user->id, 'tournamentsportbet', strtotime($betting_closed_date))) {
+				$error					= true;
+				$bet_status_refunded	= $bet_status_model->getBetResultStatusByName('fully-refunded');
+
+				$bet['id']					= $id;
+				$bet['resulted_flag']		= 1;
+				$bet['win_amount']			= $bet_value;
+				$bet['bet_result_status_id']	= $bet_status_refunded->id;
+
+				$bet_model->store($bet);
+				$bet_total -= $bet_value;
+			}
+		}
+
+		if($bet_total > 0) {
+			$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
+			$leaderboard_model->addTurnedOverByUserAndTournamentID($user->id, $ticket->tournament_id, $bet_total);
+		}
+
+		if($error) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('One or more bets could not be saved')));
+		} else {
+			return OutputHelper::json(200, array('success' => 'Bets have been registered'));
+		}
+	}
+
+
+	/**
 	 * Store a ticket purchase in the database
 	 *
 	 * @param object $tournament

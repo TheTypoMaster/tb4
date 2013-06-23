@@ -25,14 +25,26 @@ class FrontBetsController extends \BaseController {
 
 			// active live bets
 			$activeBetList = $betModel -> getActiveLiveBetsForUserId(\Auth::user() -> id);
-
 			$activeBets = array();
 
 			foreach ($activeBetList as $activeBet) {
 
 				$betGroup = ($activeBet -> origin == 'betting') ? 'racing' : $activeBet -> origin;
+				
+				//exotic bet selections
+				$exoticSelections = false;
+				if ($activeBet -> bet_type > 3){
+					
+					$exoticSelections = \TopBetta\BetSelection::getExoticSelectionsForBetId($activeBet -> id);
+					$exoticBetTransaction = \TopBetta\AccountBalance::find($activeBet -> bet_transaction_id);
+					
+					$exoticAmount = $exoticBetTransaction -> amount;
+					
+				}
+				
 
-				$activeBets[] = array('id' => (int)$activeBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeBet -> freebet) ? true : false, 'type' => (int)$activeBet -> bet_type, 'result_status' => $activeBet -> result_status, 'event_id' => (int)$activeBet -> event_id, 'event_name' => $activeBet -> event_name, 'event_number' => (int)$activeBet -> event_number, 'selection_id' => (int)$activeBet -> selection_id, 'selection_name' => $activeBet -> selection_name, 'selection_number' => (int)$activeBet -> selection_number, 'bet_total' => (int)$activeBet -> bet_total, 'created_date' => $activeBet -> created_date, 'invoice_id' => $activeBet -> invoice_id);
+				$activeBets[] = array('id' => (int)$activeBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeBet -> freebet) ? true : false, 'type' => (int)$activeBet -> bet_type, 'result_status' => $activeBet -> result_status, 'event_id' => (int)$activeBet -> event_id, 'event_name' => $activeBet -> event_name, 'event_number' => (int)$activeBet -> event_number, 
+				($exoticSelections) ? 'exotic_selection_string' : 'selection_id' => ($exoticSelections) ? $exoticSelections : (int)$activeBet -> selection_id, 'selection_name' => $activeBet -> selection_name, 'selection_number' => (int)$activeBet -> selection_number, 'bet_total' => ($exoticSelections) ? $exoticAmount : (int)$activeBet -> bet_total, 'created_date' => $activeBet -> created_date, 'invoice_id' => $activeBet -> invoice_id);
 
 			}
 
@@ -45,8 +57,20 @@ class FrontBetsController extends \BaseController {
 			foreach ($recentBetList as $recentBet) {
 
 				$betGroup = ($recentBet -> origin == 'betting') ? 'racing' : $recentBet -> origin;
+				
+				//exotic bet selections
+				$exoticSelections = false;
+				if ($recentBet -> bet_type > 3){
+					
+					$exoticSelections = \TopBetta\BetSelection::getExoticSelectionsForBetId($recentBet -> id);
+					$exoticBetTransaction = \TopBetta\AccountBalance::find($recentBet -> bet_transaction_id);
+					
+					$exoticAmount = $exoticBetTransaction -> amount;					
+					
+				}				
 
-				$recentBets[] = array('id' => (int)$recentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($recentBet -> freebet) ? true : false, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 'selection_id' => (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_total' => (int)$recentBet -> bet_total, 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date, 'invoice_id' => $recentBet -> invoice_id);
+				$recentBets[] = array('id' => (int)$recentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($recentBet -> freebet) ? true : false, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 
+				($exoticSelections) ? 'exotic_selection_string' : 'selection_id' => ($exoticSelections) ? $exoticSelections : (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_total' => ($exoticSelections) ? $exoticAmount : (int)$recentBet -> bet_total, 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date, 'invoice_id' => $recentBet -> invoice_id);
 
 			}
 
@@ -116,12 +140,20 @@ class FrontBetsController extends \BaseController {
 	 * @return Response
 	 */
 	public function store() {
-
-		//TODO: **** WHAT ARE WE DOING WITH BET_PRODUCT (TOTE)?
+			
+		$input = Input::json() -> all();	
 
 		// change these rules as required
 		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer', 'flexi' => 'required');
-		$input = Input::json() -> all();
+		
+		if ($input['source'] == 'tournamentsports') {
+				
+			$extRules = array('tournament_id' => 'required|integer', 'match_id' => 'required|integer', 'market_id' => 'required|integer', 'bets' => 'required');
+			
+			$rules = array_merge($rules, $extRules);
+			
+		}	
+		
 
 		$validator = \Validator::make($input, $rules);
 
@@ -196,32 +228,68 @@ class FrontBetsController extends \BaseController {
 				}				
 							
 		} else {
+				
+			if ($input['source'] == 'racing' OR $input['source'] == 'tournamentracing') {
+				
+				// racing	
 		
-			foreach ($input['selections'] as $selection) {
-	
-				// assemble bet data such as meeting_id, race_id etc
-				$legacyData = $betModel -> getLegacyBetData($selection);
-	
-				if (count($legacyData) > 0) {				
-			
-					if ($input['source'] == 'racing') {
+				foreach ($input['selections'] as $selection) {
+		
+					// assemble bet data such as meeting_id, race_id etc
+					$legacyData = $betModel -> getLegacyBetData($selection);
+		
+					if (count($legacyData) > 0) {				
+				
+						if ($input['source'] == 'racing') {
+								
+							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id);	
 							
-						$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id);	
+							$bet = $l -> query('saveBet', $betData);
+								
+						} elseif ($input['source'] == 'tournamentracing') {
+								
+							$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+							$bet = $l -> query('saveTournamentBet', $betData);
+							
+						} else {
+								
+							//invalid source
+							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.invalid_source'));
+							$errors++;					
+							
+						}
 						
-						$bet = $l -> query('saveBet', $betData);
-							
-					} elseif ($input['source'] == 'tournament') {
-							
-						$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
-						$bet = $l -> query('saveTournamentBet', $betData);
-						
+						//bet has been placed by now, deal with messages and errors						
+						if ($bet['status'] == 200) {
+				
+							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
+				
+						} else {
+								
+							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
+							$errors++;
+				
+						}				
+		
 					} else {
-							
-						//invalid source
-						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.invalid_source'));
-						$errors++;					
-						
+		
+						$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+						$errors++;
+		
 					}
+		
+				}
+
+			} else {
+					
+				//sports	
+				
+				if ($input['source'] == 'tournamentsports') {
+							
+					//bets = array('offer_id' => value);
+					
+					$betData = array('id' => $input['tournament_id'], 'match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);
+					$bet = $l -> query('saveTournamentSportsBet', $betData);
 					
 					//bet has been placed by now, deal with messages and errors						
 					if ($bet['status'] == 200) {
@@ -229,19 +297,14 @@ class FrontBetsController extends \BaseController {
 						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
 			
 					} else {
-			
-						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
+							
+						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
 						$errors++;
 			
-					}				
-	
-				} else {
-	
-					$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.selection_not_found'));
-					$errors++;
-	
-				}
-	
+					}						
+							
+				}							
+				
 			}
 		}
 
