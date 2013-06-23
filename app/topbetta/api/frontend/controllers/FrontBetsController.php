@@ -152,6 +152,12 @@ class FrontBetsController extends \BaseController {
 			
 			$rules = array_merge($rules, $extRules);
 			
+		} elseif ($input['source'] == 'sports') {
+
+			$extRules = array('match_id' => 'required|integer', 'market_id' => 'required|integer', 'bets' => 'required');
+			
+			$rules = array_merge($rules, $extRules);
+			
 		}	
 		
 
@@ -284,17 +290,26 @@ class FrontBetsController extends \BaseController {
 					
 				//sports	
 				
-				if ($input['source'] == 'tournamentsports') {
+				if ($input['source'] == 'tournamentsports' OR $input['source'] == 'sports') {
 							
 					//bets = array('offer_id' => value);
-					
-					$betData = array('id' => $input['tournament_id'], 'match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);
-					$bet = $l -> query('saveTournamentSportsBet', $betData);
+										
+					if ($input['source'] == 'sports') {
+							
+						$betData = array('match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);
+						$bet = $l -> query('saveSportBet', $betData);
+						
+					} else {
+							
+						$betData = array('id' => $input['tournament_id'], 'match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);						
+						$bet = $l -> query('saveTournamentSportsBet', $betData);	
+						
+					}					
 					
 					//bet has been placed by now, deal with messages and errors						
 					if ($bet['status'] == 200) {
 			
-						$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
+						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
 			
 					} else {
 							

@@ -98,7 +98,11 @@ switch($method) {
 		$save_bet = new Api_Betting();
 		echo $save_bet -> saveRacingBet();
 		break;
-	
+
+	case 'saveSportBet' :
+		$save_sportsbet = new Api_Betting();
+		echo $save_sportsbet -> saveSportBet();
+		break;	
 
 	/* TOURNAMENTS */
 	/*
