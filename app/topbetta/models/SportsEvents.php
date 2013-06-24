@@ -12,7 +12,7 @@ class SportsEvents extends \Eloquent {
 	public function getEvents($limit = 0, $cid = 0, $date = NULL) {
 
 		//get the comp id if not set
-		$compQuery = ($cid) ? ' AND ege.event_group_id = ' . $cid : '';
+		$compQuery = ($cid != 0) ? ' AND ege.event_group_id = "' . $cid . '"' : '';
 
 		//add limit if set
 		$limitQuery = ($limit) ? ' LIMIT ' . $limit : '';
