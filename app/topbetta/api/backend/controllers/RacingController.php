@@ -345,7 +345,7 @@ class RacingController extends \BaseController {
 									
 								//check if race exists in DB
 								$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
-									
+									 
 								//TODO: add error output to a log
 								if($raceExists){
 									

@@ -4,24 +4,28 @@ use TopBetta;
 
 // Class to generate or validate the DATA key for iGAS
 
-class DataKey {
+class IgasDataKey {
 	
-	public function getDataKey($params, $secretKey){
+	public function getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey){
 		// Get input object params
-		
+	
+		$paramListBetData = '';
+		$paramList = $userName . $userPassword . $companyID;
+		foreach($paramslist as $param){
+			$paramListBetData .= $param;
+		}
 		// join params together
 		// concatinate with secret key
-		$paramsPlusSecret = $joinedParams . $secretKey;
+		$paramsPlusSecret = $paramList . $paramListBetData . $secretKey;
 		// generate HASH
 		$hashedParams = md5($paramsPlusSecret);
 		
 		return $hashedParams;
-		
-		// append generated sequence to function call request
-		
-		
-	}
 	
+		// append generated sequence to function call request
+	
+	
+	}
 	public function checkDataKey(){
 		
 	}

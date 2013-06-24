@@ -15,8 +15,10 @@
 			"app/topbetta/api/backend/controllers",
 			"app/topbetta/api/backend/models",
 			"app/topbetta/api/frontend/controllers",
-			"app/topbetta/api/frontend/models",			
+			"app/topbetta/api/frontend/models",		
+			"app/topbetta/api/admin/controllers",	
 			"app/topbetta/helpers"
+			
 		]
 	},
 	"scripts": {
