@@ -502,6 +502,8 @@ class RacingController extends \BaseController {
 								// grab the race type code
 								$raceTypeCode = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 
+								$saveRecord = 0;
+								
 								// Processs win and place bets
 								if($betType == 'W' || $betType == 'P'){
 									// check if selection exists in the DB
@@ -510,7 +512,7 @@ class RacingController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result. MID:$meetingId, RN:$raceNo, SEL:$selection",1);
 										// Check if we have results already
 										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
-										$saveRecord = 0;
+										
 										switch($raceTypeCode){
 											case "R":
 												if($priceType =="TOP"){
