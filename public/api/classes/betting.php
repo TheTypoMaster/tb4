@@ -2671,7 +2671,7 @@ class Api_Betting extends JController {
 					$pending_offer_bet_value	= 0;
 
 					if($offer->market_id == $tournament_market_id && $value > 0) {
-						$bet_value					= $value * 100;
+						$bet_value					= $value;
 						$bet_list[$offer_id]		= $bet_value;
 						$bet_total					+= $bet_value;
 						$pending_offer_bet_value	+= $bet_value;
@@ -2683,7 +2683,7 @@ class Api_Betting extends JController {
 						$offer_bet_value_credit = $market_bet_limit - $offer_betted_value;
 	
 						if($offer_bet_value_credit < $pending_offer_bet_value) {
-							$maximum_bet = number_format($offer_bet_value_credit / 100, 2);
+							$maximum_bet = number_format($offer_bet_value_credit, 2);
 							return OutputHelper::json(500, array('error_msg' => JText::_('Your bet for ' . $offer->name . ' (' . $offer->market_type . ') has exceeded the bet limit. You can only bet ' . $maximum_bet)));
 						}
 					}
@@ -2719,7 +2719,13 @@ class Api_Betting extends JController {
 		}
 
 		// validation complete, so save bet
-		$this->storeTournamentSportsBet($tournament,$ticket, $match, $bet_list);
+		$error = $this->storeTournamentSportsBet($tournament,$ticket, $match, $bet_list);
+		
+		if($error) {
+			return OutputHelper::json(500, array('error_msg' => JText::_('One or more bets could not be saved')));
+		} else {
+			return OutputHelper::json(200, array('success' => 'Bets have been registered'));
+		}		
 	}
 
 	/**
@@ -2784,6 +2790,8 @@ class Api_Betting extends JController {
 				$betting_closed_date = $tournament->betting_closed_date;
 			}
 
+			//TODO: do we really need to send tournament bets to NI?
+			/*
 			if(!$this->confirmAcceptance($id, $user->id, 'tournamentsportbet', strtotime($betting_closed_date))) {
 				$error					= true;
 				$bet_status_refunded	= $bet_status_model->getBetResultStatusByName('fully-refunded');
@@ -2796,6 +2804,7 @@ class Api_Betting extends JController {
 				$bet_model->store($bet);
 				$bet_total -= $bet_value;
 			}
+			*/ 
 		}
 
 		if($bet_total > 0) {
@@ -2803,11 +2812,8 @@ class Api_Betting extends JController {
 			$leaderboard_model->addTurnedOverByUserAndTournamentID($user->id, $ticket->tournament_id, $bet_total);
 		}
 
-		if($error) {
-			return OutputHelper::json(500, array('error_msg' => JText::_('One or more bets could not be saved')));
-		} else {
-			return OutputHelper::json(200, array('success' => 'Bets have been registered'));
-		}
+		return $error;
+		
 	}
 
 

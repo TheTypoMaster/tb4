@@ -96,7 +96,7 @@ class FrontBetsController extends \BaseController {
 				
 			} else {
 				
-				$ticketId = ($ticket) ? $ticket -> id : null;
+				$ticketId = ($ticket) ? $ticket[0] -> id : null;
 				
 			}
 			
@@ -143,8 +143,8 @@ class FrontBetsController extends \BaseController {
 			
 		$input = Input::json() -> all();	
 
-		// change these rules as required
-		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer', 'flexi' => 'required');
+		// change these common rules as required
+		$rules = array('source' => 'required|alpha');
 		
 		if ($input['source'] == 'tournamentsports') {
 				
@@ -152,9 +152,19 @@ class FrontBetsController extends \BaseController {
 			
 			$rules = array_merge($rules, $extRules);
 			
+			$input['type_id'] = null;
+			
 		} elseif ($input['source'] == 'sports') {
 
 			$extRules = array('bets' => 'required');
+			
+			$rules = array_merge($rules, $extRules);
+			
+			$input['type_id'] = null;
+			
+		} elseif ($input['source'] == 'racing') {
+
+			$extRules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer', 'flexi' => 'required');
 			
 			$rules = array_merge($rules, $extRules);
 			
@@ -318,7 +328,7 @@ class FrontBetsController extends \BaseController {
 
 						if (count($legacyData) > 0) {	
 							
-							$betData = array('id' => $input['tournament_id'], 'match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);						
+							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);						
 							$bet = $l -> query('saveTournamentSportsBet', $betData);	
 
 						} else {
