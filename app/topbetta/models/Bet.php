@@ -35,11 +35,27 @@ class Bet extends \Eloquent {
 	 * @return array
 	 */
 	public function getLegacyBetData($selectionId) {
+			
 		return \DB::table('tbdb_selection AS s') 
 		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id') 
 		-> join('tbdb_event_group_event AS e', 'm.event_id', '=', 'e.event_id')  
 		-> where('s.id', '=', $selectionId) 
 		-> select('s.market_id', 's.wager_id', 's.number', 'm.event_id AS race_id', 'e.event_group_id AS meeting_id') -> get();
+
+	}
+
+	/**
+	 * Get the data required to place a legacy sports bet from just the selection id
+	 *
+	 * @param $selectionId int
+	 * @return array
+	 */
+	public function getLegacySportsBetData($selectionId) {
+			
+		return \DB::table('tbdb_selection AS s') 
+		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id') 
+		-> where('s.id', '=', $selectionId) 
+		-> select('s.market_id', 'm.event_id') -> get();	
 
 	}
 	

@@ -179,7 +179,7 @@ class FrontTournamentsController extends \BaseController {
 
 		if (is_null($tournament)) {
 
-			return array('success' => false, 'error' => Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
+			return array('success' => false, 'error' => \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
 
 		}
 

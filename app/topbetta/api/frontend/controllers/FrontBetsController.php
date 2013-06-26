@@ -96,7 +96,7 @@ class FrontBetsController extends \BaseController {
 				
 			} else {
 				
-				$ticketId = ($ticket) ? $ticket -> id : null;
+				$ticketId = ($ticket) ? $ticket[0] -> id : null;
 				
 			}
 			
@@ -143,18 +143,28 @@ class FrontBetsController extends \BaseController {
 			
 		$input = Input::json() -> all();	
 
-		// change these rules as required
-		$rules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer', 'flexi' => 'required');
+		// change these common rules as required
+		$rules = array('source' => 'required|alpha');
 		
 		if ($input['source'] == 'tournamentsports') {
 				
-			$extRules = array('tournament_id' => 'required|integer', 'match_id' => 'required|integer', 'market_id' => 'required|integer', 'bets' => 'required');
+			$extRules = array('tournament_id' => 'required|integer', 'bets' => 'required');
 			
 			$rules = array_merge($rules, $extRules);
 			
+			$input['type_id'] = null;
+			
 		} elseif ($input['source'] == 'sports') {
 
-			$extRules = array('match_id' => 'required|integer', 'market_id' => 'required|integer', 'bets' => 'required');
+			$extRules = array('bets' => 'required');
+			
+			$rules = array_merge($rules, $extRules);
+			
+			$input['type_id'] = null;
+			
+		} elseif ($input['source'] == 'racing') {
+
+			$extRules = array('amount' => 'required|integer', 'source' => 'required|alpha', 'type_id' => 'required|integer', 'flexi' => 'required');
 			
 			$rules = array_merge($rules, $extRules);
 			
@@ -296,13 +306,37 @@ class FrontBetsController extends \BaseController {
 										
 					if ($input['source'] == 'sports') {
 							
-						$betData = array('match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);
-						$bet = $l -> query('saveSportBet', $betData);
+						//TODO: this approach is just finding event/market from a single bet selection - this is all we need today	
+						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
+
+						if (count($legacyData) > 0) {	
+							
+							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);
+							$bet = $l -> query('saveSportBet', $betData);
+						
+						} else {
+		
+							$messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+							$errors++;
+		
+						}
 						
 					} else {
+
+						//TODO: this approach is just finding event/market from a single bet selection - this is all we need today	
+						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
+
+						if (count($legacyData) > 0) {	
 							
-						$betData = array('id' => $input['tournament_id'], 'match_id' => $input['match_id'], 'market_id' => $input['market_id'], 'bets' => $input['bets']);						
-						$bet = $l -> query('saveTournamentSportsBet', $betData);	
+							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);						
+							$bet = $l -> query('saveTournamentSportsBet', $betData);	
+
+						} else {
+		
+							$messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+							$errors++;
+		
+						}
 						
 					}					
 					

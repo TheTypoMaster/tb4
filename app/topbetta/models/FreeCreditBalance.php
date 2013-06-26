@@ -216,7 +216,52 @@ class FreeCreditBalance extends \Eloquent {
 		return $transactionId;
 	}
 
-	
+	public function listTransactions($userId = null, $transactionType = null, $limit, $offset) {
+
+		$query = "SELECT t.*, r.name as recipient, g.name as giver, tt.name as type, tt.description as description, "
+		. " tk.id as ticket, tk.tournament_id, tk.buy_in_transaction_id, tk2.id as ticket2, tk2.tournament_id AS tournament_id2, tk2.entry_fee_transaction_id,"
+		. " tk3.id as ticket3, tk3.tournament_id AS tournament_id3, tk3.result_transaction_id,"
+		. " tourn.name as tournament, s.name as sport_name, tourn2.name as tournament2, s2.name as sport_name2,"
+		. " tourn3.name as tournament3, s3.name as sport_name3, f.username as friend_username,  be.id as bet_entry_id, bw.id as bet_win_id, br.id as bet_refund_id"
+		. " FROM tbdb_tournament_transaction t"
+		. " LEFT JOIN tbdb_users r ON r.id = t.recipient_id"
+		. " LEFT JOIN tbdb_users g ON g.id = t.giver_id"
+		. " LEFT JOIN tbdb_tournament_transaction_type tt ON tt.id = t.tournament_transaction_type_id"
+		. " LEFT JOIN tbdb_tournament_ticket tk ON tk.buy_in_transaction_id = t.id"
+		. " LEFT JOIN tbdb_tournament tourn ON tourn.id = tk.tournament_id"
+		. " LEFT JOIN tbdb_tournament_sport s ON s.id = tourn.tournament_sport_id"
+		. " LEFT JOIN tbdb_tournament_ticket tk2 ON tk2.entry_fee_transaction_id = t.id"
+		. " LEFT JOIN tbdb_tournament tourn2 ON tourn2.id = tk2.tournament_id"
+		. " LEFT JOIN tbdb_tournament_sport s2 ON s2.id = tourn2.tournament_sport_id"
+		. " LEFT JOIN tbdb_tournament_ticket tk3 ON tk3.result_transaction_id = t.id"
+		. " LEFT JOIN tbdb_tournament tourn3 ON tourn3.id = tk3.tournament_id"
+		. " LEFT JOIN tbdb_tournament_sport s3 ON s3.id = tourn3.tournament_sport_id"
+		. " LEFT JOIN tbdb_user_referral referral ON referral.tournament_transaction_id = t.id"
+		. " LEFT JOIN tbdb_users f ON f.id = referral.friend_id"
+		//for free bet
+		. " LEFT JOIN tbdb_bet be ON be.bet_freebet_transaction_id = t.id"
+		. " LEFT JOIN tbdb_bet bw ON bw.result_transaction_id = t.id"
+		. " LEFT JOIN tbdb_bet br ON br.refund_freebet_transaction_id = t.id"
+		. " WHERE t.recipient_id = " . $userId
+		. " AND t.amount != 0";
+
+		if($transactionType != null) {
+			$query .= " AND tt.keyword = '" . $transactionType . "'";
+		}
+
+		$query .= " ORDER BY t.created_date DESC, t.id DESC";
+		
+		if ($offset) {
+			$query .= ' LIMIT ' . $offset . ',' . $limit;	
+		} else {
+			$query .= ' LIMIT ' . $limit;
+		}		
+		
+		$result = \DB::select($query);
+
+		return $result;	
+		
+	}
 
 
 }
