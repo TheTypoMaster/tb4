@@ -6,7 +6,7 @@ class TournamentBet extends \Eloquent {
 
     public static $rules = array();
 	
-	public function getTournamentBetListByTicketID($ticketId)
+	public function getTournamentBetListByTicketID($ticketId, $resulted = false)
 	{
 			
 		$query =
@@ -73,9 +73,11 @@ class TournamentBet extends \Eloquent {
 			ON
 				m.event_id = e.id
 			WHERE
-				ticket.id = "' . $ticketId . '"
-			ORDER BY
-				b.id ASC';
+				ticket.id = "' . $ticketId . '" AND b.resulted_flag = ';
+				
+			$query .= ($resulted) ? '1' : '0'; 
+				
+			$query .= ' ORDER BY b.id ASC';
 
 		$result = \DB::select($query);
 
