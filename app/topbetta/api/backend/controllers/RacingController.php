@@ -294,7 +294,7 @@ class RacingController extends \BaseController {
 										$raceEvent->name = $dataArray['RaceName'];
 									}
 									if(isset($dataArray['RaceDistance'])){
-										$raceEvent->distance = $dataArray['RaceDistance'];
+										$raceEvent->distance = $dataArray['Distance'];
 									}
 									if(isset($dataArray['RaceClass'])){
 										$raceEvent->class = $dataArray['RaceClass'];
