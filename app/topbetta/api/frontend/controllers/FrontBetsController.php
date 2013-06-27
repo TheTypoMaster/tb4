@@ -100,18 +100,31 @@ class FrontBetsController extends \BaseController {
 				
 			}
 			
-			$betModel = new \TopBetta\Bet;
+			$betModel = new \TopBetta\TournamentBet;
 
 			// active tournament bets
-			$activeTournamentBetList = $betModel -> getTournamentBetListByEventIDAndTicketID($eventId, $ticketId);
+			$activeTournamentBetList = $betModel -> getTournamentBetListByTicketID($ticketId);
 
 			$activeBets = array();
 
 			foreach ($activeTournamentBetList as $activeTournamentBet) {
+				
+				if ($activeTournamentBet -> $resulted_flag) {
+					
+					$betResult = ($activeTournamentBet -> win_amount > 0) ? 'WIN' : 'LOSS';
+					
+				} else {
+					
+					$betResult = '-';
+					
+				}
+				
+				//TODO: handle sports and racing - this is mostly sports at the moment
+				$activeBets[] = array('id' => (int)$activeTournamentBet -> id, 'type' => $activeTournamentBet -> market_type, 'selection_id' => (int)$activeTournamentBet -> selection_id, 'selection_name' => $activeTournamentBet -> selection_name, 'bet_amount' => $activeTournamentBet -> bet_amount, 'odds' => $activeTournamentBet -> odds, 'paid' => $activeTournamentBet -> win_amount, 'result' => $betResult);
 
-				$betGroup = ($activeTournamentBet -> origin == 'betting') ? 'racing' : $activeTournamentBet -> origin;
+				//$betGroup = ($activeTournamentBet -> origin == 'betting') ? 'racing' : $activeTournamentBet -> origin;
 
-				$activeTournamentBets[] = array('id' => (int)$activeTournamentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeTournamentBet -> freebet) ? true : false, 'type' => (int)$activeTournamentBet -> bet_type, 'result_status' => $activeTournamentBet -> result_status, 'event_id' => (int)$activeTournamentBet -> event_id, 'event_name' => $activeTournamentBet -> event_name, 'event_number' => (int)$activeTournamentBet -> event_number, 'selection_id' => (int)$activeTournamentBet -> selection_id, 'selection_name' => $activeTournamentBet -> selection_name, 'selection_number' => (int)$activeTournamentBet -> selection_number, 'bet_total' => (int)$activeTournamentBet -> bet_total, 'created_date' => $activeTournamentBet -> created_date, 'invoice_id' => $activeTournamentBet -> invoice_id);
+				//$activeBets[] = array('id' => (int)$activeTournamentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeTournamentBet -> freebet) ? true : false, 'type' => (int)$activeTournamentBet -> bet_type, 'result_status' => $activeTournamentBet -> result_status, 'event_id' => (int)$activeTournamentBet -> event_id, 'event_name' => $activeTournamentBet -> event_name, 'event_number' => (int)$activeTournamentBet -> event_number, 'selection_id' => (int)$activeTournamentBet -> selection_id, 'selection_name' => $activeTournamentBet -> selection_name, 'selection_number' => (int)$activeTournamentBet -> selection_number, 'bet_total' => (int)$activeTournamentBet -> bet_total, 'created_date' => $activeTournamentBet -> created_date, 'invoice_id' => $activeTournamentBet -> invoice_id);
 
 			}
 			$recentBets = array();
