@@ -36,6 +36,9 @@ class AccountBalance extends \Eloquent {
      */
     static private function newTransaction($params)
     {
+    	// Timestamp for created_date - legacy field
+    	$nowTime = date("Y-m-d H:i:s");
+    	
     	// instansiate the model
     	$transaction = new AccountBalance;
     	
@@ -49,6 +52,7 @@ class AccountBalance extends \Eloquent {
     	$transaction->account_transaction_type_id = $transactionTypeId;
     	$transaction->amount = (int)$params['amount'];
     	$transaction->notes = $params['notes'];
+    	$transaction->created_date = $nowTime;
     	
      	// save the model
     	$transaction->save();
