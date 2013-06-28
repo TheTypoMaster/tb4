@@ -96,7 +96,7 @@ class HeartBeatController extends \BaseController {
 		// check last remote host state
 		$lastStatusObject = Topbetta\HeartbeatStatus::where('heartbeat_endpoint', '=', "$heartBeatService")->get();
 		
-		if(!$lastStatusObject[0]){
+		if(is_array($lastStatusObject[0])){
 			// return error
 			return "$serverTime: ERROR: Service not found in DB";
 		}
