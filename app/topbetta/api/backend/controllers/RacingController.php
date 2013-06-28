@@ -576,7 +576,7 @@ class RacingController extends \BaseController {
 											
 										// build the serialised result data for this result
 										$arrayKey = str_replace('-', '/', $selection);
-										$arrayValue = $payout;
+										$arrayValue = $payout  / 100;
 										$exoticArray = array($arrayKey => $arrayValue);
 										$previousDivArray = array();
 										// work on each exotic type
