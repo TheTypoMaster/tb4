@@ -38,7 +38,7 @@ class RaceMeeting extends \Eloquent {
 			$startDatetime = new \DateTime($race -> start_date);
 			$startDatetime = $startDatetime -> format('c');				
 
-			$result[] = array('id' => $race -> id, 'race_number' => $race -> number, 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'results' => $results, 'status' => $race -> status);
+			$result[] = array('id' => $race -> id, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race -> class, 'start_datetime' => $startDatetime, 'results' => $results, 'status' => $race -> status);
 
 		}	
 		
