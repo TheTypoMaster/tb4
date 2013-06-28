@@ -14,7 +14,7 @@ class UpdateTbdbEventGroupTableV2 extends Migration {
 	{
 		Schema::table('tbdb_event_group', function(Blueprint $table)
 		{
-			$table->int('sport_id');
+			$table->integer('sport_id');
 		});
 	}
 
