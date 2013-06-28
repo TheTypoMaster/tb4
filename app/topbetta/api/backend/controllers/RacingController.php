@@ -446,21 +446,14 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts. Object:$o.");
 										}
 									}
-									// LEGACY DB storage area
-									if($meetingType == "G"){
-										if(isset($dataArray['Trainer'])){
-											$raceRunner->associate = $dataArray['Trainer'];
-										}
-										
-									} else {
-										if(isset($dataArray['Jockey'])){
-											$raceRunner->associate = $dataArray['Jockey'];
-										}
-										if(isset($dataArray['Trainer'])){
-											$raceRunner->trainer = $dataArray['Trainer'];
-										}
+
+									if(isset($dataArray['Jockey'])){
+										$raceRunner->associate = $dataArray['Jockey'];
 									}
-									
+									if(isset($dataArray['Trainer'])){
+										$raceRunner->trainer = $dataArray['Trainer'];
+							
+									}
 									// save or update the record
 									$raceRunnerSave = $raceRunner->save();
 									$raceRunnerID = $raceRunner->id;
