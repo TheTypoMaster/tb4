@@ -80,7 +80,7 @@ return array(
 	|
 	*/
 
-	'username' => null,
+	'username' => '',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -95,5 +95,7 @@ return array(
 
 	'password' => null,
 		
+		
+	'pretend' => true,
 
 );

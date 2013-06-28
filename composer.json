@@ -17,6 +17,7 @@
 			"app/topbetta/api/frontend/controllers",
 			"app/topbetta/api/frontend/models",		
 			"app/topbetta/api/admin/controllers",	
+			"app/topbetta/libraries/wagering",
 			"app/topbetta/helpers"
 			
 		]

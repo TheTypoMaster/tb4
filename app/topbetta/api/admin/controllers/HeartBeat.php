@@ -46,8 +46,6 @@ class HeartBeatController extends \BaseController {
 	 */
 	private $debug = true;
 	
-	
-
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -67,46 +65,69 @@ class HeartBeatController extends \BaseController {
 	 */
 	public function store()
 	{
-		// TODO: Move to config
-		$userName = Config::get('igas.topbetta.api.userName');
-		$userPassword = Config::get('igas.topbetta.api.userPassword');
-		$secretKey = Config::get('igas.topbetta.api.secretKey');
-		$companyID = Config::get('igas.topbetta.api.companyID');
-		$command = Config::get('igas.topbetta.api.command');
-		$remoteHost = Config::get('igas.topbetta.api.remoteHost');
+		$heartBeatService = 'igas_schedule';
 		
-		$paramslist = Request::get('remote');
+		// get stuff from the config
+		$userName = \Config::get('igasauthentication.userName');
+		$userPassword = \Config::get('igasauthentication.userPassword');
+		$secretKey = \Config::get('igasauthentication.secretKey');
+		$companyID = \Config::get('igasauthentication.companyID');
+		$command = \Config::get('igasauthentication.command');
+		$remoteHost = \Config::get('igasauthentication.remoteHost');
 		
-		// validate input variables
-				
-		// check last state in DB - need model
+		$serverTime = date("Y-m-d H:i:s");
 		
-		// grab some config data for the remote
+		// build up array 
+		$payloadArray = array('Username' => $userName, 'Password' => $userPassword,
+				'CompanyID' => $companyID,
+				'CompanyPushUrl' => 'http://testing1.mugbookie.com',
+				'CurrentTime' => "$serverTime",
+				);
 		
 		// generate datakey
-		$dataKey = TopBetta\IgasDataKey::getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey);
+		$dataKey = TopBetta\libraries\wagering\IgasDataKey::getDataKey($userName, $userPassword, $companyID, $payloadArray, $secretKey);
 		
-		// Build up JSON request object
-		$payloadArray = array('Username' => $userName, 'Password' => $userPassword, 
-								'CompanyID' => $companyID, 
-								'CompanyPushUrl' => 'http://testing1.mugbookie.com',
-								'CurrentTime' => "$serverTime",
-								'DataKey' => $dataKey);
-			
+		// add data key to array
+		$payloadArray['DataKey'] = $dataKey;
+		
+		// encode array as JSON
 		$jsonPayload = json_encode($payloadArray);
+
+		// check last remote host state
+		$lastStatusObject = Topbetta\HeartbeatStatus::where('heartbeat_endpoint', '=', "$heartBeatService")->get();
 		
-		// check current state
-		$requestResponse = TopBetta\CurlRequestHelper::curlRequest($remote, $command, 'POST', $jsonPayload);
+		if(!$lastStatusObject){
+			// return error
+			return "$serverTime: ERROR: Service not found in DB";
+		}
+		
+		// grab the status and id
+		$lastStatusID = $lastStatusObject[0]->id;
+		$lastStatus = $lastStatusObject[0]->last_status;
+				
+		// check current remote host state
+		$currentStatus = TopBetta\CurlRequestHelper::curlRequest($remoteHost, $command, 'POST', $jsonPayload);
+		
+		if ($currentStatus == "SUCCESS") {
+			$currentStatus = "up";
+		}
+		
+		if($lastStatusObject[0]->last_status == $currentStatus){
+			return "$serverTime: No change. last:$lastStatus, current:$currentStatus";
+		}
 		
 		// store status change in DB
+		$lastStatusObject[0]->last_status = $currentStatus;
+		$lastStatusObject[0]->save();
 		
 		// Email on status change
+		$newEmail = \Mail::send('hello', $payloadArray, function($m)
+		{
+			$m->from('heartbeat@topbetta.com', 'TopBetta iGAS HeartBeat');
+			$m->to('oliver@topbetta.com', 'Oliver Shanahan')->subject('iGAS Schedule: Status changed');
+		});
 		
-		return "Post some data here";
+		// return error
+		return "$serverTime: ERROR: Service Down";
 	}
-	
-
-	
-	
-	
 }

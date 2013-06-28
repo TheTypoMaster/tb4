@@ -1,4 +1,4 @@
-<?php namespace TopBetta\backend;
+<?php namespace TopBetta\libraries\wagering;
 
 use TopBetta;
 
@@ -6,7 +6,7 @@ use TopBetta;
 
 class IgasDataKey {
 	
-	public function getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey){
+	public static function getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey){
 		// Get input object params
 	
 		$paramListBetData = '';
@@ -14,6 +14,7 @@ class IgasDataKey {
 		foreach($paramslist as $param){
 			$paramListBetData .= $param;
 		}
+		
 		// join params together
 		// concatinate with secret key
 		$paramsPlusSecret = $paramList . $paramListBetData . $secretKey;

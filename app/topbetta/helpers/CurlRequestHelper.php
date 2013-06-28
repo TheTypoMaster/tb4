@@ -7,15 +7,16 @@
 
 class CurlRequestHelper {
 
-	public function curlRequest($remote, $command = null, $requestType = null, $jsonPayload){
+	public static function curlRequest($remote, $command = null, $requestType = null, $jsonPayload){
 
 		// validate params
-		
+		//echo "RES:$remote, Command: $command, RT:$requestType: JSOn: $jsonPayload";
+			
 		// init curl
 		$ch = curl_init($remote."/".$command);
 		
 		// set curl options
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $requestType);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -26,11 +27,11 @@ class CurlRequestHelper {
 		$error = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		
 		// make the request
-		$res = curl_exec($ch);
+		$response = curl_exec($ch);
 		curl_close($ch);
 		
 		// decode response to array
-		$response = json_decode($res);
+		// $response = json_decode($res);
 		
 		// check response and return
 		if ($response == "") {
