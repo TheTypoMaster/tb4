@@ -154,9 +154,11 @@ class RisaDataImporter extends TopBettaCLI{
 						$row = mysql_fetch_array($RunnerCodeExistResult);
 						$fileNameID = $row['id'];
 					}else {
+
+						$nowTime = date("Y-m-d H:i:s");
 						// add new file_name
-						$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`, `last_starts`) VALUES ";
-						$silkQuery .= " ('', '$runnerCode', '$silkFileName', '$lastStarts'); ";
+						$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`, `last_starts`, `created_at`, `updated_at`) VALUES ";
+						$silkQuery .= " ('', '$runnerCode', '$silkFileName', '$lastStarts', '$nowTime', '$nowTime'); ";
 						mysql_query($silkQuery);
 						$silkID = mysql_insert_id();
 						$this->l("Added to DB");
