@@ -180,6 +180,7 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'FrontUsers'			=> 'TopBetta\frontend\FrontUsersController',
 		'FrontUsersProfile'	=> 'TopBetta\frontend\FrontUsersProfileController',
+		'FrontUsersBanking'	=> 'TopBetta\frontend\FrontUsersBankingController',
 		'FrontUsersBalances'	=> 'TopBetta\frontend\FrontUsersBalancesController',
 		'FrontUsersBetting'	=> 'TopBetta\frontend\FrontUsersBettingController',
 		'FrontUsersTournaments'	=> 'TopBetta\frontend\FrontUsersTournamentsController',

@@ -255,5 +255,85 @@ class TournamentTicket extends \Eloquent {
 
 		return $result[0]->current - $result[0]->unresulted;
 	}
+	
+	/**
+	 * Get a user's tournament list
+	 *
+	 * @param integer $user_id
+	 * @return object
+	 */
+	public function getUserTournamentList($user_id, $order = 't.id', $direction = 'ASC', $limit = null, $offset = null)
+	{
+		/*	
+		if(is_null($order)) {
+			$order = (empty($this->order)) ? 't.id' : $this->order;
+		}
+
+		if(is_null($direction)) {
+			$direction = (empty($this->direction)) ? 'ASC' : $this->direction;
+		}
+
+		if(is_null($limit)) {
+			$limit = (empty($this->limit)) ? 0 : $this->limit;
+		}
+
+		if(is_null($offset)) {
+			$offset = (empty($this->offset)) ? 0 : $this->offset;
+		}
+		*/
+
+		$query =
+			'SELECT
+				t.id,
+				tk.result_transaction_id,
+				tk.created_date,
+				t.buy_in,
+				t.entry_fee,
+				s.name AS sport_name,
+				t.start_date,
+				t.end_date,
+				t.cancelled_flag,
+				t.paid_flag,
+				t.start_currency,
+				t.name AS tournament_name,
+				t.jackpot_flag,
+				t.parent_tournament_id,
+				c.name AS competition_name
+			FROM
+				tbdb_tournament_ticket AS tk
+			INNER JOIN
+				tbdb_tournament AS t
+			ON
+				t.id = tk.tournament_id
+			INNER JOIN
+				tbdb_tournament_sport AS s
+			ON
+				t.tournament_sport_id = s.id
+			INNER JOIN
+				tbdb_event_group AS eg
+			ON
+				eg.id = t.event_group_id
+			INNER JOIN
+				tbdb_tournament_competition AS c
+				ON c.id = eg.tournament_competition_id
+			WHERE
+				user_id = "' . $user_id . '"
+			AND
+				tk.refunded_flag != 1
+			AND
+				t.cancelled_flag != 1';
+
+		if(!is_null($order)) {
+			$query .= ' ORDER BY ' . $order;
+		}
+
+		if(!is_null($direction)) {
+			$query .= ' ' . $direction;
+		}
+
+		$result = \DB::select($query);
+
+		return $result;
+	}	
 
 }
