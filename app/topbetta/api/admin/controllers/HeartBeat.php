@@ -121,13 +121,15 @@ class HeartBeatController extends \BaseController {
 		$lastStatusObject[0]->save();
 		
 		// Email on status change
-		$newEmail = \Mail::send('hello', $payloadArray, function($m)
+		$emailSubject = "iGAS Schedule: Status changed: ".$currentStatus.".";
+		$emailDetails = array( 'email' => 'oliver@topbetta.com', 'to_name' => 'Oliver', 'from' => 'hearbeat@topbetta.com', 'from_name' => 'TopBetta iGAS Schedule Heartbeat', 'subject' => "$emailSubject" );
+		$newEmail = \Mail::send('hello', $payloadArray, function($m) use ($emailDetails)
 		{
-			$m->from('heartbeat@topbetta.com', 'TopBetta iGAS HeartBeat');
-			$m->to('oliver@topbetta.com', 'Oliver Shanahan')->subject('iGAS Schedule: Status changed');
+			$m->from($emailSubject['from'], $emailSubject['from_name']);
+			$m->to($emailSubject['email'], $emailSubject['to_name'])->subject($emailSubject['subject']);
 		});
 		
 		// return error
-		return "$serverTime: ERROR: Service Down";
+		return "$serverTime: Status changed. last:$lastStatus, current:$currentStatus";
 	}
 }
