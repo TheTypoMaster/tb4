@@ -216,7 +216,7 @@ class FreeCreditBalance extends \Eloquent {
 		return $transactionId;
 	}
 
-	public function listTransactions($userId = null, $transactionType = null, $limit, $offset) {
+	public function listTransactions($userId = null, $transactionType = null, $limit = 25, $offset = false) {
 
 		$query = "SELECT t.*, r.name as recipient, g.name as giver, tt.name as type, tt.description as description, "
 		. " tk.id as ticket, tk.tournament_id, tk.buy_in_transaction_id, tk2.id as ticket2, tk2.tournament_id AS tournament_id2, tk2.entry_fee_transaction_id,"

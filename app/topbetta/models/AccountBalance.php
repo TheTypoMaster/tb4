@@ -27,6 +27,87 @@ class AccountBalance extends \Eloquent {
     }
     
     
+ 	public function listTransactions($userId = null, $transactionType = null, $limit = 25, $offset = false) {
+
+		$query = "SELECT t.*, r.name as recipient, r.id as recipient_id, g.name as giver, g.id as giver_id, tt.name as type,"
+		. " tt.description as description, tourn.id as tournament_id, tourn.name as tournament, s.name as sport_name,"
+		. " tk.refunded_flag as ticket_refunded_flag, be.id as bet_entry_id, bw.id as bet_win_id, br.id as bet_refund_id"
+		. " FROM tbdb_account_transaction t"
+		. " LEFT JOIN tbdb_users r ON r.id = t.recipient_id"
+		. " LEFT JOIN tbdb_users g ON g.id = t.giver_id"
+		. " LEFT JOIN tbdb_account_transaction_type tt ON tt.id = t.account_transaction_type_id"
+		. " LEFT JOIN tbdb_tournament_ticket tk ON tk.result_transaction_id = t.id"
+		. " LEFT JOIN tbdb_tournament tourn ON tk.tournament_id = tourn.id"
+		. " LEFT JOIN tbdb_tournament_sport s ON s.id = tourn.tournament_sport_id"
+		. " LEFT JOIN tbdb_bet be ON be.bet_transaction_id = t.id"
+		. " LEFT JOIN tbdb_bet bw ON bw.result_transaction_id = t.id"
+		. " LEFT JOIN tbdb_bet br ON br.refund_transaction_id = t.id"
+		. $this->_buildQueryWhere($userId, $transactionType)
+		. " ORDER BY t.created_date DESC, t.id DESC";	
+		
+		if ($offset) {
+			$query .= ' LIMIT ' . $offset . ',' . $limit;	
+		} else {
+			$query .= ' LIMIT ' . $limit;
+		}				
+		
+		$result = \DB::select($query);
+
+		return $result;					
+		
+ 	}
+ 
+ 
+	/**
+	* Builds the WHERE part of a query
+	*
+	* @return string Part of an SQL query
+	*/
+	private function _buildQueryWhere($userId = null, $transactionType = null)
+	{
+
+		if(!$userId) {
+			return false;
+		}
+		
+		// Get the filter values
+		//$filter_from_date	= $mainframe->getUserStateFromRequest($option.'filter_transaction_from_date', 'filter_transaction_from_date');
+		//$filter_to_date		= $mainframe->getUserStateFromRequest($option.'filter_transaction_to_date', 'filter_transaction_to_date');
+		
+		// Prepare the WHERE clause
+		$where = array();
+
+		/*
+		if( $filter_from_date && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $filter_from_date, $m) )
+		{
+			$where[] = ' t.created_date >= FROM_UNIXTIME(' . $db->quote(strtotime($filter_from_date)) . ')';
+		}
+		
+		if( $filter_to_date && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $filter_to_date, $m) )
+		{
+			$where[] = ' t.created_date <= FROM_UNIXTIME(' . $db->quote(strtotime($filter_to_date)) . ')';
+		}
+		*/ 
+		
+		switch ($transactionType) {
+			case 'deposits_withdrawals' :
+				$where[] = ' tt.keyword IN ("paypaldeposit", "ewaydeposit", "bankdeposit", "bpaydeposit","moneybookersdeposit")';
+				break;
+			case 'bets' :
+				$where[] = ' tt.keyword IN ("betentry", "betwin", "betrefund")';
+				break;
+			case 'tournaments' :
+				$where[] = ' tt.keyword IN ("tournamentdollars", "tournamentwin", "entry", "buyin")';
+				break;
+		}
+		
+		$where[] = 't.recipient_id = "' . $userId . '"';
+		$where[] = '(tourn.parent_tournament_id IS NULL OR tourn.parent_tournament_id = -1)';
+		//$where[] = '(tk.refunded_flag IS NULL OR tk.refunded_flag = 0)';
+
+		// return the WHERE clause
+		return (count($where)) ? ' WHERE '.implode(' AND ', $where) : '';
+	} 
    
     /**
      * change a user's balance
