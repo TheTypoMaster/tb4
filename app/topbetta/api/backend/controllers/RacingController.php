@@ -204,6 +204,15 @@ class RacingController extends \BaseController {
 								if(isset($dataArray['State'])){
 									$raceMeet->state = $dataArray['State'];
 								}
+								if(isset($dataArray['Country'])){
+									$raceMeet->country = $dataArray['Country'];
+								}
+								if(isset($dataArray['MeetingType'])){
+									$raceMeet->meeting_grade = $dataArray['MeetingType'];
+								}
+								if(isset($dataArray['RailPosition'])){
+									$raceMeet->rail_position = $dataArray['RailPosition'];
+								}
 								
 								// save or update the record
 								$raceMeetSave = $raceMeet->save();
