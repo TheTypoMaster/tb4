@@ -6,7 +6,7 @@ class TournamentBet extends \Eloquent {
 
     public static $rules = array();
 	
-	public function getTournamentBetListByTicketID($ticketId, $resulted = false)
+	public function getTournamentBetListByTicketID($ticketId)
 	{
 			
 		$query =
@@ -20,7 +20,7 @@ class TournamentBet extends \Eloquent {
 				b.flexi_flag,
 				b.resulted_flag,
 				s.name AS bet_status,
-				t.name AS bet_type,
+				t.id AS bet_type,
 				mt.name AS market_type,
 				selection.id AS selection_id,
 				selection.number AS runner_number,
@@ -29,7 +29,8 @@ class TournamentBet extends \Eloquent {
 				sp.place_odds,
 				sp.bet_product_id,
 				sr.win_dividend,
-				sr.place_dividend
+				sr.place_dividend,
+				b.created_date
 			FROM
 				tbdb_tournament_bet AS b
 			INNER JOIN
@@ -73,11 +74,7 @@ class TournamentBet extends \Eloquent {
 			ON
 				m.event_id = e.id
 			WHERE
-				ticket.id = "' . $ticketId . '" AND b.resulted_flag = ';
-				
-			$query .= ($resulted) ? '1' : '0'; 
-				
-			$query .= ' ORDER BY b.id ASC';
+				ticket.id = "' . $ticketId . '" ORDER BY b.id ASC';
 
 		$result = \DB::select($query);
 

@@ -45,29 +45,17 @@ class FrontTournamentsBetsController extends \BaseController {
 		$betModel = new \TopBetta\TournamentBet;
 
 		// active tournament bets
-		$activeTournamentBetList = $betModel -> getTournamentBetListByTicketID($ticketId, false);
+		$tournamentBetList = $betModel -> getTournamentBetListByTicketID($ticketId);
 
-		$activeBets = array();
+		$bets = array();
 
-		foreach ($activeTournamentBetList as $activeTournamentBet) {
+		foreach ($tournamentBetList as $tournamentBet) {
 
-			//TODO: handle sports and racing - this is mostly sports at the moment
-			$activeBets[] = array('id' => (int)$activeTournamentBet -> id, 'ticket_id' => (int)$activeTournamentBet -> tournament_ticket_id, 'event_id' => (int)$activeTournamentBet -> event_id, 'bet_type' => $activeTournamentBet -> bet_type, 'type' => $activeTournamentBet -> market_type, 'selection_id' => (int)$activeTournamentBet -> selection_id, 'selection_name' => $activeTournamentBet -> selection_name, 'bet_amount' => (int)$activeTournamentBet -> bet_amount, 'fixed_odds' => (float)$activeTournamentBet -> fixed_odds, 'win_odds' => (float)$activeTournamentBet -> win_odds, 'place_odds' => (float)$activeTournamentBet -> place_odds, 'result' => '-');
-
-		}
-
-		$resultedTournamentBetList = $betModel -> getTournamentBetListByTicketID($ticketId, true);
-
-		$resultedBets = array();
-
-		foreach ($resultedTournamentBetList as $resultedTournamentBet) {
-
-			//TODO: handle sports and racing - this is mostly sports at the moment
-			$resultedBets[] = array('id' => (int)$resultedTournamentBet -> id, 'ticket_id' => (int)$resultedTournamentBet -> tournament_ticket_id, 'event_id' => (int)$resultedTournamentBet -> event_id, 'bet_type' => $resultedTournamentBet -> bet_type, 'type' => $resultedTournamentBet -> market_type, 'selection_id' => (int)$resultedTournamentBet -> selection_id, 'selection_name' => $resultedTournamentBet -> selection_name, 'bet_amount' => (int)$resultedTournamentBet -> bet_amount, 'fixed_odds' => (float)$resultedTournamentBet -> fixed_odds, 'win_odds' => (float)$resultedTournamentBet -> win_odds, 'place_odds' => (float)$resultedTournamentBet -> place_odds, 'paid' => (int)$resultedTournamentBet -> win_amount, 'result' => ($resultedTournamentBet -> win_amount > 0) ? 'WIN' : 'LOSS');
+			$bets[] = array('id' => (int)$tournamentBet -> id, 'ticket_id' => (int)$tournamentBet -> tournament_ticket_id, 'event_id' => (int)$tournamentBet -> event_id, 'type' => (int)$tournamentBet -> bet_type, 'market' => $tournamentBet -> market_type, 'selection_id' => (int)$tournamentBet -> selection_id, 'selection_name' => $tournamentBet -> selection_name, 'bet_amount' => (int)$tournamentBet -> bet_amount, 'fixed_odds' => (float)$tournamentBet -> fixed_odds, 'win_odds' => (float)$tournamentBet -> win_odds, 'place_odds' => (float)$tournamentBet -> place_odds, 'result_status' => $tournamentBet -> bet_status, 'created_date' => \TimeHelper::isoDate($tournamentBet -> created_date));
 
 		}
 
-		return array('success' => true, 'result' => array('active' => $activeBets, 'resulted' => $resultedBets));
+		return array('success' => true, 'result' => $bets);
 	}
 
 	/**
