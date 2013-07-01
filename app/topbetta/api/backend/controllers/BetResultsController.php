@@ -215,7 +215,7 @@ class BetResultsController extends \BaseController {
 										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 										{
 											$m->from($emailDetails['from'], $emailDetails['from_name']);
-											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject('iGAS Bet Results: Bet Result not processed');
+											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['$emailSubject']);
 										});
 										/*
 										return \Response::json(array(
