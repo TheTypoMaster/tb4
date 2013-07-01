@@ -207,11 +207,22 @@ class BetResultsController extends \BaseController {
 										}
 									
 									} else{
+										
+										// Email on failer to result bet
+										$emailSubject = "iGAS Bet Results: Bet Result not processed: ".$transaction['transactionID'].".";
+										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'betresults@topbetta.com', 'from_name' => 'TopBetta iGAS BetResults', 'subject' => "$emailSubject" );
+										
+										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+										{
+											$m->from($emailDetails['from'], $emailDetails['from_name']);
+											$m->to($emailDetails['to'], 'Oliver Shanahan')->subject('iGAS Bet Results: Bet Result not processed');
+										});
+										/*
 										return \Response::json(array(
 												'error' => true,
 												'message' => 'Error: Transaction Id not found in DB: '. $transaction['transactionID']),
 												400
-										);
+										);*/
 									}
 								
 								}else{
