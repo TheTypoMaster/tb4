@@ -576,7 +576,7 @@ class RacingController extends \BaseController {
 									// check if selection exists in the DB
 									$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $selection);
 									if ($selectionsExists){
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result. MID:$meetingId, RN:$raceNo, SEL:$selection, Country:$meetingCountry, Type:$meetingTypeCode.",1);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result. MID:$meetingId, RN:$raceNo, SEL:$selection.",1);
 										// Check if we have results already
 										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
 										switch($meetingTypeCode){
