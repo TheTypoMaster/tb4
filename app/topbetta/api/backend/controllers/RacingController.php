@@ -549,6 +549,10 @@ class RacingController extends \BaseController {
 
 								// grab the race type code
 								$raceTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->get();
+								$o = print_r($raceTypeCodeResult,true);
+								
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Racetype object:$o ", 1);
+								
 								$meetingTypeCode = $raceTypeCodeResult->type_code;
 								$meetingCountry = $raceTypeCodeResult->country;
 								
