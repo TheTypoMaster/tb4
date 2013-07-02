@@ -498,7 +498,7 @@ class RacingController extends \BaseController {
 													}
 												}
 											
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts. Object:$o.");
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts.");
 										}
 									}
 
