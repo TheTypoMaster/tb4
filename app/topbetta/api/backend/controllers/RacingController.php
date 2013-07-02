@@ -566,16 +566,16 @@ class RacingController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result. MID:$meetingId, RN:$raceNo, SEL:$selection",1);
 										// Check if we have results already
 										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
-										switch($raceTypeCode){
+										switch($meetingTypeCode){
 											
 											case "R": // Gallops
 												// metro
 												if ($meetingCountry == "AU" && $meetingTypeCode == "METRO" && $priceType == self::METRO_GALLOPS_WIN){
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -585,10 +585,10 @@ class RacingController extends \BaseController {
 												// prov
 												if ($meetingCountry == "AU" && $meetingTypeCode == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_WIN){
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -599,10 +599,10 @@ class RacingController extends \BaseController {
 												// os
 												if ($meetingCountry != "AU" && $priceType == self::OVERSEAS_GALLOPS_WIN){
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -614,10 +614,10 @@ class RacingController extends \BaseController {
 												if($priceType =="MID"){
 													// if result exists update that record
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType. Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType. Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -628,10 +628,10 @@ class RacingController extends \BaseController {
 											if($priceType =="MID"){
 												// if result exists update that record
 												if($resultExists){
-													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType. Already in DB", 1);
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType. Already in DB", 1);
 													$raceResult = TopBetta\RaceResult::find($resultExists);
 												}else{
-													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 													$raceResult = new TopBetta\RaceResult;
 													$raceResult->selection_id = $selectionsExists;
 												}
@@ -652,10 +652,10 @@ class RacingController extends \BaseController {
 										$raceResultSave = $raceResult->save();
 										$raceResultID = $raceResult->id;
 
-										TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$raceTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+										TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
 									}else{
 
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. PriceType:$priceType Not saved. MID: $meetingId, RaceCode:$raceTypeCode, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. PriceType:$priceType Not saved. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 									}
 										
 								
@@ -668,15 +668,15 @@ class RacingController extends \BaseController {
 										// Check if we have results already
 										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
 									
-										switch($raceTypeCode){
+										switch($meetingTypeCode){
 											case "R": // Gallops
 												// metro
 												if ($meetingCountry == "AU" && $meetingTypeCode == "METRO" && $priceType == self::METRO_GALLOPS_PLC){
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -686,7 +686,7 @@ class RacingController extends \BaseController {
 												// prov
 												if ($meetingCountry == "AU" && $meetingTypeCode == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_PLC){
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
@@ -699,10 +699,10 @@ class RacingController extends \BaseController {
 												// os
 												if ($meetingCountry != "AU" && $priceType == self::OVERSEAS_GALLOPS_PLC){
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -714,10 +714,10 @@ class RacingController extends \BaseController {
 												if($priceType =="MID"){
 													// if result exists update that record
 													if($resultExists){
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType. Already in DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType. Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
@@ -728,10 +728,10 @@ class RacingController extends \BaseController {
 											if($priceType =="MID"){
 												// if result exists update that record
 												if($resultExists){
-													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType. Already in DB", 1);
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType. Already in DB", 1);
 													$raceResult = TopBetta\RaceResult::find($resultExists);
 												}else{
-													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 													$raceResult = new TopBetta\RaceResult;
 													$raceResult->selection_id = $selectionsExists;
 												}
@@ -752,10 +752,10 @@ class RacingController extends \BaseController {
 										$raceResultSave = $raceResult->save();
 										$raceResultID = $raceResult->id;
 									
-										TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$raceTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+										TopBetta\LogHelper::l("BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
 									}else{
 									
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. PriceType:$priceType Not saved. MID: $meetingId, RaceCode:$raceTypeCode, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. PriceType:$priceType Not saved. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 									}
 										
 								// EXOTICS
