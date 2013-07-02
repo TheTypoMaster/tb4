@@ -557,8 +557,10 @@ class RacingController extends \BaseController {
 								
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Racetype object:$o ", 1);
 								//if(is_array($raceTypeCodeResult)){
-									$meetingTypeCode = $raceTypeCodeResult[0]['type_code'];
-									$meetingCountry = $raceTypeCodeResult[0]['country'];
+								$meetingTypeCode = $raceTypeCodeResult[0]['type_code'];
+								$meetingCountry = $raceTypeCodeResult[0]['country'];
+								$meetingGrade = $raceTypeCodeResult[0]['meeting_grade'];
+								
 									
 								//}else{
 								//	TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, No Meeting Code or Country found. MID:$meetingId, RN:$raceNo, SEL:$selection.", 1);
@@ -583,7 +585,7 @@ class RacingController extends \BaseController {
 											
 											case "R": // Gallops
 												// metro
-												if ($meetingCountry == "AU" && $meetingTypeCode == "METRO" && $priceType == self::METRO_GALLOPS_WIN){
+												if ($meetingCountry == "AU" && $meetingGrade == "METRO" && $priceType == self::METRO_GALLOPS_WIN){
 													if($resultExists){
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
@@ -596,7 +598,7 @@ class RacingController extends \BaseController {
 												}
 													
 												// prov
-												if ($meetingCountry == "AU" && $meetingTypeCode == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_WIN){
+												if ($meetingCountry == "AU" && $meetingGrade == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_WIN){
 													if($resultExists){
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
@@ -609,7 +611,7 @@ class RacingController extends \BaseController {
 												}
 												
 												// country
-												if ($meetingCountry == "AU" && $meetingTypeCode == "COUNTRY" && $priceType == self::COUNTRY_GALLOPS_WIN){
+												if ($meetingCountry == "AU" && $meetingGrade == "COUNTRY" && $priceType == self::COUNTRY_GALLOPS_WIN){
 													if($resultExists){
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
@@ -696,7 +698,7 @@ class RacingController extends \BaseController {
 										switch($meetingTypeCode){
 											case "R": // Gallops
 												// metro
-												if ($meetingCountry == "AU" && $meetingTypeCode == "METRO" && $priceType == self::METRO_GALLOPS_PLC){
+												if ($meetingCountry == "AU" && $meetingGrade == "METRO" && $priceType == self::METRO_GALLOPS_PLC){
 													if($resultExists){
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
@@ -709,12 +711,25 @@ class RacingController extends \BaseController {
 												}
 													
 												// prov
-												if ($meetingCountry == "AU" && $meetingTypeCode == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_PLC){
+												if ($meetingCountry == "AU" && $meetingGrade == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_PLC){
 													if($resultExists){
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														$raceResult = new TopBetta\RaceResult;
+														$raceResult->selection_id = $selectionsExists;
+													}
+													$saveRecord = 1;
+												}
+												
+												// country
+												if ($meetingCountry == "AU" && $meetingGrade == "COUNTRY" && $priceType == self::COUNTRY_GALLOPS_PLC){
+													if($resultExists){
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
+														$raceResult = TopBetta\RaceResult::find($resultExists);
+													}else{
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
