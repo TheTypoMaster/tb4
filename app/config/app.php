@@ -182,6 +182,7 @@ return array(
 		'FrontUsersProfile'	=> 'TopBetta\frontend\FrontUsersProfileController',
 		'FrontUsersBanking'	=> 'TopBetta\frontend\FrontUsersBankingController',
 		'FrontUsersDeposit'	=> 'TopBetta\frontend\FrontUsersDepositController',
+		'FrontUsersWithdraw'	=> 'TopBetta\frontend\FrontUsersWithdrawController',
 		'FrontUsersBalances'	=> 'TopBetta\frontend\FrontUsersBalancesController',
 		'FrontUsersBetting'	=> 'TopBetta\frontend\FrontUsersBettingController',
 		'FrontUsersTournaments'	=> 'TopBetta\frontend\FrontUsersTournamentsController',

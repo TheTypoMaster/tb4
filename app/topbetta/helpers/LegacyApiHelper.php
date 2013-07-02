@@ -2,7 +2,7 @@
 
 class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post');
 
 	/*
 	 * @param string $method
@@ -62,6 +62,17 @@ class LegacyApiHelper {
 					return $this -> curl('doInstantDeposit', $this -> allowed_methods['doInstantDeposit'], $payload);
 
 					break;					
+
+				case 'doWithdrawRequest' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. perform login
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doWithdrawRequest', $this -> allowed_methods['doWithdrawRequest'], $payload);
+
+					break;							
 					
 				case 'saveBet' :
 
