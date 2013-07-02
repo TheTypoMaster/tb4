@@ -553,8 +553,8 @@ class RacingController extends \BaseController {
 								
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Racetype object:$o ", 1);
 								
-								$meetingTypeCode = $raceTypeCodeResult[0]->type_code;
-								$meetingCountry = $raceTypeCodeResult[0]->country;
+								$meetingTypeCode = $raceTypeCodeResult[0]['type_code'];
+								$meetingCountry = $raceTypeCodeResult[0]['country'];
 								
 								$saveRecord = 0;
 															
