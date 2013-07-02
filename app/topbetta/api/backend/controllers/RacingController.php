@@ -42,10 +42,12 @@ class RacingController extends \BaseController {
 	//TODO: move to provder class
 	 
 	const 	EXOTICS_TOTE 		= 'SUP',
-			METRO_GALLOPS_WIN 	= 'TOPSP',
+			METRO_GALLOPS_WIN 	= 'TOP',
 			METRO_GALLOPS_PLC 	= 'TOP',
-			PROV_GALLOPS_WIN 	= 'TOPSP',
+			PROV_GALLOPS_WIN 	= 'TOP',
 			PROV_GALLOPS_PLC 	= 'MID',
+			COUNTRY_GALLOPS_WIN = 'TOP',
+			COUNTRY_GALLOPS_PLC = 'MID',
 			OVERSEAS_GALLOPS_WIN = 'MID',
 			OVERSEAS_GALLOPS_PLC = 'MID',
 			AUNZ_HARNESS_WIN 	= 'MID',
@@ -74,6 +76,8 @@ class RacingController extends \BaseController {
 			self::METRO_GALLOPS_PLC		=> 'top',
 			self::PROV_GALLOPS_WIN 		=> 'topsp',
 			self::PROV_GALLOPS_PLC 		=> 'mid',
+			self::COUNTRY_GALLOPS_WIN 	=> 'topsp',
+			self::COUNTRY_GALLOPS_PLC 	=> 'mid',
 			self::OVERSEAS_GALLOPS_WIN 	=> 'mid',
 			self::OVERSEAS_GALLOPS_PLC 	=> 'mid',
 			self::AUNZ_HARNESS_WIN 		=> 'mid',
@@ -602,6 +606,18 @@ class RacingController extends \BaseController {
 													$saveRecord = 1;
 												}
 												
+												// country
+												if ($meetingCountry == "AU" && $meetingTypeCode == "COUNTRY" && $priceType == self::COUNTRY_GALLOPS_WIN){
+													if($resultExists){
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
+														$raceResult = TopBetta\RaceResult::find($resultExists);
+													}else{
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
+														$raceResult = new TopBetta\RaceResult;
+														$raceResult->selection_id = $selectionsExists;
+													}
+													$saveRecord = 1;
+												}
 												
 												// os
 												if ($meetingCountry != "AU" && $priceType == self::OVERSEAS_GALLOPS_WIN){
