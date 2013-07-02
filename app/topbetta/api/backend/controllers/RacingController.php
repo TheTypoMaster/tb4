@@ -487,8 +487,8 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
 											// Get Silk ID for this runner
 											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', "$runnerCode" )->get();
-												$o = print_r($runnerSilkObject, true);
-												TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner RISA Object:$o.");
+												//$o = print_r($runnerSilkObject, true);
+												// TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner RISA Object:$o.");
 												if(count($runnerSilkObject) > 0){
 													if(isset($runnerSilkObject[0]->silk_file_name)){
 														$raceRunner->silk_id = $runnerSilkObject[0]->silk_file_name;
@@ -563,7 +563,7 @@ class RacingController extends \BaseController {
 									// check if selection exists in the DB
 									$selectionsExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $selection);
 									if ($selectionsExists){
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result. MID:$meetingId, RN:$raceNo, SEL:$selection",1);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Selection Exixts for result. MID:$meetingId, RN:$raceNo, SEL:$selection, Country:$meetingCountry, Type:$meetingTypeCode.",1);
 										// Check if we have results already
 										$resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
 										switch($meetingTypeCode){
