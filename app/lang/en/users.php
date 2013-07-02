@@ -22,5 +22,7 @@ return array(
 	
 	// ACCOUNT
 	"account_created"	=> "Account was succesfully created with username: :username",	
+	
+	"needs_upgrade"	=> "You have a basic account, please upgrade first.",	
 
 );
