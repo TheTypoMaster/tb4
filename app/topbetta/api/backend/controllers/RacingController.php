@@ -552,7 +552,7 @@ class RacingController extends \BaseController {
 								$o = print_r($raceTypeCodeResult,true);
 								
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, Racetype object:$o ", 1);
-								if(!is_array($raceTypeCodeResult[0])){
+								if(!isset($raceTypeCodeResult)){
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, No Meeting Code or Country found", 1);
 									break;
 								}
