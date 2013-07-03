@@ -716,7 +716,7 @@ class RacingController extends \BaseController {
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Already in DB", 1);
 														$raceResult = TopBetta\RaceResult::find($resultExists);
 													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$raceTypeCode, PriceType:$priceType Added to DB", 1);
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Result, RaceCode:$meetingTypeCode, PriceType:$priceType Added to DB", 1);
 														$raceResult = new TopBetta\RaceResult;
 														$raceResult->selection_id = $selectionsExists;
 													}
