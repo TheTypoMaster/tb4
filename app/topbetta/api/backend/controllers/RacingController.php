@@ -710,6 +710,7 @@ class RacingController extends \BaseController {
 													$saveRecord = 1;
 												}
 													
+												
 												// prov
 												if ($meetingCountry == "AU" && $meetingGrade == "PROVINCIAL" && $priceType == self::PROV_GALLOPS_PLC){
 													if($resultExists){
