@@ -299,6 +299,11 @@ switch($method) {
 		$deposits = new Api_Payment();
 		echo $deposits -> doInstantDeposit();
 		break;
+
+	case 'doWithdrawRequest' :
+		$withdraw = new Api_Payment();
+		echo $withdraw -> doWithdrawRequest();
+		break;		
 		
 	case 'getUser' :
 		$deposits = new Api_User();

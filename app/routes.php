@@ -106,6 +106,7 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	Route::resource('users.balances','FrontUsersBalances');
 	Route::resource('users.banking','FrontUsersBanking');
 	Route::resource('users.deposit','FrontUsersDeposit');
+	Route::resource('users.withdraw','FrontUsersWithdraw');
 	Route::resource('users.betting', 'FrontUsersBetting');
 	Route::resource('users.tournaments', 'FrontUsersTournaments');
 	
