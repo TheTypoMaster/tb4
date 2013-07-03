@@ -31,9 +31,9 @@ class SportsComps extends \Eloquent {
 			$sportQuery = ($sid) ? ' AND s.id IN ('.$sid.') ' : '';
 
 			//get sports and competitions
-			$query = ' SELECT s.id AS sportID, sportName, name, c.created_date, c.id AS eventGroupId ';
+			$query = ' SELECT s.id AS sportID, s.name AS sportName, c.name AS name, c.created_date, c.id AS eventGroupId ';
 			$query.= ' , c.start_date, c.close_time ';
-			$query.= ' FROM tbdb_sport_name AS s ';
+			$query.= ' FROM tbdb_tournament_sport AS s ';
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
