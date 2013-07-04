@@ -560,13 +560,15 @@ class RacingController extends \BaseController {
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 									break;
 								}
-									
+								
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
+								
 								// For win and place bets results are stored with the selection record
 								if ($betType == 'W' || $betType == 'P') {
 									// check if selection exists in the DB
 									$selectionsExists = TopBetta\RaceSelection::selectionExists ( $meetingId, $raceNo, $selection );
 									// if it exists
-									if (! $selectionsExists) {
+									if (!$selectionsExists) {
 										TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! Selection not found. PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
 										break;
 									}
@@ -579,6 +581,7 @@ class RacingController extends \BaseController {
 									} else {
 										TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, RaceCode:, PriceType:$priceType Added to DB", 1 );
 										$raceResult = new TopBetta\RaceResult ();
+										
 										$raceResult->selection_id = $selectionsExists;
 									}
 									
