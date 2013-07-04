@@ -11,7 +11,7 @@ class BetProduct extends \Eloquent {
     	 
     	return	BetProduct::join('tb_product_default AS pd', 'pd.id', '=', 'tbdb_bet_product.id')
     										->join('tb_product_provider_match AS ppm', 'ppm.tb_product_id', '=', 'pd.id')
-    										->join('tb_product_provider AS pp', 'pp.id ', '=', 'ppm.provider_id')
+    										->join('tb_product_provider AS tpp', 'tpp.id ', '=', 'ppm.provider_id')
     										->where('provider_product_name', '=', $priceType)
     										->where('bet_type', '=', $betType)
     										->where('type_code', '=', $meetingTypeCode)
