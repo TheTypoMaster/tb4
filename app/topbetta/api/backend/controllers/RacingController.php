@@ -902,6 +902,8 @@ class RacingController extends \BaseController {
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 		
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Checking if we can process: $productUsed.", 1);
+		
 		if(!$productUsed){
 			return false;
 		}
