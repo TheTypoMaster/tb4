@@ -3,7 +3,8 @@ namespace TopBetta;
 
 class SportsSportName extends \Eloquent {
     
-	protected $table = 'tbdb_sport_name';	
+	// protected $table = 'tbdb_sport_name';
+	protected $table = 'tbdb_tournament_sport';
 		
     protected $guarded = array();
 
@@ -17,6 +18,6 @@ class SportsSportName extends \Eloquent {
      * - The record ID if a record is found
      */
     static public function sportExists($sportName) {
-    	return SportsSportName::where('sportName', '=', $sportName) -> pluck('id');
+    	return SportsSportName::where('name', '=', $sportName) -> pluck('id');
     }
 }
