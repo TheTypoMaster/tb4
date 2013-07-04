@@ -10,7 +10,7 @@ class BetProduct extends \Eloquent {
     public static function isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
     	 
     	return	BetProduct::join('tb_product_default AS pd', 'pd.id', '=', 'tbdb_bet_product.id')
-    										->join('tb_product_provider_match AS ppm', 'ppm.tb_product_id', '=', 'bp.id')
+    										->join('tb_product_provider_match AS ppm', 'ppm.tb_product_id', '=', 'pd.id')
     										->join('tb_product_provider AS pp', 'pp.id ', '=', 'ppm.provider_id')
     										->where('provider_product_name', '=', $priceType)
     										->where('bet_type', '=', $betType)
