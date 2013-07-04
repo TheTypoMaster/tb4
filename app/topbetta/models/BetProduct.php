@@ -7,7 +7,7 @@ class BetProduct extends \Eloquent {
 
     public static $rules = array();
     
-    public static function isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
+   /* public static function isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
     	 
     	return	TopBetta\ProductDefaults::join('tb_product_default AS pd', 'pd.tb', '=', 'tbdb_bet_product.id')
     										->join('tb_product_provider_match AS ppm', 'ppm.tb_product_id', '=', 'bp.id')
@@ -20,5 +20,5 @@ class BetProduct extends \Eloquent {
     										->where('provider_name', '=', $providerName)
     										->pluck('id');
     
-    }
+    }*/
 }
