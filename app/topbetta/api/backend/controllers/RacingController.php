@@ -553,7 +553,7 @@ class RacingController extends \BaseController {
 								 * Check if this is a product we need to store in the DB
 								 */
 								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, About to check product save", 1 );
-								$saveThisProduct = $this->canProductBeProcessed ( $dataArray, $providerName );
+								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
 								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, after product save", 1 );
 								
 								// Ignore this Product
@@ -897,7 +897,7 @@ class RacingController extends \BaseController {
 		$meetingCountry = $meetingTypeCodeResult[0]['country'];
 		$meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 		
-		
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. About to check product used", 1);
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 		
