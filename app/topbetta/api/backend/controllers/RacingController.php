@@ -552,7 +552,7 @@ class RacingController extends \BaseController {
 								 * Check if this is a product we need to store in the DB
 								 */
 								
-								$saveThisProduct = canProductBeProcessed($dataArray, $providerName);
+								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
 								
 								// Ignore this Product
 								if(!$saveThisProduct){
