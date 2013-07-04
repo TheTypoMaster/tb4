@@ -886,12 +886,9 @@ class RacingController extends \BaseController {
 		
 	private function canProductBeProcessed($dataArray, $providerName){
 		$meetingId = $dataArray['MeetingId'];
-		$raceNo = $dataArray['RaceNo'];
+		
 		$betType = $dataArray['BetType'];
 		$priceType = $dataArray['PriceType'];
-		$selection = $dataArray['Selection'];
-		$placeNo = $dataArray['PlaceNo'];
-		$payout = $dataArray['Payout'];
 		
 		// grab the meeting details we need
 		$meetingTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->get();
@@ -903,7 +900,9 @@ class RacingController extends \BaseController {
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 		
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Product Used Result: $productUsed", 1);
+		$o = print_r($productUsed, true);
+		
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Product Used Result: $productUsed, o:$o", 1);
 		
 		if(!$productUsed){
 			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Checking if we can process: NO: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
