@@ -545,6 +545,7 @@ class RacingController extends \BaseController {
 								$selection = $dataArray['Selection'];
 								$placeNo = $dataArray['PlaceNo'];
 								$payout = $dataArray['Payout'];
+								$providerName = "igas";
 
 								// TODO: Check JSON data is valid
 
