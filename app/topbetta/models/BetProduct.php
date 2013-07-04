@@ -10,16 +10,17 @@ class BetProduct extends \Eloquent {
     public static function isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
 
     	
-    	$productID = "select `tbdb_bet_product.id` from `tbdb_bet_product as bp` 
-    				left join `tb_product_default` as `pd` on `pd`.`tb_product_id` = `bp.id` 
-    				left join `tb_product_provider_match` as `ppm` on `ppm`.`tb_product_id` = `bp.id` 
-    				left join `tb_product_provider` as `tpp` on `tpp`.`id` = `ppm.provider_id` 
-    				where `provider_product_name` = '$priceType' 
+    	$productID = "select bp.id 
+    				from tbdb_bet_product as bp 
+    				left join tb_product_default as pd on pd.tb_product_id = bp.id`
+    				left join tb_product_provider_match as ppm on ppm.tb_product_id = bp.id 
+    				left join tb_product_provider as tpp on tpp.id = ppm.provider_id 
+    				where provider_product_nam = '$priceType' 
     				and `bet_type` = '$betType' 
     				and `type_code` = '$meetingTypeCode' 
     				and `country` = '$meetingCountry' 
     				and `region` = '$meetingGrade' 
-    				and `provider_name` = '$providerName' 
+    				and `provider_name` = '$providerName'
     				limit 1";
     	
     	$result = \DB::select($productID);
