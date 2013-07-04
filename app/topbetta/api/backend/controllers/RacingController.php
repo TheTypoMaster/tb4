@@ -900,7 +900,7 @@ class RacingController extends \BaseController {
 		
 		
 		// check if product is used
-		$productUsed = TopBetta\ProductDefaults::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
+		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 		
 		if(!$productUsed){
 			return false;
