@@ -587,7 +587,7 @@ class RacingController extends \BaseController {
 											$raceResultSave = $raceResult->save ();
 											$raceResultID = $raceResult->id;
 											
-											TopBetta\LogHelper::l ( "BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout" );
+											TopBetta\LogHelper::l ( "BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout" );
 										} else {
 											TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! Selection not found. PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
 										}
