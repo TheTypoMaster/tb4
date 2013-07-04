@@ -21,7 +21,7 @@ class FrontRunnersController extends \BaseController {
 		// store runners in cache for 1 min at a time
 		return \Cache::remember('runners-' . $raceId, 1, function() use (&$raceId) {
 			
-			$runners = \TopBetta\RaceSelection::getRunnersForRaceId($raceId);
+			$runners = TopBetta\RaceSelection::getRunnersForRaceId($raceId);
 
 			return array('success' => true, 'result' => $runners);
 		});
