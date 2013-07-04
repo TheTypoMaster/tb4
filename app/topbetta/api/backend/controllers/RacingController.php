@@ -905,11 +905,11 @@ class RacingController extends \BaseController {
 		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Product Used Result: $productUsed, o:$o", 1);
 		
 		if(!$productUsed){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Checking if we can process: NO: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Cant Process: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
 			return false;
 		}
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Checking if we can process: YES: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
-		return $productUsed;
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Done: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
+		return true;
 	}
 	
 }
