@@ -530,145 +530,143 @@ class RacingController extends \BaseController {
 						}
 						break;
 						
-					// Result Data - the actual results of the race
-					case "ResultList":
-						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Result");
-						foreach ($racingArray as $dataArray){
+						// Result Data - the actual results of the race
+					case "ResultList" :
+						TopBetta\LogHelper::l ( "BackAPI: Racing - Processing $objectCount: Result" );
+						foreach ( $racingArray as $dataArray ) {
 							$selectionsExists = $resultExists = 0;
-								
+							
 							// Check required data to update a Result is in the JSON
-							if(isset($dataArray['MeetingId'])  &&  isset($dataArray['RaceNo']) && isset($dataArray['Selection']) && isset($dataArray['BetType']) && isset($dataArray['PriceType']) && isset($dataArray['PlaceNo']) && isset($dataArray['Payout'])){
-								$meetingId = $dataArray['MeetingId'];
-								$raceNo = $dataArray['RaceNo'];
-								$betType = $dataArray['BetType'];
-								$priceType = $dataArray['PriceType'];
-								$selection = $dataArray['Selection'];
-								$placeNo = $dataArray['PlaceNo'];
-								$payout = $dataArray['Payout'];
+							if (isset ( $dataArray ['MeetingId'] ) && isset ( $dataArray ['RaceNo'] ) && isset ( $dataArray ['Selection'] ) && isset ( $dataArray ['BetType'] ) && isset ( $dataArray ['PriceType'] ) && isset ( $dataArray ['PlaceNo'] ) && isset ( $dataArray ['Payout'] )) {
+								$meetingId = $dataArray ['MeetingId'];
+								$raceNo = $dataArray ['RaceNo'];
+								$betType = $dataArray ['BetType'];
+								$priceType = $dataArray ['PriceType'];
+								$selection = $dataArray ['Selection'];
+								$placeNo = $dataArray ['PlaceNo'];
+								$payout = $dataArray ['Payout'];
 								$providerName = "igas";
-
+								
 								// TODO: Check JSON data is valid
-
+								
 								/*
 								 * Check if this is a product we need to store in the DB
 								 */
 								
-								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
+								$saveThisProduct = $this->canProductBeProcessed ( $dataArray, $providerName );
 								
 								// Ignore this Product
-								if(!$saveThisProduct){
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
-									break;
-								}
-								
-								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
-								
-								// For win and place bets results are stored with the selection record
-								if ($betType == 'W' || $betType == 'P') {
-									// check if selection exists in the DB
-									$selectionsExists = TopBetta\RaceSelection::selectionExists ( $meetingId, $raceNo, $selection );
-									// if it exists
-									if (!$selectionsExists) {
-										TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! Selection not found. PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
-										break;
-									}
+								if ($saveThisProduct) {
 									
-									// Check if we have results already
-									$resultExists = \DB::table ( 'tbdb_selection_result' )->where ( 'selection_id', $selectionsExists )->pluck ( 'id' );
-									if ($resultExists) {
-										TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, RaceCode:, PriceType:$priceType Already in DB", 1 );
-										$raceResult = TopBetta\RaceResult::find ( $resultExists );
+									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
+									
+									// For win and place bets results are stored with the selection record
+									if ($betType == 'W' || $betType == 'P') {
+										// check if selection exists in the DB
+										$selectionsExists = TopBetta\RaceSelection::selectionExists ( $meetingId, $raceNo, $selection );
+										// if it exists
+										if ($selectionsExists) {
+											// Check if we have results already
+											$resultExists = \DB::table ( 'tbdb_selection_result' )->where ( 'selection_id', $selectionsExists )->pluck ( 'id' );
+											if ($resultExists) {
+												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, RaceCode:, PriceType:$priceType Already in DB", 1 );
+												$raceResult = TopBetta\RaceResult::find ( $resultExists );
+											} else {
+												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, RaceCode:, PriceType:$priceType Added to DB", 1 );
+												$raceResult = new TopBetta\RaceResult ();
+												
+												$raceResult->selection_id = $selectionsExists;
+											}
+											
+											// grab prosition and correct dividend
+											$raceResult->position = $placeNo;
+											($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
+											
+											// save win or place odds to DB
+											$raceResultSave = $raceResult->save ();
+											$raceResultID = $raceResult->id;
+											
+											TopBetta\LogHelper::l ( "BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout" );
+										} else {
+											TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! Selection not found. PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
+										}
+										// Exotic results are stored with the event record
 									} else {
-										TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, RaceCode:, PriceType:$priceType Added to DB", 1 );
-										$raceResult = new TopBetta\RaceResult ();
 										
-										$raceResult->selection_id = $selectionsExists;
+										// Get ID of event record - used to store exotic results/divs if required
+										$eventID = TopBetta\RaceEvent::eventExists ( $meetingId, $raceNo );
+										
+										// grab the event
+										$raceEvent = TopBetta\RaceEvent::find ( $eventID );
+										
+										// build the serialised result data for this result
+										$arrayKey = str_replace ( '-', '/', $selection );
+										$arrayValue = $payout / 100;
+										$exoticArray = array (
+												$arrayKey => $arrayValue 
+										);
+										$previousDivArray = array ();
+										// work on each exotic type
+										switch ($betType) {
+											case "Q" : // Quinella
+												if (! $raceEvent->quinella_dividend == NULL) {
+													if (! $raceEvent->quinella_dividend == serialize ( $exoticArray )) {
+														// unserialise the existing dividend
+														$previousDivArray = unserialize ( $raceEvent->quinella_dividend );
+														// add the new dividends
+														$raceEvent->quinella_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+													}
+												} else {
+													$raceEvent->quinella_dividend = serialize ( $exoticArray );
+												}
+												break;
+											case "E" : // Exacta
+												if (! $raceEvent->exacta_dividend == NULL) {
+													if (! $raceEvent->exacta_dividend == serialize ( $exoticArray )) {
+														// unserialise the existing dividend
+														$previousDivArray = unserialize ( $raceEvent->exacta_dividend );
+														// add the new dividends
+														$raceEvent->exacta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+													}
+												} else {
+													$raceEvent->exacta_dividend = serialize ( $exoticArray );
+												}
+												break;
+											case "T" : // Trifecta
+												if (! $raceEvent->trifecta_dividend == NULL) {
+													if (! $raceEvent->trifecta_dividend == serialize ( $exoticArray )) {
+														// unserialise the existing dividend
+														$previousDivArray = unserialize ( $raceEvent->trifecta_dividend );
+														// add the new dividends
+														$raceEvent->trifecta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+													}
+												} else {
+													$raceEvent->trifecta_dividend = serialize ( $exoticArray );
+												}
+												break;
+											case "F" : // First Four
+												if (! $raceEvent->firstfour_dividend == NULL) {
+													if (! $raceEvent->firstfour_dividend == serialize ( $exoticArray )) {
+														// unserialise the existing dividend
+														$previousDivArray = unserialize ( $raceEvent->firstfour_dividend );
+														// add the new dividends
+														$raceEvent->firstfour_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+													}
+												} else {
+													$raceEvent->firstfour_dividend = serialize ( $exoticArray );
+												}
+												break;
+											default :
+												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2 );
+										}
+										// save the exotic dividend
+										$raceEvent->save ();
 									}
-									
-									// grab prosition and correct dividend
-									$raceResult->position = $placeNo;
-									($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
-									
-									// save win or place odds to DB
-									$raceResultSave = $raceResult->save ();
-									$raceResultID = $raceResult->id;
-									
-									TopBetta\LogHelper::l ( "BackAPI: Racing - Processed Result. MID: $meetingId, RaceCode:$meetingTypeCode, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout" );
-									
-								// Exotic results are stored with the event record
-								} else {
-									
-									// Get ID of event record - used to store exotic results/divs if required
-									$eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
-									
-									// grab the event
-									$raceEvent = TopBetta\RaceEvent::find ( $eventID );
-									
-									// build the serialised result data for this result
-									$arrayKey = str_replace ( '-', '/', $selection );
-									$arrayValue = $payout / 100;
-									$exoticArray = array (
-											$arrayKey => $arrayValue 
-									);
-									$previousDivArray = array ();
-									// work on each exotic type
-									switch ($betType) {
-										case "Q" : // Quinella
-											if (! $raceEvent->quinella_dividend == NULL) {
-												if (! $raceEvent->quinella_dividend == serialize ( $exoticArray )) {
-													// unserialise the existing dividend
-													$previousDivArray = unserialize ( $raceEvent->quinella_dividend );
-													// add the new dividends
-													$raceEvent->quinella_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-												}
-											} else {
-												$raceEvent->quinella_dividend = serialize ( $exoticArray );
-											}
-											break;
-										case "E" : // Exacta
-											if (! $raceEvent->exacta_dividend == NULL) {
-												if (! $raceEvent->exacta_dividend == serialize ( $exoticArray )) {
-													// unserialise the existing dividend
-													$previousDivArray = unserialize ( $raceEvent->exacta_dividend );
-													// add the new dividends
-													$raceEvent->exacta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-												}
-											} else {
-												$raceEvent->exacta_dividend = serialize ( $exoticArray );
-											}
-											break;
-										case "T" : // Trifecta
-											if (! $raceEvent->trifecta_dividend == NULL) {
-												if (! $raceEvent->trifecta_dividend == serialize ( $exoticArray )) {
-													// unserialise the existing dividend
-													$previousDivArray = unserialize ( $raceEvent->trifecta_dividend );
-													// add the new dividends
-													$raceEvent->trifecta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-												}
-											} else {
-												$raceEvent->trifecta_dividend = serialize ( $exoticArray );
-											}
-											break;
-										case "F" : // First Four
-											if (! $raceEvent->firstfour_dividend == NULL) {
-												if (! $raceEvent->firstfour_dividend == serialize ( $exoticArray )) {
-													// unserialise the existing dividend
-													$previousDivArray = unserialize ( $raceEvent->firstfour_dividend );
-													// add the new dividends
-													$raceEvent->firstfour_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-												}
-											} else {
-												$raceEvent->firstfour_dividend = serialize ( $exoticArray );
-											}
-											break;
-										default :
-											TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2 );
-									}
-									// save the exotic dividend
-									$raceEvent->save ();
+								} else { // not all required data available
+									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
 								}
-							}else { // not all required data available
-								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Missing Results data. Can't process", 2);
+							} else {
+								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Missing Results data. Can't process", 1);
 							}
 						}
 						break; 
