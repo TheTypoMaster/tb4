@@ -8,10 +8,8 @@ class BetProduct extends \Eloquent {
     public static $rules = array();
     
     public static function isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
-    	 
-    	return	1;
-    	
-    	/* BetProduct::leftjoin('tb_product_default AS pd', 'pd.tb_product_id', '=', 'tbdb_bet_product.id')
+
+    	$productID = BetProduct::leftjoin('tb_product_default AS pd', 'pd.tb_product_id', '=', 'tbdb_bet_product.id')
     										->leftjoin('tb_product_provider_match AS ppm', 'ppm.tb_product_id', '=', 'tbdb_bet_product.id')
     										->leftjoin('tb_product_provider AS tpp', 'tpp.id', '=', 'ppm.provider_id')
     										->where('provider_product_name', '=', $priceType)
@@ -20,6 +18,7 @@ class BetProduct extends \Eloquent {
     										->where('country', '=', $meetingCountry)
     										->where('region', '=', $meetingGrade)
     										->where('provider_name', '=', $providerName)
-    										->pluck('tbdb_bet_product.id'); */
+    										->pluck('tbdb_bet_product.id');
+    	return $productID;
 	}
 }
