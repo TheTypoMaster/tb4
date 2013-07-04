@@ -25,6 +25,7 @@ class BetProduct extends \Eloquent {
     	
     	$result = \DB::select($productID);
     	
+    	//TODO: should be using the below eloquent
     	/* $productID = BetProduct::leftjoin('tb_product_default AS pd', 'pd.tb_product_id', '=', 'tbdb_bet_product.id')
     										->leftjoin('tb_product_provider_match AS ppm', 'ppm.tb_product_id', '=', 'tbdb_bet_product.id')
     										->leftjoin('tb_product_provider AS tpp', 'tpp.id', '=', 'ppm.provider_id')

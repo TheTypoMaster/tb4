@@ -552,11 +552,9 @@ class RacingController extends \BaseController {
 								/*
 								 * Check if this is a product we need to store in the DB
 								 */
-								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, About to check product save", 1 );
 								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
-								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, after product save", 1 );
-								
-								// Ignore this Product
+																
+								// We want this product
 								if ($saveThisProduct) {
 									
 									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
@@ -579,7 +577,7 @@ class RacingController extends \BaseController {
 												$raceResult->selection_id = $selectionsExists;
 											}
 											
-											// grab prosition and correct dividend
+											// grab position and correct dividend
 											$raceResult->position = $placeNo;
 											($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
 											
@@ -591,7 +589,7 @@ class RacingController extends \BaseController {
 										} else {
 											TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! Selection not found. PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
 										}
-										// Exotic results are stored with the event record
+									// Exotic results are stored with the event record
 									} else {
 										
 										// Get ID of event record - used to store exotic results/divs if required
@@ -689,40 +687,50 @@ class RacingController extends \BaseController {
 								$priceType = $dataArray['PriceType'];
 								$poolAmount = $dataArray['PoolAmount'];
 								$oddsString = $dataArray['OddString'];
-								
 								$oddsArray = explode(';', $oddsString);
+								$providerName = "igas";
 								
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. MID: $meetingId, Race: $raceNo, BT: $betType, PT: $priceType, PA: $poolAmount",1);
 																
 								// TODO: Check JSON data is valid
 				
-								// TODO: Cater properly for other odds type's 
-								if ($priceType == "TOP" || $priceType == "MID"){
+								
+								
+
+								/*
+								 * Check if this is a product we need to store in the DB
+								* NOTE: Moving forward, we should store the odds for ALL tote types
+								*/
+								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
+								
+								
+								// We want this product
+								if ($saveThisProduct) {
 									// check if race exists in DB
 									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
-									
+										
 									// grab the race type code
 									$raceTypeCode = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
-									
+										
 									// if race exists update that record
 									if($raceExists){
 										// check for odds
 										if(is_array($oddsArray)){
 											//loop on odds array
 											$runnerCount = 1;
-											
+												
 											foreach($oddsArray as $runnerOdds){
 												TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds for Runner: $runnerCount", 1);
 												// echo "RC: $runnerCount, ";
 												// get selectionID for runner
-												
+									
 												// check if selection exists in the DB
 												$selectionExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
-											
+													
 												if ($selectionExists){
 													TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. In DB", 1);
 													$priceExists = \DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
-												
+									
 													// if result exists update that record otherwise create a new one
 													if($priceExists){
 														TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, In DB: $priceExists", 1);
@@ -735,66 +743,38 @@ class RacingController extends \BaseController {
 													}
 													$oddsSet = 0;
 													// update the correct field
-													
-													if($priceType == "TOP" && $raceTypeCode == "R" ){
-														
-														switch($betType){
-															case "W":
-																$runnerPrice->win_odds = $runnerOdds / 100;
-																$oddsSet = 1;
-																//echo "Win odds set: $runnerOdds, ";
-																break;
-															case "P":
-																$runnerPrice->place_odds = $runnerOdds / 100;
-																$oddsSet = 1;
-																//echo "Place odds set: $runnerOdds, ";
-																break;
-															default:
-																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
-														}
-														
-													}elseif($priceType == "MID" && $raceTypeCode != "R" ){
-														switch($betType){
-															case "W":
-																$runnerPrice->win_odds = $runnerOdds / 100;
-																$oddsSet = 1;
-																//echo "Win odds set: $runnerOdds, ";
-																break;
-															case "P":
-																$runnerPrice->place_odds = $runnerOdds / 100;
-																$oddsSet = 1;
-																//echo "Place odds set: $runnerOdds, ";
-																break;
-															default:
-																TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
-															}
-														}
-										
-													// save/update the price record
-													if ($oddsSet){
-														$runnerPrice->save();
-														TopBetta\LogHelper::l("BackAPI: Racing - Processed Odds. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds");
-													}else{
-														TopBetta\LogHelper::l("BackAPI: Racing - Not processed. MID:$meetingId, RaceNo:$raceNo, BT:$betType, PT:$priceType, PA:$poolAmount, ODDS:$runnerOdds ", 2);
+											
+													switch($betType){
+														case "W":
+															$runnerPrice->win_odds = $runnerOdds / 100;
+															break;
+														case "P":
+															$runnerPrice->place_odds = $runnerOdds / 100;
+															break;
+														default:
+															TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
 													}
+									
+													// save/update the price record
+													$runnerPrice->save();
+														
 												}else{
 													TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No selction for Odds in DB. Can't process", 2);
 												}
 												$runnerCount++;
 											}
-											} else {
-												TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No odds array found. Can't process", 2);
-											}
-										}else{
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No race found. Can't store results", 2);
+										} else {
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No odds array found. Can't process", 2);
 										}
+									}else{
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No race found. Can't store results", 2);
+									}
 								}else{
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not TOP or MID:$priceType.", 2);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds: Price Type not used for this meeting/code: $priceType.", 2);
 								}
 							}else{
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. Missing Odds Data. Can't process", 2);
 							}
-							//echo "\n\n";
 						}
 	
 						break;
@@ -887,7 +867,6 @@ class RacingController extends \BaseController {
 		
 	private function canProductBeProcessed($dataArray, $providerName){
 		$meetingId = $dataArray['MeetingId'];
-		
 		$betType = $dataArray['BetType'];
 		$priceType = $dataArray['PriceType'];
 		
@@ -897,19 +876,12 @@ class RacingController extends \BaseController {
 		$meetingCountry = $meetingTypeCodeResult[0]['country'];
 		$meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 		
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. About to check product used", 1);
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
-		
-		$o = print_r($productUsed, true);
-		
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Product Used Result: $productUsed, o:$o", 1);
-		
+				
 		if(!$productUsed){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Cant Process: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
 			return false;
 		}
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Done: $priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName.", 1);
 		return true;
 	}
 	
