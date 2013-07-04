@@ -554,6 +554,7 @@ class RacingController extends \BaseController {
 								 */
 								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, About to check product save", 1 );
 								$saveThisProduct = $this->canProductBeProcessed ( $dataArray, $providerName );
+								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, after product save", 1 );
 								
 								// Ignore this Product
 								if ($saveThisProduct) {
