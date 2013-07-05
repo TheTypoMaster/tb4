@@ -123,7 +123,7 @@ class BettingModelBetProduct extends SuperModel
 	
 	public function isProductUsed($betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
 	
-		 
+		$db =& $this->getDBO();
 		$query = "select bp.id, ppm.provider_product_name as product_name
 		from tbdb_bet_product as bp
 		left join tb_product_default as pd on pd.tb_product_id = bp.id
