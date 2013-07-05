@@ -161,23 +161,8 @@ class RacingController extends \BaseController {
 
 		// Set the market Type
 		$marketName = "Racing";
-		 
-		//$racingJSON = print_r($racingJSON, true);
-		//echo"$racingJSON\n\n\n\n\n";
-		//exit;
 		
 		//TODO: // validate the json. Create some rules and check the json validates
-		/* $validation = Validator::make(array('json'=> $racingJSON),array('json' => 'mime:json'));
-		if($validation->fails())
-		{
-			return Response::json($validation->errors);
-		}
-		else
-		{
-			// all OK!
-		}
-		exit; */
-		// JSON objects MeetingList/RaceList/RunnerList/ResultList/PriceList/OutcomeList
 		
 		TopBetta\LogHelper::l("BackAPI: Racing - Processing '$keyCount' Objects");
 		$objectCount=1;
@@ -238,10 +223,6 @@ class RacingController extends \BaseController {
 									}
 								}
 								
-								// TODO: what do we do with country
-								//if(isset($dataArray['Country'])){
-								//	$raceMeet->type_code = $dataArray['Country'];
-								//}
 								if(isset($dataArray['EventCount'])){
 									$raceMeet->events = $dataArray['EventCount'];
 								}
@@ -556,7 +537,6 @@ class RacingController extends \BaseController {
 																
 								// We want this product
 								if ($saveThisProduct) {
-									
 									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
 									
 									// For win and place bets results are stored with the selection record
@@ -693,16 +673,13 @@ class RacingController extends \BaseController {
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. MID: $meetingId, Race: $raceNo, BT: $betType, PT: $priceType, PA: $poolAmount",1);
 																
 								// TODO: Check JSON data is valid
-				
-								
-								
 
 								/*
 								 * Check if this is a product we need to store in the DB
-								* NOTE: Moving forward, we should store the odds for ALL tote types
+								 * NOTE: Moving forward, we should store the odds for ALL tote types
 								*/
+								 								
 								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
-								
 								
 								// We want this product
 								if ($saveThisProduct) {
@@ -718,12 +695,10 @@ class RacingController extends \BaseController {
 										if(is_array($oddsArray)){
 											//loop on odds array
 											$runnerCount = 1;
-												
+
 											foreach($oddsArray as $runnerOdds){
 												TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds for Runner: $runnerCount", 1);
-												// echo "RC: $runnerCount, ";
-												// get selectionID for runner
-									
+
 												// check if selection exists in the DB
 												$selectionExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
 													
@@ -876,12 +851,15 @@ class RacingController extends \BaseController {
 		$meetingCountry = $meetingTypeCodeResult[0]['country'];
 		$meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 		
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. MeetID:$meetingId, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 2);
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 				
 		if(!$productUsed){
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT SAVED", 2);
 			return false;
 		}
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. SAVED", 2);
 		return true;
 	}
 	
