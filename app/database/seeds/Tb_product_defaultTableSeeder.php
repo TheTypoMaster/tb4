@@ -9,8 +9,10 @@ class Tb_product_defaultTableSeeder extends Seeder {
     	
 		$tb_product_default = ( array (
 				/*
-				 * Australia
+				 * Australia - Gallops
 				 */
+				
+				// METRO
 				array (
 						'tb_product_id' => '7',
 						'bet_type' => 'W',
@@ -31,7 +33,63 @@ class Tb_product_defaultTableSeeder extends Seeder {
 				),
 				array (
 						'tb_product_id' => '7',
+						'bet_type' => 'Q',
+						'country' => 'AU',
+						'region' => 'METRO',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '5',
+						'bet_type' => 'E',
+						'country' => 'AU',
+						'region' => 'METRO',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '7',
+						'bet_type' => 'T',
+						'country' => 'AU',
+						'region' => 'METRO',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '5',
+						'bet_type' => 'FF',
+						'country' => 'AU',
+						'region' => 'METRO',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				
+				// PROVINCIAL
+				array (
+						'tb_product_id' => '7',
 						'bet_type' => 'W',
+						'country' => 'AU',
+						'region' => 'PROVINCIAL',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '6',
+						'bet_type' => 'P',
+						'country' => 'AU',
+						'region' => 'PROVINCIAL',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '7',
+						'bet_type' => 'Q',
 						'country' => 'AU',
 						'region' => 'PROVINCIAL',
 						'type_code' => 'R',
@@ -40,7 +98,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 				),
 				array (
 						'tb_product_id' => '5',
-						'bet_type' => 'P',
+						'bet_type' => 'E',
 						'country' => 'AU',
 						'region' => 'PROVINCIAL',
 						'type_code' => 'R',
@@ -48,7 +106,28 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '6',
+						'tb_product_id' => '7',
+						'bet_type' => 'T',
+						'country' => 'AU',
+						'region' => 'PROVINCIAL',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '5',
+						'bet_type' => 'FF',
+						'country' => 'AU',
+						'region' => 'PROVINCIAL',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				
+				
+				// COUNTRY
+				array (
+						'tb_product_id' => '7',
 						'bet_type' => 'W',
 						'country' => 'AU',
 						'region' => 'COUNTRY',
@@ -65,13 +144,50 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
-				// Win and Place - Dogs
+				array (
+						'tb_product_id' => '7',
+						'bet_type' => 'Q',
+						'country' => 'AU',
+						'region' => 'COUNTRY',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '5',
+						'bet_type' => 'E',
+						'country' => 'AU',
+						'region' => 'COUNTRY',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '7',
+						'bet_type' => 'T',
+						'country' => 'AU',
+						'region' => 'COUNTRY',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '5',
+						'bet_type' => 'FF',
+						'country' => 'AU',
+						'region' => 'COUNTRY',
+						'type_code' => 'R',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				
+				// OTHER - Racing - No Region
 				array (
 						'tb_product_id' => '6',
 						'bet_type' => 'W',
 						'country' => 'AU',
 						'region' => '',
-						'type_code' => 'G',
+						'type_code' => 'R',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
@@ -80,31 +196,10 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'bet_type' => 'P',
 						'country' => 'AU',
 						'region' => '',
-						'type_code' => 'G',
+						'type_code' => 'R',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
-				// Win and Place - Harness
-				array (
-						'tb_product_id' => '6',
-						'bet_type' => 'W',
-						'country' => 'AU',
-						'region' => '',
-						'type_code' => 'H',
-						'created_at' => new DateTime,
-        				'updated_at' => new DateTime
-						
-				),
-				array (
-						'tb_product_id' => '6',
-						'bet_type' => 'P',
-						'country' => 'AU',
-						'region' => '',
-						'type_code' => 'H',
-						'created_at' => new DateTime,
-						'updated_at' => new DateTime
-				),
-				// Exotics - Racing
 				array (
 						'tb_product_id' => '4',
 						'bet_type' => 'Q',
@@ -141,40 +236,26 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
-				//Exotics - Harness
+					
+				/*
+				 * Australia - Dogs
+				 */
+				// Win/Place
 				array (
-						'tb_product_id' => '4',
-						'bet_type' => 'Q',
+						'tb_product_id' => '6',
+						'bet_type' => 'W',
 						'country' => 'AU',
 						'region' => '',
-						'type_code' => 'H',
+						'type_code' => 'G',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '4',
-						'bet_type' => 'E',
+						'tb_product_id' => '6',
+						'bet_type' => 'P',
 						'country' => 'AU',
 						'region' => '',
-						'type_code' => 'H',
-						'created_at' => new DateTime,
-						'updated_at' => new DateTime
-				),
-				array (
-						'tb_product_id' => '4',
-						'bet_type' => 'T',
-						'country' => 'AU',
-						'region' => '',
-						'type_code' => 'H',
-						'created_at' => new DateTime,
-						'updated_at' => new DateTime
-				),
-				array (
-						'tb_product_id' => '4',
-						'bet_type' => 'FF',
-						'country' => 'AU',
-						'region' => '',
-						'type_code' => 'H',
+						'type_code' => 'G',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
@@ -212,6 +293,69 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'country' => 'AU',
 						'region' => '',
 						'type_code' => 'G',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				
+				
+				/*
+				 * Australia - Harness
+				 */
+				// Win / Place
+				array (
+						'tb_product_id' => '6',
+						'bet_type' => 'W',
+						'country' => 'AU',
+						'region' => '',
+						'type_code' => 'H',
+						'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+						
+				),
+				array (
+						'tb_product_id' => '6',
+						'bet_type' => 'P',
+						'country' => 'AU',
+						'region' => '',
+						'type_code' => 'H',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				
+				// Exotics
+				array (
+						'tb_product_id' => '4',
+						'bet_type' => 'Q',
+						'country' => 'AU',
+						'region' => '',
+						'type_code' => 'H',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '4',
+						'bet_type' => 'E',
+						'country' => 'AU',
+						'region' => '',
+						'type_code' => 'H',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '4',
+						'bet_type' => 'T',
+						'country' => 'AU',
+						'region' => '',
+						'type_code' => 'H',
+						'created_at' => new DateTime,
+						'updated_at' => new DateTime
+				),
+				array (
+						'tb_product_id' => '4',
+						'bet_type' => 'FF',
+						'country' => 'AU',
+						'region' => '',
+						'type_code' => 'H',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
