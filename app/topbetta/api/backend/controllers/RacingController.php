@@ -858,11 +858,12 @@ class RacingController extends \BaseController {
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 				
+		$o = print_r($productUsed,true);
 		if(!$productUsed){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT SAVED: $productUsed.", 2);
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT SAVED: $productUsed. object:$o", 2);
 			return false;
 		}
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. SAVED", 2);
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. SAVED: $productUsed. object:$o", 2);
 		return true;
 	}
 	
