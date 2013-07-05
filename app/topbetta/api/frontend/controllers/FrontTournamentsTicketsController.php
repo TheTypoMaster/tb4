@@ -20,8 +20,8 @@ class FrontTournamentsTicketsController extends \BaseController {
 		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID($userId);
 
 		$nextToJump = array();
-		
-		if (count($activeTicketList) > 0) {			
+
+		if (count($activeTicketList) > 0) {
 
 			foreach ($activeTicketList as $activeTicket) {
 
@@ -38,12 +38,25 @@ class FrontTournamentsTicketsController extends \BaseController {
 					$nextToJump[] = array('id' => (int)$next -> id, 'tournament_id' => $activeTicket -> tournament_id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance);
 
 				}
-			}			
+			}
 
 		}
-		
+
+		//sort next to jump with earlist first
+		usort($nextToJump, function($a, $b) {
+			$ad = new \DateTime($a['start_datetime']);
+			$bd = new \DateTime($b['start_datetime']);
+
+			if ($ad == $bd) {
+				return 0;
+			}
+
+			// '>' for earliest first - '<' for latest first
+			return $ad > $bd ? 1 : -1;
+		});
+
 		return array('success' => true, 'result' => $nextToJump);
-		
+
 	}
 
 	/**
