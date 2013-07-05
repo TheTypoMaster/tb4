@@ -529,7 +529,8 @@ class RacingController extends \BaseController {
 								$providerName = "igas";
 								
 								// TODO: Check JSON data is valid
-								
+								if($betType == "F") $betType = "FF";
+								 
 								/*
 								 * Check if this is a product we need to store in the DB
 								 */
