@@ -519,6 +519,10 @@ class RacingController extends \BaseController {
 							
 							// Check required data to update a Result is in the JSON
 							if (isset ( $dataArray ['MeetingId'] ) && isset ( $dataArray ['RaceNo'] ) && isset ( $dataArray ['Selection'] ) && isset ( $dataArray ['BetType'] ) && isset ( $dataArray ['PriceType'] ) && isset ( $dataArray ['PlaceNo'] ) && isset ( $dataArray ['Payout'] )) {
+								
+								// TODO: mapping between provider and TB should be added to constants or DB table
+								if($dataArray['BetType'] == "F") $dataArray['BetType'] = "FF";
+								
 								$meetingId = $dataArray ['MeetingId'];
 								$raceNo = $dataArray ['RaceNo'];
 								$betType = $dataArray ['BetType'];
@@ -527,9 +531,6 @@ class RacingController extends \BaseController {
 								$placeNo = $dataArray ['PlaceNo'];
 								$payout = $dataArray ['Payout'];
 								$providerName = "igas";
-								
-								// TODO: Check JSON data is valid
-								if($betType == "F") $betType = "FF";
 								 
 								/*
 								 * Check if this is a product we need to store in the DB
@@ -624,7 +625,7 @@ class RacingController extends \BaseController {
 													$raceEvent->trifecta_dividend = serialize ( $exoticArray );
 												}
 												break;
-											case "F" : // First Four
+											case "FF" : // First Four
 												if (! $raceEvent->firstfour_dividend == NULL) {
 													if (! $raceEvent->firstfour_dividend == serialize ( $exoticArray )) {
 														// unserialise the existing dividend
@@ -670,7 +671,7 @@ class RacingController extends \BaseController {
 								$oddsString = $dataArray['OddString'];
 								$oddsArray = explode(';', $oddsString);
 								$providerName = "igas";
-								
+
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. MID: $meetingId, Race: $raceNo, BT: $betType, PT: $priceType, PA: $poolAmount",1);
 																
 								// TODO: Check JSON data is valid
@@ -854,16 +855,14 @@ class RacingController extends \BaseController {
 		$meetingCountry = $meetingTypeCodeResult[0]['country'];
 		$meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 		
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. MeetID:$meetingId, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 2);
 		// check if product is used
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
-				
-		$o = print_r($productUsed,true);
+			
 		if(!$productUsed){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT SAVED: $productUsed. object:$o", 2);
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT SAVED: MeetID:$meetingId, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 2);
 			return false;
 		}
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. SAVED: $productUsed. object:$o", 2);
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. SAVED: MeetID:$meetingId, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
 		return true;
 	}
 	
