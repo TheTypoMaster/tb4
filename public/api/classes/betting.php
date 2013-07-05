@@ -926,6 +926,8 @@ class Api_Betting extends JController {
 				
 				$meetingID = $meeting->external_event_group_id;
 				$meetingType = $meeting->type_code;
+				$meetingCountry = $meeting->country;
+				$meetingRegion = $meeting->meeting_grade;
 				
 				$race_id = JRequest::getVar('race_id', null);
 				if (is_null($race_id)) {
@@ -1277,12 +1279,24 @@ class Api_Betting extends JController {
 					$bet_confirmed	= false;
 					
 					// TODO: International races need to be catered for. Should configuration or DB driven 
-					// set tote type used for win and place bets on all gallops to TOP and harness/dogs MID
+					$providerName = "igas";
+					
+					if($type == "win"){
+						$betTypeShort = "W";
+					}elseif($type == "place"){
+						$betTypeShort = "P";
+					}
+															
+					// Grab default tote from DB 
+					$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
+					$toteType = $toteTypeReturn->product_name;
+					
+					/* // set tote type used for win and place bets on all gallops to TOP and harness/dogs MID
 					if($meetingType == "R"){
 						$toteType = "TOP";
 					}else{
 						$toteType = "MID";
-					}
+					} */
 								
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, $toteType, $runner_number);

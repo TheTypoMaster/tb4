@@ -121,4 +121,24 @@ class BettingModelBetProduct extends SuperModel
 	    return $db->loadObject();
 	}
 	
+	public function isProductUsed($betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
+	
+		 
+		$query = "select bp.id, ppm.provider_product_name as product_name
+		from tbdb_bet_product as bp
+		left join tb_product_default as pd on pd.tb_product_id = bp.id
+		left join tb_product_provider_match as ppm on ppm.tb_product_id = bp.id
+		left join tb_product_provider as tpp on tpp.id = ppm.provider_id
+		where `bet_type` = '$betType'
+		and `type_code` = '$meetingTypeCode'
+		and `country` = '$meetingCountry'
+		and `region` = '$meetingGrade'
+		and `provider_name` = '$providerName'
+		limit 1";
+		 
+		$db->setQuery($query);
+		return $db->loadObject();
+	
+	}
+	
 }
