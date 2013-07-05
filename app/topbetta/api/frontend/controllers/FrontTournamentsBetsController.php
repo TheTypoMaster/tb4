@@ -51,7 +51,7 @@ class FrontTournamentsBetsController extends \BaseController {
 
 		foreach ($tournamentBetList as $tournamentBet) {
 
-			$bets[] = array('id' => (int)$tournamentBet -> id, 'ticket_id' => (int)$tournamentBet -> tournament_ticket_id, 'event_id' => (int)$tournamentBet -> event_id, 'type' => (int)$tournamentBet -> bet_type, 'market' => $tournamentBet -> market_type, 'selection_id' => (int)$tournamentBet -> selection_id, 'selection_name' => $tournamentBet -> selection_name, 'bet_amount' => (int)$tournamentBet -> bet_amount, 'fixed_odds' => (float)$tournamentBet -> fixed_odds, 'win_odds' => (float)$tournamentBet -> win_odds, 'place_odds' => (float)$tournamentBet -> place_odds, 'result_status' => $tournamentBet -> bet_status, 'created_date' => \TimeHelper::isoDate($tournamentBet -> created_date));
+			$bets[] = array('id' => (int)$tournamentBet -> id, 'ticket_id' => (int)$tournamentBet -> tournament_ticket_id, 'event_id' => (int)$tournamentBet -> event_id, 'type' => (int)$tournamentBet -> bet_type, 'market_id' => $tournamentBet -> market_id, 'market' => $tournamentBet -> market_name, 'selection_id' => (int)$tournamentBet -> selection_id, 'selection_name' => $tournamentBet -> selection_name, 'bet_amount' => (int)$tournamentBet -> bet_amount, 'fixed_odds' => (float)$tournamentBet -> fixed_odds, 'win_odds' => (float)$tournamentBet -> win_odds, 'place_odds' => (float)$tournamentBet -> place_odds, 'result_status' => $tournamentBet -> bet_status, 'created_date' => \TimeHelper::isoDate($tournamentBet -> created_date));
 
 		}
 
