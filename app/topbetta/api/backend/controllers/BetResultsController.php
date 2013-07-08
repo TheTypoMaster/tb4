@@ -209,7 +209,7 @@ class BetResultsController extends \BaseController {
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
 										}
-										$responsePayload['result'][] = array('trasnactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'false');
+										$responsePayload['result'][] = array('transactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'false');
 									} else{
 										
 										// Email on failer to result bet
