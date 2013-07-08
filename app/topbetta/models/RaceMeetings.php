@@ -36,9 +36,20 @@ class RaceMeeting extends \Eloquent {
 
 			//convert the date to ISO 8601 format
 			$startDatetime = new \DateTime($race -> start_date);
-			$startDatetime = $startDatetime -> format('c');				
+			$startDatetime = $startDatetime -> format('c');	
+			
+			$updatedAt = $race -> updated_at;
+			if ($updatedAt -> year > 0) {
+						
+				$updatedAt = $updatedAt->toISO8601String();		
+				
+			} else {
+				
+				$updatedAt = false;
+				
+			}			
 
-			$result[] = array('id' => $race -> id, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race -> class, 'start_datetime' => $startDatetime, 'results' => $results, 'status' => $race -> status);
+			$result[] = array('id' => $race -> id, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race -> class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
 
 		}	
 		

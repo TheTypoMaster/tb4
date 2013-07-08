@@ -336,4 +336,20 @@ class TournamentTicket extends \Eloquent {
 		return $result;
 	}	
 
+	public static function nextEventForEventGroup($eventGroupId) {
+		
+		$query = "SELECT e.*,eg.type_code AS type, eg.state, eg.name AS meeting_name, eg.id AS meeting_id 
+		FROM tbdb_event_group_event AS ege 
+		INNER JOIN tbdb_event AS e ON e.id = ege.event_id
+		INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
+		WHERE ege.event_group_id = '".$eventGroupId."'
+		AND e.event_status_id = 1
+		ORDER BY e.start_date ASC
+		LIMIT 1";		
+
+		$result = \DB::select($query);
+
+		return $result;				
+	}
+
 }

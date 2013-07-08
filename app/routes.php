@@ -156,6 +156,7 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	Route::resource('tournaments.details','FrontTournamentsDetails');
 	
 	//tournaments tickets
+	Route::get('/tournaments/tickets/next-to-jump', 'FrontTournamentsTickets@nextToJump');
 	Route::resource('tournaments.tickets','FrontTournamentsTickets');	
 	
 });
