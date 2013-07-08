@@ -859,7 +859,7 @@ class RacingController extends \BaseController {
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 			
 		if(!$productUsed){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
 			return false;
 		}
 		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
