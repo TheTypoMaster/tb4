@@ -29,7 +29,7 @@ class FrontMeetingsController extends \BaseController {
 			// store meetings & races in cache for 1 min at a time
 			return \Cache::remember('meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
 
-				$eachMeeting = $this -> getMeetingsAndRaces($meetDate, $typeCode);
+				$eachMeeting = FrontMeetingsController::getMeetingsAndRaces($meetDate, $typeCode);
 
 				return array('success' => true, 'result' => $eachMeeting);
 
@@ -97,7 +97,7 @@ class FrontMeetingsController extends \BaseController {
 
 	}
 
-	private function getMeetingsAndRaces($meetDate, $typeCode = 'r') {
+	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r') {
 
 		//fetch our meetings for the specified type i.e. r = racing, g = greyhouds, h = harness
 		$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . '"') -> get();
