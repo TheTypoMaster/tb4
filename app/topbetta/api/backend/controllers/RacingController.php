@@ -500,7 +500,7 @@ class RacingController extends \BaseController {
 									$raceRunner->wager_id = $raceRunner->id;
 									$raceRunnerSave = $raceRunner->save();
 													
-									TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId , RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
+									TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId, RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
 																	
 								}else {
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. No race found for this runner. MID:$meetingId, Race:$raceNo, Runner:$runnerNo Can't process", 2);
@@ -535,7 +535,7 @@ class RacingController extends \BaseController {
 								/*
 								 * Check if this is a product we need to store in the DB
 								 */
-								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
+								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName, $raceNo);
 																
 								// We want this product
 								if ($saveThisProduct) {
@@ -681,7 +681,7 @@ class RacingController extends \BaseController {
 								 * NOTE: Moving forward, we should store the odds for ALL tote types
 								*/
 								 								
-								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName);
+								$saveThisProduct = $this->canProductBeProcessed($dataArray, $providerName, $raceNo);
 								
 								// We want this product
 								if ($saveThisProduct) {
@@ -842,7 +842,7 @@ class RacingController extends \BaseController {
 
 	
 		
-	private function canProductBeProcessed($dataArray, $providerName){
+	private function canProductBeProcessed($dataArray, $providerName, $raceNo){
 		
 		$productUsed = false;
 		$meetingId = $dataArray['MeetingId'];
@@ -859,10 +859,10 @@ class RacingController extends \BaseController {
 		$productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 			
 		if(!$productUsed){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT SAVED: MeetID:$meetingId, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 2);
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. NOT USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
 			return false;
 		}
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. SAVED: MeetID:$meetingId, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
 		return true;
 	}
 	
