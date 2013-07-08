@@ -136,6 +136,10 @@ class BetResultsController extends \BaseController {
 			);
 		}
 
+		// base structure for reponse payload
+		$responsePayload = array('error' => 'false', 'result' => array());
+		
+		
 		//$resultsJSON = print_r($resultsJSON, true);
 		//echo"$resultsJSON\n\n\n\n\n";
 		//exit;
@@ -205,7 +209,7 @@ class BetResultsController extends \BaseController {
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
 										}
-									
+										$responsePayload['result'][] = array('trasnactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'false');
 									} else{
 										
 										// Email on failer to result bet
@@ -223,6 +227,10 @@ class BetResultsController extends \BaseController {
 												'message' => 'Error: Transaction Id not found in DB: '. $transaction['transactionID']),
 												400
 										);*/
+										
+										$responsePayload['error'] = "true";
+										$responsePayload['result'][] = array('trasnactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'true');
+										
 									}
 								
 								}else{
@@ -234,6 +242,7 @@ class BetResultsController extends \BaseController {
 									
 								}
 							}
+							
 						}else{
 							return \Response::json(array(
 									'error' => true,
@@ -262,11 +271,13 @@ class BetResultsController extends \BaseController {
 			$objectCount++;
 		}
 		
-		return \Response::json(array(
+		return \Response::json($responsePayload);
+		
+		/* return \Response::json(array(
 				'error' => false,
 				'message' => 'OK: Bet Results Processed Successfully'),
 				200
-		);
+		); */
 		//return RaceMeetings::all();
 		
 	}
