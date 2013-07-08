@@ -503,7 +503,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'bet_type' => 'Q',
 						'country' => 'NZ',
 						'region' => '',
-						'type_code' => 'D',
+						'type_code' => 'G',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
@@ -512,7 +512,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'bet_type' => 'E',
 						'country' => 'NZ',
 						'region' => '',
-						'type_code' => 'D',
+						'type_code' => 'G',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
@@ -521,7 +521,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'bet_type' => 'T',
 						'country' => 'NZ',
 						'region' => '',
-						'type_code' => 'D',
+						'type_code' => 'G',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				),
@@ -530,7 +530,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'bet_type' => 'FF',
 						'country' => 'NZ',
 						'region' => '',
-						'type_code' => 'D',
+						'type_code' => 'G',
 						'created_at' => new DateTime,
 						'updated_at' => new DateTime
 				)
