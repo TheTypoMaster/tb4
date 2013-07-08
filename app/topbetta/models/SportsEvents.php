@@ -56,4 +56,21 @@ class SportsEvents extends \Eloquent {
 		return $dateQuery;
 	}
 
+	public static function getNextEventsToJump($limit = 25) {
+		
+		$query = "select ege.event_group_id AS comp_id, eg.name AS comp_name, e.*
+		FROM tbdb_event AS e
+		INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id
+		INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
+		WHERE e.start_date > NOW()
+		AND eg.type_code IS NULL
+		ORDER BY e.start_date ASC
+		LIMIT $limit";
+		
+		$result = \DB::select($query);
+
+		return $result;				
+		
+	}
+
 }
