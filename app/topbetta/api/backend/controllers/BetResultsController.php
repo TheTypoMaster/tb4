@@ -271,6 +271,8 @@ class BetResultsController extends \BaseController {
 			$objectCount++;
 		}
 		
+		$b = print_r($responsePayload,true);
+		Topbetta\LogHelper::l("BackAPI: BetResults - RETURNED JSON: $b");
 		return \Response::json($responsePayload);
 		
 		/* return \Response::json(array(
