@@ -39,10 +39,6 @@ class FrontMeetingsController extends \BaseController {
 
 			//this is used for giving changes only with polling client side - temp solution until sockets inplemented
 
-			//$date = new \DateTime($updatedAt);
-			//$date = new \DateTime('2013-07-05 10:45');
-			//$epoch = $date -> format('U');
-
 			// fetch all the meetings and races as per usual
 			$eachMeeting = $this -> getMeetingsAndRaces($meetDate, $typeCode);
 
