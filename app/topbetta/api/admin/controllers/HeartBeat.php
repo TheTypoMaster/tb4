@@ -123,10 +123,10 @@ class HeartBeatController extends \BaseController {
 		// Email on status change
 		$emailSubject = "iGAS Schedule: Status changed: ".$currentStatus.".";
 		$emailDetails = array( 'email' => 'oliver@topbetta.com', 'to_name' => 'Oliver', 'from' => 'hearbeat@topbetta.com', 'from_name' => 'TopBetta iGAS Schedule Heartbeat', 'subject' => "$emailSubject" );
-		$newEmail = \Mail::send('hello', $emailSubject, function($m) use ($emailDetails)
+		$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 		{
-			$m->from($emailSubject['from'], $emailSubject['from_name']);
-			$m->to($emailSubject['email'], $emailSubject['to_name'])->subject($emailSubject['subject']);
+			$m->from($emailDetails['from'], $emailDetails['from_name']);
+			$m->to($emailDetails['email'], $emailDetails['to_name'])->subject($emailDetails['subject']);
 		});
 		
 		// return error
