@@ -271,6 +271,7 @@ class BetResultsController extends \BaseController {
 			$objectCount++;
 		}
 		
+		
 		$j = json_encode($responsePayload);
 		
 		$b = print_r($j,true);
