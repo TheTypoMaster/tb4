@@ -229,7 +229,7 @@ class BetResultsController extends \BaseController {
 										);*/
 										
 										$responsePayload['error'] = "true";
-										$responsePayload['result'][] = array('trasnactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'true');
+										$responsePayload['result'][] = array('transactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'true');
 										
 									}
 								
