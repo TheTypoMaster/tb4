@@ -133,7 +133,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$event = $bet_data['event'];
 	
 		// Build up the bet parameters
-		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType);
+		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType, $meetingID);
 		
 		//TODO: Cater for multibets
 
