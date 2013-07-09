@@ -750,7 +750,7 @@ class SportsBMProcessor extends TopBettaCLI
 	}
 	
 	final private function addSelectionPriceRecord($selectionPriceTable, $selectionID, $marketCompetitorWinDividend, $marketCompetitorAllowBets, $marketCompetitorIsSuspended, $selectionPriceID, $debug){
-		$debug == 1;
+		$debug = 1;
 		$nowTime = date("Y-m-d H:i:s");
 		// Check is compettiton exists in database
 		$selectionPriceExist = "SELECT id from `".$selectionPriceTable."` where `selection_id` = '$selectionID' LIMIT 1";
