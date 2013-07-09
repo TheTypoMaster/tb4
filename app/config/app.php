@@ -186,6 +186,7 @@ return array(
 		'FrontUsersWithdraw'	=> 'TopBetta\frontend\FrontUsersWithdrawController',
 		'FrontUsersBalances'	=> 'TopBetta\frontend\FrontUsersBalancesController',
 		'FrontUsersBetting'	=> 'TopBetta\frontend\FrontUsersBettingController',
+		'FrontUsersBettingLimit'	=> 'TopBetta\frontend\FrontUsersBettingLimitsController',
 		'FrontUsersTournaments'	=> 'TopBetta\frontend\FrontUsersTournamentsController',
 		'FrontBets'		=> 'TopBetta\frontend\FrontBetsController',
 		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
