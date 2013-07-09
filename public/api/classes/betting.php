@@ -1694,6 +1694,7 @@ class Api_Betting extends JController {
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
+				$bet->boxed_flag				= (int)$boxed_flag;
 					
 				//save freebet into the database
 				if($free_bet_amount > 0) {
@@ -1800,7 +1801,10 @@ class Api_Betting extends JController {
 							$bet_status = 4;
 							$bet_confirmed	= false;
 						}
-
+						
+						$bet->combinations = "1";
+						$bet->percentage = "1";
+						$bet->selection_string = $wagering_bet->displayBetSelections();
 						$bet->bet_result_status_id = (int)$bet_status;
 						$bet->save();
 						file_put_contents('/tmp/saveExoticsBet', "* Bet Status Saved\n", FILE_APPEND | LOCK_EX);
@@ -2124,7 +2128,8 @@ class Api_Betting extends JController {
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				=  0;
-	
+			
+				
 				//save freebet into the database
 				if($free_bet_amount > 0) {
 					$bet->bet_freebet_flag		= 1;
