@@ -1700,10 +1700,10 @@ class Api_Betting extends JController {
 					$bet->percentage = $wagering_bet->getFlexiPercentage();
 				}
 				$bet->boxed_flag				= (int)$boxed_flag;
-				if($bet->boxed_flag) {
-					$bet->combinations = $wagering_bet->getBoxedCombinationCount();
-				} 
-				$bet->selection_string = $wagering_bet->displayBetSelections();
+				//if($bet->boxed_flag) {
+				//	$bet->combinations = $wagering_bet->getBoxedCombinationCount();
+				//} 
+				//$bet->selection_string = $wagering_bet->displayBetSelections();
 					
 				//save freebet into the database
 				if($free_bet_amount > 0) {
