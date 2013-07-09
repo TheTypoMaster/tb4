@@ -1694,13 +1694,13 @@ class Api_Betting extends JController {
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
-				if($bet->flexi_flag){
+				/* if($bet->flexi_flag){
 					$bet->percentage = $wagering_bet->getFlexiPercentage;
 				}
 				$bet->boxed_flag				= (int)$boxed_flag;
 				if($bet->boxed_flag) {
 					$bet->combinations = $wagering_bet->getBoxedCombinationCount;
-				}
+				} */
 				$bet->selection_string = $wagering_bet->displayBetSelections();
 					
 				//save freebet into the database
