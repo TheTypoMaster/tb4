@@ -39,54 +39,6 @@ class RacingController extends \BaseController {
 	 */
 	const LOG_TIME_SHOWN = false;
 		
-	//TODO: move to provder class
-	 
-	const 	EXOTICS_TOTE 		= 'SUP',
-			METRO_GALLOPS_WIN 	= 'TOP',
-			METRO_GALLOPS_PLC 	= 'TOP',
-			PROV_GALLOPS_WIN 	= 'TOP',
-			PROV_GALLOPS_PLC 	= 'MID',
-			COUNTRY_GALLOPS_WIN = 'TOP',
-			COUNTRY_GALLOPS_PLC = 'MID',
-			OVERSEAS_GALLOPS_WIN = 'MID',
-			OVERSEAS_GALLOPS_PLC = 'MID',
-			AUNZ_HARNESS_WIN 	= 'MID',
-			AUNZ_HARNESS_PLC 	= 'MID',
-			AUNZ_GREYHOUNDS_WIN = 'MID',
-			AUNZ_GREYHOUNDS_PLC = 'MID';
-
-	private $product_types = array(
-			self::METRO_GALLOPS_WIN ,
-			self::METRO_GALLOPS_PLC	,
-			self::PROV_GALLOPS_WIN ,
-			self::PROV_GALLOPS_PLC,
-			self::OVERSEAS_GALLOPS_WIN,
-			self::OVERSEAS_GALLOPS_PLC,
-			self::AUNZ_HARNESS_WIN,
-			self::AUNZ_HARNESS_PLC,
-			self::AUNZ_GREYHOUNDS_WIN,
-			self::AUNZ_GREYHOUNDS_PLC,
-			self::EXOTICS_TOTE
-	);
-	
-	
-	// Map igas products names to ours
-	private $product_type_lookup = array(
-			self::METRO_GALLOPS_WIN 	=> 'topsp',
-			self::METRO_GALLOPS_PLC		=> 'top',
-			self::PROV_GALLOPS_WIN 		=> 'topsp',
-			self::PROV_GALLOPS_PLC 		=> 'mid',
-			self::COUNTRY_GALLOPS_WIN 	=> 'topsp',
-			self::COUNTRY_GALLOPS_PLC 	=> 'mid',
-			self::OVERSEAS_GALLOPS_WIN 	=> 'mid',
-			self::OVERSEAS_GALLOPS_PLC 	=> 'mid',
-			self::AUNZ_HARNESS_WIN 		=> 'mid',
-			self::AUNZ_HARNESS_PLC 		=> 'mid',
-			self::AUNZ_GREYHOUNDS_WIN 	=> 'mid',
-			self::AUNZ_GREYHOUNDS_PLC 	=> 'mid',
-			self::EXOTICS_TOTE 			=> 'supertab'
-	);
-	
 	
 		
 	/**
@@ -95,8 +47,6 @@ class RacingController extends \BaseController {
 	 * @var boolean
 	 */
 	private $debug = true;
-	
-	
 	
 	
 	public function __construct()
@@ -228,9 +178,20 @@ class RacingController extends \BaseController {
 								}
 								if(isset($dataArray['Weather'])){
 									$raceMeet->weather = $dataArray['Weather'];
+									// change to TB default if we have a match
+									$defaultValue = DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
+									if($defaultValue){
+										$raceMeet->weather = $defaultValue->value;
+									}
+									
 								}
 								if(isset($dataArray['Track'])){
 									$raceMeet->track = $dataArray['Track'];
+									// change to TB default if we have a match
+									$defaultValue = DataValues::getDefaultValue('track_condition', $raceMeet->track);
+									if($defaultValue){
+										$raceMeet->track = $defaultValue->value;
+									}
 								}
 								if(isset($dataArray['State'])){
 									$raceMeet->state = $dataArray['State'];
