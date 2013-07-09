@@ -304,6 +304,11 @@ switch($method) {
 		$withdraw = new Api_Payment();
 		echo $withdraw -> doWithdrawRequest();
 		break;		
+
+	case 'setBetLimit' :
+		$bet_limit = new Api_Payment();
+		echo $bet_limit -> setBetLimit();
+		break;	
 		
 	case 'getUser' :
 		$deposits = new Api_User();

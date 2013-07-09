@@ -377,7 +377,15 @@ class Api_Payment extends JController {
     	
     	return OutputHelper::json(200, array('msg' => 'Request received.'));	
 		
-	}		
+	}
+
+	public function setBetLimit() {
+				
+		return OutputHelper::json(200, array('msg' => 'Bet Limit set!.'));	
+		//return OutputHelper::json(500, array('error_msg' => 'NO Bet Limit set!.'));	
+		
+	}
+		
 
 }
 ?>
