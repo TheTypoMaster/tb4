@@ -130,6 +130,7 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	// ::: SPORTS :::
 
 	//Sports events
+	Route::get('/sports/events/next-to-jump', 'FrontSportsEvents@nextToJump');
 	Route::resource('sports/events','FrontSportsEvents');
 	
 	//Sports types

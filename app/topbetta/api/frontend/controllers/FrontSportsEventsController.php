@@ -6,6 +6,34 @@ use Illuminate\Support\Facades\Input;
 
 class FrontSportsEventsController extends \BaseController {
 
+	public function nextToJump() {
+
+		$limit = Input::get('limit', 10);
+
+		// store next to jump in cache for 1 min at a time
+		return \Cache::remember('nextToJump-sports-' . $limit, 1, function() use (&$limit) {
+
+			$nextToJump = TopBetta\SportsEvents::getNextEventsToJump($limit);
+
+			$result = array();
+
+			foreach ($nextToJump as $next) {
+
+				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+
+				//convert the date to ISO 8601 format
+				$startDatetime = new \DateTime($next -> start_date);
+				$startDatetime = $startDatetime -> format('c');
+
+				$result[] = array('id' => (int)$next -> id, 'comp_id' => (int)$next -> comp_id, 'comp_name' => $next -> comp_name, 'name' => $next -> name, 'to_go' => $toGo, 'start_datetime' => $startDatetime);
+			}
+
+			return array('success' => true, 'result' => $result);
+
+		});
+
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
