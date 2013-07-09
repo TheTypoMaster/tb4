@@ -1874,8 +1874,7 @@ class Api_Betting extends JController {
 	
 		// debug file
 		$debugflag = 1;
-		$file = "/tmp/api.txt";
-	
+			
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();
@@ -1887,6 +1886,9 @@ class Api_Betting extends JController {
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_sportsbetting' . DS . 'models' . DS . 'sportsbetting.php');
 		$sportsBetting_model = new SportsbettingModelSportsbetting();
 	
+		$postVars = print_r(JRequest::get('POST'), true);
+		file_put_contents('/tmp/saveSportsBet', "* Post Vars:". $postVars . "\n", FILE_APPEND | LOCK_EX);
+		
 		/*
 			// bet placement params
 		$event_id = 941579; // the bookmaker event ID
