@@ -219,7 +219,7 @@ class BetResultsController extends \BaseController {
 										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 										{
 											$m->from($emailDetails['from'], $emailDetails['from_name']);
-											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['$emailSubject']);
+											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
 										});
 										/*
 										return \Response::json(array(
