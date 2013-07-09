@@ -193,7 +193,7 @@ class RacingController extends \BaseController {
 									$defaultValue = TopBetta\DataValues::getDefaultValue('track_condition', $raceMeet->track);
 									$o = print_r($defaultValue,true);
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
-									if(is_array($defaultValue[0]){
+									if(is_array($defaultValue[0])){
 										$raceMeet->track = $defaultValue[0]->value;
 									}
 								}
