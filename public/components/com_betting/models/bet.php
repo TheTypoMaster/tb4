@@ -118,7 +118,7 @@ class BettingModelBet extends SuperModel
 		),
 		'percentage' => array(
 				'name' => 'Percentage',
-				'type' => self::TYPE_DECIMAL
+				'type' => self::TYPE_FLOAT
 		),
 		'selection_string' => array(
 				'name' => 'Selection String',
