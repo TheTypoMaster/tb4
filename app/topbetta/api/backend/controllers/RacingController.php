@@ -179,7 +179,7 @@ class RacingController extends \BaseController {
 								if(isset($dataArray['Weather'])){
 									$raceMeet->weather = $dataArray['Weather'];
 									// change to TB default if we have a match
-									$defaultValue = DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
+									$defaultValue = TopBetta\DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
 									if($defaultValue){
 										$raceMeet->weather = $defaultValue->value;
 									}
@@ -188,7 +188,7 @@ class RacingController extends \BaseController {
 								if(isset($dataArray['Track'])){
 									$raceMeet->track = $dataArray['Track'];
 									// change to TB default if we have a match
-									$defaultValue = DataValues::getDefaultValue('track_condition', $raceMeet->track);
+									$defaultValue = TopBetta\DataValues::getDefaultValue('track_condition', $raceMeet->track);
 									if($defaultValue){
 										$raceMeet->track = $defaultValue->value;
 									}
