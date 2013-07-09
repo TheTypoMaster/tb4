@@ -180,6 +180,8 @@ class RacingController extends \BaseController {
 									$raceMeet->weather = $dataArray['Weather'];
 									// change to TB default if we have a match
 									$defaultValue = TopBetta\DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
+									$o = print_r($defaultValue,true);
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
 									if($defaultValue){
 										$raceMeet->weather = $defaultValue['value'];
 									}
@@ -189,6 +191,8 @@ class RacingController extends \BaseController {
 									$raceMeet->track = $dataArray['Track'];
 									// change to TB default if we have a match
 									$defaultValue = TopBetta\DataValues::getDefaultValue('track_condition', $raceMeet->track);
+									$o = print_r($defaultValue,true);
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
 									if($defaultValue){
 										$raceMeet->track = $defaultValue['value'];
 									}
