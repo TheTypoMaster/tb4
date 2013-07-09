@@ -626,8 +626,8 @@ class SportsBMProcessor extends TopBettaCLI
 			$row = mysql_fetch_array($eventExistResult);
 			$eventID = $row['id'];
 		}else {
-			$eventQuery = " INSERT INTO `".$eventTable."` (`id`, `event_id`, `name`, `start_date`, `created_date`) VALUES ";
-			$eventQuery .= " ('', '$marketEventID', '$marketTeams', '$suspendDate', '$nowTime' ); ";
+			$eventQuery = " INSERT INTO `".$eventTable."` (`id`, `event_id`, `name`, `start_date`, `created_date`, `event_status_id`) VALUES ";
+			$eventQuery .= " ('', '$marketEventID', '$marketTeams', '$suspendDate', '$nowTime', '1' ); ";
 			mysql_query($eventQuery);
 			$eventID = mysql_insert_id();
 			$this->l("Added to DB");
@@ -764,7 +764,7 @@ class SportsBMProcessor extends TopBettaCLI
 			$this->l("Already in DB");
 			$row = mysql_fetch_array($selectionPriceExistResult);
 			$selectionPriceID = $row['id'];
-			$selectionPriceUpdateQuery = " UPDATE `".$selectionPriceTable."` SET place_bet_dividend = '$marketCompetitorWinDividend', allow_bets = '$marketCompetitorAllowBets', is_suspended = '$marketCompetitorIsSuspended' WHERE id = '$selectionPriceID'";
+			$selectionPriceUpdateQuery = " UPDATE `".$selectionPriceTable."` SET place_bet_dividend = '$marketCompetitorWinDividend', win_odds = '$marketCompetitorWinDividend', allow_bets = '$marketCompetitorAllowBets', is_suspended = '$marketCompetitorIsSuspended' WHERE id = '$selectionPriceID'";
 			mysql_query($selectionPriceUpdateQuery);
 			if($debug == 1){
 				$this->l("selection_price UPDATE QUERY: $selectionPriceUpdateQuery");
@@ -773,8 +773,8 @@ class SportsBMProcessor extends TopBettaCLI
 		}else {
 			// add new selecion_price and get id or new record
 			$nowTime = date("Y-m-d H:i:s");
-			$selectionPriceQuery = " INSERT INTO `".$selectionPriceTable."` (`id`, `selection_id`, `place_bet_dividend`, `allow_bets`, `is_suspended` ,`created_date`) VALUES ";
-			$selectionPriceQuery .= " ('', '$selectionID', '$marketCompetitorWinDividend', '$marketCompetitorAllowBets', '$marketCompetitorIsSuspended', '$nowTime'); ";
+			$selectionPriceQuery = " INSERT INTO `".$selectionPriceTable."` (`id`, `selection_id`, `place_bet_dividend`, `win_odds`, allow_bets`, `is_suspended` ,`created_date`) VALUES ";
+			$selectionPriceQuery .= " ('', '$selectionID', '$marketCompetitorWinDividend', '$marketCompetitorWinDividend', '$marketCompetitorAllowBets', '$marketCompetitorIsSuspended', '$nowTime'); ";
 			mysql_query($selectionPriceQuery);
 			$selectionPriceID = mysql_insert_id();
 			$this->l("Added to DB");
