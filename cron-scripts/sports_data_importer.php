@@ -507,7 +507,7 @@ class SportsBMProcessor extends TopBettaCLI
 	final private function addEventGroupRecord($eventGroupTable, $competitionName, $sportID, $suspendDate, $debug){
 		// set now time
 		$nowTime = date("Y-m-d H:i:s");
-		$debug = 1;
+		//$debug = 1;
 		
 		$eventGroupExist = "SELECT id from `".$eventGroupTable."` where `name` = '$competitionName' AND `sport_id` = '$sportID' LIMIT 1";
 		if ($debug == 1){
@@ -608,7 +608,7 @@ class SportsBMProcessor extends TopBettaCLI
 	final private function addEventRecord($eventTable, $marketTeams, $suspendDate, $marketEventID, $debug){
 		// set now time
 		$nowTime = date("Y-m-d H:i:s");
-		$debug = 1;
+		//$debug = 1;
 		// Check if event exists in database
 		
 		//substr($marketOutcomeDateTime, 0, -8);
@@ -750,7 +750,7 @@ class SportsBMProcessor extends TopBettaCLI
 	}
 	
 	final private function addSelectionPriceRecord($selectionPriceTable, $selectionID, $marketCompetitorWinDividend, $marketCompetitorAllowBets, $marketCompetitorIsSuspended, $selectionPriceID, $debug){
-		$debug = 1;
+		//$debug = 1;
 		$nowTime = date("Y-m-d H:i:s");
 		// Check is compettiton exists in database
 		$selectionPriceExist = "SELECT id from `".$selectionPriceTable."` where `selection_id` = '$selectionID' LIMIT 1";
