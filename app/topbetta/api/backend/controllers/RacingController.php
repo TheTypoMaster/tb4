@@ -183,7 +183,7 @@ class RacingController extends \BaseController {
 									$o = print_r($defaultValue,true);
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
 									if($defaultValue){
-										$raceMeet->weather = $defaultValue['value'];
+										$raceMeet->weather = $defaultValue[0]['value'];
 									}
 									
 								}
@@ -194,7 +194,7 @@ class RacingController extends \BaseController {
 									$o = print_r($defaultValue,true);
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
 									if($defaultValue){
-										$raceMeet->track = $defaultValue['value'];
+										$raceMeet->track = $defaultValue[0]['value'];
 									}
 								}
 								if(isset($dataArray['State'])){
