@@ -1680,6 +1680,8 @@ class Api_Betting extends JController {
 				$bet_type_name	= $bet_type_model->getBetTypeByName($wagering_bet->getBetType(), true);
 				
 				$bet_product	= $bet_product_model->getBetProduct($bet_origin->id);
+
+				$exoticCass = 'WageringBetExotic'.$type;
 				
 				// build the bet
 				$bet = clone $bet_model;
@@ -1695,11 +1697,11 @@ class Api_Betting extends JController {
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
 				if($bet->flexi_flag){
-					$bet->percentage = WageringBetExotic::getFlexiPercentage();
+					$bet->percentage = $wagering_bet->getFlexiPercentage();
 				}
 				$bet->boxed_flag				= (int)$boxed_flag;
 				if($bet->boxed_flag) {
-					$bet->combinations = WageringBetExotic::getBoxedCombinationCount();
+					$bet->combinations = $wagering_bet->getBoxedCombinationCount();
 				} 
 				$bet->selection_string = $wagering_bet->displayBetSelections();
 					
