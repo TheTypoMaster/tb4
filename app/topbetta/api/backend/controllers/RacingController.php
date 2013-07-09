@@ -184,6 +184,16 @@ class RacingController extends \BaseController {
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
 									if(count($defaultValue) > 0){ // 
 										$raceMeet->weather = $defaultValue[0]->value;
+									}else{
+										// Email on failer to result bet
+										$emailSubject = "iGAS Race Schedule: No Weather Mapping Found: ".$raceMeet->weather.".";
+										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+										
+										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+										{
+											$m->from($emailDetails['from'], $emailDetails['from_name']);
+											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+										});
 									}
 									
 								}
@@ -195,6 +205,16 @@ class RacingController extends \BaseController {
 									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
 									if(count($defaultValue) > 0){
 										$raceMeet->track = $defaultValue[0]->value;
+									}else{
+										// Email on failer to result bet
+										$emailSubject = "iGAS Race Schedule: No Track Mapping Found: ".$raceMeet->track.".";
+										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+										
+										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+										{
+											$m->from($emailDetails['from'], $emailDetails['from_name']);
+											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+										});
 									}
 								}
 								if(isset($dataArray['State'])){
