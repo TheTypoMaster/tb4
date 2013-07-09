@@ -1703,7 +1703,7 @@ class Api_Betting extends JController {
 				//if($bet->boxed_flag) {
 				//	$bet->combinations = $wagering_bet->getBoxedCombinationCount();
 				//} 
-				//$bet->selection_string = $wagering_bet->displayBetSelections();
+				$bet->selection_string = $wagering_bet->displayBetSelections();
 					
 				//save freebet into the database
 				if($free_bet_amount > 0) {
