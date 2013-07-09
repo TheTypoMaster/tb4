@@ -377,7 +377,159 @@ class Api_Payment extends JController {
     	
     	return OutputHelper::json(200, array('msg' => 'Request received.'));	
 		
-	}		
+	}
+
+	public function setBetLimit() {
+			
+		//init models
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		$user_model		=& $this->getModel('topbettaUser', 'TopbettaUserModel');
+		
+		if (!class_exists('TopbettaUserModelUserAudit')) {
+			JLoader::import('UserAudit', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		$audit_model	=& $this->getModel('UserAudit', 'TopbettaUserModel');
+
+		//get login user details
+		$user		= $user_model->getUser();
+
+		//init session
+		$session =& JFactory::getSession();
+
+		//get post var
+		$no_limit = JRequest::getBool('no_limit', true, 'post');
+
+		//set what db field to update
+		$field_to_update	= 'bet_limit';
+		//init request cancel flag
+		$request_cancelled	= false;
+		//init err array
+		$err = array();
+
+		if ($no_limit) {
+			//-1 stands for no limit
+			$bet_limit = -1;
+		} else {
+			$bet_limit	= JRequest::getVar('bet_limit', null, 'post');
+
+			//validations for bet limit
+			if ($bet_limit != (string)($bet_limit * 1) || $bet_limit < 0) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('Invalid bet limit.')));
+			}
+
+			if ($bet_limit > 10000) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('Please select "No Limit"')));
+			}
+
+			//converted to cents based number
+			$bet_limit = bcmul($bet_limit, 100);
+		}
+
+		//if users want to increase bet limit, we store the requested value to 'requested_bet_limit'
+		if (($user->bet_limit != -1 && $bet_limit > $user->bet_limit) || ($bet_limit == -1 && $user->bet_limit != -1)) {
+			$field_to_update = 'requested_bet_limit';
+		}
+
+		//when users already have a request of increasing bet, but come back to reduce the limit,
+		//we need to cancel the previous request
+		if($bet_limit != -1 && $bet_limit < $user->bet_limit && $user->requested_bet_limit != 0) {
+			$request_cancelled = true;
+		}
+
+		//update user's bet limit
+		if (!$user_model->update($field_to_update, $bet_limit)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update your bet limit! Please contact us.")));
+		}
+
+		//flag to indicate if request_bet_limit has changed
+		$request_bet_limit_changed = false;
+		//store the value to audit table if bet_limit /request_bet_limit is changed
+
+		if ($user->{$field_to_update} != $bet_limit) {
+			//add user audit record
+			$params = array(
+				'user_id'		=> $user->user_id,
+				'admin_id'		=> -1,
+				'field_name'	=> $field_to_update,
+				'old_value'		=> $user->bet_limit,
+				'new_value'		=> $bet_limit,
+			);
+			$audit_model->store($params);
+
+			if ('requested_bet_limit' == $field_to_update) {
+				$request_bet_limit_changed = true;
+			}
+		}
+
+		//if request cancelled, need to set request_bet_limit to 0
+		if ($request_cancelled) {
+			if (!$user_model->update('requested_bet_limit', 0)) {
+				return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update requested bet limit! Please contact us.")));	
+			}
+			//add user audit record
+			$params = array(
+				'user_id'		=> $user->user_id,
+				'admin_id'		=> -1,
+				'field_name'	=> 'requested_bet_limit',
+				'old_value'		=> $user->requested_bet_limit,
+				'new_value'		=> 0,
+			);
+			$audit_model->store($params);
+		}
+
+		//get email params
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+		$usersConfig = &JComponentHelper::getParams( 'com_topbetta_user' );
+		$mailfrom	= $usersConfig->get('mailFrom');
+		$fromname	= $usersConfig->get('fromName');
+
+		//set up return messages and send out notification emails
+		if ('requested_bet_limit' == $field_to_update) {
+			if ($request_bet_limit_changed) {
+				$update_msg = JText::_('Your new bet limit will take effect in 7 days.');
+
+				//send bet limit increase request to admin
+				$mailer		= new JMAIL();
+				$emailBody	= "User {$user->username} ({$user->user_id}) has requested to increase the bet limit";
+				$emailBody	.= " from " . bcdiv($user->bet_limit, 100, 2);
+				$emailBody	.= " to " . ($bet_limit == -1 ? 'no limit' : bcdiv($bet_limit, 100, 2));
+				$emailBody	.= " on " . date('j/n/Y');
+				$mailer->setSender(array($mailfrom, $fromname));
+				$mailer->addReplyTo(array($mailfrom));
+				$mailer->addRecipient($mailfrom);
+				$mailer->setSubject('Requests to Increase Bet Limits');
+				$mailer->setBody($emailBody);
+				$mailer->IsHTML(false);
+				$mailer->Send();
+			} else {
+				$update_msg = JText::_('Raising bet limit request is already sent.');
+			}
+		} else {
+			$update_msg = JText::_('Bet limit updated');
+
+			if ($request_cancelled) {
+				//send cancel bet limit increase to admin
+				$mailer		= new JMAIL();
+				$emailBody	= "User {$user->username} ({$user->user_id}) has cancelled the request to increase bet limit";
+				$emailBody	.= " from " .  bcdiv($user->bet_limit, 100, 2);
+				$emailBody	.= " to " . ($user->requested_bet_limit == -1 ? 'no limit' : bcdiv($user->requested_bet_limit, 100, 2));
+				$emailBody	.= " on " . date('j/n/Y');
+				$mailer->setSender(array($mailfrom, $fromname));
+				$mailer->addReplyTo(array($mailfrom));
+				$mailer->addRecipient($mailfrom);
+				$mailer->setSubject('Requests to Increase Bet Limits - Cancelled');
+				$mailer->setBody($emailBody);
+				$mailer->IsHTML(false);
+				$mailer->Send();
+			}
+		}
+				
+		return OutputHelper::json(200, array('msg' => $update_msg));	
+		
+	}
+		
 
 }
 ?>

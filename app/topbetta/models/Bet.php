@@ -67,7 +67,7 @@ class Bet extends \Eloquent {
 	 */	
 	public function getActiveLiveBetsForUserId($userId) {
 		
-		$query = "SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, rs.name AS result_status,
+		$query = "SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, b.boxed_flag, b.combinations, b.percentage, b.selection_string, rs.name AS result_status,
 	      		e.id AS event_id,
 	      		e.name AS event_name,
 	      		e.number AS event_number,
@@ -134,7 +134,7 @@ class Bet extends \Eloquent {
 	{
 
 		$query = '
-			SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, rs.name AS result_status,
+			SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, b.boxed_flag, b.combinations, b.percentage, b.selection_string, rs.name AS result_status,
 	      		e.id AS event_id,
 	      		e.external_event_id,
 	      		m.market_type_id AS market_id,

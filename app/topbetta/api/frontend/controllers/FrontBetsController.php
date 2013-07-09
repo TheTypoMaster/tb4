@@ -31,14 +31,14 @@ class FrontBetsController extends \BaseController {
 			$exoticSelections = false;
 			if ($activeBet -> bet_type > 3) {
 
-				$exoticSelections = \TopBetta\BetSelection::getExoticSelectionsForBetId($activeBet -> id);
+				//$exoticSelections = \TopBetta\BetSelection::getExoticSelectionsForBetId($activeBet -> id);
 				$exoticBetTransaction = \TopBetta\AccountBalance::find($activeBet -> bet_transaction_id);
 
 				$exoticAmount = abs($exoticBetTransaction -> amount);
 
 			}
 
-			$activeBets[] = array('id' => (int)$activeBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeBet -> freebet) ? true : false, 'market_id' => (int)$activeBet -> market_id, 'type' => (int)$activeBet -> bet_type, 'result_status' => $activeBet -> result_status, 'event_id' => (int)$activeBet -> event_id, 'event_name' => $activeBet -> event_name, 'event_number' => (int)$activeBet -> event_number, ($exoticSelections) ? 'exotic_selection_string' : 'selection_id' => ($exoticSelections) ? $exoticSelections : (int)$activeBet -> selection_id, 'selection_name' => $activeBet -> selection_name, 'selection_number' => (int)$activeBet -> selection_number, 'bet_amount' => ($exoticSelections) ? $exoticAmount : (int)abs($activeBet -> bet_total), 'created_date' => $activeBet -> created_date);
+			$activeBets[] = array('id' => (int)$activeBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeBet -> freebet) ? true : false, 'market_id' => (int)$activeBet -> market_id, 'type' => (int)$activeBet -> bet_type, 'result_status' => $activeBet -> result_status, 'event_id' => (int)$activeBet -> event_id, 'event_name' => $activeBet -> event_name, 'event_number' => (int)$activeBet -> event_number, 'boxed_flag' => ($activeBet -> boxed_flag) ? true: false, 'combinations' => (int)$activeBet -> combinations, 'percentage' => (float)$activeBet -> percentage, ($activeBet -> selection_string) ? 'exotic_selection_string' : 'selection_id' => ($activeBet -> selection_string) ? $activeBet -> selection_string : (int)$activeBet -> selection_id, 'selection_name' => $activeBet -> selection_name, 'selection_number' => (int)$activeBet -> selection_number, 'bet_amount' => ($exoticSelections) ? $exoticAmount : (int)abs($activeBet -> bet_total), 'created_date' => $activeBet -> created_date);
 
 		}
 
@@ -56,14 +56,14 @@ class FrontBetsController extends \BaseController {
 			$exoticSelections = false;
 			if ($recentBet -> bet_type > 3) {
 
-				$exoticSelections = \TopBetta\BetSelection::getExoticSelectionsForBetId($recentBet -> id);
+				//$exoticSelections = \TopBetta\BetSelection::getExoticSelectionsForBetId($recentBet -> id);
 				$exoticBetTransaction = \TopBetta\AccountBalance::find($recentBet -> bet_transaction_id);
 
 				$exoticAmount = abs($exoticBetTransaction -> amount);
 
 			}
 
-			$recentBets[] = array('id' => (int)$recentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($recentBet -> freebet) ? true : false, 'market_id' => (int)$recentBet -> market_id, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, ($exoticSelections) ? 'exotic_selection_string' : 'selection_id' => ($exoticSelections) ? $exoticSelections : (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_amount' => ($exoticSelections) ? $exoticAmount : (int)abs($recentBet -> bet_total), 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date);
+			$recentBets[] = array('id' => (int)$recentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($recentBet -> freebet) ? true : false, 'market_id' => (int)$recentBet -> market_id, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 'boxed_flag' => ($recentBet -> boxed_flag) ? true: false, 'combinations' => (int)$recentBet -> combinations, 'percentage' => (float)$recentBet -> percentage, ($recentBet -> selection_string) ? 'exotic_selection_string' : 'selection_id' => ($recentBet -> selection_string) ? $recentBet -> selection_string : (int)$recentBet -> selection_id, 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_amount' => ($recentBet -> selection_string) ? $exoticAmount : (int)abs($recentBet -> bet_total), 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date);
 
 		}
 
