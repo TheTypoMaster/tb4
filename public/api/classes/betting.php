@@ -1814,6 +1814,7 @@ class Api_Betting extends JController {
 					}
 				}
 
+				
 				if (!$bet_confirmed) {
 
 					if($free_bet_amount > 0) {
