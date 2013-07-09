@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class DataProvider extends Eloquent {
+class DataProvider extends \Eloquent {
 	protected $table = 'tbdb_data_provider';
     protected $guarded = array();
 

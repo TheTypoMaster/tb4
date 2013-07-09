@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class DataValues extends Eloquent {
+class DataValues extends \Eloquent {
 	protected $table = 'tbdb_data_values';
     protected $guarded = array();
 
