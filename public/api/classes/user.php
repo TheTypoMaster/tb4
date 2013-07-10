@@ -2674,6 +2674,98 @@ Must be 18+<br>
 		return $result;
 	}
 	
+	public function doSelfExclude() {
+		
+		global $mainframe;
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		
+		$user	=& JFactory::getUser();
+		$model	=& $this->getModel('TopbettaUser', 'TopbettaUserModel');
+
+		$exclusion_end_timestamp = time() + 60 * 60 * 24 * 7;
+		$user_data_before_save	= $model->getUser();
+
+		if ($model->selfExclude($user->id, $exclusion_end_timestamp)) {
+			
+			$this->_sendExcludeEmail($exclusion_end_timestamp);
+
+			$user_data_after_save = $model->getUser();
+			//add user audit
+			if (!class_exists('TopbettaUserModelUserAudit')) {
+				JLoader::import('UserAudit', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+			}		
+						
+			$user_audit_model		=& $this->getModel('userAudit', 'TopbettaUserModel');
+			$audit_params = array(
+				'user_id'		=> $user->id,
+				'admin_id'		=> -1,
+				'field_name'	=> 'self_exclusion_date',
+				'old_value'		=> $user_data_before_save->self_exclusion_date,
+				'new_value'		=> $user_data_after_save->self_exclusion_date,
+			);
+			$user_audit_model->store($audit_params);
+
+			$mainframe->logout();
+			return OutputHelper::json(200, array('msg' => JText::_('You have been excluded for 1 week from the site. An email will be sent to notify you that this period has ended.')));
+		} else {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Sorry, there was a problem excluding you. Please contact our customer service department to be excluded for 1 week.')));
+		}		
+		
+	}
+
+	/**
+	 * Method to send exclude email
+	 *
+	 * @return void
+	 */
+	private function _sendExcludeEmail($exclusion_end_timestamp)
+	{
+		global $mainframe;
+
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+
+		$user =& JFactory::getUser();
+
+		$config =& JComponentHelper::getParams('com_topbetta_user');
+		$mailfrom = $config->get('mailFrom');
+		$fromname = $config->get('fromName');
+
+		$params =& JComponentHelper::getParams('com_topbetta_user');
+
+		$subject		= JText::_('Temporary Exclusion from TopBetta');
+		$exclusion_date	= date('d/m/Y', $exclusion_end_timestamp);		
+
+		$mailer = new UserMAIL();
+		$email_params	= array(
+			'mailfrom'	=> $mailfrom,
+			'fromname'	=> $fromname,
+			'subject'	=> $subject,
+			'mailto'	=> $user->email
+		);
+
+		$email_replacements = array(
+			'name'				=> $user->name,
+			'username'			=> $user->username,
+			'date'				=> $exclusion_date
+		);
+
+		//$mailer->sendUserEmail('excludeEmail', $email_params, $email_replacements);
+		//var_dump($mailer);
+
+		//send admin notifications
+		$mailer = new JMAIL();
+		$mailer->setSender(array($mailfrom, $fromname));
+		$mailer->addReplyTo(array($mailfrom));
+		$mailer->addRecipient($mailfrom);
+		$mailer->setSubject('Temporary Exclusion - ' . $user->username . ' (' . $user->id . ')');
+		$mailer->setBody('User ' . $user->username . ' (' . $user->id . ') has requested self-exclusion. The exclusion will be lifted on ' . $exclusion_date, false);
+		$mailer->IsHTML(false);
+		//$mailer->Send();
+		//var_dump($mailer);
+
+	}
 	
 	/**
 	 * Format the display of a countdown to a specified time
