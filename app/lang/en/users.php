@@ -23,6 +23,12 @@ return array(
 	// ACCOUNT
 	"account_created"	=> "Account was succesfully created with username: :username",	
 	
-	"needs_upgrade"	=> "You have a basic account, please upgrade first.",	
+	"needs_upgrade"	=> "You have a basic account, please upgrade first.",
+	
+	"password_changed"	=> "Your password has been changed.",
+	
+	"problem_saving_password" => "There was a problem saving your password.",
+	
+	"jackpot_flag_set"	=> "Jackpot flag updated."	
 
 );

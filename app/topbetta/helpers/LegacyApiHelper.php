@@ -2,7 +2,7 @@
 
 class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post', 'setBetLimit' => 'post');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post', 'setBetLimit' => 'post', 'doSelfExclude' => 'post', 'generateJoomlaPassword' => 'post', 'doReferFriend' => 'post');
 
 	/*
 	 * @param string $method
@@ -150,6 +150,39 @@ class LegacyApiHelper {
 					return $this -> curl('setBetLimit', $this -> allowed_methods['setBetLimit'], $payload);
 
 					break;					
+
+				case 'doSelfExclude' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doSelfExclude', $this -> allowed_methods['doSelfExclude'], $payload);
+
+					break;
+
+				case 'generateJoomlaPassword' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('generateJoomlaPassword', $this -> allowed_methods['generateJoomlaPassword'], $payload);
+
+					break;
+
+				case 'doReferFriend' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. save bet
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doReferFriend', $this -> allowed_methods['doReferFriend'], $payload);
+
+					break;																				
 
 				default :
 

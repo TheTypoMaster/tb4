@@ -1387,6 +1387,32 @@ class Api_User extends JController {
 		
     }
 	
+	/**
+	 * generateJoomlaPassword
+	 * 
+	 * This is used for laravel to store a joomla based password :-)
+	 */
+	public function generateJoomlaPassword() {
+		
+        // first validate a legit token has been sent
+		$server_token = JUtility::getToken();
+
+		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {		
+			
+			$password	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
+
+			$salt = JUserHelper::genRandomPassword(32);
+			$crypt = JUserHelper::getCryptedPassword($password, $salt);
+			$joomla_password = $crypt.':'.$salt;
+			
+			return OutputHelper::json(200, array('joomla_password' => $joomla_password ));
+		
+		}else{
+		
+		    return OutputHelper::json(500, array('error_msg' => JText::_( 'Invalid Token' ) ));
+		}		
+		
+	}
 	
 	/**
 	 * Password Reset Request Method
@@ -2674,6 +2700,167 @@ Must be 18+<br>
 		return $result;
 	}
 	
+	public function doSelfExclude() {
+		
+		global $mainframe;
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		
+		$user	=& JFactory::getUser();
+		$model	=& $this->getModel('TopbettaUser', 'TopbettaUserModel');
+
+		$exclusion_end_timestamp = time() + 60 * 60 * 24 * 7;
+		$user_data_before_save	= $model->getUser();
+
+		if ($model->selfExclude($user->id, $exclusion_end_timestamp)) {
+			
+			$this->_sendExcludeEmail($exclusion_end_timestamp);
+
+			$user_data_after_save = $model->getUser();
+			//add user audit
+			if (!class_exists('TopbettaUserModelUserAudit')) {
+				JLoader::import('UserAudit', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+			}		
+						
+			$user_audit_model		=& $this->getModel('userAudit', 'TopbettaUserModel');
+			$audit_params = array(
+				'user_id'		=> $user->id,
+				'admin_id'		=> -1,
+				'field_name'	=> 'self_exclusion_date',
+				'old_value'		=> $user_data_before_save->self_exclusion_date,
+				'new_value'		=> $user_data_after_save->self_exclusion_date,
+			);
+			$user_audit_model->store($audit_params);
+
+			$mainframe->logout();
+			return OutputHelper::json(200, array('msg' => JText::_('You have been excluded for 1 week from the site. An email will be sent to notify you that this period has ended.')));
+		} else {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Sorry, there was a problem excluding you. Please contact our customer service department to be excluded for 1 week.')));
+		}		
+		
+	}
+
+	public function doReferFriend() {
+		
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		$userModel =& $this->getModel( 'topbettaUser', 'TopbettaUserModel');
+
+		$user =& JFactory::getUser();
+		$userId = $user->get('id');
+
+		if (!$userId) {
+			
+			return OutputHelper::json(500, array('error_msg' => 'Please login first.'));
+			
+		}
+
+		$friendEmail = JRequest::getString('friend_email', null, 'post');
+		$subject = JRequest::getString('subject', null, 'post');
+		$message = JRequest::getString('message', null, 'post');
+
+		$err = array();
+
+		if( '' == $friendEmail || !JMailHelper::isEmailAddress($friendEmail))
+		{
+			$err['friend_email'] = 'Please enter a valid email.';
+		}
+		else if( $userModel->isExisting('email', $friendEmail) )
+		{
+			$err['friend_email'] = 'Sorry! The email address you have provided is already associated with an existing Topbetta user.';
+		}
+
+		if( '' == $subject )
+		{
+			$err['subject'] = 'Please enter an email subject';
+		}
+
+		if( count($err) >  0 )
+		{
+
+			return OutputHelper::json(500, array('error_msg' => $err));
+
+		}
+		
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+		
+		$mailer = new UserMAIL();
+		
+		$email_params	= array(
+			'subject'	=> $subject,
+			'mailto'	=> $friendEmail,
+			'mailfrom'	=> $user->email,
+			'fromname'	=> $user->name,
+			'ishtml'	=> true
+		);
+		$email_replacements = array(
+			'name'				=> $user->name,
+			'username'			=> $user->username,
+			'userid'			=> $userId,
+			'custom message'	=> $message,
+			'custom link'		=> JURI::base() . '/user/register/ref_id/' . $userId
+		);
+		if($mailer->sendUserEmail('referFriendEmail', $email_params, $email_replacements)) {
+			return OutputHelper::json(200, array('msg' => JText::_('An email has been sent to your friend.')));
+		} else {
+			return OutputHelper::json(500, array('error_msg' => 'Failed to send email to your friend.'));
+		}		
+		
+	}
+
+	/**
+	 * Method to send exclude email
+	 *
+	 * @return void
+	 */
+	private function _sendExcludeEmail($exclusion_end_timestamp)
+	{
+		global $mainframe;
+
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+
+		$user =& JFactory::getUser();
+
+		$config =& JComponentHelper::getParams('com_topbetta_user');
+		$mailfrom = $config->get('mailFrom');
+		$fromname = $config->get('fromName');
+
+		$params =& JComponentHelper::getParams('com_topbetta_user');
+
+		$subject		= JText::_('Temporary Exclusion from TopBetta');
+		$exclusion_date	= date('d/m/Y', $exclusion_end_timestamp);		
+
+		$mailer = new UserMAIL();
+		$email_params	= array(
+			'mailfrom'	=> $mailfrom,
+			'fromname'	=> $fromname,
+			'subject'	=> $subject,
+			'mailto'	=> $user->email
+		);
+
+		$email_replacements = array(
+			'name'				=> $user->name,
+			'username'			=> $user->username,
+			'date'				=> $exclusion_date
+		);
+
+		//$mailer->sendUserEmail('excludeEmail', $email_params, $email_replacements);
+		//var_dump($mailer);
+
+		//send admin notifications
+		$mailer = new JMAIL();
+		$mailer->setSender(array($mailfrom, $fromname));
+		$mailer->addReplyTo(array($mailfrom));
+		$mailer->addRecipient($mailfrom);
+		$mailer->setSubject('Temporary Exclusion - ' . $user->username . ' (' . $user->id . ')');
+		$mailer->setBody('User ' . $user->username . ' (' . $user->id . ') has requested self-exclusion. The exclusion will be lifted on ' . $exclusion_date, false);
+		$mailer->IsHTML(false);
+		//$mailer->Send();
+		//var_dump($mailer);
+
+	}
 	
 	/**
 	 * Format the display of a countdown to a specified time
