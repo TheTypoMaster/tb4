@@ -82,7 +82,7 @@ class FrontUsersController extends \BaseController {
 	 */
 	public function index() {
 
-		$action = \Input::get('action', 'settings');
+		$action = \Input::get('action');
 
 		switch ($action) {
 			case 'exclude' :
@@ -92,7 +92,6 @@ class FrontUsersController extends \BaseController {
 
 				$exclude = $l -> query('doSelfExclude', $input = array());
 
-				//bet has been placed by now, deal with messages and errors
 				if ($exclude['status'] == 200) {
 
 					//log this user out of laravel - joomla logout is done via legacy api

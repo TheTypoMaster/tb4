@@ -298,6 +298,11 @@ switch($method) {
 		$pwd = new Api_User();
 		echo $pwd -> generateJoomlaPassword();
 		break;		
+
+	case 'doReferFriend' :
+		$refer = new Api_User();
+		echo $refer -> doReferFriend();
+		break;		
 		
 	// PAYMENT ETC	
 	case 'getBalances' :

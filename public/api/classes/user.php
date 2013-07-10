@@ -2741,6 +2741,75 @@ Must be 18+<br>
 		
 	}
 
+	public function doReferFriend() {
+		
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		$userModel =& $this->getModel( 'topbettaUser', 'TopbettaUserModel');
+
+		$user =& JFactory::getUser();
+		$userId = $user->get('id');
+
+		if (!$userId) {
+			
+			return OutputHelper::json(500, array('error_msg' => 'Please login first.'));
+			
+		}
+
+		$friendEmail = JRequest::getString('friend_email', null, 'post');
+		$subject = JRequest::getString('subject', null, 'post');
+		$message = JRequest::getString('message', null, 'post');
+
+		$err = array();
+
+		if( '' == $friendEmail || !JMailHelper::isEmailAddress($friendEmail))
+		{
+			$err['friend_email'] = 'Please enter a valid email.';
+		}
+		else if( $userModel->isExisting('email', $friendEmail) )
+		{
+			$err['friend_email'] = 'Sorry! The email address you have provided is already associated with an existing Topbetta user.';
+		}
+
+		if( '' == $subject )
+		{
+			$err['subject'] = 'Please enter an email subject';
+		}
+
+		if( count($err) >  0 )
+		{
+
+			return OutputHelper::json(500, array('error_msg' => $err));
+
+		}
+		
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+		
+		$mailer = new UserMAIL();
+		
+		$email_params	= array(
+			'subject'	=> $subject,
+			'mailto'	=> $friendEmail,
+			'mailfrom'	=> $user->email,
+			'fromname'	=> $user->name,
+			'ishtml'	=> true
+		);
+		$email_replacements = array(
+			'name'				=> $user->name,
+			'username'			=> $user->username,
+			'userid'			=> $userId,
+			'custom message'	=> $message,
+			'custom link'		=> JURI::base() . '/user/register/ref_id/' . $userId
+		);
+		if($mailer->sendUserEmail('referFriendEmail', $email_params, $email_replacements)) {
+			return OutputHelper::json(200, array('msg' => JText::_('An email has been sent to your friend.')));
+		} else {
+			return OutputHelper::json(500, array('error_msg' => 'Failed to send email to your friend.'));
+		}		
+		
+	}
+
 	/**
 	 * Method to send exclude email
 	 *
