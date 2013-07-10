@@ -293,6 +293,11 @@ switch($method) {
 		$self_exclude = new Api_User();
 		echo $self_exclude -> doSelfExclude();
 		break;
+
+	case 'generateJoomlaPassword' :
+		$pwd = new Api_User();
+		echo $pwd -> generateJoomlaPassword();
+		break;		
 		
 	// PAYMENT ETC	
 	case 'getBalances' :

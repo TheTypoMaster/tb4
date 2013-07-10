@@ -1387,6 +1387,32 @@ class Api_User extends JController {
 		
     }
 	
+	/**
+	 * generateJoomlaPassword
+	 * 
+	 * This is used for laravel to store a joomla based password :-)
+	 */
+	public function generateJoomlaPassword() {
+		
+        // first validate a legit token has been sent
+		$server_token = JUtility::getToken();
+
+		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {		
+			
+			$password	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
+
+			$salt = JUserHelper::genRandomPassword(32);
+			$crypt = JUserHelper::getCryptedPassword($password, $salt);
+			$joomla_password = $crypt.':'.$salt;
+			
+			return OutputHelper::json(200, array('joomla_password' => $joomla_password ));
+		
+		}else{
+		
+		    return OutputHelper::json(500, array('error_msg' => JText::_( 'Invalid Token' ) ));
+		}		
+		
+	}
 	
 	/**
 	 * Password Reset Request Method
