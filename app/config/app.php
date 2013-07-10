@@ -181,6 +181,7 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'FrontUsers'			=> 'TopBetta\frontend\FrontUsersController',
 		'FrontUsersProfile'	=> 'TopBetta\frontend\FrontUsersProfileController',
+		'FrontUsersRefer'	=> 'TopBetta\frontend\FrontUsersReferController',
 		'FrontUsersBanking'	=> 'TopBetta\frontend\FrontUsersBankingController',
 		'FrontUsersDeposit'	=> 'TopBetta\frontend\FrontUsersDepositController',
 		'FrontUsersWithdraw'	=> 'TopBetta\frontend\FrontUsersWithdrawController',

@@ -100,8 +100,11 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	// 2 custom routes for users auth	
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
-		
-	Route::resource('users','FrontUsers');
+	
+	// custom route for refer a friend
+	Route::resource('users/refer','FrontUsersRefer');	
+	
+	Route::resource('users','FrontUsers');	
 	Route::resource('users.profile', 'FrontUsersProfile');
 	Route::resource('users.balances','FrontUsersBalances');
 	Route::resource('users.banking','FrontUsersBanking');

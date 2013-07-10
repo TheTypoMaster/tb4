@@ -288,6 +288,21 @@ switch($method) {
 		$user_login = new Api_User();
 		echo $user_login -> checkLogin();
 		break;
+
+	case 'doSelfExclude' :
+		$self_exclude = new Api_User();
+		echo $self_exclude -> doSelfExclude();
+		break;
+
+	case 'generateJoomlaPassword' :
+		$pwd = new Api_User();
+		echo $pwd -> generateJoomlaPassword();
+		break;		
+
+	case 'doReferFriend' :
+		$refer = new Api_User();
+		echo $refer -> doReferFriend();
+		break;		
 		
 	// PAYMENT ETC	
 	case 'getBalances' :
