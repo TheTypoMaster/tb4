@@ -96,6 +96,6 @@ return array(
 	'password' => null,
 		
 		
-	'pretend' => true,
+	// 'pretend' => true,
 
 );
