@@ -24,7 +24,7 @@ class FrontUsersBettingController extends \BaseController {
 			
 		$filter = array(
 			'user_id'		=> \Auth::user() -> id,
-			'result_type'	=> \Input::get('result_type', false)
+			'result_type'	=> \Input::get('type', false)
 			//'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : null,
 			//'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : null,
 		);			
