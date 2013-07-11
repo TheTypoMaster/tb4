@@ -32,7 +32,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '7',
+						'tb_product_id' => '4',
 						'bet_type' => 'Q',
 						'country' => 'AU',
 						'region' => 'METRO',
@@ -41,7 +41,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '5',
+						'tb_product_id' => '4',
 						'bet_type' => 'E',
 						'country' => 'AU',
 						'region' => 'METRO',
@@ -50,7 +50,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '7',
+						'tb_product_id' => '4',
 						'bet_type' => 'T',
 						'country' => 'AU',
 						'region' => 'METRO',
@@ -59,7 +59,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '5',
+						'tb_product_id' => '4',
 						'bet_type' => 'FF',
 						'country' => 'AU',
 						'region' => 'METRO',
@@ -88,7 +88,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '7',
+						'tb_product_id' => '4',
 						'bet_type' => 'Q',
 						'country' => 'AU',
 						'region' => 'PROVINCIAL',
@@ -97,7 +97,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '5',
+						'tb_product_id' => '4',
 						'bet_type' => 'E',
 						'country' => 'AU',
 						'region' => 'PROVINCIAL',
@@ -106,7 +106,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '7',
+						'tb_product_id' => '4',
 						'bet_type' => 'T',
 						'country' => 'AU',
 						'region' => 'PROVINCIAL',
@@ -115,7 +115,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '5',
+						'tb_product_id' => '4',
 						'bet_type' => 'FF',
 						'country' => 'AU',
 						'region' => 'PROVINCIAL',
@@ -145,7 +145,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '7',
+						'tb_product_id' => '4',
 						'bet_type' => 'Q',
 						'country' => 'AU',
 						'region' => 'COUNTRY',
@@ -154,7 +154,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '5',
+						'tb_product_id' => '4',
 						'bet_type' => 'E',
 						'country' => 'AU',
 						'region' => 'COUNTRY',
@@ -163,7 +163,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '7',
+						'tb_product_id' => '4',
 						'bet_type' => 'T',
 						'country' => 'AU',
 						'region' => 'COUNTRY',
@@ -172,7 +172,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
 						'updated_at' => new DateTime
 				),
 				array (
-						'tb_product_id' => '5',
+						'tb_product_id' => '4',
 						'bet_type' => 'FF',
 						'country' => 'AU',
 						'region' => 'COUNTRY',
