@@ -50,8 +50,20 @@ class FrontTournamentsBetsController extends \BaseController {
 		$bets = array();
 
 		foreach ($tournamentBetList as $tournamentBet) {
+				
+			$odds = null;	
+			
+			if ($tournamentBet -> bet_type == 1) {
+				
+				$odds = (float)$tournamentBet -> win_odds;
+				
+			} elseif ($tournamentBet -> bet_type == 2) {
+			
+				$odds = (float)$tournamentBet -> place_odds;
+				
+			}	
 
-			$bets[] = array('id' => (int)$tournamentBet -> id, 'ticket_id' => (int)$tournamentBet -> tournament_ticket_id, 'event_id' => (int)$tournamentBet -> event_id, 'type' => (int)$tournamentBet -> bet_type, 'market_id' => $tournamentBet -> market_id, 'market' => $tournamentBet -> market_name, 'selection_id' => (int)$tournamentBet -> selection_id, 'selection_name' => $tournamentBet -> selection_name, 'bet_amount' => (int)$tournamentBet -> bet_amount, 'fixed_odds' => (float)$tournamentBet -> fixed_odds, 'win_odds' => (float)$tournamentBet -> win_odds, 'place_odds' => (float)$tournamentBet -> place_odds, 'result_status' => $tournamentBet -> bet_status, 'created_date' => \TimeHelper::isoDate($tournamentBet -> created_date));
+			$bets[] = array('id' => (int)$tournamentBet -> id, 'ticket_id' => (int)$tournamentBet -> tournament_ticket_id, 'event_id' => (int)$tournamentBet -> event_id, 'event_name' => $tournamentBet -> event_name, 'event_number' => $tournamentBet -> event_number, 'type' => (int)$tournamentBet -> bet_type, 'market_id' => $tournamentBet -> market_id, 'market' => $tournamentBet -> market_name, 'selection_id' => (int)$tournamentBet -> selection_id, 'selection_name' => $tournamentBet -> selection_name, 'selection_number' => $tournamentBet -> selection_number, 'bet_amount' => (int)$tournamentBet -> bet_amount, 'fixed_odds' => (float)$tournamentBet -> fixed_odds, 'odds' => $odds, 'result_status' => $tournamentBet -> bet_status, 'win_amount' => (int)$tournamentBet -> win_amount, 'created_date' => \TimeHelper::isoDate($tournamentBet -> created_date));
 
 		}
 

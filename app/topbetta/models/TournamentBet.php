@@ -13,7 +13,9 @@ class TournamentBet extends \Eloquent {
 			'SELECT
 				b.id,
 				b.tournament_ticket_id,
-				e.id AS event_id,				
+				e.id AS event_id,
+	      		e.name AS event_name,
+	      		e.number AS event_number,				
 				b.bet_amount,
 				b.win_amount,
 				b.fixed_odds,
@@ -24,13 +26,14 @@ class TournamentBet extends \Eloquent {
 				m.market_type_id AS market_id,
 				mt.name AS market_name,
 				selection.id AS selection_id,
-				selection.number AS runner_number,
+				selection.number AS selection_number,
 				selection.name AS selection_name,
 				sp.win_odds,
 				sp.place_odds,
 				sp.bet_product_id,
 				sr.win_dividend,
 				sr.place_dividend,
+				b.win_amount as win_amount,
 				b.created_date
 			FROM
 				tbdb_tournament_bet AS b

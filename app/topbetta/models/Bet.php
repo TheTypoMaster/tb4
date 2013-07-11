@@ -75,6 +75,8 @@ class Bet extends \Eloquent {
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
+				sp.win_odds,
+				sp.place_odds,	 	      		
 	      		bat.amount AS bet_total, b.created_date, b.invoice_id, b.bet_transaction_id
 			FROM
 				tbdb_bet AS b
@@ -98,6 +100,10 @@ class Bet extends \Eloquent {
 				tbdb_selection AS s
 			ON 
 				s.id = bs.selection_id
+			LEFT JOIN
+				tbdb_selection_price AS sp
+			ON
+				sp.selection_id = s.id				
 			INNER JOIN
 				tbdb_market AS m
 			ON
@@ -143,6 +149,8 @@ class Bet extends \Eloquent {
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
 	      		s.id AS selection_id,
+				sp.win_odds,
+				sp.place_odds,	      		
 	      		bat.amount AS bet_total,
 	      		rat.amount AS win_amount,
 	      		fat.amount AS refund_amount, b.created_date, b.invoice_id, b.bet_transaction_id
@@ -168,6 +176,10 @@ class Bet extends \Eloquent {
 				tbdb_selection AS s
 			ON 
 				s.id = bs.selection_id
+			LEFT JOIN
+				tbdb_selection_price AS sp
+			ON
+				sp.selection_id = s.id				
 			INNER JOIN
 				tbdb_market AS m
 			ON
@@ -458,6 +470,21 @@ class Bet extends \Eloquent {
 		$result = \DB::select($query);
 
 		return $result;	
+	}
+
+	public static function getExoticDividendForType($exoticType, $eventId) {
+			
+		$betTypes = \TopBetta\BetTypes::find($exoticType);
+
+		$exoticName = $betTypes -> name . '_dividend';
+			
+		$event = \TopBetta\RaceEvent::find($eventId) -> toArray();
+		
+		$exoticDividends = unserialize($event[$exoticName]);
+		
+		// we only want the dollar value, not the runners
+		return ($exoticDividends) ? array_shift($exoticDividends) : null;
+		
 	}
 
 }
