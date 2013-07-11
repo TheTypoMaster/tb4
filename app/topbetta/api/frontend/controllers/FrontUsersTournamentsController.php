@@ -106,7 +106,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 				}
 
-				return $transactions;
+				return array('success' => true, 'result' => $transactions);
 
 			});
 
@@ -184,7 +184,7 @@ class FrontUsersTournamentsController extends \BaseController {
 					);
 				}
 
-				return $tournamentHistory;
+				return array('success' => true, 'result' => $tournamentHistory);
 				
 			});
 

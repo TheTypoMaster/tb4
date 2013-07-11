@@ -73,7 +73,7 @@ class FrontUsersBankingController extends \BaseController {
 
 				}
 
-				return $transactions;
+				return array("success" => true, "result" => $transactions);
 
 			});
 
