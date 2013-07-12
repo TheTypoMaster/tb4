@@ -206,7 +206,7 @@ return array(
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
-		'testJSON' => 'TopBetta\admin\testJSON'
+		'testJSON' => 'TopBetta\backend\testJSON'
 	),
 
 );
