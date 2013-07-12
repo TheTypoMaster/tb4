@@ -682,6 +682,10 @@ class Api_Betting extends JController {
 			
 			$user =& JFactory::getUser();
 			
+			if (!$user -> id) {
+				return OutputHelper::json(401, array('error_msg' => 'Please login first' ));
+			}	
+			
 			if (!class_exists('TopbettaUserModelTopbettaUser')) {
 			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
 			}
