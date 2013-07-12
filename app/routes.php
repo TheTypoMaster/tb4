@@ -65,7 +65,12 @@ Route::get('/', function()
 	
 	//$it = Hash::make('igast3st1ng');
 	//return $it;
-	return View::make('hello');
+	
+	// return TopBetta\ProductDefaults::find(1)->tbdbbetproduct;
+	
+	// return TopBetta\BetProduct::with(array('productDefaults', 'productProviderMatch', 'productProvider'))->get();
+	// return TopBetta\ProductDefaults::with('tbdbbetproduct')->get(); 
+	//return View::make('hello');
 	
 	//return FreeTransactions::all();
 	
@@ -90,6 +95,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
+	// test JSON API
+	Route::resource('testJSON', 'testJSON');
 });
 
 // Route group for consumer API
