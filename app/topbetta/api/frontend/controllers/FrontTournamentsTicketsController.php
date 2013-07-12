@@ -165,6 +165,10 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
 
+			} if ($ticket['status'] == 401) {
+				
+				return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+				
 			} else {
 
 				$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
