@@ -165,14 +165,18 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
 
-			} if ($ticket['status'] == 401) {
+			} elseif ($ticket['status'] == 401) {
 				
 				return \Response::json(array("success" => false, "error" => "Please login first."), 401);
 				
-			} else {
+			} elseif ($ticket['status'] == 500) {
 
 				$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
 				$errors++;
+
+			} else {
+			
+				return array("success" => false, "error" => $ticket, "status" => $ticket['status']);
 
 			}
 
