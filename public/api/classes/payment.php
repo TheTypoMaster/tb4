@@ -387,10 +387,8 @@ class Api_Payment extends JController {
 		}		
 		$user_model		=& $this->getModel('topbettaUser', 'TopbettaUserModel');
 		
-		if (!class_exists('TopbettaUserModelUserAudit')) {
-			JLoader::import('UserAudit', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
-		}		
-		$audit_model	=& $this->getModel('UserAudit', 'TopbettaUserModel');
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'useraudit.php');
+		$audit_model = new TopbettaUserModelUserAudit();		
 
 		//get login user details
 		$user		= $user_model->getUser();
