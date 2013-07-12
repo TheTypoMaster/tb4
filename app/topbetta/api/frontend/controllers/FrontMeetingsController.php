@@ -121,7 +121,7 @@ class FrontMeetingsController extends \BaseController {
 
 			}
 
-			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => ucwords(strtolower($event -> weather)), 'track' => ucwords(strtolower($event -> track)), 'updated_at' => $updatedAt, 'races' => $races);
+			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'updated_at' => $updatedAt, 'races' => $races);
 			$eachMeeting[] = $meetingAndRaces;
 		}
 
@@ -161,7 +161,7 @@ class FrontMeetingsController extends \BaseController {
 
 			$races = Input::get('races', false);
 
-			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => ucwords(strtolower($meetingDetails -> weather)), 'track' => ucwords(strtolower($meetingDetails -> track)), 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
+			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
 
 			return array('success' => true, 'result' => $meeting);
 
