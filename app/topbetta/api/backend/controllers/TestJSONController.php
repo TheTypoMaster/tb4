@@ -93,9 +93,15 @@ class TestJSONController extends \BaseController {
 		//$racingJSON = unserialize(file_get_contents('/tmp/backAPIracing-20130614072624'));
 		$jsonSerialized = serialize($racingJSON);
 
+		$o = print_r($racingJSON,true);
+		
+		
 		if($this->debug){
 			$timeStamp = date("YmdHis");
 			\File::append('/tmp/backAPItest-'.$timeStamp, $jsonSerialized);
+			\File::append('/tmp/backAPItestarray-'.$timeStamp, $o);
+			
+			
 		}
 		
 		// make sure JSON was received

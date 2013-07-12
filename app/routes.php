@@ -96,7 +96,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
 	// test JSON API
-	Route::resource('testJSON', 'testJSON');
+	Route::resource('testjson', 'testJSON');
 });
 
 // Route group for consumer API
