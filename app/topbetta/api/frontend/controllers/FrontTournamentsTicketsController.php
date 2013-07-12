@@ -35,7 +35,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				if ($next) {
 
-					$nextToJump[] = array('id' => (int)$next -> id, 'tournament_id' => $activeTicket -> tournament_id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance);
+					$nextToJump[] = array('id' => (int)$next -> id, 'tournament_id' => $activeTicket -> tournament_id, 'type' => ($next -> type <= 3) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance);
 
 				}
 			}
@@ -165,14 +165,18 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
 
-			} if ($ticket['status'] == 401) {
+			} elseif ($ticket['status'] == 401) {
 				
 				return \Response::json(array("success" => false, "error" => "Please login first."), 401);
 				
-			} else {
+			} elseif ($ticket['status'] == 500) {
 
 				$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
 				$errors++;
+
+			} else {
+			
+				return array("success" => false, "error" => $ticket, "status" => $ticket['status']);
 
 			}
 

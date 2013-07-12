@@ -25,7 +25,7 @@ class FrontSportsEventsController extends \BaseController {
 				$startDatetime = new \DateTime($next -> start_date);
 				$startDatetime = $startDatetime -> format('c');
 
-				$result[] = array('id' => (int)$next -> id, 'comp_id' => (int)$next -> comp_id, 'comp_name' => $next -> comp_name, 'name' => $next -> name, 'to_go' => $toGo, 'start_datetime' => $startDatetime);
+				$result[] = array('id' => (int)$next -> id, 'type' => $next -> sport_name, 'comp_id' => (int)$next -> comp_id, 'comp_name' => $next -> comp_name, 'name' => $next -> name, 'to_go' => $toGo, 'start_datetime' => $startDatetime);
 			}
 
 			return array('success' => true, 'result' => $result);

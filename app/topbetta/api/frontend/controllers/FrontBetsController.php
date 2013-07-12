@@ -198,6 +198,13 @@ class FrontBetsController extends \BaseController {
 
 			$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id);
 
+			//set our free bet flag if passed in
+			if (isset($input['use_free_credit'])) {
+					
+					$betData['chkFreeBet'] = $input['use_free_credit'];
+				
+			}	
+
 			$bet = $l -> query('saveRacingBet', $betData);
 
 			//bet has been placed by now, deal with messages and errors
@@ -229,6 +236,13 @@ class FrontBetsController extends \BaseController {
 
 							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id);
 
+							//set our free bet flag if passed in
+							if (isset($input['use_free_credit'])) {
+									
+									$betData['chkFreeBet'] = $input['use_free_credit'];
+								
+							}							
+							
 							$bet = $l -> query('saveBet', $betData);
 
 						} elseif ($input['source'] == 'tournamentracing') {
@@ -281,6 +295,14 @@ class FrontBetsController extends \BaseController {
 						if (count($legacyData) > 0) {
 
 							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);
+							
+							//set our free bet flag if passed in
+							if (isset($input['use_free_credit'])) {
+									
+									$betData['chkFreeBet'] = $input['use_free_credit'];
+								
+							}							
+							
 							$bet = $l -> query('saveSportBet', $betData);
 
 						} else {
