@@ -25,7 +25,7 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 	$httpOrigin            = $requestHeaders['Origin'];
 	$allowedHttpOrigins   = array(
                             "http://localhost:9778",
-                            "http://beta.mugbookie.com",
+                            "http://beta.mugbookie.com:9778",
                             "http://localhost",
                             "http://beta.tb4.dev",
 							"http://tb4test.mugbookie.com",
