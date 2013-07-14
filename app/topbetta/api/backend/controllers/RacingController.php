@@ -85,7 +85,7 @@ class RacingController extends \BaseController {
 	public function store()
 	{
 		// Rate Limit Check
-		$rateLimitMax = 10; // 1 second
+		$rateLimitMax = 5; // 1/2 second
 		$rateLimitCost = 0;
 		$rateLimitKey	= "igas_race_schedule";
 		$rateTTL = 5;
