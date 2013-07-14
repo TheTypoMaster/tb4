@@ -94,7 +94,7 @@ class RacingController extends \BaseController {
 		$newRateLimiter = new TopBetta\APIRateLimiter($rateLimitMax, $rateLimitCost, $rateLimitKey, $rateTTL, $rateLimitReset);
 		$checkRateLimit = $newRateLimiter->RateLimiter();
 		
-		if(!$checkRateLimit) {
+		if($checkRateLimit) {
 			// Email on failer to result bet
 			$emailSubject = "iGAS Race Schedule: Connection Rate Limited.";
 			$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
