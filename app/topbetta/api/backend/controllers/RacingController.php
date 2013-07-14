@@ -84,6 +84,32 @@ class RacingController extends \BaseController {
 	 */
 	public function store()
 	{
+		// Rate Limit Check
+		$rateLimitMax = 10; // 1 second
+		$rateLimitCost = 0;
+		$rateLimitKey	= "igas_race_schedule";
+		$rateTTL = 5;
+		$rateLimitReset = false;
+		
+		$newRateLimiter = new TopBetta\APIRateLimiter($rateLimitMax, $rateLimitCost, $rateLimitKey, $rateTTL, $rateLimitReset);
+		$checkRateLimit = $newRateLimiter->RateLimiter();
+		
+		if(!$checkRateLimit) {
+			// Email on failer to result bet
+			$emailSubject = "iGAS Race Schedule: Connection Rate Limited.";
+			$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+			
+			$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+			{
+				$m->from($emailDetails['from'], $emailDetails['from_name']);
+				$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+			});
+			return \Response::json(array(
+					'error' => true,
+					'message' => 'Error: Connection rate limited.'),
+					400
+			);
+		}
 		
 		// Log this
 		TopBetta\LogHelper::l("BackAPI: Racing - Reciving POST");
