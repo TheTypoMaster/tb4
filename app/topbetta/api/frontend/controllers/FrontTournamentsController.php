@@ -137,7 +137,7 @@ class FrontTournamentsController extends \BaseController {
 					}
 
 				}
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournaments' => $tourns);
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournaments' => $tourns);
 			}
 		}
 
