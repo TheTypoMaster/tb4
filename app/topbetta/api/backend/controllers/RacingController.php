@@ -655,7 +655,7 @@ class RacingController extends \BaseController {
 											default :
 												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2 );
 										}
-										$previousDiv = print_r($previousDivArray,0);
+										$previousDiv = print_r($previousDivArray,true);
 										TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1 );
 										// save the exotic dividend
 										$raceEvent->save ();
