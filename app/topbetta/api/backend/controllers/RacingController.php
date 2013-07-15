@@ -152,7 +152,7 @@ class RacingController extends \BaseController {
 		
 		// loop on objects in data
 		foreach($racingJSON as $key => $racingArray){
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing SequenceNo:". $key['SequenceNo']);
+			// TopBetta\LogHelper::l("BackAPI: Racing - Processing SequenceNo:". $key['SequenceNo']);
 			// Make sure we have some data to process in the array
 			if(is_array($racingArray)){
 				
