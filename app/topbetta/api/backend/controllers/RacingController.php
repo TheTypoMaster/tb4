@@ -145,7 +145,7 @@ class RacingController extends \BaseController {
 		
 		//TODO: // validate the json. Create some rules and check the json validates
 		
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing '$keyCount' Objects. SequenceNo:".$racingJSON['SequenceNo'].".");
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing '$keyCount' Objects. SequenceNo:");
 		$objectCount=1;
 		
 		
