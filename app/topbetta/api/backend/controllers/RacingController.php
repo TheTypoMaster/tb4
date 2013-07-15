@@ -145,8 +145,11 @@ class RacingController extends \BaseController {
 		
 		//TODO: // validate the json. Create some rules and check the json validates
 		
-		TopBetta\LogHelper::l("BackAPI: Racing - Processing '$keyCount' Objects");
+		TopBetta\LogHelper::l("BackAPI: Racing - Processing '$keyCount' Objects. SequenceNo:".$racingJSON->SequenceNo.".");
 		$objectCount=1;
+		
+		
+		
 		// loop on objects in data
 		foreach($racingJSON as $key => $racingArray){
 			
@@ -803,20 +806,6 @@ class RacingController extends \BaseController {
 							//}
 			
 						break;
-						
-					case "SequenceNo":
-						$o = print_r($key,true);
-						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: SequenceNo:".$o.".");
-						
-						
-						
-						//foreach ($racingArray as $dataArray){
-						//	echo"Outcome Object: ";
-						//	print_r($dataArray);
-						//	echo "\n";
-						//}
-							
-					break;
 						
 					default :
 						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key", 2);
