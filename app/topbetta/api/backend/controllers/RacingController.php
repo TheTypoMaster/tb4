@@ -816,8 +816,8 @@ class RacingController extends \BaseController {
 						);
 				}
 			}else{
-				$o = print_r($racingArray,true);				
-				TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key. No Data. Can't Process: $o.", 2);
+					
+				TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key. No Data. Can't Process: $racingArray.", 2);
 				/* return Response::json(array(
 						'error' => true,
 						'message' => 'Error: No Data found'),
