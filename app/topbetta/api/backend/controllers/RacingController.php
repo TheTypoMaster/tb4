@@ -84,6 +84,8 @@ class RacingController extends \BaseController {
 	 */
 	public function store()
 	{
+		// send email notification
+		$emailNotification = 0;
 		// Rate Limit Check
 		$rateLimitMax = 5; // 1/2 second
 		$rateLimitCost = 0;
@@ -95,15 +97,16 @@ class RacingController extends \BaseController {
 		$checkRateLimit = $newRateLimiter->RateLimiter();
 		
 		if($checkRateLimit) {
-			// Email on failer to result bet
-			$emailSubject = "iGAS Race Schedule: Connection Rate Limited.";
-			$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
-			
-			$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
-			{
-				$m->from($emailDetails['from'], $emailDetails['from_name']);
-				$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
-			});
+			if($emailNotification){
+				// Email on failer to result bet
+				$emailSubject = "iGAS Race Schedule: Connection Rate Limited.";
+				$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+				$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+				{
+					$m->from($emailDetails['from'], $emailDetails['from_name']);
+					$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+				});
+			}
 			TopBetta\LogHelper::l("BackAPI: Racing - Connection Rate Limited: $rateLimitKey.");
 			
 			return \Response::json(array(
@@ -674,7 +677,7 @@ class RacingController extends \BaseController {
 										$previousDiv = print_r($previousDivArray,true);
 										TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1);
 										// save the exotic dividend
-										$raceEvent->save ();
+										$raceEvent-$racingArray>save ();
 									}
 								} else { // not all required data available
 									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
@@ -800,7 +803,21 @@ class RacingController extends \BaseController {
 							//}
 			
 						break;
-					
+						
+					case "SequenceNo":
+						$o = print_r($key,true);
+						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: SequenceNo:".$o.".");
+						
+						
+						
+						//foreach ($racingArray as $dataArray){
+						//	echo"Outcome Object: ";
+						//	print_r($dataArray);
+						//	echo "\n";
+						//}
+							
+					break;
+						
 					default :
 						TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key", 2);
 						return \Response::json(array(
