@@ -823,7 +823,7 @@ class RacingController extends \BaseController {
 				if($this->debug){
 					$timeStamp = date("Ymd");
 					$contents = $timeStamp .": $racingArray".
-					\File::append('tmp/igas_sequence-'.$timeStamp, $jsonSerialized);
+					\File::append('tmp/igas_sequence-'.$timeStamp, $contents);
 				}
 				
 				/* return Response::json(array(
