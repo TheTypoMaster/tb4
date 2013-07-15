@@ -821,8 +821,9 @@ class RacingController extends \BaseController {
 				
 				// output timestamp and sequence 
 				if($this->debug){
-					$timeStamp = date("Y/m/d H:i:s");
-					$contents = $timeStamp .": $racingArray\n";
+					$timeStamp = date("Ymd");
+					$ttimeStamp = date("Y/m/d H:i:s");
+					$contents = $ttimeStamp .": $racingArray\n";
 					\File::append('tmp/igas_sequence-'.$timeStamp, $contents);
 				}
 				
