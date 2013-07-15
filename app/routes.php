@@ -29,6 +29,7 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
                             "http://localhost",
                             "http://beta.tb4.dev",
 							"http://tb4test.mugbookie.com",
+							"http://192.168.0.31:9778"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){  
