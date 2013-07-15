@@ -104,6 +104,8 @@ class RacingController extends \BaseController {
 				$m->from($emailDetails['from'], $emailDetails['from_name']);
 				$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
 			});
+			TopBetta\LogHelper::l("BackAPI: Racing - Connection Rate Limited: $rateLimitKey.");
+			
 			return \Response::json(array(
 					'error' => true,
 					'message' => 'Error: Connection rate limited.'),
@@ -598,15 +600,17 @@ class RacingController extends \BaseController {
 												$arrayKey => $arrayValue 
 										);
 										$previousDivArray = array ();
+										
+										TopBetta\LogHelper::l ("BackAPI: Racing - Processing Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue.",1 );
 										// work on each exotic type
 										switch ($betType) {
 											case "Q" : // Quinella
-												if (! $raceEvent->quinella_dividend == NULL) {
-													if (! $raceEvent->quinella_dividend == serialize ( $exoticArray )) {
+												if (!$raceEvent->quinella_dividend == NULL) {
+													if (!$raceEvent->quinella_dividend == serialize($exoticArray)) {
 														// unserialise the existing dividend
-														$previousDivArray = unserialize ( $raceEvent->quinella_dividend );
+														$previousDivArray = unserialize ($raceEvent->quinella_dividend);
 														// add the new dividends
-														$raceEvent->quinella_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+														$raceEvent->quinella_dividend = serialize (array_merge($previousDivArray, $exoticArray));
 													}
 												} else {
 													$raceEvent->quinella_dividend = serialize ( $exoticArray );
@@ -651,6 +655,8 @@ class RacingController extends \BaseController {
 											default :
 												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2 );
 										}
+										$previousDiv = print_r($previousDivArray,0);
+										TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1 );
 										// save the exotic dividend
 										$raceEvent->save ();
 									}
