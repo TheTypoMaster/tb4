@@ -29,10 +29,13 @@ class AccountBalance extends \Eloquent {
     
  	public function listTransactions($userId = null, $transactionType = null, $limit = 25, $offset = false) {
 
-		$query = "SELECT t.*, r.name as recipient, r.id as recipient_id, g.name as giver, g.id as giver_id, tt.name as type,"
+		$selectQuery = "SELECT t.*, r.name as recipient, r.id as recipient_id, g.name as giver, g.id as giver_id, tt.name as type,"
 		. " tt.description as description, tourn.id as tournament_id, tourn.name as tournament, s.name as sport_name,"
-		. " tk.refunded_flag as ticket_refunded_flag, be.id as bet_entry_id, bw.id as bet_win_id, br.id as bet_refund_id"
-		. " FROM tbdb_account_transaction t"
+		. " tk.refunded_flag as ticket_refunded_flag, be.id as bet_entry_id, bw.id as bet_win_id, br.id as bet_refund_id";
+		
+		$selectCountQuery = "SELECT COUNT(*) AS total";
+		
+		$query = " FROM tbdb_account_transaction t"
 		. " LEFT JOIN tbdb_users r ON r.id = t.recipient_id"
 		. " LEFT JOIN tbdb_users g ON g.id = t.giver_id"
 		. " LEFT JOIN tbdb_account_transaction_type tt ON tt.id = t.account_transaction_type_id"
@@ -45,15 +48,23 @@ class AccountBalance extends \Eloquent {
 		. $this->_buildQueryWhere($userId, $transactionType)
 		. " ORDER BY t.created_date DESC, t.id DESC";	
 		
+		$countQuery = $selectCountQuery . $query;
+		
 		if ($offset) {
 			$query .= ' LIMIT ' . $offset . ',' . $limit;	
 		} else {
 			$query .= ' LIMIT ' . $limit;
 		}				
 		
-		$result = \DB::select($query);
+		// handle our normal query with results
+		$fullQuery = $selectQuery . $query;
+		
+		$result = \DB::select($fullQuery);
+		
+		// handle our total count for this full query excluding page limits
+		$numRows = \DB::select($countQuery);
 
-		return $result;					
+		return array('result' => $result, 'num_rows' => $numRows[0]);					
 		
  	}
  
