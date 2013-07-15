@@ -606,62 +606,78 @@ class RacingController extends \BaseController {
 										switch ($betType) {
 											case "Q" : // Quinella
 												if (!$raceEvent->quinella_dividend == NULL) {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result: Type:$betType. Not in DB", 1);
 													if (!$raceEvent->quinella_dividend == serialize($exoticArray)) {
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->quinella_dividend.", 1);
 														// unserialise the existing dividend
 														$previousDivArray = unserialize ($raceEvent->quinella_dividend);
 														// add the new dividends
 														$raceEvent->quinella_dividend = serialize (array_merge($previousDivArray, $exoticArray));
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->quinella_dividend.", 1);
 													}
 												} else {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding toDB ", 1);
 													$raceEvent->quinella_dividend = serialize ( $exoticArray );
 												}
 												break;
 											case "E" : // Exacta
 												if (! $raceEvent->exacta_dividend == NULL) {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Not in DB", 1);
 													if (! $raceEvent->exacta_dividend == serialize ( $exoticArray )) {
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->exacta_dividend.", 1);
 														// unserialise the existing dividend
 														$previousDivArray = unserialize ( $raceEvent->exacta_dividend );
 														// add the new dividends
 														$raceEvent->exacta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->exacta_dividend.", 1);
 													}
 												} else {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding to DB", 1);
 													$raceEvent->exacta_dividend = serialize ( $exoticArray );
 												}
 												break;
 											case "T" : // Trifecta
 												if (! $raceEvent->trifecta_dividend == NULL) {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Not in DB", 1);
 													if (! $raceEvent->trifecta_dividend == serialize ( $exoticArray )) {
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->trifecta_dividend.", 1);
 														// unserialise the existing dividend
 														$previousDivArray = unserialize ( $raceEvent->trifecta_dividend );
 														// add the new dividends
 														$raceEvent->trifecta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->trifecta_dividend.", 1);
 													}
 												} else {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding to DB", 1);
 													$raceEvent->trifecta_dividend = serialize ( $exoticArray );
 												}
 												break;
 											case "FF" : // First Four
 												if (! $raceEvent->firstfour_dividend == NULL) {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Not in DB", 1);
 													if (! $raceEvent->firstfour_dividend == serialize ( $exoticArray )) {
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->firstfour_dividend.", 1);
 														// unserialise the existing dividend
 														$previousDivArray = unserialize ( $raceEvent->firstfour_dividend );
 														// add the new dividends
 														$raceEvent->firstfour_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
+														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->firstfour_dividend.", 1);
 													}
 												} else {
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding to DB", 1);
 													$raceEvent->firstfour_dividend = serialize ( $exoticArray );
 												}
 												break;
 											default :
-												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2 );
+												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
 										}
 										$previousDiv = print_r($previousDivArray,true);
-										TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1 );
+										TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1);
 										// save the exotic dividend
 										$raceEvent->save ();
 									}
 								} else { // not all required data available
-									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
+									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 								}
 							} else {
 								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Missing Results data. Can't process", 1);
