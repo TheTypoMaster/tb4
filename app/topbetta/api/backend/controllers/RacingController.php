@@ -672,18 +672,18 @@ class RacingController extends \BaseController {
 												}
 												break;
 											default :
-												TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
+												TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
 										}
 										$previousDiv = print_r($previousDivArray,true);
 										TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1);
 										// save the exotic dividend
-										$raceEvent-$racingArray>save ();
+										$raceEvent->save();
 									}
 								} else { // not all required data available
-									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
+									TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Not Processed! PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 								}
 							} else {
-								TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Missing Results data. Can't process", 1);
+								TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. Missing Results data. Can't process", 1);
 							}
 						}
 						break; 
