@@ -816,8 +816,16 @@ class RacingController extends \BaseController {
 						);
 				}
 			}else{
-					
-				TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key. No Data. Can't Process: $racingArray.", 2);
+				// This is the sequence are for the moment. Might move it if it becomes a permanent addition	
+				TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: $key. SequenceNo: $racingArray.", 2);
+				
+				// output timestamp and sequence 
+				if($this->debug){
+					$timeStamp = date("Ymd");
+					$contents = $timeStamp .": $racingArray".
+					\File::append('tmp/igas_sequence-'.$timeStamp, $jsonSerialized);
+				}
+				
 				/* return Response::json(array(
 						'error' => true,
 						'message' => 'Error: No Data found'),
