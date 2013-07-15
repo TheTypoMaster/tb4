@@ -342,7 +342,7 @@ class TournamentTicket extends \Eloquent {
 		FROM tbdb_event_group_event AS ege 
 		INNER JOIN tbdb_event AS e ON e.id = ege.event_id
 		INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
-		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
+		LEFT JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
 		WHERE ege.event_group_id = '".$eventGroupId."'
 		AND e.event_status_id = 1
 		ORDER BY e.start_date ASC
