@@ -120,7 +120,7 @@ class FrontTournamentsController extends \BaseController {
 						$startDatetime = new \DateTime($tourn -> start_date);
 						$startDatetime = $startDatetime -> format('c');
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_date' => $startDatetime);
+						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'start_date' => $startDatetime);
 					}
 					
 					//handle sub_type for racing
