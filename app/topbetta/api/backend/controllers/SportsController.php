@@ -165,14 +165,14 @@ class SportsController extends \BaseController {
 								}
 									
 								// Process Event
-								$eventExists = TopBetta\SportsEvents::eventExists($eventId);
+								$eventExists = TopBetta\SportsMatches::eventExists($eventId);
 								// if event exists update that record
 								if($eventExists){
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, In DB: $eventExists", 1);
-									$eventModel = TopBetta\SportsEvents::find($eventExists);
+									$eventModel = TopBetta\SportsMatches::find($eventExists);
 								// if not create a new record
 								}else{
-									$eventModel = new TopBetta\SportsEvents;
+									$eventModel = new TopBetta\SportsMatches;
 									$eventModel->external_event_id = $eventId;
 								 }
 
@@ -222,7 +222,7 @@ class SportsController extends \BaseController {
 								$betType = $dataArray['BetType'];
 
 								// make sure the event this market is in exists 1st
-								$eventExists = TopBetta\SportsEvents::eventExists($eventId);
+								$eventExists = TopBetta\SportsMatches::eventExists($eventId);
 
 								// if event exists update continue processing market
 								if($eventExists){

@@ -11,7 +11,7 @@
 |
 */
 
-//apc_clear_cache("user");
+apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
 
@@ -64,7 +64,7 @@ Route::get('/', function()
 	
 	//return (string)$api_con;
 	
-	return $eventExists = TopBetta\SportsEvents::eventExists('14511910');
+	// return $eventExists = TopBetta\SportsEvents::eventExists('14511910');
 	//$it = Hash::make('igast3st1ng');
 	//return $it;
 	
