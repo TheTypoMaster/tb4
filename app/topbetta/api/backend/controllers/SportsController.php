@@ -169,28 +169,28 @@ class SportsController extends \BaseController {
 								// if event exists update that record
 								if($eventExists){
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, In DB: $eventExists", 1);
-									$eventModel = TopBetta\SportsMatches::find($eventExists);
+									$eventModelSports = TopBetta\SportsMatches::find($eventExists);
 								// if not create a new record
 								}else{
-									$eventModel = new TopBetta\SportsMatches;
-									$eventModel->external_event_id = $eventId;
+									$eventModelSports = new TopBetta\SportsMatches;
+									$eventModelSports->external_event_id = $eventId;
 								 }
 
 								if(isset($dataArray['EventTime'])){
-									$eventModel->start_date = $dataArray['EventTime'];
+									$eventModelSports->start_date = $dataArray['EventTime'];
 								}
 								if(isset($dataArray['EventName'])){
-									$eventModel->name = $dataArray['EventName'];
+									$eventModelSports->name = $dataArray['EventName'];
 								}
 								
 								// save or update the record
-								$eventSave = $eventModel->save();
-								$EventDBID = $eventModel->id;
+								$eventSave = $eventModelSports->save();
+								$EventDBID = $eventModelSports->id;
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, Added to DB: $EventDBID", 1);
-								TopBetta\LogHelper::l("BackAPI: Sports - Processed Event. Event:$eventId, Date:$eventModel->start_date, Name:$eventModel->name");
+								TopBetta\LogHelper::l("BackAPI: Sports - Processed Event. Event:$eventId, Date:$eventModelSports->start_date, Name:$eventModelSports->name");
 
 								// Add the event_group_event pivot table record to link the competition the the event
-								$eventGEExists = TopBetta\SportEventGroupEvent::eventGEExists($eventModel->id, $compExists);
+								$eventGEExists = TopBetta\SportEventGroupEvent::eventGEExists($eventModelSports->id, $compExists);
 								// if event exists update that record
 								if($eventGEExists){
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing EGE, In DB: $eventGEExists", 1);
@@ -198,7 +198,7 @@ class SportsController extends \BaseController {
 									// if not create a new record
 								}else{
 									$eventGEModel = new TopBetta\SportEventGroupEvent;
-									$eventGEModel->event_id = $eventModel->id;
+									$eventGEModel->event_id = $eventModelSports->id;
 									$eventGEModel->event_group_id = $compExists;
 									// save the EGE record
 									$eventGEModel->save();
