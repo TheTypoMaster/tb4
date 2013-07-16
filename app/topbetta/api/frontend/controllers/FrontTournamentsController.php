@@ -103,7 +103,7 @@ class FrontTournamentsController extends \BaseController {
 						}
 					}
 
-					if ($tourn -> event_group_name == $meetingName) {
+					if ($tourn -> event_group_id == $meetingId) {
 
 						$numTournaments++;
 
