@@ -64,8 +64,11 @@ Route::get('/', function()
 	
 	//return (string)$api_con;
 	
+	return $eventExists = TopBetta\SportsEvents::eventExists('14511910');
 	//$it = Hash::make('igast3st1ng');
 	//return $it;
+	
+	
 	
 	// return TopBetta\ProductDefaults::find(1)->tbdbbetproduct;
 	
