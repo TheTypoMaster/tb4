@@ -8,6 +8,10 @@ class SportsEvents extends \Eloquent {
 	protected $guarded = array();
 
 	public static $rules = array();
+	
+	static public function eventExists($eventId) {
+		return SportsEvents::where('external_event_id', '=', $eventId) -> pluck('id');
+	}
 
 	public function getEvents($limit = 0, $cid = 0, $date = NULL) {
 
