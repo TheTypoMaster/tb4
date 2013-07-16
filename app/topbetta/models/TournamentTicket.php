@@ -36,6 +36,7 @@ class TournamentTicket extends \Eloquent {
 				tk.result_transaction_id,
 				t.buy_in,
 				t.entry_fee,
+				t.start_currency,
 				s.name AS sport_name,
 				t.start_date,
 				t.end_date,
@@ -92,6 +93,7 @@ class TournamentTicket extends \Eloquent {
 				tk.winner_alert_flag,
 				t.buy_in,
 				t.entry_fee,
+				t.start_currency,
 				s.name AS sport_name,
 				t.jackpot_flag,
 				t.start_date,
@@ -262,7 +264,7 @@ class TournamentTicket extends \Eloquent {
 	 * @param integer $user_id
 	 * @return object
 	 */
-	public function getUserTournamentList($user_id, $order = 't.id', $direction = 'ASC', $limit = null, $offset = null)
+	public function getUserTournamentList($user_id, $order = 't.id', $direction = 'ASC', $limit = 25, $offset = null)
 	{
 		/*	
 		if(is_null($order)) {
@@ -282,8 +284,7 @@ class TournamentTicket extends \Eloquent {
 		}
 		*/
 
-		$query =
-			'SELECT
+		$selectQuery = 'SELECT
 				t.id,
 				tk.result_transaction_id,
 				tk.created_date,
@@ -298,8 +299,11 @@ class TournamentTicket extends \Eloquent {
 				t.name AS tournament_name,
 				t.jackpot_flag,
 				t.parent_tournament_id,
-				c.name AS competition_name
-			FROM
+				c.name AS competition_name';
+				
+			$selectCountQuery = "SELECT COUNT(*) AS total";	
+				
+			$query = ' FROM
 				tbdb_tournament_ticket AS tk
 			INNER JOIN
 				tbdb_tournament AS t
@@ -322,6 +326,8 @@ class TournamentTicket extends \Eloquent {
 				tk.refunded_flag != 1
 			AND
 				t.cancelled_flag != 1';
+				
+		$countQuery = $selectCountQuery . $query;		
 
 		if(!is_null($order)) {
 			$query .= ' ORDER BY ' . $order;
@@ -330,10 +336,22 @@ class TournamentTicket extends \Eloquent {
 		if(!is_null($direction)) {
 			$query .= ' ' . $direction;
 		}
+		
+		if ($offset) {
+			$query .= ' LIMIT ' . $offset . ',' . $limit;	
+		} else {
+			$query .= ' LIMIT ' . $limit;
+		}						
 
-		$result = \DB::select($query);
+		// handle our normal query with results
+		$fullQuery = $selectQuery . $query;
+		
+		$result = \DB::select($fullQuery);
+		
+		// handle our total count for this full query excluding page limits
+		$numRows = \DB::select($countQuery);
 
-		return $result;
+		return array('result' => $result, 'num_rows' => $numRows[0]);	
 	}	
 
 	public static function nextEventForEventGroup($eventGroupId) {

@@ -32,14 +32,14 @@ class FrontUsersBankingController extends \BaseController {
 		if ($report == 'transactions') {
 
 			//this runs a very heavy query - cache for 1 minute
-			return \Cache::remember('usersBankingTransactions-' . \Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports) {
+			return \Cache::remember('usersBankingTransactions-' . \Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports, $page) {
 
 				$accountModel = new \TopBetta\AccountBalance;
 				$transactionList = $accountModel -> listTransactions(\Auth::user() -> id, $type, $limit, $offset);
 
 				$transactions = array();
 
-				foreach ($transactionList as $transaction) {
+				foreach ($transactionList['result'] as $transaction) {
 
 					$sport = in_array($transaction -> sport_name, $excludeSports) ? 'racing' : 'sports';
 
@@ -72,8 +72,9 @@ class FrontUsersBankingController extends \BaseController {
 					$transactions[] = array('id' => $transaction -> id, 'date' => \TimeHelper::isoDate($transaction -> created_date), 'description' => $description, 'value' => $transaction -> amount, 'type' => $transactionType);
 
 				}
-
-				return array("success" => true, "result" => $transactions);
+ 
+				$numPages = ceil($transactionList['num_rows'] -> total / $limit);
+				return array("success" => true, "result" => array('transactions' => $transactions, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
 
 			});
 

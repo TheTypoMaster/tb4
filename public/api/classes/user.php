@@ -2700,6 +2700,212 @@ Must be 18+<br>
 		return $result;
 	}
 	
+	
+	public function getBettingHistory() {
+		
+		 // first validate a legit token has been sent
+		$server_token = JUtility::getToken(); 
+         
+		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
+
+			if (!class_exists('BettingModelBet')) {
+				JLoader::import('bet', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}
+
+			if (!class_exists('BettingModelBetSelection')) {
+				JLoader::import('betselection', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}
+
+			if (!class_exists('BettingModelBetResultStatus')) {
+				JLoader::import('BetResultStatus', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}
+
+			if (!class_exists('BettingModelBetProduct')) {
+				JLoader::import('BetProduct', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}		
+			
+			// CONTROLLER CODE
+			global $mainframe, $option;
+			
+			$bet_model					=& $this->getModel('Bet', 'BettingModel');
+			$bet_selection_model		=& $this->getModel('BetSelection', 'BettingModel');
+			$bet_result_status_model	=& $this->getModel('BetResultStatus', 'BettingModel');
+			$bet_product_model			=& $this->getModel('BetProduct', 'BettingModel');
+			$bet_origin_model			=& $this->getModel('BetOrigin', 'BettingModel');
+	
+			$user =& JFactory::getUser();
+			
+			if (!$user -> id) {
+				
+				return OutputHelper::json(500, array('error_msg' => 'Please login first'));
+								
+			}	
+								
+			
+			$result_type	= JRequest::getVar('result_type', null);
+			
+			$lists = array();
+			
+			$filter_from_date	= $mainframe->getUserStateFromRequest($option.'filter_history_from_date', 'filter_history_from_date');
+			$filter_to_date		= $mainframe->getUserStateFromRequest($option.'filter_history_to_date', 'filter_history_to_date');
+	
+			$lists['from_date']	= $filter_from_date;
+			$lists['to_date']	= $filter_to_date;
+			
+			$filter = array(
+				'user_id'		=> $user->id,
+				'result_type'	=> $result_type,
+				'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : null,
+				'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : null,
+			);
+			
+			$offset = $mainframe->getUserStateFromRequest(
+				JRequest::getVar('limitstart', 0, '', 'int'),
+				'limitstart',
+				0
+			);
+
+			$limit = $mainframe->getCfg('list_limit');
+			$bet_list = $bet_model->getBetFilterList($filter, 'b.id DESC', 'ASC', $limit, $offset);
+			
+			jimport('joomla.html.pagination');
+			$total = $bet_model->getBetFilterCount($filter);
+			$pagination = new JPagination($total, $offset, $limit);
+
+
+			
+			// VIEW.HTML.PHP
+			$bet_display_list = array();
+			
+			$component_list = array('tournament', 'topbetta_user');
+			foreach ($component_list as $component) {
+				$path = JPATH_SITE . DS . 'components' . DS . 'com_' . $component . DS . 'models';
+				$this -> addModelPath($path);
+			}
+
+			$meeting_model = &$this -> getModel('Meeting', 'TournamentModel');
+			$selection_result_model = &$this -> getModel('SelectionResult', 'TournamentModel');			
+			
+			//$bet_selection_model	=& $this->getModel('BetSelection');
+			//$selection_result_model	=& $this->getModel('SelectionResult');
+			//$meeting_model			=& $this->getModel('Meeting');
+			
+			require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'helpers' . DS . 'helper.php');
+			
+			$wagering_bet = WageringBet::newBet();
+
+			$i = 1;
+			foreach ($bet_list as $bet) {
+				$label		= BettingHelper::getBetTicketDisplay($bet->id);
+				$meeting	= $meeting_model->getMeetingByRaceID($bet->event_id);
+				
+				$bet_display_list[$bet->id] = array(
+					'link'			=> '/betting/racing/meeting/' . $meeting->id . '/' . $bet->event_number,
+					'row_class'		=> $i % 2 == 0 ? 'odds' : 'even',
+					'bet_time'		=> $bet->created_date,
+					'label'			=> $label,
+					'bet_type'		=> $wagering_bet->getBetTypeDisplayName($bet->bet_type),
+					'amount'		=> FORMAT::currency($bet->bet_amount),
+					'bet_total'		=> FORMAT::currency(abs($bet->bet_total)),
+					'bet_freebet_amount'		=> FORMAT::currency(abs($bet->bet_freebet_amount)),
+					'dividend'		=> '&mdash;',
+					'paid'			=> '&mdash;',
+					'result'		=> 'CONFIRMED',
+					'half_refund'	=> false
+				);
+				 
+				if ($bet->refunded_flag && !$bet->win_amount) {
+					$bet_display_list[$bet->id]['result']	= 'REFUNDED';
+					if ($bet->refund_amount > 0) {
+						$bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);  
+					}
+					
+				}
+				else if($bet->bet_result_status == 'pending')
+				{
+					$bet_display_list[$bet->id]['result']			= 'PENDING';
+				}
+				else if ($bet->resulted_flag && empty($bet->win_amount)) {
+					$bet_display_list[$bet->id]['result']	= 'LOSS';
+					$bet_display_list[$bet->id]['paid']		= 'NIL';
+				} else if ($bet->resulted_flag) {
+					$bet_display_list[$bet->id]['result']	= 'WIN';
+					$bet_display_list[$bet->id]['paid']		= Format::currency($bet->win_amount);
+					
+					if ($wagering_bet->isStandardBetType($bet->bet_type)) {
+						$selection_result	= $selection_result_model->getSelectionResultBySelectionID($bet->selection_id);
+						$win_dividend		= $selection_result->win_dividend;
+						$place_dividend		= $selection_result->place_dividend;
+						
+						switch ($bet->bet_type) {
+							case WageringBet::BET_TYPE_WIN:
+								$bet_display_list[$bet->id]['dividend'] = Format::odds($win_dividend);
+								break;
+							case WageringBet::BET_TYPE_PLACE:
+								$bet_display_list[$bet->id]['dividend'] = Format::odds($place_dividend);
+								break;
+							case WageringBet::BET_TYPE_EACHWAY:
+								$bet_display_list[$bet->id]['dividend']  = Format::odds($win_dividend);
+								$bet_display_list[$bet->id]['dividend'] .= '/';
+								$bet_display_list[$bet->id]['dividend'] .= Format::odds($place_dividend);
+								break;
+						}
+					} else {
+						$bet_dividends = unserialize($bet->{$bet->bet_type . '_dividend'});
+						
+						$bet_display_list[$bet->id]['dividend'] = '&mdash;';
+						$dividends_count = count($bet_dividends);
+						
+						if ($dividends_count == 1) {
+							$bet_display_list[$bet->id]['dividend'] = Format::odds(array_shift($bet_dividends));
+						} else if ($dividends_count > 1) {
+							$bet_display_list[$bet->id]['dividend'] = array();
+							foreach ($bet_dividends as $combination => $bet_dividend) {
+								$bet_display_list[$bet->id]['dividend'][] = $combination . ': ' . Format::odds($bet_dividend); 
+							}
+							$bet_display_list[$bet->id]['dividend'] = implode('<br />', $bet_display_list[$bet->id]['dividend']);
+						}
+					}
+					
+					if ($bet->refunded_flag) {
+						$scrached_list = $bet_selection_model->getBetSelectionListByBetIDAndSelectionStatus($bet->id, 'scratched');
+						$scrached_display = array();
+						foreach ($scrached_list as $scrached) {
+							$scrached_display[] = $scrached->number . '. ' . $scrached->name;
+						}
+						
+						$bet_display_list[$bet->id]['half_refund'] = array(
+							'label'		=> implode(', ', $scrached_display),
+							'bet_type'	=> $wagering_bet->getBetTypeDisplayName($bet->bet_type),
+							'amount'	=> '&mdash;',
+							'bet_total'	=> '&mdash;',
+							'dividend'	=> '&mdash;',
+							'paid'		=> Format::currency($bet->refund_amount),
+							'result'	=> 'REFUND'
+						);
+					}
+				}
+				$i++;
+			}	
+
+			if (count($bet_display_list) > 0) {
+					
+				return OutputHelper::json(200, array('bet_list' => $bet_display_list, 'pagination' => $pagination, 'user' => $user->id ));	
+					
+				
+			}
+			else {
+				return OutputHelper::json(500, array('error_msg' => 'No betting history found'));
+			}
+
+		}else{
+		
+		      return OutputHelper::json(500, array('error_msg' => JText::_( 'Invalid Token' ) ));
+		}		
+		
+		
+	}
+	
 	public function doSelfExclude() {
 		
 		global $mainframe;

@@ -30,7 +30,7 @@ class FrontUsersTournamentsController extends \BaseController {
 		if ($report == 'transactions') {
 
 			//this runs a very heavy query - cache for 1 minute
-			return \Cache::remember('usersTournamentTransactions-' . \Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports) {				
+			return \Cache::remember('usersTournamentTransactions-' . \Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports, $page) {				
 
 				$transactionModel = new \TopBetta\FreeCreditBalance;
 
@@ -38,7 +38,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 				$transactions = array();
 
-				foreach ($transactionList as $transaction) {
+				foreach ($transactionList['result'] as $transaction) {
 
 					//handle our description field
 					$ticket = null;
@@ -106,7 +106,8 @@ class FrontUsersTournamentsController extends \BaseController {
 
 				}
 
-				return array('success' => true, 'result' => $transactions);
+				$numPages = ceil($transactionList['num_rows'] -> total / $limit);
+				return array("success" => true, "result" => array('transactions' => $transactions, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
 
 			});
 
@@ -115,14 +116,14 @@ class FrontUsersTournamentsController extends \BaseController {
 			$userId = \Auth::user() -> id;
 
 			//cache for 30 seconds (.5 min)
-			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports) {
+			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page) {
 				
 				$ticket_model = new \TopBetta\TournamentTicket;	
 					
 				$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset);
 				$tournamentHistory = array();
 				
-				foreach ($tournament_list as $tournament) {
+				foreach ($tournament_list['result'] as $tournament) {
 					//set bet open
 					$tournament->bet_open		= strtotime($tournament->end_date) > time();
 					//populate bettabucks
@@ -184,7 +185,8 @@ class FrontUsersTournamentsController extends \BaseController {
 					);
 				}
 
-				return array('success' => true, 'result' => $tournamentHistory);
+				$numPages = ceil($tournament_list['num_rows'] -> total / $limit);
+				return array("success" => true, "result" => array('transactions' => $tournamentHistory, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));				
 				
 			});
 

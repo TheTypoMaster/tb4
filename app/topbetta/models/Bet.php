@@ -235,6 +235,7 @@ class Bet extends \Eloquent {
 
 	/**
 	 * Get fliltered bet records
+	 * NOTE: this may not be getting used - the legacy API handles this at the moment ;-)
 	 *
 	 * @param array $filter
 	 * @return array
@@ -253,7 +254,7 @@ class Bet extends \Eloquent {
 			$order = 'b.id';
 		}
 		
-		$query = '
+		$selectQuery = '
 			SELECT
 	      		b.*,
 	      		u.username,
@@ -273,8 +274,11 @@ class Bet extends \Eloquent {
 	      		s.external_selection_id,
 	      		bat.amount AS bet_total,
 	      		rat.amount AS win_amount,
-	      		fat.amount AS refund_amount
-			FROM
+	      		fat.amount AS refund_amount ';
+				
+		$selectCountQuery = "SELECT COUNT(*) AS total ";		
+				
+		$query = 'FROM
 				tbdb_bet AS b
 			INNER JOIN
 				tbdb_bet_type AS bt
@@ -383,6 +387,8 @@ class Bet extends \Eloquent {
 			$query .= implode(' AND ', $where);
 		}
 		
+		$countQuery = $selectCountQuery . $query;		
+		
 		$query .= '
 			GROUP BY
 				b.id
@@ -396,9 +402,15 @@ class Bet extends \Eloquent {
 			$query .= ' LIMIT ' . $limit;
 		}
 
-		$result = \DB::select($query);
+		// handle our normal query with results
+		$fullQuery = $selectQuery . $query;
+		
+		$result = \DB::select($fullQuery);
+		
+		// handle our total count for this full query excluding page limits
+		$numRows = \DB::select($countQuery);
 
-		return $result;	
+		return array('result' => $result, 'num_rows' => $numRows[0]);		
 	}
 
 	public function getTournamentBetListByEventIDAndTicketID($event_id, $ticket_id)

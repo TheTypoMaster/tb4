@@ -222,12 +222,15 @@ class FreeCreditBalance extends \Eloquent {
 
 	public function listTransactions($userId = null, $transactionType = null, $limit = 25, $offset = false) {
 
-		$query = "SELECT t.*, r.name as recipient, g.name as giver, tt.name as type, tt.description as description, "
+		$selectQuery = "SELECT t.*, r.name as recipient, g.name as giver, tt.name as type, tt.description as description, "
 		. " tk.id as ticket, tk.tournament_id, tk.buy_in_transaction_id, tk2.id as ticket2, tk2.tournament_id AS tournament_id2, tk2.entry_fee_transaction_id,"
 		. " tk3.id as ticket3, tk3.tournament_id AS tournament_id3, tk3.result_transaction_id,"
 		. " tourn.name as tournament, s.name as sport_name, tourn2.name as tournament2, s2.name as sport_name2,"
-		. " tourn3.name as tournament3, s3.name as sport_name3, f.username as friend_username,  be.id as bet_entry_id, bw.id as bet_win_id, br.id as bet_refund_id"
-		. " FROM tbdb_tournament_transaction t"
+		. " tourn3.name as tournament3, s3.name as sport_name3, f.username as friend_username,  be.id as bet_entry_id, bw.id as bet_win_id, br.id as bet_refund_id";
+		
+		$selectCountQuery = "SELECT COUNT(*) AS total";
+		
+		$query = " FROM tbdb_tournament_transaction t"
 		. " LEFT JOIN tbdb_users r ON r.id = t.recipient_id"
 		. " LEFT JOIN tbdb_users g ON g.id = t.giver_id"
 		. " LEFT JOIN tbdb_tournament_transaction_type tt ON tt.id = t.tournament_transaction_type_id"
@@ -255,15 +258,23 @@ class FreeCreditBalance extends \Eloquent {
 
 		$query .= " ORDER BY t.created_date DESC, t.id DESC";
 		
+		$countQuery = $selectCountQuery . $query;
+		
 		if ($offset) {
 			$query .= ' LIMIT ' . $offset . ',' . $limit;	
 		} else {
 			$query .= ' LIMIT ' . $limit;
 		}		
 		
-		$result = \DB::select($query);
+		// handle our normal query with results
+		$fullQuery = $selectQuery . $query;
+		
+		$result = \DB::select($fullQuery);
+		
+		// handle our total count for this full query excluding page limits
+		$numRows = \DB::select($countQuery);
 
-		return $result;	
+		return array('result' => $result, 'num_rows' => $numRows[0]);
 		
 	}
 

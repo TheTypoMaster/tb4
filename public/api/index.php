@@ -310,6 +310,11 @@ switch($method) {
 		echo $funds -> getBalances();
 		break;
 
+	case 'getBettingHistory' :
+		$history = new Api_User();
+		echo $history -> getBettingHistory();
+		break;
+
 	case 'doInstantDeposit' :
 		$deposits = new Api_Payment();
 		echo $deposits -> doInstantDeposit();

@@ -5,34 +5,53 @@ use TopBetta;
 
 class FrontUsersBettingController extends \BaseController {
 
-	public function __construct()
-	{
-		$this->beforeFilter('auth');
+	public function __construct() {
+		$this -> beforeFilter('auth');
 	}
-	
+
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index()
-	{
+	public function index() {
 		$limit = \Input::get('per_page', 25);
 		$page = \Input::get('page', 1);
-		
-		$offset = $limit * ($page - 1);	
-			
-		$filter = array(
-			'user_id'		=> \Auth::user() -> id,
-			'result_type'	=> \Input::get('type', false)
-			//'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : null,
-			//'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : null,
-		);			
-		
-		$betModel = new \TopBetta\Bet;
-		
-		return $betModel->getBetFilterList($filter, 'b.id DESC', 'ASC', $limit, $offset);
-			
+
+		$offset = $limit * ($page - 1);
+
+		$filter = array('result_type' => \Input::get('type', false),
+		'limitstart' => $offset
+		//'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : null,
+		//'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : null,
+		);
+
+		return \Cache::remember('usersBettingHistory-' . \Auth::user() -> id . '-' . $filter['result_type'] . $limit . $page, 1, function() use (&$type, &$limit, &$offset, $filter, $page) {
+
+			//pass data onto legacy api
+			$l = new \TopBetta\LegacyApiHelper;
+			$history = $l -> query('getBettingHistory', $filter);
+
+			if ($history['status'] == 200) {
+
+				$transactions = array();
+
+				foreach ($history['bet_list'] as $key => $transaction) {
+
+					$transactions[] = array('id' => $key, 'date' => \TimeHelper::isoDate($transaction['bet_time']), 'selections' => $transaction['label'], 'bet_type' => $transaction['bet_type'], 'bet_amount' => (int)$transaction['amount'] * 100, 'bet_total' => (int)$transaction['bet_total'] * 100, 'freebet_amount' => (int)$transaction['bet_freebet_amount'] * 100, 'dividend' => (float)$transaction['dividend'], 'paid' => (int)$transaction['paid'] * 100, 'result' => $transaction['result'], 'half_refund' => $transaction['half_refund']);
+
+				}
+
+				return array("success" => true, "result" => array('transactions' => $transactions, 'num_pages' => (int)$history['pagination']['pages.stop'], 'current_page' => (int)$history['pagination']['pages.current']));
+
+			} else {
+
+				return array("success" => false, "error" => $history['error_msg']);
+
+			}
+
+		});
+
 	}
 
 	/**
@@ -40,8 +59,7 @@ class FrontUsersBettingController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create()
-	{
+	public function create() {
 		//
 	}
 
@@ -50,8 +68,7 @@ class FrontUsersBettingController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
-	{
+	public function store() {
 		//
 	}
 
@@ -61,8 +78,7 @@ class FrontUsersBettingController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
-	{
+	public function show($id) {
 		//
 	}
 
@@ -72,8 +88,7 @@ class FrontUsersBettingController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
-	{
+	public function edit($id) {
 		//
 	}
 
@@ -83,8 +98,7 @@ class FrontUsersBettingController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
-	{
+	public function update($id) {
 		//
 	}
 
@@ -94,8 +108,7 @@ class FrontUsersBettingController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
-	{
+	public function destroy($id) {
 		//
 	}
 
