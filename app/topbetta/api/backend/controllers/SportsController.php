@@ -119,7 +119,7 @@ class SportsController extends \BaseController {
 				switch($key){
 						
 					// Sport/Comp/Event data
-					case "EventList":
+					case "GameList":
 						TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, Object:$objectCount");
 						// Loop on each EventList JSOn object 
 						foreach ($sportsArray as $dataArray){
