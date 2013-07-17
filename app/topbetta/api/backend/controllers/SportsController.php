@@ -157,14 +157,14 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, In DB: $compExists", 1);
 										$compModel = TopBetta\SportsComps::find($compExists);
 										$compModel->name = $competition;
-										$compModel->external_event_id = $eventId;
+										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
 										
 										// if not create a new record
 									}else{
 										$compModel = new TopBetta\SportsComps;
 										$compModel->name = $competition;
-										$compModel->external_event_id = $eventId;
+										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $eventId;
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed League:$name, Added to DB: $compModel->id", 1);
 										$compExists =  $compModel->id;
