@@ -165,16 +165,36 @@ class SportsController extends \BaseController {
 										$compModel = new TopBetta\SportsComps;
 										$compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
-										$compModel->sport_id = $eventId;
+										$compModel->sport_id = $sportExists;
 										$compModel->close_time = $dataArray['EventTime'];
-										TopBetta\LogHelper::l("BackAPI: Sports - Processed League:$name, Added to DB: $compModel->id", 1);
+										TopBetta\LogHelper::l("BackAPI: Sports - Processed League:$competition, Added to DB: $compModel->id", 1);
 										$compExists =  $compModel->id;
 									}
 									// Save the updated or new record
 									$compModel->save();
-								}
+								
+									/*
+									 * Add tournament competition record
+									*/
 									
-								// Process Event
+									// Check if the record exists already
+									$tournamentCompetitonExists = TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
+									
+									if(!$tournamentCompetitonExists){
+										// add the new record
+										$tournamentCompetitionModel = new TopBetta\TournamentCompetition;
+										$tournamentCompetitionModel->tournament_sport_id = $sportExists;
+										$tournamentCompetitionModel->status_flag = 1;
+										$tournamentCompetitionModel->save();
+																	
+										// add the tournament competition ID to the event group table....
+										$compModel->tournament_competition_id = $tournamentCompetitionModel->id;
+										$compModel->save();
+									}
+								}
+								
+
+								
 								$eventExists = TopBetta\SportsMatches::eventExists($eventId);
 								// if event exists update that record
 								if($eventExists){
