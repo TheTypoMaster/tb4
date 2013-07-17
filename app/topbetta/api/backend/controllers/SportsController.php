@@ -201,7 +201,7 @@ class SportsController extends \BaseController {
 								// if event exists update that record
 								if($eventGEExists){
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing EGE, In DB: $eventGEExists", 1);
-									$eventGEModel = TopBetta\SportEventGroupEvent::find($eventGEExists);
+									// $eventGEModel = TopBetta\SportEventGroupEvent::find($eventGEExists);
 									// if not create a new record
 								}else{
 									$eventGEModel = new TopBetta\SportEventGroupEvent;
