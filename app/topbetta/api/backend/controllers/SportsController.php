@@ -414,9 +414,9 @@ class SportsController extends \BaseController {
 		}
 
 		return \Response::json(array(
-				'error' => false,
+				'error' => true,
 				'message' => 'OK: Processed Successfully'),
-				200
+				400
 		);
 		//return RaceMeetings::all();
 	}
