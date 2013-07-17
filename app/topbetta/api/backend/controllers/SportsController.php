@@ -155,7 +155,10 @@ class SportsController extends \BaseController {
 									// if comp/league exists update that record
 									if($compExists){
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, In DB: $compExists", 1);
-										//$compModel = TopBetta\SportsComps::find($compExists);
+										$compModel = TopBetta\SportsComps::find($compExists);
+										$compModel->name = $competition;
+										$compModel->external_event_id = $eventId;
+										$compModel->sport_id = $eventId;
 										// if not create a new record
 									}else{
 										$compModel = new TopBetta\SportsComps;
