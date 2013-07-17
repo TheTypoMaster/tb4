@@ -288,7 +288,7 @@ class SportsController extends \BaseController {
 							// Check all required data is available in the JSON for the Selection
 							if(isset($dataArray['EventId'])  &&  isset($dataArray['MarketId']) && isset($dataArray['SelectionId'])){
 								$eventId = $dataArray['EventId'];
-								$marketID = $dataArray['MarketId'];
+								$marketId = $dataArray['MarketId'];
 								$selectionId = $dataArray['SelectionId'];
 									
 								// check if market record for this event already exists
