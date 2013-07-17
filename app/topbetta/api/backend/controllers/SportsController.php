@@ -336,12 +336,12 @@ class SportsController extends \BaseController {
 										}
 										// Add/update the selection odds/price record
 										$selectionPriceModel->save();
-										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketID, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
+										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
 									}
-									TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketID, SelectionId:$selectionId");
+									TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId");
 										
 								}else {
-									TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection. No Market found for this selection. EID:$eventId, MarketID:$marketID, SelectionId:$selectionId Can't process", 2);
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection. No Market found for this selection. EID:$eventId, MarketID:$marketId, SelectionId:$selectionId Can't process", 2);
 								}
 							}else {
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection. Missing Selection data. Can't process", 2);
