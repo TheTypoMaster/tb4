@@ -125,8 +125,8 @@ class SportsController extends \BaseController {
 						foreach ($sportsArray as $dataArray){
 
 							// Check minimum required data is available (EventID is unique key)
-							if(isset($dataArray['EventId'])){
-								$eventId = $dataArray['EventId'];
+							if(isset($dataArray['GameId'])){
+								$eventId = $dataArray['GameId'];
 
 								// Process Sport
 								if(isset($dataArray['Sport'])){
