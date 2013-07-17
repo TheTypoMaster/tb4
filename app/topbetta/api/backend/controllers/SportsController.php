@@ -166,6 +166,7 @@ class SportsController extends \BaseController {
 										$compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $eventId;
+										$compModel->close_time = $dataArray['EventTime'];
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed League:$name, Added to DB: $compModel->id", 1);
 										$compExists =  $compModel->id;
 									}
@@ -198,6 +199,22 @@ class SportsController extends \BaseController {
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, Added to DB: $EventDBID", 1);
 								TopBetta\LogHelper::l("BackAPI: Sports - Processed Event. Event:$eventId, Date:$eventModelSports->start_date, Name:$eventModelSports->name");
 
+								// update competiton with new event start time if it's after the current stored time
+								if ($dataArray['EventTime'] > $compModel->close_time){
+									$compModel->close_time = $dataArray['EventTime'];
+									$compModel->save();
+								}
+								
+								// grag the dat from the event start times
+								$newShortDate = date_format(date_create($dataArray['EventTime']), 'd/m/y');
+								$oldShortDate = date_format(date_create($compModel->close_time), 'd/m/y');
+								
+								// update competiton with new event start time if it's after the current stored time
+								if ($oldShortDate > $newShortDate){
+									$compModel->start_time = $newShortDate;
+									$compModel->save();
+								}
+								
 								// Add the event_group_event pivot table record to link the competition the the event
 								$eventGEExists = TopBetta\SportEventGroupEvent::eventGEExists($eventModelSports->id, $compExists);
 								// if event exists update that record
