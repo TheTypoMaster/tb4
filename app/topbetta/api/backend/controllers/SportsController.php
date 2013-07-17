@@ -143,6 +143,7 @@ class SportsController extends \BaseController {
 										$sportModel->sportName = $sportName;
 										$sportModel->save();
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Sport, Added to DB: $sportModel->id", 1);
+										$sportExists = $sportModel->id;
 									}
 								}
 								
@@ -159,8 +160,10 @@ class SportsController extends \BaseController {
 									}else{
 										$compModel = new TopBetta\SportsComps;
 										$compModel->name = $competition;
+										$compModel->external_event_id = $eventId;
+										$compModel->sport_id = $eventId;
 										$compModel->save();
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, Added to DB: $compModel->id", 1);
+										TopBetta\LogHelper::l("BackAPI: Sports - Processed League:$name, Added to DB: $compModel->id", 1);
 										$compExists =  $compModel->id;
 									}
 								}
