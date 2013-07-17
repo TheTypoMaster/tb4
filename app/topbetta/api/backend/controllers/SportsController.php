@@ -161,6 +161,7 @@ class SportsController extends \BaseController {
 										$compModel->name = $competition;
 										$compModel->save();
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, Added to DB: $compModel->id", 1);
+										$compExists =  $compModel->id;
 									}
 								}
 									
