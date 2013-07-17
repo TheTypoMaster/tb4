@@ -580,6 +580,7 @@ class RacingController extends \BaseController {
 											
 											// grab position and correct dividend
 											$raceResult->position = $placeNo;
+											($betType == 'W') ? $raceResult->position = 1: $raceResult->position = $placeNo;;
 											($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
 											
 											// save win or place odds to DB
