@@ -1,6 +1,6 @@
 <?php namespace TopBetta;
 
-class TournamentCompetition extends Eloquent {
+class TournamentCompetition extends \Eloquent {
 	
 	protected $table = 'tbdb_tournament_competition';
 	
