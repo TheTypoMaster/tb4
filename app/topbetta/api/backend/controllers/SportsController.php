@@ -293,7 +293,7 @@ class SportsController extends \BaseController {
 									}
 
 									// update the bet_type_id
-									$marketTypeModel->external_bet_type_id;
+									$marketTypeModel->external_bet_type_id = $externalMarketTypeID;
 									
 									// save or update the record
 									$marketTypeSave = $marketTypeModel->save();
@@ -311,6 +311,7 @@ class SportsController extends \BaseController {
 										$marketModel->market_type_id = $marketTypeModel->id;
 										$marketModel->external_market_id = $marketId;
 									}
+									
 									//$marketModel->refund_flag = something;
 									// save the market record
 									$marketModel->event_id = $eventExists;
