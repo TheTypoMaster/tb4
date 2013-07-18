@@ -292,6 +292,9 @@ class SportsController extends \BaseController {
 										
 									}
 
+									// update the status flag
+									$marketTypeModel->status_flag = "1";
+									
 									// update the bet_type_id
 									$marketTypeModel->external_bet_type_id = $externalMarketTypeID;
 									
