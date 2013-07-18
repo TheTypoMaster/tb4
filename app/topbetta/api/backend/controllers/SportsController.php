@@ -231,7 +231,7 @@ class SportsController extends \BaseController {
 								
 								// update competiton with new event start time if it's after the current stored time
 								if ($oldShortDate > $newShortDate){
-									$compModel->start_time = $newShortDate;
+									$compModel->start_date = $newShortDate;
 									$compModel->save();
 								}
 								
