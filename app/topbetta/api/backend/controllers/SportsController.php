@@ -173,6 +173,7 @@ class SportsController extends \BaseController {
 									// Save the updated or new record
 									$compModel->save();
 									$compExists =  $compModel->id;
+
 									/*
 									 * Add tournament competition record
 									*/
@@ -189,15 +190,14 @@ class SportsController extends \BaseController {
 										$tournamentCompetitionModel->tournament_sport_id = $sportExists;
 										$tournamentCompetitionModel->name = "$competition";
 										$tournamentCompetitionModel->status_flag = 1;
-																											
-										// add the tournament competition ID to the event group table....
-										$compModel->tournament_competition_id = $tournamentCompetitionModel->id;
-										$compModel->save();
 									}
+									// save the tournament competition record
 									$tournamentCompetitionModel->save();
+									
+									// add the tournament competition ID to the event group table....
+									$compModel->tournament_competition_id = $tournamentCompetitionModel->id;
+									$compModel->save();
 								}
-								
-
 								
 								$eventExists = TopBetta\SportsMatches::eventExists($eventId);
 								// if event exists update that record
