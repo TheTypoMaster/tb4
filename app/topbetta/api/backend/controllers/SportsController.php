@@ -178,7 +178,7 @@ class SportsController extends \BaseController {
 									*/
 									
 									// Check if the record exists already
-									$tournamentCompetitonExists = TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
+									$tournamentCompetitonExists = TopBetta\TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
 									
 									if(!$tournamentCompetitonExists){
 										// add the new record
