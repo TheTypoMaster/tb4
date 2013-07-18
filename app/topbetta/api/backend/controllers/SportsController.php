@@ -340,7 +340,7 @@ class SportsController extends \BaseController {
 						foreach ($sportsArray as $dataArray){
 							$raceExists = $selectionsExists = 0;
 							// Check all required data is available in the JSON for the Selection
-							if(isset($dataArray['EventId'])  &&  isset($dataArray['MarketId']) && isset($dataArray['SelectionId'])){
+							if(isset($dataArray['EventId'])  &&  isset($dataArray['MarketId']) && isset($dataArray['SelectionNo'])){
 								$eventId = $dataArray['EventId'];
 								$marketId = $dataArray['MarketId'];
 								$selectionId = $dataArray['SelectionNo'];
