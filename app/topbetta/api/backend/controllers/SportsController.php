@@ -140,7 +140,7 @@ class SportsController extends \BaseController {
 										// if not add it and grab id
 									}else{
 										$sportModel = new TopBetta\SportsSportName;
-										$sportModel->sportName = $sportName;
+										$sportModel->name = $sportName;
 										$sportModel->save();
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Sport, Added to DB: $sportModel->id", 1);
 										$sportExists = $sportModel->id;
