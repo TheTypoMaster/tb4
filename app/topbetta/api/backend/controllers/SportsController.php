@@ -266,8 +266,11 @@ class SportsController extends \BaseController {
 								$eventId = $dataArray['EventId'];
 								$marketId = $dataArray['MarketId'];
 								$betType = $dataArray['BetType'];
+								
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market: EventID:$eventId, MarketID:$marketId, BetType:$betType.");
 
 								// make sure the event this market is in exists 1st
+								$eventExists = 0;
 								$eventExists = TopBetta\SportsMatches::eventExists($eventId);
 
 								// if event exists update continue processing market
@@ -285,6 +288,7 @@ class SportsController extends \BaseController {
 										$marketTypeModel = new TopBetta\SportsMarketType;
 										$marketTypeModel->name = $betType;
 										$marketTypeModel->description = "UPDATE ME";
+										
 									}
 
 									// save or update the record
