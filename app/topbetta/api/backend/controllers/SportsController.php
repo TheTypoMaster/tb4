@@ -125,7 +125,7 @@ class SportsController extends \BaseController {
 						foreach ($sportsArray as $dataArray){
 
 							// Check minimum required data is available (EventID is unique key)
-							if(isset($dataArray['GameId'])){
+							if(isset($dataArray['GameId']) && isset($dataArray['Sport'])){
 								$eventId = $dataArray['GameId'];
 
 								// Process Sport
@@ -255,7 +255,7 @@ class SportsController extends \BaseController {
 								}
 								
 							}else{
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Event. No Event ID, Can't process", 1);
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Event. No Event ID or Sport, Can't process", 1);
 							}
 						}
 						break;
