@@ -35,7 +35,7 @@ class FrontSportsTypesController extends \BaseController {
 
 			} else {
 
-				return array('success' => false, 'error' => Lang::get('sports.no_types'));
+				return array('success' => false, 'error' => \Lang::get('sports.no_types'));
 
 			}
 
