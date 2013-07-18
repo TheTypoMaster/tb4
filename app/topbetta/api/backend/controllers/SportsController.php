@@ -180,17 +180,21 @@ class SportsController extends \BaseController {
 									// Check if the record exists already
 									$tournamentCompetitonExists = TopBetta\TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
 									
-									if(!$tournamentCompetitonExists){
+									if($tournamentCompetitonExists){
+										$tournamentCompetitionModel->name = "$competition";
+										$tournamentCompetitionModel->status_flag = 1;
+									}else{	
 										// add the new record
 										$tournamentCompetitionModel = new TopBetta\TournamentCompetition;
 										$tournamentCompetitionModel->tournament_sport_id = $sportExists;
+										$tournamentCompetitionModel->name = "$competition";
 										$tournamentCompetitionModel->status_flag = 1;
-										$tournamentCompetitionModel->save();
-																	
+																											
 										// add the tournament competition ID to the event group table....
 										$compModel->tournament_competition_id = $tournamentCompetitionModel->id;
 										$compModel->save();
 									}
+									$tournamentCompetitionModel->save();
 								}
 								
 
