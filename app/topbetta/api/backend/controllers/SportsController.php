@@ -192,6 +192,7 @@ class SportsController extends \BaseController {
 									
 									// add the tournament competition ID to the event group table....
 									$compModel->tournament_competition_id = $tournamentCompetitionModel->id;
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing League. TC ID: $compModel->tournament_competition_id", 1);
 									$compModel->save();
 									$compExists =  $compModel->id;
 								}
