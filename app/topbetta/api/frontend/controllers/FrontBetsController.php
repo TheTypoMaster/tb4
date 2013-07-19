@@ -80,7 +80,10 @@ class FrontBetsController extends \BaseController {
 				$exoticSelections = true;
 				$exoticBetTransaction = \TopBetta\AccountBalance::find($recentBet -> bet_transaction_id);
 
-				$exoticAmount = abs($exoticBetTransaction -> amount);
+				$exoticAmount = 0;
+				if($exoticBetTransaction) {
+					$exoticAmount = abs($exoticBetTransaction -> amount);
+				}	
 				
 				$exoticDividend = \TopBetta\Bet::getExoticDividendForType($recentBet -> bet_type, $recentBet -> event_id);
 
