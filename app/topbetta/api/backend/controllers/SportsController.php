@@ -154,7 +154,7 @@ class SportsController extends \BaseController {
 									$compExists = TopBetta\SportsComps::compExists($competition);
 									// if comp/league exists update that record
 									if($compExists){
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing League, In DB: $compExists", 1);
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 										$compModel = TopBetta\SportsComps::find($compExists);
 										$compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
@@ -167,9 +167,10 @@ class SportsController extends \BaseController {
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
 										$compModel->close_time = $dataArray['EventTime'];
-										TopBetta\LogHelper::l("BackAPI: Sports - Processed League:$competition, Added to DB: $compModel->id", 1);
+										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
-																	
+									$compModel->save();
+									
 									/*
 									 * Add tournament competition record
 									*/
@@ -192,8 +193,9 @@ class SportsController extends \BaseController {
 									$tournamentCompetitionModel->save();
 									
 									// add the tournament competition ID to the event group table....
+									$compModel = TopBetta\SportsComps::find($compModel->id);
 									$compModel->tournament_competition_id = $tournamentCompetitionModel->id;
-									TopBetta\LogHelper::l("BackAPI: Sports - Processing League. TC ID: $compModel->tournament_competition_id", 1);
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition. TC ID: $compModel->tournament_competition_id", 1);
 									$compModel->save();
 									$compExists =  $compModel->id;
 								}
