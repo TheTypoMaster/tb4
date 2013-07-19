@@ -178,6 +178,7 @@ class SportsController extends \BaseController {
 									$tournamentCompetitonExists = TopBetta\TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
 									
 									if($tournamentCompetitonExists){
+										$tournamentCompetitionModel = TopBetta\TournamentCompetition::find($tournamentCompetitonExists);
 										$tournamentCompetitionModel->name = "$competition";
 										$tournamentCompetitionModel->status_flag = 1;
 									}else{	
