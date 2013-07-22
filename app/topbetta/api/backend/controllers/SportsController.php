@@ -147,7 +147,10 @@ class SportsController extends \BaseController {
 									}
 								}
 								
-								// Process League/Competition
+								/*
+								 * Add/Update League/Competition
+								*/
+								
 								if(isset($dataArray['League'])){
 									$competition = $dataArray['League'];
 									// Check if comp/league exists in DB
@@ -172,7 +175,7 @@ class SportsController extends \BaseController {
 									$compModel->save();
 									
 									/*
-									 * Add tournament competition record
+									 * Add/Update tournament competition record
 									*/
 									
 									// Check if the record exists already
@@ -200,6 +203,12 @@ class SportsController extends \BaseController {
 									$compExists =  $compModel->id;
 								}
 								
+								
+
+								/*
+								 * Add/Update Event record
+								*/
+								
 								$eventExists = TopBetta\SportsMatches::eventExists($eventId);
 								// if event exists update that record
 								if($eventExists){
@@ -224,13 +233,19 @@ class SportsController extends \BaseController {
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, Added to DB: $EventDBID", 1);
 								TopBetta\LogHelper::l("BackAPI: Sports - Processed Event. Event:$eventId, Date:$eventModelSports->start_date, Name:$eventModelSports->name");
 
+								
+
+								/*
+								 * Add/Update the close time on the Leage/Competition record to be the last events start time
+								*/
+								
 								// update competiton with new event start time if it's after the current stored time
 								if ($dataArray['EventTime'] > $compModel->close_time){
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
 								}
 								
-								// grag the dat from the event start times
+								// grab the date from the event start times
 								$newShortDate = date_format(date_create($dataArray['EventTime']), 'd/m/y');
 								$oldShortDate = date_format(date_create($compModel->close_time), 'd/m/y');
 								
@@ -270,10 +285,10 @@ class SportsController extends \BaseController {
 							if(isset($dataArray['EventId']) && $dataArray['MarketId']){
 								$eventId = $dataArray['EventId'];
 								$marketId = $dataArray['MarketId'];
-								$betType = $dataArray['BetTypeName'];
 								$externalMarketTypeID = $dataArray['BetType'];
+								$betType = "";
 								
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market: EventID:$eventId, MarketID:$marketId, BetType:$betType.");
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market: EventID:$eventId, MarketID:$marketId.");
 
 								// make sure the event this market is in exists 1st
 								$eventExists = 0;
@@ -281,31 +296,36 @@ class SportsController extends \BaseController {
 
 								// if event exists update continue processing market
 								if($eventExists){
-										
-									// check if market type exists
-									$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betType);
 
-									// if market type exists update that record
-									if($marketTypeExists){
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, In DB: $marketTypeExists", 1);
-										$marketTypeModel = TopBetta\SportsMarketType::find($marketTypeExists);
-									}else{ // if not create a new one
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, Adding to DB: $marketTypeExists", 1);
-										$marketTypeModel = new TopBetta\SportsMarketType;
-										$marketTypeModel->name = $betType;
-										$marketTypeModel->description = "UPDATE ME";
+									if(isset($dataArray['BetTypeName'])){
 										
-									}
-
-									// update the status flag
-									$marketTypeModel->status_flag = "1";
-									
-									// update the bet_type_id
-									$marketTypeModel->external_bet_type_id = $externalMarketTypeID;
-									
-									// save or update the record
-									$marketTypeSave = $marketTypeModel->save();
+										$betType = $dataArray['BetTypeName'];
+										// check if market type exists
+										$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betType);
+	
+										// if market type exists update that record
+										if($marketTypeExists){
+											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, In DB: $marketTypeExists", 1);
+											$marketTypeModel = TopBetta\SportsMarketType::find($marketTypeExists);
+										}else{ // if not create a new one
+											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, Adding to DB: $marketTypeExists", 1);
+											$marketTypeModel = new TopBetta\SportsMarketType;
+											$marketTypeModel->name = $betType;
+											$marketTypeModel->description = "UPDATE ME";
+											
+										}
+	
+										// update the status flag
+										$marketTypeModel->status_flag = "1";
 										
+										// update the bet_type_id
+										$marketTypeModel->external_bet_type_id = $externalMarketTypeID;
+										
+										// save or update the record
+										$marketTypeSave = $marketTypeModel->save();
+										
+								}
+									
 									// check if market record already exists
 									$marketExists = TopBetta\SportsMarket::marketExists($marketId);
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. DB ID: $marketExists", 1);
@@ -394,7 +414,7 @@ class SportsController extends \BaseController {
 											$selectionPriceModel = new TopBetta\SportsSelectionPrice;
 											$selectionPriceModel->selection_id = $selectionModel->id;
 											// TODO: $selectionPriceModel->bet_product_id = "Should we add an iGAS record"
-											$selectionPriceModel->win_odds = $dataArray['Odds'];
+											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
 										}
 										// Add/update the selection odds/price record
 										$selectionPriceModel->save();
