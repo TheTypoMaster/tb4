@@ -386,6 +386,7 @@ class SportsController extends \BaseController {
 									if($selectionsExists){
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection, In DB: $selectionsExists", 1);
 										$selectionModel = TopBetta\SportsSelection::find($selectionsExists);
+										$selectionModel->market_id = $marketExists;
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection, Added to DB: $selectionsExists", 1);
 										$selectionModel = new TopBetta\SportsSelection;
