@@ -22,6 +22,9 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
+        		
+        		
+        		
         		array (
         				'provider_id' => '1',
         				'data_value_id' => '2',
@@ -36,6 +39,28 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
+        		
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '2',
+        				'value' => 'showery',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '2',
+        				'value' => 'SHWRY',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		
+        		
+        		
+        		
+        		
+        		
+        		
         		array (
         				'provider_id' => '1',
         				'data_value_id' => '3',
@@ -54,6 +79,13 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'provider_id' => '1',
         				'data_value_id' => '3',
         				'value' => 'Ocast',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '3',
+        				'value' => 'Overcas',
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
@@ -104,6 +136,7 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
+        		
         		
         		array (
         				'provider_id' => '1',
@@ -157,6 +190,22 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW7',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'Slowy',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		
+        		
         		
         		array (
         				'provider_id' => '1',
@@ -176,6 +225,13 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'provider_id' => '1',
         				'data_value_id' => '8',
         				'value' => 'HEAVY',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '8',
+        				'value' => 'HVY10',
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		)
