@@ -169,7 +169,7 @@ class SportsController extends \BaseController {
 										$compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
-										$compModel->start_time = date_format(date_create($dataArray['EventTime']), 'y/m/d');
+										$compModel->start_date = date_format(date_create($dataArray['EventTime']), 'y/m/d');
 										$compModel->close_time = $dataArray['EventTime'];
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
