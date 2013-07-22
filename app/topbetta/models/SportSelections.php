@@ -14,9 +14,11 @@ class SportsSelection extends \Eloquent {
 		return SportsSelection::where('external_selection_id', $selectionId)->pluck('id');
 	}
 	
-	static public function sportSelectionExists($selectionId, $marketExists){
+	static public function sportSelectionExists($selectionId, $marketId, $eventId){
 		return SportsSelection::where('external_selection_id', $selectionId)
-							->where('market_id', '=', $marketExists)->pluck('id');
+							->where('external_market_id', '=', $marketId)
+							->where('external_event_id', '=', $eventId)
+							->pluck('id');
 	}
 	
 }

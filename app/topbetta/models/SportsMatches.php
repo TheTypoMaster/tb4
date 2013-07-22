@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta;
+<?php namespace TopBetta;
 
 class SportsMatches extends \Eloquent {
 	

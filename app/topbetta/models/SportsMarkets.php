@@ -16,7 +16,7 @@ class SportsMarket extends \Eloquent {
 	
 	static public function sportMarketExists($marketID, $eventID){
 		return SportsMarket::where('external_market_id', '=', $marketID )
-							->where('event_id','=',$eventID)
+							->where('external_event_id','=',$eventID)
 							->pluck('id');
 	}
 
