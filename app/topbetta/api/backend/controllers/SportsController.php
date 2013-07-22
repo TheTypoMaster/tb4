@@ -169,7 +169,7 @@ class SportsController extends \BaseController {
 										$compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
-										$compModel->start_time = date_format(date_create($dataArray['EventTime']), 'd/m/y');
+										$compModel->start_time = date_format(date_create($dataArray['EventTime']), 'y/m/d');
 										$compModel->close_time = $dataArray['EventTime'];
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
@@ -247,8 +247,8 @@ class SportsController extends \BaseController {
 								}
 								
 								// grab the date from the event start times
-								$newShortDate = date_format(date_create($dataArray['EventTime']), 'd/m/y');
-								$oldShortDate = date_format(date_create($compModel->close_time), 'd/m/y');
+								$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
+								$oldShortDate = date_format(date_create($compModel->close_time), 't/m/d');
 								
 								// update competiton with new event start time if it's after the current stored time
 								if ($oldShortDate > $newShortDate){
