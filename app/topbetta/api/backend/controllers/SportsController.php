@@ -380,7 +380,7 @@ class SportsController extends \BaseController {
 								if($marketExists){
 										
 									// check if selection exists in the DB
-									$selectionsExists = TopBetta\SportsSelection::selectionExists($selectionId);
+									$selectionsExists = TopBetta\SportsSelection::sportSelectionExists($selectionId, $marketExists);
 
 									// if selection exists update that record
 									if($selectionsExists){
