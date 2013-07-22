@@ -220,7 +220,7 @@ class RacingController extends \BaseController {
 										$raceMeet->weather = $defaultValue[0]->value;
 									}else{
 										// Email on failer to find a weather status to map to
-										$emailSubject = "iGAS Race Schedule: No Weather Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code.".";
+										$emailSubject = "iGAS Race Schedule: No Weather Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code. ", Weather".$raceMeet->weather.".";
 										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
 										
 										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
@@ -241,7 +241,7 @@ class RacingController extends \BaseController {
 										$raceMeet->track = $defaultValue[0]->value;
 									}else{
 										// Email on failer to find a track status to map to
-										$emailSubject = "iGAS Race Schedule: No Track Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code.".";
+										$emailSubject = "iGAS Race Schedule: No Track Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code. ", Track".$raceMeet->track.".";
 										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
 										
 										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
