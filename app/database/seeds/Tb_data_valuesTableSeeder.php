@@ -5,7 +5,7 @@ class Tb_data_valuesTableSeeder extends Seeder {
     public function run()
     {
     	// Uncomment the below to wipe the table clean before populating
-    	DB::table('tb_data_values')->delete();
+    	DB::table('tb_data_values')->truncate();
 
         $tb_data_values = ( array (
         		array (

@@ -5,7 +5,7 @@ class Tb_product_defaultTableSeeder extends Seeder {
     public function run()
     {
     	// wipe the table clean before populating
-    	DB::table('tb_product_default')->delete();
+    	DB::table('tb_product_default')->truncate();
     	
 		$tb_product_default = ( array (
 				/*

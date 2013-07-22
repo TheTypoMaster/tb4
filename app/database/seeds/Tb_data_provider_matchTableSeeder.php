@@ -5,7 +5,7 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
     public function run()
     {
     	// Uncomment the below to wipe the table clean before populating
-    	DB::table('tb_data_provider_match')->delete();
+    	DB::table('tb_data_provider_match')->truncate();
 
         $tb_data_provider_match = ( array (
         		array (
