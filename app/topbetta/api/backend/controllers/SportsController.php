@@ -169,6 +169,7 @@ class SportsController extends \BaseController {
 										$compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
+										$compModel->start_time = date_format(date_create($dataArray['EventTime']), 'd/m/y');
 										$compModel->close_time = $dataArray['EventTime'];
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
@@ -295,7 +296,6 @@ class SportsController extends \BaseController {
 
 								// if event exists update continue processing market
 								if($eventExists){
-
 									if(isset($dataArray['BetTypeName']) && isset($dataArray['BetType'])){
 										$externalMarketTypeID = $dataArray['BetType'];
 										$betType = $dataArray['BetTypeName'];
@@ -313,7 +313,7 @@ class SportsController extends \BaseController {
 											$marketTypeModel->description = "UPDATE ME";
 											
 										}
-	
+
 										// update the status flag
 										$marketTypeModel->status_flag = "1";
 										
@@ -322,8 +322,7 @@ class SportsController extends \BaseController {
 										
 										// save or update the record
 										$marketTypeSave = $marketTypeModel->save();
-										
-								}
+									}
 									
 									// check if market record already exists
 									$marketExists = TopBetta\SportsMarket::marketExists($marketId);
