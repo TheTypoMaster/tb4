@@ -285,7 +285,6 @@ class SportsController extends \BaseController {
 							if(isset($dataArray['EventId']) && $dataArray['MarketId']){
 								$eventId = $dataArray['EventId'];
 								$marketId = $dataArray['MarketId'];
-								$externalMarketTypeID = $dataArray['BetType'];
 								$betType = "";
 								
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market: EventID:$eventId, MarketID:$marketId.");
@@ -297,8 +296,8 @@ class SportsController extends \BaseController {
 								// if event exists update continue processing market
 								if($eventExists){
 
-									if(isset($dataArray['BetTypeName'])){
-										
+									if(isset($dataArray['BetTypeName']) && isset($dataArray['BetType'])){
+										$externalMarketTypeID = $dataArray['BetType'];
 										$betType = $dataArray['BetTypeName'];
 										// check if market type exists
 										$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betType);
