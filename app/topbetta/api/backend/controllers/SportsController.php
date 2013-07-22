@@ -322,6 +322,8 @@ class SportsController extends \BaseController {
 										
 										// save or update the record
 										$marketTypeSave = $marketTypeModel->save();
+									}else{
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. MarketID:$marketId, EventID:$eventId, BetType and Name not in JSON. Can't process", 2);
 									}
 									
 									// check if market record already exists
@@ -344,7 +346,7 @@ class SportsController extends \BaseController {
 									$marketModelSave = $marketModel->save();
 									$marketModelId = $marketModel->id;
 
-									TopBetta\LogHelper::l("BackAPI: Sports - Processed Market. EventID:$eventId, MarketID:$marketId, BetType: $betType");
+									TopBetta\LogHelper::l("BackAPI: Sports - Processed Market. EventID:$eventId, MarketID:$marketId, BetType: $betType, BetTypeName:$externalMarketTypeID.");
 									
 									
 									// TODO: update the results for the home and away teams 
