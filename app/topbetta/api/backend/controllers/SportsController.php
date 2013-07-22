@@ -380,19 +380,23 @@ class SportsController extends \BaseController {
 								if($marketExists){
 										
 									// check if selection exists in the DB
-									$selectionsExists = TopBetta\SportsSelection::sportSelectionExists($selectionId, $marketExists);
+									$selectionsExists = TopBetta\SportsSelection::sportSelectionExists($selectionId, $marketId, $eventId);
 
 									// if selection exists update that record
 									if($selectionsExists){
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, In DB: $selectionsExists", 1);
 										$selectionModel = TopBetta\SportsSelection::find($selectionsExists);
 										$selectionModel->market_id = $marketExists;
+										$selectionModel->external_selection_id = $selectionId;
+										$selectionModel->external_event_id = $eventId;
+										$selectionModel->external_market_id = $marketId;
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, Added to DB: $selectionsExists", 1);
 										$selectionModel = new TopBetta\SportsSelection;
 										$selectionModel->market_id = $marketExists;
 										$selectionModel->external_selection_id = $selectionId;
-									
+										$selectionModel->external_event_id = $eventId;
+										$selectionModel->external_market_id = $marketId;
 									}
 									if(isset($dataArray['Selection'])){
 										$selectionModel->name = $dataArray['Selection'];
