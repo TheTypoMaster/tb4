@@ -327,7 +327,7 @@ class SportsController extends \BaseController {
 									}
 									
 									// check if market record already exists
-									$marketExists = TopBetta\SportsMarket::marketExists($marketId);
+									$marketExists = TopBetta\SportsMarket::marketExists($marketId, $eventExists);
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. DB ID: $marketExists", 1);
 									// if market exists update that record
 									if($marketExists){ 
@@ -363,7 +363,7 @@ class SportsController extends \BaseController {
 						break;
 
 					// Selection/Team Data - The teams in the event
-					case "SelectionList":
+					case "SelectionList": // key is eventid/marketid/selection
 						TopBetta\LogHelper::l("BackAPI: Sports - Processing $objectCount: Selection");
 						foreach ($sportsArray as $dataArray){
 							$raceExists = $selectionsExists = 0;
