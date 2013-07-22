@@ -292,10 +292,10 @@ class SportsController extends \BaseController {
 	
 										// if market type exists update that record
 										if($marketTypeExists){
-											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, In DB: $marketTypeExists", 1);
+											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type. BetTypeName: $betTypeName,  BetTypeID:$externalMarketTypeID, In DB: $marketTypeExists", 1);
 											$marketTypeModel = TopBetta\SportsMarketType::find($marketTypeExists);
 										}else{ // if not create a new one
-											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, Adding to DB: $marketTypeExists", 1);
+											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, BetTypeName: $betTypeName,  BetTypeID:$externalMarketTypeID, Adding to DB: $marketTypeExists", 1);
 											$marketTypeModel = new TopBetta\SportsMarketType;
 											$marketTypeModel->name = $betTypeName;
 											$marketTypeModel->description = "UPDATE ME";
@@ -334,7 +334,7 @@ class SportsController extends \BaseController {
 									$marketModelSave = $marketModel->save();
 									$marketModelId = $marketModel->id;
 
-									TopBetta\LogHelper::l("BackAPI: Sports - Processed Market. EventID:$eventId, MarketID:$marketId, BetTypeName: $betTypeName, BetTypeID:$externalMarketTypeID.");
+									TopBetta\LogHelper::l("BackAPI: Sports - Processed Market. EventID:$eventId, MarketID:$marketId.");
 									
 									
 									// TODO: update the results for the home and away teams 
