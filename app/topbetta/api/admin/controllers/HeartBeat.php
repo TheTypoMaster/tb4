@@ -108,9 +108,14 @@ class HeartBeatController extends \BaseController {
 		// check current remote host state
 		$currentStatus = json_decode(TopBetta\CurlRequestHelper::curlRequest($remoteHost, $command, 'POST', $jsonPayload));
 		
-		if ($currentStatus->ErrorNo == "0") {
-			$currentStatus = "up";
+		if(!isset($currentStatus->ErrorNo)){
+			if ($currentStatus->ErrorNo == "0") {
+				$currentStatus = "up";
+			}else{
+				$currentStatus = "down";
+			}
 		}
+
 		
 		if($lastStatusObject[0]->last_status == $currentStatus){
 			return "$serverTime: No change. last:$lastStatus, current:$currentStatus";
