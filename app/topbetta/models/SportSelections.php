@@ -4,6 +4,14 @@ class SportsSelection extends \Eloquent {
 
 	protected $table = 'tbdb_selection';
 	
+	
+	// Relationships
+	public function sportsResults()
+	{
+		return $this->belongsTo('TopBetta\SportsResults', 'selection_id', 'id');
+	}
+	
+	
 	/**
 	 * Check if a selection exists.
 	 *
@@ -20,5 +28,13 @@ class SportsSelection extends \Eloquent {
 							->where('external_event_id', '=', $eventId)
 							->pluck('id');
 	}
+	
+	static public function getWinningSelelctionID($marketId, $eventId, $score){
+		return SportsSelection::where('external_market_id', $marketId)
+		->where('external_event_id', '=', $eventId)
+		->where('name', '=', $score)
+		->pluck('id');
+	}
+	
 	
 }
