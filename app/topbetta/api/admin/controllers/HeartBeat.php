@@ -111,9 +111,9 @@ class HeartBeatController extends \BaseController {
 		if(isset($currentStatus->ErrorNo)){
 			if ($currentStatus->ErrorNo == "0") {
 				$currentStatus = "up";
-			}else{
-				$currentStatus = "down";
-			}
+			}	
+		}else{
+			$currentStatus = "down";
 		}
 
 		
