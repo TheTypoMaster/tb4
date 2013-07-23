@@ -425,12 +425,16 @@ class SportsController extends \BaseController {
 						break;
 					
 					case "ResultList":
-						$gameId = $dataArray['GameId'];
-						$marketId = $dataArray['MarketId'];
-						$marketStatus = $dataArray['MarketStatus'];
-						$score = $dataArray['Score'];
-						$scoreType = $dataArray['ScoreType'];
-						TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. ", 1);
+// 						$gameId = $dataArray['GameId'];
+// 						$marketId = $dataArray['MarketId'];
+// 						$marketStatus = $dataArray['MarketStatus'];
+// 						$score = $dataArray['Score'];
+// 						$scoreType = $dataArray['ScoreType'];
+						
+						
+						$o = print_r($dataArray,true);
+						
+						TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: ARRAY:$o.", 1);
 						break;
 						
 					default :
