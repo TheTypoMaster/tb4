@@ -136,8 +136,7 @@ class SportsController extends \BaseController {
 									// if sport exists update that record
 									if($sportExists){
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Sport, In DB: $sportExists", 1);
-										$sportModel->name = $sportName;
-										$sportModel->save();
+									
 									}else{
 										$sportModel = new TopBetta\SportsSportName;
 										$sportModel->name = $sportName;
