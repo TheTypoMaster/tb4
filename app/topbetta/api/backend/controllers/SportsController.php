@@ -321,11 +321,13 @@ class SportsController extends \BaseController {
 									if($marketExists){ 
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, In DB: $marketExists", 1);
 										$marketModel = TopBetta\SportsMarket::find($marketExists);
+										$marketModel->external_event_id = $eventId;
 									}else{ // if not create a new one
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, Adding to DB: $marketExists", 1);
 										$marketModel = new TopBetta\SportsMarket;
 										$marketModel->market_type_id = $marketTypeModel->id;
 										$marketModel->external_market_id = $marketId;
+										$marketModel->external_event_id = $eventId;
 									}
 									
 									//$marketModel->refund_flag = something;
