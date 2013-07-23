@@ -136,6 +136,8 @@ class SportsController extends \BaseController {
 									// if sport exists update that record
 									if($sportExists){
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Sport, In DB: $sportExists", 1);
+										$sportModel->name = $sportName;
+										$sportModel->save();
 									}else{
 										$sportModel = new TopBetta\SportsSportName;
 										$sportModel->name = $sportName;
@@ -347,7 +349,8 @@ class SportsController extends \BaseController {
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. Event for Market does not exist. Can't process, EventID:$eventId, MarketID:$marketId.", 2);
 								}
 							}else{
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. EventId or MarketId not set. Can't process, EventID:$eventId, MarketID:$marketId.", 2);
+								$o = print_r($dataArray, true);
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. EventId or MarketId not set. Can't process, Object:$o.", 2);
 							}
 						}
 						break;
