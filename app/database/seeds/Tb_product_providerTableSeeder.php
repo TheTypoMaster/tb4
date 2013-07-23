@@ -9,6 +9,7 @@ class Tb_product_providerTableSeeder extends Seeder {
 
         $tb_product_provider = ( array (
         		array (
+        				'id' => '1',
         				'provider_name' => 'igas',
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
