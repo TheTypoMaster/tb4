@@ -273,8 +273,8 @@ class SportsController extends \BaseController {
 						foreach ($sportsArray as $dataArray){
 								
 							// only process if required keys eventId and marketId are in the JSON object
-							if(isset($dataArray['EventId']) && $dataArray['MarketId']){
-								$eventId = $dataArray['EventId'];
+							if(isset($dataArray['GameId']) && $dataArray['MarketId']){
+								$eventId = $dataArray['GameId'];
 								$marketId = $dataArray['MarketId'];
 																
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Market: EventID:$eventId, MarketID:$marketId.");
@@ -360,8 +360,8 @@ class SportsController extends \BaseController {
 						foreach ($sportsArray as $dataArray){
 							$raceExists = $selectionsExists = 0;
 							// Check all required data is available in the JSON for the Selection
-							if(isset($dataArray['EventId'])  &&  isset($dataArray['MarketId']) && isset($dataArray['SelectionNo'])){
-								$eventId = $dataArray['EventId'];
+							if(isset($dataArray['GameId'])  &&  isset($dataArray['MarketId']) && isset($dataArray['SelectionNo'])){
+								$eventId = $dataArray['GameId'];
 								$marketId = $dataArray['MarketId'];
 								$selectionId = $dataArray['SelectionNo'];
 									
