@@ -452,7 +452,7 @@ class SportsController extends \BaseController {
 									
 									// 
 									if($winningSelectionResultExists){
-										$selectionResultModel = TopBetta\SportsResults::find($winningSelectionResultExists);
+										$selectionResultModel = TopBetta\SportsSelectionResults::find($winningSelectionResultExists);
 									}else{
 										// create selection_result record
 										$selectionResultModel = new TopBetta\SportsResults;
