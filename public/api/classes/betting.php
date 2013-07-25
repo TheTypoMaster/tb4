@@ -1926,11 +1926,11 @@ class Api_Betting extends JController {
 			
 			
 			
-			$betParamaters = JRequest::getVar('bets', null);
+		//	$betParamaters = JRequest::getVar('bets', null);
 				
-			$betMatchID = $betParamaters['match_id'];
-			$betMarketID = $betParamaters['market_id'];
-			$betSelections = $betParamaters['bets'];
+			$betMatchID = JRequest::getVar('match_id', null);
+			$betMarketID = JRequest::getVar('market_id', null);
+			$betSelections = JRequest::getVar('bets', null);
 
 			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID\n", FILE_APPEND | LOCK_EX);
 			
