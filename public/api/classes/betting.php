@@ -1931,7 +1931,9 @@ class Api_Betting extends JController {
 			$betMatchID = $betParamaters['match_id'];
 			$betMarketID = $betParamaters['market_id'];
 			$betSelections = $betParamaters['bets'];
-				
+
+			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID\n", FILE_APPEND | LOCK_EX);
+			
 			foreach($betSelections as $selection => $betAmount){
 				file_put_contents('/tmp/saveSportsBet', "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
 			
