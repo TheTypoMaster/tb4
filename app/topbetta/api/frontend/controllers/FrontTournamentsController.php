@@ -36,6 +36,9 @@ class FrontTournamentsController extends \BaseController {
 
 		if ($entered) {
 
+			// special case to clear my tournaments after a user has been logged in
+			if (\Auth::guest()) return array("success" => true, "result" => array());
+
 			//we want to see all entered tournaments for the entered list
 			$type = null;
 
