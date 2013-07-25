@@ -1282,34 +1282,22 @@ class Api_Betting extends JController {
 					$api_error		= null;
 					$bet_confirmed	= false;
 					
-					// TODO: International races need to be catered for. Should configuration or DB driven 
-					$providerName = "igas";
-					
 					if($type == "win"){
 						$betTypeShort = "W";
 					}elseif($type == "place"){
 						$betTypeShort = "P";
 					}
 															
-					// Grab default tote from DB 
+					// Grab default tote from DB
+					$providerName = "igas";
 					$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
 					$toteType = $toteTypeReturn->product_name;
-					
-					/* // set tote type used for win and place bets on all gallops to TOP and harness/dogs MID
-					if($meetingType == "R"){
-						$toteType = "TOP";
-					}else{
-						$toteType = "MID";
-					} */
 								
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, $toteType, $runner_number);
 						$api_error		= $api->getErrorList(true);
 						
-						//$external_bet = 'test123';
-						//$api_error = 'no';
-												
-						if (empty($api_error) && isset($external_bet->wagerId)) {
+							if (empty($api_error) && isset($external_bet->wagerId)) {
 							$bet_confirmed	= true;
 							$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
 							$bet->invoice_id = $external_bet->wagerId;
@@ -1909,6 +1897,8 @@ class Api_Betting extends JController {
 		//Get free bet in cents
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
 	
+		
+		
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
 	
 			$validation = new stdClass();
@@ -1923,6 +1913,24 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 	
+			
+			$betParamaters = JRequest::getVar('bets', null);
+			
+			$betMatchID = $betParamaters['match_id'];
+			$betMarketID = $betParamaters['market_id'];
+			$betSelections = $betParamaters['bets'];
+			
+			foreach($betSelections as $selection => $betAmount){
+				file_put_contents('/tmp/saveSportsBet', "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
+				
+			}
+			exit;
+			
+			
+			
+			
+			
+			
 			// check that bet amount is greater than 0
 			$bet_value = JRequest::getVar('value', null);
 			if ($bet_value <= 0) {
@@ -1937,6 +1945,9 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 	
+			
+			
+			
 			// check if bet_type has been passed to the API
 			$bet_type = JRequest::getVar('bet_type_id', null);
 			if (is_null($bet_type)) {
