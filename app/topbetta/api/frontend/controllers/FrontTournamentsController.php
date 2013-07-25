@@ -243,7 +243,7 @@ class FrontTournamentsController extends \BaseController {
 		}
 
 		//get prize pool in cents & places paid
-		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId) * 100;
+		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId);
 		$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
 
 		//work out places paid via place list
