@@ -448,7 +448,7 @@ class SportsController extends \BaseController {
 								if ($winningSelectionID){
 								
 									// check if there is a result record for this selection already
-									$winningSelectionResultExists = TopBetta\SportsSelectionResult::SportsSelectionResults($selectionModel->id);
+									$winningSelectionResultExists = TopBetta\SportsSelectionResults::SportsSelectionResults($selectionModel->id);
 									
 									// 
 									if($winningSelectionResultExists){
