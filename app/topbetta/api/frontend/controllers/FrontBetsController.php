@@ -29,23 +29,27 @@ class FrontBetsController extends \BaseController {
 
 			//exotic bet selections
 			$exoticSelections = false;
-			
-			$odds = null;	
-			
+
+			$odds = null;
+
 			if ($activeBet -> bet_type == 1) {
-				
+
 				$odds = (float)$activeBet -> win_odds;
-				
+
 			} elseif ($activeBet -> bet_type == 2) {
-			
+
 				$odds = (float)$activeBet -> place_odds;
-				
-			} elseif ($activeBet -> bet_type > 3) {						
+
+			} elseif ($activeBet -> bet_type > 3) {
 
 				$exoticSelections = true;
 				$exoticBetTransaction = \TopBetta\AccountBalance::find($activeBet -> bet_transaction_id);
 
-				$exoticAmount = abs($exoticBetTransaction -> amount);
+				if ($exoticBetTransaction) {
+					$exoticAmount = abs($exoticBetTransaction -> amount);
+				} else {
+					$exoticAmount = 0;
+				}
 
 			}
 
@@ -65,17 +69,17 @@ class FrontBetsController extends \BaseController {
 
 			//exotic bet selections
 			$exoticSelections = false;
-			$odds = null;	
-			
+			$odds = null;
+
 			if ($recentBet -> bet_type == 1) {
-				
+
 				$odds = (float)$recentBet -> win_odds;
-				
+
 			} elseif ($recentBet -> bet_type == 2) {
-			
+
 				$odds = (float)$recentBet -> place_odds;
-				
-			} elseif ($recentBet -> bet_type > 3) {			
+
+			} elseif ($recentBet -> bet_type > 3) {
 
 				$exoticSelections = true;
 				$exoticBetTransaction = \TopBetta\AccountBalance::find($recentBet -> bet_transaction_id);
@@ -83,8 +87,8 @@ class FrontBetsController extends \BaseController {
 				$exoticAmount = 0;
 				if($exoticBetTransaction) {
 					$exoticAmount = abs($exoticBetTransaction -> amount);
-				}	
-				
+				}
+
 				$exoticDividend = \TopBetta\Bet::getExoticDividendForType($recentBet -> bet_type, $recentBet -> event_id);
 
 			}
@@ -203,10 +207,10 @@ class FrontBetsController extends \BaseController {
 
 			//set our free bet flag if passed in
 			if (isset($input['use_free_credit'])) {
-					
+
 					$betData['chkFreeBet'] = $input['use_free_credit'];
-				
-			}	
+
+			}
 
 			$bet = $l -> query('saveRacingBet', $betData);
 
@@ -241,11 +245,11 @@ class FrontBetsController extends \BaseController {
 
 							//set our free bet flag if passed in
 							if (isset($input['use_free_credit'])) {
-									
+
 									$betData['chkFreeBet'] = $input['use_free_credit'];
-								
-							}							
-							
+
+							}
+
 							$bet = $l -> query('saveBet', $betData);
 
 						} elseif ($input['source'] == 'tournamentracing') {
@@ -298,20 +302,25 @@ class FrontBetsController extends \BaseController {
 						if (count($legacyData) > 0) {
 
 							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);
-							
+
 							//set our free bet flag if passed in
 							if (isset($input['use_free_credit'])) {
-									
+
 									$betData['chkFreeBet'] = $input['use_free_credit'];
-								
-							}							
-							
+
+							}
+
 							$bet = $l -> query('saveSportBet', $betData);
 
 						} else {
 
-							$messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('bets.selection_not_found'));
+							$messages[] = array("success" => false, "error" => \Lang::get('bets.selection_not_found'));
 							$errors++;
+
+							//TODO: temp fix for no selections - could be better
+							$bet['status'] = 500;
+							$bet['error_msg'] = \Lang::get('bets.selection_not_found');
+							$betData['bets'] = $input['bets'];
 
 						}
 
