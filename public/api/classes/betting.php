@@ -1923,6 +1923,25 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 	
+			
+			
+			
+			$betParamaters = JRequest::getVar('bets', null);
+				
+			$betMatchID = $betParamaters['match_id'];
+			$betMarketID = $betParamaters['market_id'];
+			$betSelections = $betParamaters['bets'];
+				
+			foreach($betSelections as $selection => $betAmount){
+				file_put_contents('/tmp/saveSportsBet', "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
+			
+			}
+			exit;
+			
+			
+			
+			
+			
 			// check that bet amount is greater than 0
 			$bet_value = JRequest::getVar('value', null);
 			if ($bet_value <= 0) {
