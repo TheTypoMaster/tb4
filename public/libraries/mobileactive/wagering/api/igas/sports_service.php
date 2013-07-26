@@ -3,14 +3,14 @@
 class WageringApiIGassportsService extends ConfigReader{
 	// Command paths
 	private $service_login_path = 'login'; // login path to get token
-	private $service_quickbet_path = 'quickbet'; // quickbet path
+	private $service_quickbet_path = 'Betinput.aspx'; // quickbet path
 	private $service_bets_path = 'bets'; // bet lookup path
 	private $service_token_validator_path = 'checkauth'; // Token validator path
 
 	private $meeting_code = null;
 	private $type_code = null;
 	private $send_bet = null;
-	private $bm_service_url = null;
+	private $service_url = null;
 	private $token = null;
 	private $token_model = null;
 	private $runner_model = null;
@@ -36,16 +36,12 @@ class WageringApiIGassportsService extends ConfigReader{
 	
 	final public function __construct()
 	{
-
-		// get config file contents
 		$config =& JFactory::getConfig();
-		//what api to get from the server.xml
-		$api = 'tob';
+
+		$api = 'igassports';
 		$this->date = new DateTime();
-		// get the API from server.xml
 		$this->api = $this->getApi($api);
-		// build up URL to BM API from config file params
-		$this->bm_service_url = 'http://' . $this->api->host . $this->api->url;
+		$this->service_url = 'http://' . $this->api->host . $this->api->url;
 		
 		if (method_exists($this, 'initialise')){
 			$this->initialise();
@@ -66,24 +62,13 @@ class WageringApiIGassportsService extends ConfigReader{
 
 			if(file_exists($path) && is_dir($path)) {
 				JModel::addIncludePath($path . DS . 'models');
-
 			} else {
 				$this->l("ERROR - Could not find component {$name}");
-				
 			}
 		}
-		$this->token_model	=& JModel::getInstance('Token', 'BettingModel');
-		$this->runner_model	=& JModel::getInstance('Runner', 'TournamentModel');
-
 		
-		//should get a unique id for this node
-		$this->_setHostId();
-		
-		// get token from DB. Will throw error if token hasn't loaded from DB
-		$this->getToken();
-		
-		// check token. will return another token if invalid or keep the current token if valid
-		$this->_checkLoginToken();
+		//$this->token_model	=& JModel::getInstance('Token', 'BettingModel');
+		//$this->runner_model	=& JModel::getInstance('Runner', 'TournamentModel');
 
 	}
 	
@@ -99,8 +84,56 @@ class WageringApiIGassportsService extends ConfigReader{
 	 * @param array $bet_data
 	 * @return object
 	 */
-	public function placeSportsBet($event_id, $special, $handicap, $bet_type, $bet_amount, $bet_option, $bet_dividend)
+	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection)
 	{
+		
+		// TODO: get from config file or server.xml
+		// Topbetta related params
+		$userName = "topbetta";
+		$userPassword = "T0pB3tter@AP!";
+		$companyID = "TopBetta";
+		$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection");
+		
+	  // Bet related Paramaters
+		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
+				'flexi' => "$flexi", 'gameId' => "$gameID", 'marketId' => "$marketID",
+				'selection' => "$selection", 'line' => "$line", 'odds' => "$odds");
+		$p = print_r($paramslist,true);
+		
+		$this->setLogger("sports_service: placeSportsBet. Params List: $p");
+		
+		// Generate Data Key from all bet params
+		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
+		$this->setLogger("sports_service: placeSportsBet. JSON dataKey: $betDataKey");
+		
+		// format JSON object for POSTing to iGAS
+		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $paramslist, $betDataKey );
+		$this->setLogger("sports_service: placeSportsBet. iGAS JSON POST: $this->send_bet");
+		
+		// POST JSON to iGAS
+		$response = $this->action($this->send_bet, $this->service_quickbet_path);
+		
+		
+		return $response;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 /* 		$file = "/tmp/api.txt";
 		$debug = "- In service placeBetList function: $params\n";
@@ -138,6 +171,31 @@ class WageringApiIGassportsService extends ConfigReader{
 	
 		return $response;
 	}
+	
+	
+	private function getDataKey($userName, $userPassword, $companyID, $paramslist, $secretKey){
+		// Get input object params
+	
+		$paramListBetData = '';
+		$paramList = $userName . $userPassword . $companyID;
+		foreach($paramslist as $param){
+			$paramListBetData .= $param;
+		}
+		// join params together
+		// concatinate with secret key
+		$paramsPlusSecret = $paramList . $paramListBetData . $secretKey;
+		// generate HASH
+		$hashedParams = md5($paramsPlusSecret);
+	
+		$this->setLogger("sports_service: getDataKey: params plus secret:$paramsPlusSecret");
+	
+		return $hashedParams;
+	
+		// append generated sequence to function call request
+	
+	
+	}
+	
 	
 	
 	/**
@@ -444,44 +502,53 @@ class WageringApiIGassportsService extends ConfigReader{
 	}
 
 	private function curlRequest($command=null, $params=null)
-	{
-		/* $file = "/tmp/api.txt";
-		$debug = "- In service.php curlRequest function, command: $command\n";
-		file_put_contents($file, $debug, FILE_APPEND | LOCK_EX); */
+		{
+		$this->setLogger("sports_service: Entering curlRequest. Command:$command");
+		$this->setLogger("sports_service: curlRequest. post_string:$params");
 		
-		if($params!=null){
-			$post_string = $this->formatUrlString($params);
-		}
+		$ch = curl_init($this->service_url."/".$command);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($params))
+		);
 		
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL,$this->bm_service_url."/".$command);
+		
+		$c = print_r($ch,true);
+		$this->setLogger("sports_service: curlRequest. Curl Instance:$c");
+		
+		
+		 
+		
+		//$ch = curl_init();
+		//curl_setopt($ch,CURLOPT_URL,$this->service_url."/".$command);
 		//curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$post_string);
-		$size = sizeof(split("&",$post_string));
-		if($size > 0){
-			curl_setopt($ch, CURLOPT_POST, $size);
-		}
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		//curl_setopt($ch,CURLOPT_POSTFIELDS,$post_string);
+		//$size = sizeof(split("&",$post_string));
+		//if($size > 0){
+		//	curl_setopt($ch, CURLOPT_POST, $size);
+		//}
+		//curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 		//curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5-'.$_SERVER['SERVER_ADDR']);
-		curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+		//curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+		
+		
 		$error = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		
+		
 		$res = curl_exec($ch);
 		
 		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------");		
- 		$file = "/tmp/api.txt";
-		$debug = "- In service.php curlRequest function,Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------\n";
-		file_put_contents($file, $debug, FILE_APPEND | LOCK_EX); 
-		
 		
 		$response = json_decode($res);
-		$responseArray = print_r($response,true);
-		$file = "/tmp/api.txt";
-		$debug = "- In service.php curlRequest function,Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nResponse: " . $responseArray . "\n-------------\n";
-		file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
+		$r = print_r($response,true);
+		$this->setLogger("sports_service: curlRequest. Response :$r");
 		
 		curl_close($ch);
 		if ($response == "") {
-			//throw new ApiException("Server has returned nothing.<br>Token Response: ".$error." ".$this->token."<br/>".$this->bm_service_url."/".$command."<br/>".$post_string);
+			//throw new ApiException("Server has returned nothing.<br>Token Response: ".$error." ".$this->token."<br/>".$this->service_url."/".$command."<br/>".$post_string);
 			throw new ApiException("Betting is not available on this race at this stage - Try again shortly.");
 		} else {
 			return $response;
@@ -492,44 +559,35 @@ class WageringApiIGassportsService extends ConfigReader{
 
 	public function action($params=array(), $command=null)
 	{
-		/* $file = "/tmp/api.txt";
-		$debug = "- In service.php action function, command: $command\n";
-		file_put_contents($file, $debug, FILE_APPEND | LOCK_EX); */
+		$this->setLogger("sports_service: Entering action. Command:$command");
+		$p = print_r($paramslist,true);
+		$this->setLogger("sports_service: action. Params:$p");
 		
-		
-		$this->setLogger();
-		
-		if($command == "quickbet")
+	if($command == "Betinput.aspx")
 		{
-				//$params['token'] = $this->token;
-
-				$response = $this->curlRequest($command."?token=".$this->token, $params);
-
-				if ($response->result == "success" || $response->result == "processing") 
+				
+				$response = $this->curlRequest($command, $paramslist);
+				$r = print_r($response, true);
+				$this->setLogger("sports_service: action: Response from curlRequest:$r");
+				
+				if ($response->ErrorNo == "0") 
 				{
+					$this->setLogger("sports_service: action. No Errors!");
 					$bet = new stdClass;
 					$bet->isSuccess = "true";
-					$bet->wagerId = $response->results[0]->invoice_id;
+					$bet->wagerId = $response->TransactionId;
 					$bet->status = "S";
-					$bet->actualDividend = $response->results[0]->actualDividend;
-
+					
+					$this->setLogger("sports_service: action. Bet Placed!");
+					
 					return $bet;
-				} elseif(isset($response->newOdds)){
-					$bet = new stdClass;
-					$bet->message = $response->detail;
-					$bet->isSuccess = "false";
-					$bet->newOdds = $response->newOdds;
-					return $bet;
-
-				}
+				} 
 				else 
 				{
-					/*ob_start(); // Test output
-					print_r($response);
-					$output = ob_get_contents();
-					ob_end_flush();
-					throw new ApiException("Outputting: ".$output."<br>".json_encode($params));*/
-					throw new ApiException("Bet could not be posted. ".$response->detail);
+					$this->setLogger("sports_service: curlRequest Failed.");
+					
+					
+					throw new ApiException("Bet could not be posted. ".$response->ErrorText);
 
 				}
 
@@ -643,6 +701,21 @@ class WageringApiIGassportsService extends ConfigReader{
 			$this->fhandle = $handle;
     	}*/
 	}
+	
+	private function formatIgasPOST($UserName, $UserPassword, $CompanyID, $paramslist, $DataKey){
+	
+	
+		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
+				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "Flexi": '.$paramslist['flexi'].', "DataKey": "'.$DataKey.'",
+	
+ 				 "BetList": [
+  					{ "GameId": '.$paramslist['gameId'].', "MarketId": '.$paramslist['marketId'].', "Selection": "'.$paramslist['selection'].'", "Line": "'.$paramslist['line'].'",
+      				"Odds": "'.$paramslist['odds'].'" }
+		 			]
+				}';
+	}
+	
+	
 	
 }
 
