@@ -1928,73 +1928,84 @@ class Api_Betting extends JController {
 			
 		//	$betParamaters = JRequest::getVar('bets', null);
 				
-			$betMatchID = JRequest::getVar('match_id', null);
-			$betMarketID = JRequest::getVar('market_id', null);
+			
+			
 			$betSelections = JRequest::getVar('bets', null);
 
-			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID\n", FILE_APPEND | LOCK_EX);
 			
+			
+			// TODO: not catering for multi bets at this stage.
 			foreach($betSelections as $selection => $betAmount){
 				file_put_contents('/tmp/saveSportsBet', "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
 			
 			}
-			exit;
 			
-			
-			
-			
+			/*
+			 * Check all required POST vars are there
+			 */
 			
 			// check that bet amount is greater than 0
-			$bet_value = JRequest::getVar('value', null);
-			if ($bet_value <= 0) {
+			$bet_value = $betAmount;
+			if($bet_value <= 0) {
 				$validation->error = JText::_('No bet amount received');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 	
-			// check if event_id has been passed to the API
-			$event_id = JRequest::getVar('event_id', null);
-			if (is_null($event_id)) {
-				$validation->error = JText::_('No event ID recieved');
+			// check if match_id has been passed to the API
+			$betMatchID = JRequest::getVar('match_id', null);
+			if (is_null($betMatchID)) {
+				$validation->error = JText::_('No match ID recieved');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			// check if bet_type has been passed to the API
-			$bet_type = JRequest::getVar('bet_type_id', null);
-			if (is_null($bet_type)) {
-				$validation->error = JText::_('No bet type id received');
+			
+			// check if  has been passed to the API
+			$betMarketID = JRequest::getVar('market_id', null);
+			if (is_null($betMarketID)) {
+				$validation->error = JText::_('No market ID recieved');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			// check if bet option id was passed to the API
-			$bet_option_id = JRequest::getVar('selection', null);
-			if (is_null($bet_option_id)) {
-				$validation->error = JText::_('No selection id received');
-				return OutputHelper::json(500, array('error_msg' => $validation->error ));
-			}
-	
+				
+
 			// check if bet dividend was passed to the API
 			$bet_dividend = JRequest::getVar('dividend', null);
+			$bet_dividend = "100";
+				
 			if (is_null($bet_dividend)) {
 				$validation->error = JText::_('No bet dividend received');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			//$bet_dividend = "100";
-	
-			// check if bet origin was passed to the API
-			$bet_origin	= JRequest::getVar('bet_origin', null);
-			if (is_null($bet_origin)) {
-				$validation->error = JText::_('No bet origin received');
+				
+			
+
+			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID\n", FILE_APPEND | LOCK_EX);
+			exit;
+			
+			
+			
+			/*
+			 * Check the bet is on valid events and selections
+			 */			
+		
+			// check if match_id is in the DB
+			$match_exists = $sportsBetting_model->getEventApi($event_id);
+			if (is_null($match_exists)) {
+				$validation->error = JText::_('Match not available');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			// check if event exists in the database
-			$event_exists = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
-	
-			if (is_null($event_exists)) {
-				$validation->error = JText::_('Event not available');
+					
+			// check if market_id is in the DB
+			$market_exists = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
+			if (is_null($market_exists)) {
+				$validation->error = JText::_('Market not available');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
+			
+// 			// check if event exists in the database
+// 			$event_exists = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
+// 			if (is_null($event_exists)) {
+// 				$validation->error = JText::_('Event not available');
+// 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+// 			}
 	
 			if ($debugflag == 1){
 				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$event_id, BetType:$bet_type, BetValue:$bet_value, BetOption:$bet_option_id, BetDividend:$bet_dividend\n";
