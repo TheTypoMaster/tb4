@@ -105,11 +105,11 @@ class WageringApiIgassports extends WageringApi
 	
 	private function _callOperation($operation, $service)
 	{	
-		WageringApiIgasracingService::setLogger("igassports: _callOperation. Entering. Operation:$operation");
+		WageringApiIgassportsService::setLogger("igassports: _callOperation. Entering. Operation:$operation");
 		
 		$extra_args = array_slice(func_get_args(), 2);
 		$o =print_r($extra_args, true);
-		WageringApiIgasracingService::setLogger("igassports: _callOperation. Entering. Extra Args:$o");
+		WageringApiIgassportsService::setLogger("igassports: _callOperation. Entering. Extra Args:$o");
 		$extra_args = array_slice(func_get_args(), 2);
 		try{
 			return call_user_func_array(array($service, $operation), $extra_args);
