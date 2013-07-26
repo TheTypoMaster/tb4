@@ -1878,6 +1878,7 @@ class Api_Betting extends JController {
 	
 		// debug file
 		$debugflag = 1;
+		$file = "/tmp/saveSportsBet";
 			
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
@@ -1936,7 +1937,7 @@ class Api_Betting extends JController {
 			
 			// TODO: not catering for multi bets at this stage.
 			foreach($betSelections as $selection => $betAmount){
-				file_put_contents('/tmp/saveSportsBet', "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
+				file_put_contents($file, "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
 			
 			}
 			
@@ -1968,20 +1969,13 @@ class Api_Betting extends JController {
 
 			// check if bet dividend was passed to the API
 			$bet_dividend = JRequest::getVar('dividend', null);
-			$bet_dividend = "100";
-				
 			if (is_null($bet_dividend)) {
 				$validation->error = JText::_('No bet dividend received');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 				
-			
-
-			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID\n", FILE_APPEND | LOCK_EX);
-			exit;
-			
-			
-			
+			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID, Dividend:$bet_dividend\n", FILE_APPEND | LOCK_EX);
+		
 			/*
 			 * Check the bet is on valid events and selections
 			 */			
@@ -1999,13 +1993,6 @@ class Api_Betting extends JController {
 				$validation->error = JText::_('Market not available');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-			
-// 			// check if event exists in the database
-// 			$event_exists = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
-// 			if (is_null($event_exists)) {
-// 				$validation->error = JText::_('Event not available');
-// 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
-// 			}
 	
 			if ($debugflag == 1){
 				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$event_id, BetType:$bet_type, BetValue:$bet_value, BetOption:$bet_option_id, BetDividend:$bet_dividend\n";
