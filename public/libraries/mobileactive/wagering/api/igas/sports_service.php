@@ -84,7 +84,7 @@ class WageringApiIgassportsService extends ConfigReader{
 	 * @param array $bet_data
 	 * @return object
 	 */
-	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection)
+	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selectionID)
 	{
 		
 		// TODO: get from config file or server.xml
@@ -92,12 +92,12 @@ class WageringApiIgassportsService extends ConfigReader{
 		$userName = "topbetta";
 		$userPassword = "T0pB3tter@AP!";
 		$companyID = "TopBetta";
-		$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection");
+		$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selectionID");
 		
 	  // Bet related Paramaters
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 				'flexi' => "$flexi", 'gameId' => "$gameID", 'marketId' => "$marketID",
-				'selection' => "$selection", 'line' => "$line", 'odds' => "$odds");
+				'selection' => "$selectionID", 'line' => "$line", 'odds' => "$odds");
 		$p = print_r($paramslist,true);
 		
 		$this->setLogger("sports_service: placeSportsBet. Params List: $p");

@@ -2255,7 +2255,7 @@ class Api_Betting extends JController {
 						$debug = "- About to send to iGAS API\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
-					$external_bet	= $api->placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection);
+					$external_bet	= $api->placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selectionID);
 					$responseArray = print_r($external_bet,true);
 					if ($debugflag == 1){
 						$debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";
