@@ -2080,7 +2080,7 @@ class Api_Betting extends JController {
  					return OutputHelper::json(500, array('error_msg' => $validation->error ));
  				}
 
-				exit;
+				//exit;
 	
 				if ($debugflag == 1){
 					$debug = "- API connection OK\n";
