@@ -2210,11 +2210,7 @@ class Api_Betting extends JController {
 				// $selectionID = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
 				$selectionID = $selection;
 				
-				if ($debugflag == 1){
-					$debug = "- Got Selection ID: $selectionID->id\n";
-					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-				}
-	
+		
 				// create the selection object
 				$selection = clone $bet_selection_model;
 	
