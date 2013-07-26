@@ -1,6 +1,6 @@
 <?php
 
-class WageringApiIGassportsService extends ConfigReader{
+class WageringApiIgassportsService extends ConfigReader{
 	// Command paths
 	private $service_login_path = 'login'; // login path to get token
 	private $service_quickbet_path = 'Betinput.aspx'; // quickbet path
