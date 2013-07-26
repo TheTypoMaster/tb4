@@ -2217,7 +2217,7 @@ class Api_Betting extends JController {
 				
 				// populate the object data
 				$selection->bet_id			= (int)$bet_id;
-				$selection->selection_id	= (int)$selectionID->id;
+				$selection->selection_id	= (int)$selectionID;
 				$selection->position		= 0;
 	
 				// save the bet selction to __bet_selection
@@ -2337,7 +2337,7 @@ class Api_Betting extends JController {
 				// TODO: Update bet record with correct dividend. Currently it's not stored with the actual bet
 				if(isset($external_bet->actualDividend)){
 					// Update odds on bet_selection
-					$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$external_bet->actualDividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID->id'" ;
+					$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$external_bet->actualDividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
 					// echo "$query";
 					$db->setQuery( $query );
 					$db->query();
