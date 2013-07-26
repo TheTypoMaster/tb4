@@ -1879,7 +1879,7 @@ class Api_Betting extends JController {
 		// debug file
 		$debugflag = 1;
 		$file = "/tmp/saveSportsBet";
-			
+
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();
@@ -2072,13 +2072,15 @@ class Api_Betting extends JController {
 				}
 	
 // 				// check api is available
-// 				$api_con=$api->checkConnection();
+ 				$api_con=$api->checkConnection();
 				
-// 				if(is_null($api_con))
-// 				{
-// 					$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
-// 					return OutputHelper::json(500, array('error_msg' => $validation->error ));
-// 				}
+ 				if(is_null($api_con))
+ 				{
+ 					$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
+ 					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 				}
+
+				exit;
 	
 				if ($debugflag == 1){
 					$debug = "- API connection OK\n";
