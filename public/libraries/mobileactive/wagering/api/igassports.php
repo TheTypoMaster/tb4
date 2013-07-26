@@ -12,8 +12,8 @@ class WageringApiIgassports extends WageringApi
 	public function checkConnection()
 	{
 		WageringApiIgassportsService::setLogger("igassports: checkConnection. Entering");
-		//$account = $this->_getAccountService();
-		//return $this->_callOperation('checkConnection', $account);
+		$account = $this->_getAccountService();
+		return $this->_callOperation('checkConnection', $account);
 	}
 	
 	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection)
