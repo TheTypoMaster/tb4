@@ -1981,21 +1981,21 @@ class Api_Betting extends JController {
 			 */			
 		
 			// check if match_id is in the DB
-			$match_exists = $sportsBetting_model->getEventApi($event_id);
+			$match_exists = $sportsBetting_model->getEventApi($betMatchID);
 			if (is_null($match_exists)) {
 				$validation->error = JText::_('Match not available');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 					
-			// check if market_id is in the DB
-			$market_exists = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
-			if (is_null($market_exists)) {
-				$validation->error = JText::_('Market not available');
-				return OutputHelper::json(500, array('error_msg' => $validation->error ));
-			}
+// 			// check if market_id is in the DB
+// 			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
+// 			if (is_null($market_exists)) {
+// 				$validation->error = JText::_('Market not available');
+// 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+// 			}
 	
 			if ($debugflag == 1){
-				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$event_id, BetType:$bet_type, BetValue:$bet_value, BetOption:$bet_option_id, BetDividend:$bet_dividend\n";
+				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$betMatchID, Market:$betMarketID, Selection:$selection, BetValue:$bet_value, BetDividend:$bet_dividend\n";
 				file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 			}
 	
