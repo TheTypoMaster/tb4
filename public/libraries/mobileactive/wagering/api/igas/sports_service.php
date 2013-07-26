@@ -139,7 +139,7 @@ class WageringApiIgassportsService extends ConfigReader{
 		$debug = "- In service placeBetList function: $params\n";
 		file_put_contents($file, $debug, FILE_APPEND | LOCK_EX); */
 		
-		$this->setLogger();
+		// $this->setLogger();
 		//$params = "eventId=$event_id&special=&handicap=$bet_handicap&betType=$bet_type_ref&betAmount=$bet_amount&optionId=$bet_option_id&dividend=$bet_dividend";
 		
 		$this->send_bet = array(
@@ -676,7 +676,7 @@ class WageringApiIgassportsService extends ConfigReader{
 		return $fields_string;
 	}
 	
-	public  function setLogger($msg="")
+	public function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
 		$myFile = "/tmp/igassports_curl.log";

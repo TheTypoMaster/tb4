@@ -2072,7 +2072,7 @@ class Api_Betting extends JController {
 				}
 	
 				// check api is available
-				//$api_con=$api->checkConnection();
+				$api_con=$api->checkConnection();
 				
 				if(is_null($api_con))
 				{
