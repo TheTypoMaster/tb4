@@ -12,8 +12,8 @@ class WageringApiIgassports extends WageringApi
 	public function checkConnection()
 	{
 		WageringApiIgassportsService::setLogger("igassports: checkConnection. Entering");
-		$account = $this->_getAccountService();
-		return $this->_callOperation('checkConnection', $account);
+		//$account = $this->_getAccountService();
+		//return $this->_callOperation('checkConnection', $account);
 	}
 	
 	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection)
@@ -110,7 +110,6 @@ class WageringApiIgassports extends WageringApi
 		$extra_args = array_slice(func_get_args(), 2);
 		$o =print_r($extra_args, true);
 		WageringApiIgassportsService::setLogger("igassports: _callOperation. Entering. Extra Args:$o");
-		$extra_args = array_slice(func_get_args(), 2);
 		try{
 			return call_user_func_array(array($service, $operation), $extra_args);
 		}
@@ -118,6 +117,4 @@ class WageringApiIgassports extends WageringApi
 			$this->error_list[$operation][] = unserialize($e->getMessage());
 		}
 	}
-	
-	
 }
