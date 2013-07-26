@@ -2251,13 +2251,13 @@ class Api_Betting extends JController {
 				$bet_confirmed	= false;
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 					if ($debugflag == 1){
-						$debug = "- About to send to BM API\n";
+						$debug = "- About to send to iGAS API\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
-					$external_bet	= $api->placeSportsBet($event_id, $special, $handicap, $bet_type, $bet_value, $bet_option_id, $bet_dividend);
+					$external_bet	= $api->placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection);
 					$responseArray = print_r($external_bet,true);
 					if ($debugflag == 1){
-						$debug = "- After bet send to BM API, RESPONSE: $responseArray\n";
+						$debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
 	
