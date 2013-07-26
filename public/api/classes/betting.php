@@ -1981,7 +1981,7 @@ class Api_Betting extends JController {
 			 */			
 		
 			// check if match_id is in the DB
-			$match_exists = $sportsBetting_model->getEventApi($betMatchID);
+			$match_exists = $sportsBetting_model->getMatchIDApi($betMatchID);
 			if (is_null($match_exists)) {
 				$validation->error = JText::_('Match not available');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
