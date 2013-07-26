@@ -2071,14 +2071,14 @@ class Api_Betting extends JController {
 					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 				}
 	
-				// check api is available
-				$api_con=$api->checkConnection();
+// 				// check api is available
+// 				$api_con=$api->checkConnection();
 				
-				if(is_null($api_con))
-				{
-					$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
-					return OutputHelper::json(500, array('error_msg' => $validation->error ));
-				}
+// 				if(is_null($api_con))
+// 				{
+// 					$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
+// 					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+// 				}
 	
 				if ($debugflag == 1){
 					$debug = "- API connection OK\n";
