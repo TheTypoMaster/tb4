@@ -36,6 +36,9 @@ class FrontTournamentsController extends \BaseController {
 
 		if ($entered) {
 
+			// special case to clear my tournaments after a user has been logged in
+			if (\Auth::guest()) return array("success" => true, "result" => array());
+
 			//we want to see all entered tournaments for the entered list
 			$type = null;
 
@@ -240,7 +243,7 @@ class FrontTournamentsController extends \BaseController {
 		}
 
 		//get prize pool in cents & places paid
-		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId) * 100;
+		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId);
 		$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
 
 		//work out places paid via place list
@@ -265,40 +268,38 @@ class FrontTournamentsController extends \BaseController {
 
 		//calculate tournament end date/betting open
 
+		// special case to send data back in a format for backbone - this ones for you Jase ;-)
+		if (\Input::get('grouped') == true) {
+
+			$tournamentDetails = array(
+				'id' => (int)$tournament -> id,
+				'buy_in' => (int)$tournament -> buy_in,
+				'entry_fee' => (int)$tournament -> entry_fee,
+				'num_entries' => (int)$numRegistrations,
+				'prize_pool' => $prizePool,
+				'places_paid' => $places_paid,
+				'start_currency' => (int)$tournament -> start_currency,
+				'start_date' => \TimeHelper::isoDate($tournament -> start_date)
+			);
+
+			$tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
+			return array('success' => true, 'result' => array(
+				'id' => (int)$tournamentParent -> id,
+				'name' => $tournamentParent -> name,
+				'state' => $tournamentParent -> state,
+				'weather' => $tournamentParent -> weather,
+				'track' => $tournamentParent -> track,
+				'sub_type' => strtolower($tournamentParent -> type_code),
+				'tournament' => $tournamentDetails
+			));
+
+		}
+
+		//our normal tournament info
 		if ($isRacingTournament) {
+
 			// ::: racing related data :::
-
-			if (\Input::get('grouped') == true) {
-
-				// special case to send data back in a format for backbone - this ones for you Jase ;-)
-				$tournamentDetails = array(
-					'id' => (int)$tournament -> id,
-					'buy_in' => (int)$tournament -> buy_in,
-					'entry_fee' => (int)$tournament -> entry_fee,
-					'num_entries' => (int)$numRegistrations,
-					'prize_pool' => $prizePool,
-					'places_paid' => $places_paid,
-					'start_currency' => (int)$tournament -> start_currency,
-					'start_date' => \TimeHelper::isoDate($tournament -> start_date)
-				);
-
-				$tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
-				return array('success' => true, 'result' => array(
-					'id' => (int)$tournamentParent -> id,
-					'name' => $tournamentParent -> name,
-					'state' => $tournamentParent -> state,
-					'weather' => $tournamentParent -> weather,
-					'track' => $tournamentParent -> track,
-					'sub_type' => strtolower($tournamentParent -> type_code),
-					'tournament' => $tournamentDetails
-				));
-
-			} else {
-
-				//our normal tournament info
-				return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false));
-
-			}
+			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false));
 
 		} else {
 

@@ -64,7 +64,66 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index() {
+	public function index($tournamentId) {
+
+		// special case to load a ticket for a specified tournament
+		if ($tournamentId != 'get') {
+
+			$tournamentModel = new \TopBetta\Tournament;
+			$tournament = $tournamentModel -> find($tournamentId);
+
+			if (is_null($tournament)) {
+
+				return array('success' => false, 'error' => \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
+
+			}
+
+			$ticketModel = new \TopBetta\TournamentTicket;
+
+			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($tournamentId, \Auth::user() -> id);
+
+			$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+			$leaderboardDetails = $leaderboardModel -> getLeaderBoardRankByUserAndTournament(\Auth::user() -> id, $tournament);
+
+			$prize = 0;
+			if (!$tournament -> cancelled_flag && $tournament -> result_transaction_id) {
+				if ($recentTicket -> jackpot_flag) {
+
+					$transactionRecord = \TopBetta\FreeCreditBalance::find($tournament -> result_transaction_id);
+
+				} else {
+
+					$transactionRecord = \TopBetta\AccountBalance::find($tournament -> result_transaction_id);
+				}
+
+				if ($transactionRecord && $transactionRecord -> amount > 0) {
+
+					$prize = $transactionRecord -> amount;
+				}
+			}
+
+			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
+
+			return array('success' => true, 'result' => array(
+				'id' => (int)$tournamentId,
+				'tournament_id' => (int)$tournamentId,
+				'tournament_name' => $tournament -> name,
+				'buy_in' => (int)$tournament -> buy_in,
+				'entry_fee' => (int)$tournament -> entry_fee,
+				'start_currency' => (int)$tournament -> start_currency,
+				'available_currency' => $availableCurrency,
+				'turned_over' => (int)$leaderboardDetails -> turned_over,
+				'leaderboard_rank' => $rank,
+				'prize' => $prize,
+				'qualified' => ($leaderboardDetails -> qualified) ? true : false,
+				'sport_name' => $tournament -> sport_name,
+				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
+				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
+				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false)
+			);
+
+		}
+
 
 		$userId = \Auth::user() -> id;
 
