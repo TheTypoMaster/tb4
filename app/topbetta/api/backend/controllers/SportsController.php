@@ -364,6 +364,8 @@ class SportsController extends \BaseController {
 								$eventId = $dataArray['GameId'];
 								$marketId = $dataArray['MarketId'];
 								$selectionId = $dataArray['SelectionNo'];
+								$line = $dataArray['Line'];
+								
 									
 								// check if market record for this event already exists
 								$marketExists = TopBetta\SportsMarket::sportMarketExists($marketId, $eventId);
@@ -378,6 +380,7 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, In DB: $selectionsExists", 1);
 										$selectionModel = TopBetta\SportsSelection::find($selectionsExists);
 										$selectionModel->market_id = $marketExists;
+										$selectionModel->line = $line;
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, Added to DB: $selectionsExists", 1);
 										$selectionModel = new TopBetta\SportsSelection;
@@ -385,12 +388,10 @@ class SportsController extends \BaseController {
 										$selectionModel->external_selection_id = $selectionId;
 										$selectionModel->external_event_id = $eventId;
 										$selectionModel->external_market_id = $marketId;
+										$selectionModel->line = $line;
 									}
 									if(isset($dataArray['Selection'])){
 										$selectionModel->name = $dataArray['Selection'];
-										if(isset($dataArray['Line'])){
-											$selectionModel->name .= " ".$dataArray['Line'];
-										}
 									}
 									
 									// add/update the selection record
@@ -436,13 +437,15 @@ class SportsController extends \BaseController {
 							$marketStatus = $dataArray['MarketStatus'];
 							$score = $dataArray['Score'];
 							$scoreType = $dataArray['ScoreType'];
+							$selectionId = $dataArray['SelectionNo'];
+							
 							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 							
 							// If marketstatus is R = Resulted
 							if($dataArray['MarketStatus'] == 'R'){
 
 								// - get winning selection record
-								$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($marketId, $eventId, $score);
+								$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($marketId, $eventId, $selectionId);
 
 								// if selection found
 								if ($winningSelectionID){
