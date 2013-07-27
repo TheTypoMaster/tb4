@@ -1923,17 +1923,8 @@ class Api_Betting extends JController {
 				$validation->error		= JText::_('Please login to place a bet');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			
-			
-			
-		//	$betParamaters = JRequest::getVar('bets', null);
-				
-			
 			
 			$betSelections = JRequest::getVar('bets', null);
-
-			
 			
 			// TODO: not catering for multi bets at this stage.
 			foreach($betSelections as $selection => $betAmount){
@@ -1941,8 +1932,9 @@ class Api_Betting extends JController {
 			
 			}
 			
+			
 			/*
-			 * Check all required POST vars are there
+			 *  Check all required POST vars are there
 			 */
 			
 			// check that bet amount is greater than 0
@@ -1966,7 +1958,6 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 				
-
 			// check if bet dividend was passed to the API
 			$bet_dividend = JRequest::getVar('dividend', null);
 			if (is_null($bet_dividend)) {
@@ -1976,8 +1967,9 @@ class Api_Betting extends JController {
 				
 			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID, Dividend:$bet_dividend\n", FILE_APPEND | LOCK_EX);
 		
+			
 			/*
-			 * Check the bet is on valid events and selections
+			 *  Check the bet is on valid events and selections
 			 */			
 		
 			// check if match_id is in the DB
@@ -2080,8 +2072,6 @@ class Api_Betting extends JController {
  					return OutputHelper::json(500, array('error_msg' => $validation->error ));
  				}
 
-				//exit;
-	
 				if ($debugflag == 1){
 					$debug = "- API connection OK\n";
 					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
@@ -2297,7 +2287,7 @@ class Api_Betting extends JController {
 				// If the bet placement with the API failed
 				if (!$bet_confirmed) {
 					if ($debugflag == 1){
-						$debug = "- BM API Bet Failed\n";
+						$debug = "- iGAS API Bet Failed\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
 					if($free_bet_amount > 0) {
