@@ -125,7 +125,7 @@ class SportsController extends \BaseController {
 						foreach ($sportsArray as $dataArray){
 
 							// Check minimum required data is available (EventID is unique key)
-							if(isset($dataArray['GameId']) && isset($dataArray['Sport'])){
+							if(isset($dataArray['GameId'])){
 								$eventId = $dataArray['GameId'];
 
 								// Process Sport
@@ -439,39 +439,44 @@ class SportsController extends \BaseController {
 							$marketStatus = $dataArray['MarketStatus'];
 							$score = $dataArray['Score'];
 							$scoreType = $dataArray['ScoreType'];
-							$selectionId = $dataArray['SelectionNo'];
+							if(isset($dataArray['SelectionNo'])){
+								$selectionId = $dataArray['SelectionNo'];
 							
-							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
-							
-							// If marketstatus is R = Resulted
-							if($dataArray['MarketStatus'] == 'R'){
-
-								// - get winning selection record
-								$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($marketId, $eventId, $selectionId);
-
-								// if selection found
-								if ($winningSelectionID){
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 								
-									// check if there is a result record for this selection already
-									$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($selectionModel->id);
+								// If marketstatus is R = Resulted
+								if($dataArray['MarketStatus'] == 'R'){
+	
+									// - get winning selection record
+									$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($marketId, $eventId, $selectionId);
+	
+									// if selection found
+									if ($winningSelectionID){
 									
-									// 
-									if($winningSelectionResultExists){
-										$selectionResultModel = TopBetta\SportsSelectionResults::find($winningSelectionResultExists);
+										// check if there is a result record for this selection already
+										$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($selectionModel->id);
+										
+										// 
+										if($winningSelectionResultExists){
+											$selectionResultModel = TopBetta\SportsSelectionResults::find($winningSelectionResultExists);
+										}else{
+											// create selection_result record
+											$selectionResultModel = new TopBetta\SportsSelectionResults;
+											$selectionResultModel->selection_id = $winningSelectionID;
+											$selectionResultModel->position = 1;
+											$selectionResultModel->save();
+										}
 									}else{
-										// create selection_result record
-										$selectionResultModel = new TopBetta\SportsSelectionResults;
-										$selectionResultModel->selection_id = $winningSelectionID;
-										$selectionResultModel->position = 1;
-										$selectionResultModel->save();
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No SelctionID. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
 									}
 								}else{
-									TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No SelctionID. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: MarketStatus not R. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
 								}
 							}else{
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: MarketStatus not R. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
+								// Line Results
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: LINE BET. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
+								
 							}
-							
 						}
 						break;
 						
