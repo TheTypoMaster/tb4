@@ -380,7 +380,7 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, In DB: $selectionsExists", 1);
 										$selectionModel = TopBetta\SportsSelection::find($selectionsExists);
 										$selectionModel->market_id = $marketExists;
-										$selectionModel->line = $line;
+										
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, Added to DB: $selectionsExists", 1);
 										$selectionModel = new TopBetta\SportsSelection;
@@ -388,7 +388,7 @@ class SportsController extends \BaseController {
 										$selectionModel->external_selection_id = $selectionId;
 										$selectionModel->external_event_id = $eventId;
 										$selectionModel->external_market_id = $marketId;
-										$selectionModel->line = $line;
+										
 									}
 									if(isset($dataArray['Selection'])){
 										$selectionModel->name = $dataArray['Selection'];
@@ -406,12 +406,14 @@ class SportsController extends \BaseController {
 										if($oddsExists){
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, In DB: $oddsExists", 1);
 											$selectionPriceModel = TopBetta\SportsSelectionPrice::find($oddsExists);
+											$selectionPriceModel->line = $line;
 										}else{
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, Adding to DB: $oddsExists", 1);
 											$selectionPriceModel = new TopBetta\SportsSelectionPrice;
 											$selectionPriceModel->selection_id = $selectionModel->id;
 											// TODO: $selectionPriceModel->bet_product_id = "Should we add an iGAS record"
 											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
+											$selectionPriceModel->line = $line;
 										}
 										// Add/update the selection odds/price record
 										$selectionPriceModel->save();
