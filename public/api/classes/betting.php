@@ -1975,7 +1975,7 @@ class Api_Betting extends JController {
 //  			}
 	
  			// grab the external id's 
- 			$externalIDs = getExternalIDsApi($selection);
+ 			$externalIDs = $sportsBetting_model->getExternalIDsApi($selection);
  			
  			// check if external market ID exists for the given selection
  			$externalMarketID = $externalIDs->external_market_id;
