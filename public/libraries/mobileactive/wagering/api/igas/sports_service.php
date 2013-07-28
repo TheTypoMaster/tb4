@@ -522,13 +522,13 @@ class WageringApiIgassportsService extends ConfigReader{
 	public function action($params=array(), $command=null)
 	{
 		$this->setLogger("sports_service: Entering action. Command:$command");
-		$p = print_r($paramslist,true);
+		$p = print_r($params,true);
 		$this->setLogger("sports_service: action. Params:$p");
 		
 	if($command == "Betinput.aspx")
 		{
 				
-				$response = $this->curlRequest($command, $paramslist);
+				$response = $this->curlRequest($command, $params);
 				$r = print_r($response, true);
 				$this->setLogger("sports_service: action: Response from curlRequest:$r");
 				
