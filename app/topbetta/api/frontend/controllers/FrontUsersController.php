@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Lang;
 class FrontUsersController extends \BaseController {
 
 	public function __construct() {
-			
+
 		//we are only protecting certain routes in this controller
 		$this -> beforeFilter('auth', array('only' => array('index')));
-		
+
 	}
 
 	public function login() {
@@ -38,7 +38,20 @@ class FrontUsersController extends \BaseController {
 
 				if (\Auth::check()) {
 
-					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => $login['userInfo']['first_name'], "last_name" => $login['userInfo']['last_name'], "full_account" => $login['userInfo']['full_account']));
+					if (!$login['userInfo']['full_account']) {
+
+						$parts = explode(" ", \Auth::user()->name);
+						$lastname = array_pop($parts);
+						$firstname = implode(" ", $parts);
+
+					} else {
+
+						$lastname = $login['userInfo']['last_name'];
+						$firstname = $login['userInfo']['first_name'];
+
+					}
+
+					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "full_account" => $login['userInfo']['full_account']));
 
 				} else {
 
@@ -86,7 +99,7 @@ class FrontUsersController extends \BaseController {
 
 		switch ($action) {
 			case 'exclude' :
-				
+
 				//forward to legacy API to handle
 				$l = new \TopBetta\LegacyApiHelper;
 
