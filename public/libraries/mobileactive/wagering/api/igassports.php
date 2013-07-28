@@ -16,10 +16,10 @@ class WageringApiIgassports extends WageringApi
 		return $this->_callOperation('checkConnection', $account);
 	}
 	
-	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection)
+	public function placeSportsBet($clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selection)
 	{
 		$account = $this->_getAccountService();
-		return $this->_callOperation('placeSportsBet', $account, $clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selection);
+		return $this->_callOperation('placeSportsBet', $account, $clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selection);
 	} 
 	
 	

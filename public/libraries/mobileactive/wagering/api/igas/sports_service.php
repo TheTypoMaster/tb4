@@ -96,7 +96,7 @@ class WageringApiIgassportsService extends ConfigReader{
 		
 	    // Bet related Paramaters
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
-				'flexi' => "$flexi", 'gameId' => "$gameID", 'marketId' => "$marketID",
+				'gameId' => "$gameID", 'marketId' => "$marketID",
 				'selection' => "$selectionID", 'line' => "$line", 'odds' => "$odds");
 		$p = print_r($paramslist,true);
 		
