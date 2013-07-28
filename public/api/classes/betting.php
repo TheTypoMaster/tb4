@@ -1965,6 +1965,9 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 				
+			// get line if passed to API
+			$line = JRequest::getVar('line', null);
+			
 			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID, Dividend:$bet_dividend\n", FILE_APPEND | LOCK_EX);
 		
 			
@@ -2009,7 +2012,7 @@ class Api_Betting extends JController {
 				}
 					
 				if ($debugflag == 1){
-					$debug = "- Betting open and last bet no within a second\n";
+					$debug = "- Betting open and last bet not within a second\n";
 					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 				}
 	
@@ -2063,7 +2066,7 @@ class Api_Betting extends JController {
 					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 				}
 	
-// 				// check api is available
+				// check api is available
  				$api_con=$api->checkConnection();
 				
  				if(is_null($api_con))
@@ -2245,7 +2248,7 @@ class Api_Betting extends JController {
 						$debug = "- About to send to iGAS API\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
-					$external_bet	= $api->placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selectionID);
+					$external_bet	= $api->placeSportsBet($bet->user_id, $bet_id, $amount, $gameID, $marketID, $line, $bet_dividend, $selectionID);
 					$responseArray = print_r($external_bet,true);
 					if ($debugflag == 1){
 						$debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";

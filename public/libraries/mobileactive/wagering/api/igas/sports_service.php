@@ -84,7 +84,7 @@ class WageringApiIgassportsService extends ConfigReader{
 	 * @param array $bet_data
 	 * @return object
 	 */
-	public function placeSportsBet($clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selectionID)
+	public function placeSportsBet($clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selectionID)
 	{
 		
 		// TODO: get from config file or server.xml
@@ -92,9 +92,9 @@ class WageringApiIgassportsService extends ConfigReader{
 		$userName = "topbetta";
 		$userPassword = "T0pB3tter@AP!";
 		$companyID = "TopBetta";
-		$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $flexi, $gameID, $marketID, $line, $odds, $selectionID");
+		$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selectionID");
 		
-	  // Bet related Paramaters
+	    // Bet related Paramaters
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 				'flexi' => "$flexi", 'gameId' => "$gameID", 'marketId' => "$marketID",
 				'selection' => "$selectionID", 'line' => "$line", 'odds' => "$odds");
@@ -114,44 +114,6 @@ class WageringApiIgassportsService extends ConfigReader{
 		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		
 		
-		return $response;
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-/* 		$file = "/tmp/api.txt";
-		$debug = "- In service placeBetList function: $params\n";
-		file_put_contents($file, $debug, FILE_APPEND | LOCK_EX); */
-		
-		// $this->setLogger();
-		//$params = "eventId=$event_id&special=&handicap=$bet_handicap&betType=$bet_type_ref&betAmount=$bet_amount&optionId=$bet_option_id&dividend=$bet_dividend";
-		
-		$this->send_bet = array(
-			'eventId' => $event_id,
-			'special' => "",
-			'handicap' => $handicap,
-			'betType' => $bet_type,
-			'betAmount' => ($bet_amount/100),
-			'optionId' => $bet_option,
-			'dividend' => $bet_dividend	);
-		
-		$response = $this->action($this->send_bet, $this->service_quickbet_path);
 		return $response;
 	}
 	
