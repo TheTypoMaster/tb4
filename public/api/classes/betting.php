@@ -1894,20 +1894,7 @@ class Api_Betting extends JController {
 		$postVars = print_r(JRequest::get('POST'), true);
 		file_put_contents('/tmp/saveSportsBet', "* Post Vars:". $postVars . "\n", FILE_APPEND | LOCK_EX);
 		
-		/*
-			// bet placement params
-		$event_id = 941579; // the bookmaker event ID
-		$bet_amount = "1"; // Amount to bet
-		$bet_type = "win"; // the win/draw/handicap
-		$bet_option_id = "awin"; // awin/bwin/draw or competitor ID - see examples below.
-		$bet_handicap = 1; // Always set to 1
-		$bet_dividend = "2.00"; // The current dividend on the market. Can't be higher then the actual dividend. Will error and return current dividend if so.
-		*/
-		// hard coded bet params for BM
-		$handicap = 1; // Always set to 1
-		$special = "";
-	
-		//Get free bet in cents
+		// check if free credit is to be used
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
 	
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
@@ -1929,9 +1916,7 @@ class Api_Betting extends JController {
 			// TODO: not catering for multi bets at this stage.
 			foreach($betSelections as $selection => $betAmount){
 				file_put_contents($file, "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
-			
 			}
-			
 			
 			/*
 			 *  Check all required POST vars are there
@@ -1951,7 +1936,7 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 			
-			// check if  has been passed to the API
+			// check if  market has been passed to the API
 			$betMarketID = JRequest::getVar('market_id', null);
 			if (is_null($betMarketID)) {
 				$validation->error = JText::_('No market ID recieved');
@@ -1972,7 +1957,7 @@ class Api_Betting extends JController {
 		
 			
 			/*
-			 *  Check the bet is on valid events and selections
+			 *  Check the bet is on valid events, markets and selections
 			 */			
 		
 			// check if match_id is in the DB
@@ -1982,14 +1967,31 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 					
-// 			// check if market_id is in the DB
-// 			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
-// 			if (is_null($market_exists)) {
+//  			// check if market_id is in the DB
+//  			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
+//  			if (is_null($market_exists)) {
 // 				$validation->error = JText::_('Market not available');
 // 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
-// 			}
+//  			}
 	
-			if ($debugflag == 1){
+ 			// grab the external id's 
+ 			$externalIDs = getExternalIDsApi($selection);
+ 			
+ 			// check if external market ID exists for the given selection
+ 			$externalMarketID = $externalIDs->external_market_id;
+ 			if (is_null($externalMarketID)) {
+ 				$validation->error = JText::_('External Market not available');
+ 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 			}
+ 			
+ 			// check if external selection ID exists for the given selection
+ 			$externalSelectionID = $externalIDs->external_selection_id;
+ 			if (is_null($externalMarketID)) {
+ 				$validation->error = JText::_('External Selection not available');
+ 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 			}
+ 			
+ 			if ($debugflag == 1){
 				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$betMatchID, Market:$betMarketID, Selection:$selection, BetValue:$bet_value, BetDividend:$bet_dividend\n";
 				file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 			}
@@ -2248,7 +2250,7 @@ class Api_Betting extends JController {
 						$debug = "- About to send to iGAS API\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
-					$external_bet	= $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $betMatchID, $betMarketID, $line, $bet_dividend, $selectionID);
+					$external_bet	= $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $betMatchID, $externalMarketID, $line, $bet_dividend, $externalSelectionID);
 					$responseArray = print_r($external_bet,true);
 					if ($debugflag == 1){
 						$debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";

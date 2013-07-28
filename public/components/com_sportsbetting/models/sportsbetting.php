@@ -122,6 +122,8 @@ class SportsbettingModelSportsbetting extends JModel {
 		return $db->loadObject();
 	}
 	
+	
+	
 	public function getMatchIDApi($match_id)
 	{
 		$db =& $this->getDBO();
@@ -132,6 +134,15 @@ class SportsbettingModelSportsbetting extends JModel {
 	}
 	
 
+	public function getExternalIDsApi($selecitonID)
+	{
+		$db =& $this->getDBO();
+		$query = "SELECT external_selection_id, external_market_id, external_event_id FROM `tbdb_selection` WHERE id ='".$selecitonID."'";
+		$db->setQuery($query);
+	
+		return $db->loadObject();
+	}
+	
 
 // ##############################################################
 /// split up functions for the API
