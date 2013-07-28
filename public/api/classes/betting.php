@@ -1953,7 +1953,7 @@ class Api_Betting extends JController {
 			// get line if passed to API
 			$line = JRequest::getVar('line', null);
 			
-			if($line = 0) $line = "";
+			if($line == "0") $line = "";
 			
 			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID, Dividend:$bet_dividend\n", FILE_APPEND | LOCK_EX);
 		
