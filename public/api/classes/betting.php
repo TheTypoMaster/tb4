@@ -1949,7 +1949,10 @@ class Api_Betting extends JController {
 				$validation->error = JText::_('No bet dividend received');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-				
+			
+			// convert dividend to cents
+			$bet_dividend = $bet_dividend * 100;
+										
 			// get line if passed to API
 			$line = JRequest::getVar('line', null);
 			
