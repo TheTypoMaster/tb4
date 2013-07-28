@@ -668,7 +668,7 @@ class WageringApiIgassportsService extends ConfigReader{
 	
 	
 		return '{ "Username": "'.$UserName.'", "Password": "'.$UserPassword.'", "CompanyID": "'.$CompanyID.'", "ReferenceId": "'.$paramslist['betID'].'",
-				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "Flexi": '.$paramslist['flexi'].', "DataKey": "'.$DataKey.'",
+				"ClientId": "'.$paramslist['clientID'].'",  "Amount": '.$paramslist['amount'].', "DataKey": "'.$DataKey.'",
 	
  				 "BetList": [
   					{ "GameId": '.$paramslist['gameId'].', "MarketId": '.$paramslist['marketId'].', "Selection": "'.$paramslist['selection'].'", "Line": "'.$paramslist['line'].'",
