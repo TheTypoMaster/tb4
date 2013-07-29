@@ -64,7 +64,7 @@ class TournamentModelMeeting extends TournamentModelEventGroup
 	public function getMeetingApi($id)
 	{
 		$db =& $this->getDBO();
-		$query = "SELECT eg.id, eg.external_event_group_id, eg.wagering_api_id, eg.name, eg.tournament_competition_id, eg.start_date, eg.display_flag, eg.created_date, eg.updated_date, eg.meeting_code, eg.state, eg.events, eg.track, eg.weather, eg.type_code FROM `tbdb_event_group` AS eg WHERE eg.id ='".$id."'";
+		$query = "SELECT eg.id, eg.external_event_group_id, eg.wagering_api_id, eg.name, eg.tournament_competition_id, eg.start_date, eg.display_flag, eg.created_date, eg.updated_date, eg.meeting_code, eg.state, eg.events, eg.track, eg.weather, eg.type_code, eg.country, eg.meeting_grade FROM `tbdb_event_group` AS eg WHERE eg.id ='".$id."'";
 		//$query = "SELECT * FROM `#__meeting` WHERE `id`=".$id;
 		$db->setQuery($query);
 
