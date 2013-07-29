@@ -1,6 +1,14 @@
 <?php
+namespace TopBetta\frontend;
 
-class RacingController extends BaseController {
+use TopBetta;
+
+class FrontUsersBalancesController extends \BaseController {
+
+	public function __construct()
+	{
+		$this->beforeFilter('auth');
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -8,8 +16,13 @@ class RacingController extends BaseController {
 	 * @return Response
 	 */
 	public function index()
-	{
-		//
+	{			
+		$userId = \Auth::user() -> id;
+		
+		$accountBalance = \TopBetta\AccountBalance::getAccountBalance($userId);
+		$freeCreditBalance = \TopBetta\FreeCreditBalance::getFreeCreditBalance($userId);
+		
+		return array("success" => true, "result" => array("account_balance" => $accountBalance, "freecredit_balance" => $freeCreditBalance));
 	}
 
 	/**

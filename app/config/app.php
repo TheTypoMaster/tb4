@@ -39,7 +39,7 @@ return array(
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'Australia/Sydney',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -96,6 +96,7 @@ return array(
 		'Illuminate\Foundation\Providers\KeyGeneratorServiceProvider',
 		'Illuminate\Log\LogServiceProvider',
 		'Illuminate\Mail\MailServiceProvider',
+		'Illuminate\Foundation\Providers\MaintenanceServiceProvider',
 		'Illuminate\Database\MigrationServiceProvider',
 		'Illuminate\Foundation\Providers\OptimizeServiceProvider',
 		'Illuminate\Pagination\PaginationServiceProvider',
@@ -158,7 +159,7 @@ return array(
 		'File'            => 'Illuminate\Support\Facades\File',
 		'Form'            => 'Illuminate\Support\Facades\Form',
 		'Hash'            => 'Illuminate\Support\Facades\Hash',
-		'Html'            => 'Illuminate\Support\Facades\Html',
+		'HTML'            => 'Illuminate\Support\Facades\HTML',
 		'Input'           => 'Illuminate\Support\Facades\Input',
 		'Lang'            => 'Illuminate\Support\Facades\Lang',
 		'Log'             => 'Illuminate\Support\Facades\Log',
@@ -178,7 +179,35 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-
+		'FrontUsers'			=> 'TopBetta\frontend\FrontUsersController',
+		'FrontUsersProfile'	=> 'TopBetta\frontend\FrontUsersProfileController',
+		'FrontUsersRefer'	=> 'TopBetta\frontend\FrontUsersReferController',
+		'FrontUsersBanking'	=> 'TopBetta\frontend\FrontUsersBankingController',
+		'FrontUsersDeposit'	=> 'TopBetta\frontend\FrontUsersDepositController',
+		'FrontUsersWithdraw'	=> 'TopBetta\frontend\FrontUsersWithdrawController',
+		'FrontUsersBalances'	=> 'TopBetta\frontend\FrontUsersBalancesController',
+		'FrontUsersBetting'	=> 'TopBetta\frontend\FrontUsersBettingController',
+		'FrontUsersBettingLimit'	=> 'TopBetta\frontend\FrontUsersBettingLimitsController',
+		'FrontUsersTournaments'	=> 'TopBetta\frontend\FrontUsersTournamentsController',
+		'FrontBets'		=> 'TopBetta\frontend\FrontBetsController',
+		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
+		'FrontRaces'	=> 'TopBetta\frontend\FrontRacesController',
+		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController',
+		'FrontSports'	=> 'TopBetta\frontend\FrontSportsController',
+		'FrontSportsEvents'	=> 'TopBetta\frontend\FrontSportsEventsController',
+		'FrontSportsTypes'	=> 'TopBetta\frontend\FrontSportsTypesController',
+		'FrontSportsOptions'	=> 'TopBetta\frontend\FrontSportsOptionsController',
+		'FrontTournaments'	=> 'TopBetta\frontend\FrontTournamentsController',
+		'FrontTournamentsBets'	=> 'TopBetta\frontend\FrontTournamentsBetsController',
+		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController',
+		'FrontTournamentsTickets'	=> 'TopBetta\frontend\FrontTournamentsTicketsController',
+		'BackRacing'	=> 'TopBetta\backend\RacingController',
+		'BackSports'	=> 'TopBetta\backend\SportsController',
+		'BackBets'		=> 'TopBetta\backend\BetResultsController',
+		'testJSON' => 'TopBetta\backend\TestJSONController',
+		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
+		'HeartBeat' => 'TopBetta\admin\HeartBeatController'
+		
 	),
 
 );

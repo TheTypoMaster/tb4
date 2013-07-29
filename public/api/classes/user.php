@@ -72,7 +72,8 @@ class Api_User extends JController {
 													'block' 	=> $user->block,
 													'tb_user' 	=> $tb_user);				
 			} else {				
-			$result = OutputHelper::json(200, array('first_name'=> $first_name, 
+			$result = OutputHelper::json(200, array('id'		=> (int)$user->id,
+													'first_name'=> $first_name, 
 													'last_name' => $last_name, 
 													'username' 	=> $user->username, 
 													'email' 	=> $user->email,
@@ -131,11 +132,20 @@ class Api_User extends JController {
 						   $account_type = 'corporate';
 						}elseif( $user->isTopBetta && !$user->isCorporate ){
 						   $account_type = 'topbetta';
+						   $full_account = true;
 						}else{
 						   $account_type = 'basic';
+						   $full_account = false;
+						}			
+						
+						if (!class_exists('TopbettaUserModelTopbettaUser')) {
+							JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
 						}
 						
-						$result = OutputHelper::json(200, array('msg' => 'Login successful','userInfo' => array('username' => $user->username , 'name' => $user->name, 'accountType' => $account_type ) ));
+						$tb_model = new TopbettaUserModelTopbettaUser();	
+						$tbuser = $tb_model->getUser();	
+						
+						$result = OutputHelper::json(200, array('msg' => 'Login successful','userInfo' => array('id' => (int)$user->id, 'username' => $user->username , 'name' => $user->name, 'first_name' => $tbuser->first_name, 'last_name' => $tbuser->last_name, 'accountType' => $account_type, 'full_account' => $full_account ) ));
 					}else{
 
                          $result = OutputHelper::json(500, array('error_msg' => 'Account not activated or blocked' ));
@@ -928,7 +938,7 @@ class Api_User extends JController {
 
 					} else {
 						
-						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE' ) ));
+						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE' ), 'username' => $username ));
 					}
                     
                     
@@ -1377,6 +1387,32 @@ class Api_User extends JController {
 		
     }
 	
+	/**
+	 * generateJoomlaPassword
+	 * 
+	 * This is used for laravel to store a joomla based password :-)
+	 */
+	public function generateJoomlaPassword() {
+		
+        // first validate a legit token has been sent
+		$server_token = JUtility::getToken();
+
+		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {		
+			
+			$password	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
+
+			$salt = JUserHelper::genRandomPassword(32);
+			$crypt = JUserHelper::getCryptedPassword($password, $salt);
+			$joomla_password = $crypt.':'.$salt;
+			
+			return OutputHelper::json(200, array('joomla_password' => $joomla_password ));
+		
+		}else{
+		
+		    return OutputHelper::json(500, array('error_msg' => JText::_( 'Invalid Token' ) ));
+		}		
+		
+	}
 	
 	/**
 	 * Password Reset Request Method
@@ -2664,6 +2700,373 @@ Must be 18+<br>
 		return $result;
 	}
 	
+	
+	public function getBettingHistory() {
+		
+		 // first validate a legit token has been sent
+		$server_token = JUtility::getToken(); 
+         
+		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
+
+			if (!class_exists('BettingModelBet')) {
+				JLoader::import('bet', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}
+
+			if (!class_exists('BettingModelBetSelection')) {
+				JLoader::import('betselection', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}
+
+			if (!class_exists('BettingModelBetResultStatus')) {
+				JLoader::import('BetResultStatus', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}
+
+			if (!class_exists('BettingModelBetProduct')) {
+				JLoader::import('BetProduct', JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models');
+			}		
+			
+			// CONTROLLER CODE
+			global $mainframe, $option;
+			
+			$bet_model					=& $this->getModel('Bet', 'BettingModel');
+			$bet_selection_model		=& $this->getModel('BetSelection', 'BettingModel');
+			$bet_result_status_model	=& $this->getModel('BetResultStatus', 'BettingModel');
+			$bet_product_model			=& $this->getModel('BetProduct', 'BettingModel');
+			$bet_origin_model			=& $this->getModel('BetOrigin', 'BettingModel');
+	
+			$user =& JFactory::getUser();
+			
+			if (!$user -> id) {
+				
+				return OutputHelper::json(500, array('error_msg' => 'Please login first'));
+								
+			}	
+								
+			
+			$result_type	= JRequest::getVar('result_type', null);
+			
+			$lists = array();
+			
+			$filter_from_date	= $mainframe->getUserStateFromRequest($option.'filter_history_from_date', 'filter_history_from_date');
+			$filter_to_date		= $mainframe->getUserStateFromRequest($option.'filter_history_to_date', 'filter_history_to_date');
+	
+			$lists['from_date']	= $filter_from_date;
+			$lists['to_date']	= $filter_to_date;
+			
+			$filter = array(
+				'user_id'		=> $user->id,
+				'result_type'	=> $result_type,
+				'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : null,
+				'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : null,
+			);
+			
+			$offset = $mainframe->getUserStateFromRequest(
+				JRequest::getVar('limitstart', 0, '', 'int'),
+				'limitstart',
+				0
+			);
+
+			$limit = $mainframe->getCfg('list_limit');
+			$bet_list = $bet_model->getBetFilterList($filter, 'b.id DESC', 'ASC', $limit, $offset);
+			
+			jimport('joomla.html.pagination');
+			$total = $bet_model->getBetFilterCount($filter);
+			$pagination = new JPagination($total, $offset, $limit);
+
+
+			
+			// VIEW.HTML.PHP
+			$bet_display_list = array();
+			
+			$component_list = array('tournament', 'topbetta_user');
+			foreach ($component_list as $component) {
+				$path = JPATH_SITE . DS . 'components' . DS . 'com_' . $component . DS . 'models';
+				$this -> addModelPath($path);
+			}
+
+			$meeting_model = &$this -> getModel('Meeting', 'TournamentModel');
+			$selection_result_model = &$this -> getModel('SelectionResult', 'TournamentModel');			
+			
+			//$bet_selection_model	=& $this->getModel('BetSelection');
+			//$selection_result_model	=& $this->getModel('SelectionResult');
+			//$meeting_model			=& $this->getModel('Meeting');
+			
+			require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'helpers' . DS . 'helper.php');
+			
+			$wagering_bet = WageringBet::newBet();
+
+			$i = 1;
+			foreach ($bet_list as $bet) {
+				$label		= BettingHelper::getBetTicketDisplay($bet->id);
+				$meeting	= $meeting_model->getMeetingByRaceID($bet->event_id);
+				
+				$bet_display_list[$bet->id] = array(
+					'link'			=> '/betting/racing/meeting/' . $meeting->id . '/' . $bet->event_number,
+					'row_class'		=> $i % 2 == 0 ? 'odds' : 'even',
+					'bet_time'		=> $bet->created_date,
+					'label'			=> $label,
+					'bet_type'		=> $wagering_bet->getBetTypeDisplayName($bet->bet_type),
+					'amount'		=> FORMAT::currency($bet->bet_amount),
+					'bet_total'		=> FORMAT::currency(abs($bet->bet_total)),
+					'bet_freebet_amount'		=> FORMAT::currency(abs($bet->bet_freebet_amount)),
+					'dividend'		=> '&mdash;',
+					'paid'			=> '&mdash;',
+					'result'		=> 'CONFIRMED',
+					'half_refund'	=> false
+				);
+				 
+				if ($bet->refunded_flag && !$bet->win_amount) {
+					$bet_display_list[$bet->id]['result']	= 'REFUNDED';
+					if ($bet->refund_amount > 0) {
+						$bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);  
+					}
+					
+				}
+				else if($bet->bet_result_status == 'pending')
+				{
+					$bet_display_list[$bet->id]['result']			= 'PENDING';
+				}
+				else if ($bet->resulted_flag && empty($bet->win_amount)) {
+					$bet_display_list[$bet->id]['result']	= 'LOSS';
+					$bet_display_list[$bet->id]['paid']		= 'NIL';
+				} else if ($bet->resulted_flag) {
+					$bet_display_list[$bet->id]['result']	= 'WIN';
+					$bet_display_list[$bet->id]['paid']		= Format::currency($bet->win_amount);
+					
+					if ($wagering_bet->isStandardBetType($bet->bet_type)) {
+						$selection_result	= $selection_result_model->getSelectionResultBySelectionID($bet->selection_id);
+						$win_dividend		= $selection_result->win_dividend;
+						$place_dividend		= $selection_result->place_dividend;
+						
+						switch ($bet->bet_type) {
+							case WageringBet::BET_TYPE_WIN:
+								$bet_display_list[$bet->id]['dividend'] = Format::odds($win_dividend);
+								break;
+							case WageringBet::BET_TYPE_PLACE:
+								$bet_display_list[$bet->id]['dividend'] = Format::odds($place_dividend);
+								break;
+							case WageringBet::BET_TYPE_EACHWAY:
+								$bet_display_list[$bet->id]['dividend']  = Format::odds($win_dividend);
+								$bet_display_list[$bet->id]['dividend'] .= '/';
+								$bet_display_list[$bet->id]['dividend'] .= Format::odds($place_dividend);
+								break;
+						}
+					} else {
+						$bet_dividends = unserialize($bet->{$bet->bet_type . '_dividend'});
+						
+						$bet_display_list[$bet->id]['dividend'] = '&mdash;';
+						$dividends_count = count($bet_dividends);
+						
+						if ($dividends_count == 1) {
+							$bet_display_list[$bet->id]['dividend'] = Format::odds(array_shift($bet_dividends));
+						} else if ($dividends_count > 1) {
+							$bet_display_list[$bet->id]['dividend'] = array();
+							foreach ($bet_dividends as $combination => $bet_dividend) {
+								$bet_display_list[$bet->id]['dividend'][] = $combination . ': ' . Format::odds($bet_dividend); 
+							}
+							$bet_display_list[$bet->id]['dividend'] = implode('<br />', $bet_display_list[$bet->id]['dividend']);
+						}
+					}
+					
+					if ($bet->refunded_flag) {
+						$scrached_list = $bet_selection_model->getBetSelectionListByBetIDAndSelectionStatus($bet->id, 'scratched');
+						$scrached_display = array();
+						foreach ($scrached_list as $scrached) {
+							$scrached_display[] = $scrached->number . '. ' . $scrached->name;
+						}
+						
+						$bet_display_list[$bet->id]['half_refund'] = array(
+							'label'		=> implode(', ', $scrached_display),
+							'bet_type'	=> $wagering_bet->getBetTypeDisplayName($bet->bet_type),
+							'amount'	=> '&mdash;',
+							'bet_total'	=> '&mdash;',
+							'dividend'	=> '&mdash;',
+							'paid'		=> Format::currency($bet->refund_amount),
+							'result'	=> 'REFUND'
+						);
+					}
+				}
+				$i++;
+			}	
+
+			if (count($bet_display_list) > 0) {
+					
+				return OutputHelper::json(200, array('bet_list' => $bet_display_list, 'pagination' => $pagination, 'user' => $user->id ));	
+					
+				
+			}
+			else {
+				return OutputHelper::json(500, array('error_msg' => 'No betting history found'));
+			}
+
+		}else{
+		
+		      return OutputHelper::json(500, array('error_msg' => JText::_( 'Invalid Token' ) ));
+		}		
+		
+		
+	}
+	
+	public function doSelfExclude() {
+		
+		global $mainframe;
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		
+		$user	=& JFactory::getUser();
+		$model	=& $this->getModel('TopbettaUser', 'TopbettaUserModel');
+
+		$exclusion_end_timestamp = time() + 60 * 60 * 24 * 7;
+		$user_data_before_save	= $model->getUser();
+
+		if ($model->selfExclude($user->id, $exclusion_end_timestamp)) {
+			
+			$this->_sendExcludeEmail($exclusion_end_timestamp);
+
+			$user_data_after_save = $model->getUser();
+			//add user audit
+			if (!class_exists('TopbettaUserModelUserAudit')) {
+				JLoader::import('UserAudit', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+			}		
+						
+			$user_audit_model		=& $this->getModel('userAudit', 'TopbettaUserModel');
+			$audit_params = array(
+				'user_id'		=> $user->id,
+				'admin_id'		=> -1,
+				'field_name'	=> 'self_exclusion_date',
+				'old_value'		=> $user_data_before_save->self_exclusion_date,
+				'new_value'		=> $user_data_after_save->self_exclusion_date,
+			);
+			$user_audit_model->store($audit_params);
+
+			$mainframe->logout();
+			return OutputHelper::json(200, array('msg' => JText::_('You have been excluded for 1 week from the site. An email will be sent to notify you that this period has ended.')));
+		} else {
+			return OutputHelper::json(500, array('error_msg' => JText::_('Sorry, there was a problem excluding you. Please contact our customer service department to be excluded for 1 week.')));
+		}		
+		
+	}
+
+	public function doReferFriend() {
+		
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		$userModel =& $this->getModel( 'topbettaUser', 'TopbettaUserModel');
+
+		$user =& JFactory::getUser();
+		$userId = $user->get('id');
+
+		if (!$userId) {
+			
+			return OutputHelper::json(500, array('error_msg' => 'Please login first.'));
+			
+		}
+
+		$friendEmail = JRequest::getString('friend_email', null, 'post');
+		$subject = JRequest::getString('subject', null, 'post');
+		$message = JRequest::getString('message', null, 'post');
+
+		$err = array();
+
+		if( '' == $friendEmail || !JMailHelper::isEmailAddress($friendEmail))
+		{
+			$err['friend_email'] = 'Please enter a valid email.';
+		}
+		else if( $userModel->isExisting('email', $friendEmail) )
+		{
+			$err['friend_email'] = 'Sorry! The email address you have provided is already associated with an existing Topbetta user.';
+		}
+
+		if( '' == $subject )
+		{
+			$err['subject'] = 'Please enter an email subject';
+		}
+
+		if( count($err) >  0 )
+		{
+
+			return OutputHelper::json(500, array('error_msg' => $err));
+
+		}
+		
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+		
+		$mailer = new UserMAIL();
+		
+		$email_params	= array(
+			'subject'	=> $subject,
+			'mailto'	=> $friendEmail,
+			'mailfrom'	=> $user->email,
+			'fromname'	=> $user->name,
+			'ishtml'	=> true
+		);
+		$email_replacements = array(
+			'name'				=> $user->name,
+			'username'			=> $user->username,
+			'userid'			=> $userId,
+			'custom message'	=> $message,
+			'custom link'		=> JURI::base() . '/user/register/ref_id/' . $userId
+		);
+		if($mailer->sendUserEmail('referFriendEmail', $email_params, $email_replacements)) {
+			return OutputHelper::json(200, array('msg' => JText::_('An email has been sent to your friend.')));
+		} else {
+			return OutputHelper::json(500, array('error_msg' => 'Failed to send email to your friend.'));
+		}		
+		
+	}
+
+	/**
+	 * Method to send exclude email
+	 *
+	 * @return void
+	 */
+	private function _sendExcludeEmail($exclusion_end_timestamp)
+	{
+		global $mainframe;
+
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+
+		$user =& JFactory::getUser();
+
+		$config =& JComponentHelper::getParams('com_topbetta_user');
+		$mailfrom = $config->get('mailFrom');
+		$fromname = $config->get('fromName');
+
+		$params =& JComponentHelper::getParams('com_topbetta_user');
+
+		$subject		= JText::_('Temporary Exclusion from TopBetta');
+		$exclusion_date	= date('d/m/Y', $exclusion_end_timestamp);		
+
+		$mailer = new UserMAIL();
+		$email_params	= array(
+			'mailfrom'	=> $mailfrom,
+			'fromname'	=> $fromname,
+			'subject'	=> $subject,
+			'mailto'	=> $user->email
+		);
+
+		$email_replacements = array(
+			'name'				=> $user->name,
+			'username'			=> $user->username,
+			'date'				=> $exclusion_date
+		);
+
+		//$mailer->sendUserEmail('excludeEmail', $email_params, $email_replacements);
+		//var_dump($mailer);
+
+		//send admin notifications
+		$mailer = new JMAIL();
+		$mailer->setSender(array($mailfrom, $fromname));
+		$mailer->addReplyTo(array($mailfrom));
+		$mailer->addRecipient($mailfrom);
+		$mailer->setSubject('Temporary Exclusion - ' . $user->username . ' (' . $user->id . ')');
+		$mailer->setBody('User ' . $user->username . ' (' . $user->id . ') has requested self-exclusion. The exclusion will be lifted on ' . $exclusion_date, false);
+		$mailer->IsHTML(false);
+		//$mailer->Send();
+		//var_dump($mailer);
+
+	}
 	
 	/**
 	 * Format the display of a countdown to a specified time
