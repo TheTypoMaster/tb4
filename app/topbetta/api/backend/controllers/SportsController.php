@@ -294,6 +294,7 @@ class SportsController extends \BaseController {
 																				
 										// add period to bet type name if it's been set
 										($dataArray['Period'] != "") ? $betTypeName = $dataArray['BetTypeName']." ".$dataArray['Period'] : $betTypeName = $dataArray['BetTypeName'];
+										
 										// check if market type exists
 										$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betTypeName);
 	
@@ -301,26 +302,21 @@ class SportsController extends \BaseController {
 										if($marketTypeExists){
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type. BetTypeName: $betTypeName,  BetTypeID:$externalMarketTypeID, In DB: $marketTypeExists", 1);
 											$marketTypeModel = TopBetta\SportsMarketType::find($marketTypeExists);
-											//(isset($dataArray['Period'])) ? $marketTypeModel->name = $betTypeName ." ".$dataArray['Period'] : $marketTypeModel->name = $betTypeName;
 										}else{ // if not create a new one
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Market Type, BetTypeName: $betTypeName,  BetTypeID:$externalMarketTypeID, Adding to DB: $marketTypeExists", 1);
 											$marketTypeModel = new TopBetta\SportsMarketType;
 											$marketTypeModel->description = "UPDATE ME";
-											//(isset($dataArray['Period'])) ? $marketTypeModel->name = $betTypeName ." ".$dataArray['Period'] : $marketTypeModel->name = $betTypeName;
 										}
+										
 										// add bet type name to model
 										$marketTypeModel->name = $betTypeName;
 										// update the status flag
 										$marketTypeModel->status_flag = "1";
-										
 										// update the bet_type_id
 										$marketTypeModel->external_bet_type_id = $externalMarketTypeID;
-										
-										// add the Period to the bet type name if it's being set
-										
-										
 										// save or update the record
 										$marketTypeSave = $marketTypeModel->save();
+										
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. MarketID:$marketId, EventID:$eventId, BetType and Name not in JSON. Can't process", 2);
 									}
