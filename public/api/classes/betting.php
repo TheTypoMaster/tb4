@@ -3058,9 +3058,9 @@ class Api_Betting extends JController {
 	private function _isFlexiBet($bet_type_name)
 	{
 		
-		if ($bet_type_name != WageringBet::BET_TYPE_TRIFECTA && $bet_type_name != WageringBet::BET_TYPE_FIRSTFOUR) {
-			return false;
-		}
+		//if ($bet_type_name != WageringBet::BET_TYPE_TRIFECTA && $bet_type_name != WageringBet::BET_TYPE_FIRSTFOUR) {
+		//	return false;
+		//}
 		
 		return JRequest::getVar('flexi', false);
 	}
