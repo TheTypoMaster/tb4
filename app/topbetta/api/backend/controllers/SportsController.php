@@ -158,11 +158,11 @@ class SportsController extends \BaseController {
 									if($compExists){
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 										$compModel = TopBetta\SportsComps::find($compExists);
-										(isset($dataArray['Round'])) ? $compModel->name .= " " . $dataArray['Round'] : $compModel->name = $competition;
+										(isset($dataArray['Round'])) ? $compModel->name = $compModel->name. " " . $dataArray['Round'] : $compModel->name = $competition;
 									}else{
 										$compModel = new TopBetta\SportsComps;
 										//add round to competition name if is provided in the data
-										(isset($dataArray['Round'])) ? $compModel->name .= " " . $dataArray['Round'] : $compModel->name = $competition;
+										(isset($dataArray['Round'])) ? $compModel->name = $compModel->name. " " . $dataArray['Round'] : $compModel->name = $competition;
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
