@@ -207,10 +207,12 @@ class SportsController extends \BaseController {
 								if($eventExists){
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Event, In DB: $eventExists", 1);
 									$eventModelSports = TopBetta\SportsMatches::find($eventExists);
+									$eventModelSports->event_status_id = 1;
 								// if not create a new record
 								}else{
 									$eventModelSports = new TopBetta\SportsMatches;
 									$eventModelSports->external_event_id = $eventId;
+									$eventModelSports->event_status_id = 1;
 								 }
 
 								if(isset($dataArray['EventTime'])){
