@@ -72,7 +72,6 @@ class Bet extends \Eloquent {
 	      		e.name AS event_name,
 	      		e.number AS event_number,
 	      		m.market_type_id AS market_id,
-	      		m.name AS market,
 	      		mt.name AS market_name,
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
