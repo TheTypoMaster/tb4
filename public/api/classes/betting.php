@@ -1991,13 +1991,22 @@ class Api_Betting extends JController {
  			
  			// check if external selection ID exists for the given selection
  			$externalSelectionID = $externalIDs->external_selection_id;
- 			if (is_null($externalMarketID)) {
+ 			if (is_null($externalSelectionID)) {
  				$validation->error = JText::_('External Selection not available');
  				return OutputHelper::json(500, array('error_msg' => $validation->error ));
  			}
  			
+ 			// check if external event ID exists for the given selection
+ 			$externalEventID = $externalIDs->external_event_id;
+ 			if (is_null($externalEventID)) {
+ 				$validation->error = JText::_('External event not available');
+ 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 			}
+ 			
+ 			
+ 			
  			if ($debugflag == 1){
-				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$betMatchID, Market:$betMarketID, Selection:$selection, BetValue:$bet_value, BetDividend:$bet_dividend\n";
+				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$externalEventID, Market:$betMarketID, Selection:$selection, BetValue:$bet_value, BetDividend:$bet_dividend\n";
 				file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 			}
 	
@@ -2255,7 +2264,7 @@ class Api_Betting extends JController {
 						$debug = "- About to send to iGAS API\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
-					$external_bet	= $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $betMatchID, $externalMarketID, $line, $bet_dividend, $externalSelectionID);
+					$external_bet	= $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $externalEventID, $externalMarketID, $line, $bet_dividend, $externalSelectionID);
 					$responseArray = print_r($external_bet,true);
 					if ($debugflag == 1){
 						$debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";
