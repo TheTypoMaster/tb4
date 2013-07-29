@@ -72,6 +72,8 @@ class Bet extends \Eloquent {
 	      		e.name AS event_name,
 	      		e.number AS event_number,
 	      		m.market_type_id AS market_id,
+	      		m.name AS market,
+	      		mt.name AS market_name,
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
@@ -109,6 +111,10 @@ class Bet extends \Eloquent {
 			ON
 				m.id = s.market_id
 			INNER JOIN
+				tbdb_market_type AS mt
+			ON
+				mt.id = m.market_type_id
+			INNER JOIN
 				tbdb_event AS e
 			ON
 				e.id = m.event_id
@@ -144,6 +150,7 @@ class Bet extends \Eloquent {
 	      		e.id AS event_id,
 	      		e.external_event_id,
 	      		m.market_type_id AS market_id,
+	      		mt.name AS market_name,
 	      		e.name AS event_name,
 	      		e.number AS event_number,
 	      		s.name AS selection_name,
@@ -184,6 +191,10 @@ class Bet extends \Eloquent {
 				tbdb_market AS m
 			ON
 				m.id = s.market_id
+			INNER JOIN
+				tbdb_market_type AS mt
+			ON
+				mt.id = m.market_type_id
 			INNER JOIN
 				tbdb_event AS e
 			ON
