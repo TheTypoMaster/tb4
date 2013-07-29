@@ -246,7 +246,7 @@ class FrontTournamentsController extends \BaseController {
 		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId);
 		$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
 
-		if ($tournament -> free_credit_flag) {
+		if ($tournament -> free_credit_flag && $placeList) {
 
 			$placeList['formula'] = "freecredit";
 
@@ -263,6 +263,14 @@ class FrontTournamentsController extends \BaseController {
 
 				if (isset($prize['cash']) && !empty($prize['cash'])) {
 					$place_display[$place][] = $prize['cash'];
+				}
+
+				// little attempt at making a free credit prize pool
+				if ($tournament -> free_credit_flag && isset($prize['cash']) && !empty($prize['cash'])) {
+
+					$placeList['place'][$place]['freecredit'] = $prize['cash'];
+					unset($placeList['place'][$place]['cash']);
+
 				}
 
 				$place_display[$place] = join(' + ', $place_display[$place]);
