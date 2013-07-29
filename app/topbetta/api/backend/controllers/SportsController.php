@@ -404,6 +404,7 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, In DB: $selectionsExists", 1);
 										$selectionModel = TopBetta\SportsSelection::find($selectionsExists);
 										$selectionModel->market_id = $marketExists;
+										$selectionModel->home_away = $dataArray['HomeAway'];
 										
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, Added to DB: $selectionsExists", 1);
@@ -412,6 +413,7 @@ class SportsController extends \BaseController {
 										$selectionModel->external_selection_id = $selectionId;
 										$selectionModel->external_event_id = $eventId;
 										$selectionModel->external_market_id = $marketId;
+										$selectionModel->home_away = $dataArray['HomeAway'];
 										
 									}
 									if(isset($dataArray['Selection'])){

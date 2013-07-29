@@ -16,6 +16,8 @@ class UpdateTbdbSelectionTablev2 extends Migration {
 		{
 			$table->integer('external_event_id');
 			$table->integer('external_market_id');
+			$table->string('home_away');
+			
 			
 		});
 	}
