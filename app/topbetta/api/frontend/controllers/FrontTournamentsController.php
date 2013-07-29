@@ -246,6 +246,12 @@ class FrontTournamentsController extends \BaseController {
 		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId);
 		$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
 
+		if ($tournament -> free_credit_flag) {
+
+			$placeList['formula'] = "freecredit";
+
+		}
+
 		//work out places paid via place list
 		$places_paid = 0;
 		if ($placeList) {
