@@ -151,26 +151,44 @@ class SportsController extends \BaseController {
 								*/
 								
 								if(isset($dataArray['League'])){
-									$competition = $dataArray['League'];
+									//add round to competition name if is provided in the data
+									if($dataArray['Round'] != ""){
+										$competition = $dataArray['League']." ".$dataArray['Round'];
+									}else{
+										$competition = $dataArray['League'];
+									}
+									
 									// Check if comp/league exists in DB
 									$compExists = TopBetta\SportsComps::compExists($competition);
+									
 									// if comp/league exists update that record
 									if($compExists){
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 										$compModel = TopBetta\SportsComps::find($compExists);
-										($dataArray['Round'] != "") ? $compModel->name = $competition. " " . $dataArray['Round'] : $compModel->name = $competition;
+										// update the start finish times
+										if($compModel->start_date > $dataArray['EventTime']) $compModel->start_date = $dataArray['EventTime'];
+										if($compModel->close_date < $dataArray['EventTime']) $compModel->close_date = $dataArray['EventTime'];
+										
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 									}else{
 										$compModel = new TopBetta\SportsComps;
-										//add round to competition name if is provided in the data
-										($dataArray['Round'] != "") ? $compModel->name = $competition. " " . $dataArray['Round'] : $compModel->name = $competition;
+										
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
+										
+										// update the start finish times
+										$compModel->start_date = $dataArray['EventTime'];
+										$compModel->close_date = $dataArray['EventTime'];
+										
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
 									
-									$compModel->start_date = date_format(date_create($dataArray['EventTime']), 'y/m/d');
-									$compModel->close_time = $dataArray['EventTime'];
+									//$compModel->start_date = date_format(date_create($dataArray['EventTime']), 'y/m/d');
+									// Set the competition name
+									$compModel->name = $competition;
+								
+									// save or update the competition record
 									$compModel->save();
+
 									
 									/*
 									 * Add/Update tournament competition record
