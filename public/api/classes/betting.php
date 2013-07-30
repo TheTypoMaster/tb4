@@ -2346,7 +2346,7 @@ class Api_Betting extends JController {
 				// TODO: Update bet record with correct dividend. Currently it's not stored with the actual bet
 				
 				// Update odds and line on bet_selection
-				$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
+				$query = "UPDATE `tbdb_bet` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
 				$db->setQuery( $query );
 				$db->query();
 				return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
