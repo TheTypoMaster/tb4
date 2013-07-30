@@ -197,6 +197,7 @@ return array(
 		'FrontSportsEvents'	=> 'TopBetta\frontend\FrontSportsEventsController',
 		'FrontSportsTypes'	=> 'TopBetta\frontend\FrontSportsTypesController',
 		'FrontSportsOptions'	=> 'TopBetta\frontend\FrontSportsOptionsController',
+		'FrontSportsResults'	=> 'TopBetta\frontend\FrontSportsResultsController',
 		'FrontTournaments'	=> 'TopBetta\frontend\FrontTournamentsController',
 		'FrontTournamentsBets'	=> 'TopBetta\frontend\FrontTournamentsBetsController',
 		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController',
