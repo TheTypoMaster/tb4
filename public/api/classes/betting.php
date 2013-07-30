@@ -2333,7 +2333,10 @@ class Api_Betting extends JController {
 					//file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 						
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
-						
+
+					$validation->error = JText::_('Bet could not be registered');
+					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+					
 // 					if (isset($external_bet->newOdds)){
 // 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
 // 					}else{
