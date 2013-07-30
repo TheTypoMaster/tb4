@@ -166,7 +166,7 @@ class SportsController extends \BaseController {
 										$compModel = TopBetta\SportsComps::find($compExists);
 										// update the start finish times
 										if($compModel->start_date > $dataArray['EventTime']) $compModel->start_date = $dataArray['EventTime'];
-										if($compModel->close_date < $dataArray['EventTime']) $compModel->close_date = $dataArray['EventTime'];
+										if($compModel->close_time < $dataArray['EventTime']) $compModel->close_time = $dataArray['EventTime'];
 										
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 									}else{
@@ -177,7 +177,7 @@ class SportsController extends \BaseController {
 										
 										// update the start finish times
 										$compModel->start_date = $dataArray['EventTime'];
-										$compModel->close_date = $dataArray['EventTime'];
+										$compModel->close_time = $dataArray['EventTime'];
 										
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
