@@ -462,45 +462,38 @@ class SportsController extends \BaseController {
 							$marketStatus = $dataArray['MarketStatus'];
 							$score = $dataArray['Score'];
 							$scoreType = $dataArray['ScoreType'];
-							if(isset($dataArray['SelectionNo'])){
-								$selectionId = $dataArray['SelectionNo'];
+
+							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 							
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
+							// If marketstatus is R = resulted and Scoretype = win <- NON line results
+							if($dataArray['MarketStatus'] == 'R' && $dataArray['ScoreType'] == 'W'){
+
+								// - get winning selection record
+								$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($eventId, $marketId, $score);
 								
-								// If marketstatus is R = resulted and Scoretype = win <- NON line results
-								if($dataArray['MarketStatus'] == 'R' && $dataArray['ScoreType'] == 'W'){
-	
-									// - get winning selection record
-									$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($eventId, $marketId, $score);
+								// if selection found
+								if ($winningSelectionID){
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, WinningSelectionID:$winningSelectionID.", 1);
 									
-									// if selection found
-									if ($winningSelectionID){
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, WinningSelectionID:$winningSelectionID.", 1);
-										
-										// check if there is a result record for this selection already //TODO: Need to cater for re-results
-										$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($winningSelectionID);
-										 
-										if($winningSelectionResultExists){
-											$selectionResultModel = TopBetta\SportsSelectionResults::find($winningSelectionResultExists);
-										}else{
-											// create selection_result record
-											$selectionResultModel = new TopBetta\SportsSelectionResults;
-											$selectionResultModel->selection_id = $winningSelectionID;
-											$selectionResultModel->position = 1;
-											$selectionResultModel->save();
-											TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
-										}
-										
+									// check if there is a result record for this selection already //TODO: Need to cater for re-results
+									$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($winningSelectionID);
+									 
+									if($winningSelectionResultExists){
+										$selectionResultModel = TopBetta\SportsSelectionResults::find($winningSelectionResultExists);
 									}else{
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No SelctionID. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
+										// create selection_result record
+										$selectionResultModel = new TopBetta\SportsSelectionResults;
+										$selectionResultModel->selection_id = $winningSelectionID;
+										$selectionResultModel->position = 1;
+										$selectionResultModel->save();
+										TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
 									}
+									
 								}else{
-									TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: MarketStatus not R. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
+									TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No SelctionID. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
 								}
 							}else{
-								// Line Results
-								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: LINE BET. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
-								
+								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: ScoreType not W. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
 							}
 						}
 						break;
