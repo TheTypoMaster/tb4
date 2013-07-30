@@ -252,19 +252,19 @@ class SportsController extends \BaseController {
 								 * Add/Update the close time on the Leage/Competition record to be the last events start time
 								*/
 								
-								// update competiton with new event start time if it's after the current stored time
+								// update competiton with new event close time if it's after the current stored time
 								if ($dataArray['EventTime'] > $compModel->close_time){
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
 								}
 								
 								// grab the date from the event start times
-								$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
-								$oldShortDate = date_format(date_create($compModel->close_time), 'y/m/d');
+								//$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
+								//$oldShortDate = date_format(date_create($compModel->close_time), 'y/m/d');
 								
 								// update competiton with new event start time if it's after the current stored time
-								if ($oldShortDate > $newShortDate){
-									$compModel->start_date = $newShortDate;
+								if ($compModel->start_date > $dataArray['EventTime']){
+									$compModel->start_date = $dataArray['EventTime'];
 									$compModel->save();
 								}
 								
