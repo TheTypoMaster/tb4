@@ -32,10 +32,10 @@ class JConfig {
 	public $ftp_pass = 'dec0ll1g';
 	public $ftp_root = '';
 	public $dbtype = 'mysql';
-	public $host = null;
-	public $user = null;
-	public $db = null;
-	public $password = null;
+	public $host = 'localhost';
+	public $user = 'root';
+	public $db = 'topbetta_igas';
+	public $password = 't0pb3tt@mysqlp@ss';
 	public $dbprefix = 'tbdb_';
 	public $mailer = 'mail';
 	public $mailfrom = 'help@topbetta.com';
@@ -61,6 +61,7 @@ class JConfig {
 	public $time_zone = 'AEST';
 	public $time_zone_long = 'AEST (UT+10:00)';
 
+	/*
 	public function __construct() {
 		jimport('mobileactive.config.reader');
 
@@ -83,4 +84,7 @@ class JConfig {
 		$this->time_zone		= ($this->offset == 10) ? 'AEST' : 'AEDT';
 		$this->time_zone_long	= ($this->offset == 10) ? 'AEST (UT+10:00)' : 'AEDT (UTC+11:00)';
 	}
+	 * 
+	 */
 }
+//error_reporting(E_ALL);

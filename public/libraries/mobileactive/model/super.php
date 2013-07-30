@@ -825,13 +825,15 @@ abstract class SuperModel extends JModel
 		$this->_transformMembers();
 
 		$this->_emptyCheck();
-		$this->_typeCheck();
+		// $this->_typeCheck();
 
 		$this->_valueCheck();
 
 		$error_list = $this->getErrorList();
+		$e = print_r($error_list, true);
+		
 		if(!empty($error_list)) {
-			throw new Exception('Save failed due to validation errors');
+			throw new Exception('Save failed due to validation errors:'. $e);
 		}
 	}
 

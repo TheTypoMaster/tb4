@@ -33,9 +33,10 @@ App::after(function($request, $response)
 |
 */
 
+// frontend api is using laravel auth after the legacy login
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::route('login');
+	if (Auth::guest()) return Response::json(array("success" => false, "error" => "Please login first."), 401);
 });
 
 
@@ -47,6 +48,9 @@ Route::filter('auth.basic', function()
 Route::filter('apiauth', function()
 {
  
+	Config::set('auth.table', 'tb_api_users');
+	Config::set('auth.model', 'APIUser');
+	
     // Test against the presence of Basic Auth credentials
     $creds = array(
         'username' => Request::getUser(),
@@ -63,6 +67,14 @@ Route::filter('apiauth', function()
  
     }
  
+});
+
+// stateless HTTP Basic login for API
+Route::filter('basic.once', function()
+{
+	Config::set('auth.table', 'tb_api_users');
+	Config::set('auth.model', 'APIUser');
+	return Auth::onceBasic('username');
 });
 
 /*
