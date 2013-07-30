@@ -65,9 +65,9 @@ class HeartBeatController extends \BaseController {
 	 */
 	public function store()
 	{
-		$heartBeatService = Input::get('provider');
-		$companyPushUrl = Input::get('pushUrl');
-		$remoteHost = Input::get('remoteHost');
+		$heartBeatService = \Input::get('provider');
+		$companyPushUrl = \Input::get('pushUrl');
+		$remoteHost = \Input::get('remoteHost');
 		
 		// $heartBeatService = 'igas_schedule';
 		
