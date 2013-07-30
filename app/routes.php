@@ -11,7 +11,7 @@
 |
 */
 
-apc_clear_cache("user");
+// apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
 
