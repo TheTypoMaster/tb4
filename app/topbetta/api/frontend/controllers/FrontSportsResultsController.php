@@ -43,8 +43,23 @@ class FrontSportsResultsController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
-		return \TopBetta\SportsResults::getResultsForEventId($id);
+
+		// store event results in cache for 2 min at a time
+		return \Cache::remember('sportsResults-' . $id, 2, function() use($id) {
+
+			$eventResults = \TopBetta\SportsResults::getResultsForEventId($id);
+
+			$result = array();
+
+			foreach ($eventResults as $market) {
+
+
+				$result[] = array('id' => (int)$market -> id, 'market' => $market -> market, 'result' => $market -> name, 'option_id' => (int)$market -> selection_id);
+			}
+
+			return array('success' => true, 'result' => $result);
+
+		});
 	}
 
 	/**
