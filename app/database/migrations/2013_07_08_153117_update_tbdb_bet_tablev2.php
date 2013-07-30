@@ -18,6 +18,7 @@ class UpdateTbdbBetTablev2 extends Migration {
 			$table->integer('combinations');
 			$table->decimal('percentage');
 			$table->string('selection_string');
+			$table->string('line');
 			
 		});
 	}

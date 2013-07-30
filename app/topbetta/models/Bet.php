@@ -35,11 +35,11 @@ class Bet extends \Eloquent {
 	 * @return array
 	 */
 	public function getLegacyBetData($selectionId) {
-			
-		return \DB::table('tbdb_selection AS s') 
-		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id') 
-		-> join('tbdb_event_group_event AS e', 'm.event_id', '=', 'e.event_id')  
-		-> where('s.id', '=', $selectionId) 
+
+		return \DB::table('tbdb_selection AS s')
+		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id')
+		-> join('tbdb_event_group_event AS e', 'm.event_id', '=', 'e.event_id')
+		-> where('s.id', '=', $selectionId)
 		-> select('s.market_id', 's.wager_id', 's.number', 'm.event_id AS race_id', 'e.event_group_id AS meeting_id') -> get();
 
 	}
@@ -51,33 +51,34 @@ class Bet extends \Eloquent {
 	 * @return array
 	 */
 	public function getLegacySportsBetData($selectionId) {
-			
-		return \DB::table('tbdb_selection AS s') 
-		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id') 
-		-> where('s.id', '=', $selectionId) 
-		-> select('s.market_id', 'm.event_id') -> get();	
+
+		return \DB::table('tbdb_selection AS s')
+		-> join('tbdb_market AS m', 's.market_id', '=', 'm.id')
+		-> where('s.id', '=', $selectionId)
+		-> select('s.market_id', 'm.event_id') -> get();
 
 	}
-	
+
 	/**
 	 * Get active live bet records by user id
 	 *
 	 * @param integer $userId
 	 * @return array
-	 */	
+	 */
 	public function getActiveLiveBetsForUserId($userId) {
-		
+
 		$query = "SELECT b.id, bo.keyword AS origin, b.bet_freebet_flag AS freebet, bt.id AS bet_type, b.boxed_flag, b.combinations, b.percentage, b.selection_string, rs.name AS result_status,
 	      		e.id AS event_id,
 	      		e.name AS event_name,
 	      		e.number AS event_number,
 	      		m.market_type_id AS market_id,
+	      		mt.name AS market_name,
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
 				sp.win_odds,
-				sp.place_odds,	 	      		
-	      		bat.amount AS bet_total, b.created_date, b.invoice_id, b.bet_transaction_id
+				sp.place_odds,
+	      		bat.amount AS bet_total, b.bet_freebet_amount as freebet_amount, b.created_date, b.invoice_id, b.bet_transaction_id
 			FROM
 				tbdb_bet AS b
 			INNER JOIN
@@ -87,27 +88,31 @@ class Bet extends \Eloquent {
 			INNER JOIN
 				tbdb_bet_origin AS bo
 			ON
-				b.bet_origin_id = bo.id				
+				b.bet_origin_id = bo.id
 			INNER JOIN
 				tbdb_bet_result_status AS rs
 			ON
 				b.bet_result_status_id = rs.id
 			INNER JOIN
 				tbdb_bet_selection AS bs
-			ON 
+			ON
 				b.id = bs.bet_id
 			INNER JOIN
 				tbdb_selection AS s
-			ON 
+			ON
 				s.id = bs.selection_id
 			LEFT JOIN
 				tbdb_selection_price AS sp
 			ON
-				sp.selection_id = s.id				
+				sp.selection_id = s.id
 			INNER JOIN
 				tbdb_market AS m
 			ON
 				m.id = s.market_id
+			INNER JOIN
+				tbdb_market_type AS mt
+			ON
+				mt.id = m.market_type_id
 			INNER JOIN
 				tbdb_event AS e
 			ON
@@ -120,16 +125,16 @@ class Bet extends \Eloquent {
 				b.user_id = '$userId'
 			AND
 				b.resulted_flag = 0
-			
+
 			GROUP BY
 				b.id";
-				
+
 		$result = \DB::select($query);
 
-		return $result;						
-		
+		return $result;
+
 	}
-	
+
 	/**
 	 * Get recent live bet records by user id
 	 *
@@ -144,16 +149,17 @@ class Bet extends \Eloquent {
 	      		e.id AS event_id,
 	      		e.external_event_id,
 	      		m.market_type_id AS market_id,
+	      		mt.name AS market_name,
 	      		e.name AS event_name,
 	      		e.number AS event_number,
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
 	      		s.id AS selection_id,
 				sp.win_odds,
-				sp.place_odds,	      		
+				sp.place_odds,
 	      		bat.amount AS bet_total,
 	      		rat.amount AS win_amount,
-	      		fat.amount AS refund_amount, b.created_date, b.invoice_id, b.bet_transaction_id
+	      		fat.amount AS refund_amount, b.bet_freebet_amount as freebet_amount, b.created_date, b.invoice_id, b.bet_transaction_id
 			FROM
 				tbdb_bet AS b
 			INNER JOIN
@@ -163,27 +169,31 @@ class Bet extends \Eloquent {
 			INNER JOIN
 				tbdb_bet_origin AS bo
 			ON
-				b.bet_origin_id = bo.id						
+				b.bet_origin_id = bo.id
 			INNER JOIN
 				tbdb_bet_result_status AS rs
 			ON
 				b.bet_result_status_id = rs.id
 			INNER JOIN
 				tbdb_bet_selection AS bs
-			ON 
+			ON
 				b.id = bs.bet_id
 			INNER JOIN
 				tbdb_selection AS s
-			ON 
+			ON
 				s.id = bs.selection_id
 			LEFT JOIN
 				tbdb_selection_price AS sp
 			ON
-				sp.selection_id = s.id				
+				sp.selection_id = s.id
 			INNER JOIN
 				tbdb_market AS m
 			ON
 				m.id = s.market_id
+			INNER JOIN
+				tbdb_market_type AS mt
+			ON
+				mt.id = m.market_type_id
 			INNER JOIN
 				tbdb_event AS e
 			ON
@@ -202,19 +212,19 @@ class Bet extends \Eloquent {
 				fat.id = b.refund_transaction_id
 			WHERE
 				b.user_id = "' . $userId . '"';
-		
+
 		if ($fromTime) {
 			$query .= ' AND e.start_date >= FROM_UNIXTIME(' . $fromTime . ')';
 		}
-		
+
 		if ($endTime) {
 			$query .= ' AND e.start_date <= FROM_UNIXTIME(' . $endTime . ')';
 		}
-		
+
 		if(!is_null($resultedFlag)) {
 			$query.= ' AND b.resulted_flag = ' . $resultedFlag;
 		}
-		
+
 		$query .= '
 			GROUP BY
 				b.id
@@ -225,13 +235,13 @@ class Bet extends \Eloquent {
 		} else {
 			$query .= ' ORDER BY e.start_date ASC, b.created_date DESC';
 		}
-		
+
 		//TODO: limit to 15 max or what they asked for
-		
+
 		$result = \DB::select($query);
 
-		return $result;			
-	}	
+		return $result;
+	}
 
 	/**
 	 * Get fliltered bet records
@@ -249,11 +259,11 @@ class Bet extends \Eloquent {
 		$from_amount	= isset($filter['from_amount']) ? $filter['from_amount'] : null;
 		$to_amount		= isset($filter['to_amount']) ? $filter['to_amount'] : null;
 		$user_id		= isset($filter['user_id']) ? $filter['user_id'] : null;
-		
+
 		if (is_null($order)) {
 			$order = 'b.id';
 		}
-		
+
 		$selectQuery = '
 			SELECT
 	      		b.*,
@@ -275,9 +285,9 @@ class Bet extends \Eloquent {
 	      		bat.amount AS bet_total,
 	      		rat.amount AS win_amount,
 	      		fat.amount AS refund_amount ';
-				
-		$selectCountQuery = "SELECT COUNT(*) AS total ";		
-				
+
+		$selectCountQuery = "SELECT COUNT(*) AS total ";
+
 		$query = 'FROM
 				tbdb_bet AS b
 			INNER JOIN
@@ -294,11 +304,11 @@ class Bet extends \Eloquent {
 				u.id = b.user_id
 			INNER JOIN
 				tbdb_bet_selection AS bs
-			ON 
+			ON
 				b.id = bs.bet_id
 			INNER JOIN
 				tbdb_selection AS s
-			ON 
+			ON
 				s.id = bs.selection_id
 			INNER JOIN
 				tbdb_market AS m
@@ -322,26 +332,26 @@ class Bet extends \Eloquent {
 				fat.id = b.refund_transaction_id
 			';
 		$where = array();
-		
+
 		if ($keyword) {
 			$or_cond	= array();
 			$key_word	= $keyword;
 			$or_cond[]	= 'u.username LIKE "%' . $keyword . '%"';
 			$or_cond[]	= 'e.name LIKE "%' . $keyword . '%"';
 			$or_cond[]	= 's.name LIKE "%' . $keyword . '%"';
-			
+
 			if (ctype_digit($keyword)) {
 				$or_cond[]	= 'b.id = ' . $keyword;
 				$or_cond[]	= 'b.external_bet_id = ' . $keyword;
 			}
-			
+
 			$where[] = '(' . implode(' OR ', $or_cond) . ')';
 		}
-		
+
 		if ($user_id) {
 			$where[] = 'b.user_id = ' . $user_id;
 		}
-		
+
 		switch ($result_type) {
 			case 'unresulted':
 				$where[] = 'b.resulted_flag = 0';
@@ -363,54 +373,54 @@ class Bet extends \Eloquent {
 				$where[] = '(b.result_transaction_id IS NULL OR b.result_transaction_id = 0 OR rat.amount = 0)';
 				break;
 		}
-		
+
 		if ($from_time) {
 			$where[] = 'b.created_date >= FROM_UNIXTIME(' . $from_time . ')';
 		}
-		
+
 		if ($to_time) {
 			$where[] = 'b.created_date < FROM_UNIXTIME(' . $to_time . ')';
 		}
-		
+
 		if (ctype_digit($from_amount)) {
 			$where[] = 'abs(bat.amount) >=' . $from_amount * 100;
 		}
-		
+
 		if (ctype_digit($to_amount)) {
 			$where[] = 'abs(bat.amount) <=' . $to_amount * 100;
 		}
-		
+
 		if (count($where) > 0) {
 			$query .='
 				WHERE
 			';
 			$query .= implode(' AND ', $where);
 		}
-		
-		$countQuery = $selectCountQuery . $query;		
-		
+
+		$countQuery = $selectCountQuery . $query;
+
 		$query .= '
 			GROUP BY
 				b.id
 			';
 
 		$query .= ' ORDER BY ' . $order;
-				
+
 		if ($offset) {
-			$query .= ' LIMIT ' . $offset . ',' . $limit;	
+			$query .= ' LIMIT ' . $offset . ',' . $limit;
 		} else {
 			$query .= ' LIMIT ' . $limit;
 		}
 
 		// handle our normal query with results
 		$fullQuery = $selectQuery . $query;
-		
+
 		$result = \DB::select($fullQuery);
-		
+
 		// handle our total count for this full query excluding page limits
 		$numRows = \DB::select($countQuery);
 
-		return array('result' => $result, 'num_rows' => $numRows[0]);		
+		return array('result' => $result, 'num_rows' => $numRows[0]);
 	}
 
 	public function getTournamentBetListByEventIDAndTicketID($event_id, $ticket_id)
@@ -481,22 +491,22 @@ class Bet extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		return $result;	
+		return $result;
 	}
 
 	public static function getExoticDividendForType($exoticType, $eventId) {
-			
+
 		$betTypes = \TopBetta\BetTypes::find($exoticType);
 
 		$exoticName = $betTypes -> name . '_dividend';
-			
+
 		$event = \TopBetta\RaceEvent::find($eventId) -> toArray();
-		
+
 		$exoticDividends = unserialize($event[$exoticName]);
-		
+
 		// we only want the dollar value, not the runners
 		return ($exoticDividends) ? array_shift($exoticDividends) : null;
-		
+
 	}
 
 }
