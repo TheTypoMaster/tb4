@@ -838,7 +838,7 @@ class RacingController extends \BaseController {
 					$timeStamp = date("Ymd");
 					$ttimeStamp = date("Y/m/d H:i:s");
 					$contents = $ttimeStamp .": $racingArray\n";
-					\File::append('tmp/igas_sequence-'.$timeStamp, $contents);
+					\File::append('/tmp/igas_sequence-'.$timeStamp, $contents);
 				}
 				
 				/* return Response::json(array(
