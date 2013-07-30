@@ -89,7 +89,20 @@ switch($method) {
 		echo $save_bet -> saveTournamentBet();
 		break;
 
-	
+	case 'saveTournamentSportsBet' :
+		$save_bet = new Api_Betting();
+		echo $save_bet -> saveTournamentSportsBet();
+		break;				
+
+	case 'saveRacingBet' :
+		$save_bet = new Api_Betting();
+		echo $save_bet -> saveRacingBet();
+		break;
+
+	case 'saveSportBet' :
+		$save_sportsbet = new Api_Betting();
+		echo $save_sportsbet -> saveSportBet();
+		break;	
 
 	/* TOURNAMENTS */
 	/*
@@ -275,6 +288,21 @@ switch($method) {
 		$user_login = new Api_User();
 		echo $user_login -> checkLogin();
 		break;
+
+	case 'doSelfExclude' :
+		$self_exclude = new Api_User();
+		echo $self_exclude -> doSelfExclude();
+		break;
+
+	case 'generateJoomlaPassword' :
+		$pwd = new Api_User();
+		echo $pwd -> generateJoomlaPassword();
+		break;		
+
+	case 'doReferFriend' :
+		$refer = new Api_User();
+		echo $refer -> doReferFriend();
+		break;		
 		
 	// PAYMENT ETC	
 	case 'getBalances' :
@@ -282,10 +310,25 @@ switch($method) {
 		echo $funds -> getBalances();
 		break;
 
+	case 'getBettingHistory' :
+		$history = new Api_User();
+		echo $history -> getBettingHistory();
+		break;
+
 	case 'doInstantDeposit' :
 		$deposits = new Api_Payment();
 		echo $deposits -> doInstantDeposit();
 		break;
+
+	case 'doWithdrawRequest' :
+		$withdraw = new Api_Payment();
+		echo $withdraw -> doWithdrawRequest();
+		break;		
+
+	case 'setBetLimit' :
+		$bet_limit = new Api_Payment();
+		echo $bet_limit -> setBetLimit();
+		break;	
 		
 	case 'getUser' :
 		$deposits = new Api_User();
