@@ -2272,8 +2272,8 @@ class Api_Betting extends JController {
 					}
 	
 					// TODO: Need to get this check working
-					//$api_error		= $api->getErrorList(true);
-					$api_error = '';
+					$api_error		= $api->getErrorList(true);
+					//$api_error = '';
 						
 					if (empty($api_error) && isset($external_bet->wagerId)) {
 						$bet_confirmed	= true;
@@ -2333,56 +2333,33 @@ class Api_Betting extends JController {
 					//file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 						
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
-						
-					if (isset($external_bet->newOdds)){
-						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
-					}else{
-						return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
-					}
+
+					$validation->error = JText::_('Bet could not be registered');
+					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+					
+// 					if (isset($external_bet->newOdds)){
+// 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
+// 					}else{
+// 						return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+// 					}
 				}
 	
 				// setup database object rather than use the SUPERMODEL
 				$db =& JFactory::getDBO();
 				// TODO: Update bet record with correct dividend. Currently it's not stored with the actual bet
-				if(isset($external_bet->actualDividend)){
-					// Update odds on bet_selection
-					$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$external_bet->actualDividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
-					// echo "$query";
-					$db->setQuery( $query );
-					$db->query();
-					return OutputHelper::json(200, array('success' => 'Your bet has been placed', 'actualDividends' => "$external_bet->actualDividend" ));
-				}else{
-					// Update odds on bet_selection
-					$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$external_bet->actualDividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID->id'" ;
-					// echo "$query";
-					$db->setQuery( $query );
-					$db->query();
-					return OutputHelper::json(200, array('success' => 'Your bet has been placed' ));
-				}
+				
+				// Update odds and line on bet_selection
+				$query = "UPDATE `tbdb_bet` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
+				$db->setQuery( $query );
+				$db->query();
+				return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
+			
 	
 			} else {
 				return OutputHelper::json(500, array('error_msg' => 'Invalid Token' ));
 			}
 	
 		}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		
-		
-		
-		
-		
 	
 	/**
 	 * Validate a bet selection
