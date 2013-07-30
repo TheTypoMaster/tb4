@@ -80,7 +80,7 @@ class HeartBeatController extends \BaseController {
 		// build up array 
 		$payloadArray = array('Username' => $userName, 'Password' => $userPassword,
 				'CompanyID' => $companyID,
-				'CompanyPushUrl' => 'http://testing1.mugbookie.com',
+				'CompanyPushUrl' => 'http://services.topbetta.com.au',
 				'CurrentTime' => "$serverTime",
 				);
 		
