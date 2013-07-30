@@ -29,11 +29,11 @@ class SportsSelection extends \Eloquent {
 							->pluck('id');
 	}
 	
-	static public function getWinningSelelctionID($marketId, $eventId, $score){
-		return SportsSelection::where('external_market_id', $marketId)
-		->where('external_event_id', '=', $eventId)
-		->where('name', '=', $score)
-		->pluck('id');
+	static public function getWinningSelelctionID($eventId, $marketId, $score){
+		return SportsSelection::where('external_event_id', $eventId)
+								->where('external_market_id', '=', $marketId)
+								->where('name', '=', $score)
+								->pluck('id');
 	}
 	
 	
