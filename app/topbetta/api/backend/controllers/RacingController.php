@@ -180,15 +180,16 @@ class RacingController extends \BaseController {
 									if(isset($dataArray['Id'])){
 										$raceMeet->external_event_group_id = $dataArray['Id'];
 									}
+									
 								}
-								
-								if(isset($dataArray['Date'])){
-									$raceMeet->start_date = $dataArray['Date'];
-								}
+																
 								if(isset($dataArray['Name'])){
 									$raceMeet->name = $dataArray['Name'];
 								}
 								
+// 								if(isset($dataArray['Date'])){
+// 									$raceMeet->start_date = $dataArray['Date'];
+// 								}
 								
 								if(isset($dataArray['RaceType'])){
 									switch($dataArray['RaceType']){
@@ -311,10 +312,20 @@ class RacingController extends \BaseController {
 									if(isset($dataArray['RaceNo'])){
 										$raceEvent->number = $dataArray['RaceNo'];
 									}
+									
 									if(isset($dataArray['JumpTime'])){
 										$raceEvent->start_date = $dataArray['JumpTime'];
 									}
 									
+									// update meeting start time if needed
+									if ($meetingRecord->start_date == "0000-00-00 00:00:00"){
+										$meetingRecord->start_date = $dataArray['JumpTime'];
+										$meetingRecord->save();
+									}elseif($dataArray['JumpTime'] < $meetingRecord->start_date){
+										$meetingRecord->start_date = $dataArray['JumpTime'];
+										$meetingRecord->save();
+									}
+										
 									//TODO: Code Table lookup on different race status
 									//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
 									if(isset($dataArray['RaceStatus'])){
@@ -470,6 +481,11 @@ class RacingController extends \BaseController {
 									
 									// Get silkID and Last Starts for runner from RISA table
 									if($meetingType == "R"){
+										
+										if(isset($dataArray['SilkName'])){
+											$raceRunner->silk_id = $dataArray['SilkName'];
+										}
+										
 										// get silk ID from RISA data: tb_racing_data_risa_silk_map
 										// check if meeting exists in DB
 										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
@@ -494,9 +510,6 @@ class RacingController extends \BaseController {
 												//$o = print_r($runnerSilkObject, true);
 												// TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner RISA Object:$o.");
 												if(count($runnerSilkObject) > 0){
-													if(isset($runnerSilkObject[0]->silk_file_name)){
-														$raceRunner->silk_id = $runnerSilkObject[0]->silk_file_name;
-													}
 													if(isset($runnerSilkObject[0]->last_starts)){
 														$raceRunner->last_starts = $runnerSilkObject[0]->last_starts;
 													}
@@ -580,7 +593,7 @@ class RacingController extends \BaseController {
 											
 											// grab position and correct dividend
 											$raceResult->position = $placeNo;
-											($betType == 'W') ? $raceResult->position = 1: $raceResult->position = $placeNo;;
+											($betType == 'W') ? $raceResult->position = 1: $raceResult->position = $placeNo;
 											($betType == 'W') ? $raceResult->win_dividend = $payout / 100 : $raceResult->place_dividend = $payout / 100;
 											
 											// save win or place odds to DB

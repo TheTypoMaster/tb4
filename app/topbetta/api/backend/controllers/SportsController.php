@@ -151,26 +151,44 @@ class SportsController extends \BaseController {
 								*/
 								
 								if(isset($dataArray['League'])){
-									$competition = $dataArray['League'];
+									//add round to competition name if is provided in the data
+									if($dataArray['Round'] != ""){
+										$competition = $dataArray['League']." ".$dataArray['Round'];
+									}else{
+										$competition = $dataArray['League'];
+									}
+									
 									// Check if comp/league exists in DB
 									$compExists = TopBetta\SportsComps::compExists($competition);
+									
 									// if comp/league exists update that record
 									if($compExists){
-										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 										$compModel = TopBetta\SportsComps::find($compExists);
-										($dataArray['Round'] != "") ? $compModel->name = $competition. " " . $dataArray['Round'] : $compModel->name = $competition;
+										// update the start finish times
+										if($compModel->start_date > $dataArray['EventTime']) $compModel->start_date = $dataArray['EventTime'];
+										if($compModel->close_time < $dataArray['EventTime']) $compModel->close_time = $dataArray['EventTime'];
+										
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 									}else{
 										$compModel = new TopBetta\SportsComps;
-										//add round to competition name if is provided in the data
-										($dataArray['Round'] != "") ? $compModel->name = $competition. " " . $dataArray['Round'] : $compModel->name = $competition;
+										
 										$compModel->external_event_group_id = $eventId;
 										$compModel->sport_id = $sportExists;
+										
+										// update the start finish times
+										$compModel->start_date = $dataArray['EventTime'];
+										$compModel->close_time = $dataArray['EventTime'];
+										
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Competition:$competition, Added to DB: $compModel->id", 1);
 									}
 									
-									$compModel->start_date = date_format(date_create($dataArray['EventTime']), 'y/m/d');
-									$compModel->close_time = $dataArray['EventTime'];
+									//$compModel->start_date = date_format(date_create($dataArray['EventTime']), 'y/m/d');
+									// Set the competition name
+									$compModel->name = $competition;
+								
+									// save or update the competition record
 									$compModel->save();
+
 									
 									/*
 									 * Add/Update tournament competition record
@@ -234,19 +252,19 @@ class SportsController extends \BaseController {
 								 * Add/Update the close time on the Leage/Competition record to be the last events start time
 								*/
 								
-								// update competiton with new event start time if it's after the current stored time
+								// update competiton with new event close time if it's after the current stored time
 								if ($dataArray['EventTime'] > $compModel->close_time){
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
 								}
 								
 								// grab the date from the event start times
-								$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
-								$oldShortDate = date_format(date_create($compModel->close_time), 'y/m/d');
+								//$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
+								//$oldShortDate = date_format(date_create($compModel->close_time), 'y/m/d');
 								
 								// update competiton with new event start time if it's after the current stored time
-								if ($oldShortDate > $newShortDate){
-									$compModel->start_date = $newShortDate;
+								if ($compModel->start_date > $dataArray['EventTime']){
+									$compModel->start_date = $dataArray['EventTime'];
 									$compModel->save();
 								}
 								
@@ -386,6 +404,7 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, In DB: $selectionsExists", 1);
 										$selectionModel = TopBetta\SportsSelection::find($selectionsExists);
 										$selectionModel->market_id = $marketExists;
+										$selectionModel->home_away = $dataArray['HomeAway'];
 										
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - MarketDBID: $marketExists, Processing Selection, Added to DB: $selectionsExists", 1);
@@ -394,6 +413,7 @@ class SportsController extends \BaseController {
 										$selectionModel->external_selection_id = $selectionId;
 										$selectionModel->external_event_id = $eventId;
 										$selectionModel->external_market_id = $marketId;
+										$selectionModel->home_away = $dataArray['HomeAway'];
 										
 									}
 									if(isset($dataArray['Selection'])){
