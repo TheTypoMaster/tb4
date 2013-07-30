@@ -33,6 +33,7 @@ $env = $app->detectEnvironment(array(
 	'testing1' => array('testing1.*'),
 	'testing2' => array('testing2.*'),
 	'testing3' => array('testing3.*'),
+	'production' => array('services.*'),
 
 		
 
