@@ -318,7 +318,7 @@ class RacingController extends \BaseController {
 									}
 									
 									// update meeting start time if needed
-									if ($meetingRecord->start_date == ""){
+									if ($meetingRecord->start_date == "0000-00-00 00:00:00"){
 										$meetingRecord->start_date = $dataArray['JumpTime'];
 										$meetingRecord->save();
 									}elseif($dataArray['JumpTime'] < $meetingRecord->start_date){
