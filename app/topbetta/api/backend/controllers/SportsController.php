@@ -457,8 +457,6 @@ class SportsController extends \BaseController {
 						break;
 					
 					case "ResultList":
-						
-						
 						foreach ($sportsArray as $dataArray){
 							$gameId = $dataArray['GameId'];
 							$marketId = $dataArray['MarketId'];
@@ -470,19 +468,19 @@ class SportsController extends \BaseController {
 							
 								TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 								
-								// If marketstatus is R = Resulted
-								if($dataArray['MarketStatus'] == 'R'){
+								// If marketstatus is R = resulted and Scoretype = win <- NON line results
+								if($dataArray['MarketStatus'] == 'R' && $dataArray['ScoreType'] == 'W'){
 	
 									// - get winning selection record
-									$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($marketId, $eventId, $selectionId);
-	
+									$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($eventId, $marketId, $score);
+									
 									// if selection found
 									if ($winningSelectionID){
-									
-										// check if there is a result record for this selection already
-										$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($selectionModel->id);
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, WinningSelectionID:$winningSelectionID.", 1);
 										
-										// 
+										// check if there is a result record for this selection already //TODO: Need to cater for re-results
+										$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($winningSelectionID);
+										 
 										if($winningSelectionResultExists){
 											$selectionResultModel = TopBetta\SportsSelectionResults::find($winningSelectionResultExists);
 										}else{
@@ -491,7 +489,9 @@ class SportsController extends \BaseController {
 											$selectionResultModel->selection_id = $winningSelectionID;
 											$selectionResultModel->position = 1;
 											$selectionResultModel->save();
+											TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
 										}
+										
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No SelctionID. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
 									}
