@@ -870,6 +870,11 @@ class Api_Betting extends JController {
 		
 		$user =& JFactory::getUser();
 		
+		if ($user->get('guest'))
+		{
+			return OutputHelper::json(401, array('error_msg' => 'Not logged in' ));
+		}
+				
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();	
@@ -1383,7 +1388,12 @@ class Api_Betting extends JController {
 		$server_token = JUtility::getToken();
 
 		$user =& JFactory::getUser();
-
+		
+		if ($user->get('guest'))
+		{
+			return OutputHelper::json(401, array('error_msg' => 'Not logged in' ));
+		}
+		
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();
@@ -1875,7 +1885,12 @@ class Api_Betting extends JController {
 		$server_token = JUtility::getToken();
 	
 		$user =& JFactory::getUser();
-	
+		
+		if ($user->get('guest'))
+		{
+			return OutputHelper::json(401, array('error_msg' => 'Not logged in' ));
+		}
+		
 		// debug file
 		$debugflag = 1;
 		$file = "/tmp/saveSportsBet";
