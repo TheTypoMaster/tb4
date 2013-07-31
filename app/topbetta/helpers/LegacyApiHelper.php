@@ -2,7 +2,7 @@
 
 class LegacyApiHelper {
 
-	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post', 'setBetLimit' => 'post', 'doSelfExclude' => 'post', 'generateJoomlaPassword' => 'post', 'doReferFriend' => 'post', 'getBettingHistory' => 'post');
+	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post', 'setBetLimit' => 'post', 'doSelfExclude' => 'post', 'generateJoomlaPassword' => 'post', 'doReferFriend' => 'post', 'getBettingHistory' => 'post', 'doUserUpgradeTopBetta' => 'post');
 
 	/*
 	 * @param string $method
@@ -51,7 +51,18 @@ class LegacyApiHelper {
 					return $this -> curl('doUserRegisterTopBetta', $this -> allowed_methods['doUserRegisterTopBetta'], $payload);
 
 					break;
-					
+
+				case 'doUserUpgradeTopBetta' :
+
+					//1. get login hash
+					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+
+					//2. perform login
+					$payload[$login_hash['login_hash']] = 1;
+					return $this -> curl('doUserUpgradeTopBetta', $this -> allowed_methods['doUserUpgradeTopBetta'], $payload);
+
+					break;
+
 				case 'doInstantDeposit' :
 
 					//1. get login hash
@@ -61,7 +72,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('doInstantDeposit', $this -> allowed_methods['doInstantDeposit'], $payload);
 
-					break;					
+					break;
 
 				case 'doWithdrawRequest' :
 
@@ -72,8 +83,8 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('doWithdrawRequest', $this -> allowed_methods['doWithdrawRequest'], $payload);
 
-					break;							
-					
+					break;
+
 				case 'saveBet' :
 
 					//1. get login hash
@@ -83,7 +94,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('saveBet', $this -> allowed_methods['saveBet'], $payload);
 
-					break;					
+					break;
 
 				case 'saveRacingBet' :
 
@@ -94,7 +105,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('saveRacingBet', $this -> allowed_methods['saveRacingBet'], $payload);
 
-					break;	
+					break;
 
 				case 'saveSportBet' :
 
@@ -116,7 +127,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('saveTournamentBet', $this -> allowed_methods['saveTournamentBet'], $payload);
 
-					break;	
+					break;
 
 				case 'saveTournamentSportsBet' :
 
@@ -127,7 +138,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('saveTournamentSportsBet', $this -> allowed_methods['saveTournamentSportsBet'], $payload);
 
-					break;	
+					break;
 
 				case 'saveTournamentTicket' :
 
@@ -138,8 +149,8 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('saveTournamentTicket', $this -> allowed_methods['saveTournamentTicket'], $payload);
 
-					break;	
-					
+					break;
+
 				case 'setBetLimit' :
 
 					//1. get login hash
@@ -149,7 +160,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('setBetLimit', $this -> allowed_methods['setBetLimit'], $payload);
 
-					break;					
+					break;
 
 				case 'doSelfExclude' :
 
@@ -182,7 +193,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('doReferFriend', $this -> allowed_methods['doReferFriend'], $payload);
 
-					break;	
+					break;
 
 				case 'getBettingHistory' :
 
@@ -193,7 +204,7 @@ class LegacyApiHelper {
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('getBettingHistory', $this -> allowed_methods['getBettingHistory'], $payload);
 
-					break;																													
+					break;
 
 				default :
 
@@ -233,7 +244,7 @@ class LegacyApiHelper {
 		}
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_COOKIEJAR, 'tmp/' . session_id() . '.txt');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/' . session_id() . '.txt');		
+		curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/' . session_id() . '.txt');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
