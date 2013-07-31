@@ -60,12 +60,16 @@ class HeartBeatController extends \BaseController {
 	/**
 	 * Trigger the heartbeat
 	 * .
-	 * @param todo
+	 * @param providerName, companyurl, remotehost
 	 * @return Response
 	 */
 	public function store()
 	{
-		$heartBeatService = 'igas_schedule';
+		$heartBeatService = \Input::get('provider');
+		$companyPushUrl = \Input::get('pushUrl');
+		$remoteHost = \Input::get('remoteHost');
+		
+		// $heartBeatService = 'igas_schedule';
 		
 		// get stuff from the config
 		$userName = \Config::get('igasauthentication.userName');
@@ -73,14 +77,14 @@ class HeartBeatController extends \BaseController {
 		$secretKey = \Config::get('igasauthentication.secretKey');
 		$companyID = \Config::get('igasauthentication.companyID');
 		$command = \Config::get('igasauthentication.command');
-		$remoteHost = \Config::get('igasauthentication.remoteHost');
+		// $remoteHost = \Config::get('igasauthentication.remoteHost');
 		
 		$serverTime = date("Y-m-d H:i:s");
 		
 		// build up array 
 		$payloadArray = array('Username' => $userName, 'Password' => $userPassword,
 				'CompanyID' => $companyID,
-				'CompanyPushUrl' => 'http://services.topbetta.com.au',
+				'CompanyPushUrl' => $companyPushUrl,
 				'CurrentTime' => "$serverTime",
 				);
 		
@@ -126,7 +130,7 @@ class HeartBeatController extends \BaseController {
 		$lastStatusObject[0]->save();
 		
 		// Email on status change
-		$emailSubject = "iGAS Schedule: Status changed: ".$currentStatus.".";
+		$emailSubject = "iGAS Schedule($heartBeatService): Status changed: ".$currentStatus.".";
 		$emailDetails = array( 'email' => 'oliver@topbetta.com', 'to_name' => 'Oliver', 'from' => 'hearbeat@topbetta.com', 'from_name' => 'TopBetta iGAS Schedule Heartbeat', 'subject' => "$emailSubject" );
 		$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 		{
