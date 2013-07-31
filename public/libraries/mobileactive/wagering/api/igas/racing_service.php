@@ -105,7 +105,7 @@ class WageringApiIgasracingService extends ConfigReader{
 		$userName = "topbetta";
 		$userPassword = "T0pB3tter@AP!"; 
 		$companyID = "TopBetta";
-		// Change to use server.xml
+		// Change to use server_igas.xml
 		//$api = 'igasracing';
 		//$this->date = new DateTime();
 		//$this->api = $this->getApi($api);

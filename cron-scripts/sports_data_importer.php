@@ -467,7 +467,7 @@ class SportsBMProcessor extends TopBettaCLI
 				$sl = $this->getDirectorySeparator();
 	
 				$path   = ($sl == '\\') ? 'C:' : '';
-				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server.xml';
+				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server_igas.xml';
 			}
 	
 			$xml = simplexml_load_file($path);
