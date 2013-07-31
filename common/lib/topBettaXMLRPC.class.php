@@ -50,7 +50,7 @@ class topBettaXMLRPC {
 	}
 
 	/**
-	 * load configuration from server.xml
+	 * load configuration from server_igas.xml
 	 * @access private
 	 * @return void
 	 */

@@ -209,7 +209,7 @@ class RisaDataImporter extends TopBettaCLI{
 				$sl = $this->getDirectorySeparator();
 	
 				$path   = ($sl == '\\') ? 'C:' : '';
-				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server.xml';
+				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server_igas.xml';
 			}
 	
 			$xml = simplexml_load_file($path);
@@ -228,7 +228,7 @@ class RisaDataImporter extends TopBettaCLI{
 		static $sectionList = array();
 	
 		if(!isset($sectionList[$sectionName])) {
-			$xml = simplexml_load_file('/mnt/web/server.xml');
+			$xml = simplexml_load_file('/mnt/web/server_igas.xml');
 			$section = $xml->xpath("/setting/section[@name='{$sectionName}']");
 	
 			if(empty($section)) {
