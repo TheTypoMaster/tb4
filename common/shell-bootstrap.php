@@ -275,7 +275,7 @@ abstract class TopBettaCLI {
 	}
 
 	/**
-	 * Get the XML feed root from server.xml
+	 * Get the XML feed root from server_igas.xml
 	 *
 	 * @return string
 	 */
@@ -384,7 +384,7 @@ abstract class TopBettaCLI {
 		$xml_root = $this->_getXMLRoot();
 
 		if(is_null($xml_root)) {
-			$this->l("No datafeed URL found in server.xml", self::LOG_TYPE_ERROR);
+			$this->l("No datafeed URL found in server_igas.xml", self::LOG_TYPE_ERROR);
 			return;
 		}
 
@@ -514,7 +514,7 @@ abstract class TopBettaCLI {
 	}
 
 	/**
-	 * Get a section from the server.xml config file
+	 * Get a section from the server_igas.xml config file
 	 *
 	 * @param string $section_name
 	 * @return SimpleXMLElement
@@ -554,7 +554,7 @@ abstract class TopBettaCLI {
 				$path = 'C:';
 			}
 
-			$path .= DS . 'mnt' . DS . 'web' . DS . 'server.xml';
+			$path .= DS . 'mnt' . DS . 'web' . DS . 'server_igas.xml';
 			$xml = simplexml_load_file($path);
 		}
 
