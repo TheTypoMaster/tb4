@@ -87,7 +87,7 @@ class WageringApiIgassportsService extends ConfigReader{
 	public function placeSportsBet($clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selectionID)
 	{
 		
-		// TODO: get from config file or server.xml
+		// TODO: get from config file or server_igas.xml
 		// Topbetta related params
 		$userName = "topbetta";
 		$userPassword = "T0pB3tter@AP!";
