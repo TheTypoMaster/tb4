@@ -56,7 +56,7 @@ class  plgSystemConfig extends JPlugin
 	*/
 	private function getconfig()
 	{
-		$xmlFileName = '/mnt/web/server.xml';
+		$xmlFileName = '/mnt/web/server_igas.xml';
 		$xmlHandler= @fopen($xmlFileName,"r");
 		
 		$content= fread($xmlHandler,filesize($xmlFileName));
