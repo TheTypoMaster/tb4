@@ -130,7 +130,7 @@ class HeartBeatController extends \BaseController {
 		$lastStatusObject[0]->save();
 		
 		// Email on status change
-		$emailSubject = "iGAS Schedule: Status changed: ".$currentStatus.".";
+		$emailSubject = "iGAS Schedule($heartBeatService): Status changed: ".$currentStatus.".";
 		$emailDetails = array( 'email' => 'oliver@topbetta.com', 'to_name' => 'Oliver', 'from' => 'hearbeat@topbetta.com', 'from_name' => 'TopBetta iGAS Schedule Heartbeat', 'subject' => "$emailSubject" );
 		$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 		{
