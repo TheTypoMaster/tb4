@@ -56,7 +56,8 @@ class FrontSportsTypesController extends \BaseController {
 
 			} else {
 
-				return array('success' => false, 'error' => \Lang::get('sports.no_types'));
+				// we need to return an empty result for the front end :-)
+				return array('success' => true, 'result' => array());
 
 			}
 
