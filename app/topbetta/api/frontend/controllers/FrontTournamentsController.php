@@ -53,7 +53,8 @@ class FrontTournamentsController extends \BaseController {
 		$filterList = false;
 
 		if (\Auth::check() && $entered) {
-			$filterList = $tournamentModel -> getMyTournamentListByUserID(\Auth::user() -> id);
+
+			$filterList = $tournamentModel -> getMyTournamentListByUserID(\Auth::user() -> id, false, false, true);
 		}
 
 		$meetingId = NULL;
