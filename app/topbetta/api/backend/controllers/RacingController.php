@@ -610,6 +610,7 @@ class RacingController extends \BaseController {
 										// Get ID of event record - used to store exotic results/divs if required
 										$eventID = TopBetta\RaceEvent::eventExists ( $meetingId, $raceNo );
 										
+										
 										if($eventID){
 											// grab the event
 											$raceEvent = TopBetta\RaceEvent::find ( $eventID );
