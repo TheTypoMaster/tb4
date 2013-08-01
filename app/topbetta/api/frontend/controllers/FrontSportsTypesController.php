@@ -13,14 +13,35 @@ class FrontSportsTypesController extends \BaseController {
 	 */
 	public function index($compId = false, $eventId = false) {
 
-		//special case to allow for types to be called directly with the event id passed in
-		$eventId = Input::get('event_id', $eventId);
+		//tournaments require types matched to comps - front side tells us what they want
+		$tournamentFlag = Input::get('tournament', false);
+
+		if ($tournamentFlag) {
+
+			$getType = 'tourn';
+			$eventCompId = Input::get('comp_id', $compId);
+
+		} else {
+
+			$getType = 'live';
+			$eventCompId = Input::get('event_id', $eventId);
+
+		}
 
 		// store sports types in cache for 10 min at a time
-		return \Cache::remember('sportsTypes-' . $eventId, 10, function() use (&$eventId) {
+		return \Cache::remember('sportsTypes-' . $eventCompId . '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag) {
 
 			$sportsTypes = new TopBetta\SportsTypes;
-			$types = $sportsTypes -> getTypes($eventId);
+
+			if (!$tournamentFlag) {
+
+				$types = $sportsTypes -> getTypes($eventCompId);
+
+			} else {
+
+				$types = $sportsTypes -> getTournamentTypes($eventCompId);
+
+			}
 
 			if (count($types) > 0) {
 
@@ -35,7 +56,7 @@ class FrontSportsTypesController extends \BaseController {
 
 			} else {
 
-				return array('success' => false, 'error' => Lang::get('sports.no_types'));
+				return array('success' => false, 'error' => \Lang::get('sports.no_types'));
 
 			}
 
