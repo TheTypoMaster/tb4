@@ -32,7 +32,7 @@ class Api_Payment extends JController {
 
         $loggedUser =& JFactory::getUser();
         if ($loggedUser->guest) {
-			return OutputHelper::json(500, array('error' => 'Please login to make a deposit'  ));
+			return OutputHelper::json(500, array('error_msg' => 'Please login to make a deposit'  ));
 		}
       
 	    $session	=& JFactory::getSession();
@@ -173,7 +173,361 @@ class Api_Payment extends JController {
 		
 			
 	}
-	
+	 /**
+	 * Method to make withdraw requests
+	 *
+	 * @params POST data
+	 * @return string
+	 */
+	public function doWithdrawRequest() {
+		
+   		$session =& JFactory::getSession();
+    	$loginUser =& JFactory::getUser();
+    	$config =& JComponentHelper::getParams( 'com_payment' );
+    	
+    	if( $loginUser->guest )
+    	{
+    		return OutputHelper::json(500, array('error_msg' => 'Please login first.' ));
+    	}
+
+		if (!class_exists('PaymentModelWithdrawalrequest')) {
+			JLoader::import('withdrawalrequest', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
+		}
+		
+		if (!class_exists('PaymentModelAccounttransaction')) {
+			JLoader::import('accounttransaction', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
+		}		
+
+    	//$model =& $this->getModel( 'withdrawalrequest');
+    	$model = new PaymentModelWithdrawalrequest();
+		
+		$paymentModel = new PaymentModelAccounttransaction();
+    	
+    	$withdrawalType = null;
+    	$err = array();
+    	
+    	//don't trust the value posted. we make sure the value is what we want.
+    	$withdrawalType = JRequest::getVar('withdrawalType') ? JRequest::getVar('withdrawalType') : 'moneybookers';
+    	
+    	$amount = JRequest::getVar($withdrawalType . '_amount');
+    	$email = JRequest::getVar($withdrawalType . '_email');
+    	if( 'bank' == $withdrawalType )
+    	{
+    		$minWithdrawal = $config->get('eway_min_withdrawal');
+    	}
+    	elseif('moneybookers' == $withdrawalType)
+    	{
+    		$minWithdrawal = $config->get('moneybookers_min_withdrawal');
+    	}
+    	else
+    	{
+    		$minWithdrawal = $config->get('paypal_min_withdrawal');
+    	}
+    	
+    	if( !$withdrawalType )
+    	{
+    		$err['formError'] = 'Invalid Form';
+    	}
+    	else if( !$model->validateWithdrawalType( $withdrawalType ) )
+    	{
+    		//TO DO: send web alert email
+    		$err['formError'] = 'Internal Error. Please contact webmaster.';
+    	}
+    	
+    	if( !preg_match('/^[0-9\.]+$/', $amount) || $amount <= 0  )
+    	{
+    		$err[$withdrawalType . '_amount'] = 'Please enter a number';
+    	}
+    	else if( $amount < $minWithdrawal )
+    	{
+    		$err[$withdrawalType . '_amount'] = 'The minimum withdrawal amount is ' . $minWithdrawal . ' dollars';
+    	}
+    	else if( $amount > ($paymentModel->getTotal()/100))
+    	{
+    		$err[$withdrawalType . '_amount'] = 'Your account balance is not enough for this withdrawal';
+    	}
+    	
+    	if( $withdrawalType == 'paypal' || $withdrawalType == 'moneybookers')
+    	{
+    		if( '' == $email )
+    		{
+    			$err[$withdrawalType . '_email'] = 'Please enter an email.';
+    		}
+    		else if(!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $email))
+    		{
+    			$err[$withdrawalType . '_email'] = 'Invalid email';
+    		}
+    	}
+    	
+    	if( count($err) > 0 )
+    	{
+
+    		return OutputHelper::json(500, array('error_msg' => $err ));	
+    		
+    	}
+    	
+    	$amountCents = round($amount * 100);
+    	$ts = time(); // we generate a timestamp here, which will be stored as requested date and also used in email.
+    	$params = array(
+    		'requesterId' => $loginUser->get('id'),
+    		'withdrawalType' => $withdrawalType,
+    		'amount' => $amountCents,
+    		'sessionTrackingId' => $session->get( 'sessionTrackingId' ),
+    		'requestedDate' => date('Y-m-d H:i:s', $ts),
+    	);
+    	
+    	if( 'paypal' == $withdrawalType )
+    	{
+    		$params['paypalEmail'] = $email;
+    	}
+    	
+    	if( 'moneybookers' == $withdrawalType )
+    	{
+    		$params['moneybookersEmail'] = $email;
+    	}
+    	
+    	if (!$model->withdraw( $params ))
+    	{
+
+    		return OutputHelper::json(500, array('error_msg' => 'Withdrawal Failed. Please contact webmaster.' ));
+    		
+    	}
+    	
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}	    	
+		
+		$userModel = new TopbettaUserModelTopbettaUser();
+    	$user = $userModel->getUser();
+		
+    	
+    	$senderEmail	= $config->get('sender_email');
+		$senderName		= $config->get('sender_name');
+		
+    	$amountFormatted = sprintf('$%.2f', $amountCents / 100);
+    	$requestedDate = date("F j, Y, g:i a", $ts);
+    	
+    	$withdrawalMethod = null;
+    	$accountInfo = null;
+    	switch( $withdrawalType )
+    	{
+    		case 'bank':
+    			$withdrawalMethod = 'Bank Account';
+    		break;
+    		case 'paypal':
+    			$withdrawalMethod = 'PayPal Account';
+    			$accountInfo = $email;
+    		case 'moneybookers':
+    			$withdrawalMethod = 'MoneyBookers Account';
+    			$accountInfo = $email;
+    		break;
+    	}
+    	
+    	$emailBody = $config->get('withdrawal_notify_email_body');
+    	$emailSubject = $config->get('withdrawal_notify_email_subject');
+    	
+    	// send email
+    	require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+    	require_once (JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'helpers' . DS . 'helper.php');		
+    	if( $userEmail = $loginUser->email )
+    	{	
+			$mailer = new UserMAIL();
+
+			$replacements = array(
+	   			'[first name]' => $user->first_name,
+				'[name]' => $loginUser->name,
+	   			'[requested date]' => $requestedDate,
+	   			'[amount]' => $amountFormatted,
+	   			'[amount raw]' => $amount,
+	   			'[withdrawal method]' => $withdrawalMethod,
+	   			'[withdrawal account]' => $accountInfo,
+	   			'[help email]' => $config->get('help_email'),
+   			);
+   			$emailBody = PaymentHelper::variableReplace($replacements, $emailBody);
+    		
+    		$mailer->setSender(array($senderEmail, $senderName));
+    		$mailer->addReplyTo(array($senderEmail));
+    		
+    		$mailer->addRecipient($userEmail);
+    		$mailer->setSubject($emailSubject);
+    		$mailer->setBody($emailBody);
+    		$mailer->IsHTML(false);
+			$mailer->Send();
+    	}
+    	
+    	//send email to admin
+    	$mailer = new JMail();
+    	$mailer->setSender(array($senderEmail, $senderName));
+    	$mailer->addReplyTo(array($senderEmail));
+    	$mailer->addRecipient($senderEmail);
+    	
+    	$mailer->setSubject('Withdrawal Request from ' . $user->username);
+    	
+    	$emailBody	 = "A request for withdrawal has been made on $requestedDate for user {$user->username}\n\n";
+    	$emailBody 	.= "Withdrawal Details:\nUser: {$user->first_name} {$user->last_name}\nAmount: $amountFormatted\nMethod: $withdrawalMethod\nAccount: $accountInfo\n\n";
+		$emailBody	.= 'Account balance: ' . '$'.number_format($paymentModel->getTotal()/100, 2, '.', ',') . "\n";
+		$emailBody	.= "Bank account details:\nBank: $user->bank_name\nAccount name: $user->account_name\nBSB: $user->bsb_number\nAccount no.: $user->bank_account_number" . "\n\n";
+    	$emailBody	.= 'ID Verified: ' . ($user->identity_verified_flag ? 'Yes' : 'No') . "\n\n";
+    	$emailBody	.= "Contact Details:\n";
+    	$emailBody	.= "Email: {$user->email}\nMobile Number: {$user->msisdn}\nHome Number: {$user->phone_number}";
+    	
+    	$mailer->setBody($emailBody);
+    	$mailer->IsHTML(false);
+    	$mailer->Send();
+    	
+    	return OutputHelper::json(200, array('msg' => 'Request received.'));	
+		
+	}
+
+	public function setBetLimit() {
+			
+		//init models
+		if (!class_exists('TopbettaUserModelTopbettaUser')) {
+			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
+		}		
+		$user_model		=& $this->getModel('topbettaUser', 'TopbettaUserModel');
+		
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'useraudit.php');
+		$audit_model = new TopbettaUserModelUserAudit();		
+
+		//get login user details
+		$user		= $user_model->getUser();
+
+		//init session
+		$session =& JFactory::getSession();
+
+		//get post var
+		$no_limit = JRequest::getBool('no_limit', true, 'post');
+
+		//set what db field to update
+		$field_to_update	= 'bet_limit';
+		//init request cancel flag
+		$request_cancelled	= false;
+		//init err array
+		$err = array();
+
+		if ($no_limit) {
+			//-1 stands for no limit
+			$bet_limit = -1;
+		} else {
+			$bet_limit	= JRequest::getVar('bet_limit', null, 'post');
+
+			//validations for bet limit
+			if ($bet_limit != (string)($bet_limit * 1) || $bet_limit < 0) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('Invalid bet limit.')));
+			}
+
+			if ($bet_limit > 10000) {
+				return OutputHelper::json(500, array('error_msg' => JText::_('Please select "No Limit"')));
+			}
+
+			//converted to cents based number
+			$bet_limit = bcmul($bet_limit, 100);
+		}
+
+		//if users want to increase bet limit, we store the requested value to 'requested_bet_limit'
+		if (($user->bet_limit != -1 && $bet_limit > $user->bet_limit) || ($bet_limit == -1 && $user->bet_limit != -1)) {
+			$field_to_update = 'requested_bet_limit';
+		}
+
+		//when users already have a request of increasing bet, but come back to reduce the limit,
+		//we need to cancel the previous request
+		if($bet_limit != -1 && $bet_limit < $user->bet_limit && $user->requested_bet_limit != 0) {
+			$request_cancelled = true;
+		}
+
+		//update user's bet limit
+		if (!$user_model->update($field_to_update, $bet_limit)) {
+			return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update your bet limit! Please contact us.")));
+		}
+
+		//flag to indicate if request_bet_limit has changed
+		$request_bet_limit_changed = false;
+		//store the value to audit table if bet_limit /request_bet_limit is changed
+
+		if ($user->{$field_to_update} != $bet_limit) {
+			//add user audit record
+			$params = array(
+				'user_id'		=> $user->user_id,
+				'admin_id'		=> -1,
+				'field_name'	=> $field_to_update,
+				'old_value'		=> $user->bet_limit,
+				'new_value'		=> $bet_limit,
+			);
+			$audit_model->store($params);
+
+			if ('requested_bet_limit' == $field_to_update) {
+				$request_bet_limit_changed = true;
+			}
+		}
+
+		//if request cancelled, need to set request_bet_limit to 0
+		if ($request_cancelled) {
+			if (!$user_model->update('requested_bet_limit', 0)) {
+				return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update requested bet limit! Please contact us.")));	
+			}
+			//add user audit record
+			$params = array(
+				'user_id'		=> $user->user_id,
+				'admin_id'		=> -1,
+				'field_name'	=> 'requested_bet_limit',
+				'old_value'		=> $user->requested_bet_limit,
+				'new_value'		=> 0,
+			);
+			$audit_model->store($params);
+		}
+
+		//get email params
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
+		$usersConfig = &JComponentHelper::getParams( 'com_topbetta_user' );
+		$mailfrom	= $usersConfig->get('mailFrom');
+		$fromname	= $usersConfig->get('fromName');
+
+		//set up return messages and send out notification emails
+		if ('requested_bet_limit' == $field_to_update) {
+			if ($request_bet_limit_changed) {
+				$update_msg = JText::_('Your new bet limit will take effect in 7 days.');
+
+				//send bet limit increase request to admin
+				$mailer		= new JMAIL();
+				$emailBody	= "User {$user->username} ({$user->user_id}) has requested to increase the bet limit";
+				$emailBody	.= " from " . bcdiv($user->bet_limit, 100, 2);
+				$emailBody	.= " to " . ($bet_limit == -1 ? 'no limit' : bcdiv($bet_limit, 100, 2));
+				$emailBody	.= " on " . date('j/n/Y');
+				$mailer->setSender(array($mailfrom, $fromname));
+				$mailer->addReplyTo(array($mailfrom));
+				$mailer->addRecipient($mailfrom);
+				$mailer->setSubject('Requests to Increase Bet Limits');
+				$mailer->setBody($emailBody);
+				$mailer->IsHTML(false);
+				$mailer->Send();
+			} else {
+				$update_msg = JText::_('Raising bet limit request is already sent.');
+			}
+		} else {
+			$update_msg = JText::_('Bet limit updated');
+
+			if ($request_cancelled) {
+				//send cancel bet limit increase to admin
+				$mailer		= new JMAIL();
+				$emailBody	= "User {$user->username} ({$user->user_id}) has cancelled the request to increase bet limit";
+				$emailBody	.= " from " .  bcdiv($user->bet_limit, 100, 2);
+				$emailBody	.= " to " . ($user->requested_bet_limit == -1 ? 'no limit' : bcdiv($user->requested_bet_limit, 100, 2));
+				$emailBody	.= " on " . date('j/n/Y');
+				$mailer->setSender(array($mailfrom, $fromname));
+				$mailer->addReplyTo(array($mailfrom));
+				$mailer->addRecipient($mailfrom);
+				$mailer->setSubject('Requests to Increase Bet Limits - Cancelled');
+				$mailer->setBody($emailBody);
+				$mailer->IsHTML(false);
+				$mailer->Send();
+			}
+		}
+				
+		return OutputHelper::json(200, array('msg' => $update_msg));	
+		
+	}
+		
 
 }
 ?>

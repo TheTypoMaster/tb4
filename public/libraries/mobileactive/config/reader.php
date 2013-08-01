@@ -5,7 +5,7 @@ jimport('joomla.base.object');
 jimport('joomla.registry.registry');
 
 /**
- * Config Reader for MobileActive server.xml
+ * Config Reader for MobileActive server_igas.xml
  *
  * @author declan
  */
@@ -269,7 +269,7 @@ class ConfigReader extends JObject
 	}
 
 	/**
-	 * Get a section from the server.xml config file
+	 * Get a section from the server_igas.xml config file
 	 *
 	 * @param string $section_name
 	 * @return SimpleXMLElement
@@ -309,7 +309,7 @@ class ConfigReader extends JObject
 				$path = 'C:';
 			}
 
-			$path .= DS . 'mnt' . DS . 'web' . DS . 'server.xml';
+			$path .= DS . 'mnt' . DS . 'web' . DS . 'server_igas.xml';
 			$xml = simplexml_load_file($path);
 		}
 

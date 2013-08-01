@@ -223,7 +223,7 @@ class RaceDataImport extends TopBettaCLI
 	}
 	
 	final private function _getFileContentList($file){
-		//Fix this by reading from server.xml instead.
+		//Fix this by reading from server_igas.xml instead.
 		$auth = base64_encode('chiefy:Roosters');
 		$header = array("Authorization: Basic $auth");
 

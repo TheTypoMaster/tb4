@@ -1,0 +1,35 @@
+<?php
+namespace TopBetta;
+
+class SportsTypes extends \Eloquent {
+	protected $guarded = array();
+
+	public static $rules = array();
+
+	public function getTypes($eventId) {
+
+		$query = "SELECT DISTINCT(mt.id) AS id, mt.name AS bet_type FROM tbdb_market_type AS mt INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id WHERE m.event_id = $eventId";
+
+		$result = \DB::select($query);
+
+		return $result;
+
+	}
+
+	public function getTournamentTypes($compId) {
+
+		$query = "SELECT DISTINCT(mt.id) AS id, mt.name AS bet_type
+			FROM tbdb_market_type AS mt
+			INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id
+			INNER JOIN tbdb_event_group_market_type AS egmt ON egmt.market_type_id = mt.id
+			INNER JOIN tbdb_event_group AS eg ON eg.id = egmt.event_group_id
+			INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id
+			WHERE eg.id = '$compId'";
+
+		$result = \DB::select($query);
+
+		return $result;
+
+	}
+
+}
