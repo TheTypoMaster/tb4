@@ -166,31 +166,6 @@ class RacingController extends \BaseController {
 							// store data from array
 							if(isset($dataArray['Id'])){
 								$meetingId = $dataArray['Id'];
-								
-								// check if meeting exists in DB
-								$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
-								
-								// if meeting exists update that record
-								if($meetingExists){
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, In DB: $meetingExists", 1);
-									$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
-								}else{
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, Added to DB: $meetingExists", 1);
-									$raceMeet = new TopBetta\RaceMeeting;
-									if(isset($dataArray['Id'])){
-										$raceMeet->external_event_group_id = $dataArray['Id'];
-									}
-									
-								}
-																
-								if(isset($dataArray['Name'])){
-									$raceMeet->name = $dataArray['Name'];
-								}
-								
-// 								if(isset($dataArray['Date'])){
-// 									$raceMeet->start_date = $dataArray['Date'];
-// 								}
-								
 								if(isset($dataArray['RaceType'])){
 									switch($dataArray['RaceType']){
 										case "R":
@@ -208,68 +183,97 @@ class RacingController extends \BaseController {
 									}
 								}
 								
-								if(isset($dataArray['EventCount'])){
-									$raceMeet->events = $dataArray['EventCount'];
-								}
-								if(isset($dataArray['Weather'])){
-									$raceMeet->weather = $dataArray['Weather'];
-									// change to TB default if we have a match
-									$defaultValue = TopBetta\DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
-									$o = print_r($defaultValue,true);
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
-									if(count($defaultValue) > 0){ // 
-										$raceMeet->weather = $defaultValue[0]->value;
+								$isThisRaceMeeting =  TopBetta\RaceMeeting::isRace($raceMeet->type_code);
+								
+								if ($isThisRaceMeeting){
+									// check if meeting exists in DB
+									$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
+									
+									// if meeting exists update that record
+									if($meetingExists){
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, In DB: $meetingExists", 1);
+										$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
 									}else{
-										// Email on failer to find a weather status to map to
-										$emailSubject = "iGAS Race Schedule: No Weather Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code. ", Weather:".$raceMeet->weather.".";
-										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, Added to DB: $meetingExists", 1);
+										$raceMeet = new TopBetta\RaceMeeting;
+										if(isset($dataArray['Id'])){
+											$raceMeet->external_event_group_id = $dataArray['Id'];
+										}
 										
-										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
-										{
-											$m->from($emailDetails['from'], $emailDetails['from_name']);
-											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
-										});
+									}
+																	
+									if(isset($dataArray['Name'])){
+										$raceMeet->name = $dataArray['Name'];
 									}
 									
-								}
-								if(isset($dataArray['Track'])){
-									$raceMeet->track = $dataArray['Track'];
-									// change to TB default if we have a match
-									$defaultValue = TopBetta\DataValues::getDefaultValue('track_condition', $raceMeet->track);
-									$o = print_r($defaultValue,true);
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
-									if(count($defaultValue) > 0){
-										$raceMeet->track = $defaultValue[0]->value;
-									}else{
-										// Email on failer to find a track status to map to
-										$emailSubject = "iGAS Race Schedule: No Track Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code. ", Track:".$raceMeet->track.".";
-										$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
-										
-										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
-										{
-											$m->from($emailDetails['from'], $emailDetails['from_name']);
-											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
-										});
+	// 								if(isset($dataArray['Date'])){
+	// 									$raceMeet->start_date = $dataArray['Date'];
+	// 								}
+									
+																
+									if(isset($dataArray['EventCount'])){
+										$raceMeet->events = $dataArray['EventCount'];
 									}
+									if(isset($dataArray['Weather'])){
+										$raceMeet->weather = $dataArray['Weather'];
+										// change to TB default if we have a match
+										$defaultValue = TopBetta\DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
+										$o = print_r($defaultValue,true);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
+										if(count($defaultValue) > 0){ // 
+											$raceMeet->weather = $defaultValue[0]->value;
+										}else{
+											// Email on failer to find a weather status to map to
+											$emailSubject = "iGAS Race Schedule: No Weather Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code. ", Weather:".$raceMeet->weather.".";
+											$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+											
+											$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+											{
+												$m->from($emailDetails['from'], $emailDetails['from_name']);
+												$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+											});
+										}
+										
+									}
+									if(isset($dataArray['Track'])){
+										$raceMeet->track = $dataArray['Track'];
+										// change to TB default if we have a match
+										$defaultValue = TopBetta\DataValues::getDefaultValue('track_condition', $raceMeet->track);
+										$o = print_r($defaultValue,true);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
+										if(count($defaultValue) > 0){
+											$raceMeet->track = $defaultValue[0]->value;
+										}else{
+											// Email on failer to find a track status to map to
+											$emailSubject = "iGAS Race Schedule: No Track Mapping Found for MID:$meetingId, Name:".$raceMeet->name.", Type:".$raceMeet->type_code. ", Track:".$raceMeet->track.".";
+											$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'raceschedule@topbetta.com', 'from_name' => 'TopBetta iGAS RaceSchedule', 'subject' => "$emailSubject" );
+											
+											$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+											{
+												$m->from($emailDetails['from'], $emailDetails['from_name']);
+												$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+											});
+										}
+									}
+									if(isset($dataArray['State'])){
+										$raceMeet->state = $dataArray['State'];
+									}
+									if(isset($dataArray['Country'])){
+										$raceMeet->country = $dataArray['Country'];
+									}
+									if(isset($dataArray['MeetingType'])){
+										$raceMeet->meeting_grade = $dataArray['MeetingType'];
+									}
+									if(isset($dataArray['RailPosition'])){
+										$raceMeet->rail_position = $dataArray['RailPosition'];
+									}
+									
+									// save or update the record
+									$raceMeetSave = $raceMeet->save();
+									$raceMeetID = $raceMeet->id;
+									TopBetta\LogHelper::l("BackAPI: Racing - Processed Meeting. MID:$meetingId, Date:$raceMeet->start_date, Name:$raceMeet->name, Type:$raceMeet->type_code, Events:$raceMeet->events, Weather:$raceMeet->weather, Track:$raceMeet->track");
+									
 								}
-								if(isset($dataArray['State'])){
-									$raceMeet->state = $dataArray['State'];
-								}
-								if(isset($dataArray['Country'])){
-									$raceMeet->country = $dataArray['Country'];
-								}
-								if(isset($dataArray['MeetingType'])){
-									$raceMeet->meeting_grade = $dataArray['MeetingType'];
-								}
-								if(isset($dataArray['RailPosition'])){
-									$raceMeet->rail_position = $dataArray['RailPosition'];
-								}
-								
-								// save or update the record
-								$raceMeetSave = $raceMeet->save();
-								$raceMeetID = $raceMeet->id;
-								TopBetta\LogHelper::l("BackAPI: Racing - Processed Meeting. MID:$meetingId, Date:$raceMeet->start_date, Name:$raceMeet->name, Type:$raceMeet->type_code, Events:$raceMeet->events, Weather:$raceMeet->weather, Track:$raceMeet->track");
-								
 							}else{
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. No Meeting ID, Can't process", 1);
 							}								
