@@ -22,6 +22,11 @@ class RaceMeeting extends \Eloquent {
 		return RaceMeeting::where('external_event_group_id', '=', $meetingId) -> pluck('id');
 	}
 	
+	static public function isRace($typeCode) {
+		$type_code = RaceMeeting::where('type_code', '=', $typeCode)->pluck('type_code');
+		return ($type_code == 'NULL' ? false : true);
+	}
+	
 	static public function getRacesForMeetingId($meetingId) {
 		$races = RaceMeeting::find($meetingId) -> raceevents;
 
