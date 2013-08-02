@@ -169,16 +169,16 @@ class RacingController extends \BaseController {
 								if(isset($dataArray['RaceType'])){
 									switch($dataArray['RaceType']){
 										case "R":
-											$raceMeet->type_code = 'R';
-											$raceMeet->tournament_competition_id = '31';
+											$type_code = 'R';
+											$tournament_competition_id = '31';
 											break;
 										case "T":
-											$raceMeet->type_code = 'H';
-											$raceMeet->tournament_competition_id = '32';
+											$type_code = 'H';
+											$tournament_competition_id = '32';
 											break;
 										case "G":
-											$raceMeet->type_code = 'G';
-											$raceMeet->tournament_competition_id = '33';
+											$type_code = 'G';
+											$tournament_competition_id = '33';
 											break;
 									}
 								}
@@ -268,6 +268,8 @@ class RacingController extends \BaseController {
 										$raceMeet->rail_position = $dataArray['RailPosition'];
 									}
 									
+									$raceMeet->type_code = $type_code;
+									$raceMeet->tournament_competion_id = $tournament_competition_id;
 									// save or update the record
 									$raceMeetSave = $raceMeet->save();
 									$raceMeetID = $raceMeet->id;
