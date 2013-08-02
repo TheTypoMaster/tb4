@@ -215,6 +215,7 @@ class Api_User extends JController {
                     $password2	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= JRequest::getString('source', null, 'post');
+					$btag		= JRequest::getString('btag', null, 'post');
 					//$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
 
 					//do validations
@@ -304,6 +305,7 @@ class Api_User extends JController {
 						  'msisdn'					=> $mobile,
 						  'source'					=> $source,
 						  'marketing_opt_in_flag'	=> $optbox ? 1 : 0,
+						  'btag'					=> $btag
 					);
 
 					if (!$model->store($params)) {
