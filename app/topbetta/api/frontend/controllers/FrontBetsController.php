@@ -219,6 +219,10 @@ class FrontBetsController extends \BaseController {
 
 				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
 
+			} elseif ($bet['status'] == 401) {
+
+				return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+
 			} else {
 
 				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
@@ -270,7 +274,11 @@ class FrontBetsController extends \BaseController {
 
 							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
 
-						} else {
+						} elseif ($bet['status'] == 401) {
+
+							return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+
+						}  else {
 
 							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
 							$errors++;
@@ -354,7 +362,11 @@ class FrontBetsController extends \BaseController {
 
 						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
 
-					} else {
+					} elseif ($bet['status'] == 401) {
+
+						return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+
+					}  else {
 
 						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
 						$errors++;
