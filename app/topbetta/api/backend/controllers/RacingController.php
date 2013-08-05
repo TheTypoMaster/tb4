@@ -183,7 +183,7 @@ class RacingController extends \BaseController {
 									}
 								}
 								
-								$isThisRaceMeeting =  TopBetta\RaceMeeting::isRace($raceMeet->type_code);
+								$isThisRaceMeeting =  TopBetta\RaceMeeting::isRace($type_code);
 								
 								if ($isThisRaceMeeting){
 									// check if meeting exists in DB
@@ -269,7 +269,7 @@ class RacingController extends \BaseController {
 									}
 									
 									$raceMeet->type_code = $type_code;
-									$raceMeet->tournament_competion_id = $tournament_competition_id;
+									$raceMeet->tournament_competition_id = $tournament_competition_id;
 									// save or update the record
 									$raceMeetSave = $raceMeet->save();
 									$raceMeetID = $raceMeet->id;
