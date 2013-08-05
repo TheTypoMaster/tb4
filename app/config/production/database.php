@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'dbwriter.topbetta.cust.bulletproof.net',
-			'database'  => 'topbetta_igas',
+			'database'  => 'topbetta',
 			'username'  => 'tb63GuQl5',
 			'password'  => 'F5fbEfOk7mwkhBaoFY',
 			'charset'   => 'utf8',
