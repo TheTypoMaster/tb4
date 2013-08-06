@@ -1259,6 +1259,13 @@ class Api_Betting extends JController {
 							'P' 
 					);
 					foreach ( $eachWayArray as $eachWayBetType ) {
+						
+						if($type == "win"){
+							$betTypeShort = "W";
+						}elseif($type == "place"){
+							$betTypeShort = "P";
+						}
+						
 						// Grab default tote from DB
 						$toteTypeReturn = $bet_product_model->isProductUsed ( $betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName );
 						$toteType = $toteTypeReturn->product_name;
@@ -1328,7 +1335,14 @@ class Api_Betting extends JController {
 							'success' => 'Your bets have been placed' 
 					) );
 				}else{ // win and place bets
-															
+
+					
+					if($type == "win"){
+						$betTypeShort = "W";
+					}elseif($type == "place"){
+						$betTypeShort = "P";
+					}
+					
 					// Grab default tote from DB 
 					$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
 					$toteType = $toteTypeReturn->product_name;
