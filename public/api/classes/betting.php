@@ -1253,12 +1253,16 @@ class Api_Betting extends JController {
 				// TODO: International races need to be catered for. Should configuration or DB driven
 				$providerName = "igas";
 				
+				
+				
 				if ($bet->bet_type_id == "3") { // eachway bets
 					$eachWayArray = array (
 							'W',
 							'P' 
 					);
+					
 					foreach ( $eachWayArray as $eachWayBetType ) {
+						file_put_contents('/tmp/saveBet', "Bet Type:" .$eachWayBetType. "\n", FILE_APPEND | LOCK_EX);
 						
 						if($type == "win"){
 							$betTypeShort = "W";
@@ -1267,7 +1271,7 @@ class Api_Betting extends JController {
 						}
 						
 						// Grab default tote from DB
-						$toteTypeReturn = $bet_product_model->isProductUsed ( $betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName );
+						$toteTypeReturn = $bet_product_model->isProductUsed ( $eachWayBetType, $meetingCountry, $meetingRegion, $meetingType, $providerName );
 						$toteType = $toteTypeReturn->product_name;
 						
 						/*
