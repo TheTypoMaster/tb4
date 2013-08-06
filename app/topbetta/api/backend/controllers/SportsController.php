@@ -432,7 +432,7 @@ class SportsController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, In DB: $oddsExists", 1);
 											$selectionPriceModel = TopBetta\SportsSelectionPrice::find($oddsExists);
 											$selectionPriceModel->line = $line;
-											$selectionPriceModel->win_odds = $line;
+											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
 										}else{
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, Adding to DB: $oddsExists", 1);
 											$selectionPriceModel = new TopBetta\SportsSelectionPrice;
