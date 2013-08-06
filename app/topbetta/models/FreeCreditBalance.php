@@ -26,13 +26,13 @@ class FreeCreditBalance extends \Eloquent {
 	* @param  array parameters of a new transaction
 	* @return int transaction id
 	*/
-	private function newTransaction($params) {
+	static public function newTransaction($params) {
 			
 		// Timestamp for created_date - legacy field
 		$nowTime = date("Y-m-d H:i:s");
 		
 		// instansiate the model
-		$transaction = new TopBetta\FreeCreditBalance;
+		$transaction = new FreeCreditBalance;
 			
 		// get the id for the transaction type
 		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($params['tournament_transaction_type']);
@@ -64,7 +64,7 @@ class FreeCreditBalance extends \Eloquent {
 	{
 
 		// Grab the ID for the keyword
-		$transactionTypeId = TopBetta\FreeCreditTransactionTypes::getTransactionTypeId($keyword);
+		$transactionTypeId = FreeCreditTransactionTypes::getTransactionTypeId($keyword);
 		$tracking_id = -1;
 
 		// TODO: Changed to cater for laravel sessions
@@ -78,8 +78,8 @@ class FreeCreditBalance extends \Eloquent {
 		}
 
 		if(null == $desc) {
-			$transactionTypeRec = TopBetta\FreeCreditTransactionTypes::getTransactionType($keyword);
-			$desc = $transactionTypeRec->description;
+			$transactionTypeRec = FreeCreditTransactionTypes::getTransactionType($keyword);
+			$desc = $transactionTypeRec[0]->description;
 		}
 
 		$giver_id = -1;
@@ -102,10 +102,10 @@ class FreeCreditBalance extends \Eloquent {
 				'session_tracking_id' 		=> $tracking_id,
 				'amount' 					=> $amount,
 				'notes' 					=> $desc,
-				'account_transaction_type' 	=> $keyword,
+				'tournament_transaction_type' 	=> $keyword,
 		);
 
-		return TopBetta\FreeCreditBalance::newTransaction($params);
+		return FreeCreditBalance::newTransaction($params);
 	}
 
 
