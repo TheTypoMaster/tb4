@@ -1278,9 +1278,6 @@ class Api_Betting extends JController {
 							$external_bet = $api->placeRacingBet ( $bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $eachWayBetType, $toteType, $runner_number );
 							$api_error = $api->getErrorList ( true );
 							
-							// $external_bet = 'test123';
-							// $api_error = 'no';
-							
 							if (empty ( $api_error ) && isset ( $external_bet->wagerId )) {
 								$bet_confirmed = true;
 								$bet->external_bet_id = $bet_id; // (int)$external_bet->wagerId;
@@ -1351,10 +1348,7 @@ class Api_Betting extends JController {
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, $toteType, $runner_number);
 						$api_error		= $api->getErrorList(true);
-						
-						//$external_bet = 'test123';
-						//$api_error = 'no';
-												
+													
 						if (empty($api_error) && isset($external_bet->wagerId)) {
 							$bet_confirmed	= true;
 							$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
