@@ -1369,8 +1369,8 @@ class Api_Betting extends JController {
 							$bet->bet_result_status_id = (int)$bet_status;
 							$bet->save();
 						}else{
-								$bet->external_bet_error_message = (string)$api_error;
-							}
+							$bet->external_bet_error_message = (string)$api_error;
+						}
 					}
 				
 					if (!$bet_confirmed) {
