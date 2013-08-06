@@ -1043,40 +1043,6 @@ class Api_Betting extends JController {
 				
 				$bet_record = (strtolower($bet_type->name) == 'eachway') ? array('win', 'place') : array($bet_type->name);
 				foreach($bet_record as $type) {
-				
-				//hide exotic bet
-				/*
-				if ($is_exotic_bet_type) {
-					
-					$bet = WageringBet::newBet($type, $value, $boxed_flag, $flexi_flag, unserialize($race->external_race_pool_id_list));
-			
-					foreach ($selection_list as $pos => $selections) {
-						
-						$position_number = null;
-						if (!$boxed_flag) {
-							$position_number = BettingHelper::getPositionNumber($pos);
-							
-							if (is_null($position_number)) {
-								$validation->error = JText::_('Invalid position number');
-								return OutputHelper::json(500, array('error_msg' => $validation->error ));
-							}
-						}
-						
-						foreach ($selections as $selection_id) {
-							$bet->addSelection($runner_list_by_id[$selection_id[$pos]]->number, $position_number);
-						}
-					}
-						
-					if (!$bet->isValid()) {
-						$validation->error = JText::_($bet->getErrorMessage());
-						return OutputHelper::json(500, array('error_msg' => $validation->error ));
-						
-					} else {
-						$wagering_bet_list[] = $bet;
-						$bet_total	+= $bet->getTotalBetAmount();
-					}
-				} else {
-				*/
 					foreach ($selection_list['first'] as $selection_id) {
 						$bet = WageringBet::newBet($type, $value, false, 0, unserialize($race->external_race_pool_id_list));
 						$bet->addSelection($runner_list_by_id[$selection_id]->number);
@@ -1089,11 +1055,8 @@ class Api_Betting extends JController {
 							$bet_total	+= $bet->getTotalBetAmount();
 						}
 					}
-				//}
-				
-			}
+				}
 			
-				
 				$validation->data['wagering_bet_list'] = $wagering_bet_list;
 				
 				//For user account
@@ -1281,39 +1244,111 @@ class Api_Betting extends JController {
 								$bet->save();
 								return OutputHelper::json(500, array('error_msg' => 'Cannot store bet selections' ));
 							}
-						}
 					}
-					
-					$api_error		= null;
-					$bet_confirmed	= false;
-					
-					// TODO: International races need to be catered for. Should configuration or DB driven 
-					$providerName = "igas";
+				}
+				
+				$api_error = null;
+				$bet_confirmed = false;
+				
+				// TODO: International races need to be catered for. Should configuration or DB driven
+				$providerName = "igas";
+				
+				if ($bet->bet_type_id == "3") { // eachway bets
+					$eachWayArray = array (
+							'W',
+							'P' 
+					);
+					foreach ( $eachWayArray as $eachWayBetType ) {
+						
+						if($type == "win"){
+							$betTypeShort = "W";
+						}elseif($type == "place"){
+							$betTypeShort = "P";
+						}
+						
+						// Grab default tote from DB
+						$toteTypeReturn = $bet_product_model->isProductUsed ( $betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName );
+						$toteType = $toteTypeReturn->product_name;
+						
+						/*
+						 *  set tote type used for bet placement
+						 */
+						
+						if ($this->confirmAcceptance ( $bet_id, $user->id, 'bet', time () + 600 )) {
+							$external_bet = $api->placeRacingBet ( $bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $eachWayBetType, $toteType, $runner_number );
+							$api_error = $api->getErrorList ( true );
+							
+							if (empty ( $api_error ) && isset ( $external_bet->wagerId )) {
+								$bet_confirmed = true;
+								$bet->external_bet_id = $bet_id; // (int)$external_bet->wagerId;
+								$bet->invoice_id = $external_bet->wagerId;
+								
+								// Set the bet_status based on $external_bet->status
+								$bet_status = 5;
+								if ($external_bet->status == "N" || $external_bet->status == "E") {
+									$bet_status = 5;
+								} elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
+									$bet_status = 1;
+								} elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
+									$bet_status = 4;
+									$bet_confirmed = false;
+								}
+								
+								$bet->bet_result_status_id = ( int ) $bet_status;
+								$bet->save ();
+							} else {
+								$bet->external_bet_error_message = ( string ) $api_error;
+							}
+						}
+						
+						if (! $bet_confirmed) {
+							
+							if ($free_bet_amount > 0) {
+								// add free bet doallers
+								if ($free_bet_amount >= $wagering_bet->getTotalBetAmount ()) {
+									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $wagering_bet->getTotalBetAmount (), 'freebetrefund' );
+								} else {
+									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $free_bet_amount, 'freebetrefund' );
+									$bet_refund_transaction_id = $payment_model->increment ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betrefund' );
+								}
+							} else
+								$bet_refund_transaction_id = $payment_model->increment ( $wagering_bet->getTotalBetAmount (), 'betrefund' );
+							
+							$bet->refund_transaction_id = ( int ) $bet_refund_transaction_id;
+							$bet->refund_freebet_transaction_id = ( int ) $bet_freebet_refund_transaction_id;
+							$bet->resulted_flag = 1;
+							$bet->refunded_flag = 1;
+							$bet->bet_result_status_id = ( int ) $refunded_status->id;
+							$bet->save ();
+							
+							$this->confirmAcceptance ( $bet_id, $user->id, 'beterror', time () + 600 );
+							
+							return OutputHelper::json ( 500, array (
+									'error_msg' => 'One or more bets could not be registered :' . $api_error 
+							) );
+						}
+					} // end for each on eachway bets
+					return OutputHelper::json ( 200, array (
+							'success' => 'Your bets have been placed' 
+					) );
+				}else{ // win and place bets
+
 					
 					if($type == "win"){
 						$betTypeShort = "W";
 					}elseif($type == "place"){
 						$betTypeShort = "P";
 					}
-															
+					
 					// Grab default tote from DB 
 					$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
 					$toteType = $toteTypeReturn->product_name;
 					
-					/* // set tote type used for win and place bets on all gallops to TOP and harness/dogs MID
-					if($meetingType == "R"){
-						$toteType = "TOP";
-					}else{
-						$toteType = "MID";
-					} */
-								
+		
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, $toteType, $runner_number);
 						$api_error		= $api->getErrorList(true);
-						
-						//$external_bet = 'test123';
-						//$api_error = 'no';
-												
+													
 						if (empty($api_error) && isset($external_bet->wagerId)) {
 							$bet_confirmed	= true;
 							$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
@@ -1334,8 +1369,8 @@ class Api_Betting extends JController {
 							$bet->bet_result_status_id = (int)$bet_status;
 							$bet->save();
 						}else{
-								$bet->external_bet_error_message = (string)$api_error;
-							}
+							$bet->external_bet_error_message = (string)$api_error;
+						}
 					}
 				
 					if (!$bet_confirmed) {
@@ -1366,6 +1401,8 @@ class Api_Betting extends JController {
 					}
 				}
 				return OutputHelper::json(200, array('success' => 'Your bet has been placed' ));
+			
+			}
 
 		} else {
               
