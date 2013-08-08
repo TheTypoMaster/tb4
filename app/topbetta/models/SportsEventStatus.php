@@ -1,4 +1,5 @@
-<?php
+<?php namespace TopBetta;
+
 class SportEventStatus extends \Eloquent {
 
 	protected $table = 'tbdb_event_status';
