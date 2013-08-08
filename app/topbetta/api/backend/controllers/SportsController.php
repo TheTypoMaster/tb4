@@ -481,7 +481,7 @@ class SportsController extends \BaseController {
 											$winningSelectionResultExists = TopBetta\SportsSelectionResults::selectionResultExists($winningSelectionID);
 										
 											if($winningSelectionResultExists){
-												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: Already Exists: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
+												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: Already Exists: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 											}else{
 												// create selection_result record
 												$selectionResultModel = new TopBetta\SportsSelectionResults;
