@@ -160,7 +160,7 @@ class Tournament extends \Eloquent {
 	 * @param integer $userId
 	 * @return object
 	 */
-	public function getMyTournamentListByUserID($userId, $order = false, $includeRefunded = false)
+	public function getMyTournamentListByUserID($userId, $order = false, $includeRefunded = false, $enteredFromToday = false)
 	{
 
 		$query =
@@ -174,8 +174,13 @@ class Tournament extends \Eloquent {
 				t.id = tk.tournament_id
 			WHERE
 				user_id = "' . $userId . '"
-				AND t.paid_flag <> 1
 				AND t.cancelled_flag = 0';
+
+		if($enteredFromToday) {
+			$query .= " AND t.end_date > '" . date('Y-m-d') . "'";
+		} else {
+			$query .= " AND t.paid_flag <> 1";
+		}
 
 		if(!$includeRefunded) {
 			$query .= ' AND tk.refunded_flag != 1';
@@ -223,7 +228,7 @@ class Tournament extends \Eloquent {
 		$current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants;
 		return ($current_prize_pool > $tournament -> minimum_prize_pool) ? $current_prize_pool : $tournament -> minimum_prize_pool;
 	}
-	
+
 	/**
 	 * Calculate the number of places paid for a tournament, and the payout if cash.
 	 *
@@ -242,7 +247,7 @@ class Tournament extends \Eloquent {
 		}
 
 		return $payout_model->getPlaceList($tournament, $entrant_count, $prize_pool);
-	}	
+	}
 
 	/**
 	 * Check out if a tournament is racing
@@ -268,7 +273,7 @@ class Tournament extends \Eloquent {
 
 		return in_array($sport_name, $this -> excludeSports);
 	}
-	
+
 	/**
 	 * Determine if a tournament has finished
 	 *
@@ -278,6 +283,6 @@ class Tournament extends \Eloquent {
 	public function isFinished($tournament)
 	{
 		return (!empty($tournament->cancelled_flag) || strtotime($tournament->end_date) < time());
-	}	
+	}
 
 }

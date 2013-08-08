@@ -42,7 +42,7 @@ class FrontUsersDepositController extends \BaseController {
 				$userPin = sprintf("%0" . $numDigits . "d", \Auth::user() -> id);
 				$bpayRef = $userPin . $this -> mod10($userPin);
 				$billerCode = '135194';
-				
+
 				return array("success" => true, "result" => array('title' => 'Telephone & Internet Banking - BPAY&reg;', 'biller_code' => $billerCode, 'ref' => $bpayRef, 'logo' => url('images/bank_logos/logo_bpay_55.gif'), 'message' => 'Contact your bank, credit union or building society to make this payment from your cheque, savings, debit or credit card account. More info: www.bpay.com.au'));
 				break;
 
@@ -146,7 +146,7 @@ class FrontUsersDepositController extends \BaseController {
 		$input = Input::json() -> all();
 		$year = date('y');
 
-		$rules = array('name' => 'required|min:3', 'card_number' => 'required|min:13|max:19', 'card_type' => 'required|alpha', 'expiry_month' => 'required|max:12', 'expiry_year' => "required|size:2", 'cvc' => 'required|min:3', 'amount' => 'required|numeric');
+		$rules = array('name' => 'required|min:3', 'card_number' => 'required|min:13|max:19', 'expiry_month' => 'required|max:12', 'expiry_year' => "required|size:2", 'cvc' => 'required|min:3', 'amount' => 'required|numeric');
 
 		$validator = \Validator::make($input, $rules);
 
@@ -155,6 +155,14 @@ class FrontUsersDepositController extends \BaseController {
 			return array("success" => false, "error" => $validator -> messages() -> all());
 
 		} else {
+
+            //temp fix
+            if ($input['card_type'] == 1) {
+                    $input['card_type'] = 'visa';
+            }
+            if ($input['card_type'] == 2)  {
+                    $input['card_type'] = 'mastercard';
+            }
 
 			//pass data onto legacy api
 			$l = new \TopBetta\LegacyApiHelper;

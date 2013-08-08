@@ -27,37 +27,39 @@ class PaymentViewAccounttransaction extends JView
 {
 	/**
 	* Method to diplay the view
-	* 
+	*
 	* @return void
 	*/
 	function display($tpl = null)
 	{
-        parent::display($tpl); 
-        
+        parent::display($tpl);
+
         JHTML::_('behavior.mootools');
-        
+
         //added css
-        $css = JURI::base().'components/com_payment/assets/style.css';
+        //$css = JURI::base().'components/com_payment/assets/style.css';
+        $css = '/administrator/components/com_payment/assets/style.css';
 		$document =& JFactory::getDocument();
 		$document->addStyleSheet($css);
-		
+
 		if( 'add' == JRequest::getVar( 'task' ))
 		{
 			//added javascript
-			$js = JURI::base().'components/com_payment/assets/autocomplete.js';
+			//$js = JURI::base().'components/com_payment/assets/autocomplete.js';
+			$js = '/administrator/components/com_payment/assets/autocomplete.js';
 			$document->addScript($js);
 		}
 		else
 		{
 			$document->addScript('/media/system/js/datepicker.js' );
-			
+
 			$js = "window.addEvent('domready', function(){
 				$$('input.DatePicker').each( function(el){
 					new DatePicker(el);
 					});
 			}); ";
 			$document->addScriptDeclaration($js);
-			
+
 			$js = "function isNumberKey(evt)
 			      {
 			         var charCode = (evt.which) ? evt.which : event.keyCode
@@ -67,8 +69,8 @@ class PaymentViewAccounttransaction extends JView
 			      }
 			";
 			$document->addScriptDeclaration($js);
-			
-			
+
+
 			$css = '/media/system/css/datepicker.css';
 			$document->addStyleSheet($css);
 		}
