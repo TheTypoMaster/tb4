@@ -498,7 +498,7 @@ class SportsController extends \BaseController {
 												$eventStatusId = TopBetta\SportEventStatus::getSportsEventStatusIdByKeyword('paying');
 												$eventModelSports = TopBetta\SportsMatches::find($eventExists);
 												$eventModelSports->event_status_id = $eventStatusId;
-												$eventModelSports->paid = '1';
+												$eventModelSports->paid_flag = '1';
 												$eventModelSports->save();
 												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result. Event Status set to Paying: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 											}else{
