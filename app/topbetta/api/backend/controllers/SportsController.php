@@ -470,7 +470,7 @@ class SportsController extends \BaseController {
 							if($dataArray['MarketStatus'] == 'R' && $dataArray['ScoreType'] == 'W'){
 
 								// - get winning selection record
-								$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($eventId, $marketId, $score);
+								$winningSelectionID = TopBetta\SportsSelection::getWinningSelelctionID($gameId, $marketId, $score);
 								
 								// if selection found
 								if ($winningSelectionID){
