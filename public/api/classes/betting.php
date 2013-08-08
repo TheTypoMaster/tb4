@@ -1255,7 +1255,7 @@ class Api_Betting extends JController {
 				
 				
 				
-				if ($bet->bet_type_id == "3") { // eachway bets
+				if ($bet_type_id == "3") { // eachway bets
 					$eachWayArray = array (
 							'W',
 							'P' 
