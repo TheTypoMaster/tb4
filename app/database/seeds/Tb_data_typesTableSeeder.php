@@ -5,13 +5,15 @@ class Tb_data_typesTableSeeder extends Seeder {
     public function run()
     {
     	// Uncomment the below to wipe the table clean before populating
-    	DB::table('tb_data_types')->truncate();
+    	DB::table('tb_data_types')->delete();
 
         $tb_data_types = ( array (
         		array (
+        				'id' => '1',
         				'data_type' => 'weather_condition',
         		),
         		array (
+        				'id' => '2',
         				'data_type' => 'track_condition',
         		),
         		
