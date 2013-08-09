@@ -138,9 +138,9 @@ class TournamentSportOfferController extends JController
 
 			$match_is_resulted = $match_model->isEventResulted($match_id);
 
-			if($match_is_resulted){
+			//if($match_is_resulted){
 				$offerresult_model = $this->getModel('SelectionResult', 'TournamentModel');
-			}
+			//}
 
 			$market_list = array();
 			
@@ -151,10 +151,10 @@ class TournamentSportOfferController extends JController
 					$market->name = $offer->market_type;
 					$market->offer_list = array();
 					$market->paying_offer = null;
-					if ($match_is_resulted){
+				//	if ($match_is_resulted){
 						$paying_offer = $offerresult_model->getSelectionResultByMarketID($offer->market_id);
 						$market->paying_offer = is_null($paying_offer) ? '0' : $paying_offer;
-					}
+				//	}
 
 					$market_list[$offer->market_id] = $market;
 				}
