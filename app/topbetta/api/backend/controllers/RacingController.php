@@ -121,12 +121,11 @@ class RacingController extends \BaseController {
 		
 		// get the JSON POST
 		$racingJSON = \Input::json();
-		//$racingJSON = unserialize(file_get_contents('/tmp/backAPIracing-20130614072624'));
-		$jsonSerialized = serialize($racingJSON);
-
+			
 		if($this->debug){
+			$racingJSONlog = \Input::json()->all();
 			$timeStamp = date("YmdHis");
-			\File::append('/tmp/backAPIracing-'.$timeStamp, $jsonSerialized);
+			\File::append('/tmp/backAPIracingJSON-'.$timeStamp, json_encode($racingJSONlog));
 		}
 		
 		// make sure JSON was received
