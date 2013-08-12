@@ -893,7 +893,7 @@ class Api_Betting extends JController {
 		//JRequest::setVar('wager_id', '1383248'); // Runner wager ID - runner_list
 		
 		$postVars = print_r(JRequest::get('POST'), true);
-		file_put_contents('/tmp/saveBet', $postVars . "\n", FILE_APPEND | LOCK_EX);
+		file_put_contents('/tmp/igas_racing_betting.log', "POST Vars:".$postVars . "\n", FILE_APPEND | LOCK_EX);
 			
 		//Get the position of the runner
 		$pos = JRequest::getVar('pos', '0');
@@ -1262,7 +1262,7 @@ class Api_Betting extends JController {
 					);
 					
 					foreach ( $eachWayArray as $eachWayBetType ) {
-						file_put_contents('/tmp/saveBet', "Bet Type:" .$eachWayBetType. "\n", FILE_APPEND | LOCK_EX);
+						file_put_contents('/tmp/igas_racing_betting.log', "Bet Type:" .$eachWayBetType. "\n", FILE_APPEND | LOCK_EX);
 						
 						if($type == "win"){
 							$betTypeShort = "W";
@@ -1453,14 +1453,14 @@ class Api_Betting extends JController {
 		//JRequest::setVar('wager_id', '1383248'); // Runner wager ID - runner_list
 
 		$postVars = print_r(JRequest::get('POST'), true);
-		file_put_contents('/tmp/saveExoticsBet', "* Post Vars:". $postVars . "\n", FILE_APPEND | LOCK_EX);
+		file_put_contents('/tmp/igas_exotics_betting.log', "* Post Vars:". $postVars . "\n", FILE_APPEND | LOCK_EX);
 		
 		//Get free bet in cents
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
 			
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
 
-			file_put_contents('/tmp/saveExoticsBet', "* Server Token\n", FILE_APPEND | LOCK_EX);
+			// file_put_contents('/tmp/saveExoticsBet', "* Server Token\n", FILE_APPEND | LOCK_EX);
 			
 			$validation = new stdClass();
 			$validation->relogin	= false;
@@ -1653,7 +1653,7 @@ class Api_Betting extends JController {
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 
-			file_put_contents('/tmp/saveExoticsBet', "* Get API Instance\n", FILE_APPEND | LOCK_EX);
+			// file_put_contents('/tmp/saveExoticsBet', "* Get API Instance\n", FILE_APPEND | LOCK_EX);
 			$api = WageringApi::getInstance(WageringApi::API_IGASEXOTICS);
 
 			$api_con=$api->checkConnection();
@@ -1662,7 +1662,7 @@ class Api_Betting extends JController {
 				$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-			file_put_contents('/tmp/saveExoticsBet', "* API Available\n", FILE_APPEND | LOCK_EX);
+			// file_put_contents('/tmp/saveExoticsBet', "* API Available\n", FILE_APPEND | LOCK_EX);
 
 			$bet_origin			= JRequest::getVar('bet_origin', null);
 
@@ -1678,7 +1678,7 @@ class Api_Betting extends JController {
 			$validation->data['runner_list_by_number']	= $runner_list_by_number;
 			$validation->data['bet_origin']				= $bet_origin;
 
-			file_put_contents('/tmp/saveExoticsBet', "* Validation Complete\n", FILE_APPEND | LOCK_EX);
+			// file_put_contents('/tmp/saveExoticsBet', "* Validation Complete\n", FILE_APPEND | LOCK_EX);
 			
 			// Bet Validation Ends here
 			//http://topbetta.com/api/?method=saveBet&id=1&race_id=3613&bet_type_id=1&selection[]=test&selection[]=testt
@@ -1774,7 +1774,7 @@ class Api_Betting extends JController {
 				 * problem saving bet - refund the amounts to accounts that apply
 				 */
 				
-				file_put_contents('/tmp/saveExoticsBet', "* TB Bet ID:". $bet_id . "\n", FILE_APPEND | LOCK_EX);
+				// file_put_contents('/tmp/saveExoticsBet', "* TB Bet ID:". $bet_id . "\n", FILE_APPEND | LOCK_EX);
 				if (!$bet_id) {
 
 					if($free_bet_amount >0) {
@@ -1792,7 +1792,7 @@ class Api_Betting extends JController {
 					return OutputHelper::json(500, array('error_msg' => 'Cannot place this bet' ));
 				}
 				
-				file_put_contents('/tmp/saveExoticsBet', "* Total Bet Amount:". $wagering_bet->getTotalBetAmount() . "\n", FILE_APPEND | LOCK_EX);
+				// file_put_contents('/tmp/saveExoticsBet', "* Total Bet Amount:". $wagering_bet->getTotalBetAmount() . "\n", FILE_APPEND | LOCK_EX);
 				
 				$bet->id = $bet_id;
 					
@@ -1838,7 +1838,7 @@ class Api_Betting extends JController {
 					
 				$api_error		= null;
 				$bet_confirmed	= false;
-				file_put_contents('/tmp/saveExoticsBet', "* About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
+				// file_put_contents('/tmp/saveExoticsBet', "* About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 					$external_bet	= $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, 'SUP', $meetingID);
 					$api_error		= $api->getErrorList(true);
@@ -1847,7 +1847,7 @@ class Api_Betting extends JController {
 					//$api_error = 'no';
 
 					if (empty($api_error) && isset($external_bet->wagerId)) {
-						file_put_contents('/tmp/saveExoticsBet', "* Bet Placed\n", FILE_APPEND | LOCK_EX);
+					// 	file_put_contents('/tmp/saveExoticsBet', "* Bet Placed\n", FILE_APPEND | LOCK_EX);
 						$bet_confirmed	= true;
 						$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
 						$bet->invoice_id = $external_bet->wagerId;
@@ -1867,9 +1867,9 @@ class Api_Betting extends JController {
 
 						$bet->bet_result_status_id = (int)$bet_status;
 						$bet->save();
-						file_put_contents('/tmp/saveExoticsBet', "* Bet Status Saved\n", FILE_APPEND | LOCK_EX);
+						file_put_contents('/tmp/igas_exotics_betting.log', "* Bet Status Saved\n", FILE_APPEND | LOCK_EX);
 					}else{
-						file_put_contents('/tmp/saveExoticsBet', "* Bet NOT Placed\n", FILE_APPEND | LOCK_EX);
+						file_put_contents('/tmp/igas_exotics_betting.log', "* Bet NOT Placed\n", FILE_APPEND | LOCK_EX);
 						$bet->external_bet_error_message = (string)$api_error;
 					}
 				}

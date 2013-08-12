@@ -92,19 +92,19 @@ class WageringApiIgassportsService extends ConfigReader{
 		$userName = "topbetta";
 		$userPassword = "T0pB3tter@AP!";
 		$companyID = "TopBetta";
-		$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selectionID");
+	//	$this->setLogger("placeSportsBet: Params - $clientID, $betID, $amount, $gameID, $marketID, $line, $odds, $selectionID");
 		
 	    // Bet related Paramaters
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 				'gameId' => "$gameID", 'marketId' => "$marketID",
 				'selection' => "$selectionID", 'line' => "$line", 'odds' => "$odds");
-		$p = print_r($paramslist,true);
+		//$p = print_r($paramslist,true);
 		
-		$this->setLogger("sports_service: placeSportsBet. Params List: $p");
+		//$this->setLogger("sports_service: placeSportsBet. Params List: $p");
 		
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
-		$this->setLogger("sports_service: placeSportsBet. JSON dataKey: $betDataKey");
+		//$this->setLogger("sports_service: placeSportsBet. JSON dataKey: $betDataKey");
 		
 		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $paramslist, $betDataKey );
@@ -149,7 +149,7 @@ class WageringApiIgassportsService extends ConfigReader{
 		// generate HASH
 		$hashedParams = md5($paramsPlusSecret);
 	
-		$this->setLogger("sports_service: getDataKey: params plus secret:$paramsPlusSecret");
+		//$this->setLogger("sports_service: getDataKey: params plus secret:$paramsPlusSecret");
 	
 		return $hashedParams;
 	
@@ -465,7 +465,7 @@ class WageringApiIgassportsService extends ConfigReader{
 
 	private function curlRequest($command=null, $params=null)
 		{
-		$this->setLogger("sports_service: Entering curlRequest. Command:$command");
+		//$this->setLogger("sports_service: Entering curlRequest. Command:$command");
 		$this->setLogger("sports_service: curlRequest. post_string:$params");
 		
 		$ch = curl_init($this->service_url."/".$command);
@@ -479,7 +479,7 @@ class WageringApiIgassportsService extends ConfigReader{
 		
 		
 		$c = print_r($ch,true);
-		$this->setLogger("sports_service: curlRequest. Curl Instance:$c");
+		//$this->setLogger("sports_service: curlRequest. Curl Instance:$c");
 		
 		
 		 
@@ -502,7 +502,7 @@ class WageringApiIgassportsService extends ConfigReader{
 		
 		$res = curl_exec($ch);
 		
-		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------");		
+		//$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------");		
 		
 		$response = json_decode($res);
 		$r = print_r($response,true);
@@ -641,7 +641,7 @@ class WageringApiIgassportsService extends ConfigReader{
 	public function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
-		$myFile = "/tmp/igassports_curl.log";
+		$myFile = "/tmp/igas_sports_betting.log";
 		
 		
 		if ($fh = fopen($myFile, 'a')) {
