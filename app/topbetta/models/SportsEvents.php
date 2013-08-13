@@ -8,6 +8,21 @@ class SportsEvents extends \Eloquent {
 	protected $guarded = array();
 
 	public static $rules = array();
+	
+	static public function eventExists($eventId) {
+		$query = "SELECT e.id FROM tbdb_event AS e	
+				INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id
+				INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id	
+				WHERE e.external_event_id = '$eventId'";
+
+		$result = \DB::select($query);
+		
+		return $result;
+		
+		
+		// return SportsEvents::where('external_event_id', '=', $eventId) -> pluck('id');
+		
+	}
 
 	public function getEvents($limit = 0, $cid = 0, $date = NULL) {
 

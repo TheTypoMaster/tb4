@@ -870,6 +870,11 @@ class Api_Betting extends JController {
 		
 		$user =& JFactory::getUser();
 		
+		if ($user->get('guest'))
+		{
+			return OutputHelper::json(401, array('error_msg' => 'Not logged in' ));
+		}
+				
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();	
@@ -930,6 +935,8 @@ class Api_Betting extends JController {
 				
 				$meetingID = $meeting->external_event_group_id;
 				$meetingType = $meeting->type_code;
+				$meetingCountry = $meeting->country;
+				$meetingRegion = $meeting->meeting_grade;
 				
 				$race_id = JRequest::getVar('race_id', null);
 				if (is_null($race_id)) {
@@ -1036,40 +1043,6 @@ class Api_Betting extends JController {
 				
 				$bet_record = (strtolower($bet_type->name) == 'eachway') ? array('win', 'place') : array($bet_type->name);
 				foreach($bet_record as $type) {
-				
-				//hide exotic bet
-				/*
-				if ($is_exotic_bet_type) {
-					
-					$bet = WageringBet::newBet($type, $value, $boxed_flag, $flexi_flag, unserialize($race->external_race_pool_id_list));
-			
-					foreach ($selection_list as $pos => $selections) {
-						
-						$position_number = null;
-						if (!$boxed_flag) {
-							$position_number = BettingHelper::getPositionNumber($pos);
-							
-							if (is_null($position_number)) {
-								$validation->error = JText::_('Invalid position number');
-								return OutputHelper::json(500, array('error_msg' => $validation->error ));
-							}
-						}
-						
-						foreach ($selections as $selection_id) {
-							$bet->addSelection($runner_list_by_id[$selection_id[$pos]]->number, $position_number);
-						}
-					}
-						
-					if (!$bet->isValid()) {
-						$validation->error = JText::_($bet->getErrorMessage());
-						return OutputHelper::json(500, array('error_msg' => $validation->error ));
-						
-					} else {
-						$wagering_bet_list[] = $bet;
-						$bet_total	+= $bet->getTotalBetAmount();
-					}
-				} else {
-				*/
 					foreach ($selection_list['first'] as $selection_id) {
 						$bet = WageringBet::newBet($type, $value, false, 0, unserialize($race->external_race_pool_id_list));
 						$bet->addSelection($runner_list_by_id[$selection_id]->number);
@@ -1082,11 +1055,8 @@ class Api_Betting extends JController {
 							$bet_total	+= $bet->getTotalBetAmount();
 						}
 					}
-				//}
-				
-			}
+				}
 			
-				
 				$validation->data['wagering_bet_list'] = $wagering_bet_list;
 				
 				//For user account
@@ -1274,27 +1244,115 @@ class Api_Betting extends JController {
 								$bet->save();
 								return OutputHelper::json(500, array('error_msg' => 'Cannot store bet selections' ));
 							}
+					}
+				}
+				
+				$api_error = null;
+				$bet_confirmed = false;
+				
+				// TODO: International races need to be catered for. Should configuration or DB driven
+				$providerName = "igas";
+				
+				
+				
+				if ($bet_type_id == "3") { // eachway bets
+					$eachWayArray = array (
+							'W',
+							'P' 
+					);
+					
+					foreach ( $eachWayArray as $eachWayBetType ) {
+						file_put_contents('/tmp/saveBet', "Bet Type:" .$eachWayBetType. "\n", FILE_APPEND | LOCK_EX);
+						
+						if($type == "win"){
+							$betTypeShort = "W";
+						}elseif($type == "place"){
+							$betTypeShort = "P";
 						}
-					}
-					
-					$api_error		= null;
-					$bet_confirmed	= false;
-					
-					// TODO: International races need to be catered for. Should configuration or DB driven 
-					// set tote type used for win and place bets on all gallops to TOP and harness/dogs MID
-					if($meetingType == "R"){
-						$toteType = "TOP";
-					}else{
-						$toteType = "MID";
-					}
+						
+						// Grab default tote from DB
+						$toteTypeReturn = $bet_product_model->isProductUsed ( $eachWayBetType, $meetingCountry, $meetingRegion, $meetingType, $providerName );
+						$toteType = $toteTypeReturn->product_name;
+						
+						/*
+						 *  set tote type used for bet placement
+						 */
+						
+						if ($this->confirmAcceptance ( $bet_id, $user->id, 'bet', time () + 600 )) {
+							$external_bet = $api->placeRacingBet ( $bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $eachWayBetType, $toteType, $runner_number );
+							$api_error = $api->getErrorList ( true );
+							
+							if (empty ( $api_error ) && isset ( $external_bet->wagerId )) {
+								$bet_confirmed = true;
+								$bet->external_bet_id = $bet_id; // (int)$external_bet->wagerId;
+								$bet->invoice_id = $external_bet->wagerId;
 								
+								// Set the bet_status based on $external_bet->status
+								$bet_status = 5;
+								if ($external_bet->status == "N" || $external_bet->status == "E") {
+									$bet_status = 5;
+								} elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
+									$bet_status = 1;
+								} elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
+									$bet_status = 4;
+									$bet_confirmed = false;
+								}
+								
+								$bet->bet_result_status_id = ( int ) $bet_status;
+								$bet->save ();
+							} else {
+								$bet->external_bet_error_message = ( string ) $api_error;
+							}
+						}
+						
+						if (! $bet_confirmed) {
+							
+							if ($free_bet_amount > 0) {
+								// add free bet doallers
+								if ($free_bet_amount >= $wagering_bet->getTotalBetAmount ()) {
+									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $wagering_bet->getTotalBetAmount (), 'freebetrefund' );
+								} else {
+									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $free_bet_amount, 'freebetrefund' );
+									$bet_refund_transaction_id = $payment_model->increment ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betrefund' );
+								}
+							} else
+								$bet_refund_transaction_id = $payment_model->increment ( $wagering_bet->getTotalBetAmount (), 'betrefund' );
+							
+							$bet->refund_transaction_id = ( int ) $bet_refund_transaction_id;
+							$bet->refund_freebet_transaction_id = ( int ) $bet_freebet_refund_transaction_id;
+							$bet->resulted_flag = 1;
+							$bet->refunded_flag = 1;
+							$bet->bet_result_status_id = ( int ) $refunded_status->id;
+							$bet->save ();
+							
+							$this->confirmAcceptance ( $bet_id, $user->id, 'beterror', time () + 600 );
+							
+							return OutputHelper::json ( 500, array (
+									'error_msg' => 'One or more bets could not be registered :' . $api_error 
+							) );
+						}
+					} // end for each on eachway bets
+					return OutputHelper::json ( 200, array (
+							'success' => 'Your bets have been placed' 
+					) );
+				}else{ // win and place bets
+
+					
+					if($type == "win"){
+						$betTypeShort = "W";
+					}elseif($type == "place"){
+						$betTypeShort = "P";
+					}
+					
+					// Grab default tote from DB 
+					$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
+					$toteType = $toteTypeReturn->product_name;
+					
+		
 					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $type, $toteType, $runner_number);
 						$api_error		= $api->getErrorList(true);
-						
-						//$external_bet = 'test123';
-						//$api_error = 'no';
-												
+													
 						if (empty($api_error) && isset($external_bet->wagerId)) {
 							$bet_confirmed	= true;
 							$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
@@ -1315,8 +1373,8 @@ class Api_Betting extends JController {
 							$bet->bet_result_status_id = (int)$bet_status;
 							$bet->save();
 						}else{
-								$bet->external_bet_error_message = (string)$api_error;
-							}
+							$bet->external_bet_error_message = (string)$api_error;
+						}
 					}
 				
 					if (!$bet_confirmed) {
@@ -1347,6 +1405,8 @@ class Api_Betting extends JController {
 					}
 				}
 				return OutputHelper::json(200, array('success' => 'Your bet has been placed' ));
+			
+			}
 
 		} else {
               
@@ -1369,7 +1429,12 @@ class Api_Betting extends JController {
 		$server_token = JUtility::getToken();
 
 		$user =& JFactory::getUser();
-
+		
+		if ($user->get('guest'))
+		{
+			return OutputHelper::json(401, array('error_msg' => 'Not logged in' ));
+		}
+		
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();
@@ -1670,6 +1735,8 @@ class Api_Betting extends JController {
 				$bet_type_name	= $bet_type_model->getBetTypeByName($wagering_bet->getBetType(), true);
 				
 				$bet_product	= $bet_product_model->getBetProduct($bet_origin->id);
+
+				$exoticCass = 'WageringBetExotic'.$type;
 				
 				// build the bet
 				$bet = clone $bet_model;
@@ -1684,6 +1751,12 @@ class Api_Betting extends JController {
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
+				if($bet->flexi_flag){
+					$bet->percentage = $wagering_bet->getFlexiPercentage();
+				}
+				$bet->boxed_flag				= (int)$boxed_flag;
+				$bet->combinations = $wagering_bet->getCombinationCount();
+				$bet->selection_string = $wagering_bet->displayBetSelections();
 					
 				//save freebet into the database
 				if($free_bet_amount > 0) {
@@ -1790,6 +1863,7 @@ class Api_Betting extends JController {
 							$bet_status = 4;
 							$bet_confirmed	= false;
 						}
+						
 
 						$bet->bet_result_status_id = (int)$bet_status;
 						$bet->save();
@@ -1800,6 +1874,7 @@ class Api_Betting extends JController {
 					}
 				}
 
+				
 				if (!$bet_confirmed) {
 
 					if($free_bet_amount > 0) {
@@ -1851,11 +1926,16 @@ class Api_Betting extends JController {
 		$server_token = JUtility::getToken();
 	
 		$user =& JFactory::getUser();
-	
+		
+		if ($user->get('guest'))
+		{
+			return OutputHelper::json(401, array('error_msg' => 'Not logged in' ));
+		}
+		
 		// debug file
 		$debugflag = 1;
-		$file = "/tmp/api.txt";
-	
+		$file = "/tmp/saveSportsBet";
+
 		//Get user status
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
 		$tb_model = new TopbettaUserModelTopbettaUser();
@@ -1867,20 +1947,10 @@ class Api_Betting extends JController {
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_sportsbetting' . DS . 'models' . DS . 'sportsbetting.php');
 		$sportsBetting_model = new SportsbettingModelSportsbetting();
 	
-		/*
-			// bet placement params
-		$event_id = 941579; // the bookmaker event ID
-		$bet_amount = "1"; // Amount to bet
-		$bet_type = "win"; // the win/draw/handicap
-		$bet_option_id = "awin"; // awin/bwin/draw or competitor ID - see examples below.
-		$bet_handicap = 1; // Always set to 1
-		$bet_dividend = "2.00"; // The current dividend on the market. Can't be higher then the actual dividend. Will error and return current dividend if so.
-		*/
-		// hard coded bet params for BM
-		$handicap = 1; // Always set to 1
-		$special = "";
-	
-		//Get free bet in cents
+		$postVars = print_r(JRequest::get('POST'), true);
+		file_put_contents('/tmp/saveSportsBet', "* Post Vars:". $postVars . "\n", FILE_APPEND | LOCK_EX);
+		
+		// check if free credit is to be used
 		$free_bet_amount_input		= (float)JRequest::getVar('chkFreeBet', 0);
 	
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
@@ -1896,61 +1966,103 @@ class Api_Betting extends JController {
 				$validation->error		= JText::_('Please login to place a bet');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
+			
+			$betSelections = JRequest::getVar('bets', null);
+			
+			// TODO: not catering for multi bets at this stage.
+			foreach($betSelections as $selection => $betAmount){
+				file_put_contents($file, "* Bet Selection:". $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
+			}
+			
+			/*
+			 *  Check all required POST vars are there
+			 */
+			
 			// check that bet amount is greater than 0
-			$bet_value = JRequest::getVar('value', null);
-			if ($bet_value <= 0) {
+			$bet_value = $betAmount;
+			if($bet_value <= 0) {
 				$validation->error = JText::_('No bet amount received');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
 	
-			// check if event_id has been passed to the API
-			$event_id = JRequest::getVar('event_id', null);
-			if (is_null($event_id)) {
-				$validation->error = JText::_('No event ID recieved');
+			// check if match_id has been passed to the API
+			$betMatchID = JRequest::getVar('match_id', null);
+			if (is_null($betMatchID)) {
+				$validation->error = JText::_('No match ID recieved');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			// check if bet_type has been passed to the API
-			$bet_type = JRequest::getVar('bet_type_id', null);
-			if (is_null($bet_type)) {
-				$validation->error = JText::_('No bet type id received');
+			
+			// check if  market has been passed to the API
+			$betMarketID = JRequest::getVar('market_id', null);
+			if (is_null($betMarketID)) {
+				$validation->error = JText::_('No market ID recieved');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			// check if bet option id was passed to the API
-			$bet_option_id = JRequest::getVar('selection', null);
-			if (is_null($bet_option_id)) {
-				$validation->error = JText::_('No selection id received');
-				return OutputHelper::json(500, array('error_msg' => $validation->error ));
-			}
-	
+				
 			// check if bet dividend was passed to the API
 			$bet_dividend = JRequest::getVar('dividend', null);
 			if (is_null($bet_dividend)) {
 				$validation->error = JText::_('No bet dividend received');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
-	
-			//$bet_dividend = "100";
-	
-			// check if bet origin was passed to the API
-			$bet_origin	= JRequest::getVar('bet_origin', null);
-			if (is_null($bet_origin)) {
-				$validation->error = JText::_('No bet origin received');
+			
+			// convert dividend to cents
+			$bet_dividend = $bet_dividend * 100;
+										
+			// get line if passed to API
+			$line = JRequest::getVar('line', null);
+			
+			if($line == "0") $line = "";
+			
+			file_put_contents('/tmp/saveSportsBet', "* MatchID:". $betMatchID . ". MarketID:$betMarketID, Dividend:$bet_dividend\n", FILE_APPEND | LOCK_EX);
+		
+			
+			/*
+			 *  Check the bet is on valid events, markets and selections
+			 */			
+		
+			// check if match_id is in the DB
+			$match_exists = $sportsBetting_model->getMatchIDApi($betMatchID);
+			if (is_null($match_exists)) {
+				$validation->error = JText::_('Match not available');
 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 			}
+					
+//  			// check if market_id is in the DB
+//  			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
+//  			if (is_null($market_exists)) {
+// 				$validation->error = JText::_('Market not available');
+// 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+//  			}
 	
-			// check if event exists in the database
-			$event_exists = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
-	
-			if (is_null($event_exists)) {
-				$validation->error = JText::_('Event not available');
-				return OutputHelper::json(500, array('error_msg' => $validation->error ));
-			}
-	
-			if ($debugflag == 1){
-				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$event_id, BetType:$bet_type, BetValue:$bet_value, BetOption:$bet_option_id, BetDividend:$bet_dividend\n";
+ 			// grab the external id's 
+ 			$externalIDs = $sportsBetting_model->getExternalIDsApi($selection);
+ 			
+ 			// check if external market ID exists for the given selection
+ 			$externalMarketID = $externalIDs->external_market_id;
+ 			if (is_null($externalMarketID)) {
+ 				$validation->error = JText::_('External Market not available');
+ 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 			}
+ 			
+ 			// check if external selection ID exists for the given selection
+ 			$externalSelectionID = $externalIDs->external_selection_id;
+ 			if (is_null($externalSelectionID)) {
+ 				$validation->error = JText::_('External Selection not available');
+ 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 			}
+ 			
+ 			// check if external event ID exists for the given selection
+ 			$externalEventID = $externalIDs->external_event_id;
+ 			if (is_null($externalEventID)) {
+ 				$validation->error = JText::_('External event not available');
+ 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 			}
+ 			
+ 			
+ 			
+ 			if ($debugflag == 1){
+				$debug = "- Params passed to API: Free:$free_bet_amount_input, EventID:$externalEventID, Market:$betMarketID, Selection:$selection, BetValue:$bet_value, BetDividend:$bet_dividend\n";
 				file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 			}
 	
@@ -1972,7 +2084,7 @@ class Api_Betting extends JController {
 				}
 					
 				if ($debugflag == 1){
-					$debug = "- Betting open and last bet no within a second\n";
+					$debug = "- Betting open and last bet not within a second\n";
 					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 				}
 	
@@ -2027,14 +2139,14 @@ class Api_Betting extends JController {
 				}
 	
 				// check api is available
-				$api_con=$api->checkConnection();
+ 				$api_con=$api->checkConnection();
 				
-				if(is_null($api_con))
-				{
-					$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
-					return OutputHelper::json(500, array('error_msg' => $validation->error ));
-				}
-	
+ 				if(is_null($api_con))
+ 				{
+ 					$validation->error = JText::_('Service Not Available. Please Try Again Shortly');
+ 					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+ 				}
+
 				if ($debugflag == 1){
 					$debug = "- API connection OK\n";
 					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
@@ -2114,7 +2226,8 @@ class Api_Betting extends JController {
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				=  0;
-	
+			
+				
 				//save freebet into the database
 				if($free_bet_amount > 0) {
 					$bet->bet_freebet_flag		= 1;
@@ -2158,19 +2271,18 @@ class Api_Betting extends JController {
 				$bet->id = $bet_id;
 	
 				// grab the id of the selection bet on
-				$selectionID = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
-	
-				if ($debugflag == 1){
-					$debug = "- Got Selection ID: $selectionID->id\n";
-					file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-				}
-	
+				
+				// $selectionID = $sportsBetting_model->getSelectionIDApi($event_id, $bet_option_id);
+				$selectionID = $selection;
+				
+		
 				// create the selection object
 				$selection = clone $bet_selection_model;
 	
+				
 				// populate the object data
 				$selection->bet_id			= (int)$bet_id;
-				$selection->selection_id	= (int)$selectionID->id;
+				$selection->selection_id	= (int)$selectionID;
 				$selection->position		= 0;
 	
 				// save the bet selction to __bet_selection
@@ -2205,19 +2317,19 @@ class Api_Betting extends JController {
 				$bet_confirmed	= false;
 				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
 					if ($debugflag == 1){
-						$debug = "- About to send to BM API\n";
+						$debug = "- About to send to iGAS API\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
-					$external_bet	= $api->placeSportsBet($event_id, $special, $handicap, $bet_type, $bet_value, $bet_option_id, $bet_dividend);
+					$external_bet	= $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $externalEventID, $externalMarketID, $line, $bet_dividend, $externalSelectionID);
 					$responseArray = print_r($external_bet,true);
 					if ($debugflag == 1){
-						$debug = "- After bet send to BM API, RESPONSE: $responseArray\n";
+						$debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
 	
 					// TODO: Need to get this check working
-					//$api_error		= $api->getErrorList(true);
-					$api_error = '';
+					$api_error		= $api->getErrorList(true);
+					//$api_error = '';
 						
 					if (empty($api_error) && isset($external_bet->wagerId)) {
 						$bet_confirmed	= true;
@@ -2250,7 +2362,7 @@ class Api_Betting extends JController {
 				// If the bet placement with the API failed
 				if (!$bet_confirmed) {
 					if ($debugflag == 1){
-						$debug = "- BM API Bet Failed\n";
+						$debug = "- iGAS API Bet Failed\n";
 						file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 					}
 					if($free_bet_amount > 0) {
@@ -2277,56 +2389,33 @@ class Api_Betting extends JController {
 					//file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
 						
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
-						
-					if (isset($external_bet->newOdds)){
-						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
-					}else{
-						return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
-					}
+
+					$validation->error = JText::_('Bet could not be registered');
+					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+					
+// 					if (isset($external_bet->newOdds)){
+// 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
+// 					}else{
+// 						return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+// 					}
 				}
 	
 				// setup database object rather than use the SUPERMODEL
 				$db =& JFactory::getDBO();
 				// TODO: Update bet record with correct dividend. Currently it's not stored with the actual bet
-				if(isset($external_bet->actualDividend)){
-					// Update odds on bet_selection
-					$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$external_bet->actualDividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID->id'" ;
-					// echo "$query";
-					$db->setQuery( $query );
-					$db->query();
-					return OutputHelper::json(200, array('success' => 'Your bet has been placed', 'actualDividends' => "$external_bet->actualDividend" ));
-				}else{
-					// Update odds on bet_selection
-					$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$external_bet->actualDividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID->id'" ;
-					// echo "$query";
-					$db->setQuery( $query );
-					$db->query();
-					return OutputHelper::json(200, array('success' => 'Your bet has been placed' ));
-				}
+				
+				// Update odds and line on bet_selection
+				$query = "UPDATE `tbdb_bet` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
+				$db->setQuery( $query );
+				$db->query();
+				return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
+			
 	
 			} else {
 				return OutputHelper::json(500, array('error_msg' => 'Invalid Token' ));
 			}
 	
 		}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		
-		
-		
-		
-		
 	
 	/**
 	 * Validate a bet selection
@@ -3011,9 +3100,9 @@ class Api_Betting extends JController {
 	private function _isFlexiBet($bet_type_name)
 	{
 		
-		if ($bet_type_name != WageringBet::BET_TYPE_TRIFECTA && $bet_type_name != WageringBet::BET_TYPE_FIRSTFOUR) {
-			return false;
-		}
+		//if ($bet_type_name != WageringBet::BET_TYPE_TRIFECTA && $bet_type_name != WageringBet::BET_TYPE_FIRSTFOUR) {
+		//	return false;
+		//}
 		
 		return JRequest::getVar('flexi', false);
 	}

@@ -467,7 +467,7 @@ class SportsBMProcessor extends TopBettaCLI
 				$sl = $this->getDirectorySeparator();
 	
 				$path   = ($sl == '\\') ? 'C:' : '';
-				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server.xml';
+				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server_igas.xml';
 			}
 	
 			$xml = simplexml_load_file($path);
@@ -507,7 +507,7 @@ class SportsBMProcessor extends TopBettaCLI
 	final private function addEventGroupRecord($eventGroupTable, $competitionName, $sportID, $suspendDate, $debug){
 		// set now time
 		$nowTime = date("Y-m-d H:i:s");
-		$debug = 1;
+		//$debug = 1;
 		
 		$eventGroupExist = "SELECT id from `".$eventGroupTable."` where `name` = '$competitionName' AND `sport_id` = '$sportID' LIMIT 1";
 		if ($debug == 1){
@@ -608,7 +608,7 @@ class SportsBMProcessor extends TopBettaCLI
 	final private function addEventRecord($eventTable, $marketTeams, $suspendDate, $marketEventID, $debug){
 		// set now time
 		$nowTime = date("Y-m-d H:i:s");
-		$debug = 1;
+		//$debug = 1;
 		// Check if event exists in database
 		
 		//substr($marketOutcomeDateTime, 0, -8);
@@ -626,8 +626,8 @@ class SportsBMProcessor extends TopBettaCLI
 			$row = mysql_fetch_array($eventExistResult);
 			$eventID = $row['id'];
 		}else {
-			$eventQuery = " INSERT INTO `".$eventTable."` (`id`, `event_id`, `name`, `start_date`, `created_date`) VALUES ";
-			$eventQuery .= " ('', '$marketEventID', '$marketTeams', '$suspendDate', '$nowTime' ); ";
+			$eventQuery = " INSERT INTO `".$eventTable."` (`id`, `event_id`, `name`, `start_date`, `created_date`, `event_status_id`) VALUES ";
+			$eventQuery .= " ('', '$marketEventID', '$marketTeams', '$suspendDate', '$nowTime', '1' ); ";
 			mysql_query($eventQuery);
 			$eventID = mysql_insert_id();
 			$this->l("Added to DB");
@@ -750,7 +750,7 @@ class SportsBMProcessor extends TopBettaCLI
 	}
 	
 	final private function addSelectionPriceRecord($selectionPriceTable, $selectionID, $marketCompetitorWinDividend, $marketCompetitorAllowBets, $marketCompetitorIsSuspended, $selectionPriceID, $debug){
-		
+		//$debug = 1;
 		$nowTime = date("Y-m-d H:i:s");
 		// Check is compettiton exists in database
 		$selectionPriceExist = "SELECT id from `".$selectionPriceTable."` where `selection_id` = '$selectionID' LIMIT 1";
@@ -764,7 +764,7 @@ class SportsBMProcessor extends TopBettaCLI
 			$this->l("Already in DB");
 			$row = mysql_fetch_array($selectionPriceExistResult);
 			$selectionPriceID = $row['id'];
-			$selectionPriceUpdateQuery = " UPDATE `".$selectionPriceTable."` SET place_bet_dividend = '$marketCompetitorWinDividend', allow_bets = '$marketCompetitorAllowBets', is_suspended = '$marketCompetitorIsSuspended' WHERE id = '$selectionPriceID'";
+			$selectionPriceUpdateQuery = " UPDATE `".$selectionPriceTable."` SET place_bet_dividend = '$marketCompetitorWinDividend', win_odds = '$marketCompetitorWinDividend', allow_bets = '$marketCompetitorAllowBets', is_suspended = '$marketCompetitorIsSuspended' WHERE id = '$selectionPriceID'";
 			mysql_query($selectionPriceUpdateQuery);
 			if($debug == 1){
 				$this->l("selection_price UPDATE QUERY: $selectionPriceUpdateQuery");
@@ -773,8 +773,8 @@ class SportsBMProcessor extends TopBettaCLI
 		}else {
 			// add new selecion_price and get id or new record
 			$nowTime = date("Y-m-d H:i:s");
-			$selectionPriceQuery = " INSERT INTO `".$selectionPriceTable."` (`id`, `selection_id`, `place_bet_dividend`, `allow_bets`, `is_suspended` ,`created_date`) VALUES ";
-			$selectionPriceQuery .= " ('', '$selectionID', '$marketCompetitorWinDividend', '$marketCompetitorAllowBets', '$marketCompetitorIsSuspended', '$nowTime'); ";
+			$selectionPriceQuery = " INSERT INTO `".$selectionPriceTable."` (`id`, `selection_id`, `place_bet_dividend`, `win_odds`, allow_bets`, `is_suspended` ,`created_date`) VALUES ";
+			$selectionPriceQuery .= " ('', '$selectionID', '$marketCompetitorWinDividend', '$marketCompetitorWinDividend', '$marketCompetitorAllowBets', '$marketCompetitorIsSuspended', '$nowTime'); ";
 			mysql_query($selectionPriceQuery);
 			$selectionPriceID = mysql_insert_id();
 			$this->l("Added to DB");

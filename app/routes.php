@@ -11,7 +11,7 @@
 |
 */
 
-apc_clear_cache("user");
+// apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
 
@@ -29,6 +29,8 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
                             "http://localhost",
                             "http://beta.tb4.dev",
 							"http://tb4test.mugbookie.com",
+							"http://192.168.0.31:9778",
+							"https://www.topbetta.com.au"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){
@@ -90,6 +92,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
+	// test JSON API
+	Route::resource('testjson', 'testJSON');
 });
 
 // Route group for consumer API

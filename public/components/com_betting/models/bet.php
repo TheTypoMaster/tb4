@@ -108,6 +108,23 @@ class BettingModelBet extends SuperModel
 			'name' => 'Free Bet Amount',
 			'type' => self::TYPE_FLOAT
 		),
+		'boxed_flag' => array(
+				'name' => 'Boxed Flag',
+				'type' => self::TYPE_INTEGER
+		),
+		'combinations' => array(
+				'name' => 'Combinations',
+				'type' => self::TYPE_INTEGER
+		),
+		'percentage' => array(
+				'name' => 'Percentage',
+				'type' => self::TYPE_FLOAT
+		),
+		'selection_string' => array(
+				'name' => 'Selection String',
+				'type' => self::TYPE_STRING
+		),
+			
 	);
 
 	/**

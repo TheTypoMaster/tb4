@@ -112,6 +112,32 @@ class BetResultsController extends \BaseController {
 	 */
 	public function store()
 	{
+		// Rate Limit Check
+		$rateLimitMax = 5; // 1/2 second
+		$rateLimitCost = 0;
+		$rateLimitKey	= "igas_bet_results";
+		$rateTTL = 5;
+		$rateLimitReset = false;
+		
+		$newRateLimiter = new TopBetta\APIRateLimiter($rateLimitMax, $rateLimitCost, $rateLimitKey, $rateTTL, $rateLimitReset);
+		$checkRateLimit = $newRateLimiter->RateLimiter();
+		
+		if($checkRateLimit) {
+			// Email on failer to result bet
+			$emailSubject = "iGAS Bet Result: Connection Rate Limited.";
+			$emailDetails = array( 'email' => 'oliver@topbetta.com', 'first_name' => 'Oliver', 'from' => 'betoutcome@topbetta.com', 'from_name' => 'TopBetta iGAS Bet Outcome', 'subject' => "$emailSubject" );
+				
+			$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
+			{
+				$m->from($emailDetails['from'], $emailDetails['from_name']);
+				$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
+			});
+			return \Response::json(array(
+					'error' => true,
+					'message' => 'Error: Connection rate limited.'),
+					400
+			);
+		}
 		
 		// Log this
 		$this->l("BackAPI: BetResults - Reciving POST");
@@ -136,6 +162,10 @@ class BetResultsController extends \BaseController {
 			);
 		}
 
+		// base structure for reponse payload
+		$responsePayload = array('error' => 'false', 'result' => array());
+		
+		
 		//$resultsJSON = print_r($resultsJSON, true);
 		//echo"$resultsJSON\n\n\n\n\n";
 		//exit;
@@ -205,7 +235,7 @@ class BetResultsController extends \BaseController {
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
 										}
-									
+										$responsePayload['result'][] = array('transactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'false');
 									} else{
 										
 										// Email on failer to result bet
@@ -215,7 +245,7 @@ class BetResultsController extends \BaseController {
 										$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 										{
 											$m->from($emailDetails['from'], $emailDetails['from_name']);
-											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['$emailSubject']);
+											$m->to($emailDetails['email'], 'Oliver Shanahan')->subject($emailDetails['subject']);
 										});
 										/*
 										return \Response::json(array(
@@ -223,6 +253,10 @@ class BetResultsController extends \BaseController {
 												'message' => 'Error: Transaction Id not found in DB: '. $transaction['transactionID']),
 												400
 										);*/
+										
+										$responsePayload['error'] = "true";
+										$responsePayload['result'][] = array('transactionID' => $transaction['transactionID'], 'betOutcome' => $transaction['betOutcome'], 'error' => 'true');
+										
 									}
 								
 								}else{
@@ -234,6 +268,7 @@ class BetResultsController extends \BaseController {
 									
 								}
 							}
+							
 						}else{
 							return \Response::json(array(
 									'error' => true,
@@ -262,11 +297,18 @@ class BetResultsController extends \BaseController {
 			$objectCount++;
 		}
 		
-		return \Response::json(array(
+		
+		$j = json_encode($responsePayload);
+		
+		$b = print_r($j,true);
+		Topbetta\LogHelper::l("BackAPI: BetResults - RETURNED JSON: $b");
+		return \Response::json($responsePayload);
+		
+		/* return \Response::json(array(
 				'error' => false,
 				'message' => 'OK: Bet Results Processed Successfully'),
 				200
-		);
+		); */
 		//return RaceMeetings::all();
 		
 	}

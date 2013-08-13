@@ -60,12 +60,16 @@ class HeartBeatController extends \BaseController {
 	/**
 	 * Trigger the heartbeat
 	 * .
-	 * @param todo
+	 * @param providerName, companyurl, remotehost
 	 * @return Response
 	 */
 	public function store()
 	{
-		$heartBeatService = 'igas_schedule';
+		$heartBeatService = \Input::get('provider');
+		$companyPushUrl = \Input::get('pushUrl');
+		$remoteHost = \Input::get('remoteHost');
+		
+		// $heartBeatService = 'igas_schedule';
 		
 		// get stuff from the config
 		$userName = \Config::get('igasauthentication.userName');
@@ -73,14 +77,14 @@ class HeartBeatController extends \BaseController {
 		$secretKey = \Config::get('igasauthentication.secretKey');
 		$companyID = \Config::get('igasauthentication.companyID');
 		$command = \Config::get('igasauthentication.command');
-		$remoteHost = \Config::get('igasauthentication.remoteHost');
+		// $remoteHost = \Config::get('igasauthentication.remoteHost');
 		
 		$serverTime = date("Y-m-d H:i:s");
 		
 		// build up array 
 		$payloadArray = array('Username' => $userName, 'Password' => $userPassword,
 				'CompanyID' => $companyID,
-				'CompanyPushUrl' => 'http://testing1.mugbookie.com',
+				'CompanyPushUrl' => $companyPushUrl,
 				'CurrentTime' => "$serverTime",
 				);
 		
@@ -106,11 +110,16 @@ class HeartBeatController extends \BaseController {
 		$lastStatus = $lastStatusObject[0]->last_status;
 				
 		// check current remote host state
-		$currentStatus = TopBetta\CurlRequestHelper::curlRequest($remoteHost, $command, 'POST', $jsonPayload);
+		$currentStatus = json_decode(TopBetta\CurlRequestHelper::curlRequest($remoteHost, $command, 'POST', $jsonPayload));
 		
-		if ($currentStatus == "SUCCESS") {
-			$currentStatus = "up";
+		if(isset($currentStatus->ErrorNo)){
+			if ($currentStatus->ErrorNo == "0") {
+				$currentStatus = "up";
+			}	
+		}else{
+			$currentStatus = "down";
 		}
+
 		
 		if($lastStatusObject[0]->last_status == $currentStatus){
 			return "$serverTime: No change. last:$lastStatus, current:$currentStatus";
@@ -121,12 +130,12 @@ class HeartBeatController extends \BaseController {
 		$lastStatusObject[0]->save();
 		
 		// Email on status change
-		$emailSubject = "iGAS Schedule: Status changed: ".$currentStatus.".";
+		$emailSubject = "iGAS Schedule($heartBeatService): Status changed: ".$currentStatus.".";
 		$emailDetails = array( 'email' => 'oliver@topbetta.com', 'to_name' => 'Oliver', 'from' => 'hearbeat@topbetta.com', 'from_name' => 'TopBetta iGAS Schedule Heartbeat', 'subject' => "$emailSubject" );
-		$newEmail = \Mail::send('hello', $emailSubject, function($m) use ($emailDetails)
+		$newEmail = \Mail::send('hello', $emailDetails, function($m) use ($emailDetails)
 		{
-			$m->from($emailSubject['from'], $emailSubject['from_name']);
-			$m->to($emailSubject['email'], $emailSubject['to_name'])->subject($emailSubject['subject']);
+			$m->from($emailDetails['from'], $emailDetails['from_name']);
+			$m->to($emailDetails['email'], $emailDetails['to_name'])->subject($emailDetails['subject']);
 		});
 		
 		// return error

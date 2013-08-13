@@ -120,7 +120,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$companyID = "TopBetta";
 		$secretKey = "(*&j2zoez";
 	
-		//TODO: Change to use server.xml
+		//TODO: Change to use server_igas.xml
 		//$userName = $this->api->username;
 		//$userPassword = $this->api->password;
 		//$companyID = $this->api->companyid;
@@ -133,7 +133,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		$event = $bet_data['event'];
 	
 		// Build up the bet parameters
-		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType);
+		$params = $this->_buildBetList($bet_list, true, $userID, $raceNO, $priceType, $meetingID);
 		
 		//TODO: Cater for multibets
 

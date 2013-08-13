@@ -132,7 +132,7 @@ class FrontBetsController extends \BaseController {
 
 		} elseif ($input['source'] == 'sports') {
 
-			$extRules = array('bets' => 'required');
+			$extRules = array('bets' => 'required', 'dividend' => 'required');
 
 			$rules = array_merge($rules, $extRules);
 
@@ -308,9 +308,15 @@ class FrontBetsController extends \BaseController {
 						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
 
 						if (count($legacyData) > 0) {
+							
+							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'dividend' => $input['dividend'] );
 
-							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);
-
+							// add the line to the betData object if it exists
+							if(isset($input['line'])){
+								$lineArray = array('line' => $input['line']);
+								$betData = array_merge($betData, $lineArray);
+							}
+							
 							//set our free bet flag if passed in
 							if (isset($input['use_free_credit'])) {
 

@@ -14,22 +14,19 @@ class RisaDataImporter extends TopBettaCLI{
 	
 	final public function initialise(){
 		// Set the database access information as constants.
-		//$dbconfig = $this->getConfigSection('oldatabase');
+		$dbconfig = $this->getConfigSection('database');
 		
 		//if("dbtb01"==(string)$dbconfig->database->attributes()->name){
-/* 		DEFINE ('DB_USER', (string)$dbconfig->database->user);
+		DEFINE ('DB_USER', (string)$dbconfig->database->user);
 		DEFINE ('DB_PASSWORD', (string)$dbconfig->database->password);
 		DEFINE ('DB_HOST', (string)$dbconfig->database->host);
-		DEFINE ('DB_NAME', (string)$dbconfig->database->name); */
-				
-		DEFINE ('DB_USER', 'topbetta_testing');
-		DEFINE ('DB_PASSWORD', 'mysqlp@ss');
-		DEFINE ('DB_HOST', 'localhost');
-		DEFINE ('DB_NAME', 'topbetta_igas');
+		DEFINE ('DB_NAME', (string)$dbconfig->database->name); 
+	
 		
 		// Make the connnection and then select the database.
 		$dbc = @mysql_connect (DB_HOST, DB_USER, DB_PASSWORD) OR Die ('Could not connect to MySQL.');
 		mysql_select_db (DB_NAME) OR Die ('Could not select the database.');
+		
 	}
 	
 	public function execute()
@@ -209,7 +206,7 @@ class RisaDataImporter extends TopBettaCLI{
 				$sl = $this->getDirectorySeparator();
 	
 				$path   = ($sl == '\\') ? 'C:' : '';
-				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server.xml';
+				$path  .= $sl . 'mnt' . $sl . 'web' . $sl . 'server_igas.xml';
 			}
 	
 			$xml = simplexml_load_file($path);
@@ -228,7 +225,7 @@ class RisaDataImporter extends TopBettaCLI{
 		static $sectionList = array();
 	
 		if(!isset($sectionList[$sectionName])) {
-			$xml = simplexml_load_file('/mnt/web/server.xml');
+			$xml = simplexml_load_file('/mnt/web/server_igas.xml');
 			$section = $xml->xpath("/setting/section[@name='{$sectionName}']");
 	
 			if(empty($section)) {

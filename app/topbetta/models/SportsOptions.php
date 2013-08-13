@@ -14,7 +14,7 @@ class SportsOptions extends \Eloquent {
             ->join('tbdb_selection_price AS sp', 's.id', '=', 'sp.selection_id')
             ->where('m.event_id', '=', $eventId)
             ->where('mt.id', '=', $typeId)                        
-            ->select('s.name AS bet_selection', 'sp.win_odds AS odds', 's.bet_place_ref', 's.bet_type_ref', 's.external_selection_id', 's.id AS selection_id')->get();
+            ->select('s.name AS bet_selection', 'sp.win_odds AS odds', 's.bet_place_ref', 's.bet_type_ref', 's.external_selection_id', 's.id AS selection_id', 'sp.line as line')->get();
 
 	}	
 }
