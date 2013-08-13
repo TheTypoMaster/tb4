@@ -14,7 +14,7 @@ class UpdateTbdbEventTable extends Migration {
 	{
 		Schema::table('tbdb_event', function(Blueprint $table)
 		{
-			//
+			$table->string('score');
 			$table->timestamps();
 		});
 	}

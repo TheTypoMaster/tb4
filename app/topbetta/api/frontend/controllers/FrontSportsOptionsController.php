@@ -18,7 +18,7 @@ class FrontSportsOptionsController extends \BaseController {
 		$eventId = Input::get('event_id', $eventId);
 
 		// store sports types in cache for 10 min at a time
-		return \Cache::remember('sportsOptions-' . $eventId . '-' . $typeId, .2, function() use (&$eventId, &$typeId) {
+		// return \Cache::remember('sportsOptions-' . $eventId . '-' . $typeId, .2, function() use (&$eventId, &$typeId) {
 
 			$sportsOptions = new TopBetta\SportsOptions;
 			$options = $sportsOptions -> getOptions($eventId, $typeId);
@@ -40,7 +40,7 @@ class FrontSportsOptionsController extends \BaseController {
 
 			}
 
-		});
+		// });
 	}
 
 	/**

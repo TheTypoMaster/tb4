@@ -15,7 +15,7 @@ class CreateTbDataTypesTable extends Migration {
 		Schema::create('tb_data_types', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('data_type');
+			$table->string('data_type');
 			$table->timestamps();
 		});
 	}

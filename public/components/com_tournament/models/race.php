@@ -391,10 +391,12 @@ class TournamentModelRace extends TournamentModelEvent
 			ON
 				t.group_event_id = ege.group_event_id
 			WHERE
-				t.tournament_id = ' . $db->quote($id);
+				t.id = ' . $db->quote($id);
 
 		$db->setQuery($query);
 		return $db->loadObjectList();
+		
+		//t.tournament_id = ' . $db->quote($id)
 		
 	}
 	

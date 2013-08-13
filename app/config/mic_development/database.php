@@ -54,14 +54,13 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'dbwriter.topbetta.cust.bulletproof.net',
-			'database'  => 'topbetta',
-			'username'  => 'tb63GuQl5',
-			'password'  => 'F5fbEfOk7mwkhBaoFY',
+			'host'      => 'localhost',
+			'database'  => 'topbetta_application',
+			'username'  => 'root',
+			'password'  => 'root',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
-			'profile'	=> true,
 		),
 
 		'pgsql' => array(

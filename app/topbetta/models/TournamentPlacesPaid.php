@@ -5,7 +5,7 @@ class TournamentPlacesPaid extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
-	
+
 	/**
 	 * Cash prize formula name
 	 *
@@ -60,8 +60,8 @@ class TournamentPlacesPaid extends \Eloquent {
 	 *
 	 * @var integer
 	 */
-	const REMAINDER_FORMULA_DISTRIBUTE = 2;	
-	
+	const REMAINDER_FORMULA_DISTRIBUTE = 2;
+
 	/**
 	 * Get the relevant places value depending on the entrants number
 	 *
@@ -97,8 +97,8 @@ class TournamentPlacesPaid extends \Eloquent {
 		$result = \DB::select($query);
 
 		return $result[0];
-	}	
-	
+	}
+
 	/**
 	 * Get the final prize distribution for a completed tournament
 	 *
@@ -125,7 +125,7 @@ class TournamentPlacesPaid extends \Eloquent {
 
 		return $this->_getCashPrizeDistribution($tournament, $qualified_list, $prize_pool);
 	}
-	
+
 	/**
 	 * Get the final prize distribution for a cash tournament
 	 *
@@ -148,7 +148,9 @@ class TournamentPlacesPaid extends \Eloquent {
 
 			$percentage = 0;
 			for($i = $rank; $i < ($rank + $qualified_count); ++$i) {
-				$percentage += $payout_list[$i];
+				if (array_key_exists($i, $payout_list)) {
+					$percentage += $payout_list[$i];
+				}
 			}
 
 			$place_list['place'][$rank][self::PRIZE_TYPE_CASH] 	= (($percentage / 100) * $prize_pool) / $qualified_count;
@@ -156,8 +158,8 @@ class TournamentPlacesPaid extends \Eloquent {
 		}
 
 		return $place_list;
-	}	
-	
+	}
+
 	/**
 	 * Get the final payout list taking into account shifting places based on qualifiers
 	 *
@@ -189,8 +191,8 @@ class TournamentPlacesPaid extends \Eloquent {
 		}
 
 		return $place_list;
-	}	
-	
+	}
+
 	/**
 	 * Get a cash payout array by loading a record from the database and reformatting it
 	 *
@@ -200,8 +202,8 @@ class TournamentPlacesPaid extends \Eloquent {
 	public function getCashPayoutList($entrant_count) {
 		$place = $this->getPlacesPaid($entrant_count);
 		return $this->_formatPercentageList($place->percentage);
-	}	
-	
+	}
+
 			/**
 	 * Take a comma separated string of percentages and arrive at a payout list
 	 *
@@ -228,7 +230,7 @@ class TournamentPlacesPaid extends \Eloquent {
 	private function isJackpot($tournament) {
 		return (!empty($tournament->jackpot_flag) && $tournament->parent_tournament_id > 0);
 	}
-	
+
 	/**
 	 * Check whether a tournament is a private tournament
 	 *
@@ -237,8 +239,8 @@ class TournamentPlacesPaid extends \Eloquent {
 	 */
 	private function isPrivate($tournament) {
 		return ($tournament->private_flag);
-	}	
-	
+	}
+
 	/**
 	 * Get private tournament places paid based on keyword
 	 *
@@ -252,8 +254,8 @@ class TournamentPlacesPaid extends \Eloquent {
 			case self::PRIZE_FORMAT_ALL:
 				return 1;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Get a percentage breakdown list
 	 *
@@ -263,8 +265,8 @@ class TournamentPlacesPaid extends \Eloquent {
 	public function getPercentagePayoutList($place_count) {
 		$place = $this->getPercentage($place_count);
 		return $this->_formatPercentageList($place->percentage);
-	}	
-	
+	}
+
 	/**
 	 * Opposite of get places; this one gets the percentage share when you know projected places
 	 *
@@ -289,7 +291,7 @@ class TournamentPlacesPaid extends \Eloquent {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Reformat qualifier list from the leaderboard in order to sort prize distribution
 	 *
@@ -309,7 +311,7 @@ class TournamentPlacesPaid extends \Eloquent {
 
 		return $ranking_list;
 	}
-	
+
 	/**
 	 * Get a list of expected places paid
 	 *
@@ -324,8 +326,8 @@ class TournamentPlacesPaid extends \Eloquent {
 		}
 
 		return $this->_getCashPlaceList($tournament, $entrant_count, $prize_pool);
-	}	
-	
+	}
+
 	/**
 	 * Get a place list for a jackpot tournament
 	 *
@@ -360,7 +362,7 @@ class TournamentPlacesPaid extends \Eloquent {
 
 		return $place_list;
 	}
-	
+
 	/**
 	 * Get a place list for a cash tournament
 	 *
@@ -372,12 +374,13 @@ class TournamentPlacesPaid extends \Eloquent {
 	private function _getCashPlaceList($tournament, $entrant_count, $prize_pool) {
 		$payout_list = $this->getCashPayoutList($entrant_count);
 
+		/*
 		if($this->isPrivate($tournament)){
 			//$prize_format_model =& JModel::getInstance('TournamentPrizeFormat', 'TournamentModel');
 			//$private_tournament_model =& JModel::getInstance('TournamentPrivate', 'TournamentModel');
 			//$private_tournament = $private_tournament_model->getTournamentPrivateByTournamentID($tournament->id);
 			$private_tournament = \TopBetta\TournamentPrivate::find($tournament->id);
-			
+
 			//$prize_format = $prize_format_model->getTournamentPrizeFormat($private_tournament->tournament_prize_format_id);
 			$prize_format = \TopBetta\TournamentPrizeFormat::find($private_tournament->tournament_prize_format_id);
 
@@ -386,6 +389,7 @@ class TournamentPlacesPaid extends \Eloquent {
 				$payout_list = $this->getPercentagePayoutList($place_count);
 			}
 		}
+		*/
 
 		$place_list = array('formula' => self::PRIZE_TYPE_CASH, 'place' => array());
 		foreach($payout_list as $rank => $percentage) {
@@ -394,5 +398,5 @@ class TournamentPlacesPaid extends \Eloquent {
 
 		return $place_list;
 	}
-				
+
 }

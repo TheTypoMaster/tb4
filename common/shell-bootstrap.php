@@ -4,7 +4,7 @@ define('_JEXEC', 1);
 
 // Setup the path related constants.
 define('DS', DIRECTORY_SEPARATOR);
-define('JPATH_BASE', realpath(dirname(__FILE__) . DS . '..' . DS . 'document-root'));
+define('JPATH_BASE', '/mnt/data/sites/services.topbetta.com.au/project-root/public');
 define('JPATH_ROOT', JPATH_BASE);
 define('JPATH_CONFIGURATION', JPATH_BASE);
 define('JPATH_LIBRARIES', JPATH_BASE . DS . 'libraries');
