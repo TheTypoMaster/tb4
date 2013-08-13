@@ -178,6 +178,26 @@ class FrontBetsController extends \BaseController {
 
 			}
 
+			if ($errors > 0) {
+
+				// problem with bet
+				if ($messages['status'] == 401) {
+
+					return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+
+				} else {
+
+					return array("success" => false, "error" => $messages);
+
+				}
+
+
+			} else {
+
+				// bet placed OK
+				return array("success" => true, "result" => $messages);
+
+			}
 			return array("success" => ($errors > 0) ? false : true, ($errors > 0) ? "error" : "result" => $messages);
 
 		}
@@ -221,7 +241,9 @@ class FrontBetsController extends \BaseController {
 
 			} elseif ($bet['status'] == 401) {
 
-				return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+				// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+				$messages[] = array("status" => 401, "success" => false);
+				$errors++;
 
 			} else {
 
@@ -276,7 +298,9 @@ class FrontBetsController extends \BaseController {
 
 						} elseif ($bet['status'] == 401) {
 
-							return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+							// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+							$messages[] = array("status" => 401, "success" => false);
+							$errors++;
 
 						}  else {
 
@@ -308,7 +332,7 @@ class FrontBetsController extends \BaseController {
 						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
 
 						if (count($legacyData) > 0) {
-							
+
 							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'dividend' => $input['dividend'] );
 
 							// add the line to the betData object if it exists
@@ -316,7 +340,7 @@ class FrontBetsController extends \BaseController {
 								$lineArray = array('line' => $input['line']);
 								$betData = array_merge($betData, $lineArray);
 							}
-							
+
 							//set our free bet flag if passed in
 							if (isset($input['use_free_credit'])) {
 
@@ -364,7 +388,9 @@ class FrontBetsController extends \BaseController {
 
 					} elseif ($bet['status'] == 401) {
 
-						return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+						// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+						$messages[] = array("status" => 401, "success" => false);
+						$errors++;
 
 					}  else {
 
