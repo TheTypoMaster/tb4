@@ -359,11 +359,22 @@ class SportsController extends \BaseController {
 									$marketModel->event_id = $eventExists;
 									
 									$marketModel->period = $dataArray['Period'];
-									$marketModel->pitcher_home_no = $dataArray['PitcherHomeNo'];
-									$marketModel->pitcher_home = $dataArray['PitcherHome'];
-									$marketModel->pitcher_away_no = $dataArray['PitcherAwayNo'];
-									$marketModel->pitcher_away = $dataArray['PitcherAway'];
-									$marketModel->market_status = $dataArray['MarketStatus']; // Should come from a code table
+									
+									if(isset($dataArray['PitcherHomeNo'])){
+										$marketModel->pitcher_home_no = $dataArray['PitcherHomeNo'];
+									}
+									if(isset($dataArray['PitcherHome'])){
+										$marketModel->pitcher_home = $dataArray['PitcherHome'];
+									}
+									if(isset($dataArray['PitcherAwayNo'])){
+										$marketModel->pitcher_away_no = $dataArray['PitcherAwayNo'];
+									}
+									if(isset($dataArray['PitcherAway'])){
+										$marketModel->pitcher_away = $dataArray['PitcherAway'];
+									}
+									if(isset($dataArray['MarketStatus'])){
+										$marketModel->market_status = $dataArray['MarketStatus'];
+									}
 									
 									// save the market record
 									$marketModelSave = $marketModel->save();
