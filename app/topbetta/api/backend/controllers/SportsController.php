@@ -364,13 +364,13 @@ class SportsController extends \BaseController {
 										$marketModel->pitcher_home_no = $dataArray['PitcherHomeNo'];
 									}
 									if(isset($dataArray['PitcherHome'])){
-										$marketModel->pitcher_home = $dataArray['PitcherHome'];
+										$marketModel->pitcher_home_name = $dataArray['PitcherHome'];
 									}
 									if(isset($dataArray['PitcherAwayNo'])){
 										$marketModel->pitcher_away_no = $dataArray['PitcherAwayNo'];
 									}
 									if(isset($dataArray['PitcherAway'])){
-										$marketModel->pitcher_away = $dataArray['PitcherAway'];
+										$marketModel->pitcher_away_name = $dataArray['PitcherAway'];
 									}
 									if(isset($dataArray['MarketStatus'])){
 										$marketModel->market_status = $dataArray['MarketStatus'];
