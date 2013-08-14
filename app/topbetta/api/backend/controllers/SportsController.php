@@ -311,9 +311,9 @@ class SportsController extends \BaseController {
 										$externalMarketTypeID = $dataArray['BetType'];
 																				
 										// add period to bet type name if it's been set
-										// ($dataArray['Period'] != "") ? $betTypeName = $dataArray['BetTypeName']." ".$dataArray['Period'] : $betTypeName = $dataArray['BetTypeName'];
+										($dataArray['Period'] != "") ? $betTypeName = $dataArray['BetTypeName']." ".$dataArray['Period'] : $betTypeName = $dataArray['BetTypeName'];
 										
-										$betTypeName = $dataArray['BetTypeName'];
+										// $betTypeName = $dataArray['BetTypeName'];
 										
 										// check if market type exists
 										$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betTypeName);
