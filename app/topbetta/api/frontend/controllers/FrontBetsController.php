@@ -156,32 +156,33 @@ class FrontBetsController extends \BaseController {
 
 			$messages = array();
 			$errors = 0;
+			$betStatus = 200;
 
 			// type id 3 is each way
 			if ($input['type_id'] == 3) {
 
 				//do our win bets
 				$input['type_id'] = 1;
-				$this -> placeBet($input, $messages, $errors);
+				$this -> placeBet($betStatus, $input, $messages, $errors);
 
 				//do our place bets
 				$input['type_id'] = 2;
-				$this -> placeBet($input, $messages, $errors);
+				$this -> placeBet($betStatus, $input, $messages, $errors);
 
 			} elseif ($input['type_id'] < 3) {
 
-				$this -> placeBet($input, $messages, $errors);
+				$this -> placeBet($betStatus, $input, $messages, $errors);
 
 			} else {
 
-				$this -> placeBet($input, $messages, $errors, true);
+				$this -> placeBet($betStatus, $input, $messages, $errors, true);
 
 			}
 
 			if ($errors > 0) {
 
 				// problem with bet
-				if ($messages['status'] == 401) {
+				if ($betStatus == 401) {
 
 					return \Response::json(array("success" => false, "error" => "Please login first."), 401);
 
@@ -207,12 +208,14 @@ class FrontBetsController extends \BaseController {
 	/**
 	 * Place the bet via the legacy api, generally called within a list of bets
 	 *
+	 * TODO: remove the dependency on var references below
+	 *
 	 * @param $inout array
 	 * @param $messages array
 	 * @param $errors int
 	 *
 	 */
-	private function placeBet(&$input, &$messages, &$errors, $exotic = false) {
+	private function placeBet(&$betStatus, &$input, &$messages, &$errors, $exotic = false) {
 
 		//TODO: remove tournament bets from here - they belong in FrontTournamentsBetsController
 
@@ -242,7 +245,7 @@ class FrontBetsController extends \BaseController {
 			} elseif ($bet['status'] == 401) {
 
 				// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
-				$messages[] = array("status" => 401, "success" => false);
+				$betStatus = 401;
 				$errors++;
 
 			} else {
@@ -299,7 +302,7 @@ class FrontBetsController extends \BaseController {
 						} elseif ($bet['status'] == 401) {
 
 							// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
-							$messages[] = array("status" => 401, "success" => false);
+							$betStatus = 401;
 							$errors++;
 
 						}  else {
@@ -389,7 +392,7 @@ class FrontBetsController extends \BaseController {
 					} elseif ($bet['status'] == 401) {
 
 						// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
-						$messages[] = array("status" => 401, "success" => false);
+						$betStatus = 401;
 						$errors++;
 
 					}  else {
