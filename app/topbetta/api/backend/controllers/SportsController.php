@@ -311,7 +311,9 @@ class SportsController extends \BaseController {
 										$externalMarketTypeID = $dataArray['BetType'];
 																				
 										// add period to bet type name if it's been set
-										($dataArray['Period'] != "") ? $betTypeName = $dataArray['BetTypeName']." ".$dataArray['Period'] : $betTypeName = $dataArray['BetTypeName'];
+										// ($dataArray['Period'] != "") ? $betTypeName = $dataArray['BetTypeName']." ".$dataArray['Period'] : $betTypeName = $dataArray['BetTypeName'];
+										
+										$betTypeName = $dataArray['BetTypeName'];
 										
 										// check if market type exists
 										$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betTypeName);
@@ -346,18 +348,24 @@ class SportsController extends \BaseController {
 									if($marketExists){ 
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, In DB: $marketExists", 1);
 										$marketModel = TopBetta\SportsMarket::find($marketExists);
-										$marketModel->external_event_id = $eventId;
 									}else{ // if not create a new one
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, Adding to DB: $marketExists", 1);
 										$marketModel = new TopBetta\SportsMarket;
-										$marketModel->market_type_id = $marketTypeModel->id;
-										$marketModel->external_market_id = $marketId;
-										$marketModel->external_event_id = $eventId;
 									}
 									
-									//$marketModel->refund_flag = something;
-									// save the market record
+									$marketModel->market_type_id = $marketTypeModel->id;
+									$marketModel->external_market_id = $marketId;
+									$marketModel->external_event_id = $eventId;
 									$marketModel->event_id = $eventExists;
+									
+									$marketModel->period = $dataArray['Period'];
+									$marketModel->pitcher_home_no = $dataArray['PitcherHomeNo'];
+									$marketModel->pitcher_home = $dataArray['PitcherHome'];
+									$marketModel->pitcher_away_no = $dataArray['PitcherAwayNo'];
+									$marketModel->pitcher_away = $dataArray['PitcherAway'];
+									$marketModel->market_status = $dataArray['MarketStatus']; // Should come from a code table
+									
+									// save the market record
 									$marketModelSave = $marketModel->save();
 									$marketModelId = $marketModel->id;
 
