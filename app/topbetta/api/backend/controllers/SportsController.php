@@ -381,12 +381,7 @@ class SportsController extends \BaseController {
 									$marketModelId = $marketModel->id;
 
 									TopBetta\LogHelper::l("BackAPI: Sports - Processed Market. EventID:$eventId, MarketID:$marketId.");
-									
-									
-									// TODO: update the results for the home and away teams 
-									// - can this work in motor racing etc etc
-									// - do we currently store the results?
-									// - check if the selection_results record exists
+
 								}else{
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. Event for Market does not exist. Can't process, EventID:$eventId, MarketID:$marketId.", 2);
 								}
