@@ -455,6 +455,7 @@ class SportsController extends \BaseController {
 											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
 											$selectionPriceModel->line = $line;
 										}
+										
 										// Add/update the selection odds/price record
 										$selectionPriceModel->save();
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
