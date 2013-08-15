@@ -360,6 +360,7 @@ class SportsController extends \BaseController {
 									
 									$marketModel->period = $dataArray['Period'];
 									
+									// Baseball stuff
 									if(isset($dataArray['PitcherHomeNo'])){
 										$marketModel->pitcher_home_no = $dataArray['PitcherHomeNo'];
 									}
