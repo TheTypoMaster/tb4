@@ -258,10 +258,6 @@ class SportsController extends \BaseController {
 									$compModel->save();
 								}
 								
-								// grab the date from the event start times
-								//$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
-								//$oldShortDate = date_format(date_create($compModel->close_time), 'y/m/d');
-								
 								// update competiton with new event start time if it's after the current stored time
 								if ($compModel->start_date > $dataArray['EventTime']){
 									$compModel->start_date = $dataArray['EventTime'];
