@@ -141,15 +141,18 @@ class FrontTournamentsController extends \BaseController {
 					if (array_key_exists($tournament -> sport_name, $flipRacingMap)) {
 
 						$sub_type_name = $flipRacingMap[$tournament -> sport_name];
+						$tournamentType = 'r';
 
 					} else {
 
 						$sub_type_name = $tournament -> sport_name;
+						$tournamentType = 's';
 
 					}
 
 				}
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournaments' => $tourns);
+
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
 			}
 		}
 
