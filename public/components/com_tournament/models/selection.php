@@ -306,6 +306,8 @@ class TournamentModelSelection extends SuperModel
 					 )
 			GROUP BY
 				s.id
+			ORDER BY market_id 				
+					
 		';
 		$db->setQuery($query);
 		return $db->loadObjectList();
