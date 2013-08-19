@@ -191,7 +191,7 @@ class RacingController extends \BaseController {
 									// Change meeting check to be based on name/type/date rather then iGAS meetingID
 									//  to allow future race meetings to be created for tournaments
 									
-									$dt = new DateTime($dataArray['Date']);
+									$dt = new \DateTime($dataArray['Date']);
 									$shortDate =  $dt->format('Y-m-d');
 									
 									$meetingCode = strtoupper($dataArray['Name']) . "-". $type_code ."-" . $shortDate;
