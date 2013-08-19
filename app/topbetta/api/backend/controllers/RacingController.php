@@ -201,6 +201,7 @@ class RacingController extends \BaseController {
 									if($meetingExists){
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, In DB: $meetingExists", 1);
 										$raceMeet = TopBetta\RaceMeeting::find($meetingExists);
+										$raceMeet->external_event_group_id = $dataArray['Id'];
 									}else{
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, Added to DB: $meetingExists", 1);
 										$raceMeet = new TopBetta\RaceMeeting;
