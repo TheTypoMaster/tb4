@@ -163,7 +163,7 @@ class RacingController extends \BaseController {
 						TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, Object:$objectCount");
 						foreach ($racingArray as $dataArray){
 							// store data from array
-							if(isset($dataArray['Id'])){
+							if(isset($dataArray['Id']) && isset($dataArray['Name']) && isset($dataArray['Date'])){
 								$meetingId = $dataArray['Id'];
 								if(isset($dataArray['RaceType'])){
 									switch($dataArray['RaceType']){
@@ -188,6 +188,11 @@ class RacingController extends \BaseController {
 									// check if meeting exists in DB
 									$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 									
+									// Change meeting check to be based on name/type/date rather then iGAS meetingID
+									//  to allow future meets to be created for tournaments
+									$meetingCode = strtoupper($dataArray['Name']) . "-". $type_code ."-" . $dataArray['Date'];
+									// $meetingExists = TopBetta\RaceMeeting::meetingExistsByCode($meetingCode);
+									
 									// if meeting exists update that record
 									if($meetingExists){
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting, In DB: $meetingExists", 1);
@@ -198,18 +203,17 @@ class RacingController extends \BaseController {
 										if(isset($dataArray['Id'])){
 											$raceMeet->external_event_group_id = $dataArray['Id'];
 										}
-										
 									}
-																	
-									if(isset($dataArray['Name'])){
-										$raceMeet->name = $dataArray['Name'];
-									}
+									
+									// Add new code for race to be used for future tournaments
+									$raceMeet->meeting_code = $meetingCode;
+									
+									$raceMeet->name = $dataArray['Name'];
 									
 	// 								if(isset($dataArray['Date'])){
 	// 									$raceMeet->start_date = $dataArray['Date'];
 	// 								}
 									
-																
 									if(isset($dataArray['EventCount'])){
 										$raceMeet->events = $dataArray['EventCount'];
 									}
