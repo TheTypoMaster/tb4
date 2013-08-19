@@ -186,12 +186,12 @@ class RacingController extends \BaseController {
 								
 								if ($isThisRaceMeeting){
 									// check if meeting exists in DB
-									$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
+									// $meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 									
 									// Change meeting check to be based on name/type/date rather then iGAS meetingID
-									//  to allow future meets to be created for tournaments
+									//  to allow future race meetings to be created for tournaments
 									$meetingCode = strtoupper($dataArray['Name']) . "-". $type_code ."-" . $dataArray['Date'];
-									// $meetingExists = TopBetta\RaceMeeting::meetingExistsByCode($meetingCode);
+									$meetingExists = TopBetta\RaceMeeting::meetingExistsByCode($meetingCode);
 									
 									// if meeting exists update that record
 									if($meetingExists){
@@ -205,9 +205,10 @@ class RacingController extends \BaseController {
 										}
 									}
 									
-									// Add new code for race to be used for future tournaments
+									// add the meeting code to the model
 									$raceMeet->meeting_code = $meetingCode;
 									
+									// add the meeting name to the model
 									$raceMeet->name = $dataArray['Name'];
 									
 	// 								if(isset($dataArray['Date'])){
@@ -222,8 +223,8 @@ class RacingController extends \BaseController {
 										if(!$raceMeet->weather == ""){
 											// change to TB default if we have a match
 											$defaultValue = TopBetta\DataValues::getDefaultValue('weather_condition', $raceMeet->weather);
-											$o = print_r($defaultValue,true);
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
+											//$o = print_r($defaultValue,true);
+											//TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue weather o:$o", 1);
 											if(count($defaultValue) > 0){ // 
 												$raceMeet->weather = $defaultValue[0]->value;
 											}else{
@@ -245,8 +246,8 @@ class RacingController extends \BaseController {
 										if(!$raceMeet->track == ""){
 											// change to TB default if we have a match
 											$defaultValue = TopBetta\DataValues::getDefaultValue('track_condition', $raceMeet->track);
-											$o = print_r($defaultValue,true);
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
+											//$o = print_r($defaultValue,true);
+											//TopBetta\LogHelper::l("BackAPI: Racing - Processing Meeting. defaultValue track o:$o", 1);
 											if(count($defaultValue) > 0){
 												$raceMeet->track = $defaultValue[0]->value;
 											}else{
