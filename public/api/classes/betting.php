@@ -1405,7 +1405,7 @@ class Api_Betting extends JController {
 				
 			
 			}
-			return OutputHelper::json (200, array ('success' => 'Your bets have been placed'));
+			return OutputHelper::json (200, array ('success' => 'Your bet(s) have been placed'));
 
 		} else {
               
