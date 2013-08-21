@@ -1332,9 +1332,7 @@ class Api_Betting extends JController {
 							) );
 						}
 					} // end for each on eachway bets
-					return OutputHelper::json ( 200, array (
-							'success' => 'Your bets have been placed' 
-					) );
+					
 				}else{ // win and place bets
 
 					
@@ -1404,9 +1402,10 @@ class Api_Betting extends JController {
 						
 					}
 				}
-				return OutputHelper::json(200, array('success' => 'Your bet has been placed' ));
+				
 			
 			}
+			return OutputHelper::json (200, array ('success' => 'Your bets have been placed'));
 
 		} else {
               
