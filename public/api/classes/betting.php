@@ -1316,7 +1316,7 @@ class Api_Betting extends JController {
 						
 						$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 						
-						return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+						//return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
 						
 					}
 			}
