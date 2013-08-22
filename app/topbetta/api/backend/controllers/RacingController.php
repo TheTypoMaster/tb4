@@ -194,7 +194,7 @@ class RacingController extends \BaseController {
 									$dt = new \DateTime($dataArray['Date']);
 									$shortDate =  $dt->format('Y-m-d');
 									
-									$meetingCode = strtoupper($dataArray['Name']) . "-". $type_code ."-" . $shortDate;
+									$meetingCode = str_replace(" ", "",  strtoupper($dataArray['Name']) . "-". $type_code ."-" . $shortDate);
 									$meetingExists = TopBetta\RaceMeeting::meetingExistsByCode($meetingCode);
 									
 									// if meeting exists update that record
