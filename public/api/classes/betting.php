@@ -1254,71 +1254,71 @@ class Api_Betting extends JController {
 				// TODO: International races need to be catered for. Should configuration or DB driven
 				$providerName = "igas";
 					
-					if($bet->bet_type_id == "1"){
-						$betTypeShort = "W";
-					}elseif($bet->bet_type_id == "2"){
-						$betTypeShort = "P";
-					}
-					
-					// Grab default tote from DB 
-					$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
-					$toteType = $toteTypeReturn->product_name;
-					
-		
-					if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
-						$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $betTypeShort, $toteType, $runner_number);
-						$api_error		= $api->getErrorList(true);
-													
-						if (empty($api_error) && isset($external_bet->wagerId)) {
-							$bet_confirmed	= true;
-							$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
-							$bet->invoice_id = $external_bet->wagerId;
-									
-							// Set the bet_status based on $external_bet->status
-							$bet_status = 5;
-							if($external_bet->status == "N" || $external_bet->status == "E")
-							{
-								$bet_status = 5;
-							}elseif($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L"){
-								$bet_status = 1;
-							}elseif($external_bet->status == "F" || $external_bet->status == "CN"){
-								$bet_status = 4;
-								$bet_confirmed	= false;
-							}
-							
-							$bet->bet_result_status_id = (int)$bet_status;
-							$bet->save();
-						}else{
-							$bet->external_bet_error_message = (string)$api_error;
-						}
-					}
+				if($bet->bet_type_id == "1"){
+					$betTypeShort = "W";
+				}elseif($bet->bet_type_id == "2"){
+					$betTypeShort = "P";
+				}
 				
-					if (!$bet_confirmed) {
-						
-						if($free_bet_amount > 0) {
-							//add free bet doallers
-							if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
-								$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund'); 
-							}
-							else {
-								$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
-								$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund'); 
-							}
-						}
-						else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
+				// Grab default tote from DB 
+				$toteTypeReturn = $bet_product_model->isProductUsed($betTypeShort, $meetingCountry, $meetingRegion, $meetingType, $providerName);
+				$toteType = $toteTypeReturn->product_name;
+				
+	
+				if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time()+600)) {
+					$external_bet	= $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $betTypeShort, $toteType, $runner_number);
+					$api_error		= $api->getErrorList(true);
 												
-						$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
-						$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
-						$bet->resulted_flag			= 1;
-						$bet->refunded_flag			= 1;
-						$bet->bet_result_status_id	= (int)$refunded_status->id;
+					if (empty($api_error) && isset($external_bet->wagerId)) {
+						$bet_confirmed	= true;
+						$bet->external_bet_id = $bet_id;//(int)$external_bet->wagerId;
+						$bet->invoice_id = $external_bet->wagerId;
+								
+						// Set the bet_status based on $external_bet->status
+						$bet_status = 5;
+						if($external_bet->status == "N" || $external_bet->status == "E")
+						{
+							$bet_status = 5;
+						}elseif($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L"){
+							$bet_status = 1;
+						}elseif($external_bet->status == "F" || $external_bet->status == "CN"){
+							$bet_status = 4;
+							$bet_confirmed	= false;
+						}
+						
+						$bet->bet_result_status_id = (int)$bet_status;
 						$bet->save();
-						
-						$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
-						
-						//return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
-						
+					}else{
+						$bet->external_bet_error_message = (string)$api_error;
 					}
+				}
+			
+				if (!$bet_confirmed) {
+					
+					if($free_bet_amount > 0) {
+						//add free bet doallers
+						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund'); 
+						}
+						else {
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
+							$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund'); 
+						}
+					}
+					else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
+											
+					$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
+					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
+					$bet->resulted_flag			= 1;
+					$bet->refunded_flag			= 1;
+					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->save();
+					
+					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
+					
+					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					
+				}
 			}
 			return OutputHelper::json (200, array ('success' => 'Your bet(s) have been placed'));
 
