@@ -182,7 +182,7 @@ class RacingController extends \BaseController {
 									}
 								}
 								
-								$isThisRaceMeeting =  TopBetta\RaceMeeting::isRace($type_code);
+								$isThisRaceMeeting =  TopBetta\RaceMeeting::isRace($meetingId);
 								
 								if ($isThisRaceMeeting){
 									// check if meeting exists in DB
@@ -304,116 +304,121 @@ class RacingController extends \BaseController {
 								$meetingId = $dataArray['MeetingId'];
 								$raceNo = $dataArray['RaceNo'];
 							
-								// make sure the meeting this race is in exists 1st
-								$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
-	
-								// if meeting exists update that record then continue to add/update the race record
-								if($meetingExists){
-									
-									$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
-								
-									// check if race exists
-									$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
-	
-									// if race exists update that record
-									if($raceExists){
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, In DB: $raceExists", 1);
-										$raceEvent = TopBetta\RaceEvent::find($raceExists);
-									}else{
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB: $raceExists", 1);
-										$raceEvent = new TopBetta\RaceEvent;
-										if(isset($dataArray['MeetingId'])){
-											$raceEvent->external_event_id = $meetingId;
-										}
-									}
-								
-									// get race values from JSON
-									if(isset($dataArray['RaceNo'])){
-										$raceEvent->number = $dataArray['RaceNo'];
-									}
-									
-									if(isset($dataArray['JumpTime'])){
-										$raceEvent->start_date = $dataArray['JumpTime'];
-									}
-									
-									// update meeting start time if needed
-									if ($meetingRecord->start_date == "0000-00-00 00:00:00"){
-										$meetingRecord->start_date = $dataArray['JumpTime'];
-										$meetingRecord->save();
-									}elseif($dataArray['JumpTime'] < $meetingRecord->start_date){
-										$meetingRecord->start_date = $dataArray['JumpTime'];
-										$meetingRecord->save();
-									}
+								$isThisRaceMeeting =  TopBetta\RaceMeeting::isRace($meetingId);
+								if ($isThisRaceMeeting){
+												
+									// make sure the meeting this race is in exists 1st
+									$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
+		
+									// if meeting exists update that record then continue to add/update the race record
+									if($meetingExists){
 										
-									//TODO: Code Table lookup on different race status
-									//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
-									if(isset($dataArray['RaceStatus'])){
-										switch($dataArray['RaceStatus']){
-											case "O":
-												$raceEvent->event_status_id = '1';
-												break;
-											case "C":
-												$raceEvent->event_status_id = '5';
-												break;
-											case "S":
-												$raceEvent->event_status_id = '5'; // no suspended status in code table
-												break;
-											case "I":
-												$raceEvent->event_status_id = '6';
-												break;
-											case "R":
-												$raceEvent->event_status_id = '2';
-												break;
-											case "A":
-												$raceEvent->event_status_id = '3';
-												break;
-
-											default:
-												TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process. ", 2);
+										$meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
+									
+										// check if race exists
+										$raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+		
+										// if race exists update that record
+										if($raceExists){
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, In DB: $raceExists", 1);
+											$raceEvent = TopBetta\RaceEvent::find($raceExists);
+										}else{
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB: $raceExists", 1);
+											$raceEvent = new TopBetta\RaceEvent;
+											if(isset($dataArray['MeetingId'])){
+												$raceEvent->external_event_id = $meetingId;
+											}
 										}
 									
-									}
+										// get race values from JSON
+										if(isset($dataArray['RaceNo'])){
+											$raceEvent->number = $dataArray['RaceNo'];
+										}
+										
+										if(isset($dataArray['JumpTime'])){
+											$raceEvent->start_date = $dataArray['JumpTime'];
+										}
+										
+										// update meeting start time if needed
+										if ($meetingRecord->start_date == "0000-00-00 00:00:00"){
+											$meetingRecord->start_date = $dataArray['JumpTime'];
+											$meetingRecord->save();
+										}elseif($dataArray['JumpTime'] < $meetingRecord->start_date){
+											$meetingRecord->start_date = $dataArray['JumpTime'];
+											$meetingRecord->save();
+										}
+											
+										//TODO: Code Table lookup on different race status
+										//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
+										if(isset($dataArray['RaceStatus'])){
+											switch($dataArray['RaceStatus']){
+												case "O":
+													$raceEvent->event_status_id = '1';
+													break;
+												case "C":
+													$raceEvent->event_status_id = '5';
+													break;
+												case "S":
+													$raceEvent->event_status_id = '5'; // no suspended status in code table
+													break;
+												case "I":
+													$raceEvent->event_status_id = '6';
+													break;
+												case "R":
+													$raceEvent->event_status_id = '2';
+													break;
+												case "A":
+													$raceEvent->event_status_id = '3';
+													break;
+	
+												default:
+													TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process. ", 2);
+											}
+										
+										}
+										
+										// TODO: Not stored or needed?
+										/* if(isset($dataArray['RunnerCount'])){
+											$raceEvent->type_code = $dataArray['RunnerCount'];
+										} */
+										
+										if(isset($dataArray['RaceName'])){
+											$raceEvent->name = $dataArray['RaceName'];
+										}
+										if(isset($dataArray['Distance'])){
+											$raceEvent->distance = $dataArray['Distance'];
+										}
+										if(isset($dataArray['RaceClass'])){
+											$raceEvent->class = $dataArray['RaceClass'];
+										}
 									
-									// TODO: Not stored or needed?
-									/* if(isset($dataArray['RunnerCount'])){
-										$raceEvent->type_code = $dataArray['RunnerCount'];
-									} */
-									
-									if(isset($dataArray['RaceName'])){
-										$raceEvent->name = $dataArray['RaceName'];
-									}
-									if(isset($dataArray['Distance'])){
-										$raceEvent->distance = $dataArray['Distance'];
-									}
-									if(isset($dataArray['RaceClass'])){
-										$raceEvent->class = $dataArray['RaceClass'];
-									}
-								
-									// save or update the record
-									$raceEvent->weather = $meetingRecord->weather;
-									$raceEvent->track_condition = $meetingRecord->track;
-									$raceEventSave = $raceEvent->save();
-									$raceEventID = $raceEvent->id;
-									
-									TopBetta\LogHelper::l("BackAPI: Racing - Processed Race. MID:$meetingId, RaceNo:$raceNo, Name: $raceEvent->name, JumpTime:$raceEvent->start_date, Status:$raceEvent->event_status_id");
-																	
-									// Add the event_group_event record if adding race
-									
-									// TODO: maybe through eloquent check if the race already exists in DB also need to check what event_id field stores
-									$egeExists = \DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->pluck('event_id');
-									
-									if(!$egeExists){
-										$eventGroupEvent = new TopBetta\RaceEventGroupEvent;
-										$eventGroupEvent->event_id = $raceEventID;
-										$eventGroupEvent->event_group_id = $meetingExists;
-										$eventGroupEvent->save();
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB",1);
-										// Add event_group event record
+										// save or update the record
+										$raceEvent->weather = $meetingRecord->weather;
+										$raceEvent->track_condition = $meetingRecord->track;
+										$raceEventSave = $raceEvent->save();
+										$raceEventID = $raceEvent->id;
+										
+										TopBetta\LogHelper::l("BackAPI: Racing - Processed Race. MID:$meetingId, RaceNo:$raceNo, Name: $raceEvent->name, JumpTime:$raceEvent->start_date, Status:$raceEvent->event_status_id");
+																		
+										// Add the event_group_event record if adding race
+										
+										// TODO: maybe through eloquent check if the race already exists in DB also need to check what event_id field stores
+										$egeExists = \DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->pluck('event_id');
+										
+										if(!$egeExists){
+											$eventGroupEvent = new TopBetta\RaceEventGroupEvent;
+											$eventGroupEvent->event_id = $raceEventID;
+											$eventGroupEvent->event_group_id = $meetingExists;
+											$eventGroupEvent->save();
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB",1);
+											// Add event_group event record
+										}else{
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, EGE in DB",1);
+										}
 									}else{
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, EGE in DB",1);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process", 2);
 									}
-								}else{
-									TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process", 2);
+									
 								}
 							}else{
 								TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. MeetingID or RaceNo not set. Can't process", 2);
