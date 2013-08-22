@@ -27,7 +27,7 @@ class RaceMeeting extends \Eloquent {
 	}
 	
 	static public function isRace($meetingId) {
-		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingCode)->pluck('type_code');
+		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 		return ($type_code == 'NULL' ? false : true);
 	}
 	
