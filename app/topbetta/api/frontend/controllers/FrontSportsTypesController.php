@@ -48,7 +48,7 @@ class FrontSportsTypesController extends \BaseController {
 				//we need to type cast the strings to int
 				foreach ($types as $type) {
 
-					$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type);
+					$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status);
 
 				}
 

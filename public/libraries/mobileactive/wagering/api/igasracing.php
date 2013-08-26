@@ -11,7 +11,7 @@ class WageringApiIgasracing extends WageringApi
 	
 	public function checkConnection()
 	{
-		WageringApiIgasracingService::setLogger("igasracing: checkConnection. Entering");
+		//WageringApiIgasracingService::setLogger("igasracing: checkConnection. Entering");
 		$account = $this->_getAccountService();
 		return $this->_callOperation('checkConnection', $account);
 	}
@@ -25,16 +25,16 @@ class WageringApiIgasracing extends WageringApi
 	
 	public function placeBet(WageringBet $bet, $event, $custom_id)
 	{
-		WageringApiIgasracingService::setLogger("igasracing: placeBet. Entering");
+		//WageringApiIgasracingService::setLogger("igasracing: placeBet. Entering");
 		return $this->placeBetList(array($bet), $event, $custom_id);
 	}
 	
 	public function placeBetList($bet_list, $event, $custom_id)
 	{
-		WageringApiIgasracingService::setLogger("igasracing: placeBetList. Entering...");
+		//WageringApiIgasracingService::setLogger("igasracing: placeBetList. Entering...");
 		
-		$o = print_r($event);
-		WageringApiIgasracingService::setLogger("igasracing: placeBetList. Event: $o");
+		//$o = print_r($event);
+		//WageringApiIgasracingService::setLogger("igasracing: placeBetList. Event: $o");
 		
 		$account = $this->_getAccountService();
 		$account->setTypeCode($event->type_code);
@@ -52,7 +52,7 @@ class WageringApiIgasracing extends WageringApi
 	
 	public function validateBet(WageringBet $bet, $event)
 	{
-		WageringApiIgasracingService::setLogger("igasracing: validateBet. Entering");
+		//WageringApiIgasracingService::setLogger("igasracing: validateBet. Entering");
 		$account = $this->_getAccountService();
 		$account->setTypeCode($event->type_code);
 		$account->setMeetingCode($event->meeting_code);
@@ -98,7 +98,7 @@ class WageringApiIgasracing extends WageringApi
 	}
 	
 	private function _getAccountService(){
-		WageringApiIgasracingService::setLogger("igasracing: _getAccountService. Entering");
+		//WageringApiIgasracingService::setLogger("igasracing: _getAccountService. Entering");
 		return new WageringApiIgasracingService();
 	}
 /*	
@@ -108,11 +108,11 @@ class WageringApiIgasracing extends WageringApi
 	*/
 	private function _callOperation($operation, $service)
 	{	
-		WageringApiIgasracingService::setLogger("igasracing: _callOperation. Entering. Operation:$operation");
+		//WageringApiIgasracingService::setLogger("igasracing: _callOperation. Entering. Operation:$operation");
 		
 		$extra_args = array_slice(func_get_args(), 2);
-		$o =print_r($extra_args, true);
-		WageringApiIgasracingService::setLogger("igasracing: _callOperation. Entering. Extra Args:$o");
+		//$o =print_r($extra_args, true);
+		//WageringApiIgasracingService::setLogger("igasracing: _callOperation. Entering. Extra Args:$o");
 		try{
 			return call_user_func_array(array($service, $operation), $extra_args);
 		}

@@ -85,12 +85,12 @@ class SportsController extends \BaseController {
 
 		// get the JSON POST
 		$sportsJSON = \Input::json();
-		//$sportsJSON = unserialize(file_get_contents('/tmp/backAPIracing-20130524203203'));
-		$jsonSerialized = serialize($sportsJSON);
-
+		
+		// log the JSON POST
 		if($this->debug){
+			$sportsJSONlog = \Input::json()->all();
 			$timeStamp = date("YmdHis");
-			\File::append('/tmp/backAPIsports-'.$timeStamp, $jsonSerialized);
+			\File::append('/tmp/backAPIsportsJSON-'.$timeStamp, json_encode($sportsJSONlog));
 		}
 
 		// make sure JSON was received
@@ -258,10 +258,6 @@ class SportsController extends \BaseController {
 									$compModel->save();
 								}
 								
-								// grab the date from the event start times
-								//$newShortDate = date_format(date_create($dataArray['EventTime']), 'y/m/d');
-								//$oldShortDate = date_format(date_create($compModel->close_time), 'y/m/d');
-								
 								// update competiton with new event start time if it's after the current stored time
 								if ($compModel->start_date > $dataArray['EventTime']){
 									$compModel->start_date = $dataArray['EventTime'];
@@ -313,6 +309,8 @@ class SportsController extends \BaseController {
 										// add period to bet type name if it's been set
 										($dataArray['Period'] != "") ? $betTypeName = $dataArray['BetTypeName']." ".$dataArray['Period'] : $betTypeName = $dataArray['BetTypeName'];
 										
+										// $betTypeName = $dataArray['BetTypeName'];
+										
 										// check if market type exists
 										$marketTypeExists = TopBetta\SportsMarketType::marketTypeExists($betTypeName);
 	
@@ -346,28 +344,41 @@ class SportsController extends \BaseController {
 									if($marketExists){ 
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, In DB: $marketExists", 1);
 										$marketModel = TopBetta\SportsMarket::find($marketExists);
-										$marketModel->external_event_id = $eventId;
 									}else{ // if not create a new one
 										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, Adding to DB: $marketExists", 1);
 										$marketModel = new TopBetta\SportsMarket;
-										$marketModel->market_type_id = $marketTypeModel->id;
-										$marketModel->external_market_id = $marketId;
-										$marketModel->external_event_id = $eventId;
 									}
 									
-									//$marketModel->refund_flag = something;
-									// save the market record
+									$marketModel->market_type_id = $marketTypeModel->id;
+									$marketModel->external_market_id = $marketId;
+									$marketModel->external_event_id = $eventId;
 									$marketModel->event_id = $eventExists;
+									
+									$marketModel->period = $dataArray['Period'];
+									
+									// Baseball stuff
+									if(isset($dataArray['PitcherHomeNo'])){
+										$marketModel->pitcher_home_no = $dataArray['PitcherHomeNo'];
+									}
+									if(isset($dataArray['PitcherHome'])){
+										$marketModel->pitcher_home_name = $dataArray['PitcherHome'];
+									}
+									if(isset($dataArray['PitcherAwayNo'])){
+										$marketModel->pitcher_away_no = $dataArray['PitcherAwayNo'];
+									}
+									if(isset($dataArray['PitcherAway'])){
+										$marketModel->pitcher_away_name = $dataArray['PitcherAway'];
+									}
+									if(isset($dataArray['MarketStatus'])){
+										$marketModel->market_status = $dataArray['MarketStatus'];
+									}
+									
+									// save the market record
 									$marketModelSave = $marketModel->save();
 									$marketModelId = $marketModel->id;
 
 									TopBetta\LogHelper::l("BackAPI: Sports - Processed Market. EventID:$eventId, MarketID:$marketId.");
-									
-									
-									// TODO: update the results for the home and away teams 
-									// - can this work in motor racing etc etc
-									// - do we currently store the results?
-									// - check if the selection_results record exists
+
 								}else{
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Market. Event for Market does not exist. Can't process, EventID:$eventId, MarketID:$marketId.", 2);
 								}
@@ -441,6 +452,7 @@ class SportsController extends \BaseController {
 											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
 											$selectionPriceModel->line = $line;
 										}
+										
 										// Add/update the selection odds/price record
 										$selectionPriceModel->save();
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
@@ -491,19 +503,20 @@ class SportsController extends \BaseController {
 												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
 											}
 											
-											// update the event status to paying
-											$eventExists = TopBetta\SportsMatches::eventExists($gameId);
-											if($eventExists){
-												// get the event status id for paying
-												$eventStatusId = TopBetta\SportEventStatus::getSportsEventStatusIdByKeyword('paying');
-												$eventModelSports = TopBetta\SportsMatches::find($eventExists);
-												$eventModelSports->event_status_id = $eventStatusId;
-												$eventModelSports->paid_flag = '1';
-												$eventModelSports->save();
-												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result. Event Status set to Paying: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
-											}else{
-												TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: Event not found. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
-											}
+											// TAKEN OUT TILL WE GO FULL AUTO
+// 											// update the event status to paying
+// 											$eventExists = TopBetta\SportsMatches::eventExists($gameId);
+// 											if($eventExists){
+// 												// get the event status id for paying
+// 												$eventStatusId = TopBetta\SportEventStatus::getSportsEventStatusIdByKeyword('paying');
+// 												$eventModelSports = TopBetta\SportsMatches::find($eventExists);
+// 												$eventModelSports->event_status_id = $eventStatusId;
+// 												$eventModelSports->paid_flag = '1';
+// 												$eventModelSports->save();
+// 												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result. Event Status set to Paying: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
+// 											}else{
+// 												TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: Event not found. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);
+// 											}
 											
 										}else{
 											TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: Selection not found. GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType. Can't Process", 1);

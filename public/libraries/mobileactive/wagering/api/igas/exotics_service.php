@@ -90,19 +90,19 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 */
 	public function placeBetList(Array $bet_data)
 	{
-		$b = print_r($bet_data,true);
-		$this->setLogger("* exotics_service: placebetList: bet_data:$b");
+		//$b = print_r($bet_data,true);
+		//$this->setLogger("* exotics_service: placebetList: bet_data:$b");
 		
 		$bet_list = $bet_data['bet_list'];
 		$event = $bet_data['event'];
 		
 		// Build up the bet parameters
 		$params = $this->_buildBetList($bet_list);
-		$this->setLogger("* exotics_service: placebetList: Bet Params: bet_data:".print_r($params,true));
+		//$this->setLogger("* exotics_service: placebetList: Bet Params: bet_data:".print_r($params,true));
 		
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $params, "$secretKey");
-		$this->setLogger("* exotics_service: placebetList: DataKey: $betDataKey");
+		//$this->setLogger("* exotics_service: placebetList: DataKey: $betDataKey");
 		
 		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $params, $betDataKey );
@@ -125,8 +125,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		//$userPassword = $this->api->password;
 		//$companyID = $this->api->companyid;
 		
-		$b = print_r($bet_data,true);
-		$this->setLogger("* exotics_service: placeRacebetList: bet_data:$b");
+		//$b = print_r($bet_data,true);
+		//$this->setLogger("* exotics_service: placeRacebetList: bet_data:$b");
 	
 		// Split up bet and event data
 		$bet_list = $bet_data['bet_list'];
@@ -139,7 +139,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 		$betParams = $this->send_bet;
 		$sb = print_r($this->send_bet,true);
-		$this->setLogger("* exotics_service: placeRacebetList: Send bet params:$sb");
+		//$this->setLogger("* exotics_service: placeRacebetList: Send bet params:$sb");
 		
 		// Build up bet array for JSON
 		$paramsList = array('ReferenceID' => $betParams['eventId'], 'ClientID' => $userID,
@@ -149,7 +149,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramsList, "$secretKey");
-		$this->setLogger("* exotics_service: placeRacebetList: DataKey: $betDataKey");
+		//$this->setLogger("* exotics_service: placeRacebetList: DataKey: $betDataKey");
 	
 		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName, $userPassword, $companyID, $paramsList, $betDataKey );
@@ -211,8 +211,8 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	 */
 	private function _buildBetList($bet_list, $return_multiple = true, $userID, $raceNO, $priceType, $meetingID){
 		
-		$b = print_r($bet_list,true);
-		$this->setLogger("exotics_service: Build Bet List:$b");
+		//$b = print_r($bet_list,true);
+		//$this->setLogger("exotics_service: Build Bet List:$b");
 				
 		if(is_null($this->type_code)){ // is_null($this->meeting_code) || 
 			throw new Exception('Meeting code and type code must be set to place bet');
@@ -423,7 +423,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 	private function curlRequest($command=null, $params=null)
 	{
-		$this->setLogger("exotics_service: Entering curlRequest. Command:$command");
+		//$this->setLogger("exotics_service: Entering curlRequest. Command:$command");
 		$this->setLogger("exotics_service: curlRequest. post_string:$params");
 		
 		/*
@@ -440,15 +440,17 @@ class WageringApiIgasexoticsService extends ConfigReader{
 		
 		
 		
-		$c = print_r($ch,true);
-		$this->setLogger("exotics_service: curlRequest. Curl Instance:$c");
+		//$c = print_r($ch,true);
+		//$this->setLogger("exotics_service: curlRequest. Curl Instance:$c");
 				
 		$error = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$res = curl_exec($ch);
 		
-		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . ". Post String:".$params."\n-------------");		
+		//$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . ". Post String:".$params."\n-------------");		
 		
 		$response = json_decode($res);
+		$r = print_r($response,true);
+		$this->setLogger("exotics_service: curlRequest. Response :$r");
 		curl_close($ch);
 		if ($response == "") {
 			//throw new ApiException("Server has returned nothing.<br>Token Response: ".$error." ".$this->token."<br/>".$this->bm_service_url."/".$command."<br/>".$post_string);
@@ -521,7 +523,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 	private function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
-		$myFile = "/tmp/saveExoticsBet";
+		$myFile = "/tmp/igas_exotics_betting.log";
 
 		if ($fh = fopen($myFile, 'a')) {
 			fwrite($fh, date('Y-m-d H:i:s') . "\n" . $msg);
