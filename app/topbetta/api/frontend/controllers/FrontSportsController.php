@@ -35,7 +35,7 @@ class FrontSportsController extends \BaseController {
 					$comps = array();
 					
 					// get comps for sport
-					$competitons = $sportsComps->getCompsSorted($date, $sid);
+					$competitons = $sportsComps->getCompsSorted($date, $sportId);
 					$comp_order = '1';
 					
 					foreach($competitons as $competition){
