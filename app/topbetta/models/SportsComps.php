@@ -20,6 +20,27 @@ class SportsComps extends \Eloquent {
     	return SportsComps::where('name', '=', $compName) -> pluck('id');
     }
 
+   public function getCompsSorted ($date = NULL, $sid = NULL){
+    	//construct the date query string
+    	$dateQuery = $this->mkDateQuery($date, 'eg.close_time');
+    	
+    	//select sports if ids set
+    	$sportQuery = ($sid) ? ' AND s.id IN ('.$sid.') ' : '';
+    	
+    	$query = ' SELECT eg.name AS name, eg.created_date, eg.id AS eventGroupId, eg.start_date, eg.close_time';
+    	$query .= ' FROM tbdb_event_group as eg';
+    	$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.provider_value = eg.name ';
+    	$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
+    	$query .= ' LEFT JOIN tbdb_tournament_sport AS s ON s.id = eg.sport_id';
+    	// $query .= ' LEFT JOIN tb_data_provider AS dp ON dp.id = dopm.provider_id ';
+    	$query.= $dateQuery;
+    	$query.= $sportQuery;
+    	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
+		
+    	$result = \DB::select($query);
+    	
+    	return $result;
+     }
 
 	public function getSportAndComps($date = NULL, $sid = NULL) {
 
