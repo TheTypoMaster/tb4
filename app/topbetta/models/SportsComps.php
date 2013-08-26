@@ -22,7 +22,7 @@ class SportsComps extends \Eloquent {
 
    public function getCompsSorted ($date = NULL, $sid = NULL){
     	//construct the date query string
-    	$dateQuery = $this->mkDateQuery($date, 'c.close_time');
+    	$dateQuery = $this->mkDateQuery($date, 'eg.close_time');
     	
     	//select sports if ids set
     	$sportQuery = ($sid) ? ' AND s.id IN ('.$sid.') ' : '';
