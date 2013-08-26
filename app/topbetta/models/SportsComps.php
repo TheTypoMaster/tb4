@@ -20,6 +20,24 @@ class SportsComps extends \Eloquent {
     	return SportsComps::where('name', '=', $compName) -> pluck('id');
     }
 
+   public function getCompsSorted ($date = NULL, $sid = NULL){
+    	//construct the date query string
+    	$dateQuery = $this->mkDateQuery($date, 'c.close_time');
+    	
+    	$query .= ' SELECT eg.name AS name, eg.created_date, eg.id AS eventGroupId, eg.start_date, eg.close_time';
+    	$query .= ' FROM tbdb_event_group as eg';
+    	$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.provider_value = eg.name ';
+    	$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
+    	$query .= ' LEFT JOIN tbdb_tournament_sport AS s ON s.id = eg.sport_id';
+    	// $query .= ' LEFT JOIN tb_data_provider AS dp ON dp.id = dopm.provider_id ';
+    	$query.= $dateQuery;
+    	$query.= $sportQuery;
+    	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
+		
+    	$result = \DB::select($query);
+    	
+    	return $result;
+     }
 
 	public function getSportAndComps($date = NULL, $sid = NULL) {
 
@@ -35,13 +53,9 @@ class SportsComps extends \Eloquent {
 			$query.= ' , c.start_date, c.close_time ';
 			$query.= ' FROM tbdb_tournament_sport AS s ';
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
-			// Changed to add ordering based on competition then event name
-			$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.provider_value = c.name ';
-			$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
-			// $query .= ' LEFT JOIN tb_data_provider AS dp ON dp.id = dopm.provider_id ';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
-			$query.= ' ORDER BY sportName, doo.order_number ASC, name ASC ';
+			$query.= ' ORDER BY sportName, name ASC ';
 
 			$result = \DB::select($query);
 

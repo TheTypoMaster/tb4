@@ -33,18 +33,42 @@ class FrontSportsController extends \BaseController {
 					$sportName = $sport -> sportName;
 					$sportId = $sport -> sportID;
 					$comps = array();
-					foreach ($sports as $comp) {
-
-						if ($comp -> sportName == $sportName) {
-
-							//convert the date to ISO 8601 format
-							$startDatetime = new \DateTime($comp -> start_date);
-							$startDatetime = $startDatetime -> format('c');
-
-							$comps[] = array('id' => (int)$comp -> eventGroupId, 'name' => $comp -> name, 'start_date' => $startDatetime);
-						}
-
+					
+					// get comps for sport
+					$competitons = $sportsComps->getCompsSorted($date, $sid);
+					$comp_order = '1';
+					
+					foreach($competitons as $competition){
+						
+						//convert the date to ISO 8601 format
+						$startDatetime = new \DateTime($competition -> start_date);
+						$startDatetime = $startDatetime -> format('c');
+						
+						// build up competitions for current sport
+						$comps[] = array('id' => (int)$competition -> eventGroupId, 'name' => $competition -> name, 'start_date' => $startDatetime, 'order' => $comp_order);
+						$comp_order++;
 					}
+					
+					
+					
+					
+					
+					
+// 					foreach ($sports as $comp) {
+
+// 						if ($comp -> sportName == $sportName) {
+
+// 							//convert the date to ISO 8601 format
+// 							$startDatetime = new \DateTime($comp -> start_date);
+// 							$startDatetime = $startDatetime -> format('c');
+
+// 							$comps[] = array('id' => (int)$comp -> eventGroupId, 'name' => $comp -> name, 'start_date' => $startDatetime);
+// 						}
+
+// 					}
+					
+					
+					
 					$eachSport[] = array('id' => (int)$sportId, 'name' => $sportName, 'competitions' => $comps);
 				}
 			}
