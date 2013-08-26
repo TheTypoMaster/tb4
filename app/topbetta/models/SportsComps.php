@@ -35,9 +35,12 @@ class SportsComps extends \Eloquent {
 			$query.= ' , c.start_date, c.close_time ';
 			$query.= ' FROM tbdb_tournament_sport AS s ';
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
+			// Changed to add ordering based on competition then event name
+			$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.value = c.name ';
+			$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
-			$query.= ' ORDER BY sportName, name ASC ';
+			$query.= ' ORDER BY sportName, doo.order_number ASC, name ASC ';
 
 			$result = \DB::select($query);
 
