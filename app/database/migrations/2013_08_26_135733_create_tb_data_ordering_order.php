@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTbDataOrderValues extends Migration {
+class CreateTbDataOrderingOrder extends Migration {
 
 	/**
 	 * Run the migrations.
