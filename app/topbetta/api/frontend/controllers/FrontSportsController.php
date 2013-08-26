@@ -49,26 +49,6 @@ class FrontSportsController extends \BaseController {
 						$comp_order++;
 					}
 					
-					
-					
-					
-					
-					
-// 					foreach ($sports as $comp) {
-
-// 						if ($comp -> sportName == $sportName) {
-
-// 							//convert the date to ISO 8601 format
-// 							$startDatetime = new \DateTime($comp -> start_date);
-// 							$startDatetime = $startDatetime -> format('c');
-
-// 							$comps[] = array('id' => (int)$comp -> eventGroupId, 'name' => $comp -> name, 'start_date' => $startDatetime);
-// 						}
-
-// 					}
-					
-					
-					
 					$eachSport[] = array('id' => (int)$sportId, 'name' => $sportName, 'competitions' => $comps);
 				}
 			}
