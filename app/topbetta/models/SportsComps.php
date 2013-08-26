@@ -24,7 +24,7 @@ class SportsComps extends \Eloquent {
     	//construct the date query string
     	$dateQuery = $this->mkDateQuery($date, 'c.close_time');
     	
-    	$query .= ' SELECT eg.name AS name, eg.created_date, eg.id AS eventGroupId, eg.start_date, eg.close_time';
+    	$query = ' SELECT eg.name AS name, eg.created_date, eg.id AS eventGroupId, eg.start_date, eg.close_time';
     	$query .= ' FROM tbdb_event_group as eg';
     	$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.provider_value = eg.name ';
     	$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
