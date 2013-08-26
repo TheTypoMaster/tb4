@@ -25,7 +25,7 @@ class FrontSportsController extends \BaseController {
 
 			$sportName = '';
 			$eachSport = array();
-			
+
 			// Group the sports and comps which come through as one list
 			foreach ($sports as $sport) {
 
@@ -81,8 +81,30 @@ class FrontSportsController extends \BaseController {
 	 * @return Response
 	 */
 	public function show($id) {
-		//
-		return "Sports show $id";
+		// fetch the sport this comp belongs to
+		$sportsComps = new TopBetta\SportsComps;
+		$sports = $sportsComps -> getCompWithSport($id);
+
+		if ($sports) {
+			$sports = $sports[0];
+
+			$result = array(
+				'id' => (int)$sports->sportID,
+				'name' => $sports->sportName,
+				'competitions' => array(
+					'id' => (int)$sports->eventGroupId,
+					'name' => $sports->name,
+					'start_date' => $sports->start_date
+				)
+			);
+
+			return array('success' => true, 'result' => $result);
+
+		} else {
+
+			return array('success' => false, 'error' => \Lang::get('sports.no_competition_found'));
+
+		}
 	}
 
 	/**
