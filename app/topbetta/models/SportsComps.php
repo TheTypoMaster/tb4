@@ -2,14 +2,14 @@
 namespace TopBetta;
 
 class SportsComps extends \Eloquent {
-    
-	protected $table = 'tbdb_event_group';	
-		
+
+	protected $table = 'tbdb_event_group';
+
     protected $guarded = array();
 
     public static $rules = array();
-    
-    
+
+
     /**
      * Check if a comp exists.
      *
@@ -19,13 +19,13 @@ class SportsComps extends \Eloquent {
     static public function compExists($compName) {
     	return SportsComps::where('name', '=', $compName) -> pluck('id');
     }
-    
-    	
+
+
 	public function getSportAndComps($date = NULL, $sid = NULL) {
 
 			//construct the date query string
 			$dateQuery = $this->mkDateQuery($date, 'c.close_time');
-			
+
 			//select sports if ids set
 			//if ($sid) { $sportQuery = ' AND s.id IN ('.$sid.') ' ; }
 			$sportQuery = ($sid) ? ' AND s.id IN ('.$sid.') ' : '';
@@ -42,8 +42,22 @@ class SportsComps extends \Eloquent {
 			$result = \DB::select($query);
 
 			return $result;
-	}	
-	
+	}
+
+	public function getCompWithSport($compId) {
+
+		$query = ' SELECT s.id AS sportID, s.name AS sportName, c.name AS name, c.created_date, c.id AS eventGroupId ';
+		$query.= ' , c.start_date, c.close_time ';
+		$query.= ' FROM tbdb_tournament_sport AS s ';
+		$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
+		$query.= ' WHERE c.id = "' . $compId . '"';
+
+		$result = \DB::select($query);
+
+		return $result;
+
+	}
+
 	private function mkDateQuery($date = NULL, $time_field) {
 		if ($date && date('Y-m-d') != $date) {
 			if (strtotime($date) < time()) {
@@ -58,5 +72,5 @@ class SportsComps extends \Eloquent {
 			$dateQuery = ' WHERE UNIX_TIMESTAMP('.$time_field.') > '.time() ;
 		}
 		return $dateQuery;
-	}	
+	}
 }
