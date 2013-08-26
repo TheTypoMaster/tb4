@@ -317,6 +317,7 @@ class FrontTournamentsController extends \BaseController {
 				'weather' => $tournamentParent -> weather,
 				'track' => $tournamentParent -> track,
 				'sub_type' => strtolower($tournamentParent -> type_code),
+				'tournament_type' => ($isRacingTournament) ? 'r' : 's',
 				'tournament' => $tournamentDetails
 			));
 
