@@ -92,6 +92,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('saveBet', $this -> allowed_methods['saveBet'], $payload);
 
 					break;
@@ -103,6 +104,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('saveRacingBet', $this -> allowed_methods['saveRacingBet'], $payload);
 
 					break;
@@ -114,6 +116,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('saveSportBet', $this -> allowed_methods['saveSportBet'], $payload);
 
 					break;
@@ -125,6 +128,7 @@ class LegacyApiHelper {
 
 					//2. save tournament bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('saveTournamentBet', $this -> allowed_methods['saveTournamentBet'], $payload);
 
 					break;
@@ -136,6 +140,7 @@ class LegacyApiHelper {
 
 					//2. save tournament bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('saveTournamentSportsBet', $this -> allowed_methods['saveTournamentSportsBet'], $payload);
 
 					break;
@@ -147,6 +152,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('saveTournamentTicket', $this -> allowed_methods['saveTournamentTicket'], $payload);
 
 					break;
@@ -202,6 +208,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('getBettingHistory', $this -> allowed_methods['getBettingHistory'], $payload);
 
 					break;
@@ -224,12 +231,9 @@ class LegacyApiHelper {
 	/*
 	 * Our curl call to handle post & get requests separately
 	 *
-	 * - we are using a cookie file that we create for each user dynamically before being used
-	 * - this is stored in the database so it will work across the server pool
+	 * - we are using a cookie file that we create for each user based on their session id
 	 */
 	private function curl($method, $type, $payload = array(), $del_cookie = true) {
-
-		//TODO: we should have a cookie file prepared for us unique to this users session
 
 		$url = \URL::to('/api/?method=') . $method;
 
@@ -251,11 +255,6 @@ class LegacyApiHelper {
 		$buffer = json_decode(curl_exec($ch), true);
 
 		curl_close($ch);
-
-		//TODO: we are done with the cookie file, delete it now
-		if ($del_cookie) {
-			//rm the cookie file
-		}
 
 		return $buffer;
 
