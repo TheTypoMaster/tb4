@@ -30,8 +30,8 @@ class WageringApiIgasexotics extends WageringApi
 	public function placeRacingBetList($bet_list, $event, $custom_id, $userID, $raceNO, $priceType, $meetingID)
 	{
 		
-		$bl = print_r($bet_list,true);
-		file_put_contents('/tmp/saveExoticsBet', "* igasexotcs: PlaceRacingbetList. Bet List". $bl . "\n", FILE_APPEND | LOCK_EX);
+		//$bl = print_r($bet_list,true);
+		//file_put_contents('/tmp/saveExoticsBet', "* igasexotcs: PlaceRacingbetList. Bet List". $bl . "\n", FILE_APPEND | LOCK_EX);
 		$account = $this->_getAccountService();
 		$account->setTypeCode($event->type_code);
 		// $account->setMeetingCode($event->meeting_code);
@@ -42,8 +42,8 @@ class WageringApiIgasexotics extends WageringApi
 	
 	public function placeBetList($bet_list, $event, $custom_id)
 	{
-		$bl = print_r($bet_list,true);
-		file_put_contents('/tmp/saveExoticsBet', "* igasexotcs: PlacebetList. Bet List". $bl . "\n", FILE_APPEND | LOCK_EX);
+		//$bl = print_r($bet_list,true);
+		//file_put_contents('/tmp/saveExoticsBet', "* igasexotcs: PlacebetList. Bet List". $bl . "\n", FILE_APPEND | LOCK_EX);
 		$account = $this->_getAccountService();
 		$account->setTypeCode($event->type_code);
 		// $account->setMeetingCode($event->meeting_code);
