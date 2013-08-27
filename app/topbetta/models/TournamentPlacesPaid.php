@@ -264,6 +264,7 @@ class TournamentPlacesPaid extends \Eloquent {
 	 */
 	public function getPercentagePayoutList($place_count) {
 		$place = $this->getPercentage($place_count);
+		$place = $place[0];
 		return $this->_formatPercentageList($place->percentage);
 	}
 

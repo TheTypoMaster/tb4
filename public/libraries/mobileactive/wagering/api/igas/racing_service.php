@@ -113,7 +113,7 @@ class WageringApiIgasracingService extends ConfigReader{
 		//$userName = $this->api->username;
 		//$userPassword = $this->api->password;
 		//$companyID = $this->api->companyid;
-		$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
+		//$this->setLogger("placeRacingBet: Params - $clientID, $betID, $amount, $flexi, $meetingID, $raceNo, $betType, $priceType, $selection");
 		
 		if($betType == "win"){
 			$betType = "W";
@@ -124,12 +124,12 @@ class WageringApiIgasracingService extends ConfigReader{
 		$paramslist = array('betID' => "$betID", 'clientID' => "$clientID",'amount' => "$amount",
 						'flexi' => "$flexi",'meetingID' => "$meetingID", 'raceNo' => "$raceNo",
 						'betType' => "$betType", 'priceType' => "$priceType", 'selection' => "$selection");
-		$p = print_r($paramslist,true);
-		$this->setLogger("racing_service: placeRacingBet. Params List: $p");
+		//$p = print_r($paramslist,true);
+		//$this->setLogger("racing_service: placeRacingBet. Params List: $p");
 		
 		// Generate Data Key from all bet params
 		$betDataKey = $this->getDataKey($userName, $userPassword, $companyID, $paramslist, '(*&j2zoez');
-		$this->setLogger("racing_service: placeRacingBet. JSON dataKey: $betDataKey");
+		//$this->setLogger("racing_service: placeRacingBet. JSON dataKey: $betDataKey");
 		
 		// format JSON object for POSTing to iGAS
 		$this->send_bet = $this->formatIgasPOST ($userName,$userPassword,$companyID, $paramslist, $betDataKey );
@@ -157,7 +157,7 @@ class WageringApiIgasracingService extends ConfigReader{
 		// generate HASH
 		$hashedParams = md5($paramsPlusSecret);
 		
-		$this->setLogger("racing_service: getDataKey: params plus secret:$paramsPlusSecret");
+		// $this->setLogger("racing_service: getDataKey: params plus secret:$paramsPlusSecret");
 		
 		return $hashedParams;
 	
@@ -509,7 +509,7 @@ $Selection = "1";
 	// Make the curl request and return the response
 	private function curlRequest($command=null, $params=null)
 	{
-		$this->setLogger("racing_service: Entering curlRequest. Command:$command");
+		//$this->setLogger("racing_service: Entering curlRequest. Command:$command");
 		$this->setLogger("racing_service: curlRequest. post_string:$params");
 		
 		$ch = curl_init($this->service_url."/".$command);
@@ -522,8 +522,8 @@ $Selection = "1";
 		);
 		
 		
-		$c = print_r($ch,true);
-		$this->setLogger("racing_service: curlRequest. Curl Instance:$c");
+		//$c = print_r($ch,true);
+		//$this->setLogger("racing_service: curlRequest. Curl Instance:$c");
 		
 		
 		 
@@ -546,7 +546,7 @@ $Selection = "1";
 		
 		$res = curl_exec($ch);
 		
-		$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------");		
+		//$this->setLogger("Command: " . $command . "\nUser Agent: :" . $this->useragent . "\nRaw Response: " . $res . "\n-------------");		
 		
 		$response = json_decode($res);
 		$r = print_r($response,true);
@@ -565,9 +565,9 @@ $Selection = "1";
 
 	public function action(&$paramslist=array(), $command=null)
 	{
-		$this->setLogger("racing_service: Entering action. Command:$command");
-		$p = print_r($paramslist,true);
-		$this->setLogger("racing_service: action. Params:$p");
+		//$this->setLogger("racing_service: Entering action. Command:$command");
+		//$p = print_r($paramslist,true);
+		//$this->setLogger("racing_service: action. Params:$p");
 		
 		
 		
@@ -576,8 +576,8 @@ $Selection = "1";
 				//$params['token'] = $this->token;
 
 				$response = $this->curlRequest($command, $paramslist);
-				$r = print_r($response, true);
-				$this->setLogger("racing_service: action: Response from curlRequest:$r");
+				//$r = print_r($response, true);
+				//$this->setLogger("racing_service: action: Response from curlRequest:$r");
 				
 				if ($response->ErrorNo == "0") 
 				{
@@ -688,7 +688,7 @@ $Selection = "1";
 	public function setLogger($msg="")
 	{
 		//STAGING: $myFile = "/var/www/staging.topbetta.com/document-root/logs/bm_curl.log";
-		$myFile = "/tmp/igasracing_curl.log";
+		$myFile = "/tmp/igas_racing_betting.log";
 		
 		
 		if ($fh = fopen($myFile, 'a')) {

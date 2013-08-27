@@ -12,8 +12,10 @@ return array(
 	|
 	*/
 
+	"no_competition_found" => "No competition found",
+
 	"no_types"	=> "No types available",
-	
-	"no_options" => "No options available",		
-	
+
+	"no_options" => "No options available",
+
 );

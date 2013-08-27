@@ -30,6 +30,7 @@ $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
 	'ol_development' => array('UBUNTU-XPS-M1530'),
+	'ol_testing' => array('ol_test.*'),
 	'mic_development' => array('Mics-MacBook-Pro.local'),
 	'testing1' => array('testing1.*'),
 	'testing2' => array('testing2.*'),
