@@ -2740,7 +2740,16 @@ Must be 18+<br>
 			$bet_product_model			=& $this->getModel('BetProduct', 'BettingModel');
 			$bet_origin_model			=& $this->getModel('BetOrigin', 'BettingModel');
 
-			$user =& JFactory::getUser();
+			// Joomla userid is being passed from Laravel
+			// this fixes Joomla forgetting who is logged in :-)
+			$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+			if ($l_user_id) {
+				$user =& JFactory::getUser($l_user_id);
+			} else {
+				$user =& JFactory::getUser();
+			}
+			// $user =& JFactory::getUser();
 
 			if (!$user -> id) {
 
