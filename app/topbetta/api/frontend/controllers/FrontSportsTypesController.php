@@ -19,7 +19,7 @@ class FrontSportsTypesController extends \BaseController {
 		if ($tournamentFlag) {
 
 			$getType = 'tourn';
-			// $eventCompId = Input::get('comp_id', $compId);
+			$eventCompId = Input::get('comp_id', $compId);
 
 		} else {
 
@@ -29,7 +29,7 @@ class FrontSportsTypesController extends \BaseController {
 		}
 
 		// store sports types in cache for 10 min at a time
-		return \Cache::remember('sportsTypes-' . $eventCompId . '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag, $eventId) {
+		return \Cache::remember('sportsTypes-' . $eventCompId . '-' .$eventId. '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag, $eventId) {
 
 			$sportsTypes = new TopBetta\SportsTypes;
 
