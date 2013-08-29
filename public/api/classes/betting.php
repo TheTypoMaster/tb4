@@ -1,16 +1,11 @@
 <?php
 /**
- * @version		$Id: racing.php  Michael Costa $
+ * @version		$Id: betting.php
  * @package		API
  * @subpackage
- * @copyright	Copyright (C) 2012 Michael Costa. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See COPYRIGHT.php for copyright notices and details.
- */
+ * @copyright	Copyright (C) 2012 TopBetta. All rights reserved.
+**/
+ 
 jimport('joomla.application.component.controller');
 jimport('mobileactive.wagering.bet');
 jimport('mobileactive.wagering.api');
@@ -2355,7 +2350,7 @@ class Api_Betting extends JController {
 				// TODO: Update bet record with correct dividend. Currently it's not stored with the actual bet
 
 				// Update odds and line on bet_selection
-				$query = "UPDATE `tbdb_bet` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
+				$query = "UPDATE `tbdb_bet` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `id` = '$bet_id'";
 				$db->setQuery( $query );
 				$db->query();
 				return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
