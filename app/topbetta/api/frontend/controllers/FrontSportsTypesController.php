@@ -29,7 +29,7 @@ class FrontSportsTypesController extends \BaseController {
 		}
 
 		// store sports types in cache for 10 min at a time
-		return \Cache::remember('sportsTypes-' . $eventCompId . '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag) {
+		return \Cache::remember('sportsTypes-' . $eventCompId . '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag, $eventId) {
 
 			$sportsTypes = new TopBetta\SportsTypes;
 
@@ -39,7 +39,7 @@ class FrontSportsTypesController extends \BaseController {
 
 			} else {
 
-				$types = $sportsTypes -> getTournamentTypes($compId, $eventId);
+				$types = $sportsTypes -> getTournamentTypes($eventCompId, $eventId);
 
 			}
 
