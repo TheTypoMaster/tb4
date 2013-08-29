@@ -2,33 +2,33 @@
 namespace TopBetta;
 
 class SportsEvents extends \Eloquent {
-	
-	protected $table = 'tbdb_event_group_event';	
-	
+
+	protected $table = 'tbdb_event_group_event';
+
 	protected $guarded = array();
 
 	public static $rules = array();
-	
+
 	static public function eventExists($eventId) {
-		$query = "SELECT e.id FROM tbdb_event AS e	
+		$query = "SELECT e.id FROM tbdb_event AS e
 				INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id
-				INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id	
+				INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
 				WHERE e.external_event_id = '$eventId'";
 
 		$result = \DB::select($query);
-		
+
 		return $result;
-		
-		
+
+
 		// return SportsEvents::where('external_event_id', '=', $eventId) -> pluck('id');
-		
+
 	}
 
 	public function getEvents($limit = 0, $cid = 0, $date = NULL) {
 
 		//get the comp id if not set
 		$compQuery = ($cid != 0) ? ' AND ege.event_group_id = "' . $cid . '"' : false;
-		
+
 		if (!$compQuery) {
 			return array();
 		}
@@ -45,7 +45,8 @@ class SportsEvents extends \Eloquent {
 		$query .= ' FROM tbdb_event AS e ';
 		if ($cid) { $query .= ' INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id ';
 		}
-		$query .= $dateQuery;
+		// TODO: is this actually needed?
+		// $query .= $dateQuery;
 		$query .= $compQuery;
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
@@ -72,21 +73,21 @@ class SportsEvents extends \Eloquent {
 	}
 
 	public static function getNextEventsToJump($limit = 25) {
-		
+
 		$query = "select ege.event_group_id AS comp_id, eg.name AS comp_name, e.*, ts.name AS sport_name
 		FROM tbdb_event AS e
 		INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id
 		INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
-		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id 
+		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
 		WHERE e.start_date > NOW()
 		AND eg.type_code IS NULL
 		ORDER BY e.start_date ASC
 		LIMIT $limit";
-		
+
 		$result = \DB::select($query);
 
-		return $result;				
-		
+		return $result;
+
 	}
 
 }
