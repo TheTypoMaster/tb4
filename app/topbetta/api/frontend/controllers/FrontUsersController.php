@@ -115,7 +115,7 @@ class FrontUsersController extends \BaseController {
 
 				} else {
 
-					return array('success' => false, 'result' => $exclude['error_msg']);
+					return array('success' => false, 'error' => $exclude['error_msg']);
 
 				}
 				break;
