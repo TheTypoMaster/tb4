@@ -19,7 +19,7 @@ class FrontSportsTypesController extends \BaseController {
 		if ($tournamentFlag) {
 
 			$getType = 'tourn';
-			$eventCompId = Input::get('comp_id', $compId);
+			// $eventCompId = Input::get('comp_id', $compId);
 
 		} else {
 
@@ -39,7 +39,7 @@ class FrontSportsTypesController extends \BaseController {
 
 			} else {
 
-				$types = $sportsTypes -> getTournamentTypes($eventCompId);
+				$types = $sportsTypes -> getTournamentTypes($compId, $eventId);
 
 			}
 
