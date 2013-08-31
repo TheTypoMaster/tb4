@@ -341,6 +341,7 @@ class PaymentModelAccounttransaction extends JModel
 	 * @param int transaction amount
 	 * @param keyword transaction type keyword
 	 * @param string transaction description
+	 * @param int user id
 	 * @return int transaction id
 	 */
 	function increment($amount, $keyword, $desc = null, $user_id = null)
@@ -364,11 +365,20 @@ class PaymentModelAccounttransaction extends JModel
 
 		$giver_id = -1;
 		if(PHP_SAPI != 'cli') {
-			// $loginUser =& JFactory::getUser();
-			$giver_id = $user_id = null;
+			if($user_id != null){
+				$giver_id = $user_id;
+			}else{
+				$loginUser =& JFactory::getUser();
+				$giver_id = $loginUser->id;
+			}
 		}
 
-		$recipient_id = $user_id;
+		if($user_id != null){
+			$recipient_id = $user_id;
+		}else{
+			$recipient_id = $user->id;
+		}
+		
 		if(null == $recipient_id) {
 			$recipient_id = $giver_id;
 		}
