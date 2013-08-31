@@ -67,6 +67,7 @@ class TopbettaUserModelTopbettaUser extends JModel
       'citizenship' => 'Citizenship Certificate',
       'passport' => 'Passport',
       'driver' => 'Driver\'s License',
+      'veda' => 'Veda',
     ),
   );
 

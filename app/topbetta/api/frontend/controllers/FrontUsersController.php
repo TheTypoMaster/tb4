@@ -51,9 +51,17 @@ class FrontUsersController extends \BaseController {
 
 					}
 
-					$mobile = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id)->pluck('msisdn');
+					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id) -> first();
 
-					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "email" => \Auth::user()->email, "mobile" => $mobile, "full_account" => $login['userInfo']['full_account']));
+					$mobile = NULL;
+					$verified = false;
+
+					if ($tbUser){
+						$mobile = $tbUser -> msisdn;
+						$verified = ($tbUser -> identity_verified_flag) ? true : false;
+					}
+
+					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "email" => \Auth::user()->email, "mobile" => $mobile, "full_account" => $login['userInfo']['full_account'], "verified" => $verified, "register_date" => \TimeHelper::isoDate(\Auth::user()->registerDate)));
 
 				} else {
 
@@ -115,7 +123,7 @@ class FrontUsersController extends \BaseController {
 
 				} else {
 
-					return array('success' => false, 'result' => $exclude['error_msg']);
+					return array('success' => false, 'error' => $exclude['error_msg']);
 
 				}
 				break;
