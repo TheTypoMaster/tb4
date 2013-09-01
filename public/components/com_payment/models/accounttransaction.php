@@ -405,7 +405,7 @@ class PaymentModelAccounttransaction extends JModel
 	 */
 	function decrement($amount, $keyword, $desc = null, $user_id = null)
 	{
-		return $this->increment(-$amount, $keyword, $desc, $user_id = null);
+		return $this->increment(-$amount, $keyword, $desc, $user_id);
 	}
 
 	/**
