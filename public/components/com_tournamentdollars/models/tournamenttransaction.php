@@ -182,6 +182,7 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param int the amount in cents to add
 	 * @param keyword the keyword identifying the type of transaction
 	 * @param string an optional description for the transaction
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
 	function increment($amount, $keyword, $desc = null, $user_id = null) {
@@ -240,6 +241,7 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param int the amount in cents to add
 	 * @param keyword the keyword identifying the type of transaction
 	 * @param string an optional description for the transaction
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
 	function increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {

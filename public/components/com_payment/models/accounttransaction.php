@@ -341,7 +341,7 @@ class PaymentModelAccounttransaction extends JModel
 	 * @param int transaction amount
 	 * @param keyword transaction type keyword
 	 * @param string transaction description
-	 * @param int user id
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
 	function increment($amount, $keyword, $desc = null, $user_id = null)
@@ -401,6 +401,7 @@ class PaymentModelAccounttransaction extends JModel
 	 * @param int transaction amount
 	 * @param string transaction type keyword
 	 * @param string transaction description
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
 	function decrement($amount, $keyword, $desc = null, $user_id = null)
