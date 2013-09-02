@@ -173,6 +173,7 @@ Route::group(array('prefix' => '/api/v1'), function() {
 
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
+	Route::get('combined/sports', 'FrontCombinedSports@index');
 
 });
 
