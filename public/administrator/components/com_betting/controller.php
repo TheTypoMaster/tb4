@@ -25,8 +25,8 @@ class BettingController extends JController {
 		$lists = array(
 			'keyword'		=> $filter_keyword,
 			'result_type'	=> $filter_result_type,
-			'from_date'		=> $filter_from_date,
-			'to_date'		=> $filter_to_date,
+			'from_date'		=> $filter_from_date ? $filter_from_date : date("Y-m-d", (time() - 24 * 60 * 60)),
+			'to_date'		=> $filter_to_date  ? $filter_to_date : date("Y-m-d"),
 			'from_amount'	=> $filter_from_amount,
 			'to_amount'		=> $filter_to_amount,
 		);
