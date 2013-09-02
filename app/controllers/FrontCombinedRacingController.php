@@ -11,6 +11,7 @@ class FrontCombinedRacingController extends \BaseController {
     public function index()
     {
 
+        $typeCode = \Input::get('type', 'r');
         $raceId = \Input::get('race', null);
 
         if (!$raceId) {
@@ -19,7 +20,7 @@ class FrontCombinedRacingController extends \BaseController {
 
         }
 
-        $request = \Request::create('/api/v1/racing/meetings', 'GET');
+        $request = \Request::create('/api/v1/racing/meetings?type=' . $typeCode, 'GET');
 
         $response = \Route::dispatch($request);
 
