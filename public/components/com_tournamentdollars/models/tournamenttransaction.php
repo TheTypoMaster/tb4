@@ -216,7 +216,7 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 		if($user_id != null){
 			$recipient_id = $user_id;
 		}else{
-			$recipient_id = $user->id;
+			$recipient_id = $this->user_id;
 		}
 		
 		if(null == $recipient_id) {
