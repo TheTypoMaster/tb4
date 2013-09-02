@@ -36,8 +36,9 @@ class FrontCombinedRacingController extends \BaseController {
 
             foreach ($race as $key => $value) {
                 $race[$key]['meeting_id'] = $meeting['id'];
-                $races = array_merge($races, $race);
             }
+
+            $races = array_merge($races, $race);
 
             unset($meetingsAndRaces[$id]['races']);
         }
