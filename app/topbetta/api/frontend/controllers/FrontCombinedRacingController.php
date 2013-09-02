@@ -26,6 +26,11 @@ class FrontCombinedRacingController extends \BaseController {
         $response = \Route::dispatch($request);
 
         $meetingsAndRaces = $response->getOriginalContent();
+
+        if (!$meetingsAndRaces['success']) {
+            return array("success" => false, "error" => "No meetings and races available");
+        }
+
         $meetingsAndRaces = $meetingsAndRaces['result'];
 
         $races = array();
@@ -48,6 +53,11 @@ class FrontCombinedRacingController extends \BaseController {
         $response = \Route::dispatch($request);
 
         $runners = $response->getOriginalContent();
+
+        if (!$runners['success']) {
+            return array("success" => false, "error" => "No runners available");
+        }
+
         $runners = $runners['result'];
 
         foreach ($runners as $key => $value) {

@@ -11,14 +11,79 @@ class FrontCombinedSportsController extends \BaseController {
     public function index()
     {
 
-        $request = \Request::create('/api/v1/sports', 'GET');
+        $compId = \Input::get('comp', null);
 
+        if (!$compId) {
+            return array("success" => false, "error" => "No comp id selected");
+        }
+
+        // SPORTS & COMP
+        $request = \Request::create("/api/v1/sports/$compId", 'GET');
         $response = \Route::dispatch($request);
 
         $sportsComps = $response->getOriginalContent();
+
+        if (!$sportsComps['success']) {
+            return array("success" => false, "error" => "No comps available");
+        }
+
         $sportsComps = $sportsComps['result'];
 
-        return array('success' => true, 'result' => array('comps' => $sportsComps));
+        // EVENTS
+        $request = \Request::create("/api/v1/sports/$compId/events", 'GET');
+        $response = \Route::dispatch($request);
+
+        $events = $response->getOriginalContent();
+
+        if (!$events['success']) {
+            return array("success" => false, "error" => "No events available");
+        }
+
+        $events = $events['result'];
+
+        foreach ($events as $key => $value) {
+            $events[$key]['comp_id'] = (int)$compId;
+        }
+
+        // BET TYPES
+        $eventId = \Input::get('event_id', $events[0]['id']);
+
+        $request = \Request::create("/api/v1/sports/$compId/events/$eventId/types", 'GET');
+
+        $response = \Route::dispatch($request);
+
+        $types = $response->getOriginalContent();
+
+        if (!$types['success']) {
+            return array("success" => false, "error" => "No types available");
+        }
+
+        $types = $types['result'];
+
+        foreach ($types as $key => $value) {
+            $types[$key]['event_id'] = $events[0]['id'];
+        }
+
+        // OPTIONS
+        $typeId = \Input::get('type_id', $types[0]['id']);
+
+        $request = \Request::create("/api/v1/sports/$compId/events/$eventId/types/$typeId/options", 'GET');
+
+        $response = \Route::dispatch($request);
+
+        $options = $response->getOriginalContent();
+
+        if (!$options['success']) {
+            return array("success" => false, "error" => "No options available");
+        }
+
+        $options = $options['result'];
+
+        foreach ($options as $key => $value) {
+            $options[$key]['type_id'] = $types[0]['id'];
+        }
+
+        return array('success' => true, 'result' => array('comps' => $sportsComps, 'events' => $events, 'types' => $types, 'options' => $options));
     }
 
     /**
