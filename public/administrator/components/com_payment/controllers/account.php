@@ -66,8 +66,8 @@ class PaymentControllerAccount extends JController {
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['search'] = $filter_search;
 		$lists['transaction_type'] = $filter_transaction_type;
-		$lists['from_date'] = $filter_from_date;
-		$lists['to_date'] = $filter_to_date;
+		$lists['from_date'] = $filter_from_date ? $filter_from_date : date("Y-m-d", (time() - 24 * 60 * 60));
+		$lists['to_date'] = $filter_to_date ? $filter_to_date : date("Y-m-d", time());
 		$lists['from_amount'] = $filter_from_amount;
 		$lists['to_amount'] = $filter_to_amount;
 

@@ -26,7 +26,7 @@ class BettingController extends JController {
 			'keyword'		=> $filter_keyword,
 			'result_type'	=> $filter_result_type,
 			'from_date'		=> $filter_from_date ? $filter_from_date : date("Y-m-d", (time() - 24 * 60 * 60)),
-			'to_date'		=> $filter_to_date  ? $filter_to_date : date("Y-m-d"),
+			'to_date'		=> $filter_to_date  ? $filter_to_date : date("Y-m-d", (time() + 24 * 60 * 60)),
 			'from_amount'	=> $filter_from_amount,
 			'to_amount'		=> $filter_to_amount,
 		);
@@ -41,7 +41,7 @@ class BettingController extends JController {
 			'keyword'		=> $filter_keyword,
 			'result_type'	=> $filter_result_type,
 			'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : (time() - 24 * 60 * 60),
-			'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : time(),
+			'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : (time() + 24 * 60 * 60),
 			'from_amount'	=> $filter_from_amount,
 			'to_amount'		=> $filter_to_amount,
 		);
