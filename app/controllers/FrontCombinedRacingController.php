@@ -11,6 +11,7 @@ class FrontCombinedRacingController extends \BaseController {
     public function index()
     {
 
+        // required input
         $typeCode = \Input::get('type', 'r');
         $raceId = \Input::get('race', null);
 
