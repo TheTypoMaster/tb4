@@ -171,6 +171,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	Route::get('/tournaments/tickets/next-to-jump', 'FrontTournamentsTickets@nextToJump');
 	Route::resource('tournaments.tickets','FrontTournamentsTickets');
 
+	// ::: SPECIAL COMBINED CALLS :::
+	Route::get('combined/racing', 'FrontCombinedRacing@index');
+
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {
