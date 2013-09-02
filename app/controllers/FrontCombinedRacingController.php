@@ -23,7 +23,8 @@ class FrontCombinedRacingController extends \BaseController {
 
         $response = \Route::dispatch($request);
 
-        $meetingsAndRaces = $response->getOriginalContent()['result'];
+        $meetingsAndRaces = $response->getOriginalContent();
+        $meetingsAndRaces = $meetingsAndRaces['result'];
 
         $races = array();
 
@@ -43,7 +44,8 @@ class FrontCombinedRacingController extends \BaseController {
 
         $response = \Route::dispatch($request);
 
-        $runners = $response->getOriginalContent()['result'];
+        $runners = $response->getOriginalContent();
+        $runners = $runners['result'];
 
         foreach ($runners as $key => $value) {
             $runners[$key]['race_id'] = (int)$raceId;
