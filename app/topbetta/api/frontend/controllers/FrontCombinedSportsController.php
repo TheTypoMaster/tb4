@@ -29,6 +29,14 @@ class FrontCombinedSportsController extends \BaseController {
 
         $sportsComps = $sportsComps['result'];
 
+        // seperate comp from grouped results
+        $comp = $sportsComps['competitions'];
+        $comp['sport_id'] = (int)$sportsComps['id'];
+
+        // seperate sport from comps
+        unset($sportsComps['competitions']);
+        $sport = $sportsComps;
+
         // EVENTS
         $request = \Request::create("/api/v1/sports/$compId/events", 'GET');
         $response = \Route::dispatch($request);
@@ -83,7 +91,7 @@ class FrontCombinedSportsController extends \BaseController {
             $options[$key]['type_id'] = $types[0]['id'];
         }
 
-        return array('success' => true, 'result' => array('comps' => $sportsComps, 'events' => $events, 'types' => $types, 'options' => $options));
+        return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options));
     }
 
     /**
