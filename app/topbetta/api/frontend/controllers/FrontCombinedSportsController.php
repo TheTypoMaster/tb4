@@ -49,12 +49,30 @@ class FrontCombinedSportsController extends \BaseController {
 
         $events = $events['result'];
 
+        $nextEvent = false;
+
         foreach ($events as $key => $value) {
             $events[$key]['comp_id'] = (int)$compId;
+
+            // we need to determine the next event to jump
+            $startTime = new \DateTime($value['start_time']);
+            $startTime = $startTime -> format('U');
+
+            $nowTime = new \DateTime();
+            $nowTime = $nowTime -> format('U');
+
+            if ($startTime >= $nowTime && !$nextEvent) {
+                $nextEvent = $value['id'];
+            }
+        }
+
+        // if we don't have a future event, select the first event
+        if (!$nextEvent) {
+            $nextEvent = $events[0]['id'];
         }
 
         // BET TYPES
-        $eventId = \Input::get('event_id', $events[0]['id']);
+        $eventId = \Input::get('event_id', $nextEvent);
 
         $request = \Request::create("/api/v1/sports/$compId/events/$eventId/types", 'GET');
 
@@ -69,7 +87,7 @@ class FrontCombinedSportsController extends \BaseController {
         $types = $types['result'];
 
         foreach ($types as $key => $value) {
-            $types[$key]['event_id'] = $events[0]['id'];
+            $types[$key]['event_id'] = (int)$eventId;
         }
 
         // OPTIONS
@@ -88,10 +106,10 @@ class FrontCombinedSportsController extends \BaseController {
         $options = $options['result'];
 
         foreach ($options as $key => $value) {
-            $options[$key]['type_id'] = $types[0]['id'];
+            $options[$key]['type_id'] = (int)$typeId;
         }
 
-        return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options));
+        return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
     }
 
     /**
