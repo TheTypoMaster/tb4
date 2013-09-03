@@ -103,12 +103,13 @@ class TopbettaUserModelTopbettaUser extends JModel
     $userTable = $db->nameQuote('#__users');
     $accountTransactionTable = $db->nameQuote('#__account_transaction');
     $tournamentTransactionTable = $db->nameQuote('#__tournament_transaction');
-    $query = "SELECT t.*, u.email, u.username, u.block, u.registerDate, u.lastvisitDate, at.account_balance, tt.tournament_balance FROM $topbettaUserTable t"
+    // $query = "SELECT t.*, u.email, u.username, u.block, u.registerDate, u.lastvisitDate, at.account_balance, tt.tournament_balance FROM $topbettaUserTable t"
+    $query = "SELECT t.*, u.email, u.username, u.block, u.registerDate, u.lastvisitDate FROM $topbettaUserTable t"
       . " LEFT JOIN $userTable u ON u.id = t.user_id"
-      . " LEFT JOIN (SELECT recipient_id, sum( amount ) AS account_balance FROM $accountTransactionTable"
-      . " GROUP BY recipient_id) at ON u.id = at.recipient_id "
-      . " LEFT JOIN (SELECT recipient_id, sum( amount ) AS tournament_balance FROM $tournamentTransactionTable"
-      . " GROUP BY recipient_id) tt ON u.id = tt.recipient_id "
+    //  . " LEFT JOIN (SELECT recipient_id, sum( amount ) AS account_balance FROM $accountTransactionTable"
+    //  . " GROUP BY recipient_id) at ON u.id = at.recipient_id "
+    //  . " LEFT JOIN (SELECT recipient_id, sum( amount ) AS tournament_balance FROM $tournamentTransactionTable"
+    //  . " GROUP BY recipient_id) tt ON u.id = tt.recipient_id "
       . $this->_buildQueryWhere()
       . $this->_buildQueryOrderBy()
     ;
