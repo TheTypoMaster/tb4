@@ -21,32 +21,33 @@ class FrontCombinedRacingController extends \BaseController {
 
         }
 
-        $request = \Request::create('/api/v1/racing/meetings?type=' . $typeCode, 'GET');
+        // work out meeting id based off race id only
+        $meetingId = \TopBetta\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
 
-        $response = \Route::dispatch($request);
+        $meetingsController = new FrontMeetingsController();
+        $meetingAndRaces = $meetingsController->show($meetingId, true);
 
-        $meetingsAndRaces = $response->getOriginalContent();
+        // $request = \Request::create('/api/v1/racing/meetings/' . $meetingId . '?races=true', 'GET', array('races' => true));
 
-        if (!$meetingsAndRaces['success']) {
+        // $response = \Route::dispatch($request);
+
+        // $meetingsAndRaces = $response->getOriginalContent();
+
+        if (!$meetingAndRaces['success']) {
             return array("success" => false, "error" => "No meetings and races available");
         }
 
-        $meetingsAndRaces = $meetingsAndRaces['result'];
+        $meetingAndRaces = $meetingAndRaces['result'];
 
-        $races = array();
+        $races = $meetingAndRaces['races'];
 
-        foreach ($meetingsAndRaces as $id => $meeting) {
-
-            $race = $meetingsAndRaces[$id]['races'];
-
-            foreach ($race as $key => $value) {
-                $race[$key]['meeting_id'] = $meeting['id'];
-            }
-
-            $races = array_merge($races, $race);
-
-            unset($meetingsAndRaces[$id]['races']);
+        foreach ($races as $key => $value) {
+            $races[$key]['meeting_id'] = $meetingAndRaces['id'];
         }
+
+        unset($meetingAndRaces['races']);
+
+        $meeting = $meetingAndRaces;
 
         $runnersController = new FrontRunnersController();
         $runners = $runnersController->index(false, $raceId);
@@ -62,7 +63,7 @@ class FrontCombinedRacingController extends \BaseController {
             $runners[$key]['race_id'] = (int)$raceId;
         }
 
-        return array('success' => true, 'result' => array('meetings' => $meetingsAndRaces, 'races' => $races, 'runners' => $runners));
+        return array('success' => true, 'result' => array('meeting' => $meeting, 'races' => $races, 'runners' => $runners));
 
     }
 
