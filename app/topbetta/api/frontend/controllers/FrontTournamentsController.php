@@ -184,9 +184,11 @@ class FrontTournamentsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($tournamentId) {
+	public function show($tournamentId, $groupedStatus = false) {
 		//TODO: work with private tournaments
 		//TODO: work with jackpot tournaments
+
+		$grouped = \Input::get('grouped', $groupedStatus);
 
 		//does tournament exist?
 		$tournamentModel = new \TopBetta\Tournament;
@@ -295,7 +297,7 @@ class FrontTournamentsController extends \BaseController {
 		//calculate tournament end date/betting open
 
 		// special case to send data back in a format for backbone - this ones for you Jase ;-)
-		if (\Input::get('grouped') == true) {
+		if ($grouped == true) {
 
 			$tournamentDetails = array(
 				'id' => (int)$tournament -> id,

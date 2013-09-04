@@ -21,28 +21,47 @@ class FrontCombinedTournamentsController extends \BaseController {
 
         }
 
-        $request = \Request::create("/api/v1/tournaments/$tournId", 'GET');
+        // $request = \Request::create("/api/v1/tournaments/$tournId?grouped=true", 'GET');
 
-        $response = \Route::dispatch($request);
+        // $response = \Route::dispatch($request);
 
-        $tournament = $response->getOriginalContent();
+        // $tournament = $response->getOriginalContent();
 
-        if (!$tournament['success']) {
+        $tournamentController = new FrontTournamentsController();
+        $tournamentGrouped =  $tournamentController->show($tournId, true);
+
+        if (!$tournamentGrouped['success']) {
+            return array("success" => false, "error" => "No tournament grouped details available");
+        }
+
+        $tournamentGrouped = $tournamentGrouped['result'];
+
+        $tournament = $tournamentGrouped['tournament'];
+
+        unset($tournamentGrouped['tournament']);
+        $group = $tournamentGrouped;
+
+        $tournament['group_id'] = $group['id'];
+
+        $tournamentDetails =  $tournamentController->show($tournId);
+
+        if (!$tournamentDetails['success']) {
             return array("success" => false, "error" => "No tournament details available");
         }
 
-        $tournament = $tournament['result'];
+        $tournamentDetails = $tournamentDetails['result'];
+        $tournamentDetails['tournament_id'] = (int)$tournId;
 
         // used for combining data below
-        $tournamentKey = array('tournament' => $tournament);
+        $tournamentKey = array('group' => $group, 'tournament' => $tournament, 'details' => $tournamentDetails);
         $combinedResult = false;
 
         // RACING TOURNAMENT
 
-        if ($tournament['tournament_type'] == 'r') {
+        if ($tournamentDetails['tournament_type'] == 'r') {
 
             // work out next event for this meeting
-            $meetingId = $tournament['meeting_id'];
+            $meetingId = $tournamentDetails['meeting_id'];
             $races = Topbetta\RaceMeeting::getRacesForMeetingId($meetingId);
 
             $nextEvent = false;
