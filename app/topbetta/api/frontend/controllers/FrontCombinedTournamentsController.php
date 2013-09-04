@@ -97,7 +97,7 @@ class FrontCombinedTournamentsController extends \BaseController {
             // SPORTS TOURNAMENT
 
             $sportsController = new FrontCombinedSportsController();
-            $sports =  $sportsController->index($tournament['competition_id']);
+            $sports =  $sportsController->index($tournamentDetails['competition_id']);
 
             if ($sports['success']) {
                 $combinedResult = array_merge($tournamentKey, $sports['result']);
