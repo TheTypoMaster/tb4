@@ -8,10 +8,10 @@ class FrontCombinedSportsController extends \BaseController {
      *
      * @return Response
      */
-    public function index()
+    public function index($compId = null)
     {
 
-        $compId = \Input::get('comp', null);
+        $compId = \Input::get('comp', $compId);
 
         if (!$compId) {
             return array("success" => false, "error" => "No comp id selected");

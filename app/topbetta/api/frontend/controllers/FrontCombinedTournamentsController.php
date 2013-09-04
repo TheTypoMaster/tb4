@@ -33,7 +33,14 @@ class FrontCombinedTournamentsController extends \BaseController {
 
         $tournament = $tournament['result'];
 
+        // used for combining data below
+        $tournamentKey = array('tournament' => $tournament);
+        $combinedResult = false;
+
+        // RACING TOURNAMENT
+
         if ($tournament['tournament_type'] == 'r') {
+
             // work out next event for this meeting
             $meetingId = $tournament['meeting_id'];
             $races = Topbetta\RaceMeeting::getRacesForMeetingId($meetingId);
@@ -60,23 +67,30 @@ class FrontCombinedTournamentsController extends \BaseController {
             }
 
             $racingController = new FrontCombinedRacingController();
-            $racing =  $racingController->index($tournament['tournament_type'], $nextEvent);
+            $racing =  $racingController->index('r', $nextEvent);
 
             if ($racing['success']) {
-
-                $racing = $racing['result'];
-
-                $meetings = $racing['meetings'];
-                $races = $racing['races'];
-                $runners = $racing['runners'];
-
+                $combinedResult = array_merge($tournamentKey, $racing['result'], array('selected' => array('race_id' => (int)$nextEvent)));
             }
-
-            // return our combined tournament and combined racing data
-            return array('success' => true, 'result' => array('tournament' => $tournament, 'meetings' => $meetings, 'races' => $races, 'runners' => $runners, 'selected' => array('race_id' => (int)$nextEvent)));
 
         } else {
 
+            // SPORTS TOURNAMENT
+
+            $sportsController = new FrontCombinedSportsController();
+            $sports =  $sportsController->index($tournament['competition_id']);
+
+            if ($sports['success']) {
+                $combinedResult = array_merge($tournamentKey, $sports['result']);
+            }
+
+        }
+
+        // we now have the tournament & sports or racing data combined
+        if ($combinedResult) {
+            return array('success' => true, 'result' => $combinedResult);
+        } else {
+            return array('success' => false, 'error' => 'Problem combining the data');
         }
 
     }
