@@ -204,6 +204,7 @@ return array(
 		'FrontTournamentsTickets'	=> 'TopBetta\frontend\FrontTournamentsTicketsController',
 		'FrontCombinedRacing'	=> 'TopBetta\frontend\FrontCombinedRacingController',
 		'FrontCombinedSports'	=> 'TopBetta\frontend\FrontCombinedSportsController',
+		'FrontCombinedTournaments'	=> 'TopBetta\frontend\FrontCombinedTournamentsController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',

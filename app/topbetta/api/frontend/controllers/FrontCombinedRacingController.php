@@ -8,12 +8,12 @@ class FrontCombinedRacingController extends \BaseController {
      *
      * @return Response
      */
-    public function index()
+    public function index($type = 'r', $race = false)
     {
 
         // required input
-        $typeCode = \Input::get('type', 'r');
-        $raceId = \Input::get('race', null);
+        $typeCode = \Input::get('type', $type);
+        $raceId = \Input::get('race', $race);
 
         if (!$raceId) {
 
@@ -48,11 +48,9 @@ class FrontCombinedRacingController extends \BaseController {
             unset($meetingsAndRaces[$id]['races']);
         }
 
-        $request = \Request::create('/api/v1/racing/runners?race=' . $raceId, 'GET');
+        $runnersController = new FrontRunnersController();
+        $runners = $runnersController->index(false, $raceId);
 
-        $response = \Route::dispatch($request);
-
-        $runners = $response->getOriginalContent();
 
         if (!$runners['success']) {
             return array("success" => false, "error" => "No runners available");
