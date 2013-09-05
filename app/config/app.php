@@ -202,13 +202,16 @@ return array(
 		'FrontTournamentsBets'	=> 'TopBetta\frontend\FrontTournamentsBetsController',
 		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController',
 		'FrontTournamentsTickets'	=> 'TopBetta\frontend\FrontTournamentsTicketsController',
+		'FrontCombinedRacing'	=> 'TopBetta\frontend\FrontCombinedRacingController',
+		'FrontCombinedSports'	=> 'TopBetta\frontend\FrontCombinedSportsController',
+		'FrontCombinedTournaments'	=> 'TopBetta\frontend\FrontCombinedTournamentsController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController'
-		
+
 	),
 
 );
