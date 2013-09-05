@@ -200,7 +200,7 @@ class IADataExport extends TopBettaCLI
 	
 	private function _copyFileToHostBySSH($local_file, $remote_file){
 		//exec('scp -i '. $this->_ssh_private_key_path . ' ' . $local_file . ' ' . $this->_ssh_user . '@' . $this->_ssh_host . ':' . $remote_file);
-		echo('scp -i '. $this->_ssh_private_key_path . ' -P 2222 ' . $local_file . ' ' . $this->_ssh_user . '@' . $this->_ssh_host . ':');
+		exec('scp -i '. $this->_ssh_private_key_path . ' -P 2222 ' . $local_file . ' ' . $this->_ssh_user . '@' . $this->_ssh_host . ':');
 	}
 }
 
