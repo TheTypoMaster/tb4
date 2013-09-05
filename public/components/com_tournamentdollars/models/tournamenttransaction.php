@@ -182,9 +182,10 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param int the amount in cents to add
 	 * @param keyword the keyword identifying the type of transaction
 	 * @param string an optional description for the transaction
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
-	function increment($amount, $keyword, $desc = null) {
+	function increment($amount, $keyword, $desc = null, $user_id = null) {
 		$transactionTypeId = $this->getTransactionTypeId($keyword);
 
 		$tracking_id = -1;
@@ -204,11 +205,20 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 
 		$giver_id = -1;
 		if(PHP_SAPI != 'cli') {
-			$loginUser =& JFactory::getUser();
-			$giver_id = $loginUser->id;
+			if($user_id != null){
+				$giver_id = $user_id;
+			}else{
+				$loginUser =& JFactory::getUser();
+				$giver_id = $loginUser->id;
+			}
 		}
 
-		$recipient_id = $this->user_id;
+		if($user_id != null){
+			$recipient_id = $user_id;
+		}else{
+			$recipient_id = $this->user_id;
+		}
+		
 		if(null == $recipient_id) {
 			$recipient_id = $giver_id;
 		}
@@ -231,6 +241,7 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param int the amount in cents to add
 	 * @param keyword the keyword identifying the type of transaction
 	 * @param string an optional description for the transaction
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
 	function increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {
@@ -273,7 +284,7 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param string transaction description
 	 * @return int transaction id
 	 */
-	function decrement($amount, $keyword, $desc = null) {
+	function decrement($amount, $keyword, $desc = null, $user_id = null) {
 		$decrementAccountAmount = 0;
 		$totalTournamentAmount 	= $this->getTotal();
 		$transactionId 			= null;
@@ -281,10 +292,15 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 		if($amount > $totalTournamentAmount) {
 			$accountModel = JModel::getInstance('AccountTransaction', 'PaymentModel');
 
-			$loginUser 	=& JFactory::getUser();
-			$giver_id 	= $loginUser->id;
-
-			$recipient_id = $this->user_id;
+			if($user_id != null){
+				$giver_id = $user_id;
+				$recipient_id = $user_id;
+			}else{
+				$loginUser 	=& JFactory::getUser();
+				$giver_id 	= $loginUser->id;
+				$recipient_id = $this->user_id;
+			}
+			
 			if(null == $recipient_id) {
 				$recipient_id = $giver_id;
 			}
