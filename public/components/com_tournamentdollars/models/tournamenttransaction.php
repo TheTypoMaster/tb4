@@ -286,7 +286,12 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 */
 	function decrement($amount, $keyword, $desc = null, $user_id = null) {
 		$decrementAccountAmount = 0;
-		$totalTournamentAmount 	= $this->getTotal();
+		if($user_id != null){
+			$totalTournamentAmount 	= $this->getTotal($user_id);
+		}else{
+			$totalTournamentAmount 	= $this->getTotal();
+		}
+		
 		$transactionId 			= null;
 
 		if($amount > $totalTournamentAmount) {
@@ -306,7 +311,13 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 			}
 
 			$accountModel->setUserId($recipient_id);
-			$totalAccountAmount = $accountModel->getTotal();
+			
+			if($user_id != null){
+				$totalAccountAmount = $accountModel->getTotal($user_id);
+			}else{
+				$totalAccountAmount = $accountModel->getTotal();
+			}
+			
 
 			$decrementAccountAmount =  $amount - $totalTournamentAmount;
 			if($decrementAccountAmount > $totalAccountAmount) {
@@ -319,31 +330,65 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 				$keyword = 'tournamentdollars';
 			}
 
-			if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc)) {
-				return false;
-			}
-
-			if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance')) {
-				if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!')) {
-					// :TODO: send email to tech!
+			
+			if($user_id != null){
+				if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc, $user_id)) {
+					return false;
 				}
-
-				return false;
+			}else{
+				if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc)) {
+					return false;
+				}
 			}
+					
+			if($user_id != null){
+				if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance', $user_id)) {
+					if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!', $user_id)) {
+						// :TODO: send email to tech!
+					}
+				
+					return false;
+				}
+			}else{
+				if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance')) {
+					if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!')) {
+						// :TODO: send email to tech!
+					}
+				
+					return false;
+				}
+			}
+
 		}
 
-		if(!$transactionId = $this->increment(-$amount, $keyword, $desc)) {
-			if($decrementAccountAmount > 0) {
-				if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance')) {
-					//TO DO : send email to tech!
+		if($user_id != null){
+			if(!$transactionId = $this->increment(-$amount, $keyword, $desc, $user_id)) {
+				if($decrementAccountAmount > 0) {
+					if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance', $user_id)) {
+						//TO DO : send email to tech!
+					}
+	
+					//MC if(!$accountModel->increment( $decrementAccountAmount, 'tournamentdollars', 'Failed to decrease user\'s tournament dollars! Add the amount transferred back!')) {
+						//TO DO: send email to tech!
+					//MC }
 				}
-
-				//MC if(!$accountModel->increment( $decrementAccountAmount, 'tournamentdollars', 'Failed to decrease user\'s tournament dollars! Add the amount transferred back!')) {
-					//TO DO: send email to tech!
-				//MC }
+	
+				return false;
 			}
-
-			return false;
+		}else{
+			if(!$transactionId = $this->increment(-$amount, $keyword, $desc)){
+				if($decrementAccountAmount > 0) {
+					if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance', $user_id)) {
+						//TO DO : send email to tech!
+					}
+						
+					//MC if(!$accountModel->increment( $decrementAccountAmount, 'tournamentdollars', 'Failed to decrease user\'s tournament dollars! Add the amount transferred back!')) {
+					//TO DO: send email to tech!
+					//MC }
+				}
+					
+				return false;
+			}
 		}
 
 		return $transactionId;
