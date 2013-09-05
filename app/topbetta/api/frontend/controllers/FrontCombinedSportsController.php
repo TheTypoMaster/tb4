@@ -45,7 +45,7 @@ class FrontCombinedSportsController extends \BaseController {
 
         if (!$events['success']) {
             // return array("success" => false, "error" => "No events available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('event_id' => false, 'type_id' => false)));
+            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => false, 'type_id' => false)));
         }
 
         $events = $events['result'];
@@ -83,7 +83,7 @@ class FrontCombinedSportsController extends \BaseController {
 
         if (!$types['success']) {
             // return array("success" => false, "error" => "No types available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('event_id' => (int)$eventId, 'type_id' => false)));
+            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => false)));
         }
 
         $types = $types['result'];
@@ -103,7 +103,7 @@ class FrontCombinedSportsController extends \BaseController {
 
         if (!$options['success']) {
             // return array("success" => false, "error" => "No options available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => array(), 'selected' => array('event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
+            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
         }
 
         $options = $options['result'];
@@ -112,7 +112,7 @@ class FrontCombinedSportsController extends \BaseController {
             $options[$key]['type_id'] = (int)$typeId;
         }
 
-        return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
+        return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
     }
 
     /**
