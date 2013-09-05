@@ -8,30 +8,25 @@ class FrontCombinedRacingController extends \BaseController {
      *
      * @return Response
      */
-    public function index($type = 'r', $race = false)
+    public function index($type = 'r', $race = false, $meeting = false)
     {
 
         // required input
         $typeCode = \Input::get('type', $type);
         $raceId = \Input::get('race', $race);
+        $meetingId = \Input::get('meeting', $meeting);
 
-        if (!$raceId) {
-
-            return array("success" => false, "error" => "No race selected");
-
+        if (!$meetingId && !$raceId) {
+            return array("success" => false, "error" => "No meeting id or race id selected");
         }
 
         // work out meeting id based off race id only
-        $meetingId = \TopBetta\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+        if (!$meetingId && $raceId) {
+            $meetingId = \TopBetta\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+        }
 
         $meetingsController = new FrontMeetingsController();
         $meetingAndRaces = $meetingsController->show($meetingId, true);
-
-        // $request = \Request::create('/api/v1/racing/meetings/' . $meetingId . '?races=true', 'GET', array('races' => true));
-
-        // $response = \Route::dispatch($request);
-
-        // $meetingsAndRaces = $response->getOriginalContent();
 
         if (!$meetingAndRaces['success']) {
             return array("success" => false, "error" => "No meetings and races available");
@@ -41,8 +36,10 @@ class FrontCombinedRacingController extends \BaseController {
 
         $races = $meetingAndRaces['races'];
 
-        foreach ($races as $key => $value) {
-            $races[$key]['meeting_id'] = $meetingAndRaces['id'];
+        if ($races) {
+            foreach ($races as $key => $value) {
+                $races[$key]['meeting_id'] = $meetingAndRaces['id'];
+            }
         }
 
         unset($meetingAndRaces['races']);

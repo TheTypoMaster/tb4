@@ -21,12 +21,6 @@ class FrontCombinedTournamentsController extends \BaseController {
 
         }
 
-        // $request = \Request::create("/api/v1/tournaments/$tournId?grouped=true", 'GET');
-
-        // $response = \Route::dispatch($request);
-
-        // $tournament = $response->getOriginalContent();
-
         $tournamentController = new FrontTournamentsController();
         $tournamentGrouped =  $tournamentController->show($tournId, true);
 
@@ -81,15 +75,15 @@ class FrontCombinedTournamentsController extends \BaseController {
             }
 
             // if we don't have a future event, select the first event
-            if (!$nextEvent) {
+            if (!$nextEvent && $races) {
                 $nextEvent = $races[0]['id'];
             }
 
             $racingController = new FrontCombinedRacingController();
-            $racing =  $racingController->index('r', $nextEvent);
+            $racing =  $racingController->index('r', $nextEvent, $meetingId);
 
             if ($racing['success']) {
-                $combinedResult = array_merge($tournamentKey, $racing['result'], array('selected' => array('race_id' => (int)$nextEvent)));
+                $combinedResult = array_merge($tournamentKey, $racing['result'], array('selected' => array('race_id' => $nextEvent)));
             }
 
         } else {
