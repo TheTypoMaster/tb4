@@ -12,7 +12,7 @@
  * See COPYRIGHT.php for copyright notices and details.
  */
 jimport('joomla.application.component.controller');
-jimport( 'joomla.environment.request' ); 
+jimport( 'joomla.environment.request' );
 jimport( 'joomla.user.user' );
 jimport('joomla.user.helper');
 
@@ -34,7 +34,7 @@ class Api_Payment extends JController {
         if ($loggedUser->guest) {
 			return OutputHelper::json(500, array('error_msg' => 'Please login to make a deposit'  ));
 		}
-      
+
 	    $session	=& JFactory::getSession();
 		$config		=& JComponentHelper::getParams( 'com_payment' );
 
@@ -44,13 +44,13 @@ class Api_Payment extends JController {
 		$model			= new PaymentModelAccounttransaction();
 		require_once (JPATH_BASE.DS.'components'.DS.'com_payment'.DS.'models'.DS.'ewayinvoicenumber.php');
 		$invoiceModel	= new PaymentModelEwayinvoicenumber();
-		    	
+
 		$eway			= new eway();
-		    	
+
 		$minDeposit		= $config->get('eway_min_deposit');
-		    	
+
 		$err			= array();
-		    	
+
 		$cardName	= JRequest::getVar('name', '', 'post');
 		$cardNumber	= JRequest::getVar('card_number', '', 'post');
 		$cardType	= JRequest::getVar('card_type', '', 'post');
@@ -58,21 +58,21 @@ class Api_Payment extends JController {
 		$expYear	= JRequest::getVar('expiry_year', '', 'post');
 		$cvc		= JRequest::getVar('cvc', '', 'post');
 		$amount		= JRequest::getVar('amount', '', 'post');
-		    	
-		    	
+
+
 		$userNames	= explode(' ', trim($loggedUser->name));
-				
+
 		$firstName	= ucfirst(strtolower(array_shift($userNames)));
 		$lastName	= ucwords(strtolower(implode( ' ', $userNames)));
-		   	
+
 		if (!$config->get('eway_enabled')) {
 			$err['eway_system'] = 'Sorry, at the moment we don\'t accept credit card deposit';
 		}
-		
+
 		if ('' == $cardName) {
 			$err['name'] = 'Please enter the card holder\'s name';
 		}
-		 
+
 		if ('' == $cardNumber) {
 			$err['card_number'] = 'Please enter card number';
 		} else {
@@ -81,42 +81,42 @@ class Api_Payment extends JController {
 				$err['card_number'] = 'Invalid card number';
 			}
 		}
-		    	
+
 		if (!isset($expYear) || !isset($expMonth)) {
 			$err['expiry'] = 'Invalid Expiry';
 		}
-				
+
 		if (!isset($err['expiry']) && $expYear == date('y') && $expMonth < date('m')) {
 			$err['eway_expiry'] = 'Card Expired';
 		}
-		
+
 		if ('' == $cvc) {
 			$err['cvc'] = 'Please enter a cvc number';
 		} else if( strlen($cvc) != 3 ) {
 			$err['cvc'] = 'Invalid CVC';
 		}
-		
+
 		if (!preg_match('/^[0-9\.]+$/', $amount) || $amount <= 0) {
 			$err['amount'] = 'Please enter a number';
 		} else if ($amount < $minDeposit)
 		{
 			$err['amount'] = 'The minimum deposit amount is ' . $minDeposit . ' dollars';
 		}
-		
+
 		if (count($err) > 0) {
-			
-			return OutputHelper::json(500, array('error_msg' => $err ,'form_data' => $_GET  ));  
+
+			return OutputHelper::json(500, array('error_msg' => $err ,'form_data' => $_GET  ));
 		}
-		
+
 		$invoiceNumber = $invoiceModel->generateInvoiceNumber();
-		 	
+
 		if (empty($invoiceNumber)) {
-			return OutputHelper::json(500, array('error_msg' => 'Interal Error. Please try again later.' )); 
+			return OutputHelper::json(500, array('error_msg' => 'Interal Error. Please try again later.' ));
 		}
-				
+
 	    $amountCents	= $amount*100;
 		$userId			= $loggedUser->id;
-		 		
+
 		$eway->setTransactionData("TotalAmount", $amountCents );
 		$eway->setTransactionData("CustomerFirstName", $firstName);
 		$eway->setTransactionData("CustomerLastName", $lastName);
@@ -134,21 +134,21 @@ class Api_Payment extends JController {
 		$eway->setTransactionData("Option2", '');
 		$eway->setTransactionData("Option3", '');
 		$eway->setTransactionData("CVN", $cvc);
-		
+
 		$ewayResponse	= $eway->makePayment();
-		
+
 		require_once (JPATH_BASE.DS.'components'.DS.'com_payment'.DS.'models'.DS.'ewayrequestlog.php');
 		//make an eway log
 		$logModel		= new PaymentModelEwayrequestlog();
-		
+
 		$logModel->addLog($userId, $amountCents, $cardName, $ewayResponse);
-				
+
 		if ('True' == $ewayResponse['EWAYTRXNSTATUS']) {
 			$sessionTrackingId = $session->get('sessionTrackingId');
 
 			$amountCents = $ewayResponse['EWAYRETURNAMOUNT'];
 			//$amountCents = $amountCents / 100;
-			
+
 			$params= array(
 				'amount'					=> $amountCents,
 				'recipient_id'				=> $userId,
@@ -157,21 +157,21 @@ class Api_Payment extends JController {
 				'notes'						=> 'Instant Deposit From Mobile',
 				'account_transaction_type'	=> 'ewaydeposit',
 			);
-			
+
 			if (!$model->newTransaction($params)) {
 				return OutputHelper::json(500, array('error_msg' => $ewayResponse['EWAYTRXNERROR'] , 'internal_error' => 'Internal Error! Please contact webmaster!' ));
 			}
 
 			return OutputHelper::json(200, array('msg' => $ewayResponse['EWAYTRXNNUMBER']));
-		
+
 		} else {
-			
-             return OutputHelper::json(500, array('error_msg' => $ewayResponse['EWAYTRXNERROR'] ));		
+
+             return OutputHelper::json(500, array('error_msg' => $ewayResponse['EWAYTRXNERROR'] ));
 		}
-		
-		
-		
-			
+
+
+
+
 	}
 	 /**
 	 * Method to make withdraw requests
@@ -180,11 +180,11 @@ class Api_Payment extends JController {
 	 * @return string
 	 */
 	public function doWithdrawRequest() {
-		
+
    		$session =& JFactory::getSession();
     	$loginUser =& JFactory::getUser();
     	$config =& JComponentHelper::getParams( 'com_payment' );
-    	
+
     	if( $loginUser->guest )
     	{
     		return OutputHelper::json(500, array('error_msg' => 'Please login first.' ));
@@ -193,22 +193,22 @@ class Api_Payment extends JController {
 		if (!class_exists('PaymentModelWithdrawalrequest')) {
 			JLoader::import('withdrawalrequest', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
 		}
-		
+
 		if (!class_exists('PaymentModelAccounttransaction')) {
 			JLoader::import('accounttransaction', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
-		}		
+		}
 
     	//$model =& $this->getModel( 'withdrawalrequest');
     	$model = new PaymentModelWithdrawalrequest();
-		
+
 		$paymentModel = new PaymentModelAccounttransaction();
-    	
+
     	$withdrawalType = null;
     	$err = array();
-    	
+
     	//don't trust the value posted. we make sure the value is what we want.
     	$withdrawalType = JRequest::getVar('withdrawalType') ? JRequest::getVar('withdrawalType') : 'moneybookers';
-    	
+
     	$amount = JRequest::getVar($withdrawalType . '_amount');
     	$email = JRequest::getVar($withdrawalType . '_email');
     	if( 'bank' == $withdrawalType )
@@ -223,7 +223,7 @@ class Api_Payment extends JController {
     	{
     		$minWithdrawal = $config->get('paypal_min_withdrawal');
     	}
-    	
+
     	if( !$withdrawalType )
     	{
     		$err['formError'] = 'Invalid Form';
@@ -233,7 +233,7 @@ class Api_Payment extends JController {
     		//TO DO: send web alert email
     		$err['formError'] = 'Internal Error. Please contact webmaster.';
     	}
-    	
+
     	if( !preg_match('/^[0-9\.]+$/', $amount) || $amount <= 0  )
     	{
     		$err[$withdrawalType . '_amount'] = 'Please enter a number';
@@ -246,7 +246,7 @@ class Api_Payment extends JController {
     	{
     		$err[$withdrawalType . '_amount'] = 'Your account balance is not enough for this withdrawal';
     	}
-    	
+
     	if( $withdrawalType == 'paypal' || $withdrawalType == 'moneybookers')
     	{
     		if( '' == $email )
@@ -258,14 +258,14 @@ class Api_Payment extends JController {
     			$err[$withdrawalType . '_email'] = 'Invalid email';
     		}
     	}
-    	
+
     	if( count($err) > 0 )
     	{
 
-    		return OutputHelper::json(500, array('error_msg' => $err ));	
-    		
+    		return OutputHelper::json(500, array('error_msg' => $err ));
+
     	}
-    	
+
     	$amountCents = round($amount * 100);
     	$ts = time(); // we generate a timestamp here, which will be stored as requested date and also used in email.
     	$params = array(
@@ -275,38 +275,38 @@ class Api_Payment extends JController {
     		'sessionTrackingId' => $session->get( 'sessionTrackingId' ),
     		'requestedDate' => date('Y-m-d H:i:s', $ts),
     	);
-    	
+
     	if( 'paypal' == $withdrawalType )
     	{
     		$params['paypalEmail'] = $email;
     	}
-    	
+
     	if( 'moneybookers' == $withdrawalType )
     	{
     		$params['moneybookersEmail'] = $email;
     	}
-    	
+
     	if (!$model->withdraw( $params ))
     	{
 
     		return OutputHelper::json(500, array('error_msg' => 'Withdrawal Failed. Please contact webmaster.' ));
-    		
+
     	}
-    	
+
 		if (!class_exists('TopbettaUserModelTopbettaUser')) {
 			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
-		}	    	
-		
+		}
+
 		$userModel = new TopbettaUserModelTopbettaUser();
     	$user = $userModel->getUser();
-		
-    	
+
+
     	$senderEmail	= $config->get('sender_email');
 		$senderName		= $config->get('sender_name');
-		
+
     	$amountFormatted = sprintf('$%.2f', $amountCents / 100);
     	$requestedDate = date("F j, Y, g:i a", $ts);
-    	
+
     	$withdrawalMethod = null;
     	$accountInfo = null;
     	switch( $withdrawalType )
@@ -317,20 +317,21 @@ class Api_Payment extends JController {
     		case 'paypal':
     			$withdrawalMethod = 'PayPal Account';
     			$accountInfo = $email;
+    		break;
     		case 'moneybookers':
     			$withdrawalMethod = 'MoneyBookers Account';
     			$accountInfo = $email;
     		break;
     	}
-    	
+
     	$emailBody = $config->get('withdrawal_notify_email_body');
     	$emailSubject = $config->get('withdrawal_notify_email_subject');
-    	
+
     	// send email
     	require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php');
-    	require_once (JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'helpers' . DS . 'helper.php');		
+    	require_once (JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'helpers' . DS . 'helper.php');
     	if( $userEmail = $loginUser->email )
-    	{	
+    	{
 			$mailer = new UserMAIL();
 
 			$replacements = array(
@@ -344,25 +345,25 @@ class Api_Payment extends JController {
 	   			'[help email]' => $config->get('help_email'),
    			);
    			$emailBody = PaymentHelper::variableReplace($replacements, $emailBody);
-    		
+
     		$mailer->setSender(array($senderEmail, $senderName));
     		$mailer->addReplyTo(array($senderEmail));
-    		
+
     		$mailer->addRecipient($userEmail);
     		$mailer->setSubject($emailSubject);
     		$mailer->setBody($emailBody);
     		$mailer->IsHTML(false);
 			$mailer->Send();
     	}
-    	
+
     	//send email to admin
     	$mailer = new JMail();
     	$mailer->setSender(array($senderEmail, $senderName));
     	$mailer->addReplyTo(array($senderEmail));
     	$mailer->addRecipient($senderEmail);
-    	
+
     	$mailer->setSubject('Withdrawal Request from ' . $user->username);
-    	
+
     	$emailBody	 = "A request for withdrawal has been made on $requestedDate for user {$user->username}\n\n";
     	$emailBody 	.= "Withdrawal Details:\nUser: {$user->first_name} {$user->last_name}\nAmount: $amountFormatted\nMethod: $withdrawalMethod\nAccount: $accountInfo\n\n";
 		$emailBody	.= 'Account balance: ' . '$'.number_format($paymentModel->getTotal()/100, 2, '.', ',') . "\n";
@@ -370,25 +371,25 @@ class Api_Payment extends JController {
     	$emailBody	.= 'ID Verified: ' . ($user->identity_verified_flag ? 'Yes' : 'No') . "\n\n";
     	$emailBody	.= "Contact Details:\n";
     	$emailBody	.= "Email: {$user->email}\nMobile Number: {$user->msisdn}\nHome Number: {$user->phone_number}";
-    	
+
     	$mailer->setBody($emailBody);
     	$mailer->IsHTML(false);
     	$mailer->Send();
-    	
-    	return OutputHelper::json(200, array('msg' => 'Request received.'));	
-		
+
+    	return OutputHelper::json(200, array('msg' => 'Request received.'));
+
 	}
 
 	public function setBetLimit() {
-			
+
 		//init models
 		if (!class_exists('TopbettaUserModelTopbettaUser')) {
 			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
-		}		
+		}
 		$user_model		=& $this->getModel('topbettaUser', 'TopbettaUserModel');
-		
+
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'useraudit.php');
-		$audit_model = new TopbettaUserModelUserAudit();		
+		$audit_model = new TopbettaUserModelUserAudit();
 
 		//get login user details
 		$user		= $user_model->getUser();
@@ -464,7 +465,7 @@ class Api_Payment extends JController {
 		//if request cancelled, need to set request_bet_limit to 0
 		if ($request_cancelled) {
 			if (!$user_model->update('requested_bet_limit', 0)) {
-				return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update requested bet limit! Please contact us.")));	
+				return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update requested bet limit! Please contact us.")));
 			}
 			//add user audit record
 			$params = array(
@@ -523,11 +524,11 @@ class Api_Payment extends JController {
 				$mailer->Send();
 			}
 		}
-				
-		return OutputHelper::json(200, array('msg' => $update_msg));	
-		
+
+		return OutputHelper::json(200, array('msg' => $update_msg));
+
 	}
-		
+
 
 }
 ?>
