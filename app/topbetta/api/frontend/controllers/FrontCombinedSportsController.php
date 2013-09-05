@@ -44,7 +44,8 @@ class FrontCombinedSportsController extends \BaseController {
         $events = $response->getOriginalContent();
 
         if (!$events['success']) {
-            return array("success" => false, "error" => "No events available");
+            // return array("success" => false, "error" => "No events available");
+            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('event_id' => false, 'type_id' => false)));
         }
 
         $events = $events['result'];
@@ -81,7 +82,8 @@ class FrontCombinedSportsController extends \BaseController {
         $types = $response->getOriginalContent();
 
         if (!$types['success']) {
-            return array("success" => false, "error" => "No types available");
+            // return array("success" => false, "error" => "No types available");
+            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('event_id' => (int)$eventId, 'type_id' => false)));
         }
 
         $types = $types['result'];
@@ -100,7 +102,8 @@ class FrontCombinedSportsController extends \BaseController {
         $options = $response->getOriginalContent();
 
         if (!$options['success']) {
-            return array("success" => false, "error" => "No options available");
+            // return array("success" => false, "error" => "No options available");
+            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => array(), 'selected' => array('event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
         }
 
         $options = $options['result'];
