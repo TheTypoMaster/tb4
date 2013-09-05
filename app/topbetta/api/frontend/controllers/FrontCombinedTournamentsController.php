@@ -14,6 +14,7 @@ class FrontCombinedTournamentsController extends \BaseController {
     {
 
         $tournId = \Input::get('tourn_id', null);
+        $raceId = \Input::get('race', null);
 
         if (!$tournId) {
 
@@ -70,13 +71,18 @@ class FrontCombinedTournamentsController extends \BaseController {
                 $nowTime = $nowTime -> format('U');
 
                 if ($startTime >= $nowTime && !$nextEvent) {
-                    $nextEvent = $value['id'];
+                    $nextEvent = (int)$value['id'];
                 }
             }
 
             // if we don't have a future event, select the first event
             if (!$nextEvent && $races) {
-                $nextEvent = $races[0]['id'];
+                $nextEvent = (int)$races[0]['id'];
+            }
+
+            // if they passed in a race to select, lets keep that
+            if ($raceId) {
+                $nextEvent = (int)$raceId;
             }
 
             $racingController = new FrontCombinedRacingController();
