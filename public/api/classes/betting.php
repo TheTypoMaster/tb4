@@ -2917,8 +2917,8 @@ class Api_Betting extends JController {
 
 		//$buy_in_id      = $user->tournament_dollars->decrement($tournament->buy_in, 'buyin');
 		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');
-		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin');
-		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry');
+		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
+		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
 
 		$ticket = array(
 				'tournament_id'             => $tournament->id,
@@ -2973,7 +2973,7 @@ class Api_Betting extends JController {
 
 		} else {
 			$ticket = $ticket_model->getTournamentTicket($ticket_id);
-			$refund_id = $user->tournament_dollars->increment($tournament->buy_in + $tournament->entry_fee, 'refund');
+			$refund_id = $user->tournament_dollars->increment($tournament->buy_in + $tournament->entry_fee, 'refund', null, $user->id);
 
 			$ticket->refunded_flag = 1;
 			$ticket->result_transaction_id = $refund_id;
