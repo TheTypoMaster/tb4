@@ -153,13 +153,13 @@ class FrontMeetingsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id) {
+	public function show($id, $showRaces = false) {
 		//
 		$meetingDetails = TopBetta\RaceMeeting::find($id);
 
 		if ($meetingDetails) {
 
-			$races = Input::get('races', false);
+			$races = Input::get('races', $showRaces);
 
 			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
 
