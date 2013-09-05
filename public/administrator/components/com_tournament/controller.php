@@ -567,9 +567,9 @@ class TournamentController extends JController
 				}
 				$automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
 				
-				if (!$jackpot_flag) {
-					$automated_text .= '/' . $minimum_prize_pool_amount;
-				}
+			//	if (!$jackpot_flag) {
+			//		$automated_text .= '/' . $minimum_prize_pool_amount;
+			//	}
 				
 			break;
 			case 'description':
