@@ -2126,7 +2126,7 @@ class Api_Betting extends JController {
 				}
 
 				// deduct from account
-				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal() : 0;
+				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal($user->id) : 0;
 				$bet_freebet_transaction_id = $bet_freebet_refund_transaction_id =0;
 
 				if ($debugflag == 1){
