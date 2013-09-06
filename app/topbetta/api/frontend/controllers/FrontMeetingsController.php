@@ -100,7 +100,7 @@ class FrontMeetingsController extends \BaseController {
 	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r') {
 
 		//fetch our meetings for the specified type i.e. r = racing, g = greyhouds, h = harness
-		$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . ' AND display_flag = 1"') -> get();
+		$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . '" AND display_flag = 1') -> get();
 
 		//TODO: make sure we have rows
 		$meetingAndRaces = array();
