@@ -91,7 +91,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			// Check if we have a ticket in the tournament before going any further
 			$myTicketID = $ticketModel->getTournamentTicketByUserAndTournamentID(\Auth::user()->id, $tournamentId);
-			if(is_null($myTicketID)){
+			if(!$myTicketID){
 				return array('success' => false, 'error' => \Lang::get('tournaments.ticket_not_found', array('tournamentId' => $tournamentId)));
 			}
 			
