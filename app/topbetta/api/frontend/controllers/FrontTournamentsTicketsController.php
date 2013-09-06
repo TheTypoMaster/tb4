@@ -89,6 +89,12 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$ticketModel = new \TopBetta\TournamentTicket;
 
+			// Check if we have a ticket in the tournament before going any further
+			$myTicketID = $ticketModel->getTournamentTicketByUserAndTournamentID(\Auth::user()->id, $tournamentId);
+			if(is_null($myTicketID)){
+				return array('success' => false, 'error' => \Lang::get('tournaments.ticket_not_found', array('tournamentId' => $tournamentId)));
+			}
+			
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($tournamentId, \Auth::user() -> id);
 
 			$leaderboardModel = new \TopBetta\TournamentLeaderboard;
