@@ -35,6 +35,7 @@ class SportsComps extends \Eloquent {
     	// $query .= ' LEFT JOIN tb_data_provider AS dp ON dp.id = dopm.provider_id ';
     	$query.= $dateQuery;
     	$query.= $sportQuery;
+    	$query .= "eg.display_flag = '1'";
     	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
 		
     	$result = \DB::select($query);
@@ -58,6 +59,7 @@ class SportsComps extends \Eloquent {
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
+			$query .= "c.display_flag = '1'";
 			$query.= ' ORDER BY sportName, name ASC ';
 
 			$result = \DB::select($query);
