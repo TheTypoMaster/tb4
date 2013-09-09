@@ -1,16 +1,11 @@
 <?php
 /**
- * @version		$Id: racing.php  Michael Costa $
+ * @version		$Id: betting.php
  * @package		API
  * @subpackage
- * @copyright	Copyright (C) 2012 Michael Costa. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See COPYRIGHT.php for copyright notices and details.
- */
+ * @copyright	Copyright (C) 2012 TopBetta. All rights reserved.
+**/
+ 
 jimport('joomla.application.component.controller');
 jimport('mobileactive.wagering.bet');
 jimport('mobileactive.wagering.api');
@@ -1160,18 +1155,18 @@ class Api_Betting extends JController {
 				// $bet_type_name = $bet_type_model->getBetTypeByName('win', true);
 			foreach ( $wagering_bet_list as $wagering_bet ) {
 				
-				$free_bet_amount = (( int ) $free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal () : 0;
+				$free_bet_amount = (( int ) $free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal ($user->id) : 0;
 				$bet_freebet_transaction_id = $bet_freebet_refund_transaction_id = 0;
 				
 				if ($free_bet_amount > 0) {
 					if ($free_bet_amount >= $wagering_bet->getTotalBetAmount ()) {
-						$bet_freebet_transaction_id = $tournamentdollars_model->decrement ( $wagering_bet->getTotalBetAmount (), 'freebetentry' ); // introducing freebet-entry keyword for transaction type
+						$bet_freebet_transaction_id = $tournamentdollars_model->decrement ( $wagering_bet->getTotalBetAmount (), 'freebetentry', null, $user->id ); // introducing freebet-entry keyword for transaction type
 					} else {
-						$bet_freebet_transaction_id = $tournamentdollars_model->decrement ( $free_bet_amount, 'freebetentry' ); // introducing freebet-entry keyword for transaction type
-						$bet_transaction_id = $payment_model->decrement ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betentry' );
+						$bet_freebet_transaction_id = $tournamentdollars_model->decrement ( $free_bet_amount, 'freebetentry' , null, $user->id); // introducing freebet-entry keyword for transaction type
+						$bet_transaction_id = $payment_model->decrement ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betentry', null, $user->id);
 					}
 				} else
-					$bet_transaction_id = $payment_model->decrement ( $wagering_bet->getTotalBetAmount (), 'betentry' );
+					$bet_transaction_id = $payment_model->decrement ( $wagering_bet->getTotalBetAmount (), 'betentry', null, $user->id);
 				
 				$bet_type_name = $bet_type_model->getBetTypeByName ( $wagering_bet->getBetType (), true );
 				$bet_product = $bet_product_model->getBetProduct ( $bet_origin->id );
@@ -1207,13 +1202,13 @@ class Api_Betting extends JController {
 					if ($free_bet_amount > 0) {
 						// add free bet doallers
 						if ($free_bet_amount >= $wagering_bet->getTotalBetAmount ()) {
-							$tournamentdollars_model->increment ( $wagering_bet->getTotalBetAmount (), 'freebetrefund' ); // introducing freebetrefund keyword for transaction type
+							$tournamentdollars_model->increment ( $wagering_bet->getTotalBetAmount (), 'freebetrefund' , null, $user->id); // introducing freebetrefund keyword for transaction type
 						} else {
-							$tournamentdollars_model->increment ( $free_bet_amount, 'freebetrefund' ); // introducing freebetrefund keyword for transaction type
-							$payment_model->increment ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betrefund' );
+							$tournamentdollars_model->increment ( $free_bet_amount, 'freebetrefund' , null, $user->id); // introducing freebetrefund keyword for transaction type
+							$payment_model->increment ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betrefund', null, $user->id);
 						}
 					} else
-						$payment_model->increment ( $wagering_bet->getTotalBetAmount (), 'betrefund' );
+						$payment_model->increment ( $wagering_bet->getTotalBetAmount (), 'betrefund', null, $user->id);
 					
 					return OutputHelper::json ( 500, array (
 							'error_msg' => 'Cannot place this bet' 
@@ -1244,13 +1239,13 @@ class Api_Betting extends JController {
 							if ($free_bet_amount > 0) {
 								// add free bet doallers
 								if ($free_bet_amount >= $wagering_bet->getTotalBetAmount ()) {
-									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $wagering_bet->getTotalBetAmount (), 'freebetrefund' );
+									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $wagering_bet->getTotalBetAmount (), 'freebetrefund', null, $user->id );
 								} else {
-									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $free_bet_amount, 'freebetrefund' );
-									$bet_refund_transaction_id = $payment_model->increment ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betrefund' );
+									$bet_freebet_refund_transaction_id = $tournamentdollars_model->increment ( $free_bet_amount, 'freebetrefund' , null, $user->id);
+									$bet_refund_transaction_id = $payment_model->increment ( ($wagering_bet->getTotalBetAmount () - $free_bet_amount), 'betrefund', null, $user->id);
 								}
 							} else
-								$bet_refund_transaction_id = $payment_model->increment ( $wagering_bet->getTotalBetAmount (), 'betrefund' );
+								$bet_refund_transaction_id = $payment_model->increment ( $wagering_bet->getTotalBetAmount (), 'betrefund', null, $user->id);
 
 							$bet->refund_transaction_id = ( int ) $bet_refund_transaction_id;
 							$bet->refund_freebet_transaction_id = ( int ) $bet_freebet_refund_transaction_id;
@@ -1315,14 +1310,14 @@ class Api_Betting extends JController {
 					if($free_bet_amount > 0) {
 						//add free bet doallers
 						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund'); 
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund', null, $user->id); 
 						}
 						else {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
-							$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund'); 
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id);
+							$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund', null, $user->id); 
 						}
 					}
-					else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
+					else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund', null, $user->id);
 											
 					$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
@@ -1654,7 +1649,7 @@ class Api_Betting extends JController {
 
 			foreach ($wagering_bet_list as $wagering_bet) {
 
-				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal() : 0;
+				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal($user->id) : 0;
 				$bet_freebet_transaction_id = $bet_freebet_refund_transaction_id =0;
 
 				/*
@@ -1663,14 +1658,14 @@ class Api_Betting extends JController {
 
 				if($free_bet_amount >0) {
 					if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
-						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($wagering_bet->getTotalBetAmount(), 'freebetentry'); // introducing freebet-entry keyword for transaction type
+						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($wagering_bet->getTotalBetAmount(), 'freebetentry', null, $user->id); // introducing freebet-entry keyword for transaction type
 					}
 					else {
-						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($free_bet_amount, 'freebetentry'); // introducing freebet-entry keyword for transaction type
-						$bet_transaction_id	= $payment_model->decrement(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betentry');
+						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($free_bet_amount, 'freebetentry', null, $user->id); // introducing freebet-entry keyword for transaction type
+						$bet_transaction_id	= $payment_model->decrement(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betentry', null, $user->id);
 					}
 				}
-				else $bet_transaction_id	= $payment_model->decrement($wagering_bet->getTotalBetAmount(), 'betentry');
+				else $bet_transaction_id	= $payment_model->decrement($wagering_bet->getTotalBetAmount(), 'betentry', null, $user->id);
 
 				$bet_type_name	= $bet_type_model->getBetTypeByName($wagering_bet->getBetType(), true);
 
@@ -1720,14 +1715,14 @@ class Api_Betting extends JController {
 					if($free_bet_amount >0) {
 						//add free bet dollars
 						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
-							$tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund'); // introducing freebetrefund keyword for transaction type
+							$tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund', null, $user->id); // introducing freebetrefund keyword for transaction type
 						}
 						else {
-							$tournamentdollars_model->increment($free_bet_amount, 'freebetrefund'); // introducing freebetrefund keyword for transaction type
-							$payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund');
+							$tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id); // introducing freebetrefund keyword for transaction type
+							$payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund', null, $user->id);
 						}
 					}
-					else $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
+					else $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund', null, $user->id);
 
 					return OutputHelper::json(500, array('error_msg' => 'Cannot place this bet' ));
 				}
@@ -1756,14 +1751,14 @@ class Api_Betting extends JController {
 							if($free_bet_amount > 0) {
 								//add free bet dollers
 								if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
-									$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund');
+									$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund', null, $user->id);
 								}
 								else {
-									$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
-									$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund');
+									$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id);
+									$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund', null, $user->id);
 								}
 							}
-							else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
+							else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund', null, $user->id);
 
 							$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
 							$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
@@ -1820,14 +1815,14 @@ class Api_Betting extends JController {
 					if($free_bet_amount > 0) {
 						//add free bet dollars
 						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund');
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund', null, $user->id);
 						}
 						else {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
-							$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund');
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id);
+							$bet_refund_transaction_id	= $payment_model->increment(($wagering_bet->getTotalBetAmount() - $free_bet_amount), 'betrefund', null, $user->id);
 						}
 					}
-					else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund');
+					else $bet_refund_transaction_id	= $payment_model->increment($wagering_bet->getTotalBetAmount(), 'betrefund', null, $user->id);
 
 					$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
@@ -2141,14 +2136,14 @@ class Api_Betting extends JController {
 
 				if($free_bet_amount >0) {
 					if($free_bet_amount >= $bet_value) {
-						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($bet_value, 'freebetentry'); // introducing freebet-entry keyword for transaction type
+						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($bet_value, 'freebetentry', null, $user->id); // introducing freebet-entry keyword for transaction type
 					}
 					else {
-						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($free_bet_amount, 'freebetentry'); // introducing freebet-entry keyword for transaction type
-						$bet_transaction_id	= $payment_model->decrement(($bet_value - $free_bet_amount), 'betentry');
+						$bet_freebet_transaction_id	= $tournamentdollars_model->decrement($free_bet_amount, 'freebetentry', null, $user->id); // introducing freebet-entry keyword for transaction type
+						$bet_transaction_id	= $payment_model->decrement(($bet_value - $free_bet_amount), 'betentry', null, $user->id);
 					}
 				}else {
-					$bet_transaction_id	= $payment_model->decrement($bet_value, 'betentry');
+					$bet_transaction_id	= $payment_model->decrement($bet_value, 'betentry', null, $user->id);
 				}
 
 				if ($debugflag == 1){
@@ -2175,6 +2170,7 @@ class Api_Betting extends JController {
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
 				$bet->flexi_flag				=  0;
+				//$bet->fixed_odds  				= (int)$bet_dividend;
 
 
 				//save freebet into the database
@@ -2204,14 +2200,14 @@ class Api_Betting extends JController {
 					if($free_bet_amount >0) {
 						//add free bet dollars
 						if($free_bet_amount >= $bet_value) {
-							$tournamentdollars_model->increment($bet_value, 'freebetrefund'); // introducing freebetrefund keyword for transaction type
+							$tournamentdollars_model->increment($bet_value, 'freebetrefund', null, $user->id); // introducing freebetrefund keyword for transaction type
 						}
 						else {
-							$tournamentdollars_model->increment($free_bet_amount, 'freebetrefund'); // introducing freebetrefund keyword for transaction type
-							$payment_model->increment(($bet_value - $free_bet_amount), 'betrefund');
+							$tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id); // introducing freebetrefund keyword for transaction type
+							$payment_model->increment(($bet_value - $free_bet_amount), 'betrefund', null, $user->id);
 						}
 					}else {
-						$payment_model->increment($bet_value, 'betrefund');
+						$payment_model->increment($bet_value, 'betrefund', null, $user->id);
 						return OutputHelper::json(500, array('error_msg' => 'Cannot place this bet' ));
 					}
 
@@ -2243,14 +2239,14 @@ class Api_Betting extends JController {
 					if($free_bet_amount > 0) {
 						//add free bet dollars
 						if($free_bet_amount >= $bet_value) {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($bet_value, 'freebetrefund');
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($bet_value, 'freebetrefund', null, $user->id);
 						}
 						else {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
-							$bet_refund_transaction_id	= $payment_model->increment(($bet_value - $free_bet_amount), 'betrefund');
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id);
+							$bet_refund_transaction_id	= $payment_model->increment(($bet_value - $free_bet_amount), 'betrefund', null, $user->id);
 						}
 					}
-					else $bet_refund_transaction_id	= $payment_model->increment($bet_value, 'betrefund');
+					else $bet_refund_transaction_id	= $payment_model->increment($bet_value, 'betrefund', null, $user->id);
 
 					$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
@@ -2317,14 +2313,14 @@ class Api_Betting extends JController {
 					if($free_bet_amount > 0) {
 						//add free bet dollars
 						if($free_bet_amount >= $bet_value) {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($bet_value, 'freebetrefund');
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($bet_value, 'freebetrefund', null, $user->id);
 						}
 						else {
-							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund');
-							$bet_refund_transaction_id	= $payment_model->increment(($bet_value - $free_bet_amount), 'betrefund');
+							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($free_bet_amount, 'freebetrefund', null, $user->id);
+							$bet_refund_transaction_id	= $payment_model->increment(($bet_value - $free_bet_amount), 'betrefund', null, $user->id);
 						}
 					}
-					else $bet_refund_transaction_id	= $payment_model->increment($bet_value, 'betrefund');
+					else $bet_refund_transaction_id	= $payment_model->increment($bet_value, 'betrefund', null, $user->id);
 
 					$bet->refund_transaction_id	= (int)$bet_refund_transaction_id;
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
@@ -2352,9 +2348,9 @@ class Api_Betting extends JController {
 				// setup database object rather than use the SUPERMODEL
 				$db =& JFactory::getDBO();
 				// TODO: Update bet record with correct dividend. Currently it's not stored with the actual bet
-
+				$bet_dividend = $bet_dividend/100;
 				// Update odds and line on bet_selection
-				$query = "UPDATE `tbdb_bet` SET `fixed_odds` = '$bet_dividend', `line` = '$line' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
+				$query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$bet_dividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'" ;
 				$db->setQuery( $query );
 				$db->query();
 				return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
@@ -2921,8 +2917,8 @@ class Api_Betting extends JController {
 
 		//$buy_in_id      = $user->tournament_dollars->decrement($tournament->buy_in, 'buyin');
 		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');
-		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin');
-		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry');
+		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
+		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
 
 		$ticket = array(
 				'tournament_id'             => $tournament->id,
@@ -2977,7 +2973,7 @@ class Api_Betting extends JController {
 
 		} else {
 			$ticket = $ticket_model->getTournamentTicket($ticket_id);
-			$refund_id = $user->tournament_dollars->increment($tournament->buy_in + $tournament->entry_fee, 'refund');
+			$refund_id = $user->tournament_dollars->increment($tournament->buy_in + $tournament->entry_fee, 'refund', null, $user->id);
 
 			$ticket->refunded_flag = 1;
 			$ticket->result_transaction_id = $refund_id;
