@@ -14,6 +14,10 @@ class FrontTournamentsController extends \BaseController {
 	 * @return Response
 	 */
 	public function index() {
+		// handle our affiliate stuff if set
+		$affiliateId = Input::get('aff_id', null);
+		$campaignId = Input::get('cam_id', null);
+
 		//
 		$type = Input::get('type', 'racing');
 
@@ -48,11 +52,48 @@ class FrontTournamentsController extends \BaseController {
 
 		$list_params = array('jackpot' => false, 'private' => 0, 'type' => $type, 'sub_type' => $sub_type);
 
-		$tournamentList = $tournamentModel -> getTournamentActiveList($list_params);
+		$tournamentList = $tournamentModel -> getTournamentActiveList($list_params);			
 
 		$filterList = false;
 
-		if (\Auth::check() && $entered) {
+		// filter for affiliate only tournaments
+		if ($affiliateId && $campaignId) {
+			$filter = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+
+			if ($filter) {
+				$filter = unserialize($filter);
+
+
+				$whitelistTournIds = $filter['whitelist']['tournament_ids'];
+				$whitelistSportIds = $filter['whitelist']['tournament_sports'];
+
+				$filterList = array();
+
+				// ** AT THIS STAGE WE CAN ONLY WORK WITH WHITELIST TOURN IDS >>OR<< WHITELIST SPORTS
+				if ($whitelistTournIds) {
+					foreach ($whitelistTournIds as $id) {
+					   $object = new \stdClass();
+					   $object->id = $id;				
+					   $filterList[] = $object;
+					}			
+				}
+
+				if ($whitelistSportIds) {		
+					foreach ($whitelistSportIds as $id) {
+						foreach ($tournamentList as $tournament) {
+							if ($tournament->tournament_sport_id == $id) {
+							   $object = new \stdClass();
+							   $object->id = $tournament->id;				
+							   $filterList[] = $object;									
+							}
+						}
+					}
+				}
+			}	
+		} 
+
+		// filter for logged in users tournaments they have entered only - "My Tourns"
+		if (\Auth::check() && $entered && !$filterList) {
 
 			$filterList = $tournamentModel -> getMyTournamentListByUserID(\Auth::user() -> id, false, false, true);
 
@@ -98,7 +139,6 @@ class FrontTournamentsController extends \BaseController {
 
 				// build our list of tournaments for this meeting
 				foreach ($tournamentList as $tourn) {
-
 					//TODO: bad code for now - had to live code on the server - can't get races to load on my f*n pc!!
 					if ($filterList) {
 
