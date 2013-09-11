@@ -16,6 +16,7 @@ class CreateTopbettaAffiliates extends Migration {
 		{
 			$table->increments('id');
 			$table->string('company_name');
+			$table->string('description');
 			$table->string('affiliate_id');
 			$table->string('campaign_id');
 			$table->text('filter');			
