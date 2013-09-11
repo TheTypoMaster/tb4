@@ -285,26 +285,4 @@ class Tournament extends \Eloquent {
 		return (!empty($tournament->cancelled_flag) || strtotime($tournament->end_date) < time());
 	}
 
-	public function getAffiliateTournaments($affiliateId, $campaignId) {
-
-		$query =
-			'SELECT
-				t.id
-			FROM
-				tbdb_tournament AS t
-			WHERE
-
-				AND t.cancelled_flag = 0';
-
-			$query .= " AND t.end_date > '" . date('Y-m-d') . "'";
-			$query .= " AND t.paid_flag <> 1";
-
-			$query .= ' ORDER BY t.start_date ASC';
-
-		$result = \DB::select($query);
-
-		return $result;
-
-	}
-
 }
