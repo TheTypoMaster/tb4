@@ -154,12 +154,27 @@ class FrontUsersController extends \BaseController {
 		$rules = array('first_name' => 'required|alpha_num|min:3', 'last_name' => 'required|alpha_num|min:3', 'source' => 'required|alpha_dash', 'type' => 'required|in:basic,upgrade,full');
 
 		//shared between upgrade & full accounts
-		$extRules = array('title' => 'required|in:Mr,Mrs,Ms,Miss,Dr,Prof', 'dob_day' => 'required|max:2', 'dob_month' => 'required|max:2', 'dob_year' => 'required|max:4', 'phone' => 'required|min:9', 'postcode' => 'required|max:6', 'street' => 'required|max:100', 'city' => 'required|max:50', 'state' => 'required|max:50', 'country' => 'required|alpha|max:3', 'promo_code' => 'alpha_dash|max:100', 'heard_about' => 'alpha_dash|max:200', 'heard_about_info' => 'alpha_dash|max:200', 'optbox' => 'in:0,1,true,false', 'privacy' => 'accepted', 'terms' => 'accepted');
+		$extRules = array('title' => 'required|in:Mr,Mrs,Ms,Miss,Dr,Prof', 
+			'dob_day' => 'required|max:2', 
+			'dob_month' => 'required|max:2', 
+			'dob_year' => 'required|max:4', 
+			//'phone' => 'required|min:9', 
+			'postcode' => 'required|max:6', 
+			'street' => 'required|max:100', 
+			'city' => 'required|max:50', 
+			'state' => 'required|max:50', 
+			'country' => 'required|alpha|max:3', 
+			'promo_code' => 'alpha_dash|max:100', 
+			'heard_about' => 'alpha_dash|max:200', 
+			'heard_about_info' => 'alpha_dash|max:200', 
+			'optbox' => 'in:0,1,true,false', 
+			'privacy' => 'accepted', 
+			'terms' => 'accepted');
 
 		if ($input['type'] == 'basic') {
 
 			$rules['email'] = 'required|email|unique:tbdb_users';
-			$rules['mobile'] = 'required|min:9';
+			//$rules['mobile'] = 'required|min:9';
 			$rules['password'] = array('required', 'min:5', 'regex:([a-zA-Z].*[0-9]|[0-9].*[a-zA-Z])');
 
 		}
