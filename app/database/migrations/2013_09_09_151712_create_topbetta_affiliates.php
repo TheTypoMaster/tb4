@@ -12,7 +12,7 @@ class CreateTopbettaAffiliates extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('tbdb_affiliates', function(Blueprint $table)
+		Schema::create('tb_affiliates', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('company_name');
@@ -31,7 +31,7 @@ class CreateTopbettaAffiliates extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('tbdb_affiliates');
+		Schema::drop('tb_affiliates');
 	}
 
 }
