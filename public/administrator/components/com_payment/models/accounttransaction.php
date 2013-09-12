@@ -142,6 +142,11 @@ class PaymentModelAccounttransaction extends JModel
 		$filter_to_date = $mainframe->getUserStateFromRequest($option.'filter_account_to_date', 'filter_account_to_date');
 		$filter_from_amount = $mainframe->getUserStateFromRequest($option.'filter_account_from_amount', 'filter_account_from_amount');
 		$filter_to_amount = $mainframe->getUserStateFromRequest($option.'filter_account_to_amount', 'filter_account_to_amount');
+		
+		// set some defaults
+		$filter_from_date = $filter_from_date ? $filter_from_date : date("Y-m-d", (time() - 24 * 60 * 60));
+		$filter_to_date = $filter_to_date ? $filter_to_date : date("Y-m-d", time());
+				
 		// Prepare the WHERE clause
 		$where = array();
 		// Determine search terms
