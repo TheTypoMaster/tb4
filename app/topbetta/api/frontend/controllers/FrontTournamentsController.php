@@ -57,14 +57,20 @@ class FrontTournamentsController extends \BaseController {
 		$filterList = false;
 
 		// filter for affiliate only tournaments
-		if ($affiliateId && $campaignId && !$entered) {
+		if ($affiliateId && $campaignId) {
 			$filter = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
 			if ($filter) {
 				$filter = unserialize($filter);
 
+				$whitelistTournIds = false;
+				$whitelistSportIds = false;
+				$noWhitelist = true;
 
-				$whitelistTournIds = $filter['whitelist']['tournament_ids'];
-				$whitelistSportIds = $filter['whitelist']['tournament_sports'];
+				if (array_key_exists("whitelist",$filter)) {
+					$noWhitelist = false;
+					$whitelistTournIds = $filter['whitelist']['tournament_ids'];
+					$whitelistSportIds = $filter['whitelist']['tournament_sports'];
+				}
 
 				$filterList = array();
 
@@ -89,7 +95,7 @@ class FrontTournamentsController extends \BaseController {
 					}
 				}
 
-				if (!$filterList) {
+				if (!$filterList && !$noWhitelist) {
 					//they have no tournaments
 					return array("success" => true, "result" => array());
 				}
