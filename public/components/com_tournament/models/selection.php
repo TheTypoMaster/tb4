@@ -271,7 +271,7 @@ class TournamentModelSelection extends SuperModel
 				sp.win_odds,
 				sp.place_odds,
 				sp.override_odds,
-				sp.bet_product_id
+				sp.bet_product_id,
 				sp.line
 			FROM
 				' . $db->nameQuote('#__selection') . ' as s
