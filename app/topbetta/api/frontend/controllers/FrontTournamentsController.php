@@ -57,7 +57,7 @@ class FrontTournamentsController extends \BaseController {
 		$filterList = false;
 
 		// filter for affiliate only tournaments
-		if ($affiliateId && $campaignId) {
+		if ($affiliateId && $campaignId && !$entered) {
 			$filter = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
 			if ($filter) {
 				$filter = unserialize($filter);
