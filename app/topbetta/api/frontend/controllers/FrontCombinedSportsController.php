@@ -8,7 +8,7 @@ class FrontCombinedSportsController extends \BaseController {
      *
      * @return Response
      */
-    public function index($compId = null)
+    public function index($compId = null, $tournamentFlag = false)
     {
 
         $compId = \Input::get('comp', $compId);
@@ -75,11 +75,14 @@ class FrontCombinedSportsController extends \BaseController {
         // BET TYPES
         $eventId = \Input::get('event_id', $nextEvent);
 
-        $request = \Request::create("/api/v1/sports/$compId/events/$eventId/types", 'GET');
+        $typesController = new FrontSportsTypesController();
+        $types = $typesController->index($compId, $eventId, $tournamentFlag);
 
-        $response = \Route::dispatch($request);
+        // $request = \Request::create("/api/v1/sports/$compId/events/$eventId/types", 'GET');
 
-        $types = $response->getOriginalContent();
+        // $response = \Route::dispatch($request);
+
+        // $types = $response->getOriginalContent();
 
         if (!$types['success']) {
             // return array("success" => false, "error" => "No types available");
