@@ -11,10 +11,10 @@ class FrontSportsTypesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index($compId = false, $eventId = false) {
+	public function index($compId = false, $eventId = false, $tourn = false) {
 
 		//tournaments require types matched to comps - front side tells us what they want
-		$tournamentFlag = Input::get('tournament', false);
+		$tournamentFlag = Input::get('tournament', $tourn);
 
 		if ($tournamentFlag) {
 
