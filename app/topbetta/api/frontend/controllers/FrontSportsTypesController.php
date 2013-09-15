@@ -11,10 +11,10 @@ class FrontSportsTypesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index($compId = false, $eventId = false) {
+	public function index($compId = false, $eventId = false, $tourn = false) {
 
 		//tournaments require types matched to comps - front side tells us what they want
-		$tournamentFlag = Input::get('tournament', false);
+		$tournamentFlag = Input::get('tournament', $tourn);
 
 		if ($tournamentFlag) {
 
@@ -29,7 +29,7 @@ class FrontSportsTypesController extends \BaseController {
 		}
 
 		// store sports types in cache for 10 min at a time
-		return \Cache::remember('sportsTypes-' . $eventCompId . '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag) {
+		return \Cache::remember('sportsTypes-' . $eventCompId . '-' .$eventId. '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag, $eventId) {
 
 			$sportsTypes = new TopBetta\SportsTypes;
 
@@ -39,7 +39,7 @@ class FrontSportsTypesController extends \BaseController {
 
 			} else {
 
-				$types = $sportsTypes -> getTournamentTypes($eventCompId);
+				$types = $sportsTypes -> getTournamentTypes($eventCompId, $eventId);
 
 			}
 
@@ -48,7 +48,7 @@ class FrontSportsTypesController extends \BaseController {
 				//we need to type cast the strings to int
 				foreach ($types as $type) {
 
-					$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type);
+					$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status);
 
 				}
 

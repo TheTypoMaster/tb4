@@ -19,11 +19,16 @@ class RaceMeeting extends \Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function meetingExists($meetingId) {
-		return RaceMeeting::where('external_event_group_id', '=', $meetingId) -> pluck('id');
+		return RaceMeeting::where('external_event_group_id', '=', $meetingId) 
+							->where('sport_id', '0')-> pluck('id');
 	}
 	
-	static public function isRace($typeCode) {
-		$type_code = RaceMeeting::where('type_code', '=', $typeCode)->pluck('type_code');
+	static public function meetingExistsByCode($meetingCode) {
+		return RaceMeeting::where('meeting_code', '=', $meetingCode)-> pluck('id');
+	}
+	
+	static public function isRace($meetingId) {
+		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 		return ($type_code == 'NULL' ? false : true);
 	}
 	

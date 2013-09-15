@@ -2740,7 +2740,16 @@ Must be 18+<br>
 			$bet_product_model			=& $this->getModel('BetProduct', 'BettingModel');
 			$bet_origin_model			=& $this->getModel('BetOrigin', 'BettingModel');
 
-			$user =& JFactory::getUser();
+			// Joomla userid is being passed from Laravel
+			// this fixes Joomla forgetting who is logged in :-)
+			$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+			if ($l_user_id) {
+				$user =& JFactory::getUser($l_user_id);
+			} else {
+				$user =& JFactory::getUser();
+			}
+			// $user =& JFactory::getUser();
 
 			if (!$user -> id) {
 
@@ -2932,11 +2941,11 @@ Must be 18+<br>
 
 			$user_data_after_save = $model->getUser();
 			//add user audit
-			if (!class_exists('TopbettaUserModelUserAudit')) {
-				JLoader::import('UserAudit', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
-			}
 
-			$user_audit_model		=& $this->getModel('userAudit', 'TopbettaUserModel');
+			require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'useraudit.php');
+			$user_audit_model = new TopbettaUserModelUserAudit();
+
+			// $user_audit_model		=& $this->getModel('userAudit', 'TopbettaUserModel');
 			$audit_params = array(
 				'user_id'		=> $user->id,
 				'admin_id'		=> -1,

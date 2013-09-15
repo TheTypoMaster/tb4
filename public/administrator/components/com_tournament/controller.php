@@ -466,8 +466,11 @@ class TournamentController extends JController
 				$meeting->tournament_competition_id	= (int)$tournament_competition_id;
 				$meeting->start_date				= $start_date;
 				
+				// Add new meeting code to be used when matching up to provider data
+				$shortDate = substr($meeting->start_date, 0, 10);
 				$meeting->type_code	= (isset($type_code_lookup[$sport->name]) ? $type_code_lookup[$sport->name] : NULL);
-				
+				$meeting->meeting_code = str_replace(" ", "",  strtoupper($meeting->name) . "-". $meeting->type_code ."-" . $shortDate);
+					
 				$event_group_id = $meeting->save();
 				
 				$tournament->event_group_id	= (int)$event_group_id;
@@ -564,9 +567,9 @@ class TournamentController extends JController
 				}
 				$automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
 				
-				if (!$jackpot_flag) {
-					$automated_text .= '/' . $minimum_prize_pool_amount;
-				}
+			//	if (!$jackpot_flag) {
+			//		$automated_text .= '/' . $minimum_prize_pool_amount;
+			//	}
 				
 			break;
 			case 'description':

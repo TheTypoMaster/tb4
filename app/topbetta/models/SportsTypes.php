@@ -8,7 +8,7 @@ class SportsTypes extends \Eloquent {
 
 	public function getTypes($eventId) {
 
-		$query = "SELECT DISTINCT(mt.id) AS id, mt.name AS bet_type FROM tbdb_market_type AS mt INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id WHERE m.event_id = $eventId";
+		$query = "SELECT m.id AS id, mt.name AS bet_type, m.market_status as status FROM tbdb_market_type AS mt INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id WHERE m.event_id = $eventId";
 
 		$result = \DB::select($query);
 
@@ -16,15 +16,16 @@ class SportsTypes extends \Eloquent {
 
 	}
 
-	public function getTournamentTypes($compId) {
+	public function getTournamentTypes($compId, $eventId) {
 
-		$query = "SELECT DISTINCT(mt.id) AS id, mt.name AS bet_type
-			FROM tbdb_market_type AS mt
-			INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id
-			INNER JOIN tbdb_event_group_market_type AS egmt ON egmt.market_type_id = mt.id
-			INNER JOIN tbdb_event_group AS eg ON eg.id = egmt.event_group_id
-			INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id
-			WHERE eg.id = '$compId'";
+		$query = "SELECT DISTINCT(m.id) AS id, mt.name AS bet_type, m.market_status as status
+					FROM tbdb_market AS m
+					INNER JOIN tbdb_event as e on e.id = m.event_id
+					INNER JOIN tbdb_market_type AS mt ON mt.id = m.market_type_id
+					INNER JOIN tbdb_event_group_market_type AS egmt ON egmt.market_type_id = mt.id
+					INNER JOIN tbdb_event_group AS eg ON eg.id = egmt.event_group_id
+					INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id
+					WHERE eg.id = '$compId' AND e.id = '$eventId'";
 
 		$result = \DB::select($query);
 

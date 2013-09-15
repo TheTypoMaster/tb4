@@ -14,6 +14,10 @@ class FrontTournamentsController extends \BaseController {
 	 * @return Response
 	 */
 	public function index() {
+		// handle our affiliate stuff if set
+		$affiliateId = Input::get('aff_id', null);
+		$campaignId = Input::get('cam_id', null);
+
 		//
 		$type = Input::get('type', 'racing');
 
@@ -48,11 +52,58 @@ class FrontTournamentsController extends \BaseController {
 
 		$list_params = array('jackpot' => false, 'private' => 0, 'type' => $type, 'sub_type' => $sub_type);
 
-		$tournamentList = $tournamentModel -> getTournamentActiveList($list_params);
+		$tournamentList = $tournamentModel -> getTournamentActiveList($list_params);			
 
 		$filterList = false;
 
-		if (\Auth::check() && $entered) {
+		// filter for affiliate only tournaments
+		if ($affiliateId && $campaignId && !$entered) {
+			$filter = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+			if ($filter) {
+				$filter = unserialize($filter);
+
+				$whitelistTournIds = false;
+				$whitelistSportIds = false;
+				$noWhitelist = true;
+
+				if (array_key_exists("whitelist",$filter)) {
+					$noWhitelist = false;
+					$whitelistTournIds = $filter['whitelist']['tournament_ids'];
+					$whitelistSportIds = $filter['whitelist']['tournament_sports'];
+				}
+
+				$filterList = array();
+
+				// ** AT THIS STAGE WE CAN ONLY WORK WITH WHITELIST TOURN IDS >>OR<< WHITELIST SPORTS
+				if ($whitelistTournIds) {
+					foreach ($whitelistTournIds as $id) {
+					   $object = new \stdClass();
+					   $object->id = $id;				
+					   $filterList[] = $object;
+					}			
+				}
+
+				if ($whitelistSportIds) {		
+					foreach ($whitelistSportIds as $id) {
+						foreach ($tournamentList as $tournament) {
+							if ($tournament->tournament_sport_id == $id) {
+							   $object = new \stdClass();
+							   $object->id = $tournament->id;				
+							   $filterList[] = $object;									
+							}
+						}
+					}
+				}
+
+				if (!$filterList && !$noWhitelist) {
+					//they have no tournaments
+					return array("success" => true, "result" => array());
+				}
+			}	
+		} 
+
+		// filter for logged in users tournaments they have entered only - "My Tourns"
+		if (\Auth::check() && $entered && !$filterList) {
 
 			$filterList = $tournamentModel -> getMyTournamentListByUserID(\Auth::user() -> id, false, false, true);
 
@@ -98,7 +149,6 @@ class FrontTournamentsController extends \BaseController {
 
 				// build our list of tournaments for this meeting
 				foreach ($tournamentList as $tourn) {
-
 					//TODO: bad code for now - had to live code on the server - can't get races to load on my f*n pc!!
 					if ($filterList) {
 
@@ -141,15 +191,18 @@ class FrontTournamentsController extends \BaseController {
 					if (array_key_exists($tournament -> sport_name, $flipRacingMap)) {
 
 						$sub_type_name = $flipRacingMap[$tournament -> sport_name];
+						$tournamentType = 'r';
 
 					} else {
 
 						$sub_type_name = $tournament -> sport_name;
+						$tournamentType = 's';
 
 					}
 
 				}
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournaments' => $tourns);
+
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
 			}
 		}
 
@@ -181,9 +234,11 @@ class FrontTournamentsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($tournamentId) {
+	public function show($tournamentId, $groupedStatus = false) {
 		//TODO: work with private tournaments
 		//TODO: work with jackpot tournaments
+
+		$grouped = \Input::get('grouped', $groupedStatus);
 
 		//does tournament exist?
 		$tournamentModel = new \TopBetta\Tournament;
@@ -292,7 +347,7 @@ class FrontTournamentsController extends \BaseController {
 		//calculate tournament end date/betting open
 
 		// special case to send data back in a format for backbone - this ones for you Jase ;-)
-		if (\Input::get('grouped') == true) {
+		if ($grouped == true) {
 
 			$tournamentDetails = array(
 				'id' => (int)$tournament -> id,
@@ -314,6 +369,7 @@ class FrontTournamentsController extends \BaseController {
 				'weather' => $tournamentParent -> weather,
 				'track' => $tournamentParent -> track,
 				'sub_type' => strtolower($tournamentParent -> type_code),
+				'tournament_type' => ($isRacingTournament) ? 'r' : 's',
 				'tournament' => $tournamentDetails
 			));
 
@@ -323,12 +379,12 @@ class FrontTournamentsController extends \BaseController {
 		if ($isRacingTournament) {
 
 			// ::: racing related data :::
-			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false));
+			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r'));
 
 		} else {
 
 			// ::: sports related data :::
-			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false));
+			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's'));
 
 		}
 

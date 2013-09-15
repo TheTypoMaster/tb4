@@ -182,9 +182,10 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param int the amount in cents to add
 	 * @param keyword the keyword identifying the type of transaction
 	 * @param string an optional description for the transaction
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
-	function increment($amount, $keyword, $desc = null) {
+	function increment($amount, $keyword, $desc = null, $user_id = null) {
 		$transactionTypeId = $this->getTransactionTypeId($keyword);
 
 		$tracking_id = -1;
@@ -204,11 +205,20 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 
 		$giver_id = -1;
 		if(PHP_SAPI != 'cli') {
-			$loginUser =& JFactory::getUser();
-			$giver_id = $loginUser->id;
+			if($user_id != null){
+				$giver_id = $user_id;
+			}else{
+				$loginUser =& JFactory::getUser();
+				$giver_id = $loginUser->id;
+			}
 		}
 
-		$recipient_id = $this->user_id;
+		if($user_id != null){
+			$recipient_id = $user_id;
+		}else{
+			$recipient_id = $this->user_id;
+		}
+		
 		if(null == $recipient_id) {
 			$recipient_id = $giver_id;
 		}
@@ -231,6 +241,7 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param int the amount in cents to add
 	 * @param keyword the keyword identifying the type of transaction
 	 * @param string an optional description for the transaction
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
 	function increment_for_promo_code($amount, $keyword, $user_id, $desc = null) {
@@ -273,24 +284,40 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 	 * @param string transaction description
 	 * @return int transaction id
 	 */
-	function decrement($amount, $keyword, $desc = null) {
+	function decrement($amount, $keyword, $desc = null, $user_id = null) {
 		$decrementAccountAmount = 0;
-		$totalTournamentAmount 	= $this->getTotal();
+		if($user_id != null){
+			$totalTournamentAmount 	= $this->getTotal($user_id);
+		}else{
+			$totalTournamentAmount 	= $this->getTotal();
+		}
+		
 		$transactionId 			= null;
 
 		if($amount > $totalTournamentAmount) {
 			$accountModel = JModel::getInstance('AccountTransaction', 'PaymentModel');
 
-			$loginUser 	=& JFactory::getUser();
-			$giver_id 	= $loginUser->id;
-
-			$recipient_id = $this->user_id;
+			if($user_id != null){
+				$giver_id = $user_id;
+				$recipient_id = $user_id;
+			}else{
+				$loginUser 	=& JFactory::getUser();
+				$giver_id 	= $loginUser->id;
+				$recipient_id = $this->user_id;
+			}
+			
 			if(null == $recipient_id) {
 				$recipient_id = $giver_id;
 			}
 
 			$accountModel->setUserId($recipient_id);
-			$totalAccountAmount = $accountModel->getTotal();
+			
+			if($user_id != null){
+				$totalAccountAmount = $accountModel->getTotal($user_id);
+			}else{
+				$totalAccountAmount = $accountModel->getTotal();
+			}
+			
 
 			$decrementAccountAmount =  $amount - $totalTournamentAmount;
 			if($decrementAccountAmount > $totalAccountAmount) {
@@ -303,31 +330,65 @@ class TournamentdollarsModelTournamenttransaction extends JModel
 				$keyword = 'tournamentdollars';
 			}
 
-			if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc)) {
-				return false;
-			}
-
-			if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance')) {
-				if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!')) {
-					// :TODO: send email to tech!
+			
+			if($user_id != null){
+				if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc, $user_id)) {
+					return false;
 				}
-
-				return false;
+			}else{
+				if(!$accountModel->decrement($decrementAccountAmount, $keyword, $desc)) {
+					return false;
+				}
 			}
+					
+			if($user_id != null){
+				if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance', $user_id)) {
+					if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!', $user_id)) {
+						// :TODO: send email to tech!
+					}
+				
+					return false;
+				}
+			}else{
+				if(!$this->increment($decrementAccountAmount, 'purchase', 'Transferred from account balance')) {
+					if(!$accountModel->increment($decrementAccountAmount, 'tournamentdollars', 'Failed to increase user\'s tournament dollars! Add the decrement back!')) {
+						// :TODO: send email to tech!
+					}
+				
+					return false;
+				}
+			}
+
 		}
 
-		if(!$transactionId = $this->increment(-$amount, $keyword, $desc)) {
-			if($decrementAccountAmount > 0) {
-				if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance')) {
-					//TO DO : send email to tech!
+		if($user_id != null){
+			if(!$transactionId = $this->increment(-$amount, $keyword, $desc, $user_id)) {
+				if($decrementAccountAmount > 0) {
+					if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance', $user_id)) {
+						//TO DO : send email to tech!
+					}
+	
+					//MC if(!$accountModel->increment( $decrementAccountAmount, 'tournamentdollars', 'Failed to decrease user\'s tournament dollars! Add the amount transferred back!')) {
+						//TO DO: send email to tech!
+					//MC }
 				}
-
-				//MC if(!$accountModel->increment( $decrementAccountAmount, 'tournamentdollars', 'Failed to decrease user\'s tournament dollars! Add the amount transferred back!')) {
-					//TO DO: send email to tech!
-				//MC }
+	
+				return false;
 			}
-
-			return false;
+		}else{
+			if(!$transactionId = $this->increment(-$amount, $keyword, $desc)){
+				if($decrementAccountAmount > 0) {
+					if(!$this->increment(-$decrementAccountAmount, $keyword, 'Failed to decrease user\'s tournament dollars! Decrease the amount transferred from account balance', $user_id)) {
+						//TO DO : send email to tech!
+					}
+						
+					//MC if(!$accountModel->increment( $decrementAccountAmount, 'tournamentdollars', 'Failed to decrease user\'s tournament dollars! Add the amount transferred back!')) {
+					//TO DO: send email to tech!
+					//MC }
+				}
+					
+				return false;
+			}
 		}
 
 		return $transactionId;

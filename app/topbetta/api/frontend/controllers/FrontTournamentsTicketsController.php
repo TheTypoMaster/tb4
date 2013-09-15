@@ -15,6 +15,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 		$userId = \Auth::user() -> id;
 
 		$ticketModel = new \TopBetta\TournamentTicket;
+		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
 
 		// active tourn tickets
 		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID($userId);
@@ -28,6 +29,14 @@ class FrontTournamentsTicketsController extends \BaseController {
 				//get the event group from the tournament id
 				$tournament = \TopBetta\Tournament::find($activeTicket -> tournament_id);
 
+				$availableCurrency = $ticketModel -> getAvailableTicketCurrency($activeTicket -> tournament_id, \Auth::user() -> id);
+
+				$leaderboardDetails = $leaderboardModel -> getLeaderBoardRankByUserAndTournament(\Auth::user() -> id, $tournament);
+
+				$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;
+
+				$numEntries = \TopBetta\TournamentTicket::countTournamentEntrants($activeTicket -> tournament_id);
+
 				// get next event for this event group
 				$nextData = \TopBetta\TournamentTicket::nextEventForEventGroup($tournament -> event_group_id);
 
@@ -35,7 +44,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				if ($next) {
 
-					$nextToJump[] = array('id' => (int)$activeTicket -> tournament_id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type <= 3) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance);
+					$nextToJump[] = array('id' => (int)$activeTicket -> tournament_id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type <= 3) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries);
 
 				}
 			}
@@ -80,6 +89,12 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$ticketModel = new \TopBetta\TournamentTicket;
 
+			// Check if we have a ticket in the tournament before going any further
+			$myTicketID = $ticketModel->getTournamentTicketByUserAndTournamentID(\Auth::user()->id, $tournamentId);
+			if(!$myTicketID){
+				return array('success' => false, 'error' => \Lang::get('tournaments.ticket_not_found', array('tournamentId' => $tournamentId)));
+			}
+			
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($tournamentId, \Auth::user() -> id);
 
 			$leaderboardModel = new \TopBetta\TournamentLeaderboard;

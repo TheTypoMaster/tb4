@@ -189,7 +189,7 @@ class TournamentModelSelection extends SuperModel
 			'SELECT
 				s.id,
 				s.name,
-				m.name as market_type,
+				mt.name as market_type,
 				m.id as market_id,
 				sp.override_odds,
 				sp.win_odds,
@@ -200,6 +200,12 @@ class TournamentModelSelection extends SuperModel
 				' . $db->nameQuote('#__selection') . ' as s
 			ON
 				s.market_id = m.id
+						
+			LEFT JOIN
+				' . $db->nameQuote('#__market_type') . ' as mt
+			ON
+				mt.id = m.market_type_id
+						
 			LEFT JOIN
 				' . $db->nameQuote('#__selection_price') . ' as sp
 			ON
@@ -265,7 +271,8 @@ class TournamentModelSelection extends SuperModel
 				sp.win_odds,
 				sp.place_odds,
 				sp.override_odds,
-				sp.bet_product_id
+				sp.bet_product_id,
+				sp.line
 			FROM
 				' . $db->nameQuote('#__selection') . ' as s
 			LEFT JOIN
@@ -300,6 +307,8 @@ class TournamentModelSelection extends SuperModel
 					 )
 			GROUP BY
 				s.id
+			ORDER BY market_id 				
+					
 		';
 		$db->setQuery($query);
 		return $db->loadObjectList();

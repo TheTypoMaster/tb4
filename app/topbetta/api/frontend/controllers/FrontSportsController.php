@@ -25,7 +25,7 @@ class FrontSportsController extends \BaseController {
 
 			$sportName = '';
 			$eachSport = array();
-			
+
 			// Group the sports and comps which come through as one list
 			foreach ($sports as $sport) {
 
@@ -33,18 +33,22 @@ class FrontSportsController extends \BaseController {
 					$sportName = $sport -> sportName;
 					$sportId = $sport -> sportID;
 					$comps = array();
-					foreach ($sports as $comp) {
-
-						if ($comp -> sportName == $sportName) {
-
-							//convert the date to ISO 8601 format
-							$startDatetime = new \DateTime($comp -> start_date);
-							$startDatetime = $startDatetime -> format('c');
-
-							$comps[] = array('id' => (int)$comp -> eventGroupId, 'name' => $comp -> name, 'start_date' => $startDatetime);
-						}
-
+					
+					// get comps for sport
+					$competitons = $sportsComps->getCompsSorted($date, $sportId);
+					$comp_order = '1';
+					
+					foreach($competitons as $competition){
+						
+						//convert the date to ISO 8601 format
+						$startDatetime = new \DateTime($competition -> start_date);
+						$startDatetime = $startDatetime -> format('c');
+						
+						// build up competitions for current sport
+						$comps[] = array('id' => (int)$competition -> eventGroupId, 'name' => $competition -> name, 'start_date' => $startDatetime, 'order' => $comp_order);
+						$comp_order++;
 					}
+					
 					$eachSport[] = array('id' => (int)$sportId, 'name' => $sportName, 'competitions' => $comps);
 				}
 			}
@@ -81,8 +85,30 @@ class FrontSportsController extends \BaseController {
 	 * @return Response
 	 */
 	public function show($id) {
-		//
-		return "Sports show $id";
+		// fetch the sport this comp belongs to
+		$sportsComps = new TopBetta\SportsComps;
+		$sports = $sportsComps -> getCompWithSport($id);
+
+		if ($sports) {
+			$sports = $sports[0];
+
+			$result = array(
+				'id' => (int)$sports->sportID,
+				'name' => $sports->sportName,
+				'competitions' => array(
+					'id' => (int)$sports->eventGroupId,
+					'name' => $sports->name,
+					'start_date' => $sports->start_date
+				)
+			);
+
+			return array('success' => true, 'result' => $result);
+
+		} else {
+
+			return array('success' => false, 'error' => \Lang::get('sports.no_competition_found'));
+
+		}
 	}
 
 	/**

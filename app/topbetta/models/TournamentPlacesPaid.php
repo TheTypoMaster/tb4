@@ -148,7 +148,9 @@ class TournamentPlacesPaid extends \Eloquent {
 
 			$percentage = 0;
 			for($i = $rank; $i < ($rank + $qualified_count); ++$i) {
-				$percentage += $payout_list[$i];
+				if (array_key_exists($i, $payout_list)) {
+					$percentage += $payout_list[$i];
+				}
 			}
 
 			$place_list['place'][$rank][self::PRIZE_TYPE_CASH] 	= (($percentage / 100) * $prize_pool) / $qualified_count;
@@ -262,6 +264,7 @@ class TournamentPlacesPaid extends \Eloquent {
 	 */
 	public function getPercentagePayoutList($place_count) {
 		$place = $this->getPercentage($place_count);
+		$place = $place[0];
 		return $this->_formatPercentageList($place->percentage);
 	}
 

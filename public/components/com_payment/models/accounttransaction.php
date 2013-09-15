@@ -341,9 +341,10 @@ class PaymentModelAccounttransaction extends JModel
 	 * @param int transaction amount
 	 * @param keyword transaction type keyword
 	 * @param string transaction description
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
-	function increment($amount, $keyword, $desc = null)
+	function increment($amount, $keyword, $desc = null, $user_id = null)
 	{
 		$transactionTypeId = $this->getTransactionTypeId($keyword);
 
@@ -364,11 +365,20 @@ class PaymentModelAccounttransaction extends JModel
 
 		$giver_id = -1;
 		if(PHP_SAPI != 'cli') {
-			$loginUser =& JFactory::getUser();
-			$giver_id = $loginUser->id;
+			if($user_id != null){
+				$giver_id = $user_id;
+			}else{
+				$loginUser =& JFactory::getUser();
+				$giver_id = $loginUser->id;
+			}
 		}
 
-		$recipient_id = $this->user_id;
+		if($user_id != null){
+			$recipient_id = $user_id;
+		}else{
+			$recipient_id = $this->user_id;
+		}
+		
 		if(null == $recipient_id) {
 			$recipient_id = $giver_id;
 		}
@@ -391,11 +401,12 @@ class PaymentModelAccounttransaction extends JModel
 	 * @param int transaction amount
 	 * @param string transaction type keyword
 	 * @param string transaction description
+	 * @param int an optional user id for the transaction
 	 * @return int transaction id
 	 */
-	function decrement($amount, $keyword, $desc = null)
+	function decrement($amount, $keyword, $desc = null, $user_id = null)
 	{
-		return $this->increment(-$amount, $keyword, $desc);
+		return $this->increment(-$amount, $keyword, $desc, $user_id);
 	}
 
 	/**
