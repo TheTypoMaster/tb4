@@ -111,3 +111,9 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+
+Route::filter('logOut', function()
+{
+	return Auth::logout();
+});

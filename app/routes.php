@@ -85,7 +85,7 @@ Route::group(array('prefix' => '/api/admin/v1'), function() {
 
 
 // Route group for backend API. Uses basic stateless auth filter
-Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
+Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once', 'after' => 'logOut'), function() { //, 'before' => 'basic.once'
 	// incoming race data and results
 	Route::resource('racing', 'BackRacing');
 	// incoming sports data and results
