@@ -27,7 +27,7 @@ class RaceEvent extends \Eloquent {
 		  WHERE e.start_date > NOW() 
 		  AND ts.racing_flag = 1 
 		  AND es.keyword = 'selling'
-		  AND eg.display_flag = 1 
+		  AND e.display_flag = 1 
 		  ORDER BY e.start_date ASC 
 		  LIMIT 0, $limit";
 		  
