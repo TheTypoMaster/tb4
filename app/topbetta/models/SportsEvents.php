@@ -82,7 +82,7 @@ class SportsEvents extends \Eloquent {
 		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
 		WHERE e.start_date > NOW()
 		AND eg.type_code IS NULL
-		AND display_flag = '1'
+		AND e.display_flag = '1'
 		ORDER BY e.start_date ASC
 		LIMIT $limit";
 
