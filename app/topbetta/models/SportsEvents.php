@@ -47,6 +47,7 @@ class SportsEvents extends \Eloquent {
 		}
 		// TODO: is this actually needed?
 		// $query .= $dateQuery;
+		$query .= " WHERE e.display_flag = '1' ";
 		$query .= $compQuery;
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
@@ -81,6 +82,7 @@ class SportsEvents extends \Eloquent {
 		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
 		WHERE e.start_date > NOW()
 		AND eg.type_code IS NULL
+		AND e.display_flag = '1'
 		ORDER BY e.start_date ASC
 		LIMIT $limit";
 
