@@ -215,6 +215,7 @@ class Api_User extends JController {
                     $password2	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= JRequest::getString('source', null, 'post');
+					$optbox		= JRequest::getVar('optbox', null, 'post');
 					$btag		= JRequest::getString('btag', null, 'post');
 					//$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
 
