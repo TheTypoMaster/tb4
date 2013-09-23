@@ -72,7 +72,7 @@ class FrontSportsTypesController extends \BaseController {
 						$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status);
 					}else{
 						// Add a bet_limit field
-						$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status, 'bet_limit' => $betLimitValue);
+						$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status, 'bet_limit' => $betLimitValue, 'line' => $type->line);
 					}
 				}
 
