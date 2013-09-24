@@ -97,11 +97,11 @@ class Tournament extends \Eloquent {
 		 if ($jackpot !== false) {
 		 $query .= ' AND t.jackpot_flag = ' . $db -> quote($jackpot);
 		 }
-
-		 if ($private !== false) {
-		 $query .= ' AND t.private_flag = ' . $db -> quote($private);
-		 }
 		 */
+		 
+		 if ($private !== false) {
+		 $query .= ' AND t.private_flag = "' . $private . '"';
+		 }
 
 		// start with a sub_type, then fall back to type
 		if ($sub_type) {
