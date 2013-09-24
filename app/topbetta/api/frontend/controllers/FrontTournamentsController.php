@@ -182,7 +182,7 @@ class FrontTournamentsController extends \BaseController {
 						$startDatetime = \TimeHelper::isoDate($tourn -> start_date);
 						$endDatetime = \TimeHelper::isoDate($tourn -> end_date);
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'start_date' => $startDatetime, 'end_date' => $endDatetime);
+						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime);
 					}
 
 					//handle sub_type for racing
@@ -357,6 +357,7 @@ class FrontTournamentsController extends \BaseController {
 				'prize_pool' => $prizePool,
 				'places_paid' => $places_paid,
 				'start_currency' => (int)$tournament -> start_currency,
+				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);

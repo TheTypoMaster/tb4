@@ -38,7 +38,7 @@ class FrontUsersBettingController extends \BaseController {
 
 				foreach ($history['bet_list'] as $key => $transaction) {
 
-					$transactions[] = array('id' => $key, 'date' => \TimeHelper::isoDate($transaction['bet_time']), 'selections' => $transaction['label'], 'bet_type' => $transaction['bet_type'], 'bet_amount' => (int)$transaction['amount'] * 100, 'bet_total' => (int)$transaction['bet_total'] * 100, 'freebet_amount' => (int)$transaction['bet_freebet_amount'] * 100, 'dividend' => (float)$transaction['dividend'], 'paid' => (int)$transaction['paid'] * 100, 'result' => $transaction['result'], 'half_refund' => $transaction['half_refund']);
+					$transactions[] = array('id' => $key, 'date' => \TimeHelper::isoDate($transaction['bet_time']), 'selections' => $transaction['label'], 'bet_type' => $transaction['bet_type'], 'bet_amount' => (int)$transaction['amount'], 'bet_total' => (int)$transaction['bet_total'], 'freebet_amount' => (int)$transaction['bet_freebet_amount'], 'dividend' => (float)$transaction['dividend'], 'paid' => (int)$transaction['paid'], 'result' => $transaction['result'], 'half_refund' => $transaction['half_refund']);
 
 				}
 
