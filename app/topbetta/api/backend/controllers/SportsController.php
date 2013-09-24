@@ -461,7 +461,8 @@ class SportsController extends \BaseController {
 									
 									// Add the line to the market record for display purposes
 									$marketModel = TopBetta\SportsMarket::find($marketExists);
-									($line < 0) ? $marketModel->line = $line * -1 : $marketModel->line = $line;
+									($line < 0) ? $marketModel->line = $line * -1 : $marketModel->line = str_replace("+", "", $line);
+									
 									$marketModel->save();
 									
 								}else {
