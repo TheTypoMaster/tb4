@@ -54,6 +54,7 @@ class Tournament extends \Eloquent {
 				t.created_date,
 				t.updated_date,
 				t.private_flag,
+				t.bet_limit_flag,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,
