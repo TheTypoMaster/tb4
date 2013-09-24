@@ -166,28 +166,32 @@ class FrontUsersController extends \BaseController {
 			'country' => 'required|alpha|max:3', 
 			'promo_code' => 'alpha_dash|max:100', 
 			'heard_about' => 'alpha_dash|max:200', 
-			'heard_about_info' => 'alpha_dash|max:200', 
-			'optbox' => 'in:0,1,true,false', 
-			'privacy' => 'accepted', 
-			'terms' => 'accepted');
+			'heard_about_info' => 'alpha_dash|max:200');
 
-		if ($input['type'] == 'basic') {
+		if (isset($input['type']) && $input['type'] == 'basic') {
 
 			$rules['email'] = 'required|email|unique:tbdb_users';
 			//$rules['mobile'] = 'required|min:9';
 			$rules['password'] = array('required', 'min:5', 'regex:([a-zA-Z].*[0-9]|[0-9].*[a-zA-Z])');
+			// terms wraps up privacy/terms & marketing as 1 options now
+			$rules['terms'] = 'accepted';	
+			$input['optbox'] = 1;
 
 		}
 
-		if ($input['type'] == 'upgrade') {
+		if (isset($input['type']) && $input['type'] == 'upgrade') {
 
 			$rules = array_merge($rules, $extRules);
 
 		}
 
-		if ($input['type'] == 'full') {
+		if (isset($input['type']) && $input['type'] == 'full') {
 
 			$extRules['username'] = 'unique:tbdb_users';
+			// terms wraps up privacy/terms & marketing as 1 options now
+			$rules['terms'] = 'accepted';	
+			$input['optbox'] = 1;
+						
 			$rules = array_merge($rules, $extRules);
 
 		}

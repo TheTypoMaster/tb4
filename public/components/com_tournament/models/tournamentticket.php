@@ -754,7 +754,7 @@ class TournamentModelTournamentTicket extends JModel
 				ON
 					t.id = tp.tournament_id
 			WHERE
-					t.group_event_id = ' . $db->quote($group_event_id) . '
+					t.event_group_id = ' . $db->quote($group_event_id) . '
 				AND
 					tt.refunded_flag != 1
 				AND
