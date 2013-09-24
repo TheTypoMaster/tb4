@@ -12,7 +12,7 @@ class AddLineToTbdbMarketsTable extends Migration {
      */
     public function up()
     {
-        Schema::table('markets', function(Blueprint $table) {
+        Schema::table('tbdb_market', function(Blueprint $table) {
         	$table->string('line');
         });
     }
@@ -24,7 +24,7 @@ class AddLineToTbdbMarketsTable extends Migration {
      */
     public function down()
     {
-        Schema::table('markets', function(Blueprint $table) {
+        Schema::table('tbdb_market', function(Blueprint $table) {
             $table->drop('line');
         });
     }

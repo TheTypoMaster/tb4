@@ -357,6 +357,7 @@ class FrontTournamentsController extends \BaseController {
 				'prize_pool' => $prizePool,
 				'places_paid' => $places_paid,
 				'start_currency' => (int)$tournament -> start_currency,
+				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
