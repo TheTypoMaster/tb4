@@ -40,27 +40,7 @@ class FrontSportsTypesController extends \BaseController {
 			} else {
 
 				$types = $sportsTypes -> getTournamentTypes($eventCompId, $eventId);
-				$betTypes = count($types);
 				
-				// TODO: This should be moved to a more maintainable solution for tournaments only
-				// if we have some bet types
-				if($betTypes > 0){
-					// Hard coded bet limits per number of markets linked to tournament
-					$offer_market_limit = array(
-							1 => 'unlimited',
-							2 => 50000,
-							3 => 50000,
-							4 => 25000,
-							5 => 25000,
-							6 => 25000,
-							7 => 25000,
-							8 => 25000,
-							9 => 10000,
-					);
-					
-					// Set bet limit based on number of markets available to bet on
-					($betTypes > 9) ? $betLimitValue = $offer_market_limit[9] : $betLimitValue = $offer_market_limit[$betTypes];
-				}
 			}
 
 			if (count($types) > 0) {
@@ -68,12 +48,8 @@ class FrontSportsTypesController extends \BaseController {
 				// we need to type cast the strings to int
 				foreach ($types as $type) {
 	
-					if(!$tournamentFlag){
-						$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status);
-					}else{
-						// Add a bet_limit field
-						$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status, 'bet_limit' => $betLimitValue, 'line' => $type->line);
-					}
+					$eachType[] = array('id' => (int)$type -> id, 'bet_type' => $type -> bet_type, 'status' => $type->status, 'line' => $type->line);
+					
 				}
 
 				return array('success' => true, 'result' => $eachType);
