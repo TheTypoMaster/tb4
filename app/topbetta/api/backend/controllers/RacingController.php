@@ -347,7 +347,25 @@ class RacingController extends \BaseController {
 											$meetingRecord->start_date = $dataArray['JumpTime'];
 											$meetingRecord->save();
 										}
-											
+										
+										// update tournament start end times
+										if(isset($dataArray['JumpTime']) && isset($dataArray['RaceNo'])){
+											$tournamentsOnMeeting = getTournamentWithEventGroup($meetingExists);
+											// loop on each tournament
+											foreach ($tournamentsOnMeeting as $tournament){
+												// if it's race 1 store the jump time as tourn start date.
+												$tournamentModel = Topbetta\Tournament::find($tournament->id);
+												if ($raceEvent->number == 1) {
+													$tournamentModel->start_time = $dataArray['JumpTime'];
+												}else{
+													if ($dataArray['JumpTime'] > $tournamentModel->end_date){
+														$tournamentModel->end_date = $dataArray['JumpTime'];
+													}
+												}
+											}
+											$tournamentModel->save();
+										}
+												
 										//TODO: Code Table lookup on different race status
 										//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
 										if(isset($dataArray['RaceStatus'])){
