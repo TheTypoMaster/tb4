@@ -362,8 +362,9 @@ class RacingController extends \BaseController {
 														$tournamentModel->end_date = $dataArray['JumpTime'];
 													}
 												}
+												$tournamentModel->save();
 											}
-											$tournamentModel->save();
+											
 										}
 												
 										//TODO: Code Table lookup on different race status
