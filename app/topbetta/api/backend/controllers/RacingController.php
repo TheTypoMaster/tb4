@@ -356,7 +356,7 @@ class RacingController extends \BaseController {
 												// if it's race 1 store the jump time as tourn start date.
 												$tournamentModel = Topbetta\Tournament::find($tournament->id);
 												if ($raceEvent->number == 1) {
-													$tournamentModel->start_time = $dataArray['JumpTime'];
+													$tournamentModel->start_date = $dataArray['JumpTime'];
 												}else{
 													if ($dataArray['JumpTime'] > $tournamentModel->end_date){
 														$tournamentModel->end_date = $dataArray['JumpTime'];
