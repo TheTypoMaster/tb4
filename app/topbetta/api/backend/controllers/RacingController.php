@@ -350,7 +350,7 @@ class RacingController extends \BaseController {
 										
 										// update tournament start end times
 										if(isset($dataArray['JumpTime']) && isset($dataArray['RaceNo'])){
-											$tournamentsOnMeeting = getTournamentWithEventGroup($meetingExists);
+											$tournamentsOnMeeting = Topbetta\Tournament::getTournamentWithEventGroup($meetingExists);
 											// loop on each tournament
 											foreach ($tournamentsOnMeeting as $tournament){
 												// if it's race 1 store the jump time as tourn start date.
