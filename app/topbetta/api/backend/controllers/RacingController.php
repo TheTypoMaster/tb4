@@ -333,19 +333,16 @@ class RacingController extends \BaseController {
 										// get race values from JSON
 										if(isset($dataArray['RaceNo'])){
 											$raceEvent->number = $dataArray['RaceNo'];
+											// update meeting start time if it's race 1
+											if($raceEvent->number == '1'){
+												$meetingRecord->start_date = $dataArray['JumpTime'];
+												$meetingRecord->save();
+											}
+											
 										}
 										
 										if(isset($dataArray['JumpTime'])){
 											$raceEvent->start_date = $dataArray['JumpTime'];
-										}
-										
-										// update meeting start time if needed
-										if ($meetingRecord->start_date == "0000-00-00 00:00:00"){
-											$meetingRecord->start_date = $dataArray['JumpTime'];
-											$meetingRecord->save();
-										}elseif($dataArray['JumpTime'] < $meetingRecord->start_date){
-											$meetingRecord->start_date = $dataArray['JumpTime'];
-											$meetingRecord->save();
 										}
 										
 										// update tournament start end times
