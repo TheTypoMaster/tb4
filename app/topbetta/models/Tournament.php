@@ -14,6 +14,10 @@ class Tournament extends \Eloquent {
 	protected $guarded = array();
 
 	public static $rules = array();
+	
+	static public function getTournamentWithEventGroup($eventGroupId){
+		return Tournament::where('event_group_id', '=', $eventGroupId)->get();
+	}
 
 	public function getTournamentActiveList($list_params = array()) {
 
