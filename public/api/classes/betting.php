@@ -876,10 +876,17 @@ class Api_Betting extends JController {
 		// this fixes Joomla forgetting who is logged in :-)
 		$l_user_id = JRequest::getVar('l_user_id', NULL);
 
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
+		$bet_model	= new BettingModelBet();
+		
 		if ($l_user_id) {
 			$user =& JFactory::getUser($l_user_id);
 		} else {
 			$user =& JFactory::getUser();
+			if ((time() - $bet_model->getLastBetTimeStampByUserIDApi($user->id)->created_date) < 2) {
+				// $validation->error = JText::_('Please wait a second to make another bet');
+				return OutputHelper::json(500, array('error_msg' => 'Please wait a second to make another bet'));
+			}
 		}
 
 		if ($user->get('guest'))

@@ -458,7 +458,13 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
 									}
 									TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId");
-										
+									
+									// Add the line to the market record for display purposes
+									$marketModel = TopBetta\SportsMarket::find($marketExists);
+									($line < 0) ? $marketModel->line = $line * -1 : $marketModel->line = str_replace("+", "", $line);
+									
+									$marketModel->save();
+									
 								}else {
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection. No Market found for this selection. EID:$eventId, MarketID:$marketId, SelectionId:$selectionId Can't process", 2);
 								}

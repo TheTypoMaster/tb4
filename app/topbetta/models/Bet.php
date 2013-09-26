@@ -76,6 +76,7 @@ class Bet extends \Eloquent {
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
+	      		sr.win_dividend, sr.place_dividend,bs.fixed_odds,	      		
 				sp.win_odds,
 				sp.place_odds,
 	      		bat.amount AS bet_total, b.bet_freebet_amount as freebet_amount, b.created_date, b.invoice_id, b.bet_transaction_id
@@ -105,6 +106,10 @@ class Bet extends \Eloquent {
 				tbdb_selection_price AS sp
 			ON
 				sp.selection_id = s.id
+			LEFT JOIN
+				tbdb_selection_result AS sr
+			ON
+				sr.selection_id = s.id				
 			INNER JOIN
 				tbdb_market AS m
 			ON
@@ -155,6 +160,7 @@ class Bet extends \Eloquent {
 	      		s.name AS selection_name,
 	      		s.number AS selection_number,
 	      		s.id AS selection_id,
+	      		sr.win_dividend, sr.place_dividend,bs.fixed_odds,	      		
 				sp.win_odds,
 				sp.place_odds,
 	      		bat.amount AS bet_total,
@@ -186,6 +192,10 @@ class Bet extends \Eloquent {
 				tbdb_selection_price AS sp
 			ON
 				sp.selection_id = s.id
+			LEFT JOIN
+				tbdb_selection_result AS sr
+			ON
+				sr.selection_id = s.id					
 			INNER JOIN
 				tbdb_market AS m
 			ON
