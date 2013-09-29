@@ -123,6 +123,19 @@ JToolBarHelper::cancel();
 					<td>
 						$<input type="text" name="start_currency" value="<?php echo $this->formdata['start_currency']; ?>" <?php echo $this->disabled;?> />
 					</td>
+					
+					<td class='key'>
+						<label for="tournament_feature_id">Tournament Feature</label>
+					</td>
+					<td>
+						<select name="tournament_feature_id" id="tournament_feature_id" <?php echo $this->disabled;?>>
+							<?php foreach($this->tournament_feature_option_list as $tournament_feature_id => $tournament_feature_name): ?>
+							<option value="<?php echo $tournament_feature_id; ?>"<?php echo $this->tournament_feature_selected_list[$tournament_feature_id]; ?>><?php echo $tournament_feature_name; ?></option>
+							<?php endforeach; ?>
+						</select>
+					</td>
+					
+					
 					<?php if (!empty($this->id)) : ?>
 					<td colspan="2"></td>
 					<?php endif; ?>
