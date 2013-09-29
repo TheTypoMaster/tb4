@@ -5,23 +5,19 @@ class Tb_data_typesTableSeeder extends Seeder {
     public function run()
     {
     	// Uncomment the below to wipe the table clean before populating
-    	DB::table('tb_data_types')->delete();
+    	DB::table('tb_tournament_features')->delete();
 
-        $tb_data_types = ( array (
+        $tb_tournament_features = ( array (
         		array (
-        				'id' => '1',
-        				'data_type' => 'weather_condition',
-        		),
-        		array (
-        				'id' => '2',
-        				'data_type' => 'track_condition',
+        				'keyword' => 'atp2013',
+        				'description' => '2013 ATP Tournaments',
         		),
         		
         		
         ) );
 
         // Uncomment the below to run the seeder
-         DB::table('tb_data_types')->insert($tb_data_types);
+         DB::table('tb_tournament_features')->insert($tb_tournament_features);
     }
 
 }
