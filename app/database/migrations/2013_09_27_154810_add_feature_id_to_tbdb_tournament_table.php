@@ -13,7 +13,7 @@ class AddFeatureIdToTbdbTournamentTable extends Migration {
     public function up()
     {
         Schema::table('tbdb_tournament', function(Blueprint $table) {
-        	$table->string('feature_keyword');
+        	$table->string('feature_keyword')->index();
         });
     }
 
