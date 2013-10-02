@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tb_data_typesTableSeeder');
 		$this->call('Tb_data_ordering_orderTableSeeder');
 		$this->call('Tb_data_ordering_provider_matchTableSeeder');
-		$this->call('Tb_tournament_featuresTableSeeder');
+		//$this->call('Tb_tournament_featuresTableSeeder');
 	}
 
 }

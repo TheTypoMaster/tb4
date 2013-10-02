@@ -5,7 +5,7 @@ class Tb_tournament_featuresTableSeeder extends Seeder {
 	public function run()
 	{
 		// Uncomment the below to wipe the table clean before populating
-		DB::table('tb_tournament_features')->delete();
+		//DB::table('tb_tournament_features')->delete();
 
 		$tb_tournament_features = ( array (
 				array (
@@ -17,7 +17,7 @@ class Tb_tournament_featuresTableSeeder extends Seeder {
 		) );
 
 		// Uncomment the below to run the seeder
-		DB::table('tb_tournament_features')->insert($tb_tournament_features);
+		//DB::table('tb_tournament_features')->insert($tb_tournament_features);
 	}
 
 }
