@@ -114,6 +114,9 @@ class TournamentController extends JController
 			$private_tournament			= $private_tournament_model->getPrivateTournamentCreatorInfoByTournamentID($tournament->id);
 		}
 		$place_list   = $tournament_model->calculateTournamentPlacesPaid($tournament, count($player_list), $prize_pool);
+		
+		// Get tournament features
+		// $tournament_feature_list = JModel::getInstance('TournamentFeature', 'TournamentModel')->getTournamentFeatureList();
 
 		$parent_link = null;
 		if(!empty($tournament->jackpot_flag) && !empty($tournament->parent_tournament_id)) {
@@ -138,7 +141,7 @@ class TournamentController extends JController
 		$view->assign('parent_link', $parent_link);
 		$view->assign('entrants', $entrants);
 		$view->assign('event_group', $event_group->name);
-
+		//$view->assign('tournament_feature_list', $tournament_feature_list);
 		$view->assign('is_racing_tournament', $is_racing_tournament);
 		
 		$view->display();
@@ -170,6 +173,8 @@ class TournamentController extends JController
 			'future_meeting_venue'					=> '',
 			'tod_flag'								=> '',
 			'free_credit_flag'						=> 0
+			//'feature_keyword'						=> -1
+			
 		);
 
 		return $field_list;
@@ -223,6 +228,7 @@ class TournamentController extends JController
 		}
 		$formdata['tod_flag'] 		= $tournament->tod_flag;
 		$formdata['free_credit']	= $tournament->free_credit_flag;
+		$formdata['tournament_feature_id'] = $tournament->feature_keyword;
 		
 		if ($sessFormData = $session->get('sessFormData', null, 'tournament'))
 		{
@@ -259,7 +265,10 @@ class TournamentController extends JController
 		$venue_list = JModel::getInstance('MeetingVenue', 'TournamentModel')
 						->getMeetingVenueList();
 
-
+		
+		// Get tournament features
+		//$tournament_feature_list = JModel::getInstance('TournamentFeature', 'TournamentModel')->getTournamentFeatureList();
+		
 		$list_params = array(
 			'type'	=> ($is_racing_sport ? 'racing' : 'sports'),
 			'order'	=> 'lower(t.name)'
@@ -286,6 +295,8 @@ class TournamentController extends JController
 		$view->assign('buy_in_list', $buy_in_list);
 		
 		$view->assign('venue_list', $venue_list);
+		
+		//$view->assign('tournament_feature_list', $tournament_feature_list);
 
 		$view->assign('error_list', $error_list);
 		$view->assign('formdata', $formdata);
@@ -294,6 +305,9 @@ class TournamentController extends JController
 		$view->assign('entrants_disable', ($entrants > 0));
 		
 		$view->assign('tod_list', $tod_list);
+		
+		
+		
 		
 		$view->display();
 	}
@@ -310,6 +324,8 @@ class TournamentController extends JController
 		
 		$name			= JRequest::getVar('name', null);
 		$description	= JRequest::getVar('description', null);
+		
+		// $feature_keyword = JRequest::getVar('tournament_feature_id', null);
 		
 		$entrants				= 0;
 		$is_future_tournament	= false;
@@ -333,6 +349,7 @@ class TournamentController extends JController
 		$tournament->id										= (int)$id;
 		$tournament->name									= $name;
 		$tournament->description							= $description;
+		//$tournament->feature_keyword						= $feature_keyword;
 		
 		$sport_model	=& $this->getModel('TournamentSport', 'TournamentModel');
 		
@@ -423,6 +440,7 @@ class TournamentController extends JController
 			$tournament->bet_limit_flag							= 0;
 			$tournament->tod_flag								= strtoupper($tod_flag);
 			$tournament->free_credit_flag						= (int)JRequest::getVar('free_credit_flag', 0);
+			//$tournament->feature_keyword						= $feature_keyword;
 		
 			if (!$is_racing) {
 				$tournament->closed_betting_on_first_match_flag		= (int)$closed_betting_on_first_match_flag;
