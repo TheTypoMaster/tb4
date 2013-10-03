@@ -25,7 +25,7 @@ class AddFeatureIdToTbdbTournamentTable extends Migration {
     public function down()
     {
         Schema::table('tbdb_tournament', function(Blueprint $table) {
-            $table->drop('feature_keyword');
+            $table->dropColumn('feature_keyword');
         });
     }
 
