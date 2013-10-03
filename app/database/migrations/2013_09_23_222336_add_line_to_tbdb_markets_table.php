@@ -25,7 +25,7 @@ class AddLineToTbdbMarketsTable extends Migration {
     public function down()
     {
         Schema::table('tbdb_market', function(Blueprint $table) {
-            $table->drop('line');
+            $table->dropColumn('line');
         });
     }
 
