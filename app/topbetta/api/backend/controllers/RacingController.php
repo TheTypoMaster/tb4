@@ -976,7 +976,7 @@ class RacingController extends \BaseController {
             TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
 	
 		}else{
-			TopBetta\LogHelper::l("Meeting ID not found???? - $meetingTypeCodeResult");
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - $meetingTypeCodeResult");
 		}
 		return true;
 	}
