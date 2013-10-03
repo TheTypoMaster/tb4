@@ -921,7 +921,7 @@ class RacingController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit($id) 
 	{
 		//
 	}
@@ -958,7 +958,7 @@ class RacingController extends \BaseController {
 		$priceType = $dataArray['PriceType'];
 		
 		// grab the meeting details we need
-		$meetingTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->get();
+		$meetingTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->where('type_code', 'IS NOT', 'NULL')->get();
 		$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
 		$meetingCountry = $meetingTypeCodeResult[0]['country'];
 		$meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
