@@ -228,7 +228,7 @@ class TournamentController extends JController
 		}
 		$formdata['tod_flag'] 		= $tournament->tod_flag;
 		$formdata['free_credit']	= $tournament->free_credit_flag;
-		$formdata['tournament_feature_id'] = $tournament->feature_keyword;
+		//$formdata['tournament_feature_id'] = $tournament->feature_keyword;
 		
 		if ($sessFormData = $session->get('sessFormData', null, 'tournament'))
 		{
