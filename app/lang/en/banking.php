@@ -22,5 +22,5 @@ return array(
 	"cc_payment_failed" => "E-Way Payment Processing Failed",
 	"cc_payment_success" => "E-Way Payment Processing Succeeded",
 	"cc_payment_accbal_update_failed" => "E-Way Payment worked but account balance not updated - Please contact Topbetta Helpdesk",
-	
+		
 );
