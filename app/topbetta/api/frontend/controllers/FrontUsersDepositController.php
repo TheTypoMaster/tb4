@@ -235,37 +235,37 @@ class FrontUsersDepositController extends \BaseController {
 					$soapResponse = $this->ewayProcessRequest($createCustomerArray, 'CreateCustomer');
 					
 					// check we got a new managedCustomerID
-					if($soapResponse['success'] && $soapResponse['message']->CreateCustomerResult){
+					if($soapResponse['success'] && $soapResponse['result']->CreateCustomerResult){
 						
 						// Store the new CC token in our DB
 						$ccTokenModel = new TopBetta\PaymentEwayTokens();
 						$ccTokenModel->user_id = \Auth::user()->id;
-						$ccTokenModel->cc_token = $soapResponse['message']->CreateCustomerResult;
+						$ccTokenModel->cc_token = $soapResponse['result']->CreateCustomerResult;
 						$ccTokenModel->save();
 						
 						// Process a payment with the new managedCustomerID
-						$paymentArray = array('managedCustomerID' => $soapResponse['message']->CreateCustomerResult, 'amount' => $input['amount'], 
+						$paymentArray = array('managedCustomerID' => $soapResponse['result']->CreateCustomerResult, 'amount' => $input['amount'], 
 											'invoiceReference' => \Auth::user()->id, 'invoiceDescription' => 'TopBetta Deposit');
 						$soapResponse = $this->ewayProcessRequest($paymentArray, 'ProcessPayment');
 						
 						// Check if CC payment was processed successfully
-						if($soapResponse['success'] && $soapResponse['message']->ewayResponse->ewayTrxnStatus = 'True'){
+						if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
 
 							// Update users account balance
-							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['message']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['message']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['message']->ewayResponse->ewayAuthCode);
+							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 							if($updateAccountBalance){
-								return array("success" => true, "message" => \Lang::get('banking.cc_payment_success'));
+								return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 							}else{
 								//TODO: If updating of account balance fails then let someone know!?!?
-								return array("success" => false, "message" => \Lang::get('banking.cc_payment_accbal_update_failed'));
+								return array("success" => false, "result" => \Lang::get('banking.cc_payment_accbal_update_failed'));
 							}
 						}else{
 							// return failed message
-							return array("success" => false, "message" => \Lang::get('banking.cc_payment_failed'));
+							return array("success" => false, "error" => \Lang::get('banking.cc_payment_failed'));
 						}
 					}else{
-						return array("success" => false, "message" => \Lang::get('banking.customer_creation_failed'));
+						return array("success" => false, "error" => \Lang::get('banking.customer_creation_failed'));
 					}
 						
 				}
@@ -290,20 +290,20 @@ class FrontUsersDepositController extends \BaseController {
 					$soapResponse = $this->ewayProcessRequest($requestbody, 'ProcessPayment');
 					
 					// Check if CC payment was processed successfully
-					if($soapResponse['success'] && $soapResponse['message']->ewayResponse->ewayTrxnStatus = 'True'){
+					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
 					
 						// Update users account balance
-						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['message']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['message']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['message']->ewayResponse->ewayAuthCode);
+						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 						if($updateAccountBalance){
-							return array("success" => true, "message" => \Lang::get('banking.cc_payment_success'));
+							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
-							return array("success" => false, "message" => \Lang::get('banking.cc_payment_accbal_update_failed'));
+							return array("success" => false, "error" => \Lang::get('banking.cc_payment_accbal_update_failed'));
 						}
 					}else{
 						// return failed message
-						return array("success" => false, "message" => \Lang::get('banking.cc_payment_failed'));
+						return array("success" => false, "error" => \Lang::get('banking.cc_payment_failed'));
 					}
 				}
 				break;
@@ -326,57 +326,53 @@ class FrontUsersDepositController extends \BaseController {
 					$soapResponse = $this->ewayProcessRequest($requestbody, 'ProcessPaymentWithCVN');
 					
 					// Check if CC payment was processed successfully
-					if($soapResponse['success'] && $soapResponse['message']->ewayResponse->ewayTrxnStatus = 'True'){
+					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
 							
 						// Update users account balance
-						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['message']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['message']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['message']->ewayResponse->ewayAuthCode);
+						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 						if($updateAccountBalance){
-							return array("success" => true, "message" => \Lang::get('banking.cc_payment_success'));
+							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
-							return array("success" => false, "message" => \Lang::get('banking.cc_payment_accbal_update_failed'));
+							return array("success" => false, "error" => \Lang::get('banking.cc_payment_accbal_update_failed'));
 						}
 					}else{
 						// return failed message
-						return array("success" => false, "message" => \Lang::get('banking.cc_payment_failed'));
+						return array("success" => false, "error" => \Lang::get('banking.cc_payment_failed'));
 					}
 				}
 				break;
 			
 			case 'query_customer':
-				// Validate 
-				$rules = array('managedCustomerID' => 'required');
-				$validator = \Validator::make($input, $rules);
-				if ($validator -> fails()) {				
-					return array("success" => false, "error" => $validator -> messages() -> all());
-				} else {
-					$ccTokenDetailsArray = array();
-					
-					// grab all the managedCustomerId's for the users stored CC's out of the database
-					$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
-	
+				$ccTokenDetailsArray = array();
+				
+				// grab all the managedCustomerId's for the users stored CC's out of the database
+				$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
+
+				$tokenCount = count($usersCCTokens);
+				
+				if(count($usersCCTokens)){
 					// loop through each token found and query E-Way for the CC details
 					foreach($usersCCTokens as $userToken){
-						
 						$requestbody = array('managedCustomerID' => $userToken->cc_token);
 						// make the SOAP call
 						$soapResponse = $this->ewayProcessRequest($requestbody, 'QueryCustomer');
 						
 						if($soapResponse['success']){
-							$ccTokenDetailsArray[] = $soapResponse['message'];
+							$ccTokenDetailsArray[] = $soapResponse['result'];
 						}
 					}
-					return array('success' => true, 'message' => $ccTokenDetailsArray);
+					return array('success' => true, 'result' => $ccTokenDetailsArray);
+				}else{				
+					return array('success' => false, 'error' => 'No Stored Tokens');
 				}
 				break;
 				
 			default :
-				return array("success" => false, "message" => \Lang::get('banking.invalid_action'));
+				return array("success" => false, "error" => \Lang::get('banking.invalid_action'));
 				break;
 		}
-				
-		return $soapResponse;
 	}
 	
 	function buildRequestBody($input) {
@@ -418,13 +414,13 @@ class FrontUsersDepositController extends \BaseController {
 		try {
 			$soapCall = $soapClient->$method($requestbody,$headers);
 		} catch (\SoapFault $fault) {
-			return array("success" => false, "message" => $fault->faultcode." Ð ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." Ð ".$fault->faultstring);
 		} catch(\Exception $fault){
-			return array("success" => false, "message" => $fault->faultcode." Ð ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." Ð ".$fault->faultstring);
 		}
 	
 		// return response from soap request
-		return array("success" => true, "message" => $soapCall);
+		return array("success" => true, "result" => $soapCall);
 	}
 	
 
