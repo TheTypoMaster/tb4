@@ -45,7 +45,32 @@ class FrontUsersDepositController extends \BaseController {
 
 				return array("success" => true, "result" => array('title' => 'Telephone & Internet Banking - BPAY&reg;', 'biller_code' => $billerCode, 'ref' => $bpayRef, 'logo' => url('images/bank_logos/logo_bpay_55.gif'), 'message' => 'Contact your bank, credit union or building society to make this payment from your cheque, savings, debit or credit card account. More info: www.bpay.com.au'));
 				break;
-
+			
+			case 'query_eway_customer':
+				$ccTokenDetailsArray = array();
+			
+				// grab all the managedCustomerId's for the users stored CC's out of the database
+				$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
+			
+				$tokenCount = count($usersCCTokens);
+			
+				if(count($usersCCTokens)){
+					// loop through each token found and query E-Way for the CC details
+					foreach($usersCCTokens as $userToken){
+						$requestbody = array('managedCustomerID' => $userToken->cc_token);
+						// make the SOAP call
+						$soapResponse = $this->ewayProcessRequest($requestbody, 'QueryCustomer');
+			
+						if($soapResponse['success']){
+							$ccTokenDetailsArray[] = $soapResponse['result'];
+						}
+					}
+					return array('success' => true, 'result' => $ccTokenDetailsArray);
+				}else{
+					return array('success' => false, 'error' => 'No Stored Tokens');
+				}
+				break;
+				
 			default :
 				return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
 				break;
@@ -341,31 +366,6 @@ class FrontUsersDepositController extends \BaseController {
 						// return failed message
 						return array("success" => false, "error" => \Lang::get('banking.cc_payment_failed'));
 					}
-				}
-				break;
-			
-			case 'query_customer':
-				$ccTokenDetailsArray = array();
-				
-				// grab all the managedCustomerId's for the users stored CC's out of the database
-				$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
-
-				$tokenCount = count($usersCCTokens);
-				
-				if(count($usersCCTokens)){
-					// loop through each token found and query E-Way for the CC details
-					foreach($usersCCTokens as $userToken){
-						$requestbody = array('managedCustomerID' => $userToken->cc_token);
-						// make the SOAP call
-						$soapResponse = $this->ewayProcessRequest($requestbody, 'QueryCustomer');
-						
-						if($soapResponse['success']){
-							$ccTokenDetailsArray[] = $soapResponse['result'];
-						}
-					}
-					return array('success' => true, 'result' => $ccTokenDetailsArray);
-				}else{				
-					return array('success' => false, 'error' => 'No Stored Tokens');
 				}
 				break;
 				
