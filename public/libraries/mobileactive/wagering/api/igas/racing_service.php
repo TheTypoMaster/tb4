@@ -741,7 +741,7 @@ class ApiException extends Exception
 			throw new Exception(serialize($error_list));
 		}
 		elseif(is_string($response)){
-			if(is_array($details)){
+			if($details != null){
 				throw new Exception(serialize('(' . $details->ErrorNo . ') ' . $details->ErrorText));
 			}else{
 				throw new Exception(serialize('(' . 0 . ') ' . $response));
