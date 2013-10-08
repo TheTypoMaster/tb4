@@ -8,4 +8,9 @@ class TopBettaUser extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
+    
+    static public function getTopBettaUserDetails($userID){
+    	return TopBettaUser::where('user_id', '=', $userID)->get();
+    }
+    
 }
