@@ -22,7 +22,13 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
-        		
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '1',
+        				'value' => 'finery',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
         		
         		
         		array (
@@ -136,7 +142,56 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD1',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD2',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD3',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD4',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD5',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
         		
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD6',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '5',
+        				'value' => 'GOOD7',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
         		
         		array (
         				'provider_id' => '1',
@@ -163,6 +218,55 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'provider_id' => '1',
         				'data_value_id' => '6',
         				'value' => 'dead4',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD1',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD2',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD3',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD4',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD5',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD6',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '6',
+        				'value' => 'DEAD7',
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
@@ -204,6 +308,49 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW1',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW2',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW3',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW4',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW5',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array (
+        				'provider_id' => '1',
+        				'data_value_id' => '7',
+        				'value' => 'SLOW6',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		
         		
         		
         		
@@ -234,10 +381,43 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         				'value' => 'HVY10',
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
-        		)
-        		        		
+        		),
         		
         		
+        		
+        		/*
+        		 *    Bet Errors
+        		 */
+        		array ( // Betting closed
+        				'provider_id' => '1',
+        				'data_value_id' => '9',
+        				'value' => '280',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array ( // LegNo:1 Odds have changed
+        				'provider_id' => '1',
+        				'data_value_id' => '10',
+        				'value' => '44',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array ( // LegNo:1 Line has changed
+        				'provider_id' => '1',
+        				'data_value_id' => '11',
+        				'value' => '43',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		array ( // Selection withdrawn
+        				'provider_id' => '1',
+        				'data_value_id' => '12',
+        				'value' => '71',
+        				'created_at' => new DateTime,
+        				'updated_at' => new DateTime
+        		),
+        		
+         		
         ) );
 
         // Uncomment the below to run the seeder
