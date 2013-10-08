@@ -596,7 +596,7 @@ $Selection = "1";
 					$this->setLogger("racing_service: curlRequest Failed.");
 					
 					
-					throw new ApiException("Bet could not be posted. ", $details);
+					throw new ApiException("Bet could not be posted. ", $response);
 
 				}
 
