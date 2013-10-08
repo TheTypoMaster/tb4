@@ -14,6 +14,10 @@ class Tournament extends \Eloquent {
 	protected $guarded = array();
 
 	public static $rules = array();
+	
+	static public function getTournamentWithEventGroup($eventGroupId){
+		return Tournament::where('event_group_id', '=', $eventGroupId)->get();
+	}
 
 	public function getTournamentActiveList($list_params = array()) {
 
@@ -54,6 +58,7 @@ class Tournament extends \Eloquent {
 				t.created_date,
 				t.updated_date,
 				t.private_flag,
+				t.bet_limit_flag,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,
@@ -97,11 +102,11 @@ class Tournament extends \Eloquent {
 		 if ($jackpot !== false) {
 		 $query .= ' AND t.jackpot_flag = ' . $db -> quote($jackpot);
 		 }
-
-		 if ($private !== false) {
-		 $query .= ' AND t.private_flag = ' . $db -> quote($private);
-		 }
 		 */
+		 
+		 if ($private !== false) {
+		 $query .= ' AND t.private_flag = "' . $private . '"';
+		 }
 
 		// start with a sub_type, then fall back to type
 		if ($sub_type) {
