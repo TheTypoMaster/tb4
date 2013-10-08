@@ -56,7 +56,7 @@ return array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
 			'database'  => 'topbetta_igas',
-			'username'  => 'root',
+			'username'  => 'topbetta_testing',
 			'password'  => 'mysqlp@ss',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
