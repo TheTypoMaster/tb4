@@ -394,15 +394,19 @@ class FrontUsersDepositController extends \BaseController {
 	private function ewayProcessRequest($requestbody, $method){
 		
 		
-		// TODO: move to laravel config file
+		// Grab config details
+		$soapEndPoint = \Config::get('eway.soapEndPoint');
+		$customerID = \Config::get('eway.eWAYCustomerID');
+		$userName = \Config::get('eway.Username');
+		$password = \Config::get('eway.Password');
 		
 		// init soap client
-		$soapClient = new \SoapClient('https://www.eway.com.au/gateway/ManagedPaymentService/test/managedCreditCardPayment.asmx?WSDL', array('trace' => 1));
+		$soapClient = new \SoapClient($soapEndPoint, array('trace' => 1));
 		
 		$sh_param = array(
-				'eWAYCustomerID' => '87654321',
-				'Username' => 'test@eway.com.au',
-				'Password' => 'test123'	);
+				'eWAYCustomerID' => $customerID,
+				'Username' => $userName,
+				'Password' => $password	);
 		
 		// set the SOAP headers
 		$headers = new \SoapHeader('https://www.eway.com.au/gateway/managedpayment', 'eWAYHeader', $sh_param);
