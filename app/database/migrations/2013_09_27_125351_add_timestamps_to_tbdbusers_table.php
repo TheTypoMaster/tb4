@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddLineToTbdbMarketsTable extends Migration {
+class AddTimestampsToTbdbUsersTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class AddLineToTbdbMarketsTable extends Migration {
      */
     public function up()
     {
-        Schema::table('tbdb_market', function(Blueprint $table) {
-        	$table->string('line');
+        Schema::table('tbdb_users', function(Blueprint $table) {
+            $table->timestamps();
         });
     }
 
@@ -24,8 +24,8 @@ class AddLineToTbdbMarketsTable extends Migration {
      */
     public function down()
     {
-        Schema::table('tbdb_market', function(Blueprint $table) {
-            $table->dropColumn('line');
+        Schema::table('tbdb_users', function(Blueprint $table) {
+            
         });
     }
 
