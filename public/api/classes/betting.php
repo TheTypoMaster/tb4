@@ -1315,7 +1315,7 @@ class Api_Betting extends JController {
 				if (!$bet_confirmed) {
 					
 					if($free_bet_amount > 0) {
-						//add free bet doallers
+						//add free bet dollars
 						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
 							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund', null, $user->id); 
 						}
@@ -1335,8 +1335,18 @@ class Api_Betting extends JController {
 					
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 					
-					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					// Check for TB error code matching
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
 					
+                    // pull the error code from the API response
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    
+                    // If we have a custom error show that - otherwise show the provider error
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+                    ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
+                    
+					return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage ));
 				}
 			}
 			return OutputHelper::json (200, array ('success' => 'Your bet(s) have been placed'));
@@ -1840,7 +1850,17 @@ class Api_Betting extends JController {
 
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 
-					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					// Check for TB error code matching
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
+					
+                    // pull the error code from the API response
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    
+                    // If we have a custom error show that - otherwise show the provider error
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+                    ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
+					
 
 				}
 			}
@@ -2343,7 +2363,19 @@ class Api_Betting extends JController {
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 
 					$validation->error = JText::_('Bet could not be registered');
-					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+					
+					
+					// Check for TB error code matching
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
+					
+                    // pull the error code from the API response
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    
+                    // If we have a custom error show that - otherwise show the provider error
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+                    ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
+					
 
 // 					if (isset($external_bet->newOdds)){
 // 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
