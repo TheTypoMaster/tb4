@@ -1335,7 +1335,13 @@ class Api_Betting extends JController {
 					
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 					
-					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+					$betErrorCodes_model	= new BettingModelBetErrorCodes();
+					
+					$betErrorCode = preg_match('#\([^)]+\)#', (string)$api_error);
+					$tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode, $providerName);
+										
+					return OutputHelper::json(500, array('error_msg' => 'Error: ' . $tbErrorMessage ));
 					
 				}
 			}
@@ -1840,7 +1846,7 @@ class Api_Betting extends JController {
 
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 
-					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered: ' . $api_error ));
 
 				}
 			}
