@@ -1336,10 +1336,12 @@ class Api_Betting extends JController {
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 					
 					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
-					$betErrorCodes_model	= new BettingModelBetErrorCodes();
-					
-					$betErrorCode = preg_match('#\([^)]+\)#', (string)$api_error);
-					$tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode, $providerName);
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
+
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+
+                    //return OutputHelper::json(500, array('error_msg' => 'Error: ' . print_r($tbErrorMessage));
 										
 					return OutputHelper::json(500, array('error_msg' => 'Error: ' . $tbErrorMessage ));
 					
