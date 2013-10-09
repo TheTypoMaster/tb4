@@ -391,7 +391,7 @@ class Tb_data_provider_matchTableSeeder extends Seeder {
         		array ( // Betting closed
         				'provider_id' => '1',
         				'data_value_id' => '9',
-        				'value' => '280',
+        				'value' => '281',
         				'created_at' => new DateTime,
         				'updated_at' => new DateTime
         		),
