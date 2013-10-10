@@ -32,31 +32,31 @@ class FrontTournamentsController extends \BaseController {
 			$featuredTourns = array(
 				'2013-10-12' => array(
 					'free' => 53737, 
-					'paid' => 53685), 
+					'paid' => 53757), 
 				'2013-10-16' => array(
 					'free' => 53739, 
-					'paid' => 53721),
+					'paid' => 53757),
 				'2013-10-19' => array(
 					'free' => 53741, 
-					'paid' => 53723), 
+					'paid' => 53759), 
 				'2013-10-20' => array(
 					'free' => 53743, 
-					'paid' => 53725), 
+					'paid' => 53759), 
 				'2013-10-25' => array(
 					'free' => 53745, 
-					'paid' => 53727), 
+					'paid' => 53759), 
 				'2013-10-26' => array(
 					'free' => 53747, 
-					'paid' => 53729), 
+					'paid' => 53761), 
 				'2013-11-02' => array(
 					'free' => 53749, 
-					'paid' => 53731), 
+					'paid' => 53763), 
 				'2013-11-05' => array(
 					'free' => 53751, 
-					'paid' => 53733), 
+					'paid' => 53763), 
 				'2013-11-07' => array(
 					'free' => 53753, 
-					'paid' => 53735)
+					'paid' => 53763)
 				);
 
 			echo serialize($featuredTourns);exit;
