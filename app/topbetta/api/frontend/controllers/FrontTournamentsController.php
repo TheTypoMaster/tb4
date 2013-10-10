@@ -21,6 +21,70 @@ class FrontTournamentsController extends \BaseController {
 		//
 		$type = Input::get('type', 'racing');
 
+		// special case for the atp landing page
+		// new feature being implemented will replace this
+		if ($type == 'atp-landing') {
+			
+			$affiliateId = 'G01';
+			$campaignId = 'ATP';
+
+			/*
+			$featuredTourns = array(
+				'2013-10-12' => array(
+					'free' => 53737, 
+					'paid' => 53757), 
+				'2013-10-16' => array(
+					'free' => 53739, 
+					'paid' => 53757),
+				'2013-10-19' => array(
+					'free' => 53741, 
+					'paid' => 53759), 
+				'2013-10-20' => array(
+					'free' => 53743, 
+					'paid' => 53759), 
+				'2013-10-25' => array(
+					'free' => 53745, 
+					'paid' => 53759), 
+				'2013-10-26' => array(
+					'free' => 53747, 
+					'paid' => 53761), 
+				'2013-11-02' => array(
+					'free' => 53749, 
+					'paid' => 53763), 
+				'2013-11-05' => array(
+					'free' => 53751, 
+					'paid' => 53763), 
+				'2013-11-07' => array(
+					'free' => 53753, 
+					'paid' => 53763)
+				);
+
+			echo serialize($featuredTourns);exit;
+			*/
+
+			$featuredTourns = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+			if ($featuredTourns) {
+				$featuredTourns = unserialize($featuredTourns);
+			} else {
+				$featuredTourns = array();
+			}	
+			
+			// we reverse the order and find the first match :-)
+			$value = array_first(array_reverse($featuredTourns), function($key, $value)
+			{
+				$date = new \DateTime();
+				$date = $date -> format('Y-m-d');
+
+				// start with the first one if we are not up to the start date yet
+				$date = ($date < '2013-10-12') ? '2013-10-12' : $date;   
+
+			    return $key <= $date;
+			});			
+
+			return array("success" => true, "result" => $value);
+
+		}
+
 		//sub type e.g. for racing: greyhounds, for sports: nrl
 		$sub_type = Input::get('sub_type', null);
 
