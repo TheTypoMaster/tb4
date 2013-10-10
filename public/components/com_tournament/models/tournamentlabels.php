@@ -11,8 +11,29 @@ class TournamentModelTournamentLabels extends JModel
 	public function getTournamentLabels(){
 		$db =& $this->getDBO();
 		
-		$query  = " SELECT id, label, description";
-		$query .= " FROM tb_tournament_labels";
+		$query  = " SELECT tl.id, tl.label as label, tl.description as description, tl.parent_label_id as parent_label_id, ttl.label as parent_label_label";
+		$query .= " FROM tb_tournament_labels as tl";
+		$query .= " LEFT JOIN tb_tournament_labels as ttl on ttl.id = tl.parent_label_id";
+			
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	public function getTournamentLabelById($id){
+		$db =& $this->getDBO();
+	
+		$query  = " SELECT id, label, description, parent_label_id";
+		$query .= " FROM tb_tournament_labels WHERE id = '$id'";
+			
+		$db->setQuery($query);
+		return $db->loadAssoc();
+	}
+	
+	public function getTournamentParentLabels($parentLabelId){
+		$db =& $this->getDBO();
+	
+		$query  = " SELECT id, label, description, parent_label_id";
+		$query .= " FROM tb_tournament_labels WHERE parent_label_id = '$parentLabelId' ";
 			
 		$db->setQuery($query);
 		return $db->loadObjectList();
@@ -39,6 +60,26 @@ class TournamentModelTournamentLabels extends JModel
 		$db->setQuery($query);
 		return $db->loadObjectList();
 	}
+	
+	public function addTournamentLabel($label, $description, $parent_label_id){
+		$db =& $this->getDBO();
+	
+		$query = "INSERT INTO tb_tournament_labels (label,	description, parent_label_id)
+			 		VALUES ('$label','$description','$parent_label_id')";
+	
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	public function updateTournamentLabel($id, $label, $description, $parent_label_id){
+		$db =& $this->getDBO();
+	
+		$query = "UPDATE tb_tournament_labels SET label = '$label', description = '$description', parent_label_id = '$parent_label_id' WHERE id = '$id'" ;
+	
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
 	
 	public function deleteTournamentLabelsByTournamentId($tournamentId){
 		$db =& $this->getDBO();
