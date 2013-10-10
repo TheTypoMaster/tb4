@@ -13,13 +13,13 @@ jimport( 'joomla.application.component.view' );
 switch( JRequest::getVar('task') )
 {
 case 'edit':
-	JToolBarHelper::title( JText::_( 'Tournament Label Manager  - Edit Label' ), 'generic.png' );
+	JToolBarHelper::title( JText::_( 'Tournament Group Manager  - Edit Group' ), 'generic.png' );
 	break;
 default:
-	JToolBarHelper::title( JText::_( 'Tournament Label Manager' ), 'generic.png' );
+	JToolBarHelper::title( JText::_( 'Tournament Group Manager' ), 'generic.png' );
 	break;
 }
-class TournamentViewTournamentLabels extends JView
+class TournamentViewTournamentGroups extends JView
 {
 public function display($tpl = null) {
 		$task = JRequest::getVar('task', 'listView');
@@ -41,7 +41,7 @@ public function display($tpl = null) {
 	}
 	
 	/**
-	 * Method to edit tournament label
+	 * Method to edit tournament Group
 	 */
 	public function edit()
 	{
@@ -52,14 +52,14 @@ public function display($tpl = null) {
 		JToolBarHelper::save("save", "Save");
 		JToolBarHelper::cancel();
 		
-		$this->labels_option_list = array('-1' => JText::_('Select a Parent Tournament Label'));
-		if (!empty($this->tournament_labels)) {
-			foreach($this->tournament_labels as $label) {
-				$this->labels_option_list[$label->id] = JText::_($label->label);
+		$this->groups_option_list = array('-1' => JText::_('Select a Parent Group'));
+		if (!empty($this->tournament_groups)) {
+			foreach($this->tournament_groups as $Group) {
+				$this->groups_option_list[$Group->id] = JText::_($group->group);
 			}
 		}
 		
-		$this->label_selected_list = FormHelper::getSelectedList($this->labels_option_list, $this->tournament_label_details['parent_label_id']);
+		$this->group_selected_list = FormHelper::getSelectedList($this->groups_option_list, $this->tournament_group_details['parent_group_id']);
 		
 	}
 }

@@ -5,12 +5,12 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport( 'joomla.application.component.controller' );
 
-class TournamentLabelsController extends JController
+class TournamentGroupsController extends JController
 {
 	/**
 	 * Controller URL is to reuse the same path to all the places nessessary
 	 */
-	private $controllerUrl = 'index.php?option=com_tournament&controller=tournamentlabels';
+	private $controllerUrl = 'index.php?option=com_tournament&controller=tournamentgroups';
 	/**
 	 * Display the list of racing tournaments
 	 *
@@ -44,19 +44,19 @@ class TournamentLabelsController extends JController
 			0
 		); 
 		
-		$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
-		$tournament_label_list = $tournament_label_model->getTournamentLabels();
+		$tournament_group_model =& $this->getModel('TournamentGroups', 'TournamentModel');
+		$tournament_group_list = $tournament_group_model->getTournamentGroups();
 		
 		jimport('joomla.html.pagination');
 
-		$total = count($tournament_label_list);
+		$total = count($tournament_group_list);
 		$pagination 	= new JPagination($total, $offset, $limit);
 		
 		
-		$view 			=& $this->getView('TournamentLabels', 'html', 'TournamentView');
+		$view 			=& $this->getView('TournamentGroups', 'html', 'TournamentView');
 		$view->setLayout('listview');
 		
-		$view->assign('tournament_label_list', $tournament_label_list);
+		$view->assign('tournament_group_list', $tournament_group_list);
 		$view->assign('order', $order);
 		$view->assign('direction', $direction);
 		$view->assign('pagination', $pagination->getListFooter());
@@ -85,20 +85,20 @@ class TournamentLabelsController extends JController
 		$fields		= array_keys($this->_getFieldList());
 		
 		// model 
-		$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
+		$tournament_group_model =& $this->getModel('TournamentGroups', 'TournamentModel');
 		
 		// grab the label details
-		$tournament_label_details = $tournament_label_model->getTournamentLabelById($id);
+		$tournament_group_details = $tournament_group_model->getTournamentGroupById($id);
 		
 		// get all available labels
-		$tournament_labels = $tournament_label_model->getTournamentLabels();
+		$tournament_groups = $tournament_group_model->getTournamentGroups();
 		
 		
-		$view =& $this->getView('TournamentLabels', 'html', 'TournamentView');
+		$view =& $this->getView('TournamentGroups', 'html', 'TournamentView');
 		$view->setLayout('edit');
 		
-		$view->assign('tournament_label_details', $tournament_label_details);
-		$view->assign('tournament_labels', $tournament_labels);
+		$view->assign('tournament_group_details', $tournament_group_details);
+		$view->assign('tournament_groups', $tournament_groups);
 		
 		$session =& JFactory::getSession();
 
@@ -109,9 +109,9 @@ class TournamentLabelsController extends JController
 	{
 		static $field_list = array(
 				
-				'label' 								=> -1,
+				'group' 								=> -1,
 				'descripiption' 						=> -1,
-				'parent_label_id'					=> -1
+				'parent_group_id'						=> -1
 			);
 	
 		return $field_list;
@@ -124,17 +124,17 @@ class TournamentLabelsController extends JController
 	{
     			
 		$id					= JRequest::getVar('id', null);
-		$label				= JRequest::getVar('label', null);
+		$group				= JRequest::getVar('group', null);
 		$description		= JRequest::getVar('description', null);
-		$parent_label_id	= JRequest::getVar('parent_label_id', null);
+		$parent_label_id	= JRequest::getVar('parent_groupl_id', null);
 
-		$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
+		$tournament_group_model =& $this->getModel('TournamentGroups', 'TournamentModel');
 		
 		if ($id){
-			$tournament_label_model->updateTournamentLabel($id, $label, $description, $parent_label_id);
+			$tournament_group_model->updateTournamentGroup($id, $group, $description, $parent_label_id);
 			$this->setRedirect($this->controllerUrl, JText::_('Label updated'));
 		}else{
-			$tournament_label_model->addTournamentLabel($label, $description, $parent_label_id);
+			$tournament_group_model->addTournamentGroup($group, $description, $parent_label_id);
 			$this->setRedirect($this->controllerUrl, JText::_('Label Added'));
 		}
 		
