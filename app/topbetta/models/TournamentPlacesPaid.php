@@ -293,6 +293,34 @@ class TournamentPlacesPaid extends \Eloquent {
 	}
 
 	/**
+	 * Get the next available rank (if there is one)
+	 *
+	 * @param array 	$ranking_list
+	 * @param integer 	$current
+	 * @return mixed
+	 */
+	private function _getNextRank(array $ranking_list, $current) {
+		// this indicates that 1st place was not paid
+		if($current == 0) {
+			return 1;
+		}
+
+		$key_list = array_keys($ranking_list);
+
+		$next 	= false;
+		$index 	= array_search($current, $key_list);
+
+		if($index !== false) {
+			++$index;
+			if(isset($key_list[$index])) {
+				$next = $key_list[$index];
+			}
+		}
+
+		return $next;
+	}
+
+	/**
 	 * Check whether a tournament is a jackpot tournament
 	 *
 	 * @param object $tournament
