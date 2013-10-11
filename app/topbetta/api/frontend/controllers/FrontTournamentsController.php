@@ -180,6 +180,44 @@ class FrontTournamentsController extends \BaseController {
 
 		}
 
+		// >>>>>>>>>>>>>>>>>> START TEMP ATP
+		$affiliateId = 'G01';
+		$campaignId = 'ATP2';
+		
+		/*
+		$atpTournaments = array(
+			'53737' => array('atp'),
+			'53685' => array('atp'),
+			'53739' => array('atp'),
+			'53721' => array('atp'),
+			'53741' => array('atp'),
+			'53723' => array('atp'),
+			'53743' => array('atp'),
+			'53725' => array('atp'),
+			'53745' => array('atp'),
+			'53727' => array('atp'),
+			'53747' => array('atp'),
+			'53729' => array('atp'),
+			'53749' => array('atp'),
+			'53731' => array('atp'),
+			'53751' => array('atp'),
+			'53733' => array('atp'),
+			'53753' => array('atp'),
+			'53735' => array('atp'),
+			'53719' => array('atp','final')
+		);
+
+		echo serialize($atpTournaments);exit;
+		/*/
+
+		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+		if ($atpTournaments) {
+			$atpTournaments = unserialize($atpTournaments);
+		} else {
+			$atpTournaments = array();
+		}	
+		// <<<<<<<<<<<<<<<<< END TEMP ATP
+
 		$meetingId = NULL;
 		$eachMeeting = array();
 
@@ -246,7 +284,13 @@ class FrontTournamentsController extends \BaseController {
 						$startDatetime = \TimeHelper::isoDate($tourn -> start_date);
 						$endDatetime = \TimeHelper::isoDate($tourn -> end_date);
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime);
+						// TEMP FOR ATP
+						$labels = array();
+						if (array_key_exists($tourn -> id, $atpTournaments)) {
+							$labels = $atpTournaments[$tourn -> id];
+						}		
+
+						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels);
 					}
 
 					//handle sub_type for racing
