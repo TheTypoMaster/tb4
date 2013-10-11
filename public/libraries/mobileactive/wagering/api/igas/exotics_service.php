@@ -502,7 +502,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 			}
 			else {
 				$this->setLogger("exotics_service: action Failed.");
-				throw new ApiException("Bet could not be posted. ".$response->detail);
+				throw new ApiException("Bet could not be posted. ", $response);
 			}
 		}
 		throw new ApiException("API error: No api path selected. ");
@@ -536,7 +536,7 @@ class WageringApiIgasexoticsService extends ConfigReader{
 
 class ApiException extends Exception
 {
-	public function __construct($response){
+	public function __construct($response, $details = null){
 		if(is_array($response)){
 			$error_list = array();
 			foreach($response as $response_single){
@@ -549,7 +549,11 @@ class ApiException extends Exception
 			throw new Exception(serialize($error_list));
 		}
 		elseif(is_string($response)){
-			throw new Exception(serialize('(' . 0 . ') ' . $response));
+			if($details != null){
+				throw new Exception(serialize('(' . $details->ErrorNo . ') ' . $details->ErrorText));
+			}else{
+				throw new Exception(serialize('(' . 0 . ') ' . $response));
+			}
 		}
 		else{
 			throw new Exception(serialize('(' . $response->errorCode . ') ' . $response->errorMessage));
