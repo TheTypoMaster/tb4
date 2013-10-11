@@ -62,7 +62,7 @@ class FrontUsersDepositController extends \BaseController {
 						$soapResponse = $this->ewayProcessRequest($requestbody, 'QueryCustomer');
 			
 						if($soapResponse['success']){
-							$ccTokenDetailsArray[] = $soapResponse['result'];
+							$ccTokenDetailsArray[] = $soapResponse['result']->QueryCustomerResult;
 						}
 					}
 					return array('success' => true, 'result' => $ccTokenDetailsArray);
@@ -304,6 +304,13 @@ class FrontUsersDepositController extends \BaseController {
 				if ($validator -> fails()) {				
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
+					
+					// Check the managed customer ID is stored in the DB
+					$usersCCTokenID = TopBetta\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $input['managedCustomerID']);
+					
+					if (!$usersCCTokenID){
+						return array("success" => false, "error" => \Lang::get('banking.cc_token_invalid'));
+					}
 					// add invoice ref an invoice decription to the request body
 					$invoiceDetail = array('InvoiceReference' => \Auth::user()->id, 'InvoiceDescription' => 'TopBetta Deposit');
 					$input = array_merge($input, $invoiceDetail);
