@@ -241,7 +241,11 @@ class FrontUsersDepositController extends \BaseController {
 				$title = $topbettaUserDetails[0]['title'];
 				$firstName = $topbettaUserDetails[0]['first_name'];
 				$lastName = $topbettaUserDetails[0]['last_name'];
-				$country = $topbettaUserDetails[0]['country'];
+				$country = strtolower($topbettaUserDetails[0]['country']);
+				$address = $topbettaUserDetails[0]['street'];
+				$suburb = $topbettaUserDetails[0]['city'];
+				$state = $topbettaUserDetails[0]['state'];
+				$postcode = $topbettaUserDetails[0]['postcode'];
 			
 				// Validate the data required to make a new customer and initial deposit is correct
 				$rules = array('CCNumber' => 'required|max:20', 'CCNameOnCard' => 'max:50',
@@ -253,8 +257,10 @@ class FrontUsersDepositController extends \BaseController {
 				} else {
 				
 					// Add the required data to the array for the SOAP request body
-					$createCustomerArray = array('Title' => $title, 'FirstName' => $firstName, 'LastName' => $lastName, 'Country' => $country,
-							'CCNumber' => $input['CCNumber'], 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear']);
+					$createCustomerArray = array('Title' => $title.'.', 'FirstName' => $firstName, 'LastName' => $lastName, 'Country' => $country,
+							'CCNumber' => $input['CCNumber'], 'CCNameOnCard' => '', 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear'],
+							'Address' => $address, 'Suburb' => $suburb, 'State' => $state, 'Company' => '', 'PostCode' => $postcode, 'Email' => '', 'Fax' => '', 'Phone' => '',
+							'Mobile' => '', 'CustomerRef' => '', 'JobDesc' => '', 'Comments' => '', 'URL' => '');
 		
 					// Make the SOAP call
 					$soapResponse = $this->ewayProcessRequest($createCustomerArray, 'CreateCustomer');
