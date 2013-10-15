@@ -280,7 +280,7 @@ class FrontUsersDepositController extends \BaseController {
 						$soapResponse = $this->ewayProcessRequest($paymentArray, 'ProcessPayment');
 						
 						// Check if CC payment was processed successfully
-						if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
+						if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus == 'True'){
 
 							// Update users account balance
 							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
@@ -328,7 +328,7 @@ class FrontUsersDepositController extends \BaseController {
 					$soapResponse = $this->ewayProcessRequest($requestbody, 'ProcessPayment');
 					
 					// Check if CC payment was processed successfully
-					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
+					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus == 'True'){
 					
 						// Update users account balance
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
