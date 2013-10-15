@@ -305,8 +305,9 @@ class FrontUsersDepositController extends \BaseController {
 		
 			case 'process_payment':
 				
+				$validationMessages = array('amount.min' => 'The deposit amount must be at least $10');
 				$rules = array('managedCustomerID' => 'required', 'amount' => 'required|Integer|Min:1000');
-				$validator = \Validator::make($input, $rules);
+				$validator = \Validator::make($input, $rules, $validationMessages);
 				if ($validator -> fails()) {				
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
