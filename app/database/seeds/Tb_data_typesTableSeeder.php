@@ -16,6 +16,10 @@ class Tb_data_typesTableSeeder extends Seeder {
         				'id' => '2',
         				'data_type' => 'track_condition',
         		),
+        		array (
+        				'id' => '3',
+        				'data_type' => 'bet_error_codes',
+        		),
         		
         		
         ) );
