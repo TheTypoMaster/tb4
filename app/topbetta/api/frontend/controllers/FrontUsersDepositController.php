@@ -248,8 +248,8 @@ class FrontUsersDepositController extends \BaseController {
 				$postcode = $topbettaUserDetails[0]['postcode'];
 			
 				// Validate the data required to make a new customer and initial deposit is correct
-				$rules = array('CCNumber' => 'required|max:20', 'CCNameOnCard' => 'max:50',
-							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer' );
+				$rules = array('CCNumber' => 'required|max:20', 'CCName' => 'max:50',
+							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:10' );
 				
 				$validator = \Validator::make($input, $rules);
 				if ($validator -> fails()) {				
@@ -258,7 +258,7 @@ class FrontUsersDepositController extends \BaseController {
 				
 					// Add the required data to the array for the SOAP request body
 					$createCustomerArray = array('Title' => $title.'.', 'FirstName' => $firstName, 'LastName' => $lastName, 'Country' => $country,
-							'CCNumber' => $input['CCNumber'], 'CCNameOnCard' => '', 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear'],
+							'CCNumber' => $input['CCNumber'], 'CCNameOnCard' => $input['CCName'], 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear'],
 							'Address' => $address, 'Suburb' => $suburb, 'State' => $state, 'Company' => '', 'PostCode' => $postcode, 'Email' => '', 'Fax' => '', 'Phone' => '',
 							'Mobile' => '', 'CustomerRef' => '', 'JobDesc' => '', 'Comments' => '', 'URL' => '');
 		
