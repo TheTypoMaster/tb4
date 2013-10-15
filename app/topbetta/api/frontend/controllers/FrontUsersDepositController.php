@@ -249,7 +249,7 @@ class FrontUsersDepositController extends \BaseController {
 			
 				// Validate the data required to make a new customer and initial deposit is correct
 				$rules = array('CCNumber' => 'required|max:20', 'CCName' => 'max:50',
-							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:10' );
+							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:1000' );
 				
 				$validator = \Validator::make($input, $rules);
 				if ($validator -> fails()) {				
