@@ -120,7 +120,7 @@ class TournamentPlacesPaid extends \Eloquent {
 		}
 
 		if($this->isJackpot($tournament)) {
-			//return $this->_getJackpotPrizeDistribution($tournament, $qualified_list, $prize_pool);
+			return $this->_getJackpotPrizeDistribution($tournament, $qualified_list, $prize_pool);
 		}
 
 		return $this->_getCashPrizeDistribution($tournament, $qualified_list, $prize_pool);
@@ -155,6 +155,77 @@ class TournamentPlacesPaid extends \Eloquent {
 
 			$place_list['place'][$rank][self::PRIZE_TYPE_CASH] 	= (($percentage / 100) * $prize_pool) / $qualified_count;
 			$place_list['place'][$rank]['count'] 				= $qualified_count;
+		}
+
+		return $place_list;
+	}
+
+	/**
+	 * Get the final prize distribution for a jackpot tournament
+	 *
+	 * @param object 	$tournament
+	 * @param array 	$qualified_list
+	 * @param integer 	$prize_pool
+	 * @return array
+	 */
+	private function _getJackpotPrizeDistribution($tournament, $qualified_list, $prize_pool) {
+
+		$tournament_model = new \TopBetta\Tournament;
+		//$parent = $tournament_model->getTournament($tournament->parent_tournament_id);
+		$parent = \TopBetta\Tournament::find($tournament->parent_tournament_id);		
+
+		if(is_null($parent)) {
+			return false;
+		}
+
+		$price 				= $parent->entry_fee + $parent->buy_in;
+		$place_list 		= array('formula' => self::PRIZE_TYPE_TICKET, 'place' => array());
+		$ranking_list		= $this->formatRankingList($qualified_list);
+		$last_rank			= 0;
+
+		$remainder = $prize_pool;
+		foreach($ranking_list as $rank => $qualified) {
+			$potential_count = count($qualified);
+			if($remainder - ($potential_count * $price) < 0) {
+				break;
+			}
+
+			$place_list['place'][$rank][self::PRIZE_TYPE_TICKET] = $parent->id;
+			$last_rank = $rank;
+
+			$remainder -= ($potential_count * $price);
+		}
+
+		if($remainder > 0) {
+			$current_rank = $this->_getNextRank($ranking_list, $last_rank);
+			if($current_rank === 1) {
+				$formula = self::REMAINDER_FORMULA_NEXT_PLACE;
+			} else {
+				$formula = $this->_getRemainderFormula($tournament, $remainder, $price, ($current_rank !== false));
+			}
+
+			switch($formula) {
+				case self::REMAINDER_FORMULA_NEXT_PLACE:
+					$place_list['place'][$current_rank][self::PRIZE_TYPE_CASH] = $remainder / count($ranking_list[$current_rank]);
+					break;
+				case self::REMAINDER_FORMULA_DISTRIBUTE:
+					$cash_list = $this->_getCashPrizeDistribution($tournament, $qualified_list, $remainder);
+					foreach($cash_list['place'] as $rank => $cash) {
+						$place_list['place'][$rank][self::PRIZE_TYPE_CASH] = $cash[self::PRIZE_TYPE_CASH];
+					}
+					break;
+				case self::REMAINDER_FORMULA_DISCARD:
+				default:
+					break;
+			}
+		}
+
+		foreach($ranking_list as $rank => $qualified) {
+			if(!isset($place_list['place'][$rank])) {
+				continue;
+			}
+
+			$place_list['place'][$rank]['count'] = count($qualified);
 		}
 
 		return $place_list;
@@ -222,6 +293,34 @@ class TournamentPlacesPaid extends \Eloquent {
 	}
 
 	/**
+	 * Get the next available rank (if there is one)
+	 *
+	 * @param array 	$ranking_list
+	 * @param integer 	$current
+	 * @return mixed
+	 */
+	private function _getNextRank(array $ranking_list, $current) {
+		// this indicates that 1st place was not paid
+		if($current == 0) {
+			return 1;
+		}
+
+		$key_list = array_keys($ranking_list);
+
+		$next 	= false;
+		$index 	= array_search($current, $key_list);
+
+		if($index !== false) {
+			++$index;
+			if(isset($key_list[$index])) {
+				$next = $key_list[$index];
+			}
+		}
+
+		return $next;
+	}
+
+	/**
 	 * Check whether a tournament is a jackpot tournament
 	 *
 	 * @param object $tournament
@@ -239,6 +338,16 @@ class TournamentPlacesPaid extends \Eloquent {
 	 */
 	private function isPrivate($tournament) {
 		return ($tournament->private_flag);
+	}
+
+	/**
+	 * Check whether a tournament is free
+	 *
+	 * @param object $tournament
+	 * @return array
+	 */
+	private function isFree($tournament) {
+		return ($tournament->buy_in + $tournament->entry_fee == 0);
 	}
 
 	/**
@@ -398,6 +507,58 @@ class TournamentPlacesPaid extends \Eloquent {
 		}
 
 		return $place_list;
+	}
+
+	/**
+	 * Get the remainder formula based on the tournament conditions
+	 *
+	 * @param object 	$tournament
+	 * @param integer 	$remainder
+	 * @param integer 	$ticket_value
+	 * @param boolean 	$has_unpaid_qualifier
+	 * @return integer
+	 */
+	private function _getRemainderFormula($tournament, $remainder, $ticket_value = 0, $has_unpaid_qualifier = false) {
+		$formula = null;
+		if($this->isFree($tournament)) {
+			$formula = $this->_getFreeRemainderFormula($remainder, $ticket_value, $has_unpaid_qualifier);
+		} else {
+			$formula = $this->_getCashRemainderFormula($has_unpaid_qualifier);
+		}
+
+		return $formula;
+	}
+
+	/**
+	 * Get remainder formula for a free tournament
+	 *
+	 * @param integer $remainder
+	 * @param integer $ticket_value
+	 * @param boolean $has_unpaid_qualifier
+	 * @return integer
+	 */
+	private function _getFreeRemainderFormula($remainder, $ticket_value = 0, $has_unpaid_qualifier = false) {
+		$formula = self::REMAINDER_FORMULA_DISCARD;
+		if($remainder >= $ticket_value && $has_unpaid_qualifier) {
+			$formula = self::REMAINDER_FORMULA_NEXT_PLACE;
+		}
+
+		return $formula;
+	}
+
+	/**
+	 * Get remainder formula for non-free tournaments
+	 *
+	 * @param boolean $has_unpaid_qualifier
+	 * @return integer
+	 */
+	private function _getCashRemainderFormula($has_unpaid_qualifier = false) {
+		$formula = self::REMAINDER_FORMULA_DISTRIBUTE;
+		if($has_unpaid_qualifier) {
+			$formula = self::REMAINDER_FORMULA_NEXT_PLACE;
+		}
+
+		return $formula;
 	}
 
 }

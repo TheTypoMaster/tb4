@@ -13,5 +13,15 @@ return array(
 	*/
 
 	"invalid_type" => "Invalid Type",
-	
+		
+		
+	// E-Way Related messages	
+	"invalid_action" => "Invalid Action",
+	"missing_action" => "Missing Action",
+	"customer_creation_failed" => "Customer Account Creation Failed",
+	"cc_payment_failed" => "Payment Processing Failed",
+	"cc_payment_success" => "Payment Processing Succeeded",
+	"cc_payment_accbal_update_failed" => "Payment successful but account balance not updated - Please contact Topbetta Helpdesk",
+	"cc_token_invalid" => "Invalid token provided - Please contact Topbetta Helpdesk",
+		
 );

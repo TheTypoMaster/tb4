@@ -39,10 +39,10 @@ class IADataExport extends TopBettaCLI
 		
 		$date = date('Ymd', $timestamp);
 		$hour = date('G');
-		$this->_registration_file_path	= $config->registration['source_file_path'] . 'TopBetta_REG_' . $date . '_' . $hour . '.csv';
+		$this->_registration_file_path	= $config->registration['source_file_path'] . 'TopBetta_REG_' . $date . '.csv';
 		$this->_registration_ssh_path	= $config->registration['destination_file_path'];
 		
-		$this->_sales_file_path			= $config->sales['source_file_path'] . 'TopBetta_SALES_' . $date . '_' . $hour . '.csv';
+		$this->_sales_file_path			= $config->sales['source_file_path'] . 'TopBetta_SALES_' . $date . '.csv';
 		$this->_sales_ssh_path			= $config->sales['destination_file_path']; 
 		
 		$this->_ssh_user				= $config->ssh['user'];
@@ -200,7 +200,7 @@ class IADataExport extends TopBettaCLI
 	
 	private function _copyFileToHostBySSH($local_file, $remote_file){
 		//exec('scp -i '. $this->_ssh_private_key_path . ' ' . $local_file . ' ' . $this->_ssh_user . '@' . $this->_ssh_host . ':' . $remote_file);
-		exec('scp -i '. $this->_ssh_private_key_path . ' -P 2222 ' . $local_file . ' ' . $this->_ssh_user . '@' . $this->_ssh_host . ':');
+		exec('scp -i '. $this->_ssh_private_key_path . ' -P 2222 ' . $local_file . ' ' . $this->_ssh_user . '@' . $this->_ssh_host . ':' . $remote_file);
 	}
 }
 
