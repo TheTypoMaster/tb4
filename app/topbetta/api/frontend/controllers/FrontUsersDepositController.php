@@ -244,7 +244,7 @@ class FrontUsersDepositController extends \BaseController {
 				$country = strtolower($topbettaUserDetails[0]['country']);
 				$address = $topbettaUserDetails[0]['street'];
 				$suburb = $topbettaUserDetails[0]['city'];
-				$state = $topbettaUserDetails[0]['state'];
+				$state = strtoupper($topbettaUserDetails[0]['state']);
 				$postcode = $topbettaUserDetails[0]['postcode'];
 			
 				// Validate the data required to make a new customer and initial deposit is correct
