@@ -976,19 +976,26 @@ class RacingController extends \BaseController {
 
 		if(is_array($meetingTypeCodeResult)){
 
-    		$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
-        	$meetingCountry = $meetingTypeCodeResult[0]['country'];
-            $meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
-
-            // check if product is used
-            $productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
-
-            if(!$productUsed){
-            	TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
-                return false;
-			}
-            TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+			if(!empty($meetingTypeCodeResult[0])){
+			
+	    		$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
+	        	$meetingCountry = $meetingTypeCodeResult[0]['country'];
+	            $meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 	
+	            // check if product is used
+	            $productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
+	
+	            if(!$productUsed){
+	            	TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
+	                return false;
+				}
+	            TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+		
+			}else{
+				TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: No array offset's found $meetingTypeCodeResult");
+			}
+            
+            
 		}else{
 			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - $meetingTypeCodeResult");
 		}
