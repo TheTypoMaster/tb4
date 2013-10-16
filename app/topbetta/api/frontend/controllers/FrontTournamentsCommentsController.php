@@ -24,7 +24,7 @@ class FrontTournamentsCommentsController extends \BaseController {
 		$tournament = $tournamentModel -> find($tournamentId);
 
 		if ($tournament) {
-			$tournamentComments = \TournamentComment::getTournamentCommentListByTournamentId($tournamentId);
+			$tournamentComments = \TopBetta\TournamentComment::getTournamentCommentListByTournamentId($tournamentId);
 
 			$comments = array();
 
