@@ -6,12 +6,14 @@ class Tb_api_usersTableSeeder extends Seeder {
 		
 		$tb_api_users = array (
 				array (
+						'id' => '1',
 						'username' => 'test_api_user',
 						'password' => Hash::make ( 'p@ssw0rd!' ),
 						'created_at' => new DateTime (),
 						'updated_at' => new DateTime () 
 				),
 				array (
+						'id' => '2',
 						'username' => 'igas',
 						'password' => Hash::make ( 'igast3st1ng' ),
 						'created_at' => new DateTime (),
