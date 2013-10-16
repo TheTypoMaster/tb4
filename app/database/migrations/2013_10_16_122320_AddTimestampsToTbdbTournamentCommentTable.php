@@ -12,7 +12,9 @@ class AddTimestampsToTbdbTournamentCommentTable extends Migration {
 	 */
 	public function up()
 	{
-        Schema::table('tbdb_tournament_comment', function(Blueprint $table) {            
+        Schema::table('tbdb_tournament_comment', function(Blueprint $table) {                        
+            DB::statement("ALTER TABLE `tbdb_tournament_comment` MODIFY created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL;");
+            DB::statement("ALTER TABLE `tbdb_tournament_comment` MODIFY updated_date TIMESTAMP DEFAULT '0000-00-00 00:00:00' NOT NULL;");
             $table->timestamps();
         });
 	}
