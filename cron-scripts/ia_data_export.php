@@ -87,10 +87,11 @@ class IADataExport extends TopBettaCLI
 			'has_btag'			=> true
 		);
 		
-		$transaction_types	= array('deposit', 'chargeback', 'promo', 'betentry', 'betrefund', 'entry', 'betshands');
+		$transaction_types	= array('deposit', 'chargeback', 'promo', 'betentry', 'betwin', 'betrefund', 'entry', 'betshands');
 		foreach ($transaction_types as $transaction_type) {
 			$params['transaction_type']		= $transaction_type;
-			if($transaction_type == 'entry'){
+			// MC: we want the tournament entry fee to come from account transactions only
+			if($transaction_type == '_entry'){
 				$total_amount_list	= $this->tournament_transaction->getTotalAmountListGroupByRecipientID($params);
 			}
 			else{
@@ -164,10 +165,13 @@ class IADataExport extends TopBettaCLI
 			$total_bet_entry	= isset($sales['betentry']) ? abs($sales['betentry']) : 0;
 			$total_bet_refund	= isset($sales['betrefund']) ? $sales['betrefund'] : 0;
 			
-			$stake		= $total_bet_entry - $total_bet_refund;
-			$revenue	= bcmul($stake,0.045);
+			$bet_win	= isset($sales['betwin']) ? $sales['betwin'] : 0;
+
+			$turn_over		= $total_bet_entry - $total_bet_refund;
+			$revenue	= $turn_over - $bet_win;
+
 			$sales_csv_list[$recipient_id]['revenue']	= ($revenue != 0) ? Format::currency($revenue) : 0;
-			$sales_csv_list[$recipient_id]['stake']		= ($stake > 0) ? Format::currency($stake) : 0;
+			$sales_csv_list[$recipient_id]['stake']		= ($turn_over > 0) ? Format::currency($turn_over) : 0;
 			
 			$sales_csv_list[$recipient_id]['bonus']		= (isset($sales['promo'])) ? Format::currency($sales['promo']) : 0;
 			

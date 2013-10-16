@@ -329,36 +329,50 @@ class RacingController extends \BaseController {
 												$raceEvent->external_event_id = $meetingId;
 											}
 										}
-									
+										$firstUpdate = 0;
 										// get race values from JSON
 										if(isset($dataArray['RaceNo'])){
 											$raceEvent->number = $dataArray['RaceNo'];
-											// update meeting start time if it's race 1
-											if($raceEvent->number == '1'){
+																						
+											// update meeting start time 
+											if ($meetingRecord->created_at == '0000-00-00 00:00:00'){ // was made by tournament creation
+												$meetingRecord->created_at == $dataArray['JumpTime'];
+												$meetingRecord->start_date = $dataArray['JumpTime'];
+												$meetingRecord->save();
+												$firstUpdate = 1;
+											}else if($dataArray['JumpTime'] < $meetingRecord->start_date){
 												$meetingRecord->start_date = $dataArray['JumpTime'];
 												$meetingRecord->save();
 											}
-											
+										
 										}
 										
 										if(isset($dataArray['JumpTime'])){
 											$raceEvent->start_date = $dataArray['JumpTime'];
 										}
 										
-										// update tournament start end times
+										// update tournament start end times and meeting start time
 										if(isset($dataArray['JumpTime']) && isset($dataArray['RaceNo'])){
 											$tournamentsOnMeeting = Topbetta\Tournament::getTournamentWithEventGroup($meetingExists);
 											// loop on each tournament
 											foreach ($tournamentsOnMeeting as $tournament){
 												// if it's race 1 store the jump time as tourn start date.
 												$tournamentModel = Topbetta\Tournament::find($tournament->id);
-												if ($raceEvent->number == 1) {
+												
+												// if this was the first update for the meeting set both start and end times to race jump time
+												if($firstUpdate){ 
 													$tournamentModel->start_date = $dataArray['JumpTime'];
-												}else{
-													if ($dataArray['JumpTime'] > $tournamentModel->end_date){
+													$tournamentModel->end_date = $dataArray['JumpTime'];
+												}else{ // otherwise set start/end times for tournament accordingly
+													if($meetingRecord->start_date < $tournamentModel->start_date){
+														$tournamentModel->start_date = $dataArray['JumpTime'];
+															
+													}else if($dataArray['JumpTime'] > $tournamentModel->end_date){
 														$tournamentModel->end_date = $dataArray['JumpTime'];
 													}
 												}
+												
+												// save the tournament record
 												$tournamentModel->save();
 											}
 											
