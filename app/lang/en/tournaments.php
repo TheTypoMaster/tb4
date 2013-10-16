@@ -14,5 +14,8 @@ return array(
 
 	"not_found" => "Tournament id: :tournamentId not found",
 	"ticket_not_found" => "Tournament ticket not found",
+	"comment_posted" => "Comment Posted!",
+	"comment_issue" => "There was an issue posting your comment",
+	"commenting_closed" => "Commenting for this tournament is closed",
 	
 );
