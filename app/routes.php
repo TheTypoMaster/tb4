@@ -162,6 +162,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	Route::resource('tournaments','FrontTournaments');
 
 	//tournaments bets
+	Route::resource('tournaments.comments','FrontTournamentsComments');
+
+	//tournaments bets
 	Route::resource('tournaments-bets','FrontTournamentsBets');
 
 	//tournaments details
