@@ -446,7 +446,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, EGE in DB",1);
 										}
 									}else{
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process", 2);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process. MeetingID: $meetingId, RaceNumber: $raceNo", 2);
 									}
 									
 								}
