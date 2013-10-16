@@ -248,8 +248,8 @@ class FrontUsersDepositController extends \BaseController {
 				$postcode = $topbettaUserDetails[0]['postcode'];
 			
 				// Validate the data required to make a new customer and initial deposit is correct
-				$rules = array('CCNumber' => 'required|max:20', 'CCNameOnCard' => 'max:50',
-							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer' );
+				$rules = array('CCNumber' => 'required|max:20', 'CCName' => 'max:50',
+							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:1000' );
 				
 				$validator = \Validator::make($input, $rules);
 				if ($validator -> fails()) {				
@@ -258,7 +258,7 @@ class FrontUsersDepositController extends \BaseController {
 				
 					// Add the required data to the array for the SOAP request body
 					$createCustomerArray = array('Title' => $title.'.', 'FirstName' => $firstName, 'LastName' => $lastName, 'Country' => $country,
-							'CCNumber' => $input['CCNumber'], 'CCNameOnCard' => '', 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear'],
+							'CCNumber' => $input['CCNumber'], 'CCNameOnCard' => $input['CCName'], 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear'],
 							'Address' => $address, 'Suburb' => $suburb, 'State' => $state, 'Company' => '', 'PostCode' => $postcode, 'Email' => '', 'Fax' => '', 'Phone' => '',
 							'Mobile' => '', 'CustomerRef' => '', 'JobDesc' => '', 'Comments' => '', 'URL' => '');
 		
@@ -280,7 +280,7 @@ class FrontUsersDepositController extends \BaseController {
 						$soapResponse = $this->ewayProcessRequest($paymentArray, 'ProcessPayment');
 						
 						// Check if CC payment was processed successfully
-						if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
+						if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus == 'True'){
 
 							// Update users account balance
 							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
@@ -305,8 +305,9 @@ class FrontUsersDepositController extends \BaseController {
 		
 			case 'process_payment':
 				
-				$rules = array('managedCustomerID' => 'required', 'amount' => 'required|Integer');
-				$validator = \Validator::make($input, $rules);
+				$validationMessages = array('amount.min' => 'The deposit amount must be at least $10');
+				$rules = array('managedCustomerID' => 'required', 'amount' => 'required|Integer|Min:1000');
+				$validator = \Validator::make($input, $rules, $validationMessages);
 				if ($validator -> fails()) {				
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
@@ -328,7 +329,7 @@ class FrontUsersDepositController extends \BaseController {
 					$soapResponse = $this->ewayProcessRequest($requestbody, 'ProcessPayment');
 					
 					// Check if CC payment was processed successfully
-					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
+					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus == 'True'){
 					
 						// Update users account balance
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
