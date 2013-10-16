@@ -20,6 +20,10 @@ class TournamentTicket extends \Eloquent {
 
 	}
 
+	public static function getTicketForUserId($userId, $tournamentId) {
+		return TournamentTicket::where('tournament_id', '=', $tournamentId) -> where('user_id', '=', $userId) -> get();		
+	}
+
 	/**
 	 * Get a user's tournament tickets
 	 *
