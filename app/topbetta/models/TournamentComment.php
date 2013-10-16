@@ -1,6 +1,7 @@
 <?php
+namespace TopBetta;
 
-class TournamentComment extends Eloquent {
+class TournamentComment extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
@@ -20,7 +21,7 @@ class TournamentComment extends Eloquent {
 		return TournamentComment::where('tournament_id', '=', $tournamentId)
 		            ->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_tournament_comment.user_id')
 		            ->select('tbdb_tournament_comment.*', 'tbdb_users.username')
-		            ->orderBy('tbdb_tournament_comment.created_date', 'asc')
+		            ->orderBy('tbdb_tournament_comment.created_at', 'asc')
 		            ->get();
 	}    
 }

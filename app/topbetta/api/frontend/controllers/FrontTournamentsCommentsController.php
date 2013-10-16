@@ -1,9 +1,16 @@
 <?php
 namespace TopBetta\frontend;
 
-use TopBetta;
+// use TopBetta;
 
 class FrontTournamentsCommentsController extends \BaseController {
+
+	public function __construct() {
+
+		//we are only protecting certain routes in this controller
+		$this -> beforeFilter('auth', array('only' => array('store')));
+
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -55,87 +62,63 @@ class FrontTournamentsCommentsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
-	{
-		// Only registered users in this tournament can post comments
+	public function store($tournamentId)
+	{	
+		$input = \Input::json() -> all();
 
-		//TODO: joomla code!		
-		if (is_null($ticket) && ($user->usertype == "Registered" || $user->guest)) {
-			$allow_sledge_comment = false;
-		}		
+		$rules = array('comment' => 'required|max:400');
 
+		$validator = \Validator::make($input, $rules);
 
+		if ($validator -> fails()) {
 
+			return array("success" => false, "error" => $validator -> messages() -> all());
 
+		} else {					
 
-
-		$comment 			= strip_tags(JRequest::getVar('tournament_sledge', '')); //cleaning up the html
-		$tournament_id		= JRequest::getVar('tournament_id', null);
-		$display_identifier	= JRequest::getVar('display_identifier', null);
-		$ticket_model 		=& $this->getModel('TournamentTicket', 'TournamentModel');
-
-		if (!empty($display_identifier)) {
-			$redirect_url = JURI::base()."private/".$display_identifier;
-		} else {
-			$redirect_url = JURI::base() . "tournament/details/" . $tournament_id;
-		}
-
-		$this->setRedirect($redirect_url);
-
-		$user =& JFactory::getUser();
-		if ($user->guest) {
-			JError::raiseWarning(0, JText::_('Please login to post a comment'));
-			return false;
-		}
-		/**
-		 * If the user is Normal user,
-		 * he needs to be resigstered to the tournament
-		 * To post a comment
-		 */
-		$ticket	= $ticket_model->getTournamentTicketByUserAndTournamentID($user->id, $tournament_id);
-
-		/**
-		 * If the user is Normal user,
-		 * he needs to be resigstered to that tournament
-		 * To post a comment
-		 */
-		if (is_null($ticket) && ($user->usertype == "Registered" || $user->guest)) {
-			JError::raiseWarning(0, JText::_('You need to be in the tournament to post a comment'));
-			return false;
-		}
-		if (strlen($comment) > 400) {
-			JError::raiseWarning(0, JText::_('You are allowed maximum 400 characters per post'));
-			return false;
-		}
-		if(empty($comment)){
-			JError::raiseWarning(0, JText::_("Comment can't be Empty"));
-			return false;
-		}
-		/**
-		 * Replace bad words with asterisks
-		 */
-		$config 		=& JComponentHelper::getParams( 'com_topbetta_user' );
-		$blacklist 		= $config->get('blacklistWords');
-		$blacklist		= explode("\n", $blacklist); //Array of blacklisted words
-		foreach ($blacklist as $key => $badword){
 			/**
-			 * Replacing all characters of the bad word with *
+			 * If the user is Normal user,
+			 * he needs to be resigstered to the tournament
+			 * To post a comment
 			 */
-			$comment = str_replace($badword, str_repeat('*', strlen($badword)), $comment);
+			$ticket = \TopBetta\TournamentTicket::getTicketForUserId(\Auth::user()->id, $tournamentId);
+
+			if (count($ticket) == 0) {
+				return array("success" => false, "error" => \Lang::get('tournaments.ticket_not_found'));
+			}
+
+			// don't let them post comments after the tournament is over
+			// dd($ticket);
+
+			$comment = $input['comment'];
+
+			/**
+			 * Replace bad words with asterisks
+			 */
+			// $blacklist 		= $config->get('blacklistWords');
+			// $blacklist		= explode("\n", $blacklist); //Array of blacklisted words
+			// foreach ($blacklist as $key => $badword){
+				/**
+				 * Replacing all characters of the bad word with *
+				 */
+				// $comment = str_replace($badword, str_repeat('*', strlen($badword)), $comment);
+			// }
+
+			$params	= array(
+				"tournament_id" => $tournamentId,
+				"user_id" => \Auth::user()->id,
+				"comment" => $comment
+			);
+
+			$tournamentComment = \TopBetta\TournamentComment::create($params);
+			
+			if ($tournamentComment) {
+				return array("success" => true, "result" => \Lang::get('tournaments.comment_posted'));
+			} else {
+				return array("success" => false, "error" => \Lang::get('tournaments.comment_issue'));	
+			}
+
 		}
-
-		$tournament_comment_model 	=& $this->getModel('TournamentComment', 'TournamentModel');
-
-		$params	= array(
-			"tournament_id" => $tournament_id,
-			"user_id" => $user->id,
-			"comment" => $comment
-		);
-
-		$result	= $tournament_comment_model->store($params);
-
-		$this->setMessage(JText::_("Comment Posted!"));
-		return true;
 
 	}
 
@@ -145,10 +128,9 @@ class FrontTournamentsCommentsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($tournamentId, $commentId)
+	public function show($id)
 	{
 		//
-		return "Showing Comment id: " . $commentId . " for Tournament ID: $tournamentId";
 	}
 
 	/**
