@@ -336,7 +336,7 @@ class RacingController extends \BaseController {
 																						
 											// update meeting start time 
 											if ($meetingRecord->created_at == '0000-00-00 00:00:00'){ // was made by tournament creation
-												$meetingRecord->created_at == $dataArray['JumpTime'];
+												$meetingRecord->created_at =  $dataArray['JumpTime'];
 												$meetingRecord->start_date = $dataArray['JumpTime'];
 												$meetingRecord->save();
 												$firstUpdate = 1;
