@@ -364,7 +364,7 @@ class RacingController extends \BaseController {
 													$tournamentModel->start_date = $dataArray['JumpTime'];
 													$tournamentModel->end_date = $dataArray['JumpTime'];
 												}else{ // otherwise set start/end times for tournament accordingly
-													if($meetingRecord->start_date < $tournamentModel->start_date){
+													if($dataArray['JumpTime'] < $tournamentModel->start_date){
 														$tournamentModel->start_date = $dataArray['JumpTime'];
 															
 													}else if($dataArray['JumpTime'] > $tournamentModel->end_date){
