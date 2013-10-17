@@ -329,17 +329,17 @@ class RacingController extends \BaseController {
 												$raceEvent->external_event_id = $meetingId;
 											}
 										}
-										$firstUpdate = 0;
+										//$firstUpdate = 0;
 										// get race values from JSON
 										if(isset($dataArray['RaceNo'])){
 											$raceEvent->number = $dataArray['RaceNo'];
 																						
 											// update meeting start time 
-											if ($meetingRecord->created_at == '0000-00-00 00:00:00'){ // was made by tournament creation
-												$meetingRecord->created_at =  $dataArray['JumpTime'];
+											if ($raceEvent->number == '1'){ // was made by tournament creation
+												$meetingRecord->created_at = $dataArray['JumpTime'];
 												$meetingRecord->start_date = $dataArray['JumpTime'];
 												$meetingRecord->save();
-												$firstUpdate = 1;
+											//	$firstUpdate = 1;
 											}else if($dataArray['JumpTime'] < $meetingRecord->start_date){
 												$meetingRecord->start_date = $dataArray['JumpTime'];
 												$meetingRecord->save();
@@ -360,17 +360,17 @@ class RacingController extends \BaseController {
 												$tournamentModel = Topbetta\Tournament::find($tournament->id);
 												
 												// if this was the first update for the meeting set both start and end times to race jump time
-												if($firstUpdate){ 
+												//if($firstUpdate){ 
 													$tournamentModel->start_date = $dataArray['JumpTime'];
 													$tournamentModel->end_date = $dataArray['JumpTime'];
-												}else{ // otherwise set start/end times for tournament accordingly
+												//}else{ // otherwise set start/end times for tournament accordingly
 													if($dataArray['JumpTime'] < $tournamentModel->start_date){
 														$tournamentModel->start_date = $dataArray['JumpTime'];
 															
 													}else if($dataArray['JumpTime'] > $tournamentModel->end_date){
 														$tournamentModel->end_date = $dataArray['JumpTime'];
 													}
-												}
+												//}
 												
 												// save the tournament record
 												$tournamentModel->save();
