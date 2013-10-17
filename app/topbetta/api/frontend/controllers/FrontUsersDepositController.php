@@ -431,12 +431,9 @@ class FrontUsersDepositController extends \BaseController {
 		//make the call
 		try {
 			$soapCall = $soapClient->$method($requestbody,$headers);
-			\Log::info('EWAY SOAP RESPONSE:'.$soapClient->__getLastResponse());
 		} catch (\SoapFault $fault) {
-			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
 			return array("success" => false, "error" => $fault->faultcode." Ğ ".$fault->faultstring);
 		} catch(\Exception $fault){
-			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
 			return array("success" => false, "error" => $fault->faultcode." Ğ ".$fault->faultstring);
 		}
 	
