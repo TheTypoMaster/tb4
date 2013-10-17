@@ -32,4 +32,18 @@ class TournamentComment extends \Eloquent {
 
 		return $query->get();           
 	}    
+
+	/**
+	 * only let them post comments for 2 days after the tournament end date
+	 * @param  int  $tournamentId Tournament ID
+	 * @return boolean               
+	 */
+	public static function isTournamentCommentingAllowed($tournamentId) {
+		$tournament = \TopBetta\Tournament::find($tournamentId);
+		$tournamentEndDate = date_create($tournament['end_date']);
+		$diff = $tournamentEndDate->diff(date_create("now"))->format("%d");	
+
+		return ($diff >= 2) ? false : true;
+
+	}
 }
