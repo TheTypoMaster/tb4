@@ -15,13 +15,21 @@ class TournamentComment extends \Eloquent {
 	 * @return object
 	 */
 	
-	public static function getTournamentCommentListByTournamentId( $tournamentId )
+	public static function getTournamentCommentListByTournamentId( $tournamentId, $limit = 50, $dir = false, $commentId = false )
 	{
 
-		return TournamentComment::where('tournament_id', '=', $tournamentId)
+		$query = TournamentComment::where('tournament_id', '=', $tournamentId)
 		            ->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_tournament_comment.user_id')
 		            ->select('tbdb_tournament_comment.*', 'tbdb_users.username')
 		            ->orderBy('tbdb_tournament_comment.created_at', 'asc')
-		            ->get();
+		            ->take($limit);		            
+
+		if ($dir == 'after' && $commentId) {
+			$query->where('tbdb_tournament_comment.id', '>', $commentId);
+		} else if ($dir == 'before' && $commentId) {
+			$query->where('tbdb_tournament_comment.id', '<', $commentId);
+		}            
+
+		return $query->get();           
 	}    
 }

@@ -24,7 +24,11 @@ class FrontTournamentsCommentsController extends \BaseController {
 		$tournament = $tournamentModel -> find($tournamentId);
 
 		if ($tournament) {
-			$tournamentComments = \TopBetta\TournamentComment::getTournamentCommentListByTournamentId($tournamentId);
+			$limit = \Input::get('limit', 50);
+			$dir = \Input::get('dir', false);
+			$commentId = \Input::get('comment_id', false);
+
+			$tournamentComments = \TopBetta\TournamentComment::getTournamentCommentListByTournamentId($tournamentId, $limit, $dir, $commentId);
 
 			$comments = array();
 
@@ -34,7 +38,7 @@ class FrontTournamentsCommentsController extends \BaseController {
 					'tournament_id' => (int)$comment->tournament_id,
 					'username' => $comment->username,
 					'comment' => $comment->comment,
-					'date' => \TimeHelper::isoDate($comment->created_date)
+					'date' => \TimeHelper::isoDate($comment->created_at)
 					);
 			}
 
