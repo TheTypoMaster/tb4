@@ -16,9 +16,9 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 				</tr>
 				<tr>
 
-					<td class='key'><group for="group">Group</group></td>
+					<td class='key'><label for="group">Group</group></td>
 					<td><input type="text" name="group" id="group" size="64"
-						value="<?php echo $this->tournament_group_details['group']; ?>" />
+						value="<?php echo $this->tournament_group_details['group_name']; ?>" />
 					</td>
 				</tr>
 				<tr>

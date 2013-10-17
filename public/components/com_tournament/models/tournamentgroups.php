@@ -12,7 +12,7 @@ class TournamentModelTournamentGroups extends JModel
 	public function getTournamentGroups(){
 		$db =& $this->getDBO();
 
-		$query  = " SELECT tg.id, tg.group_name as grouping, tg.description as description, tg.parent_group_id as parent_group_id, ttg.group_name as parent_group_group";
+		$query  = " SELECT tg.id, tg.group_name as group_name, tg.description as description, tg.parent_group_id as parent_group_id, ttg.group_name as parent_group_group";
 		$query .= " FROM tb_tournament_groups as tg";
 		$query .= " LEFT JOIN tb_tournament_groups as ttg on ttg.id = tg.parent_group_id";
 			
@@ -50,7 +50,7 @@ class TournamentModelTournamentGroups extends JModel
 	public function getTournamentParentGroups($parentGroupId){
 		$db =& $this->getDBO();
 
-		$query  = " SELECT id, group, description, parent_group_id";
+		$query  = " SELECT id, group_name, description, parent_group_id";
 		$query .= " FROM tb_tournament_groups WHERE parent_group_id = '$parentGroupId' ";
 			
 		$db->setQuery($query);

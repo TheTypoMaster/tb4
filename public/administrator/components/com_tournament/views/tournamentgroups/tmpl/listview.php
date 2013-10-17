@@ -24,7 +24,7 @@ defined('_JEXEC') or die('Restricted access');
 
 					<td><?php echo JText::_($tournament_group->id); ?>
 					</td>
-					<td><?php echo JText::_($tournament_group->group); ?>
+					<td><?php echo JText::_($tournament_group->group_name); ?>
 					</td>
 					<td><?php echo JText::_($tournament_group->description); ?>
 					</td>

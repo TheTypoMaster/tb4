@@ -54,8 +54,8 @@ public function display($tpl = null) {
 		
 		$this->groups_option_list = array('-1' => JText::_('Select a Parent Group'));
 		if (!empty($this->tournament_groups)) {
-			foreach($this->tournament_groups as $Group) {
-				$this->groups_option_list[$Group->id] = JText::_($group->group);
+			foreach($this->tournament_groups as $group) {
+				$this->groups_option_list[$group->id] = JText::_($group->group_name);
 			}
 		}
 		
