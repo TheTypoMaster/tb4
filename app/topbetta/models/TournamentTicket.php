@@ -354,6 +354,56 @@ class TournamentTicket extends \Eloquent {
 		return array('result' => $result, 'num_rows' => $numRows[0]);	
 	}	
 
+	/**
+	 * Return data needed to determine if unregistering is allowed for a user
+	 *
+	 * @param integer $tournament_id
+	 * @param integer $user_id
+	 * @return object
+	 */
+	public static function unregisterAllowed($tournamentId, $userId)
+	{
+
+		$query =
+			'SELECT
+				t.start_date - NOW() AS time,
+				t.start_date AS start_date,
+				COUNT(b.id) AS bet
+			FROM
+				tbdb_tournament AS t
+			INNER JOIN
+				tbdb_tournament_ticket AS tt
+			ON
+				t.id = tt.tournament_id
+			LEFT JOIN
+				tbdb_tournament_bet AS b
+			ON
+				tt.id = b.tournament_ticket_id
+			LEFT JOIN
+				tbdb_bet_result_status AS s
+			ON
+				s.id = b.bet_result_status_id
+			WHERE
+				t.id = "' . $tournamentId . '"
+			AND
+				tt.user_id = "' . $userId . '"
+			AND (s.name IS NULL OR s.name != "fully-refunded")
+			AND tt.refunded_flag = 0
+			GROUP BY
+				b.tournament_ticket_id';
+
+		$result = \DB::select($query);	
+
+		if(count($result) == 0){
+			return false;
+		}	
+
+		$result = $result[0];
+
+		return (floor($result->time) > 0 && $result->bet == 0);
+
+	}	
+
 	public static function nextEventForEventGroup($eventGroupId) {
 		
 		$query = "SELECT e.*,eg.type_code AS type, eg.state, eg.name AS meeting_name, eg.id AS meeting_id, ts.name AS sport_name 

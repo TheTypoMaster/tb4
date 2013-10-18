@@ -296,8 +296,69 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id) {
-		//
+	public function destroy($tournamentId, $ticketId) {
+		// return "Destroy ticket id: $ticketId for Tournament ID: $tournamentId";
+		// return \TopBetta\TournamentTicket::unregisterAllowed($tournamentId, \Auth::user() -> id);
+		if (is_null($tournamentId)) {
+			return 'No tournament specified';
+		} else {
+
+			if ($tournament = \TopBetta\Tournament::find($tournamentId)) {
+				$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)->where('user_id', '=', \Auth::user() -> id)->get();
+
+				$betModel = new \TopBetta\TournamentBet; 
+				$betList = $betModel->getTournamentBetListByTicketID($ticketId);
+				dd($betList);
+				// var_dump(\DB::getQueryLog());
+				if(count($ticket) > 0) {
+					var_dump($ticket);
+				} else {
+					echo "No ticket<br>";
+				}
+
+				dd($ticket);
+				$unregister_allowed = \TopBetta\TournamentTicket::unregisterAllowed($tournamentId, \Auth::user() -> id);
+				// dd($unregister_allowed);
+
+				if ($unregister_allowed) {
+					if (strtotime($tournament->start_date) > time()) {
+						$ticket = \TopBetta\TournamentTicket::getTournamentTicketByUserAndTournamentID(\Auth::user() -> id, $tournament->id);
+						dd($ticket);
+						$foundTicketId = 0;
+						if (count($ticket) > 0) {
+							$ticketId = $ticket[0]->id;
+						} 
+						if ($foundTicketId == $ticketId) {
+
+							/*
+							if ($ticket_model->refundTicket($ticket->id, true)) {
+								$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
+								$leaderboard_model->deleteByUserAndTournamentID($user->id, $tournament->id);
+
+								$message  = JText::_('Ticket has been refunded');
+								$type     = 'message';
+							} else {
+								$message  = JText::_('Ticket could not be refunded');
+								$type     = 'error';
+							}
+							*/
+						} else {
+							//$message  = JText::_('Ticket not found');
+							return "Ticket not found";
+						}
+					} else {
+						// $message  = JText::_('Can\'t refund a ticket for a tournament which has commenced');
+						return 'Can\'t refund a ticket for a tournament which has commenced';
+					}
+				} else {
+					//$message  = JText::_('You\'ve already bet on this tournament');
+					return 'You\'ve already bet on this tournament';
+					// return array('success' => false, 'error' => \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
+				}
+			} else {
+				return array('success' => false, 'error' => \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
+			}
+		}
 	}
 
 }
