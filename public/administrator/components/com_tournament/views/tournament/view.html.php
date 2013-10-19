@@ -157,8 +157,8 @@ class TournamentViewTournament extends JView
  			}
  		}
  		
- 		$test = print_r($this->tournament_label_selected_list,true);
- 		file_put_contents('/tmp/debug', $test, FILE_APPEND | LOCK_EX);
+ 		//$test = print_r($this->tournament_label_selected_list,true);
+ 		//file_put_contents('/tmp/debug', $test, FILE_APPEND | LOCK_EX);
  		
  		//$this->tournament_label_selected_list = FormHelper::getSelectedList($this->tournament_label_option_list, $this->formdata['tournament_label_id']);
 		

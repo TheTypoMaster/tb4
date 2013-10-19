@@ -61,5 +61,13 @@ public function display($tpl = null) {
 		
 		$this->label_selected_list = FormHelper::getSelectedList($this->labels_option_list, $this->tournament_label_details['parent_label_id']);
 		
+		$this->label_groups_option_list = array('-1' => JText::_('Select a Label Group'));
+		if (!empty($this->label_groups)) {
+			foreach($this->label_groups as $group) {
+				$this->label_groups_option_list[$group->id] = JText::_($group->group_name);
+			}
+		}
+		
+		
 	}
 }

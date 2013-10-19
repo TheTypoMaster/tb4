@@ -68,19 +68,20 @@ class TournamentModelTournamentLabels extends JModel
 			 		VALUES ('$label','$description','$parent_label_id')";
 	
 		$db->setQuery($query);
-		return $db->loadObjectList();
+		$db->loadObjectList();
+		return $db->insertid();
 	}
 	
 	public function updateTournamentLabel($id, $label, $description, $parent_label_id){
 		$db =& $this->getDBO();
 	
 		$query = "UPDATE tb_tournament_labels SET label = '$label', description = '$description', parent_label_id = '$parent_label_id' WHERE id = '$id'" ;
-	
+		
 		$db->setQuery($query);
 		return $db->loadObjectList();
+		
 	}
-	
-	
+		
 	public function deleteTournamentLabelsByTournamentId($tournamentId){
 		$db =& $this->getDBO();
 	
@@ -90,4 +91,82 @@ class TournamentModelTournamentLabels extends JModel
 		$db->setQuery($query);
 		return $db->loadObjectList();
 	}
+	
+	public function deleteTournamentLabelsByLabelId($labelId){
+		$db =& $this->getDBO();
+	
+		$query  = " DELETE from tb_tournament_label_tournament";
+		$query .= " WHERE tournament_label_id = '$labelId' ";
+			
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	public function deleteLabelsByLabelId($labelId){
+		$db =& $this->getDBO();
+	
+		$query  = " DELETE from tb_tournament_labels";
+		$query .= " WHERE id = '$labelId' ";
+			
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	public function removeParentLabelRefs($labelId){
+		$db =& $this->getDBO();
+		
+		$query = "UPDATE tb_tournament_labels SET parent_label_id = '0' WHERE parent_label_id = '$labelId'" ;
+		
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	
+	/*
+	 * Tournament Group Stuff
+	*/
+	
+	public function deleteLabelGroupsByLabelId($labelID){
+		$db =& $this->getDBO();
+	
+		$query  = " DELETE from tb_tournament_group_label";
+		$query .= " WHERE tournament_label_id = '$labelID' ";
+			
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	public function addLabelGroupToLabel($labelID, $groupID){
+		$db =& $this->getDBO();
+	
+		$query = "INSERT INTO tb_tournament_group_label (tournament_label_id, tournament_group_id, created_at) VALUES ($labelID, $groupID, NOW())";
+	
+		$db->setQuery($query);
+		$db->loadObjectList();
+		return $db->insertid();
+	}
+	
+	public function getLabelGroups(){
+		$db =& $this->getDBO();
+
+		$query  = " SELECT tg.id, tg.group_name as group_name, tg.description as description, tg.parent_group_id as parent_group_id, ttg.group_name as parent_group_group";
+		$query .= " FROM tb_tournament_groups as tg";
+		$query .= " LEFT JOIN tb_tournament_groups as ttg on ttg.id = tg.parent_group_id";
+			
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+	
+	public function getLabelGroupsByLabelId($labelID){
+		$db =& $this->getDBO();
+	
+		$query  = " SELECT tg.id";
+		$query .= " FROM tb_tournament_groups AS tg";
+		$query .= " INNER JOIN tb_tournament_group_label AS tgl ON tgl.tournament_group_id = tg.id";
+		$query .= " WHERE tgl.tournament_label_id = '$labelID'";
+	
+		$db->setQuery($query);
+		return $db->loadResultArray();
+	}
+	
 }

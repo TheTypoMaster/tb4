@@ -86,10 +86,10 @@ class TournamentGroupsController extends JController
 		
 		// model 
 		$tournament_group_model =& $this->getModel('TournamentGroups', 'TournamentModel');
-		
-		// grab the label details
-		$tournament_group_details = $tournament_group_model->getTournamentGroupById($id);
-		
+		if($id){
+			// grab the label details
+			$tournament_group_details = $tournament_group_model->getTournamentGroupById($id);
+		}
 		// get all available labels
 		$tournament_groups = $tournament_group_model->getTournamentGroups();
 		
@@ -118,7 +118,7 @@ class TournamentGroupsController extends JController
 	}
 	
 	/**
-	 * to Save Tournament Label
+	 * to Save Tournament Group
 	 */
 	public function save()
 	{
@@ -126,16 +126,16 @@ class TournamentGroupsController extends JController
 		$id					= JRequest::getVar('id', null);
 		$group				= JRequest::getVar('group', null);
 		$description		= JRequest::getVar('description', null);
-		$parent_label_id	= JRequest::getVar('parent_groupl_id', null);
+		$parent_label_id	= JRequest::getVar('parent_group_id', null);
 
 		$tournament_group_model =& $this->getModel('TournamentGroups', 'TournamentModel');
 		
 		if ($id){
 			$tournament_group_model->updateTournamentGroup($id, $group, $description, $parent_label_id);
-			$this->setRedirect($this->controllerUrl, JText::_('Label updated'));
+			$this->setRedirect($this->controllerUrl, JText::_('Group updated'));
 		}else{
 			$tournament_group_model->addTournamentGroup($group, $description, $parent_label_id);
-			$this->setRedirect($this->controllerUrl, JText::_('Label Added'));
+			$this->setRedirect($this->controllerUrl, JText::_('Group Added'));
 		}
 		
 		

@@ -44,8 +44,12 @@ class TournamentLabelsController extends JController
 			0
 		); 
 		
+		// get the labels model
 		$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
+
+		// get available labels and groups
 		$tournament_label_list = $tournament_label_model->getTournamentLabels();
+		$label_group_list = $tournament_label_model->getLabelGroups();
 		
 		jimport('joomla.html.pagination');
 
@@ -54,6 +58,8 @@ class TournamentLabelsController extends JController
 		
 		
 		$view 			=& $this->getView('TournamentLabels', 'html', 'TournamentView');
+		
+		
 		$view->setLayout('listview');
 		
 		$view->assign('tournament_label_list', $tournament_label_list);
@@ -74,7 +80,7 @@ class TournamentLabelsController extends JController
 	
 	
 	/**
-	* To load the Edit Tournament Label form
+	* To load the Edit/New Tournament Label form
 	*/
 	public function edit()
 	{
@@ -87,21 +93,36 @@ class TournamentLabelsController extends JController
 		// model 
 		$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
 		
-		// grab the label details
-		$tournament_label_details = $tournament_label_model->getTournamentLabelById($id);
+		$label_group_selected_list = array();
 		
+		// if were editing an existing label
+		if($id){
+			// grab the label details were editing
+			$tournament_label_details = $tournament_label_model->getTournamentLabelById($id);
+			
+			// get all groups label is linked to
+			$label_group_selected_list = $tournament_label_model->getLabelGroupsByLabelId($id);
+		}
+			
 		// get all available labels
 		$tournament_labels = $tournament_label_model->getTournamentLabels();
 		
+		// get all available groups
+		$label_groups = $tournament_label_model->getLabelGroups();
 		
+		//set the view
 		$view =& $this->getView('TournamentLabels', 'html', 'TournamentView');
 		$view->setLayout('edit');
 		
+		//assign model data to the view
 		$view->assign('tournament_label_details', $tournament_label_details);
 		$view->assign('tournament_labels', $tournament_labels);
+		$view->assign('label_groups', $label_groups);
+		$view->assign('label_groups_selected_list', $label_group_selected_list);
 		
 		$session =& JFactory::getSession();
 
+		// display the view
 		$view->display();
 	}
 	
@@ -111,7 +132,7 @@ class TournamentLabelsController extends JController
 				
 				'label' 								=> -1,
 				'descripiption' 						=> -1,
-				'parent_label_id'					=> -1
+				'parent_label_id'						=> -1
 			);
 	
 		return $field_list;
@@ -127,17 +148,61 @@ class TournamentLabelsController extends JController
 		$label				= JRequest::getVar('label', null);
 		$description		= JRequest::getVar('description', null);
 		$parent_label_id	= JRequest::getVar('parent_label_id', null);
-
+		$labelGroups 		= JRequest::getVar('label_group_id', '','array');
+		
+		// Get the labels model
 		$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
 		
 		if ($id){
 			$tournament_label_model->updateTournamentLabel($id, $label, $description, $parent_label_id);
-			$this->setRedirect($this->controllerUrl, JText::_('Label updated'));
+			$updateText = "Updated";
 		}else{
-			$tournament_label_model->addTournamentLabel($label, $description, $parent_label_id);
-			$this->setRedirect($this->controllerUrl, JText::_('Label Added'));
+			$id = $tournament_label_model->addTournamentLabel($label, $description, $parent_label_id);
+			$updateText = "Added";
 		}
 		
-		
+		/*
+		 * Label grouping pivot tables stuff
+		*/
+
+		// Remove existing groups for label
+		$tournament_label_model->deleteLabelGroupsByLabelId($id);
+			
+		// Add new groups for label
+		foreach($labelGroups as $groupId){
+			$tournament_label_model->addLabelGroupToLabel($id, $groupId);
+		}
+	
+		$this->setRedirect($this->controllerUrl, JText::_('Label/Groups '. $updateText));
 	}
+	
+	/**
+	 * to Delete a Tournament Label and all it's associations
+	 */
+	public function delete()
+	{
+		$id	= JRequest::getVar('id', null);
+		
+		if($id){
+			// get the labels model
+			$tournament_label_model =& $this->getModel('TournamentLabels', 'TournamentModel');
+		
+			// remove labels from tournaments
+			$tournament_label_model->deleteTournamentLabelsByLabelId($id);
+			
+			// remove label from groups
+			$tournament_label_model->deleteLabelGroupsByLabelId($id);
+			
+			// remove parent label ref's from other labels
+			$tournament_label_model->removeParentLabelRefs($id);	
+			
+			// remove the actual label
+			$tournament_label_model->deleteLabelsByLabelId($id);
+			
+			$this->setRedirect($this->controllerUrl, JText::_('Label deleted, removed from Tournaments, Groups and parent labels!'));
+		}else{
+			$this->setRedirect($this->controllerUrl, JText::_('No Label ID passed in to delete!'));
+		}
+	}
+	
 }

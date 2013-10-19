@@ -40,6 +40,23 @@ defined ( '_JEXEC' ) or die ( 'Restricted access' );
 							<?php endforeach; ?>
 					</select></td>
 				</tr>
+				
+				<tr>
+				<td class='key'>
+						<label for="label_group_id">Assign Label to Groups</label>
+					</td>
+					
+					
+					<td>
+					
+						<select name="label_group_id[]" id="label_group_id"  multiple="multiple" size ='5'>
+							<?php foreach($this->label_groups_option_list as $label_group_id => $label_group_name): ?>
+							<option value="<?php echo $label_group_id; ?>"
+								<?php echo in_array($label_group_id, $this->label_groups_selected_list) ? 'selected="selected"' : ''?>><?php echo $label_group_name; ?></option>
+							<?php endforeach; ?>
+						</select>
+						</td>
+				</tr>
 
 
 			</table>
