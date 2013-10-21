@@ -17,5 +17,6 @@ return array(
 	"comment_posted" => "Comment Posted!",
 	"comment_issue" => "There was an issue posting your comment",
 	"commenting_closed" => "Commenting for this tournament is closed",
+	"existing_ticket" => "You already have a ticket in this tournament",
 	
 );

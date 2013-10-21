@@ -231,29 +231,36 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 		foreach ($tournaments['tournaments'] as $tournamentId) {
 
-			// save tournament tickets via legacy API
-			$l = new \TopBetta\LegacyApiHelper;
-			$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId));
-
-			if ($ticket['status'] == 200) {
-
-				$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
-
-			} elseif ($ticket['status'] == 401) {
-
-				return \Response::json(array("success" => false, "error" => "Please login first."), 401);
-
-			} elseif ($ticket['status'] == 500) {
-
-				$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
-				$errors++;
-
-			} else {
-
-				return array("success" => false, "error" => $ticket, "status" => $ticket['status']);
-
+			$newRateLimiter = new TopBetta\APIRateLimiter('10', '0', '-ticketPurchase-'.\Auth::user()->id .'-'.$tournamentId, '2');
+			$checkRateLimit = $newRateLimiter->RateLimiter();
+			
+			// if were not rate limited
+			if(!$checkRateLimit) {
+				// save tournament tickets via legacy API
+				$l = new \TopBetta\LegacyApiHelper;
+				$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId));
+	
+				if ($ticket['status'] == 200) {
+	
+					$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
+	
+				} elseif ($ticket['status'] == 401) {
+	
+					return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+	
+				} elseif ($ticket['status'] == 500) {
+	
+					$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
+					$errors++;
+	
+				} else {
+	
+					return array("success" => false, "error" => $ticket, "status" => $ticket['status']);
+	
+				}
+			}else{
+				return \Response::json(array("success" => false, "error" => \Lang::get('tournaments.existing_ticket')), 429);
 			}
-
 		}
 
 		return array("success" => ($errors > 0) ? false : true, ($errors > 0) ? "error" : "result" => $messages);
