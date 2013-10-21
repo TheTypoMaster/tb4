@@ -256,8 +256,10 @@ class FrontUsersDepositController extends \BaseController {
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
 				
+					($title == 'Miss') ? $title = $title : $title = $title.'.';
+					
 					// Add the required data to the array for the SOAP request body
-					$createCustomerArray = array('Title' => $title.'.', 'FirstName' => $firstName, 'LastName' => $lastName, 'Country' => $country,
+					$createCustomerArray = array('Title' => $title, 'FirstName' => $firstName, 'LastName' => $lastName, 'Country' => $country,
 							'CCNumber' => $input['CCNumber'], 'CCNameOnCard' => $input['CCName'], 'CCExpiryMonth' => $input['CCExpiryMonth'], 'CCExpiryYear' => $input['CCExpiryYear'],
 							'Address' => $address, 'Suburb' => $suburb, 'State' => $state, 'Company' => '', 'PostCode' => $postcode, 'Email' => '', 'Fax' => '', 'Phone' => '',
 							'Mobile' => '', 'CustomerRef' => '', 'JobDesc' => '', 'Comments' => '', 'URL' => '');
