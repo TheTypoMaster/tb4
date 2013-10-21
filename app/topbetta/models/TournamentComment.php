@@ -15,13 +15,35 @@ class TournamentComment extends \Eloquent {
 	 * @return object
 	 */
 	
-	public static function getTournamentCommentListByTournamentId( $tournamentId )
+	public static function getTournamentCommentListByTournamentId( $tournamentId, $limit = 50, $dir = false, $commentId = false )
 	{
 
-		return TournamentComment::where('tournament_id', '=', $tournamentId)
+		$query = TournamentComment::where('tournament_id', '=', $tournamentId)
 		            ->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_tournament_comment.user_id')
 		            ->select('tbdb_tournament_comment.*', 'tbdb_users.username')
 		            ->orderBy('tbdb_tournament_comment.created_at', 'asc')
-		            ->get();
+		            ->take($limit);		            
+
+		if ($dir == 'after' && $commentId) {
+			$query->where('tbdb_tournament_comment.id', '>', $commentId);
+		} else if ($dir == 'before' && $commentId) {
+			$query->where('tbdb_tournament_comment.id', '<', $commentId);
+		}            
+
+		return $query->get();           
 	}    
+
+	/**
+	 * only let them post comments for 2 days after the tournament end date
+	 * @param  int  $tournamentId Tournament ID
+	 * @return boolean               
+	 */
+	public static function isTournamentCommentingAllowed($tournamentId) {
+		$tournament = \TopBetta\Tournament::find($tournamentId);
+		$tournamentEndDate = date_create($tournament['end_date']);
+		$diff = $tournamentEndDate->diff(date_create("now"))->format("%d");	
+
+		return ($diff >= 2) ? false : true;
+
+	}
 }
