@@ -357,52 +357,113 @@ class TournamentTicket extends \Eloquent {
 	/**
 	 * Return data needed to determine if unregistering is allowed for a user
 	 *
-	 * @param integer $tournament_id
-	 * @param integer $user_id
+	 * @param integer $tournamentId
+	 * @param integer $ticketId
 	 * @return object
 	 */
-	public static function unregisterAllowed($tournamentId, $userId)
+	public function unregisterAllowed($tournamentId, $ticketId)
 	{
+		$allowed = true;
+		$error = array();
 
-		$query =
-			'SELECT
-				t.start_date - NOW() AS time,
-				t.start_date AS start_date,
-				COUNT(b.id) AS bet
-			FROM
-				tbdb_tournament AS t
-			INNER JOIN
-				tbdb_tournament_ticket AS tt
-			ON
-				t.id = tt.tournament_id
-			LEFT JOIN
-				tbdb_tournament_bet AS b
-			ON
-				tt.id = b.tournament_ticket_id
-			LEFT JOIN
-				tbdb_bet_result_status AS s
-			ON
-				s.id = b.bet_result_status_id
-			WHERE
-				t.id = "' . $tournamentId . '"
-			AND
-				tt.user_id = "' . $userId . '"
-			AND (s.name IS NULL OR s.name != "fully-refunded")
-			AND tt.refunded_flag = 0
-			GROUP BY
-				b.tournament_ticket_id';
+		// HAS THE TOURNAMENT ALREADY STARTED
+		$tournament = \TopBetta\Tournament::find($tournamentId);
+		
+		if ($tournament) {
+			if (strtotime($tournament->start_date) < time()) {
+				$error[] = \Lang::get('tournaments.already_started');
+				$allowed = false;
+			}	
 
-		$result = \DB::select($query);	
+			// HAVE THEY ALREADY PLACED ANY BETS
+			$numBets = $this->getNumBetsForTicket($ticketId);
 
-		if(count($result) == 0){
-			return false;
-		}	
+			if ($numBets > 0) {
+				$error[] = \Lang::get('tournaments.already_bet');
+				$allowed = false;
+			}
+		} else {
+				$error[] = \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId));
+				$allowed = false;
+		}
 
-		$result = $result[0];
-
-		return (floor($result->time) > 0 && $result->bet == 0);
+		return json_decode(json_encode(array("allowed" => $allowed, "error" => $error)), false);
 
 	}	
+
+	/**
+	 * Refund a tournament ticket.
+	 *
+	 * @param integer $ticket_id
+	 * @param boolean $full
+	 * @return bool
+	 */
+	public function refundTicket($ticket, $full = false)
+	{
+		// $ticket       = $this->getTournamentTicket($ticket_id);
+		$cost_method  = ($full) ? 'getTicketCost' : 'getTicketBuyIn';
+		$cost         = $this->$cost_method($ticket->id);
+
+		if(!empty($cost)) {
+			$refundId = \TopBetta\FreeCreditBalance::_increment(\Auth::user()->id, $cost, 'refund');
+			if (!$refundId) {
+				return false;
+			}
+			// if(!empty($user->tournament_dollars)) {
+				// $refundId = $user->tournament_dollars->increment($cost, 'refund');
+			// } else {
+				// return false;
+			// }
+
+			$ticket->result_transaction_id = $refundId;
+		}
+
+		$ticket->refunded_flag = 1;
+		return $ticket->save();
+		// return $this->store((array)$ticket);
+	}
+
+	/**
+	 * Calculate the cost of a ticket by adding the entry-fee and buy-in
+	 *
+	 * @param integer $ticket_id
+	 * @return integer
+	 */
+	public function getTicketCost($ticketId)
+	{
+		$query = \DB::table('tbdb_tournament AS t')
+			->join('tbdb_tournament_ticket AS tt', 'tt.tournament_id', '=', 't.id')
+			->where('tt.id', $ticketId)
+			->select(\DB::raw('t.entry_fee + t.buy_in AS cost'))
+			->get();
+
+		return (count($query) > 0) ? $query[0]->cost : false;	
+	}	
+
+	/**
+	 * Get the buy-in cost of a purchased ticket.
+	 *
+	 * @param integer $ticket_id
+	 * @return integer
+	 */
+	public function getTicketBuyIn($ticketId)
+	{
+		return \DB::table('tbdb_tournament AS t')
+			->join('tbdb_tournament_ticket AS tt', 'tt.tournament_id', '=', 't.id')
+			->where('tt.id', $ticketId)
+			->pluck('t.buy_in');
+	}	
+
+	private function getNumBetsForTicket($ticketId) {
+		return \DB::table('tbdb_tournament_ticket AS tt')
+			->leftJoin('tbdb_tournament_bet AS b', 'tt.id', '=', 'b.tournament_ticket_id')
+			->leftJoin('tbdb_bet_result_status AS s', 's.id', '=', 'b.bet_result_status_id')
+			->where('tt.id', $ticketId)
+			->whereRaw('(s.name IS NULL OR s.name != "fully-refunded")')
+			->where('tt.refunded_flag',0)
+			->groupBy('b.tournament_ticket_id')
+			->count('b.id');		
+	}
 
 	public static function nextEventForEventGroup($eventGroupId) {
 		

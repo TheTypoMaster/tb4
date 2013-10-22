@@ -297,11 +297,46 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 * @return Response
 	 */
 	public function destroy($tournamentId, $ticketId) {
-		// return "Destroy ticket id: $ticketId for Tournament ID: $tournamentId";
-		// return \TopBetta\TournamentTicket::unregisterAllowed($tournamentId, \Auth::user() -> id);
+
 		if (is_null($tournamentId)) {
-			return 'No tournament specified';
+			return array('success' => false, 'error' => \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
 		} else {
+
+			// DO THEY HAVE A TICKET FOR THIS TOURNAMENT
+			$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)->where('user_id', '=', \Auth::user() -> id)->get();
+			if(count($ticket) > 0) {
+
+				$ticketModel = new \TopBetta\TournamentTicket;
+				$unregisterAllowed = $ticketModel->unregisterAllowed($tournamentId, $ticketId);
+				if($unregisterAllowed->allowed) {
+					// REFUND TICKET
+					if ($ticketModel->refundTicket($ticket[0], true)) {
+						dd("Refunded");
+					}	
+					// 	$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
+					// 	$leaderboard_model->deleteByUserAndTournamentID($user->id, $tournament->id);
+
+					// 	$message  = JText::_('Ticket has been refunded');
+					// 	$type     = 'message';
+					// } else {
+					// 	$message  = JText::_('Ticket could not be refunded');
+					// 	$type     = 'error';
+					// }						
+					return "Refund";
+				} else {
+					return array('success' => false, 'error' => $unregisterAllowed->error);
+				}
+				
+			} else {
+				return array('success' => false, 'error' => \Lang::get('tournaments.ticket_not_found'));
+			}			
+
+
+			die('ahhh');
+
+
+
+
 
 			if ($tournament = \TopBetta\Tournament::find($tournamentId)) {
 				$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)->where('user_id', '=', \Auth::user() -> id)->get();
