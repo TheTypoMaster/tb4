@@ -94,6 +94,9 @@ class FrontTournamentsTicketsController extends \BaseController {
 			if(!$myTicketID){
 				return array('success' => false, 'error' => \Lang::get('tournaments.ticket_not_found', array('tournamentId' => $tournamentId)));
 			}
+
+			$unregisterAllowed = $ticketModel->unregisterAllowed($tournamentId, $myTicketID[0]->id);
+			$unregisterAllowed = $unregisterAllowed->allowed;			
 			
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($tournamentId, \Auth::user() -> id);
 
@@ -134,7 +137,8 @@ class FrontTournamentsTicketsController extends \BaseController {
 				'sport_name' => $tournament -> sport_name,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
-				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false)
+				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false,
+				'unregister_allowed' => $unregisterAllowed)
 			);
 
 		}
@@ -161,7 +165,10 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;
 
-			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false);
+			$unregisterAllowed = $ticketModel->unregisterAllowed($activeTicket -> tournament_id, $activeTicket -> id);
+			$unregisterAllowed = $unregisterAllowed->allowed;
+
+			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => $unregisterAllowed);
 
 		}
 
@@ -200,7 +207,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
-			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false);
+			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => false);
 
 		}
 
@@ -303,8 +310,40 @@ class FrontTournamentsTicketsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id) {
-		//
+	public function destroy($tournamentId, $ticketId) {
+
+		if (is_null($tournamentId)) {
+			return array('success' => false, 'error' => \Lang::get('tournaments.not_found', array('tournamentId' => $tournamentId)));
+		} else {
+
+			// DO THEY HAVE A TICKET FOR THIS TOURNAMENT
+			$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)
+				->where('user_id', '=', \Auth::user() -> id)
+				->where('refunded_flag', 0)
+				->get();
+
+			if(count($ticket) > 0) {
+
+				$ticketModel = new \TopBetta\TournamentTicket;
+				$unregisterAllowed = $ticketModel->unregisterAllowed($tournamentId, $ticketId);
+				if($unregisterAllowed->allowed) {
+					// REFUND TICKET
+					$refunded = $ticketModel->refundTicket($ticket[0], true);
+
+					if ($refunded) {
+						return array('success' => true, 'result' => \Lang::get('tournaments.refunded_ticket', array('ticketId' => $ticketId)));
+					} else {
+						return array('success' => false, 'error' => \Lang::get('tournaments.refund_ticket_problem', array('ticketId' => $ticketId)));
+					}						
+					
+				} else {
+					return array('success' => false, 'error' => $unregisterAllowed->error);
+				}
+				
+			} else {
+				return array('success' => false, 'error' => \Lang::get('tournaments.ticket_not_found'));
+			}			
+		}
 	}
 
 }
