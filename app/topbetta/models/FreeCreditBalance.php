@@ -50,7 +50,7 @@ class FreeCreditBalance extends \Eloquent {
 		$transaction->save();
 			
 		// return false if save fails
-		if($transaction->id) {
+		if(!$transaction->id) {
 			return false;
 		}
 		// return the new transaction ID
