@@ -18,5 +18,7 @@ return array(
 	"ticket_not_found" => "Tournament ticket not found",
 	"already_bet" => "You've already bet on this tournament",
 	"already_started" => "Can't refund a ticket for a tournament which has commenced",
+	"refunded_ticket" => "Ticket #:ticketId has been refunded",
+	"refund_ticket_problem" => "Ticket #:ticketId could not be refunded",
 	
 );
