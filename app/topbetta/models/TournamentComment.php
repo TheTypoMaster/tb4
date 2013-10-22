@@ -28,7 +28,9 @@ class TournamentComment extends \Eloquent {
 		} else if ($dir == 'before' && $commentId) {
 			$query->where('tbdb_tournament_comment.id', '<', $commentId);
 			$query->take($limit);	
-		}            
+		} else {
+			$query->take($limit);
+		}           
 
 		return $query->get();           
 	}    
