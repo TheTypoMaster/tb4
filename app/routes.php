@@ -30,7 +30,11 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
                             "http://beta.tb4.dev",
 							"http://tb4test.mugbookie.com",
 							"http://192.168.0.31:9778",
-							"https://www.topbetta.com.au"
+							"https://www.topbetta.com.au",
+							"http://jason.mugbookie.com",
+							"http://evan.mugbookie.com",
+							"http://mic.mugbookie.com",
+							"http://greg.mugbookie.com"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){
