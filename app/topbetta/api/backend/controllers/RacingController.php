@@ -364,27 +364,30 @@ class RacingController extends \BaseController {
 											
 										}
 												
-										//TODO: Code Table lookup on different race status
+										//TODO: Code Table lookup on different race status from provider
 										//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
 										if(isset($dataArray['RaceStatus'])){
 											switch($dataArray['RaceStatus']){
 												case "O":
-													$raceEvent->event_status_id = '1';
+													$raceEvent->event_status_id = '1'; // selling
 													break;
 												case "C":
-													$raceEvent->event_status_id = '5';
+													$raceEvent->event_status_id = '5'; // closed
 													break;
 												case "S":
 													$raceEvent->event_status_id = '5'; // no suspended status in code table
 													break;
 												case "I":
-													$raceEvent->event_status_id = '6';
+													$raceEvent->event_status_id = '6'; // interim
 													break;
 												case "R":
-													$raceEvent->event_status_id = '2';
+													$raceEvent->event_status_id = '2'; // paying
 													break;
 												case "A":
-													$raceEvent->event_status_id = '3';
+													$raceEvent->event_status_id = '3'; // abandoned
+													break;
+												case "D":
+													$raceEvent->event_status_id = '7'; // deleted
 													break;
 	
 												default:

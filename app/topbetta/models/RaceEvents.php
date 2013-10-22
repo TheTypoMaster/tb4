@@ -28,6 +28,7 @@ class RaceEvent extends \Eloquent {
 		  AND ts.racing_flag = 1 
 		  AND es.keyword = 'selling'
 		  AND e.display_flag = 1 
+		  AND e.event_status_id != 7
 		  ORDER BY e.start_date ASC 
 		  LIMIT 0, $limit";
 		  
