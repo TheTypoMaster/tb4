@@ -410,18 +410,13 @@ class TournamentTicket extends \Eloquent {
 			if (!$refundId) {
 				return false;
 			}
-			// if(!empty($user->tournament_dollars)) {
-				// $refundId = $user->tournament_dollars->increment($cost, 'refund');
-			// } else {
-				// return false;
-			// }
 
 			$ticket->result_transaction_id = $refundId;
 		}
 
 		$ticket->refunded_flag = 1;
+
 		return $ticket->save();
-		// return $this->store((array)$ticket);
 	}
 
 	/**
