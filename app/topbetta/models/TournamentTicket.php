@@ -406,6 +406,7 @@ class TournamentTicket extends \Eloquent {
 
 		if(!empty($cost)) {
 			$refundId = \TopBetta\FreeCreditBalance::_increment(\Auth::user()->id, $cost, 'refund');
+
 			if (!$refundId) {
 				return false;
 			}

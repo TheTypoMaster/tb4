@@ -303,16 +303,24 @@ class FrontTournamentsTicketsController extends \BaseController {
 		} else {
 
 			// DO THEY HAVE A TICKET FOR THIS TOURNAMENT
-			$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)->where('user_id', '=', \Auth::user() -> id)->get();
+			$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)
+				->where('user_id', '=', \Auth::user() -> id)
+				->where('refunded_flag', 0)
+				->get();
+
 			if(count($ticket) > 0) {
 
 				$ticketModel = new \TopBetta\TournamentTicket;
 				$unregisterAllowed = $ticketModel->unregisterAllowed($tournamentId, $ticketId);
 				if($unregisterAllowed->allowed) {
 					// REFUND TICKET
-					if ($ticketModel->refundTicket($ticket[0], true)) {
-						dd("Refunded");
-					}	
+					$refunded = $ticketModel->refundTicket($ticket[0], true);
+
+					if ($refunded) {
+						return array('success' => true, 'result' => \Lang::get('tournaments.refunded_ticket', array('ticketId' => $ticketId)));
+					} else {
+						return array('success' => false, 'error' => \Lang::get('tournaments.refund_ticket_problem', array('ticketId' => $ticketId)));
+					}
 					// 	$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
 					// 	$leaderboard_model->deleteByUserAndTournamentID($user->id, $tournament->id);
 
@@ -322,7 +330,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 					// 	$message  = JText::_('Ticket could not be refunded');
 					// 	$type     = 'error';
 					// }						
-					return "Refund";
+					
 				} else {
 					return array('success' => false, 'error' => $unregisterAllowed->error);
 				}
