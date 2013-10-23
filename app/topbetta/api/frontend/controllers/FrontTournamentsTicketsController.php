@@ -300,6 +300,9 @@ class FrontTournamentsTicketsController extends \BaseController {
 	/**
 	 * Remove the specified resource from storage.
 	 *
+	 * NOTE: if you can't use DELETE VERB
+	 * Add: ?_method=DELETE to requesting POST URL
+	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
