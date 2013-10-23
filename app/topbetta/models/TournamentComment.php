@@ -21,14 +21,16 @@ class TournamentComment extends \Eloquent {
 		$query = TournamentComment::where('tournament_id', '=', $tournamentId)
 		            ->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_tournament_comment.user_id')
 		            ->select('tbdb_tournament_comment.*', 'tbdb_users.username')
-		            ->orderBy('tbdb_tournament_comment.created_at', 'asc')
-		            ->take($limit);		            
+		            ->orderBy('tbdb_tournament_comment.id', 'desc');		            	            
 
 		if ($dir == 'after' && $commentId) {
 			$query->where('tbdb_tournament_comment.id', '>', $commentId);
 		} else if ($dir == 'before' && $commentId) {
 			$query->where('tbdb_tournament_comment.id', '<', $commentId);
-		}            
+			$query->take($limit);	
+		} else {
+			$query->take($limit);
+		}           
 
 		return $query->get();           
 	}    
