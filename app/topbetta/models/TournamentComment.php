@@ -45,7 +45,6 @@ class TournamentComment extends \Eloquent {
 		$tournamentEndDate = date_create($tournament['end_date']);
 		$diff = $tournamentEndDate->diff(date_create("now"))->format("%d");	
 
-		return ($diff >= 2) ? false : true;
-
+		return ($diff >= 2 && strtotime($tournament['end_date']) < time()) ? false : true;
 	}
 }
