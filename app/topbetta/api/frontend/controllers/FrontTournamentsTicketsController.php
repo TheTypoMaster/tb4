@@ -334,6 +334,9 @@ class FrontTournamentsTicketsController extends \BaseController {
 					$refunded = $ticketModel->refundTicket($ticket[0], true);
 
 					if ($refunded) {
+						$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+						$leaderboardModel->deleteByUserAndTournamentID(\Auth::user() -> id, $tournamentId);
+						
 						return array('success' => true, 'result' => \Lang::get('tournaments.refunded_ticket', array('ticketId' => $ticketId)));
 					} else {
 						return array('success' => false, 'error' => \Lang::get('tournaments.refund_ticket_problem', array('ticketId' => $ticketId)));
