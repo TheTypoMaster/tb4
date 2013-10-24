@@ -108,7 +108,7 @@ class FrontTournamentsCommentsController extends \BaseController {
 				/**
 				 * Replacing all characters of the bad word with *
 				 */
-				$comment = str_replace($badword, str_repeat('*', strlen($badword)), $comment);
+				$comment = str_ireplace($badword, str_repeat('*', strlen($badword)), $comment);
 			}
 
 			$params	= array(
