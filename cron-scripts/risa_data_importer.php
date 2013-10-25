@@ -49,7 +49,12 @@ class RisaDataImporter extends TopBettaCLI{
 			
 		else{
 			touch(self::LOCK_FILE);
-			$this->processRisaData();
+			// update silk images
+			$this->updateSilkImages();
+			
+			//update DB with silk names and last starts
+			$this->processFutureRisaData();
+		
 		}
 	}
 	
@@ -63,7 +68,12 @@ class RisaDataImporter extends TopBettaCLI{
 		$cmd = "wget --mirror -nd -nv -P ".self::DATA_LOCATION." --ftp-user=topbetta --ftp-password=topracing \"$url\" 2>&1";
 		$output = shell_exec($cmd);
 		$this->l("Output: ".$output);
-
+		
+		// sync the risa silks as well
+	    $silksCmd = "wget --mirror -nd -nv -P /mnt/data/sites/www.topbetta.com.au/silks --ftp-user=topbetta --ftp-password=topracing ftp://116.240.194.141/Top%20Betta/Jockey%20silks/library/ 2>&1" ;
+	    $output = shell_exec($silksCmd);
+	    $this->l("Output: ".$output);
+	   
 		// get the list of files in the data directory
 		//$dataDirectory = '/home/oshan/git/tb4/cron-scripts/risa_data';
 		$xmlFiles = array_diff(scandir(self::DATA_LOCATION), array('..', '.', '.listing'));
@@ -151,7 +161,7 @@ class RisaDataImporter extends TopBettaCLI{
 						$row = mysql_fetch_array($RunnerCodeExistResult);
 						$fileNameID = $row['id'];
 					}else {
-
+						
 						$nowTime = date("Y-m-d H:i:s");
 						// add new file_name
 						$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`, `last_starts`, `created_at`, `updated_at`) VALUES ";
@@ -172,6 +182,101 @@ class RisaDataImporter extends TopBettaCLI{
 			$this->l("File Marked Processed: $updateQuery");
 		}
 	}
+
+	
+	function processFutureRisaData(){
+		
+		// pull down the latest files fro  the RISA FTP site
+		$url = 'ftp://116.240.194.141/Top Betta/Risa XML 3.5/';
+		$outputfile = "dl.html";
+		$cmd = "wget --mirror -nd -nv -P ".self::DATA_LOCATION." --ftp-user=topbetta --ftp-password=topracing \"$url\" 2>&1";
+		$output = shell_exec($cmd);
+		$this->l("Output: ".$output);
+		
+		// get the list of files in the data directory
+		$xmlFiles = array_diff(scandir(self::DATA_LOCATION), array('..', '.', '.listing'));
+		
+		// today's date
+		$today = date('Ymd');
+		
+		// loop on each xml file
+		foreach($xmlFiles as $fileName){
+			
+			// only process if it's a file with a .xml extension
+			if(pathinfo($fileName, PATHINFO_EXTENSION) == 'xml'){
+				$this->l("Processing FileName: ".$fileName);
+			
+				// extract meeting date from filename
+				$meetingDate = substr($fileName, 0, 7);
+				
+				// process file if it in the future
+				if ($meetingDate >= $today){
+					
+					// grab the file's xml contents
+					$risaXML = new SimpleXMLElement(file_get_contents(self::DATA_LOCATION . $fileName));
+						
+					// get the meeting details
+					$meetDate = $risaXML->MeetDate;
+					$codeType = $risaXML->CodeType;
+					$codeType = 'R';
+					$venueName = strtoupper($risaXML->Venue[0]->attributes()->VenueName);
+						
+					// loop on each race
+					foreach ($risaXML->Races->Race as $risaRace) {
+						($risaRace->RaceNumber < 10) ? $raceNumber = '0' . $risaRace->RaceNumber : $raceNumber = $risaRace->RaceNumber;
+						echo "Race Number: $raceNumber\n";
+						foreach ($risaRace->RaceEntries->RaceEntry as $raceEntry) {
+							($raceEntry->TabNumber < 10) ? $runnerNumber = '0' . $raceEntry->TabNumber : $runnerNumber = $raceEntry->TabNumber;
+							
+							$silkFileName = $raceEntry->JockeySilksImage->attributes ()->FileName_NoExt;
+							$lastStarts = $raceEntry->Form->LastStartsSummary;
+
+							// build up the unique runner code
+							$runnerCode = $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber;
+							$this->l ("Processing: " . $runnerCode . " Silk:$silkFileName, LastStarts:$lastStarts");
+							
+							// Check if runner code is in DB
+							$runnerCodeExist = "SELECT id from `tb_racing_data_risa_silk_map` where `runner_code` = '$runnerCode' LIMIT 1";
+							$RunnerCodeExistResult = mysql_query ($runnerCodeExist );
+							$RunnerCodeExistnum_rows = mysql_num_rows ($RunnerCodeExistResult);
+							
+							// if exists update record
+							if ($RunnerCodeExistnum_rows) {
+								$this->l ( "Already in DB" );
+								$row = mysql_fetch_array ($RunnerCodeExistResult);
+								$fileNameID = $row ['id'];
+								$updateQuery  = " UPDATE tb_racing_data_risa_silk_map ";
+								$updateQuery .= " SET silk_file_name = '$silkFileName', last_starts = '$lastStarts', updated_at = NOW()";
+								mysql_query ( $updateQuery );
+								if ($debug) {
+									$this->l ( "Update Silk table Query: mysql_query" );
+								}
+							// otherwise add a record
+							} else { 
+								$nowTime = date ( "Y:m:d:H:i:s" );
+								$silkQuery = " INSERT INTO `tb_racing_data_risa_silk_map` (`id`, `runner_code`, `silk_file_name`, `last_starts`, `created_at`, `updated_at`) VALUES ";
+								$silkQuery .= " ('', '$runnerCode', '$silkFileName', '$lastStarts', '$nowTime', '$nowTime'); ";
+								mysql_query ( $silkQuery );
+								$silkID = mysql_insert_id ();
+								$this->l ( "Added to DB" );
+								if ($debug) {
+									$this->l ( "Add Silk table Query: $silkQuery" );
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	function updateSilkImages(){
+		// sync the risa silks images
+		$silksCmd = "wget --mirror -nd -nv -P /mnt/data/sites/www.topbetta.com.au/silks --ftp-user=topbetta --ftp-password=topracing ftp://116.240.194.141/Top%20Betta/Jockey%20silks/library/ 2>&1" ;
+		$output = shell_exec($silksCmd);
+		$this->l("Silk Images Update: ".$output);
+	}
+	
 	
 	function cleanUpRisaData(){
 		
@@ -238,7 +343,6 @@ class RisaDataImporter extends TopBettaCLI{
 	
 			$sectionList[$sectionName] = $section[0];
 		}
-	
 		return $sectionList[$sectionName];
 	}
 
