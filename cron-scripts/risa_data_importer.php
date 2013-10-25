@@ -50,7 +50,7 @@ class RisaDataImporter extends TopBettaCLI{
 		else{
 			touch(self::LOCK_FILE);
 			// update silk images
-			$this->updateSilkImages();
+			//$this->updateSilkImages();
 			
 			//update DB with silk names and last starts
 			$this->processFutureRisaData();
