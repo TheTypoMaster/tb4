@@ -248,6 +248,7 @@ class RisaDataImporter extends TopBettaCLI{
 								$fileNameID = $row ['id'];
 								$updateQuery  = " UPDATE tb_racing_data_risa_silk_map ";
 								$updateQuery .= " SET silk_file_name = '$silkFileName', last_starts = '$lastStarts', updated_at = NOW()";
+								$updateQuery .= " WHERE runner_code = '$runnerCode'";
 								mysql_query ( $updateQuery );
 								if ($debug) {
 									$this->l ( "Update Silk table Query: mysql_query" );
