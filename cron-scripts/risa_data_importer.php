@@ -209,6 +209,7 @@ class RisaDataImporter extends TopBettaCLI{
 				// extract meeting date from filename
 				$meetingDate = substr($fileName, 0, 7);
 				
+				$this->l("Meeting Date: ".$meetingDate. ", Today: $today.");
 				// process file if it in the future
 				if ($meetingDate >= $today){
 					
