@@ -70,9 +70,9 @@ class RisaDataImporter extends TopBettaCLI{
 		$this->l("Output: ".$output);
 		
 		// sync the risa silks as well
-	    $silksCmd = "wget --mirror -nd -nv -P /mnt/data/sites/www.topbetta.com.au/silks --ftp-user=topbetta --ftp-password=topracing ftp://116.240.194.141/Top%20Betta/Jockey%20silks/library/ 2>&1" ;
-	    $output = shell_exec($silksCmd);
-	    $this->l("Output: ".$output);
+	    //$silksCmd = "wget --mirror -nd -nv -P /mnt/data/sites/www.topbetta.com.au/silks --ftp-user=topbetta --ftp-password=topracing ftp://116.240.194.141/Top%20Betta/Jockey%20silks/library/ 2>&1" ;
+	    ////$output = shell_exec($silksCmd);
+	   // $this->l("Output: ".$output);
 	   
 		// get the list of files in the data directory
 		//$dataDirectory = '/home/oshan/git/tb4/cron-scripts/risa_data';
