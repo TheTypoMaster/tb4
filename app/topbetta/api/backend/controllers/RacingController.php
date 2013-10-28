@@ -330,7 +330,7 @@ class RacingController extends \BaseController {
 											}
 										}
 										
-										if (isset ( $dataArray ['RaceNo'] )) {
+										if (isset($dataArray ['RaceNo']) && isset($dataArray ['JumpTime'])) {
 											$raceEvent->number = $dataArray ['RaceNo'];
 											// update meeting start time if it's race 1
 											if ($raceEvent->number == '1') {
