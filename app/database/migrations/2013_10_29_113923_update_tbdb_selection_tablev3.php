@@ -13,7 +13,7 @@ class UpdateTbdbSelectionTablev3 extends Migration {
     public function up()
     {
         Schema::table('tbdb_selection', function(Blueprint $table) {
-            $table->string('runner_code', 24);
+            $table->string('runner_code', 64)->index();
         });
     }
 
