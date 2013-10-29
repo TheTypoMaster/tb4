@@ -91,7 +91,7 @@ class RisaFormImporter extends \BaseController {
 							$runnerExists = TopBetta\RisaForm::checkForRunnerCode($runnerCode);
 							// if runner code exists update that record
 							if($runnerExists){
-								\Log::info("RisaImport: RunnerForm: Runner Form Exists");
+								\Log::info("RisaImport: RunnerForm: Runner Form Exists, ID:$runnerExists");
 								$runnerForm = TopBetta\RisaForm::find($runnerExists);
 							}else{
 								\Log::info("RisaImport: RunnerForm: Runner will be added");
@@ -132,6 +132,12 @@ class RisaFormImporter extends \BaseController {
 		}
 	}
 	
+	
+	/**
+	 * Grab last starts from XML and add the to the database
+	 *
+	 * @return int number of last starts processed
+	 */
 	private function lastStartsImporter($lastStartsXML, $runnerCode, $horseCode, $runnerId){
 		
 		$lastStartCount = 0;
@@ -184,9 +190,9 @@ class RisaFormImporter extends \BaseController {
 	}
 	
 	/**
-	 * Download RISA
+	 * Download RISA XML files from the FTP server
 	 *
-	 * @return booleen
+	 * @return array of files to process
 	 */
 	private function downloadRISAFTP() {
 		
@@ -199,8 +205,6 @@ class RisaFormImporter extends \BaseController {
 		$wgetPath = \Config::get('risa.wgetPath');
 		
 		// mirror the RISA ftp site with wget - // TODO: check out native way to do this
-		$url = 'ftp://116.240.194.141/Top Betta/Risa XML 3.5/';
-		$outputfile = "dl.html";
 		$cmd = $wgetPath."wget --mirror -nd -nv -P " . $localStoragePath . " --ftp-user=" . $ftpUserName . " --ftp-password=" . $ftpPassword . " \"$ftpIP/$ftpPath\" 2>&1";
 		$output = shell_exec ( $cmd );
 		\Log::info( "Output: " . $output );
@@ -213,6 +217,11 @@ class RisaFormImporter extends \BaseController {
 		) );
 	}
 	
+	/**
+	 * Grag results/form from XML and return formatted
+	 *
+	 * @return string formatted with results
+	 */
 	private function getResultsSummary($resultsSummary){
 		(isset($resultsSummary->attributes()->Starts)) ? $starts = $resultsSummary->attributes()->Starts : $starts = 0;
 		(isset($resultsSummary->attributes()->Wins)) ? $wins = $resultsSummary->attributes()->Wins : $wins = 0;

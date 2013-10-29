@@ -45,7 +45,10 @@ class RaceSelection extends \Eloquent {
                         sp.override_odds,
                         ss.name AS status,
                         sr.win_dividend,
-                        sr.place_dividend
+                        sr.place_dividend,
+                        rrf.*,
+                        fls.*
+                        
 			  FROM
 			                        `tbdb_selection` AS s
 			  INNER JOIN
