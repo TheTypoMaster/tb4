@@ -29,7 +29,7 @@ $app->redirectIfTrailingSlash();
 $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
-	'ol_development' => array('Olivers-MacBook-Pro.local'),
+	'ol_development' => array('olivers-mbp.gateway'),
 	'ol_testing' => array('ol_test.topbetta.com'),
 	'mic_development' => array('Mics-MacBook-Pro.local'),
 	'testing1' => array('testing1.*'),

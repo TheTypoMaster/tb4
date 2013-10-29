@@ -80,6 +80,9 @@ Route::group(array('prefix' => '/api/admin/v1'), function() {
 	// Data importer calls
 	Route::resource('dataimporter', 'AdminDataImporter');
 	Route::resource('heartbeat', 'HeartBeat');
+	
+	// RISA form importer
+	Route::get('risaformimporter', 'TopBetta\admin\RisaFormImporter@formImporter');
 
 });
 
