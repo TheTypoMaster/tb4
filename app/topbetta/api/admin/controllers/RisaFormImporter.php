@@ -12,7 +12,7 @@ class RisaFormImporter extends \BaseController {
 	public function formImporter() {
 		// today's date
 		$today = date ( 'Ymd' );
-		$localStoragePath = "/Users/Neo/git/development/tb4/cron-scripts/risa_data/";
+		$localStoragePath = \Config::get('risa.localStoragePath');
 		
 		$xmlFiles = $this->downloadRISAFTP();
 		// loop on each xml file
@@ -190,17 +190,18 @@ class RisaFormImporter extends \BaseController {
 	 */
 	private function downloadRISAFTP() {
 		
-		// get config soon
-		$ftpUserName = "topbetta";
-		$ftpPassword = "topracing";
-		$ftpIP = "ftp://116.240.194.141";
-		$ftpPath = "Top Betta/Risa XML 3.5/";
-		$localStoragePath = "/Users/Neo/git/development/tb4/cron-scripts/risa_data/";
+		// get ftp details from config
+		$ftpUserName = \Config::get('risa.ftpUserName');
+		$ftpPassword =\Config::get('risa.ftpPassword');
+		$ftpIP = \Config::get('risa.ftpIP');
+		$ftpPath = \Config::get('risa.ftpPath');
+		$localStoragePath = \Config::get('risa.localStoragePath');
+		$wgetPath = \Config::get('risa.wgetPath');
 		
 		// mirror the RISA ftp site with wget - // TODO: check out native way to do this
 		$url = 'ftp://116.240.194.141/Top Betta/Risa XML 3.5/';
 		$outputfile = "dl.html";
-		$cmd = "/usr/local/bin/wget --mirror -nd -nv -P " . $localStoragePath . " --ftp-user=" . $ftpUserName . " --ftp-password=" . $ftpPassword . " \"$ftpIP/$ftpPath\" 2>&1";
+		$cmd = $wgetPath."wget --mirror -nd -nv -P " . $localStoragePath . " --ftp-user=" . $ftpUserName . " --ftp-password=" . $ftpPassword . " \"$ftpIP/$ftpPath\" 2>&1";
 		$output = shell_exec ( $cmd );
 		\Log::info( "Output: " . $output );
 		

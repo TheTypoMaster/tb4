@@ -331,7 +331,7 @@ class RacingController extends \BaseController {
 										}
 									
 										// get race values from JSON
-										if(isset($dataArray['RaceNo'])){
+										if(isset($dataArray['RaceNo']) && isset($dataArray['JumpTime'])){
 											$raceEvent->number = $dataArray['RaceNo'];
 											// update meeting start time if it's race 1
 											if($raceEvent->number == '1'){
