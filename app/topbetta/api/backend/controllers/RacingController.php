@@ -558,7 +558,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts.");
 											
 											// add the runner code 
-											$runnerCodeSelction = $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber;
+											$runnerCodeSelction = str_replace(" ", "", $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber);
 											$raceRunner->runner_code = $runnerCodeSelction;
 										}
 									}

@@ -47,7 +47,7 @@ class RisaFormImporter extends \BaseController {
 							($raceEntry->TabNumber < 10) ? $runnerNumber = '0' . $raceEntry->TabNumber : $runnerNumber = $raceEntry->TabNumber;
 							
 							// build up the unique runner code
-							$runnerCode = $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber;
+							$runnerCode = str_replace(" ", "", $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber);
 							\Log::info  ("RisaImport: RunnerForm: Processing: " . $runnerCode);
 							
 							// horse results summary
@@ -98,7 +98,7 @@ class RisaFormImporter extends \BaseController {
 								$runnerForm = new TopBetta\RisaForm;
 							}
 							
-							// prepare the model
+							// add data to the model instance
 							$runnerForm->race_code = $raceCode;
 							$runnerForm->horse_code = $raceEntry->Horse->attributes()->HorseCode;
 							$runnerForm->runner_code = $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber;
@@ -156,6 +156,7 @@ class RisaFormImporter extends \BaseController {
 				$runnerLastStart->runner_code = $runnerCode;
 			}
 			
+			// add data to the model instance
 			$runnerLastStart->runner_form_id = $runnerId;
 			$runnerLastStart->horse_code = $horseCode;
 			$runnerLastStart->finish_position = $lastStart->FinishPosition;
