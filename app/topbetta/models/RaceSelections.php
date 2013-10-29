@@ -78,7 +78,7 @@ class RaceSelection extends \Eloquent {
 			  LEFT JOIN
 			  						`tb_data_risa_runner_form_last_starts` as fls
 			  ON
-			  						fls.funner_form_id = rrf.id
+			  						fls.runner_form_id = rrf.id
 			  WHERE
 			                        e.id = '$raceId'
 			  ORDER
