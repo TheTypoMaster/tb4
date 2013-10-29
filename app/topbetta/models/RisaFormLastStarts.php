@@ -1,20 +1,14 @@
 <?php namespace TopBetta;
 
-class RisaForm extends \Eloquent {
+class RisaFormLastStarts extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
     
-    protected $table = 'tb_data_risa_runner_form';
+    protected $table = 'tb_data_risa_runner_form_last_starts';
     
-    public function selection(){
-    	return $this->hasOne('TopBetta\RaceSelection', 'runner_code', 'runner_code');
-    }
-
-    public function lastStarts(){
-    	return $this->hasMany('Topbetta\RisaFormLastStarts', 'id', 'runner_form_id');
-    			//-> join('tbdb_event_status', 'tbdb_event.event_status_id', '=', 'tbdb_event_status.id')
-    			//-> select(array('tbdb_event.*', 'tbdb_event_status.name AS status'));
+    public function risaForm(){
+    	return $this->hasOne('Topbetta\RisaForm', 'runner_form_id', 'id');
     }
     
     
