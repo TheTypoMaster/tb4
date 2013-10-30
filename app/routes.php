@@ -52,7 +52,7 @@ header('Access-Control-Allow-Credentials: true');
 
 Route::get('/', function()
 {
-	return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', '2013-10-29-R-PORTMACQUARIE-08-16')->get();
+	//return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runnerCode)->get();
 	// return all events for meeting with id of 1
 	//$events = RaceMeeting::find(1)->raceevents;
 	//return $events;
