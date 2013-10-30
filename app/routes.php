@@ -56,6 +56,7 @@ header('Access-Control-Allow-Credentials: true');
 
 Route::get('/', function()
 {
+	//return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runnerCode)->get();
 	// return all events for meeting with id of 1
 	//$events = RaceMeeting::find(1)->raceevents;
 	//return $events;
@@ -84,6 +85,9 @@ Route::group(array('prefix' => '/api/admin/v1'), function() {
 	// Data importer calls
 	Route::resource('dataimporter', 'AdminDataImporter');
 	Route::resource('heartbeat', 'HeartBeat');
+	
+	// RISA form importer
+	Route::get('risaformimporter', 'TopBetta\admin\RisaFormImporter@formImporter');
 
 });
 
