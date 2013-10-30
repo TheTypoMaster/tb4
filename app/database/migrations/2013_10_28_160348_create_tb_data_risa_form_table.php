@@ -23,6 +23,7 @@ class CreateTbDataRisaFormTable extends Migration {
             $table->string('sex', 12);
             $table->string('colour', 24);
             $table->string('career_results', 24);
+            $table->string('distance_results', 24);
             $table->string('track_results', 24);
            	$table->string('track_distance_results', 24);
            	$table->string('first_up_results', 24);
