@@ -66,7 +66,7 @@ class FrontCombinedRacingController extends \BaseController {
             							'track' => $runnersForm[0]->track_results, 'track_distance' => $runnersForm[0]->track_distance_results, 'first_up' => $runnersForm[0]->first_up_results, 'second_up' => $runnersForm[0]->second_up_results,
             							'good' => $runnersForm[0]->good_results, 'dead' => $runnersForm[0]->dead_results, 'slow' => $runnersForm[0]->slow_results, 'heavy' => $runnersForm[0]->heavy_results);
             
-            foreach ($runnersForm[0]->last_starts as $last_starts){
+            foreach ($runnersForm[0]->last_starts[0] as $last_starts){
             	$runners[$key]['detailed_form']['last_starts'][] = $last_starts;
             }
             
