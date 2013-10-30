@@ -65,8 +65,8 @@ class FrontCombinedRacingController extends \BaseController {
             // make sure we got some form for this runner
             if(isset($runnersForm[0])){
             	$runners[$key]['detailed_form'] = array ('id'=> (int)$runnersForm[0]->id, 'age' => $runnersForm[0]->age, 'colour' => $runnersForm[0]->colour, 'sex' => $runnersForm[0]->sex, 'career' => $runnersForm[0]->career_results, 
-	            						'track' => $runnersForm[0]->track_results, 'track_distance' => $runnersForm[0]->track_distance_results, 'first_up' => $runnersForm[0]->first_up_results, 'second_up' => $runnersForm[0]->second_up_results,
-	            						'good' => $runnersForm[0]->good_results, 'dead' => $runnersForm[0]->dead_results, 'slow' => $runnersForm[0]->slow_results, 'heavy' => $runnersForm[0]->heavy_results);
+            						'distance' => $runnersForm[0]->distance_results, 'track' => $runnersForm[0]->track_results, 'track_distance' => $runnersForm[0]->track_distance_results, 'first_up' => $runnersForm[0]->first_up_results, 'second_up' => $runnersForm[0]->second_up_results,
+            						'good' => $runnersForm[0]->good_results, 'dead' => $runnersForm[0]->dead_results, 'slow' => $runnersForm[0]->slow_results, 'heavy' => $runnersForm[0]->heavy_results);
 	            
 	            foreach ($runnersForm[0]->last_starts as $last_starts){
 	            	$runners[$key]['detailed_form']['last_starts'][] = array('id' => (int)$last_starts->id, 'finish_position' => (int)$last_starts->finish_position, 'race_starters' => (int)$last_starts->race_starters, 'abr_venue' => $last_starts->abr_venue, 'race_distance' => $last_starts->race_distance,

@@ -56,6 +56,9 @@ header('Access-Control-Allow-Credentials: true');
 
 Route::get('/', function()
 {
+	
+	return \Redirect::to('https://www.topbetta.com.au');
+	
 	//return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runnerCode)->get();
 	// return all events for meeting with id of 1
 	//$events = RaceMeeting::find(1)->raceevents;
@@ -72,8 +75,7 @@ Route::get('/', function()
 
 	//$it = Hash::make('igast3st1ng');
 	//return $it;
-	return View::make('hello');
-
+	
 	//return FreeTransactions::all();
 
 	// return FreeCreditBalance::getFreeCreditBalance(6996);
@@ -81,7 +83,7 @@ Route::get('/', function()
 });
 
 //Route group for admin stuff
-Route::group(array('prefix' => '/api/admin/v1'), function() {
+Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), function() {
 	// Data importer calls
 	Route::resource('dataimporter', 'AdminDataImporter');
 	Route::resource('heartbeat', 'HeartBeat');
