@@ -965,10 +965,8 @@ class RacingController extends \BaseController {
         $meetingTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->where('type_code', '!=', 'NULL')->get()->toArray();
 
 		if(is_array($meetingTypeCodeResult)){
-
-			if(!empty($meetingTypeCodeResult[0])){
-			
-	    		$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
+			if(isset($meetingTypeCodeResult[0])){
+				$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
 	        	$meetingCountry = $meetingTypeCodeResult[0]['country'];
 	            $meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 	
@@ -980,14 +978,11 @@ class RacingController extends \BaseController {
 	                return false;
 				}
 	            TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
-		
 			}else{
-				TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: No array offset's found $meetingTypeCodeResult");
+				TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - ". print_r($meetingTypeCodeResult, true));
 			}
-            
-            
-		}else{
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - $meetingTypeCodeResult");
+        }else{
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - ". print_r($meetingTypeCodeResult, true));
 		}
 		return true;
 	}

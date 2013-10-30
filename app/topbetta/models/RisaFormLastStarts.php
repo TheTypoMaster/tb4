@@ -1,21 +1,18 @@
 <?php namespace TopBetta;
 
-class RisaForm extends \Eloquent {
+class RisaFormLastStarts extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
     
-    protected $table = 'tb_data_risa_runner_form';
+    protected $table = 'tb_data_risa_runner_form_last_starts';
     
-    public function selection(){
-    	return $this->hasOne('TopBetta\RaceSelection', 'runner_code', 'runner_code');
+    public function risaForm(){
+    	return $this->hasOne('Topbetta\RisaForm', 'id', 'runner_form_id');
     }
-
-    public function lastStarts(){
-    	return $this->hasMany('TopBetta\RisaFormLastStarts', 'runner_form_id', 'id');
-     }
     
-     // check if runner_code exists in DB already
+    
+    // check if runner_code exists in DB already
     static public function checkForRunnerCode($runnerCode) {
     	return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('id');
     }

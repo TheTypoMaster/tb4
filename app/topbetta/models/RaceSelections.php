@@ -45,10 +45,8 @@ class RaceSelection extends \Eloquent {
                         sp.override_odds,
                         ss.name AS status,
                         sr.win_dividend,
-                        sr.place_dividend,
-                        rrf.*,
-                        fls.*
-                        
+                        sr.place_dividend
+                         
 			  FROM
 			                        `tbdb_selection` AS s
 			  INNER JOIN
@@ -71,14 +69,6 @@ class RaceSelection extends \Eloquent {
 			                        `tbdb_event` AS e
 			  ON
 			                        m.event_id = e.id
-			  LEFT JOIN
-			  						`tb_data_risa_runner_form` as rrf
-			  ON
-			  						rrf.runner_code = s.runner_code
-			  LEFT JOIN
-			  						`tb_data_risa_runner_form_last_starts` as fls
-			  ON
-			  						fls.funner_form_id = rrf.id
 			  WHERE
 			                        e.id = '$raceId'
 			  ORDER
@@ -96,7 +86,7 @@ class RaceSelection extends \Eloquent {
 			$scratched = ($runner -> status == "Scratched") ? true : false;
 			$pricing = array('win' => (float)number_format($runner -> win_odds, 2), 'place' => (float)number_format($runner -> place_odds, 2));
 
-			$result[] = array('id' => (int)$runner -> id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => $runner -> trainer, 'weight' => (float)$runner -> weight, 'saddle' => (int)$runner -> number, 'barrier' => (int)$runner -> barrier, 'scratched' => $scratched, 'form' => $runner -> last_starts, 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id);
+			$result[] = array('id' => (int)$runner -> id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => $runner -> trainer, 'weight' => (float)$runner -> weight, 'saddle' => (int)$runner -> number, 'barrier' => (int)$runner -> barrier, 'scratched' => $scratched, 'form' => $runner -> last_starts, 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id, 'runner_code' => $runner->runner_code);
 
 		}
 
