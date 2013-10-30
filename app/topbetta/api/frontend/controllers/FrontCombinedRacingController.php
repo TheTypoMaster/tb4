@@ -60,7 +60,9 @@ class FrontCombinedRacingController extends \BaseController {
             $runners[$key]['race_id'] = (int)$raceId;
             
             // add call to runners form 
-            $runners[$key]['detailed_form'] = TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runners[$key]['runner_code'])->get();
+            $runnersForm = \TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runners[$key]['runner_code'])->get()->toArray();
+            
+            $runners[$key]['detailed_form'] = $runnersForm[0];
            
         }
 
