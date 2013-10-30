@@ -12,13 +12,10 @@ class RisaForm extends \Eloquent {
     }
 
     public function lastStarts(){
-    	return $this->hasMany('Topbetta\RisaFormLastStarts', 'id', 'runner_form_id');
-    			//-> join('tbdb_event_status', 'tbdb_event.event_status_id', '=', 'tbdb_event_status.id')
-    			//-> select(array('tbdb_event.*', 'tbdb_event_status.name AS status'));
-    }
+    	return $this->hasMany('TopBetta\RisaFormLastStarts', 'runner_form_id', 'id');
+     }
     
-    
-    // check if runner_code exists in DB already
+     // check if runner_code exists in DB already
     static public function checkForRunnerCode($runnerCode) {
     	return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('id');
     }

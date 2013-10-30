@@ -8,7 +8,7 @@ class RisaFormLastStarts extends \Eloquent {
     protected $table = 'tb_data_risa_runner_form_last_starts';
     
     public function risaForm(){
-    	return $this->hasOne('Topbetta\RisaForm', 'runner_form_id', 'id');
+    	return $this->hasOne('Topbetta\RisaForm', 'id', 'runner_form_id');
     }
     
     
