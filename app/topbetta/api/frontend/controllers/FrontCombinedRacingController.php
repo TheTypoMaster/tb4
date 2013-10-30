@@ -67,7 +67,7 @@ class FrontCombinedRacingController extends \BaseController {
             							'good' => $runnersForm[0]->good_results, 'dead' => $runnersForm[0]->dead_results, 'slow' => $runnersForm[0]->slow_results, 'heavy' => $runnersForm[0]->heavy_results);
             
             foreach ($runnersForm[0]->last_starts as $last_starts){
-            	$runners[$key]['detailed_form']['last_starts'][] = array('finish_position' => $last_starts->finish_position, 'race_starters' => $last_starts->race_starters, 'abr_venue' => $last_starts->abr_venue, 'race_distance' => $last_starts->race_distance,
+            	$runners[$key]['detailed_form']['last_starts'][] = array('id' => $last_starts->id, 'finish_position' => $last_starts->finish_position, 'race_starters' => $last_starts->race_starters, 'abr_venue' => $last_starts->abr_venue, 'race_distance' => $last_starts->race_distance,
             						'name_race_form' => $last_starts->name_race_form, 'mgt_date' => $last_starts->mgt_date, 'track_condition' => $last_starts->track_condition, 'numberic_rating' => $last_starts->numberic_rating, 'jockey_initials' => $last_starts->jockey_initials,
             						'jockey_surname' => $last_starts->jockey_surname, 'handicap' => $last_starts->handicap, 'barrier' => $last_starts->barrier, 'starting_win_price' => $last_starts->starting_win_price, 'other_runner_name' => $last_starts->other_runner_name,
             						'other_runner_barrier' => $last_starts->other_runner_barrier, 'in_running_800' => $last_starts->in_running_800, 'in_running_400' => $last_starts->in_running_400, 'other_runner_time' => $last_starts->other_runner_time, 'margin_decimal' => $last_starts->margin_decimal);
