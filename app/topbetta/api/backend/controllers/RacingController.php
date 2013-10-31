@@ -526,7 +526,6 @@ class RacingController extends \BaseController {
 											$raceRunner->silk_id = $dataArray['SilkName'];
 										}
 										
-										// get silk ID from RISA data: tb_racing_data_risa_silk_map
 										// check if meeting exists in DB
 										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
@@ -542,24 +541,17 @@ class RacingController extends \BaseController {
 											// make sure the numbers are 2 digits
 											($raceNo < 10) ? $raceNumber = '0' . $raceNo : $raceNumber = $raceNo;
 											($runnerNo < 10) ? $runnerNumber = '0' . $runnerNo : $runnerNumber = $runnerNo;
+																					
 											// Build the runner code
-											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
-											// Get Silk ID for this runner
-											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', "$runnerCode" )->get();
-												//$o = print_r($runnerSilkObject, true);
-												// TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner RISA Object:$o.");
-												if(count($runnerSilkObject) > 0){
-													if(isset($runnerSilkObject[0]->last_starts)){
-														$raceRunner->last_starts = $runnerSilkObject[0]->last_starts;
-													}
-												}
+											$runnerCodeSelection = str_replace(" ", "", $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber);
 											
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts.");
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
 											
+											// Get last starts for this runner is we have them
+											$raceRunner->last_starts = TopBetta\RisaForm::getRunnerLastStarts($runnerCode);
+										
 											// add the runner code 
-											$runnerCodeSelction = str_replace(" ", "", $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber);
-											$raceRunner->runner_code = $runnerCodeSelction;
+											$raceRunner->runner_code = $runnerCodeSelection;
 										}
 									}
 
