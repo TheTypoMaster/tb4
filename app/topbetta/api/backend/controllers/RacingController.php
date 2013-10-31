@@ -548,7 +548,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
 											
 											// Get last starts for this runner is we have them
-											$raceRunner->last_starts = TopBetta\RisaForm::getRunnerLastStarts($runnerCode);
+											$raceRunner->last_starts = TopBetta\RisaForm::getRunnerLastStarts($runnerCodeSelection);
 										
 											// add the runner code 
 											$raceRunner->runner_code = $runnerCodeSelection;
