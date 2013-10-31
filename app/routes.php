@@ -30,7 +30,11 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
                             "http://beta.tb4.dev",
 							"http://tb4test.mugbookie.com",
 							"http://192.168.0.31:9778",
-							"https://www.topbetta.com.au"
+							"https://www.topbetta.com.au",
+							"http://jason.mugbookie.com",
+							"http://evan.mugbookie.com",
+							"http://mic.mugbookie.com",
+							"http://greg.mugbookie.com"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){
@@ -52,6 +56,10 @@ header('Access-Control-Allow-Credentials: true');
 
 Route::get('/', function()
 {
+	
+	return \Redirect::to('https://www.topbetta.com.au');
+	
+	//return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runnerCode)->get();
 	// return all events for meeting with id of 1
 	//$events = RaceMeeting::find(1)->raceevents;
 	//return $events;
@@ -67,8 +75,7 @@ Route::get('/', function()
 
 	//$it = Hash::make('igast3st1ng');
 	//return $it;
-	return View::make('hello');
-
+	
 	//return FreeTransactions::all();
 
 	// return FreeCreditBalance::getFreeCreditBalance(6996);
@@ -76,10 +83,13 @@ Route::get('/', function()
 });
 
 //Route group for admin stuff
-Route::group(array('prefix' => '/api/admin/v1'), function() {
+Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), function() {
 	// Data importer calls
 	Route::resource('dataimporter', 'AdminDataImporter');
 	Route::resource('heartbeat', 'HeartBeat');
+	
+	// RISA form importer
+	Route::get('risaformimporter', 'TopBetta\admin\RisaFormImporter@formImporter');
 
 });
 
@@ -160,6 +170,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
 
 	//tournaments
 	Route::resource('tournaments','FrontTournaments');
+
+	//tournaments bets
+	Route::resource('tournaments.comments','FrontTournamentsComments');
 
 	//tournaments bets
 	Route::resource('tournaments-bets','FrontTournamentsBets');

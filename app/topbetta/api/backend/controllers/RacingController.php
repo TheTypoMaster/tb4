@@ -329,62 +329,62 @@ class RacingController extends \BaseController {
 												$raceEvent->external_event_id = $meetingId;
 											}
 										}
-									
-										// get race values from JSON
-										if(isset($dataArray['RaceNo'])){
-											$raceEvent->number = $dataArray['RaceNo'];
+										
+										if (isset($dataArray ['RaceNo']) && isset($dataArray ['JumpTime'])) {
+											$raceEvent->number = $dataArray ['RaceNo'];
 											// update meeting start time if it's race 1
-											if($raceEvent->number == '1'){
-												$meetingRecord->start_date = $dataArray['JumpTime'];
+											if ($raceEvent->number == '1') {
+												$meetingRecord->start_date = $dataArray ['JumpTime'];
 												$meetingRecord->save();
 											}
-											
 										}
 										
-										if(isset($dataArray['JumpTime'])){
-											$raceEvent->start_date = $dataArray['JumpTime'];
+										if (isset ( $dataArray ['JumpTime'] )) {
+											$raceEvent->start_date = $dataArray ['JumpTime'];
 										}
 										
 										// update tournament start end times
-										if(isset($dataArray['JumpTime']) && isset($dataArray['RaceNo'])){
-											$tournamentsOnMeeting = Topbetta\Tournament::getTournamentWithEventGroup($meetingExists);
+										if (isset ($dataArray ['JumpTime']) && isset ($dataArray ['RaceNo'])) {
+											$tournamentsOnMeeting = Topbetta\Tournament::getTournamentWithEventGroup ($meetingExists);
 											// loop on each tournament
-											foreach ($tournamentsOnMeeting as $tournament){
+											foreach ($tournamentsOnMeeting as $tournament) {
 												// if it's race 1 store the jump time as tourn start date.
-												$tournamentModel = Topbetta\Tournament::find($tournament->id);
+												$tournamentModel = Topbetta\Tournament::find ($tournament->id);
 												if ($raceEvent->number == 1) {
-													$tournamentModel->start_date = $dataArray['JumpTime'];
-												}else{
-													if ($dataArray['JumpTime'] > $tournamentModel->end_date){
-														$tournamentModel->end_date = $dataArray['JumpTime'];
+													$tournamentModel->start_date = $dataArray ['JumpTime'];
+												} else {
+													if ($dataArray ['JumpTime'] > $tournamentModel->end_date) {
+														$tournamentModel->end_date = $dataArray ['JumpTime'];
 													}
 												}
 												$tournamentModel->save();
 											}
-											
 										}
 												
-										//TODO: Code Table lookup on different race status
+										//TODO: Code Table lookup on different race status from provider
 										//TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
 										if(isset($dataArray['RaceStatus'])){
 											switch($dataArray['RaceStatus']){
 												case "O":
-													$raceEvent->event_status_id = '1';
+													$raceEvent->event_status_id = '1'; // selling
 													break;
 												case "C":
-													$raceEvent->event_status_id = '5';
+													$raceEvent->event_status_id = '5'; // closed
 													break;
 												case "S":
 													$raceEvent->event_status_id = '5'; // no suspended status in code table
 													break;
 												case "I":
-													$raceEvent->event_status_id = '6';
+													$raceEvent->event_status_id = '6'; // interim
 													break;
 												case "R":
-													$raceEvent->event_status_id = '2';
+													$raceEvent->event_status_id = '2'; // paying
 													break;
 												case "A":
-													$raceEvent->event_status_id = '3';
+													$raceEvent->event_status_id = '3'; // abandoned
+													break;
+												case "D":
+													$raceEvent->event_status_id = '7'; // deleted
 													break;
 	
 												default:
@@ -432,7 +432,7 @@ class RacingController extends \BaseController {
 											TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, EGE in DB",1);
 										}
 									}else{
-										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process", 2);
+										TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process. MeetingID: $meetingId, RaceNumber: $raceNo", 2);
 									}
 									
 								}
@@ -526,7 +526,6 @@ class RacingController extends \BaseController {
 											$raceRunner->silk_id = $dataArray['SilkName'];
 										}
 										
-										// get silk ID from RISA data: tb_racing_data_risa_silk_map
 										// check if meeting exists in DB
 										$meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
 										TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
@@ -542,20 +541,17 @@ class RacingController extends \BaseController {
 											// make sure the numbers are 2 digits
 											($raceNo < 10) ? $raceNumber = '0' . $raceNo : $raceNumber = $raceNo;
 											($runnerNo < 10) ? $runnerNumber = '0' . $runnerNo : $runnerNumber = $runnerNo;
+																					
 											// Build the runner code
-											$runnerCode = $meetDate."-".$codeType."-%".$venueName."%-".$raceNumber."-".$runnerNumber;
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode");
-											// Get Silk ID for this runner
-											$runnerSilkObject = TopBetta\backend\RisaSilks::where('runner_code', 'LIKE', "$runnerCode" )->get();
-												//$o = print_r($runnerSilkObject, true);
-												// TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner RISA Object:$o.");
-												if(count($runnerSilkObject) > 0){
-													if(isset($runnerSilkObject[0]->last_starts)){
-														$raceRunner->last_starts = $runnerSilkObject[0]->last_starts;
-													}
-												}
+											$runnerCodeSelection = str_replace(" ", "", $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber);
 											
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCode, Silk:$raceRunner->silk_id, LastStarts:$raceRunner->last_starts.");
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
+											
+											// Get last starts for this runner is we have them
+											$raceRunner->last_starts = TopBetta\RisaForm::getRunnerLastStarts($runnerCodeSelection);
+										
+											// add the runner code 
+											$raceRunner->runner_code = $runnerCodeSelection;
 										}
 									}
 
@@ -961,22 +957,24 @@ class RacingController extends \BaseController {
         $meetingTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->where('type_code', '!=', 'NULL')->get()->toArray();
 
 		if(is_array($meetingTypeCodeResult)){
-
-    		$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
-        	$meetingCountry = $meetingTypeCodeResult[0]['country'];
-            $meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
-
-            // check if product is used
-            $productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
-
-            if(!$productUsed){
-            	TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
-                return false;
-			}
-            TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+			if(isset($meetingTypeCodeResult[0])){
+				$meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
+	        	$meetingCountry = $meetingTypeCodeResult[0]['country'];
+	            $meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
 	
-		}else{
-			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - $meetingTypeCodeResult");
+	            // check if product is used
+	            $productUsed = TopBetta\BetProduct::isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
+	
+	            if(!$productUsed){
+	            	TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade", 1);
+	                return false;
+				}
+	            TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+			}else{
+				TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - ". print_r($meetingTypeCodeResult, true));
+			}
+        }else{
+			TopBetta\LogHelper::l("BackAPI: Racing - Processing Result or Odds: Meeting ID not found???? - ". print_r($meetingTypeCodeResult, true));
 		}
 		return true;
 	}

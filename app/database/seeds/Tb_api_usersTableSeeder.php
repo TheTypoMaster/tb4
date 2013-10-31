@@ -18,7 +18,14 @@ class Tb_api_usersTableSeeder extends Seeder {
 						'password' => Hash::make ( 'igast3st1ng' ),
 						'created_at' => new DateTime (),
 						'updated_at' => new DateTime () 
-				) 
+				),
+				array (
+						'id' => '3',
+						'username' => 'topbetta_api_users',
+						'password' => Hash::make ( 't0pb3ttapa55' ),
+						'created_at' => new DateTime (),
+						'updated_at' => new DateTime ()
+				)
 		)
 		;
 		
