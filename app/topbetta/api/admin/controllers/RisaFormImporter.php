@@ -83,6 +83,9 @@ class RisaFormImporter extends \BaseController {
 									case "Heavy":
 										$heavyResults = $this->getResultsSummary($resultsSummary);
 										break;
+									case "AtThisDistance":
+										$distanceResults = $this->getResultsSummary($resultsSummary);
+										break;
 										
 								}
 							}
@@ -107,6 +110,7 @@ class RisaFormImporter extends \BaseController {
 							$runnerForm->sex = $raceEntry->Horse->attributes()->Sex;
 							$runnerForm->colour = $raceEntry->Horse->attributes()->Colour;
 							$runnerForm->career_results = $totalResults;
+							$runnerForm->distance_results = $distanceResults;
 							$runnerForm->track_results = $thisTrack;
 							$runnerForm->track_distance_results = $trackDistance;
 							$runnerForm->first_up_results = $firstUp;
