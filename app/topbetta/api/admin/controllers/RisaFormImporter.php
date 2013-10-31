@@ -104,7 +104,7 @@ class RisaFormImporter extends \BaseController {
 							// add data to the model instance
 							$runnerForm->race_code = $raceCode;
 							$runnerForm->horse_code = $raceEntry->Horse->attributes()->HorseCode;
-							$runnerForm->runner_code = $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber;
+							$runnerForm->runner_code = str_replace(" ", "", $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber);
 							$runnerForm->runner_name = $raceEntry->Horse->attributes()->HorseName;
 							$runnerForm->age = $raceEntry->Horse->attributes()->Age;
 							$runnerForm->sex = $raceEntry->Horse->attributes()->Sex;
