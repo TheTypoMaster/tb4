@@ -541,16 +541,20 @@ class RacingController extends \BaseController {
 											// make sure the numbers are 2 digits
 											($raceNo < 10) ? $raceNumber = '0' . $raceNo : $raceNumber = $raceNo;
 											($runnerNo < 10) ? $runnerNumber = '0' . $runnerNo : $runnerNumber = $runnerNo;
-																					
+
 											// Build the runner code
 											$runnerCodeSelection = str_replace(" ", "", $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber);
 											
-											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
-											
 											// Get last starts for this runner is we have them
-											$raceRunner->last_starts = TopBetta\RisaForm::getRunnerLastStarts($runnerCode);
-										
-											// add the runner code 
+											$raceRunnersLastStarts = TopBetta\RisaForm::getRunnerLastStarts($runnerCodeSelection);
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Last Starts: $raceRunner->last_starts");
+
+											if(isset($raceRunnersLastStarts)){
+												$raceRunner->last_starts = $raceRunnersLastStarts;
+											}else{
+												$raceRunner->last_starts = "";
+											}
+											// add the runner code
 											$raceRunner->runner_code = $runnerCodeSelection;
 										}
 									}
