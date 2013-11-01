@@ -243,7 +243,7 @@ class FrontUsersController extends \BaseController {
 		//$timeStamp = date("YmdHis");
 		//\File::append('/tmp/UserSignups-'.$timeStamp, json_encode($input) .". ".$yourbrowser);
 
-		\Log::debug(json_encode($input) .". ".$yourbrowser);
+		\Log::info(json_encode($input) .". ".$yourbrowser);
 		
 		$rules = array('first_name' => 'required|alpha_num|min:3', 'last_name' => 'required|alpha_num|min:3', 'source' => 'required|alpha_dash', 'type' => 'required|in:basic,upgrade,full');
 
