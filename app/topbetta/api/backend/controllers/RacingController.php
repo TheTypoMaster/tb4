@@ -544,6 +544,7 @@ class RacingController extends \BaseController {
 
 											// Build the runner code
 											$runnerCodeSelection = str_replace(" ", "", $meetDate."-".$codeType."-".$venueName."-".$raceNumber."-".$runnerNumber);
+											TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
 											
 											// Get last starts for this runner is we have them
 											$raceRunnersLastStarts = TopBetta\RisaForm::getRunnerLastStarts($runnerCodeSelection);
