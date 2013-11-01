@@ -239,7 +239,7 @@ class FrontUsersController extends \BaseController {
 		$input = Input::json() -> all();
 		
 		$ua=$this->getBrowser();
-		//$yourbrowser= "Your browser: " . $ua['name'] . " " . $ua['version'] . " on " .$ua['platform'] . " reports: <br >" . $ua['userAgent'];
+		$yourbrowser= "Your browser: " . $ua['name'] . " " . $ua['version'] . " on " .$ua['platform'] . " reports: <br >" . $ua['userAgent'];
 		//$timeStamp = date("YmdHis");
 		//\File::append('/tmp/UserSignups-'.$timeStamp, json_encode($input) .". ".$yourbrowser);
 
