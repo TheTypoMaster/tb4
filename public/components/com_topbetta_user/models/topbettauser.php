@@ -281,9 +281,8 @@ class TopbettaUserModelTopbettaUser extends JModel
 				marketing_opt_in_flag = ' . $db->quote($params['marketing_opt_in_flag']) . ',
 				self_exclusion_date	= ' . (isset($params['self_exclusion_date']) ? $db->quote($params['self_exclusion_date']) : 'null') . ',
 				bet_limit	= ' . (isset($params['bet_limit']) ? $db->quote($params['bet_limit']) : -1) . ',
-				requested_bet_limit	 = ' . (isset($params['requested_bet_limit']) ? $db->quote($params['requested_bet_limit']) : 0) . ',
-				btag		= ' . (isset($params['btag']) ? $db->quote($params['btag']) : 'null') . '
-        		WHERE user_id		= ' . $db->quote($params['user_id']) . ' LIMIT 1';
+				requested_bet_limit	 = ' . (isset($params['requested_bet_limit']) ? $db->quote($params['requested_bet_limit']) : 0) . '
+				WHERE user_id		= ' . $db->quote($params['user_id']) . ' LIMIT 1';
 		
 		$db->setQuery($query);
 		return $db->query();
