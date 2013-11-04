@@ -1666,6 +1666,22 @@ class Api_Betting extends JController {
 
 			foreach ($wagering_bet_list as $wagering_bet) {
 
+				// build the bet
+				$bet = clone $bet_model;
+				
+				// check if its a flexi
+				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
+				
+				// set the flexi percentage
+				if($bet->flexi_flag){
+					$bet->percentage = $wagering_bet->getFlexiPercentage();
+				}
+				
+				// if percentage is less than 1 percent then reject the bet
+				if ($bet->percentage < 1){
+					return OutputHelper::json(500, array('error_msg' => 'Bet not placed. Flexi percentage must be greater than 1%' ));
+				}
+				
 				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal($user->id) : 0;
 				$bet_freebet_transaction_id = $bet_freebet_refund_transaction_id =0;
 
@@ -1690,8 +1706,7 @@ class Api_Betting extends JController {
 
 				$exoticCass = 'WageringBetExotic'.$type;
 
-				// build the bet
-				$bet = clone $bet_model;
+				
 
 				$bet->external_bet_id			= 0;
 				$bet->user_id					= (int)$user->id;
@@ -1702,7 +1717,7 @@ class Api_Betting extends JController {
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
-				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
+				
 				if($bet->flexi_flag){
 					$bet->percentage = $wagering_bet->getFlexiPercentage();
 				}
