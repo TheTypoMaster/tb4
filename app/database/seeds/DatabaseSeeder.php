@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tbdb_selection_status_addSuspendedRecordTableSeeder');
 		$this->call('Tbdb_event_status_AddDeleteRecordEventStatusTableSeeder');
 		
+		$this->call('Tbdb_bet_result_statusTableSeeder');
 	}
 
 }
