@@ -212,7 +212,7 @@ class RisaFormImporter extends \BaseController {
 		// mirror the RISA ftp site with wget - // TODO: check out native way to do this
 		$cmd = $wgetPath."wget --mirror -nd -nv -P " . $localStoragePath . " --ftp-user=" . $ftpUserName . " --ftp-password=" . $ftpPassword . " \"$ftpIP/$ftpPath\" 2>&1";
 		$output = shell_exec ( $cmd );
-		\Log::info( "Output: " . $output );
+		\Log::info( "RisaImport: Wget Mirror Output: " . $output);
 		
 		// get the list of files in the data directory
 		return array_diff ( scandir ( $localStoragePath ), array (
