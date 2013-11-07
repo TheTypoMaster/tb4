@@ -9,6 +9,7 @@ class RaceMeeting extends \Eloquent {
 	public function raceevents() {
 		return $this -> belongsToMany('TopBetta\RaceEvent', 'tbdb_event_group_event', 'event_group_id', 'event_id')
 		 -> join('tbdb_event_status', 'tbdb_event.event_status_id', '=', 'tbdb_event_status.id')
+		 -> where('tbdb_event.event_status_id', '!=', '7')
 		 -> select(array('tbdb_event.*', 'tbdb_event_status.name AS status'));
 	}
 
