@@ -307,6 +307,9 @@ class FrontTournamentsTicketsController extends \BaseController {
 	/**
 	 * Remove the specified resource from storage.
 	 *
+	 * NOTE: if you can't use DELETE VERB
+	 * Add: ?_method=DELETE to requesting POST URL
+	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
@@ -331,6 +334,9 @@ class FrontTournamentsTicketsController extends \BaseController {
 					$refunded = $ticketModel->refundTicket($ticket[0], true);
 
 					if ($refunded) {
+						$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+						$leaderboardModel->deleteByUserAndTournamentID(\Auth::user() -> id, $tournamentId);
+						
 						return array('success' => true, 'result' => \Lang::get('tournaments.refunded_ticket', array('ticketId' => $ticketId)));
 					} else {
 						return array('success' => false, 'error' => \Lang::get('tournaments.refund_ticket_problem', array('ticketId' => $ticketId)));
