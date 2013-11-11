@@ -130,6 +130,8 @@ class Bet extends \Eloquent {
 				b.user_id = '$userId'
 			AND
 				b.resulted_flag = 0
+			AND 
+				rs.id !=  6
 
 			GROUP BY
 				b.id";
