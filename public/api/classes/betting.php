@@ -1153,11 +1153,10 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 				$bet_origin_model			= new BettingModelBetOrigin();
 
-
-				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
-				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
-				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
+				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
+				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
 				$bet_origin			= $bet_origin_model->getBetOriginByKeywordApi($bet_origin_keyword);
 				
@@ -1659,6 +1658,8 @@ class Api_Betting extends JController {
 			require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 			$bet_origin_model			= new BettingModelBetOrigin();
 
+			$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+			$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 			$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 			$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 			$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -1714,7 +1715,7 @@ class Api_Betting extends JController {
 				$bet->user_id					= (int)$user->id;
 				$bet->bet_amount				= (int)$wagering_bet->getBetAmount();
 				$bet->bet_type_id				= (int)$bet_type_name->id;
-				$bet->bet_result_status_id		= (int)$unresult_status->id;
+				$bet->bet_result_status_id		= (int)$processing_status->id;
 				$bet->bet_origin_id				= (int)$bet_origin->id;
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
@@ -1862,7 +1863,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
@@ -2159,6 +2160,8 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 				$bet_origin_model			= new BettingModelBetOrigin();
 
+				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -2208,7 +2211,7 @@ class Api_Betting extends JController {
 				$bet->bet_type_id				= 1;
 				// TODO: Should add other bet types for sport to the __bet_type table
 				//$bet->bet_type_id				= (int)$bet_type_name->id;
-				$bet->bet_result_status_id		= (int)$unresult_status->id;
+				$bet->bet_result_status_id		= (int)$processing_status->id;
 				$bet->bet_origin_id				= (int)$bet_origin->id;
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
@@ -2370,7 +2373,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 
 					//$betObject = print_r($bet, true);
