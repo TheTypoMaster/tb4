@@ -1157,6 +1157,7 @@ class Api_Betting extends JController {
 				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
+				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
 				$bet_origin			= $bet_origin_model->getBetOriginByKeywordApi($bet_origin_keyword);
 				
@@ -1331,7 +1332,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 					
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
