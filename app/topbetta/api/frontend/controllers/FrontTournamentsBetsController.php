@@ -63,6 +63,7 @@ class FrontTournamentsBetsController extends \BaseController {
 				
 			}	
 
+			($tournamentBet->market_line) ? $tournamentBet->selection_name = $tournamentBet->selection_name . " (".$tournamentBet->market_line.")" : $tournamentBet->selection_name = $tournamentBet->selection_name;
 			$bets[] = array('id' => (int)$tournamentBet -> id, 'ticket_id' => (int)$tournamentBet -> tournament_ticket_id, 'event_id' => (int)$tournamentBet -> event_id, 'event_name' => $tournamentBet -> event_name, 'event_number' => $tournamentBet -> event_number, 'type' => (int)$tournamentBet -> bet_type, 'market_id' => $tournamentBet -> market_id, 'market' => $tournamentBet -> market_name, 'selection_id' => (int)$tournamentBet -> selection_id, 'selection_name' => $tournamentBet -> selection_name, 'selection_number' => $tournamentBet -> selection_number, 'bet_amount' => (int)$tournamentBet -> bet_amount, 'fixed_odds' => (float)$tournamentBet -> fixed_odds, 'odds' => $odds, 'result_status' => $tournamentBet -> bet_status, 'win_amount' => (int)$tournamentBet -> win_amount, 'created_date' => \TimeHelper::isoDate($tournamentBet -> created_date));
 
 		}

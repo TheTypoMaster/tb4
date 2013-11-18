@@ -24,6 +24,7 @@ class TournamentBet extends \Eloquent {
 				s.name AS bet_status,
 				t.id AS bet_type,
 				m.market_type_id AS market_id,
+				m.line as market_line,
 				mt.name AS market_name,
 				selection.id AS selection_id,
 				selection.number AS selection_number,
