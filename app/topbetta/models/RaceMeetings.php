@@ -13,6 +13,19 @@ class RaceMeeting extends \Eloquent {
 		 -> select(array('tbdb_event.*', 'tbdb_event_status.name AS status'));
 	}
 
+
+	/**
+	 * Grab details of meeting based on external ID.
+	 *
+	 * @return Integer
+	 * - The record ID if a record is found
+	 */	
+	static public function getMeetingDetails($meetingId) {
+		$racingCodes = array('R', 'G', 'H');
+		return RaceMeeting::where('external_event_group_id', '=', $meetingId)
+		->whereIn('type_code', $racingCodes)->get()->toArray();
+	}
+	
 	/**
 	 * Check if a meeting exists.
 	 *
