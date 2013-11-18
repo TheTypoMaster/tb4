@@ -959,7 +959,7 @@ class RacingController extends \BaseController {
         $priceType = $dataArray['PriceType'];
 
         // grab the meeting details we need
-        $meetingTypeCodeResult = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->where('type_code', '!=', 'NULL')->get()->toArray();
+        $meetingTypeCodeResult = Topbetta\RaceMeeting::getMeetingDetails($meetingId);
 
 		if(is_array($meetingTypeCodeResult)){
 			if(isset($meetingTypeCodeResult[0])){
