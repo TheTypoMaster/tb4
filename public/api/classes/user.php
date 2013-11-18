@@ -216,7 +216,7 @@ class Api_User extends JController {
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= JRequest::getString('source', null, 'post');
 					$optbox		= JRequest::getVar('optbox', null, 'post');
-					$btag		= JRequest::getString('btag', null, 'post');
+					$btag		= JRequest::getString('btag', 'kx8FbVSXTgEWqcfzuvZcQGNd7ZgqdRLk', 'post');
 					//$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
 
 					//do validations
