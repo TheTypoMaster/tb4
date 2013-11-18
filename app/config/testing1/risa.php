@@ -44,7 +44,8 @@ return array(
 | RISA FTP path.
 |
 */
-'ftpPath' => 'Top Betta/Risa XML 3.5/',
+'ftpFormPath' => 'Top Betta/Risa XML 3.5/',
+'ftpSilkPath' => 'Top Betta/Jockey silks/library/',
 
 /*
 |------------------------------
@@ -54,8 +55,9 @@ return array(
 | RISA XML local storage path.
 |
 */
-'localStoragePath' => __DIR__.'/../../../cron-scripts/risa_data/',
-
+'localFormStoragePath' => __DIR__.'/../../../cron-scripts/risa_data/',
+'localSilkStoragePath' => __DIR__.'/../../../cron-scripts/silks/',
+	
 /*
  |------------------------------
 | wget PATH
