@@ -32,8 +32,9 @@ class Tournament extends \Eloquent {
 		$sub_type = isset($list_params['sub_type']) ? $list_params['sub_type'] : null;
 		$event_group_id = isset($list_params['event_group_id']) ? $list_params['event_group_id'] : array();
 		$order = isset($list_params['order']) ? $list_params['order'] : null;
-
-		$query = '
+		$today = \Carbon\Carbon::today('Australia/Sydney');
+		
+		$query = "
 			SELECT
 				t.id,
 				t.tournament_sport_id,
@@ -83,13 +84,16 @@ class Tournament extends \Eloquent {
 				tbdb_tournament_competition AS c
 			ON
 				c.id = eg.tournament_competition_id
-			WHERE
-				t.end_date > NOW()
-			AND
+			WHERE 
+				t.end_date > '" . $today;
+				
+		//		t.end_date > NOW()
+
+		$query .= "'	AND
 				t.status_flag = 1
 			AND
 				t.cancelled_flag = 0
-		';
+		";
 		/*
 		 if ($sport_id !== null) {
 		 $query .= ' AND t.tournament_sport_id = ' . $db -> quote($sport_id);
