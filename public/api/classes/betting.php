@@ -1875,7 +1875,8 @@ class Api_Betting extends JController {
                     // If we have a custom error show that - otherwise show the provider error
                     $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
                     ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
-					
+
+                    return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage ));
 
 				}
 			}
@@ -2391,6 +2392,7 @@ class Api_Betting extends JController {
                     $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
                     ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
 					
+                    return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage ));
 
 // 					if (isset($external_bet->newOdds)){
 // 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
