@@ -47,6 +47,21 @@ class Format
 		return $text;
 	}
 
+
+	/**
+	 * Formats an integer to be displayed as currency, optionally adding a dollar sign
+	 *
+	 * @param integer $amount
+	 * @param boolean $add_dollar_sign
+	 * @return string
+	 */
+	public static function aff_data_currency($amount, $add_dollar_sign = false)
+	{
+		$text = ($add_dollar_sign) ? '$' : '';
+		return $text . number_format(floor($amount) / 100, 2, '.', '');
+	
+	}
+	
 	/**
 	 * Formats an integer to be displayed as currency, optionally adding a dollar sign
 	 *
