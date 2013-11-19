@@ -46,6 +46,7 @@ class AccountBalance extends \Eloquent {
 		. " LEFT JOIN tbdb_bet bw ON bw.result_transaction_id = t.id"
 		. " LEFT JOIN tbdb_bet br ON br.refund_transaction_id = t.id"
 		. $this->_buildQueryWhere($userId, $transactionType)
+		. " WHERE tbdb_bet.bet_result_status_id  != '6' AND tbdb_bet.bet_result_status_id  != '7'"
 		. " ORDER BY t.created_date DESC, t.id DESC";	
 		
 		$countQuery = $selectCountQuery . $query;
