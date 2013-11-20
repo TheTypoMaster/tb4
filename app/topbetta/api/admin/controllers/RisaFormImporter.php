@@ -12,9 +12,12 @@ class RisaFormImporter extends \BaseController {
 	public function formImporter() {
 		// today's date
 		$today = date ( 'Ymd' );
-		$localStoragePath = \Config::get('risa.localStoragePath');
+		$localStoragePath = \Config::get('risa.localFormStoragePath');
 		
-		$xmlFiles = $this->downloadRISAFTP();
+		// download silks images
+		$xmlFiles = $this->downloadRISASilkFTP();
+		// download form xml
+		$xmlFiles = $this->downloadRISAFormFTP();
 		// loop on each xml file
 		foreach ($xmlFiles as $fileName) {
 			
@@ -199,20 +202,20 @@ class RisaFormImporter extends \BaseController {
 	 *
 	 * @return array of files to process
 	 */
-	private function downloadRISAFTP() {
+	private function downloadRISAFormFTP() {
 		
 		// get ftp details from config
 		$ftpUserName = \Config::get('risa.ftpUserName');
 		$ftpPassword =\Config::get('risa.ftpPassword');
 		$ftpIP = \Config::get('risa.ftpIP');
-		$ftpPath = \Config::get('risa.ftpPath');
-		$localStoragePath = \Config::get('risa.localStoragePath');
+		$ftpPath = \Config::get('risa.ftpFormPath');
+		$localStoragePath = \Config::get('risa.localFormStoragePath');
 		$wgetPath = \Config::get('risa.wgetPath');
 		
 		// mirror the RISA ftp site with wget - // TODO: check out native way to do this
 		$cmd = $wgetPath."wget --mirror -nd -nv -P " . $localStoragePath . " --ftp-user=" . $ftpUserName . " --ftp-password=" . $ftpPassword . " \"$ftpIP/$ftpPath\" 2>&1";
 		$output = shell_exec ( $cmd );
-		\Log::info( "RisaImport: Wget Mirror Output: " . $output);
+		\Log::info( "RisaImport: FORM Wget Mirror Output: " . $output);
 		
 		// get the list of files in the data directory
 		return array_diff ( scandir ( $localStoragePath ), array (
@@ -221,6 +224,35 @@ class RisaFormImporter extends \BaseController {
 				'.listing' 
 		) );
 	}
+	
+	/**
+	 * Download RISA Silks files from the FTP server
+	 *
+	 * @return array of files to process
+	 */
+	private function downloadRISASilkFTP() {
+	
+		// get ftp details from config
+		$ftpUserName = \Config::get('risa.ftpUserName');
+		$ftpPassword =\Config::get('risa.ftpPassword');
+		$ftpIP = \Config::get('risa.ftpIP');
+		$ftpPath = \Config::get('risa.ftpSilkPath');
+		$localStoragePath = \Config::get('risa.localSilkStoragePath');
+		$wgetPath = \Config::get('risa.wgetPath');
+	
+		// mirror the RISA ftp site with wget - // TODO: check out native way to do this
+		$cmd = $wgetPath."wget --mirror -nd -nv -P " . $localStoragePath . " --ftp-user=" . $ftpUserName . " --ftp-password=" . $ftpPassword . " \"$ftpIP/$ftpPath\" 2>&1";
+		$output = shell_exec ( $cmd );
+		\Log::info( "RisaImport: SILK Wget Mirror Output: " . $output);
+	
+		// get the list of files in the data directory
+		return array_diff ( scandir ( $localStoragePath ), array (
+				'..',
+				'.',
+				'.listing'
+		) );
+	}
+	
 	
 	/**
 	 * Grag results/form from XML and return formatted
