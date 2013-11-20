@@ -459,6 +459,7 @@ class FrontTournamentsController extends \BaseController {
 
 			$tournamentDetails = array(
 				'id' => (int)$tournament -> id,
+				'name' => $tournament->name,
 				'buy_in' => (int)$tournament -> buy_in,
 				'entry_fee' => (int)$tournament -> entry_fee,
 				'num_entries' => (int)$numRegistrations,
