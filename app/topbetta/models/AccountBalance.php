@@ -114,7 +114,7 @@ class AccountBalance extends \Eloquent {
 		
 		$where[] = 't.recipient_id = "' . $userId . '"';
 		$where[] = '(tourn.parent_tournament_id IS NULL OR tourn.parent_tournament_id = -1)';
-		$where[] = 'be.bet_result_status_id NOT IN (6,7)';
+		$where[] = '(be.bet_result_status_id NOT IN (6,7) OR be.bet_result_status_id IS NULL)';
 		
 		//$where[] = '(tk.refunded_flag IS NULL OR tk.refunded_flag = 0)';
 
