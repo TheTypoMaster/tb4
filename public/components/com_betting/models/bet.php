@@ -552,6 +552,9 @@ class BettingModelBet extends SuperModel
 			$where[] = 'abs(bat.amount) <=' . $to_amount * 100;
 		}
 		
+		// exclude failed and processing
+		$where[] = 'b.bet_result_status_id NOT IN (6,7)';
+		
 		if (count($where) > 0) {
 			$query .='
 				WHERE
