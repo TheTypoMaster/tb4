@@ -2996,7 +2996,7 @@ class Api_Betting extends JController {
 			if ($userAccountBalance >= $totalTicketCost){
 				// remove money from account balance
 				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-				$payment_dollars_model->decrement($tournament->buy_in, 'buy-in', null, $user_id);
+				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user_id);
 				
 				//put money in free credit
 				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
