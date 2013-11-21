@@ -661,6 +661,8 @@ class Api_Betting extends JController {
 		//this is for external auth check
 		$token_key		= JRequest::getString('tb_key',null,'post');
 		$token_secret	= JRequest::getString('tb_secret',null,'post');
+		$freeCreditFlag = (float)JRequest::getVar('chkFreeBet', 0);
+		
 		$api_user = new Api_User();
 		$token = $api_user->get_external_website_key_secret($token_key,$token_secret);
 
@@ -829,7 +831,7 @@ class Api_Betting extends JController {
 
 			//final check - can we save this tournament ticket
 			//OutputHelper::_debug($user);
-			$ticket_result = $this->storeTicket($tournament, $user);
+			$ticket_result = $this->storeTicket($tournament, $user, $freeCreditFlag);
 
 			if ($ticket_result['status'] == 200) {
 				if ($iframe) {
@@ -1153,7 +1155,8 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 				$bet_origin_model			= new BettingModelBetOrigin();
 
-
+				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -1184,7 +1187,7 @@ class Api_Betting extends JController {
 				$bet->user_id = ( int ) $user->id;
 				$bet->bet_amount = ( int ) $wagering_bet->getBetAmount ();
 				$bet->bet_type_id = ( int ) $bet_type_name->id;
-				$bet->bet_result_status_id = ( int ) $unresult_status->id;
+				$bet->bet_result_status_id = ( int ) $processing_status->id;
 				$bet->bet_origin_id = ( int ) $bet_origin->id;
 				$bet->bet_product_id = ( int ) $bet_product->id;
 				$bet->bet_transaction_id = ( int ) $bet_transaction_id;
@@ -1330,7 +1333,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 					
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
@@ -1657,6 +1660,8 @@ class Api_Betting extends JController {
 			require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 			$bet_origin_model			= new BettingModelBetOrigin();
 
+			$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+			$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 			$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 			$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 			$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -1712,7 +1717,7 @@ class Api_Betting extends JController {
 				$bet->user_id					= (int)$user->id;
 				$bet->bet_amount				= (int)$wagering_bet->getBetAmount();
 				$bet->bet_type_id				= (int)$bet_type_name->id;
-				$bet->bet_result_status_id		= (int)$unresult_status->id;
+				$bet->bet_result_status_id		= (int)$processing_status->id;
 				$bet->bet_origin_id				= (int)$bet_origin->id;
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
@@ -1860,7 +1865,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
@@ -2158,6 +2163,8 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 				$bet_origin_model			= new BettingModelBetOrigin();
 
+				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -2207,7 +2214,7 @@ class Api_Betting extends JController {
 				$bet->bet_type_id				= 1;
 				// TODO: Should add other bet types for sport to the __bet_type table
 				//$bet->bet_type_id				= (int)$bet_type_name->id;
-				$bet->bet_result_status_id		= (int)$unresult_status->id;
+				$bet->bet_result_status_id		= (int)$processing_status->id;
 				$bet->bet_origin_id				= (int)$bet_origin->id;
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
@@ -2369,7 +2376,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 
 					//$betObject = print_r($bet, true);
@@ -2954,7 +2961,7 @@ class Api_Betting extends JController {
 	 * @param object $user
 	 * @return void
 	 */
-	protected function storeTicket($tournament, $user)
+	protected function storeTicket($tournament, $user, $freeCreditFlag)
 	{
 		//var_dump($user);
 		//exit;
@@ -2966,16 +2973,50 @@ class Api_Betting extends JController {
 		}
 
 		$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
+		
 		if (!class_exists('TournamentdollarsModelTournamenttransaction')) {
 			JLoader::import('tournamenttransaction', JPATH_BASE . DS . 'components' . DS . 'com_tournamentdollars' . DS . 'models');
 		}
 		$tournament_dollars_model = JModel::getInstance('Tournamenttransaction', 'TournamentdollarsModel');
+		
+		if (!class_exists('PaymentModelAccounttransaction')) {
+			JLoader::import('accounttransaction', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
+		}
+		$payment_dollars_model = JModel::getInstance('Accounttransaction', 'PaymentModel');
 
 		//$buy_in_id      = $user->tournament_dollars->decrement($tournament->buy_in, 'buyin');
-		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');
+		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');4
+		
+		if(!$freeCreditFlag){
+			// grab ticket cost and account balance.
+			$totalTicketCost= $tournament->buy_in + $tournament->entry_fee;
+			$userAccountBalance = $payment_dollars_model->getTotal($user->id);
+
+			//transfer total cost
+			if ($userAccountBalance >= $totalTicketCost){
+				// remove money from account balance
+				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
+				$payment_dollars_model->decrement($tournament->buy_in, 'buy-in', null, $user_id);
+				
+				//put money in free credit
+				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user_id);
+			
+			} else {// transfer whats there
+				// remove money from account balance
+				//$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
+				$payment_dollars_model->decrement($userAccountBalance, 'buy-in', null, $user_id);
+			
+				//put money in free credit
+				//$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user_id);
+			}
+		}
+				
+		// pay for the ticket with free credit if possible
 		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
-
+			
 		$ticket = array(
 				'tournament_id'             => $tournament->id,
 				'user_id'                   => $user->id,
