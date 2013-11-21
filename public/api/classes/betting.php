@@ -2984,9 +2984,6 @@ class Api_Betting extends JController {
 		}
 		$payment_dollars_model = JModel::getInstance('Accounttransaction', 'PaymentModel');
 
-		//$buy_in_id      = $user->tournament_dollars->decrement($tournament->buy_in, 'buyin');
-		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');4
-		
 		if(!$freeCreditFlag){
 			// grab ticket cost and account balance.
 			$totalTicketCost= $tournament->buy_in + $tournament->entry_fee;
