@@ -661,6 +661,8 @@ class Api_Betting extends JController {
 		//this is for external auth check
 		$token_key		= JRequest::getString('tb_key',null,'post');
 		$token_secret	= JRequest::getString('tb_secret',null,'post');
+		$freeCreditFlag = (float)JRequest::getVar('chkFreeBet', 0);
+		
 		$api_user = new Api_User();
 		$token = $api_user->get_external_website_key_secret($token_key,$token_secret);
 
@@ -829,7 +831,7 @@ class Api_Betting extends JController {
 
 			//final check - can we save this tournament ticket
 			//OutputHelper::_debug($user);
-			$ticket_result = $this->storeTicket($tournament, $user);
+			$ticket_result = $this->storeTicket($tournament, $user, $freeCreditFlag);
 
 			if ($ticket_result['status'] == 200) {
 				if ($iframe) {
@@ -2959,7 +2961,7 @@ class Api_Betting extends JController {
 	 * @param object $user
 	 * @return void
 	 */
-	protected function storeTicket($tournament, $user)
+	protected function storeTicket($tournament, $user, $freeCreditFlag)
 	{
 		//var_dump($user);
 		//exit;
@@ -2971,16 +2973,47 @@ class Api_Betting extends JController {
 		}
 
 		$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
+		
 		if (!class_exists('TournamentdollarsModelTournamenttransaction')) {
 			JLoader::import('tournamenttransaction', JPATH_BASE . DS . 'components' . DS . 'com_tournamentdollars' . DS . 'models');
 		}
 		$tournament_dollars_model = JModel::getInstance('Tournamenttransaction', 'TournamentdollarsModel');
+		
+		if (!class_exists('PaymentModelAccounttransaction')) {
+			JLoader::import('accounttransaction', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
+		}
+		$payment_dollars_model = JModel::getInstance('Accounttransaction', 'PaymentModel');
 
-		//$buy_in_id      = $user->tournament_dollars->decrement($tournament->buy_in, 'buyin');
-		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');
+		if(!$freeCreditFlag){
+			// grab ticket cost and account balance.
+			$totalTicketCost= $tournament->buy_in + $tournament->entry_fee;
+			$userAccountBalance = $payment_dollars_model->getTotal($user->id);
+
+			//transfer total cost
+			if ($userAccountBalance >= $totalTicketCost){
+				// remove money from account balance
+				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
+				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user_id);
+				
+				//put money in free credit
+				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user_id);
+			
+			} else {// transfer whats there
+				// remove money from account balance
+				//$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
+				$payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user_id);
+			
+				//put money in free credit
+				//$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user_id);
+			}
+		}
+				
+		// pay for the ticket with free credit if possible
 		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
-
+			
 		$ticket = array(
 				'tournament_id'             => $tournament->id,
 				'user_id'                   => $user->id,
