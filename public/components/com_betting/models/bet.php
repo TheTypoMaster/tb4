@@ -728,7 +728,7 @@ class BettingModelBet extends SuperModel
 	      		s.external_selection_id,
 	      		s.number AS selection_number,
 				mt.name as market_name,
-				e.sport_id as sport_id
+				eg.sport_id as sport_id
 			FROM
 				' . $db->nameQuote('#__bet') . ' AS b
 			INNER JOIN
@@ -759,6 +759,14 @@ class BettingModelBet extends SuperModel
 				' . $db->nameQuote('#__event') . ' AS e
 			ON
 				e.id = m.event_id
+			INNER JOIN
+				' . $db->nameQuote('#__event_group_event') . ' AS ege
+			ON
+				e.id = ege.event_id
+			INNER JOIN
+				' . $db->nameQuote('#__event_group') . ' AS eg
+			ON
+				eg.id = ege.event_group_id			
 			WHERE
 				b.id = ' . $db->quote($id) . '
 			GROUP BY
