@@ -61,7 +61,7 @@ class BettingHelper
 		$race		= $race_model->getRace($bet->event_id);
 		
 		if($bet->sport_id > 0){
-			$ticket_display  = $meeting->name . ' (Market: ' . $bet->market_type . ') (Fixed Odds: ' . $bet->fixed_odds .' )';
+			$ticket_display  = $meeting->name . ' (Market: ' . $bet->market_name . ') (Odds: ' . $bet->fixed_sport_odds .') ';
 		}else{
 			$ticket_display  = $meeting->name . ' (' . $meeting->competition_name . ') (Race ' . $race->number . ') ';
 		}

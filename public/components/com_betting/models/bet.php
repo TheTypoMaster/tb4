@@ -727,6 +727,7 @@ class BettingModelBet extends SuperModel
 	      		s.name AS selection_name,
 	      		s.external_selection_id,
 	      		s.number AS selection_number,
+				s.fixed_odds as fixed_sport_odds,
 				mt.name as market_name,
 				eg.sport_id as sport_id
 			FROM
