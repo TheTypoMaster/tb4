@@ -60,8 +60,11 @@ class BettingHelper
 		$meeting	= $meeting_model->getMeetingByRaceID($bet->event_id);
 		$race		= $race_model->getRace($bet->event_id);
 		
-		$ticket_display  = $meeting->name . ' (' . $meeting->competition_name . ') (Race ' . $race->number . ') ';
-		
+		if($bet->sport_id){
+			$ticket_display  = $meeting->name . ' (Market: ' . $bet->market_type . ') (Fixed Odds: ' . $bet->fixed_odds .' )';
+		}else{
+			$ticket_display  = $meeting->name . ' (' . $meeting->competition_name . ') (Race ' . $race->number . ') ';
+		}
 		if ($wagering_bet->isStandardBetType($bet->bet_type)) {
 			$ticket_display .= $bet->selection_number . '.' . $bet->selection_name;
 		} else {
