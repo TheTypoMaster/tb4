@@ -61,12 +61,12 @@ class BettingHelper
 		$race		= $race_model->getRace($bet->event_id);
 		
 		if($bet->sport_id > 0){
-			$ticket_display  = $meeting->name . ' (Market: ' . $bet->market_name . ') (Odds: ' . $bet->fixed_sport_odds .') ';
+			$ticket_display  = $meeting->name . ' (Market: ' . $bet->market_name . ') (Odds: ' . $bet->fixed_sport_odds .')';
 		}else{
-			$ticket_display  = $meeting->name . ' (' . $meeting->competition_name . ') (Race ' . $race->number . ') ';
+			$ticket_display  = $meeting->name . ' (' . $meeting->competition_name . ') (Race ' . $race->number . ')';
 		}
 		if ($wagering_bet->isStandardBetType($bet->bet_type)) {
-			$ticket_display .= $bet->selection_number . '.' . $bet->selection_name;
+			$ticket_display .= $bet->selection_number . '. ' . $bet->selection_name;
 		} else {
 			$selection_list		= $bet_selection_model->getBetSelectionListByBetID($bet->id);
 			$selection_group	= array();
