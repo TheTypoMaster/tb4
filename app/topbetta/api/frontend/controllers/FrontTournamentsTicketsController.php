@@ -246,7 +246,14 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				// save tournament tickets via legacy API
 				$l = new \TopBetta\LegacyApiHelper;
-				$ticket = $l -> query('saveTournamentTicket', array("id" => $tournamentId, 'chkFreeBet' => $tournaments['use_free_credit']));
+				$tournDetailsArray = array("id" => $tournamentId);
+				if (isset($tournaments['use_free_credit'])) {
+				
+					$tournDetailsArray['chkFreeBet'] = $tournaments['use_free_credit'];
+				
+				}
+				
+				$ticket = $l -> query('saveTournamentTicket', $tournDetailsArray);
 	
 				if ($ticket['status'] == 200) {
 	
