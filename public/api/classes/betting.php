@@ -669,6 +669,9 @@ class Api_Betting extends JController {
         // first validate a legit token has been sent
 		$server_token = JUtility::getToken();
 
+		$postVars = print_r(JRequest::get('POST'), true);
+		file_put_contents('/tmp/igas_tourn_ticket.log', "POST Vars:".$postVars . "\n", FILE_APPEND | LOCK_EX);
+		
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum') || $token || $iframe) {
 
 			$component_list = array('betting', 'tournament', 'tournament_dollars', 'topbetta_user','payment');
