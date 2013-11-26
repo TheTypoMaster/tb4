@@ -2984,7 +2984,7 @@ class Api_Betting extends JController {
 		}
 		$payment_dollars_model = JModel::getInstance('Accounttransaction', 'PaymentModel');
 
-		if($freeCreditFlag != 0){
+		if($freeCreditFlag == 0){
 			// grab ticket cost and account balance.
 			$totalTicketCost= $tournament->buy_in + $tournament->entry_fee;
 			$userAccountBalance = $payment_dollars_model->getTotal($user->id);
