@@ -669,6 +669,9 @@ class Api_Betting extends JController {
         // first validate a legit token has been sent
 		$server_token = JUtility::getToken();
 
+		//$postVars = print_r(JRequest::get('GET'), true);
+		//file_put_contents('/tmp/igas_tourn_ticket.log', "POST Vars:".$postVars . "\nFreeCreditFlag:$freeCreditFlag\n", FILE_APPEND | LOCK_EX);
+		
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum') || $token || $iframe) {
 
 			$component_list = array('betting', 'tournament', 'tournament_dollars', 'topbetta_user','payment');
@@ -2984,7 +2987,9 @@ class Api_Betting extends JController {
 		}
 		$payment_dollars_model = JModel::getInstance('Accounttransaction', 'PaymentModel');
 
-		if($freeCreditFlag == 0){
+		//file_put_contents('/tmp/igas_tourn_ticket.log', "FreeCreditFlag:$freeCreditFlag\n", FILE_APPEND | LOCK_EX);
+		
+		if(!$freeCreditFlag){
 			// grab ticket cost and account balance.
 			$totalTicketCost= $tournament->buy_in + $tournament->entry_fee;
 			$userAccountBalance = $payment_dollars_model->getTotal($user->id);
@@ -2992,21 +2997,21 @@ class Api_Betting extends JController {
 			//transfer total cost
 			if ($userAccountBalance >= $totalTicketCost){
 				// remove money from account balance
-				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user_id);
+				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
+				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 				
 				//put money in free credit
-				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
-				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user->id);
+				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user->id);
 			
 			} else {// transfer whats there
 				// remove money from account balance
 				//$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-				$payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user_id);
+				$payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
 			
 				//put money in free credit
 				//$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
-				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user->id);
 			}
 		}
 				
