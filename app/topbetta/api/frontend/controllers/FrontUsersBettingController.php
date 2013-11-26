@@ -21,7 +21,7 @@ class FrontUsersBettingController extends \BaseController {
 		$offset = $limit * ($page - 1);
 
 		$filter = array('result_type' => \Input::get('type', false),
-		'limitstart' => $offset, 'chkFreeBet' => \Input::get('use_free_credit', true)
+		'limitstart' => $offset
 		//'from_time'		=> $filter_from_date ? strtotime($filter_from_date) : null,
 		//'to_time'		=> $filter_to_date ? (strtotime($filter_to_date) + 24 * 60 * 60) : null,
 		);
