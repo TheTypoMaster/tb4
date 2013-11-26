@@ -2998,21 +2998,21 @@ class Api_Betting extends JController {
 			//transfer total cost
 			if ($userAccountBalance >= $totalTicketCost){
 				// remove money from account balance
-				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user_id);
+				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
+				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 				
 				//put money in free credit
-				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
-				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user->id);
+				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user->id);
 			
 			} else {// transfer whats there
 				// remove money from account balance
 				//$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-				$payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user_id);
+				$payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
 			
 				//put money in free credit
 				//$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
-				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user->id);
 			}
 		}
 				
