@@ -694,7 +694,7 @@ class RacingController extends \BaseController {
 														// if the new exotic results are the same as what we already have in the database
 														if ($raceEvent->exacta_dividend != serialize($exoticArray)) {
 															// unserialise the existing dividend from the database
-															$previousDivArray = unserialize ($raceEvent->quinella_dividend);
+															$previousDivArray = unserialize ($raceEvent->exacta_dividend);
 															// update or add selection dividends
 															$previousDivArray[$arrayKey] = $arrayValue;
 															// add the new dividends
@@ -702,7 +702,7 @@ class RacingController extends \BaseController {
 														}
 														// if we didn't have a result stored already then store it
 													} else {
-														$raceEvent->quinella_dividend = serialize($exoticArray);
+														$raceEvent->exacta_dividend = serialize($exoticArray);
 													}
 													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->exacta_dividend.", 1);
 													break;
@@ -722,7 +722,7 @@ class RacingController extends \BaseController {
 														}
 														// if we didn't have a result stored already then store it
 													} else {
-														$raceEvent->quinella_dividend = serialize($exoticArray);
+														$raceEvent->trifecta_dividend = serialize($exoticArray);
 													}
 													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->trifecta_dividend.", 1);
 													break;
