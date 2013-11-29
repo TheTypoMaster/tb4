@@ -60,6 +60,9 @@ class FrontBetsController extends \BaseController {
 				$dividend = $activeBet -> fixed_odds;
 			}
 
+			// temp add line to selection name
+			($activeBet->market_line) ? $activeBet->selection_name = $activeBet->selection_name . " (".$activeBet->market_line.")" : $activeBet->selection_name = $activeBet->selection_name;
+			
 			$activeBets[] = array('id' => (int)$activeBet -> id, 'bet_group' => $betGroup, 'freebet' => ($activeBet -> freebet) ? true : false, 'market_id' => (int)$activeBet -> market_id, 'market' => $activeBet -> market_name, 'type' => (int)$activeBet -> bet_type, 'result_status' => $activeBet -> result_status, 'event_id' => (int)$activeBet -> event_id, 'event_name' => $activeBet -> event_name, 'event_number' => (int)$activeBet -> event_number, 'boxed_flag' => ($activeBet -> boxed_flag) ? true: false, 'combinations' => (int)$activeBet -> combinations, 'percentage' => (float)$activeBet -> percentage, ($activeBet -> selection_string) ? 'exotic_selection_string' : 'selection_id' => ($activeBet -> selection_string) ? $activeBet -> selection_string : (int)$activeBet -> selection_id, 'selection_name' => $activeBet -> selection_name, 'selection_number' => (int)$activeBet -> selection_number, 'odds' => $odds, 'dividend' => $dividend, 'bet_amount' => ($exoticSelections) ? $exoticAmount : (int)abs($activeBet -> bet_total), 'freebet_amount' => (int)abs($activeBet -> freebet_amount), 'created_date' => $activeBet -> created_date);
 
 		}
@@ -107,6 +110,8 @@ class FrontBetsController extends \BaseController {
 				$dividend = $recentBet -> fixed_odds;
 			}			
 
+			// temp add line to selection name
+			($recentBet->market_line) ? $recentBet->selection_name = $recentBet->selection_name . " (".$recentBet->market_line.")" : $recentBet->selection_name = $recentBet->selection_name;
 			$recentBets[] = array('id' => (int)$recentBet -> id, 'bet_group' => $betGroup, 'freebet' => ($recentBet -> freebet) ? true : false, 'market_id' => (int)$recentBet -> market_id, 'market' => $recentBet -> market_name, 'type' => (int)$recentBet -> bet_type, 'result_status' => $recentBet -> result_status, 'event_id' => (int)$recentBet -> event_id, 'event_name' => $recentBet -> event_name, 'event_number' => (int)$recentBet -> event_number, 'boxed_flag' => ($recentBet -> boxed_flag) ? true: false, 'combinations' => (int)$recentBet -> combinations, 'percentage' => (float)$recentBet -> percentage, ($recentBet -> selection_string) ? 'exotic_selection_string' : 'selection_id' => ($recentBet -> selection_string) ? $recentBet -> selection_string : (int)$recentBet -> selection_id, ($exoticSelections) ? 'exotic_dividend' : '' => ($exoticSelections) ? $exoticDividend : '', 'selection_name' => $recentBet -> selection_name, 'selection_number' => (int)$recentBet -> selection_number, 'bet_amount' => ($recentBet -> selection_string) ? $exoticAmount : (int)abs($recentBet -> bet_total), 'freebet_amount' => (int)abs($recentBet -> freebet_amount), 'odds' => $odds, 'dividend' => $dividend, 'win_amount' => (int)$recentBet -> win_amount, 'refund_amount' => (int)$recentBet -> refund_amount, 'created_date' => $recentBet -> created_date);
 
 		}
