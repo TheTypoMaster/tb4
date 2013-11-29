@@ -694,7 +694,7 @@ class RacingController extends \BaseController {
 														// if the new exotic results are the same as what we already have in the database
 														if ($raceEvent->exacta_dividend != serialize($exoticArray)) {
 															// unserialise the existing dividend from the database
-															$previousDivArray = unserialize ($raceEvent->quinella_dividend);
+															$previousDivArray = unserialize ($raceEvent->exacta_dividend);
 															// update or add selection dividends
 															$previousDivArray[$arrayKey] = $arrayValue;
 															// add the new dividends
