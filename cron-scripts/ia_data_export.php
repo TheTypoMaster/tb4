@@ -157,8 +157,8 @@ class IADataExport extends TopBettaCLI
 			$recipient = $this->user->getUser($recipient_id);
 			$sales_csv_list[$recipient_id]['btag'] = $recipient->btag;
 			
-			$sales_csv_list[$recipient_id]['deposit']		= (isset($sales['deposit']) && $sales['deposit'] > 0) ? Format::currency($sales['deposit']) : 0;
-			$sales_csv_list[$recipient_id]['chargeback']	= (isset($sales['chargeback']) && $sales['chargeback'] < 0) ? Format::currency(abs($sales['chargeback'])) : 0;
+			$sales_csv_list[$recipient_id]['deposit']		= (isset($sales['deposit']) && $sales['deposit'] > 0) ? Format::aff_data_currency($sales['deposit']) : 0;
+			$sales_csv_list[$recipient_id]['chargeback']	= (isset($sales['chargeback']) && $sales['chargeback'] < 0) ? Format::aff_data_currency(abs($sales['chargeback'])) : 0;
 			
 			$sales_csv_list[$recipient_id]['betshands']	= isset($sales['betshands']) ? $sales['betshands'] : 0;
 			
@@ -170,15 +170,15 @@ class IADataExport extends TopBettaCLI
 			$turn_over		= $total_bet_entry - $total_bet_refund;
 			$revenue	= $turn_over - $bet_win;
 
-			$sales_csv_list[$recipient_id]['revenue']	= ($revenue != 0) ? Format::currency($revenue) : 0;
-			$sales_csv_list[$recipient_id]['stake']		= ($turn_over > 0) ? Format::currency($turn_over) : 0;
+			$sales_csv_list[$recipient_id]['revenue']	= ($revenue != 0) ? Format::aff_data_currency($revenue) : 0;
+			$sales_csv_list[$recipient_id]['stake']		= ($turn_over > 0) ? Format::aff_data_currency($turn_over) : 0;
 			
-			$sales_csv_list[$recipient_id]['bonus']		= (isset($sales['promo'])) ? Format::currency($sales['promo']) : 0;
+			$sales_csv_list[$recipient_id]['bonus']		= (isset($sales['promo'])) ? Format::aff_data_currency($sales['promo']) : 0;
 			
 			$total_entry		= isset($sales['entry']) ? abs($sales['entry']) : 0;
 			$tournament_fees	= $total_entry;
 			
-			$sales_csv_list[$recipient_id]['tournament_fees'] = ($tournament_fees != 0) ? Format::currency($tournament_fees) : 0;
+			$sales_csv_list[$recipient_id]['tournament_fees'] = ($tournament_fees != 0) ? Format::aff_data_currency($tournament_fees) : 0;
 			
 			$this->d(implode(',', $sales_csv_list[$recipient_id]));
 		}
