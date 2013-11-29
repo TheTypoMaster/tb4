@@ -491,7 +491,7 @@ class SportsController extends \BaseController {
 
 							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 							
-							if($marketStatus == 'R'){
+							if($marketStatus == 'C' OR $marketStatus == 'R'){
 								switch($scoreType){
 									// Non Line bet types
 									case 'W':
