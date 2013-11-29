@@ -702,7 +702,7 @@ class RacingController extends \BaseController {
 														}
 														// if we didn't have a result stored already then store it
 													} else {
-														$raceEvent->quinella_dividend = serialize($exoticArray);
+														$raceEvent->exacta_dividend = serialize($exoticArray);
 													}
 													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->exacta_dividend.", 1);
 													break;
@@ -722,7 +722,7 @@ class RacingController extends \BaseController {
 														}
 														// if we didn't have a result stored already then store it
 													} else {
-														$raceEvent->quinella_dividend = serialize($exoticArray);
+														$raceEvent->trifecta_dividend = serialize($exoticArray);
 													}
 													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->trifecta_dividend.", 1);
 													break;
