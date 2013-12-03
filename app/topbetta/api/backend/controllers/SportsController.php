@@ -489,6 +489,27 @@ class SportsController extends \BaseController {
 							$score = $dataArray['Score'];
 							$scoreType = $dataArray['ScoreType'];
 
+							// update the market status if it's been included with the result data
+							if(isset($dataArray['MarketStatus'])){
+								// make sure the event this market is in exists
+								$eventExists = TopBetta\SportsMatches::eventExists($gameId);
+								if($eventExists){
+									// check if market record exists
+									$marketExists = TopBetta\SportsMarket::marketExists($marketId, $eventExists);
+										
+									// if market exists update that record
+									if($marketExists){
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, In DB: $marketExists", 1);
+										$marketModel = TopBetta\SportsMarket::find($marketExists);
+										$marketModel->market_status = $dataArray['MarketStatus'];
+										// save the market record
+										$marketModelSave = $marketModel->save();
+									}else{
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No Market found to update status: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
+									}
+								}
+							}
+							
 							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 							
 							if($marketStatus == 'C' OR $marketStatus == 'R'){
