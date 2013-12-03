@@ -123,12 +123,7 @@ class FrontMeetingsController extends \BaseController {
 			
 			// grab the meeting start_date
 			$startDate = $event->start_date;
-			if ($startDate -> year > 0) {
-			
-				$startDate = $startDate -> toISO8601String();
-			
-			}
-			
+						
 			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'start_date' => $startDate, 'updated_at' => $updatedAt, 'races' => $races);
 			$eachMeeting[] = $meetingAndRaces;
 		}
