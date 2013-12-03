@@ -662,80 +662,95 @@ class RacingController extends \BaseController {
 											$exoticArray = array (
 													$arrayKey => $arrayValue 
 											);
-											$previousDivArray = array ();
+											
+											$previousDivArray = array();
 											
 											TopBetta\LogHelper::l ("BackAPI: Racing - Processing Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue.",1 );
-											// work on each exotic type
+																						
+											// process each exotic type
 											switch ($betType) {
 												case "Q" : // Quinella
-													if (!$raceEvent->quinella_dividend == NULL) {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result: Type:$betType. Not in DB", 1);
-														if (!$raceEvent->quinella_dividend == serialize($exoticArray)) {
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->quinella_dividend.", 1);
-															// unserialise the existing dividend
+													// if we already have a dividend stored
+													if ($raceEvent->quinella_dividend != NULL) {
+														// if the new exotic results are the same as what we already have in the database
+														if ($raceEvent->quinella_dividend != serialize($exoticArray)) {
+															// unserialise the existing dividend from the database
 															$previousDivArray = unserialize ($raceEvent->quinella_dividend);
+															// update or add selection dividends
+															$previousDivArray[$arrayKey] = $arrayValue;
 															// add the new dividends
-															$raceEvent->quinella_dividend = serialize (array_merge($previousDivArray, $exoticArray));
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->quinella_dividend.", 1);
+															$raceEvent->quinella_dividend = serialize($previousDivArray);	
 														}
+													// if we didn't have a result stored already then store it	
 													} else {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding toDB ", 1);
-														$raceEvent->quinella_dividend = serialize ( $exoticArray );
+														$raceEvent->quinella_dividend = serialize($exoticArray);
 													}
+													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->quinella_dividend.", 1);
 													break;
+													
 												case "E" : // Exacta
-													if (! $raceEvent->exacta_dividend == NULL) {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Not in DB", 1);
-														if (! $raceEvent->exacta_dividend == serialize ( $exoticArray )) {
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->exacta_dividend.", 1);
-															// unserialise the existing dividend
-															$previousDivArray = unserialize ( $raceEvent->exacta_dividend );
+													// if we already have a dividend stored
+													if ($raceEvent->exacta_dividend != NULL) {
+														// if the new exotic results are the same as what we already have in the database
+														if ($raceEvent->exacta_dividend != serialize($exoticArray)) {
+															// unserialise the existing dividend from the database
+															$previousDivArray = unserialize ($raceEvent->exacta_dividend);
+															// update or add selection dividends
+															$previousDivArray[$arrayKey] = $arrayValue;
 															// add the new dividends
-															$raceEvent->exacta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->exacta_dividend.", 1);
+															$raceEvent->exacta_dividend = serialize($previousDivArray);
 														}
+														// if we didn't have a result stored already then store it
 													} else {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding to DB", 1);
-														$raceEvent->exacta_dividend = serialize ( $exoticArray );
+														$raceEvent->exacta_dividend = serialize($exoticArray);
 													}
+													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->exacta_dividend.", 1);
 													break;
+													
 												case "T" : // Trifecta
-													if (! $raceEvent->trifecta_dividend == NULL) {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Not in DB", 1);
-														if (! $raceEvent->trifecta_dividend == serialize ( $exoticArray )) {
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->trifecta_dividend.", 1);
-															// unserialise the existing dividend
-															$previousDivArray = unserialize ( $raceEvent->trifecta_dividend );
+													// if we already have a dividend stored
+													if ($raceEvent->trifecta_dividend != NULL) {
+														// if the new exotic results are the same as what we already have in the database
+														if ($raceEvent->trifecta_dividend != serialize($exoticArray)) {
+															// unserialise the existing dividend from the database
+															$previousDivArray = unserialize ($raceEvent->trifecta_dividend);
+															// update or add selection dividends
+															$previousDivArray[$arrayKey] = $arrayValue;
 															// add the new dividends
-															$raceEvent->trifecta_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->trifecta_dividend.", 1);
+															$raceEvent->trifecta_dividend = serialize($previousDivArray);
+															
 														}
+														// if we didn't have a result stored already then store it
 													} else {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding to DB", 1);
-														$raceEvent->trifecta_dividend = serialize ( $exoticArray );
+														$raceEvent->trifecta_dividend = serialize($exoticArray);
 													}
+													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->trifecta_dividend.", 1);
 													break;
+													
 												case "FF" : // First Four
-													if (! $raceEvent->firstfour_dividend == NULL) {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Not in DB", 1);
-														if (! $raceEvent->firstfour_dividend == serialize ( $exoticArray )) {
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Extra Dividends:$raceEvent->firstfour_dividend.", 1);
-															// unserialise the existing dividend
-															$previousDivArray = unserialize ( $raceEvent->firstfour_dividend );
+													// if we already have a dividend stored
+													if ($raceEvent->firstfour_dividend != NULL) {
+														// if the new exotic results are the same as what we already have in the database
+														if ($raceEvent->firstfour_dividend != serialize($exoticArray)) {
+															// unserialise the existing dividend from the database
+															$previousDivArray = unserialize ($raceEvent->firstfour_dividend);
+															// update or add selection dividends
+															$previousDivArray[$arrayKey] = $arrayValue;
 															// add the new dividends
-															$raceEvent->firstfour_dividend = serialize ( array_merge ( $previousDivArray, $exoticArray ) );
-															TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. New Joined Dividends:$raceEvent->firstfour_dividend.", 1);
+															$raceEvent->firstfour_dividend = serialize($previousDivArray);
+															
 														}
+														// if we didn't have a result stored already then store it
 													} else {
-														TopBetta\LogHelper::l("BackAPI: Racing - Processing Exotics Result Div: Type:$betType. Adding to DB", 1);
-														$raceEvent->firstfour_dividend = serialize ( $exoticArray );
+														$raceEvent->firstfour_dividend = serialize($exoticArray);
 													}
+													TopBetta\LogHelper::l("BackAPI: Racing - Processed Exotics Result Div: Type:$betType. Added Dividends:$raceEvent->firstfour_dividend.", 1);
 													break;
+
 												default :
 													TopBetta\LogHelper::l("BackAPI: Racing - Processing Result. No valid betType found:$betType. Can't process", 2);
 											}
-											$previousDiv = print_r($previousDivArray,true);
-											TopBetta\LogHelper::l ("BackAPI: Racing - Processed Exotic Result: Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue. Previous Pos/Div:$previousDiv",1);
+
 											// save the exotic dividend
 											$raceEvent->save();
 										}else{
@@ -983,5 +998,6 @@ class RacingController extends \BaseController {
 		}
 		return true;
 	}
+	
 	
 }

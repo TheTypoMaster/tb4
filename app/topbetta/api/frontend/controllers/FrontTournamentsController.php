@@ -290,7 +290,7 @@ class FrontTournamentsController extends \BaseController {
 							$labels = $atpTournaments[$tourn -> id];
 						}		
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels);
+						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn -> name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels);
 					}
 
 					//handle sub_type for racing
@@ -459,6 +459,7 @@ class FrontTournamentsController extends \BaseController {
 
 			$tournamentDetails = array(
 				'id' => (int)$tournament -> id,
+				'name' => $tournament->name,
 				'buy_in' => (int)$tournament -> buy_in,
 				'entry_fee' => (int)$tournament -> entry_fee,
 				'num_entries' => (int)$numRegistrations,
