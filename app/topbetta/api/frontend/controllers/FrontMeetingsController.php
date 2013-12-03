@@ -161,7 +161,7 @@ class FrontMeetingsController extends \BaseController {
 
 			$races = Input::get('races', $showRaces);
 			
-			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $event->start_date);
+			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $meetingDetails->start_date);
 			$startDateISO8601 = $startDate->toISO8601String();
 			
 			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'start_date' => $startDateISO8601, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
