@@ -116,6 +116,7 @@ class TournamentModelMarket extends SuperModel
 		$query =
 			'SELECT
 				m.market_type_id,
+				m.line,
 				mt.name,
 				mt.description
 			FROM
