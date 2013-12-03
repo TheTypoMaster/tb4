@@ -112,23 +112,14 @@ class FrontMeetingsController extends \BaseController {
 
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {
-
 				$updatedAt = $updatedAt -> toISO8601String();
-
 			} else {
-
 				$updatedAt = false;
-
 			}
 			
 			// grab the meeting start_date
-			$startDate = $event->start_date;
-			if ($startDate -> year > 0) {
-			
-				$startDate = $startDate -> toISO8601String();
-			
-			}
-			
+			$startDate = $event -> start_date;
+						
 			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'start_date' => $startDate, 'updated_at' => $updatedAt, 'races' => $races);
 			$eachMeeting[] = $meetingAndRaces;
 		}
@@ -168,14 +159,8 @@ class FrontMeetingsController extends \BaseController {
 		if ($meetingDetails) {
 
 			$races = Input::get('races', $showRaces);
-
-			if ($meetingDetails -> start_date -> year > 0) {
-					
-				$startDate = $meetingDetails -> start_date -> toISO8601String();
-					
-			}
 			
-			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'start_date' => $startDate, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
+			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'start_date' => $meetingDetails -> start_date, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
 
 			return array('success' => true, 'result' => $meeting);
 
