@@ -118,7 +118,8 @@ class FrontMeetingsController extends \BaseController {
 			}
 			
 			// grab the meeting start_date and format
-			$startDate = \Carbon\Carbon::createFromTimestamp(strtotime($event->start_date)).
+			// $startDate = \Carbon\Carbon::createFromTimestamp(strtotime($event->start_date)).
+			$startDate = \Carbon\Carbon::createFromFormat('y-m-d h:i:s', $event->start_date);
 			$startDateISO8601 = $startDate->toISO8601String();
 												
 			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'start_date' => $startDateISO8601, 'updated_at' => $updatedAt, 'races' => $races);
