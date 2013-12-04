@@ -359,7 +359,8 @@ class TournamentSportEventController extends JController
 			$event_list		= $event_model->getEventListByEventGroupID($event_group_id);
 			
 			$market_model		=& $this->getModel('Market', 'TournamentModel');
-			$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
+			//$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
+			$market_list	= $event_group_market_type_model->getEventGroupMarketListByEventGroupID($event_group_id);
 
 			$i = 0;
 			foreach ($event_list as $event) {
@@ -383,7 +384,8 @@ class TournamentSportEventController extends JController
 		$view->assign('match_list', $event_list);
 		//$view->assign('match_time', $match_time);
 		$view->assign('market_list', $market_checkbox_list);
-		$view->assign('bet_type_list', $market_type_list);
+		//$view->assign('bet_type_list', $market_type_list);
+		$view->assign('bet_type_list', $market_list);
 		$view->assign('betting_started', $betting_started);
 		$view->assign('total_tournaments', $total_tournaments);
 
@@ -510,12 +512,15 @@ class TournamentSportEventController extends JController
 						$market_list = $market_model->getMarketListByEventId($event->id);
 
 						foreach ($market_list as $market) {
-							if (in_array($market->market_type_id, $market_types)) {
-								if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
-									$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
+							if (in_array($market->market_id, $market_types)) {
+								//if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
+								if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->market_id)) {	
+									//$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
+									$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->market_id);
 								}
 							} else {
-								$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
+								//$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
+								$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->market_id);
 							}
 						}
 					}

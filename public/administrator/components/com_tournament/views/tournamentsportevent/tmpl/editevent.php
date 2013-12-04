@@ -236,9 +236,9 @@ if($total_match > 0){
 		?>
 		<tr>
 			<td><?=$market['name']?></td>
-			<td><?=$market['line']?></td>
+			<td> (<?=$market['line']?>)</td>
 			<td><?=$market['description']?></td>
-			<td><input type="checkbox" name="betTypes[]" value="<?=$market['market_type_id']?>" <?=$checked?> /></td>
+			<td><input type="checkbox" name="betTypes[]" value="<?=$market['market_id']?>" <?=$checked?> /></td>
 		</tr>
 		<?php
 		}

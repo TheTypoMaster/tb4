@@ -49,12 +49,40 @@ class TournamentModelEventGroupMarketType extends SuperModel
 		
 		return (bool)$db->loadResult();
 	}
+	
+	public function isEventGroupMarketAdded($event_group_id, $market_id)
+	{
+
+		$db =& $this->getDBO();
+		$query = '
+			SELECT
+				count(*)
+			FROM
+				' . $db->nameQuote('#__event_group_market_type') . '
+			WHERE
+				event_group_id = ' . $db->quote($event_group_id) . '
+			AND
+				market_id = ' . $db->quote($market_id);
+	
+		$db->setQuery($query);
+	
+		return (bool)$db->loadResult();
+	}
 
 	public function addEventGroupMarketType($event_group_id, $market_type_id)
 	{
 		$this->event_group_id 	= (int)$event_group_id;
 		$this->market_type_id	= (int)$market_type_id;
 
+		return $this->save(true);
+	}
+	
+	public function addEventGroupMarket($event_group_id, $market_type_id, $market_id)
+	{
+		$this->event_group_id 	= (int)$event_group_id;
+		$this->market_type_id	= (int)$market_type_id;
+		$this->market_id	= (int)$market_id;
+	
 		return $this->save(true);
 	}
 
@@ -70,6 +98,20 @@ class TournamentModelEventGroupMarketType extends SuperModel
 		$db->setQuery($query->getDelete());
 		return $db->query();
 	}
+	
+	public function removeEventGroupMarket($event_group_id, $market_Type_id, $market_id)
+	{
+		$table = $this	->_getTable()
+		->addWhere('event_group_id', $event_group_id)
+		->addWhere('market_Type_id', $market_Type_id)
+		->addWhere('market_id', $market_id);
+	
+		$query = new DatabaseQuery($table);
+		$db =& $this->getDBO();
+	
+		$db->setQuery($query->getDelete());
+		return $db->query();
+	}
 
 	public function getEventGroupMarketTypeListByEventGroupID($event_group_id)
 	{
@@ -80,6 +122,19 @@ class TournamentModelEventGroupMarketType extends SuperModel
 		$db =& $this->getDBO();
 		$query = new DatabaseQuery($table);
 
+		$db->setQuery($query->getSelect());
+		return $db->loadResultArray();
+	}
+	
+	public function getEventGroupMarketListByEventGroupID($event_group_id)
+	{
+		$table = new DatabaseQueryTable($this->_table_name);
+		$table 	->addColumn('market_id')
+				->addWhere('event_group_id', $event_group_id);
+	
+		$db =& $this->getDBO();
+		$query = new DatabaseQuery($table);
+	
 		$db->setQuery($query->getSelect());
 		return $db->loadResultArray();
 	}
