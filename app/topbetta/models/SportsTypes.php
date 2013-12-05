@@ -30,7 +30,7 @@ class SportsTypes extends \Eloquent {
 					INNER JOIN tbdb_event_group_market_type AS egmt ON egmt.market_id = m.id
 					INNER JOIN tbdb_event_group AS eg ON eg.id = egmt.event_group_id
 					INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id
-					WHERE eg.id = '$compId' AND e.id = '$eventId' and m.display_flag = '1'
+					WHERE eg.id = '$compId' AND m.display_flag = '1'
 					AND m.market_status != 'D'";
 
 		$result = \DB::select($query);
