@@ -512,15 +512,15 @@ class TournamentSportEventController extends JController
 						$market_list = $market_model->getMarketListByEventId($event->id);
 
 						foreach ($market_list as $market) {
-							if (in_array($market->market_id, $market_types)) {
+							if (in_array($market->id, $market_types)) {
 								//if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
-								if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->market_id)) {	
+								if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
 									//$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
-									$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->market_id);
+									$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
 								}
 							} else {
 								//$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
-								$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->market_id);
+								$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
 							}
 						}
 					}

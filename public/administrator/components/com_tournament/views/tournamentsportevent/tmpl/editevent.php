@@ -232,13 +232,13 @@ if($total_match > 0){
 	
 		foreach($this->market_list as $market){
 			$checked = "";
-			if(in_array($market['market_type_id'], (array)$this->bet_type_list)) $checked = 'checked="checked"';
+			if(in_array($market['id'], (array)$this->bet_type_list)) $checked = 'checked="checked"';
 		?>
 		<tr>
 			<td><?=$market['name']?></td>
 			<td> (<?=$market['line']?>)</td>
 			<td><?=$market['description']?></td>
-			<td><input type="checkbox" name="betTypes[]" value="<?=$market['market_id']?>" <?=$checked?> /></td>
+			<td><input type="checkbox" name="betTypes[]" value="<?=$market['id']?>" <?=$checked?> /></td>
 		</tr>
 		<?php
 		}
