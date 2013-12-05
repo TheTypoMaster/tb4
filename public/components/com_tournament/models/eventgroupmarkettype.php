@@ -19,7 +19,12 @@ class TournamentModelEventGroupMarketType extends SuperModel
 		'market_type_id' => array(
 			'name' => 'Market Type ID',
 			'type' => self::TYPE_INTEGER
+		),
+		'market_id' => array(
+			'name' => 'Market ID',
+			'type' => self::TYPE_INTEGER
 		)
+			
 	);
 
 	public function isEventGroupMarketTypeAdded($event_group_id, $market_type_id)
@@ -103,7 +108,7 @@ class TournamentModelEventGroupMarketType extends SuperModel
 	{
 		$table = $this	->_getTable()
 		->addWhere('event_group_id', $event_group_id)
-		->addWhere('market_Type_id', $market_Type_id)
+		->addWhere('market_type_id', $market_Type_id)
 		->addWhere('market_id', $market_id);
 	
 		$query = new DatabaseQuery($table);
