@@ -343,6 +343,7 @@ class TournamentSportEventController extends JController
 		$event_list				= array();
 		$market_checkbox_list	= array();
 		$market_type_list		= array();
+		$market_list_defined	= array();
 		$total_tournaments		= 0;
 		if (!is_null($event_group_data) && $event_group_data->tournament_competition_id > 0) {
 
@@ -359,8 +360,8 @@ class TournamentSportEventController extends JController
 			$event_list		= $event_model->getEventListByEventGroupID($event_group_id);
 			
 			$market_model		=& $this->getModel('Market', 'TournamentModel');
-			$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
-			//$market_list	= $event_group_market_type_model->getEventGroupMarketListByEventGroupID($event_group_id);
+			//$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
+			$market_list_defined	= $event_group_market_type_model->getEventGroupMarketListByEventGroupID($event_group_id);
 
 			$i = 0;
 			foreach ($event_list as $event) {
@@ -385,7 +386,7 @@ class TournamentSportEventController extends JController
 		//$view->assign('match_time', $match_time);
 		$view->assign('market_list', $market_checkbox_list);
 		//$view->assign('bet_type_list', $market_type_list);
-		$view->assign('bet_type_list', $market_list);
+		$view->assign('bet_type_list', $market_list_defined);
 		$view->assign('betting_started', $betting_started);
 		$view->assign('total_tournaments', $total_tournaments);
 
