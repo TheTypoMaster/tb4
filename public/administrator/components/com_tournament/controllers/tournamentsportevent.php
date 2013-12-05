@@ -384,8 +384,8 @@ class TournamentSportEventController extends JController
 		$view->assign('match_list', $event_list);
 		//$view->assign('match_time', $match_time);
 		$view->assign('market_list', $market_checkbox_list);
-		$view->assign('bet_type_list', $market_type_list);
-		//$view->assign('bet_type_list', $market_list);
+		//$view->assign('bet_type_list', $market_type_list);
+		$view->assign('bet_type_list', $market_list);
 		$view->assign('betting_started', $betting_started);
 		$view->assign('total_tournaments', $total_tournaments);
 
