@@ -115,7 +115,7 @@ class TournamentModelMarket extends SuperModel
 		$db =& $this->getDBO();
 		$query =
 			'SELECT
-				m.id
+				m.id,
 				m.market_type_id,
 				m.line,
 				mt.name,
