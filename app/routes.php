@@ -127,6 +127,12 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	Route::resource('users.betting', 'FrontUsersBetting');
 	Route::resource('users.betting-limit', 'FrontUsersBettingLimit');
 	Route::resource('users.tournaments', 'FrontUsersTournaments');
+        
+        // Password Resets
+        // The actual reset password method
+        Route::post('password_resets/reset/{token}', 'FrontPasswordResetsController@postReset');
+        //The email gets sent via this method
+        Route::resource('password_resets', 'FrontPasswordResetsController', ['only' => ['store']]);        
 
 	// ::: BETS :::
 	Route::resource('bets','FrontBets');
