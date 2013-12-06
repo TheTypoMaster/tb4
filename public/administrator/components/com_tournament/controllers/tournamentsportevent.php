@@ -515,7 +515,7 @@ class TournamentSportEventController extends JController
 
 						//loop on each market
 						foreach ($market_list as $market) {
-							if (in_array($market->id, $market_types)) {
+							if (in_array($market->market_type_id, $market_types)) {
 									
 								// grab the line for the market being processed
 									//$marketLine = $market_model->getMarket($market->id);
