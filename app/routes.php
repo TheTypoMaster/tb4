@@ -130,9 +130,9 @@ Route::group(array('prefix' => '/api/v1'), function() {
         
         // Password Resets
         // The actual reset password method
-        Route::post('password_resets/reset/{token}', 'FrontPasswordResetsController@postReset');
+        Route::post('password_resets/reset', 'FrontPasswordResetsController@postReset');
         //The email gets sent via this method
-        Route::resource('password_resets', 'FrontPasswordResetsController', ['only' => ['store']]);        
+        Route::post('password_resets', 'FrontPasswordResetsController@store');        
 
 	// ::: BETS :::
 	Route::resource('bets','FrontBets');
