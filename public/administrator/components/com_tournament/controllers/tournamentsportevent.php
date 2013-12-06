@@ -360,8 +360,8 @@ class TournamentSportEventController extends JController
 			$event_list		= $event_model->getEventListByEventGroupID($event_group_id);
 			
 			$market_model		=& $this->getModel('Market', 'TournamentModel');
-			//$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
-			$market_list_defined	= $event_group_market_type_model->getEventGroupMarketListByEventGroupID($event_group_id);
+			$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
+			//$market_list_defined	= $event_group_market_type_model->getEventGroupMarketListByEventGroupID($event_group_id);
 
 			$i = 0;
 			foreach ($event_list as $event) {
@@ -385,8 +385,8 @@ class TournamentSportEventController extends JController
 		$view->assign('match_list', $event_list);
 		//$view->assign('match_time', $match_time);
 		$view->assign('market_list', $market_checkbox_list);
-		//$view->assign('bet_type_list', $market_type_list);
-		$view->assign('bet_type_list', $market_list_defined);
+		$view->assign('bet_type_list', $market_type_list);
+		//$view->assign('bet_type_list', $market_list_defined);
 		$view->assign('betting_started', $betting_started);
 		$view->assign('total_tournaments', $total_tournaments);
 
@@ -518,20 +518,20 @@ class TournamentSportEventController extends JController
 							if (in_array($market->id, $market_types)) {
 									
 								// grab the line for the market being processed
-									$marketLine = $market_model->getMarket($market->id);
+									//$marketLine = $market_model->getMarket($market->id);
 									
 									// check the line is the same
-									if($market->line == $marketLine->line) {
-										//if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
-										if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
-											//$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
-											$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
-										}
+									//if($market->line == $marketLine->line) {
+										if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
+										//if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
+											$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
+											//$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
+									//	}
 									}
 								
 							} else {
-								//$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
-								$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
+								$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
+								//$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
 							}
 						}
 					}
