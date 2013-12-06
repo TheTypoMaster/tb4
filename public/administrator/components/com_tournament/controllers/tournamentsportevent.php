@@ -509,16 +509,26 @@ class TournamentSportEventController extends JController
 					 */
 					$existing_market_types = $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
 
+					// loop on each event
 					foreach ($event_list as $event) {
 						$market_list = $market_model->getMarketListByEventId($event->id);
 
+						//loop on each market
 						foreach ($market_list as $market) {
-							if (in_array($market->market_type_id, $market_types)) {
-								//if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
-								if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
-									//$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
-									$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
-								}
+							if (in_array($market->id, $market_types)) {
+									
+								// grab the line for the market being processed
+									$marketLine = $market_model->getMarket($market->id);
+									
+									// check the line is the same
+									if($market->line == $marketLine) {
+										//if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
+										if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
+											//$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
+											$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
+										}
+									}
+								
 							} else {
 								//$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
 								$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
