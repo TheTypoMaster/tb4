@@ -521,7 +521,7 @@ class TournamentSportEventController extends JController
 									$marketLine = $market_model->getMarket($market->id);
 									
 									// check the line is the same
-									if($market->line == $marketLine) {
+									if($market->line == $marketLine->line) {
 										//if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
 										if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
 											//$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
