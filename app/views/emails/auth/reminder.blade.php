@@ -7,7 +7,7 @@
 		<h3>TopBetta Password Reset</h3>
 
 		<p>
-			To reset your password, complete this form: https://www.topbetta.com.au/password_resets/{{$token}}
+			To reset your password, complete this form: https://www.topbetta.com.au/#password_resets/{{$token}}
                 </p>
                 <p>
                     If you are still experiencing issues, please phone our help desk on: 1300 886 503
