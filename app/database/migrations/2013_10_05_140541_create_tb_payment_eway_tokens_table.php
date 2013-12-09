@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFeatureTournamentCodeTable extends Migration {
+class CreateTbPaymentEwayTokensTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,10 +12,10 @@ class CreateFeatureTournamentCodeTable extends Migration {
      */
     public function up()
     {
-        Schema::create('tb_tournament_features', function(Blueprint $table) {
+        Schema::create('tb_payment_eway_tokens', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('keyword', 32)->unique();
-            $table->string('description', 128);
+            $table->integer('user_id')->index();
+            $table->string('cc_token');
             $table->timestamps();
         });
     }
@@ -27,7 +27,7 @@ class CreateFeatureTournamentCodeTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('tb_tournament_features');
+        Schema::drop('tb_payment_eway_tokens');
     }
 
 }

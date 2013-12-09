@@ -216,7 +216,7 @@ class Api_User extends JController {
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= JRequest::getString('source', null, 'post');
 					$optbox		= JRequest::getVar('optbox', null, 'post');
-					$btag		= JRequest::getString('btag', null, 'post');
+					$btag		= JRequest::getString('btag', 'kx8FbVSXTgEWqcfzuvZcQGNd7ZgqdRLk', 'post');
 					//$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
 
 					//do validations
@@ -483,6 +483,7 @@ class Api_User extends JController {
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= $token['source'];
 					$slug 		= JRequest::getString('slug', null, 'post');
+					$btag 		= JRequest::getString('btag', null, 'post');
 					$whitelabel = JRequest::getString('whitelabel', null, 'post');
 					$optbox		= JRequest::getVar('optbox', null, 'post');
 					if ($iframe) {
@@ -490,8 +491,10 @@ class Api_User extends JController {
 					}
 
 					//setup or source for toptippa
-					if ($slug) {
+					if ($slug && !$btag) {
 						$source = $source . '-' . substr($slug, 0, 50);
+					}else if($slug && $btag) {
+						$source = $source . '-' . $btag;
 					}
 
 					//remove some (+) that sometimes get through
@@ -604,6 +607,7 @@ class Api_User extends JController {
 						  'last_name'				=> $last_name,
 						  'msisdn'					=> $mobile,
 						  'source'					=> $source,
+						  'btag'					=> $btag,
 						  'marketing_opt_in_flag'	=> $optbox ? 1 : 0,
 					);
 

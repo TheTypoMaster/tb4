@@ -9,9 +9,23 @@ class RaceMeeting extends \Eloquent {
 	public function raceevents() {
 		return $this -> belongsToMany('TopBetta\RaceEvent', 'tbdb_event_group_event', 'event_group_id', 'event_id')
 		 -> join('tbdb_event_status', 'tbdb_event.event_status_id', '=', 'tbdb_event_status.id')
+		 -> where('tbdb_event.event_status_id', '!=', '7')
 		 -> select(array('tbdb_event.*', 'tbdb_event_status.name AS status'));
 	}
 
+
+	/**
+	 * Grab details of meeting based on external ID.
+	 *
+	 * @return Integer
+	 * - The record ID if a record is found
+	 */	
+	static public function getMeetingDetails($meetingId) {
+		$racingCodes = array('R', 'G', 'H');
+		return RaceMeeting::where('external_event_group_id', '=', $meetingId)
+		->whereIn('type_code', $racingCodes)->get()->toArray();
+	}
+	
 	/**
 	 * Check if a meeting exists.
 	 *

@@ -3,17 +3,17 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddFeatureIdToTbdbTournamentTable extends Migration {
+class UpdateTbdbSelectionTablev3 extends Migration {
 
-    /**
+/**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::table('tbdb_tournament', function(Blueprint $table) {
-        	$table->string('feature_keyword');
+        Schema::table('tbdb_selection', function(Blueprint $table) {
+            $table->string('runner_code', 64)->index();
         });
     }
 
@@ -24,10 +24,9 @@ class AddFeatureIdToTbdbTournamentTable extends Migration {
      */
     public function down()
     {
-        Schema::table('tbdb_tournament', function(Blueprint $table) {
-            $table->dropColumn('feature_keyword');
-           
+        Schema::table('tbdb_selection', function(Blueprint $table) {
+            
         });
     }
-
+	
 }

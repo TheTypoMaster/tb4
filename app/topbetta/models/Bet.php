@@ -72,6 +72,7 @@ class Bet extends \Eloquent {
 	      		e.name AS event_name,
 	      		e.number AS event_number,
 	      		m.market_type_id AS market_id,
+	      		m.line as market_line,
 	      		mt.name AS market_name,
 	      		s.id AS selection_id,
 	      		s.name AS selection_name,
@@ -130,6 +131,8 @@ class Bet extends \Eloquent {
 				b.user_id = '$userId'
 			AND
 				b.resulted_flag = 0
+			AND 
+				rs.id !=  6
 
 			GROUP BY
 				b.id";
@@ -154,6 +157,7 @@ class Bet extends \Eloquent {
 	      		e.id AS event_id,
 	      		e.external_event_id,
 	      		m.market_type_id AS market_id,
+				m.line as market_line,
 	      		mt.name AS market_name,
 	      		e.name AS event_name,
 	      		e.number AS event_number,

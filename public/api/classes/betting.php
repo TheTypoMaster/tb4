@@ -661,12 +661,17 @@ class Api_Betting extends JController {
 		//this is for external auth check
 		$token_key		= JRequest::getString('tb_key',null,'post');
 		$token_secret	= JRequest::getString('tb_secret',null,'post');
+		$freeCreditFlag = (float)JRequest::getVar('chkFreeBet', 0);
+		
 		$api_user = new Api_User();
 		$token = $api_user->get_external_website_key_secret($token_key,$token_secret);
 
         // first validate a legit token has been sent
 		$server_token = JUtility::getToken();
 
+		//$postVars = print_r(JRequest::get('GET'), true);
+		//file_put_contents('/tmp/igas_tourn_ticket.log', "POST Vars:".$postVars . "\nFreeCreditFlag:$freeCreditFlag\n", FILE_APPEND | LOCK_EX);
+		
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum') || $token || $iframe) {
 
 			$component_list = array('betting', 'tournament', 'tournament_dollars', 'topbetta_user','payment');
@@ -829,7 +834,7 @@ class Api_Betting extends JController {
 
 			//final check - can we save this tournament ticket
 			//OutputHelper::_debug($user);
-			$ticket_result = $this->storeTicket($tournament, $user);
+			$ticket_result = $this->storeTicket($tournament, $user, $freeCreditFlag);
 
 			if ($ticket_result['status'] == 200) {
 				if ($iframe) {
@@ -1153,7 +1158,8 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 				$bet_origin_model			= new BettingModelBetOrigin();
 
-
+				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -1184,7 +1190,7 @@ class Api_Betting extends JController {
 				$bet->user_id = ( int ) $user->id;
 				$bet->bet_amount = ( int ) $wagering_bet->getBetAmount ();
 				$bet->bet_type_id = ( int ) $bet_type_name->id;
-				$bet->bet_result_status_id = ( int ) $unresult_status->id;
+				$bet->bet_result_status_id = ( int ) $processing_status->id;
 				$bet->bet_origin_id = ( int ) $bet_origin->id;
 				$bet->bet_product_id = ( int ) $bet_product->id;
 				$bet->bet_transaction_id = ( int ) $bet_transaction_id;
@@ -1315,7 +1321,7 @@ class Api_Betting extends JController {
 				if (!$bet_confirmed) {
 					
 					if($free_bet_amount > 0) {
-						//add free bet doallers
+						//add free bet dollars
 						if($free_bet_amount >= $wagering_bet->getTotalBetAmount()) {
 							$bet_freebet_refund_transaction_id	= $tournamentdollars_model->increment($wagering_bet->getTotalBetAmount(), 'freebetrefund', null, $user->id); 
 						}
@@ -1330,13 +1336,23 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 					
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 					
-					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					// Check for TB error code matching
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
 					
+                    // pull the error code from the API response
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    
+                    // If we have a custom error show that - otherwise show the provider error
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+                    ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
+                    
+					return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage ));
 				}
 			}
 			return OutputHelper::json (200, array ('success' => 'Your bet(s) have been placed'));
@@ -1647,6 +1663,8 @@ class Api_Betting extends JController {
 			require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 			$bet_origin_model			= new BettingModelBetOrigin();
 
+			$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+			$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 			$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 			$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 			$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -1656,6 +1674,22 @@ class Api_Betting extends JController {
 
 			foreach ($wagering_bet_list as $wagering_bet) {
 
+				// build the bet
+				$bet = clone $bet_model;
+				
+				// check if its a flexi
+				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
+				
+				// set the flexi percentage
+				if($bet->flexi_flag){
+					$bet->percentage = $wagering_bet->getFlexiPercentage();
+				}
+				
+				// if percentage is less than 1 percent then reject the bet
+				if ($bet->percentage < 1){
+					return OutputHelper::json(500, array('error_msg' => 'Bet not placed. Flexi percentage must be greater than 1%' ));
+				}
+				
 				$free_bet_amount = ((int)$free_bet_amount_input > 0) ? $tournamentdollars_model->getTotal($user->id) : 0;
 				$bet_freebet_transaction_id = $bet_freebet_refund_transaction_id =0;
 
@@ -1680,19 +1714,18 @@ class Api_Betting extends JController {
 
 				$exoticCass = 'WageringBetExotic'.$type;
 
-				// build the bet
-				$bet = clone $bet_model;
+				
 
 				$bet->external_bet_id			= 0;
 				$bet->user_id					= (int)$user->id;
 				$bet->bet_amount				= (int)$wagering_bet->getBetAmount();
 				$bet->bet_type_id				= (int)$bet_type_name->id;
-				$bet->bet_result_status_id		= (int)$unresult_status->id;
+				$bet->bet_result_status_id		= (int)$processing_status->id;
 				$bet->bet_origin_id				= (int)$bet_origin->id;
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
 				$bet->bet_freebet_transaction_id= (int)$bet_freebet_transaction_id;
-				$bet->flexi_flag				= (int)$wagering_bet->isFlexiBet() ? 1 : 0;
+				
 				if($bet->flexi_flag){
 					$bet->percentage = $wagering_bet->getFlexiPercentage();
 				}
@@ -1835,12 +1868,23 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 
-					return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
+					// Check for TB error code matching
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
+					
+                    // pull the error code from the API response
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    
+                    // If we have a custom error show that - otherwise show the provider error
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+                    ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
+
+                    return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage ));
 
 				}
 			}
@@ -2122,6 +2166,8 @@ class Api_Betting extends JController {
 				require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betorigin.php');
 				$bet_origin_model			= new BettingModelBetOrigin();
 
+				$failed_status		= $bet_result_status_model->getBetResultStatusByNameApi('failed');
+				$processing_status	= $bet_result_status_model->getBetResultStatusByNameApi('processing');
 				$unresult_status	= $bet_result_status_model->getBetResultStatusByNameApi('unresulted');
 				$refunded_status	= $bet_result_status_model->getBetResultStatusByNameApi('fully-refunded');
 				$bet_product		= $bet_product_model->getBetProductByKeywordApi('supertab-ob');
@@ -2171,7 +2217,7 @@ class Api_Betting extends JController {
 				$bet->bet_type_id				= 1;
 				// TODO: Should add other bet types for sport to the __bet_type table
 				//$bet->bet_type_id				= (int)$bet_type_name->id;
-				$bet->bet_result_status_id		= (int)$unresult_status->id;
+				$bet->bet_result_status_id		= (int)$processing_status->id;
 				$bet->bet_origin_id				= (int)$bet_origin->id;
 				$bet->bet_product_id			= (int)$bet_product->id;
 				$bet->bet_transaction_id		= (int)$bet_transaction_id;
@@ -2333,7 +2379,7 @@ class Api_Betting extends JController {
 					$bet->refund_freebet_transaction_id	= (int)$bet_freebet_refund_transaction_id;
 					$bet->resulted_flag			= 1;
 					$bet->refunded_flag			= 1;
-					$bet->bet_result_status_id	= (int)$refunded_status->id;
+					$bet->bet_result_status_id	= (int)$failed_status->id;
 					$bet->save();
 
 					//$betObject = print_r($bet, true);
@@ -2343,7 +2389,20 @@ class Api_Betting extends JController {
 					$this->confirmAcceptance($bet_id, $user->id, 'beterror', time()+600);
 
 					$validation->error = JText::_('Bet could not be registered');
-					return OutputHelper::json(500, array('error_msg' => $validation->error ));
+					
+					
+					// Check for TB error code matching
+					require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betErrorCodes.php');
+                    $betErrorCodes_model    = new BettingModelBetErrorCodes();
+					
+                    // pull the error code from the API response
+                    preg_match('#\((.*?)\)#', (string)$api_error, $betErrorCode);
+                    
+                    // If we have a custom error show that - otherwise show the provider error
+                    $tbErrorMessage = $betErrorCodes_model->getTBErrorMessage($betErrorCode[1], $providerName);
+                    ($tbErrorMessage) ? $errorMessage = $tbErrorMessage->value : $errorMessage = $api_error;
+					
+                    return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage ));
 
 // 					if (isset($external_bet->newOdds)){
 // 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
@@ -2905,7 +2964,7 @@ class Api_Betting extends JController {
 	 * @param object $user
 	 * @return void
 	 */
-	protected function storeTicket($tournament, $user)
+	protected function storeTicket($tournament, $user, $freeCreditFlag)
 	{
 		//var_dump($user);
 		//exit;
@@ -2917,16 +2976,49 @@ class Api_Betting extends JController {
 		}
 
 		$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
+		
 		if (!class_exists('TournamentdollarsModelTournamenttransaction')) {
 			JLoader::import('tournamenttransaction', JPATH_BASE . DS . 'components' . DS . 'com_tournamentdollars' . DS . 'models');
 		}
 		$tournament_dollars_model = JModel::getInstance('Tournamenttransaction', 'TournamentdollarsModel');
+		
+		if (!class_exists('PaymentModelAccounttransaction')) {
+			JLoader::import('accounttransaction', JPATH_BASE . DS . 'components' . DS . 'com_payment' . DS . 'models');
+		}
+		$payment_dollars_model = JModel::getInstance('Accounttransaction', 'PaymentModel');
 
-		//$buy_in_id      = $user->tournament_dollars->decrement($tournament->buy_in, 'buyin');
-		//$entry_fee_id   = $user->tournament_dollars->decrement($tournament->entry_fee, 'entry');
+		//file_put_contents('/tmp/igas_tourn_ticket.log', "FreeCreditFlag:$freeCreditFlag\n", FILE_APPEND | LOCK_EX);
+		
+		if(!$freeCreditFlag){
+			// grab ticket cost and account balance.
+			$totalTicketCost= $tournament->buy_in + $tournament->entry_fee;
+			$userAccountBalance = $payment_dollars_model->getTotal($user->id);
+
+			//transfer total cost
+			if ($userAccountBalance >= $totalTicketCost){
+				// remove money from account balance
+				$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
+				$payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
+				
+				//put money in free credit
+				$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user->id);
+				$tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user->id);
+			
+			} else {// transfer whats there
+				// remove money from account balance
+				//$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
+				$payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
+			
+				//put money in free credit
+				//$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
+				$tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user->id);
+			}
+		}
+				
+		// pay for the ticket with free credit if possible
 		$buy_in_id      = $tournament_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 		$entry_fee_id   = $tournament_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
-
+			
 		$ticket = array(
 				'tournament_id'             => $tournament->id,
 				'user_id'                   => $user->id,

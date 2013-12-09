@@ -48,6 +48,31 @@ class Tb_data_valuesTableSeeder extends Seeder {
         				'data_type_id' => '2',
         				'value' => 'HEAVY',
         		),
+        		
+        		// Bet error codes
+        		array (
+        				'id' => '9',
+        				'data_type_id' => '3',
+        				'value' => 'Betting Closed',
+        		),
+        		array (
+        				'id' => '10',
+        				'data_type_id' => '3',
+        				'value' => 'Odds Changed',
+        		),
+        		array (
+        				'id' => '11',
+        				'data_type_id' => '3',
+        				'value' => 'Line Changed',
+        		),
+        		array (
+        				'id' => '12',
+        				'data_type_id' => '3',
+        				'value' => 'Selection Withdrawn',
+        		)
+        		
+        		
+        		
         ) );
 
         // Uncomment the below to run the seeder

@@ -430,6 +430,13 @@ class SportsController extends \BaseController {
 										$selectionModel->name = $dataArray['Selection'];
 									}
 									
+									// if selection suspended status will be S
+									if(isset($dataArray['Status'])){
+										if($dataArray['Status'] == 'S'){
+											$selectionModel->selection_status_id = $dataArray['Status'];
+										}
+									}
+									
 									// add/update the selection record
 									$selectionSave = $selectionModel->save();
 																		
@@ -484,7 +491,7 @@ class SportsController extends \BaseController {
 
 							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 							
-							if($marketStatus == 'R'){
+							if($marketStatus == 'C' OR $marketStatus == 'R'){
 								switch($scoreType){
 									// Non Line bet types
 									case 'W':
