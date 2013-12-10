@@ -9,10 +9,11 @@ class TournamentSport extends \Eloquent
     protected $guarded = array();
     public static $rules = array();
 
-    public function getActiveSports()
+    public static function getActiveSports()
     {
         return TournamentSport::where('status_flag', '1')
                         ->where('racing_flag', '0')
+                        ->select(array('id','name'))
                         ->get();
     }
 
