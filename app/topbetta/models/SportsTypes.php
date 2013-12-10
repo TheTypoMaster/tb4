@@ -8,7 +8,7 @@ class SportsTypes extends \Eloquent {
 
 	public function getTypes($eventId) {
 
-		$query = "SELECT m.id AS id, mt.name AS bet_type, m.market_status as status, m.line as line 
+		$query = "SELECT m.id AS id, mt.name AS bet_type, m.market_status as status, m.line as line, mt.id AS market_type_id 
 					FROM tbdb_market_type AS mt 
 					INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id 
 					WHERE m.event_id = $eventId

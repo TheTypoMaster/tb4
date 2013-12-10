@@ -1,6 +1,8 @@
 <?php
 namespace TopBetta\frontend;
 
+use TopBetta\TournamentSport;
+
 class FrontCombinedSportsController extends \BaseController {
 
     /**
@@ -11,10 +13,18 @@ class FrontCombinedSportsController extends \BaseController {
     public function index($compId = null, $tournamentFlag = false)
     {
 
+        /* changes:
+         * - no longer required to pass comp
+         * - empty call should return next to jump event and relevant selections
+         * - sport id could be passed in which should select next event for that sport
+         * - all sports list should be passed each time
+         * xx pass the market type id back with the markets
+         */
+        
         $compId = \Input::get('comp', $compId);
 
         if (!$compId) {
-            return array("success" => false, "error" => "No comp id selected");
+//            return array("success" => false, "error" => "No comp id selected");
         }
 
         // SPORTS & COMP
@@ -45,7 +55,7 @@ class FrontCombinedSportsController extends \BaseController {
 
         if (!$events['success']) {
             // return array("success" => false, "error" => "No events available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => false, 'type_id' => false)));
+            return array('success' => true, 'result' => array('sports_list' => TournamentSport::getActiveSports(), 'sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => false, 'type_id' => false)));
         }
 
         $events = $events['result'];
