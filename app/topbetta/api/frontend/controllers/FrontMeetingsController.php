@@ -112,16 +112,16 @@ class FrontMeetingsController extends \BaseController {
 
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {
-
 				$updatedAt = $updatedAt -> toISO8601String();
-
 			} else {
-
 				$updatedAt = false;
-
 			}
-
-			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'updated_at' => $updatedAt, 'races' => $races);
+			
+			// grab the meeting start_date and format
+			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $event->start_date);
+			$startDateISO8601 = $startDate->toISO8601String();
+												
+			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'start_date' => $startDateISO8601, 'updated_at' => $updatedAt, 'races' => $races);
 			$eachMeeting[] = $meetingAndRaces;
 		}
 
@@ -160,8 +160,11 @@ class FrontMeetingsController extends \BaseController {
 		if ($meetingDetails) {
 
 			$races = Input::get('races', $showRaces);
-
-			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
+			
+			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $meetingDetails->start_date);
+			$startDateISO8601 = $startDate->toISO8601String();
+			
+			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'start_date' => $startDateISO8601, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
 
 			return array('success' => true, 'result' => $meeting);
 
