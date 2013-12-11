@@ -206,6 +206,7 @@ return array(
 		'FrontCombinedRacing'	=> 'TopBetta\frontend\FrontCombinedRacingController',
 		'FrontCombinedSports'	=> 'TopBetta\frontend\FrontCombinedSportsController',
 		'FrontCombinedTournaments'	=> 'TopBetta\frontend\FrontCombinedTournamentsController',
+                'FrontPasswordResetsController' => 'TopBetta\frontend\FrontPasswordResetsController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',

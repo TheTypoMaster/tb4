@@ -343,6 +343,7 @@ class TournamentSportEventController extends JController
 		$event_list				= array();
 		$market_checkbox_list	= array();
 		$market_type_list		= array();
+		$market_list_defined	= array();
 		$total_tournaments		= 0;
 		if (!is_null($event_group_data) && $event_group_data->tournament_competition_id > 0) {
 
@@ -360,6 +361,7 @@ class TournamentSportEventController extends JController
 			
 			$market_model		=& $this->getModel('Market', 'TournamentModel');
 			$market_type_list	= $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
+			//$market_list_defined	= $event_group_market_type_model->getEventGroupMarketListByEventGroupID($event_group_id);
 
 			$i = 0;
 			foreach ($event_list as $event) {
@@ -384,6 +386,7 @@ class TournamentSportEventController extends JController
 		//$view->assign('match_time', $match_time);
 		$view->assign('market_list', $market_checkbox_list);
 		$view->assign('bet_type_list', $market_type_list);
+		//$view->assign('bet_type_list', $market_list_defined);
 		$view->assign('betting_started', $betting_started);
 		$view->assign('total_tournaments', $total_tournaments);
 
@@ -506,16 +509,29 @@ class TournamentSportEventController extends JController
 					 */
 					$existing_market_types = $event_group_market_type_model->getEventGroupMarketTypeListByEventGroupID($event_group_id);
 
+					// loop on each event
 					foreach ($event_list as $event) {
 						$market_list = $market_model->getMarketListByEventId($event->id);
 
+						//loop on each market
 						foreach ($market_list as $market) {
 							if (in_array($market->market_type_id, $market_types)) {
-								if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
-									$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
-								}
+									
+								// grab the line for the market being processed
+									//$marketLine = $market_model->getMarket($market->id);
+									
+									// check the line is the same
+									//if($market->line == $marketLine->line) {
+										if (!$event_group_market_type_model->isEventGroupMarketTypeAdded($event_group_id, $market->market_type_id)) {
+										//if (!$event_group_market_type_model->isEventGroupMarketAdded($event_group_id, $market->id)) {	
+											$event_group_market_type_model->addEventGroupMarketType($event_group_id, $market->market_type_id);
+											//$event_group_market_type_model->addEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
+									//	}
+									}
+								
 							} else {
 								$event_group_market_type_model->removeEventGroupMarketType($event_group_id, $market->market_type_id);
+								//$event_group_market_type_model->removeEventGroupMarket($event_group_id, $market->market_type_id, $market->id);
 							}
 						}
 					}
