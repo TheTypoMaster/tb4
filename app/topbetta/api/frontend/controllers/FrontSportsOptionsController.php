@@ -49,7 +49,7 @@ class FrontSportsOptionsController extends \BaseController {
 
 				//we need to type cast the strings to int
 				foreach ($options as $option) {
-					$eachOption[] = array('bet_selection' => $option -> bet_selection, 'odds' => (float)$option -> odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'external_selection_id' => (int)$option -> external_selection_id, 'id' => (int)$option -> selection_id, 'line' => $option -> line, 'bet_limit' => $betLimitValue);
+					$eachOption[] = array('bet_selection' => $option -> bet_selection, 'odds' => (float)$option -> odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'external_selection_id' => (int)$option -> external_selection_id, 'id' => (int)$option -> selection_id, 'line' => $option -> line, 'bet_limit' => $betLimitValue, 'type_id' => (int)$option->type_id);
 				}
 
 				return array('success' => true, 'result' => $eachOption);
@@ -93,7 +93,7 @@ class FrontSportsOptionsController extends \BaseController {
 
 				//we need to type cast the strings to int
 				foreach ($options as $option) {
-					$eachOption[] = array('bet_selection' => $option -> bet_selection, 'odds' => (float)$option -> odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'external_selection_id' => (int)$option -> external_selection_id, 'id' => (int)$option -> selection_id, 'line' => $option -> line, 'bet_limit' => $betLimitValue);
+					$eachOption[] = array('bet_selection' => $option -> bet_selection, 'odds' => (float)$option -> odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'external_selection_id' => (int)$option -> external_selection_id, 'id' => (int)$option -> selection_id, 'line' => $option -> line, 'bet_limit' => $betLimitValue, 'type_id' => (int)$option->type_id);
 				}
 
 				return array('success' => true, 'result' => $eachOption);

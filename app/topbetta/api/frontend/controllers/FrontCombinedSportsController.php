@@ -13,6 +13,7 @@ class FrontCombinedSportsController extends \BaseController {
      */
     public function index($compId = null, $tournamentFlag = false)
     {
+
         
         $sportsList = TournamentSport::getActiveSports()->toArray();
 
@@ -21,7 +22,7 @@ class FrontCombinedSportsController extends \BaseController {
                 $nextSport = SportsEvents::getNextEventsToJump(1, $sportId);
 
                 if (count($nextSport) == 0) {
-           return array("success" => false, "error" => "No Next To Jump Sports Event");			
+                  return array("success" => false, "error" => "No Next To Jump Sports Event");			
                 } 
                 $compId = $nextSport[0]->comp_id;
                 $eventId = \TopBetta\RaceEvent::where('external_event_id',$nextSport[0]->external_event_id)->pluck('id');
@@ -146,11 +147,12 @@ class FrontCombinedSportsController extends \BaseController {
 
         $options = $options['result'];
 
-        foreach ($options as $key => $value) {
-            $options[$key]['type_id'] = (int)$typeId;
-        }
+// This may not be needed now
+//         foreach ($options as $key => $value) {
+//             $options[$key]['type_id'] = (int)$typeId;
+//         }
 
-        return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
+        return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$options[0]['type_id'], 'market_type_id' => (int)$typeId)));
     }
 
     /**
