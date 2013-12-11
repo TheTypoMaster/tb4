@@ -223,6 +223,7 @@ if($total_match > 0){
 		<thead>
 		<tr>
 			<th class="lftTxt">Bet Type</th>
+			<th class="lftTxt">Line</th>
 			<th class="lftTxt">Description</th>
 			<th>Status</th>
 		</tr>
@@ -235,6 +236,7 @@ if($total_match > 0){
 		?>
 		<tr>
 			<td><?=$market['name']?></td>
+			<td> (<?=$market['line']?>)</td>
 			<td><?=$market['description']?></td>
 			<td><input type="checkbox" name="betTypes[]" value="<?=$market['market_type_id']?>" <?=$checked?> /></td>
 		</tr>

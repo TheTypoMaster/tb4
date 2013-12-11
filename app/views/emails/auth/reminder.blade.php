@@ -4,10 +4,18 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		<h2>Password Reset</h2>
+		<h3>TopBetta Password Reset</h3>
 
-		<div>
-			To reset your password, complete this form: {{ URL::to('password/reset', array($token)) }}.
-		</div>
+		<p>
+			To reset your password, complete this form: https://www.topbetta.com.au/#password_resets/{{$token}}
+                </p>
+                <p>
+                    If you are still experiencing issues, please phone our help desk on: 1300 886 503
+                </p>
+                <p>
+                <br>TopBetta<br>
+                Phone: 1300 886 503<br>
+                Email: help@topbetta.com
+                </p>
 	</body>
 </html>
