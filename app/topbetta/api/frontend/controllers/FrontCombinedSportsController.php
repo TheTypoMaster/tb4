@@ -129,6 +129,7 @@ class FrontCombinedSportsController extends \BaseController {
         	$options = $optionsController->getAllOptionsForMarketTypeId($allEvents, $marketTypeId);
 
         	$typeId = $marketTypeId;
+        	$oldTypeId = \Input::get('type_id');
 
         } else {
 			$typeId = \Input::get('type_id', $types[0]['id']);
@@ -139,6 +140,9 @@ class FrontCombinedSportsController extends \BaseController {
 
 			$options = $response->getOriginalContent();
         }
+        
+		// This is for front-end madness!!
+        $selectedTypeId = isset($oldTypeId) ? $oldTypeId : $typeId;
 
         if (!$options['success']) {
             // return array("success" => false, "error" => "No options available");
@@ -152,7 +156,7 @@ class FrontCombinedSportsController extends \BaseController {
 //             $options[$key]['type_id'] = (int)$typeId;
 //         }
 
-        return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$options[0]['type_id'], 'market_type_id' => (int)$typeId)));
+                return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$selectedTypeId, 'market_type_id' => (int)$typeId)));
     }
 
     /**
