@@ -1,6 +1,9 @@
 <?php
 namespace TopBetta\frontend;
 
+use TopBetta\TournamentSport;
+use TopBetta\SportsEvents;
+
 class FrontCombinedSportsController extends \BaseController {
 
     /**
@@ -11,10 +14,30 @@ class FrontCombinedSportsController extends \BaseController {
     public function index($compId = null, $tournamentFlag = false)
     {
 
+        
+        $sportsList = TournamentSport::getActiveSports()->toArray();
+
+        // if they pass in a sport id, show next event
+        if ($sportId = \Input::get('sport_id')) {
+                $nextSport = SportsEvents::getNextEventsToJump(1, $sportId);
+
+                if (count($nextSport) == 0) {
+                  return array("success" => false, "error" => "No Next To Jump Sports Event");			
+                } 
+                $compId = $nextSport[0]->comp_id;
+                $eventId = \TopBetta\RaceEvent::where('external_event_id',$nextSport[0]->external_event_id)->pluck('id');
+        }
+
         $compId = \Input::get('comp', $compId);
 
         if (!$compId) {
-            return array("success" => false, "error" => "No comp id selected");
+            // return the next to jump event
+            $nextToJump = SportsEvents::getNextEventsToJump(1);
+            if (count($nextToJump) == 0) {
+                return array("success" => false, "error" => "No Next To Jump Sports Event");			
+            } 
+            $compId = $nextToJump[0]->comp_id;
+            $eventId = \TopBetta\RaceEvent::where('external_event_id',$nextToJump[0]->external_event_id)->pluck('id');
         }
 
         // SPORTS & COMP
@@ -45,15 +68,17 @@ class FrontCombinedSportsController extends \BaseController {
 
         if (!$events['success']) {
             // return array("success" => false, "error" => "No events available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => false, 'type_id' => false)));
+            return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => false, 'type_id' => false)));
         }
 
         $events = $events['result'];
+        $allEvents = array();
 
         $nextEvent = false;
 
         foreach ($events as $key => $value) {
             $events[$key]['comp_id'] = (int)$compId;
+            $allEvents[] = (int)$value['id'];
 
             // we need to determine the next event to jump
             $startTime = new \DateTime($value['start_time']);
@@ -86,7 +111,7 @@ class FrontCombinedSportsController extends \BaseController {
 
         if (!$types['success']) {
             // return array("success" => false, "error" => "No types available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => false)));
+            return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => false)));
         }
 
         $types = $types['result'];
@@ -96,26 +121,42 @@ class FrontCombinedSportsController extends \BaseController {
         }
 
         // OPTIONS
-        $typeId = \Input::get('type_id', $types[0]['id']);
+        
+        // Did they pass in a market type id? 
+        // - this means they want all options for all events for this market type
+        if ($marketTypeId = \Input::get('market_type_id')) {
+        	$optionsController = new FrontSportsOptionsController();
+        	$options = $optionsController->getAllOptionsForMarketTypeId($allEvents, $marketTypeId);
 
-        $request = \Request::create("/api/v1/sports/$compId/events/$eventId/types/$typeId/options", 'GET');
+        	$typeId = $marketTypeId;
+        	$oldTypeId = \Input::get('type_id');
 
-        $response = \Route::dispatch($request);
+        } else {
+			$typeId = \Input::get('type_id', $types[0]['id']);
 
-        $options = $response->getOriginalContent();
+			$request = \Request::create("/api/v1/sports/$compId/events/$eventId/types/$typeId/options", 'GET');
+
+			$response = \Route::dispatch($request);
+
+			$options = $response->getOriginalContent();
+        }
+        
+		// This is for front-end madness!!
+        $selectedTypeId = isset($oldTypeId) ? $oldTypeId : $typeId;
 
         if (!$options['success']) {
             // return array("success" => false, "error" => "No options available");
-            return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
+            return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
         }
 
         $options = $options['result'];
 
-        foreach ($options as $key => $value) {
-            $options[$key]['type_id'] = (int)$typeId;
-        }
+// This may not be needed now
+//         foreach ($options as $key => $value) {
+//             $options[$key]['type_id'] = (int)$typeId;
+//         }
 
-        return array('success' => true, 'result' => array('sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$typeId)));
+                return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$selectedTypeId, 'market_type_id' => (int)$typeId)));
     }
 
     /**
