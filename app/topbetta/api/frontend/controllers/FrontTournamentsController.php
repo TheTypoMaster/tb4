@@ -453,7 +453,11 @@ class FrontTournamentsController extends \BaseController {
 			$places_paid = count($place_display);
 		}
 
+
 		$numRegistrations = count($playerList);
+
+        // TEMP for tournament landing page until proper tournament group/labels are implimented
+        ($tournament->featured == "Featured") ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
 
 		//calculate tournament end date/betting open
 
@@ -470,6 +474,7 @@ class FrontTournamentsController extends \BaseController {
 				'places_paid' => $places_paid,
 				'start_currency' => (int)$tournament -> start_currency,
 				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
+                'featured' => $featuredTournamentFlag,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
