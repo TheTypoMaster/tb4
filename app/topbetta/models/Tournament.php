@@ -23,7 +23,7 @@ class Tournament extends \Eloquent {
 	}
 
     static public function isTournamentFeatured($tournamentId){
-        static::with('tournamentlabels')->where('label', 'Featured')->get();
+        return static::with('tournamentlabels')->where('id', $tournamentId)->get();
     }
 
 	public function getTournamentActiveList($list_params = array()) {
@@ -76,7 +76,9 @@ class Tournament extends \Eloquent {
 				eg.events,
 				eg.track,
 				eg.weather,
-				c.name AS competition_name
+				c.name AS competition_name,
+				tl.label AS featured
+
 			FROM
 				tbdb_tournament AS t
 			INNER JOIN
@@ -91,6 +93,14 @@ class Tournament extends \Eloquent {
 				tbdb_tournament_competition AS c
 			ON
 				c.id = eg.tournament_competition_id
+			LEFT JOIN
+			    tbdb_tournamanet_label_tournament AS tlt
+	        ON
+	            tlt.tournament_id = t.id
+			LEFT JOIN
+			    tbdb_tournamanet_labels AS tl
+	        ON
+	            tl.id = tlt.label_id
 			WHERE 
 				t.end_date > '" . $today;
 				
