@@ -1,5 +1,7 @@
 <?php namespace TopBetta;
 
+use Illuminate\Database\Eloquent;
+
 class TournamentLabelTournament extends Eloquent {
     protected $guarded = array();
     public static $rules = array();
