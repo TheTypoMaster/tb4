@@ -15,7 +15,7 @@ class Tournament extends \Eloquent {
 
 	// model relationships
     public function tournamentlabels(){
-        return $this->belongsToMany('TopBetta\TournamentLabels', 'TopBetta\TournamentLabelTournament', 'tournament_id', 'tournament_label_id');
+        return $this->belongsToMany('TopBetta\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
     }
 
 	static public function getTournamentWithEventGroup($eventGroupId){
