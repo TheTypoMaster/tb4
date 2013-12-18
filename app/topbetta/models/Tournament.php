@@ -3,7 +3,9 @@ namespace TopBetta;
 
 class Tournament extends \Eloquent {
 
-	protected $table = 'tbdb_tournament';
+    protected $guarded = array();
+    public static $rules = array();
+    protected $table = 'tbdb_tournament';
 
 	/**
 	 * Array to content the Racing Sports to exclude from the list
@@ -11,13 +13,18 @@ class Tournament extends \Eloquent {
 	 */
 	public $excludeSports = array('galloping', 'greyhounds', 'harness');
 
-	protected $guarded = array();
+	// model relationships
+    public function tournamentlabels(){
+        return $this->belongsToMany('TopBetta\TournamentLabels', 'TopBetta\TournamentLabelTournament', 'tournament_id', 'tournament_label_id');
+    }
 
-	public static $rules = array();
-	
 	static public function getTournamentWithEventGroup($eventGroupId){
 		return Tournament::where('event_group_id', '=', $eventGroupId)->get();
 	}
+
+    static public function isTournamentFeatured($tournamentId){
+
+    }
 
 	public function getTournamentActiveList($list_params = array()) {
 
