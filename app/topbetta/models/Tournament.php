@@ -25,7 +25,7 @@ class Tournament extends \Eloquent {
     static public function isTournamentFeatured($tournamentId){
         return static::join('tb_tournament_label_tournament', 'tb_tournament_label_tournament.tournament_id', '=', 'tbdb_tournament.id')
                         ->join('tb_tournament_labels', 'tb_tournament_labels.id', '=', 'tb_tournament_label_tournament.tournament_label_id')
-                        ->where('tb_tournament_labels.id', 'Featured')->pluck('id');
+                        ->where('tb_tournament_labels.id', 'Featured')->pluck('tb_tournament_labels.id');
 
         //return static::with('tournamentlabels')->where('id', $tournamentId)->get();
     }
