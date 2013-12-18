@@ -453,7 +453,6 @@ class FrontTournamentsController extends \BaseController {
 			$places_paid = count($place_display);
 		}
 
-
 		$numRegistrations = count($playerList);
 
         $test = TopBetta\Tournament::isTournamentFeatured($tournament->id);
