@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tbdb_event_status_AddDeleteRecordEventStatusTableSeeder');
 		
 		$this->call('Tbdb_bet_result_statusTableSeeder');
+		$this->call('Tbdb_components_add_tournament_grouping_recordsTableSeeder');
 	}
 
 }

@@ -56,7 +56,9 @@ header('Access-Control-Allow-Credentials: true');
 
 Route::get('/', function()
 {
-	
+
+    return TopBetta\Tournament::isTournamentFeatured('53987');
+
 	return \Redirect::to('https://www.topbetta.com.au');
 	
 	//return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runnerCode)->get();
