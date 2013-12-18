@@ -94,7 +94,7 @@ class Tournament extends \Eloquent {
 			ON
 				c.id = eg.tournament_competition_id
 			LEFT JOIN
-			    tbdb_tournamanet_label_tournament AS tlt
+			    tbdb_tournamant_label_tournament AS tlt
 	        ON
 	            tlt.tournament_id = t.id
 			LEFT JOIN
