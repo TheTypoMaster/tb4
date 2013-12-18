@@ -14,8 +14,8 @@ class CreateTbdbTournamentGroupsTable extends Migration {
     {
         Schema::create('tb_tournament_groups', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('group', 64)->index();
-            $table->string('descritopn');
+            $table->string('group_name', 64)->index();
+            $table->string('description');
             $table->integer('parent_group_id')->index();
             $table->timestamps();
         });

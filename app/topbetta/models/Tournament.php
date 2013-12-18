@@ -23,7 +23,7 @@ class Tournament extends \Eloquent {
 	}
 
     static public function isTournamentFeatured($tournamentId){
-
+        static::with('tournamentlabels')->where('label', 'Featured')->get();
     }
 
 	public function getTournamentActiveList($list_params = array()) {
