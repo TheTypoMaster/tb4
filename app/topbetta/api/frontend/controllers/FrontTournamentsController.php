@@ -456,6 +456,7 @@ class FrontTournamentsController extends \BaseController {
 
 		$numRegistrations = count($playerList);
 
+        $test = TopBetta\Tournament::isTournamentFeatured($tournament->id);
         // TEMP for tournament landing page until proper tournament group/labels are implimented
        (TopBetta\Tournament::isTournamentFeatured($tournament->id)) ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
 
@@ -474,7 +475,7 @@ class FrontTournamentsController extends \BaseController {
 				'places_paid' => $places_paid,
 				'start_currency' => (int)$tournament -> start_currency,
 				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
-                'featured' => $featuredTournamentFlag,
+                'featured' => $test,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
