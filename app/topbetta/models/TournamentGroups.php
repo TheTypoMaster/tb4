@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta;
 
 class TournamentGroups extends Eloquent {
     protected $guarded = array();
