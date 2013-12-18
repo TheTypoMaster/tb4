@@ -100,7 +100,7 @@ class Tournament extends \Eloquent {
 			LEFT JOIN
 			    tb_tournament_labels AS tl
 	        ON
-	            tl.id = tlt.label_id
+	            tl.id = tlt.tournament_label_id
 			WHERE 
 				t.end_date > '" . $today;
 				
