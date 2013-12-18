@@ -457,7 +457,7 @@ class FrontTournamentsController extends \BaseController {
 		$numRegistrations = count($playerList);
 
         // TEMP for tournament landing page until proper tournament group/labels are implimented
-        $featuredTournamentFlag = \TopBetta\Tournament::isTournamentFeatured($tournament->id;
+        $featuredTournamentFlag = \TopBetta\Tournament::isTournamentFeatured($tournament->id);
          //(TopBetta\Tournament::isTournamentFeatured($tournament->id)) ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
 
 		//calculate tournament end date/betting open
