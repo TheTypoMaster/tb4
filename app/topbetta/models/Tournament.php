@@ -317,4 +317,21 @@ class Tournament extends \Eloquent {
 		return (!empty($tournament->cancelled_flag) || strtotime($tournament->end_date) < time());
 	}
 
+	/**
+         * Gets the next event start time (sport/racing) for an event group id
+         * 
+         * @param type $groupId
+         * @return type string
+         */
+        public static function getNextEventStartTimeForEventGroupId($groupId) {
+		
+		return \DB::table('tbdb_event')
+                    ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                    ->join('tbdb_event_group',  'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+                    ->where('tbdb_event_group.id', $groupId)
+                    ->where('tbdb_event.event_status_id',1)
+                    ->orderBy('tbdb_event.start_date', 'asc')
+                    ->take(1)
+                    ->pluck('tbdb_event.start_date');
+	}         
 }
