@@ -109,9 +109,9 @@ class FrontCombinedSportsController extends \BaseController {
 
         // $types = $response->getOriginalContent();
 
-        if (!$types['success']) {
+        if (!$types['success'] || count($types['result']) == 0) {
             // return array("success" => false, "error" => "No types available");
-            return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => false)));
+            return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => false)));
         }
 
         $types = $types['result'];
