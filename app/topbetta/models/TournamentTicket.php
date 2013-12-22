@@ -332,7 +332,7 @@ class TournamentTicket extends \Eloquent {
 				t.cancelled_flag != 1';
 
         if ($paid) {
-            $query .= ' AND paid_flag = 1 ';
+            $query .= ' AND t.paid_flag = 1 ';
         }
         $countQuery = $selectCountQuery . $query;
 
