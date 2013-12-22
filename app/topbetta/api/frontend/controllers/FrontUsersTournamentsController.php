@@ -120,8 +120,11 @@ class FrontUsersTournamentsController extends \BaseController {
 			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap) {
 				
 				$ticket_model = new \TopBetta\TournamentTicket;	
-					
-				$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset);
+
+                // just grab the completed tournaments - this API needs to be re-addressed at some stage.
+                $paid = 1;
+
+				$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset, $paid);
 				$tournamentHistory = array();
 				
 				foreach ($tournament_list['result'] as $tournament) {

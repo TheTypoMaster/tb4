@@ -268,7 +268,7 @@ class TournamentTicket extends \Eloquent {
 	 * @param integer $user_id
 	 * @return object
 	 */
-	public function getUserTournamentList($user_id, $order = 't.id', $direction = 'ASC', $limit = 25, $offset = null)
+	public function getUserTournamentList($user_id, $order = 't.id', $direction = 'ASC', $limit = 25, $offset = null, $paid = null)
 	{
 		/*	
 		if(is_null($order)) {
@@ -330,8 +330,11 @@ class TournamentTicket extends \Eloquent {
 				tk.refunded_flag != 1
 			AND
 				t.cancelled_flag != 1';
-				
-		$countQuery = $selectCountQuery . $query;		
+
+        if ($paid) {
+            $query .= ' AND t.paid_flag = 1 ';
+        }
+        $countQuery = $selectCountQuery . $query;
 
 		if(!is_null($order)) {
 			$query .= ' ORDER BY ' . $order;
@@ -345,9 +348,10 @@ class TournamentTicket extends \Eloquent {
 			$query .= ' LIMIT ' . $offset . ',' . $limit;	
 		} else {
 			$query .= ' LIMIT ' . $limit;
-		}						
+		}
 
-		// handle our normal query with results
+
+        // handle our normal query with results
 		$fullQuery = $selectQuery . $query;
 		
 		$result = \DB::select($fullQuery);
