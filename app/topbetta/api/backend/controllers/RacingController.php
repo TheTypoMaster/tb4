@@ -643,7 +643,7 @@ class RacingController extends \BaseController {
                                             $raceEvent->save();
 
                                             // delete all results records for this event
-                                            $deleteRaceID = deleteResultsForRaceId($eventID);
+                                            $deleteRaceID = TopBetta\RaceResult::deleteResultsForRaceId($eventID);
 
                                             TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, Existing Results for EventID: $eventID deleted. Response: $deleteRaceID.", 1 );
                                         }
