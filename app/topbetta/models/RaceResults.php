@@ -182,14 +182,11 @@ class RaceResult extends \Eloquent {
 
     public function deleteResultsForRaceId($raceId) {
 
-        $delete_result = \DB::table('tbdb_selection_result AS sr')
+        return \DB::table('tbdb_selection_result AS sr')
             ->leftJoin('tbdb_selection AS s', 's.id', '=', 'sr.selection_id')
-             ->join('tbdb_market AS mk', 'mk.id', '=', 's.market_id')
+            ->join('tbdb_market AS mk', 'mk.id', '=', 's.market_id')
             ->join('tbdb_event AS e', 'e.id', '=', 'mk.event_id')
             ->where('e.id', '=', $raceId)
             ->delete();
-
-        return $delete_result;
-
     }
 }

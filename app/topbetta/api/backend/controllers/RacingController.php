@@ -645,7 +645,7 @@ class RacingController extends \BaseController {
                                             // delete all results records for this event
                                             $deleteRaceID = deleteResultsForRaceId($eventID);
 
-                                            TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, Existing Results for EventID: $eventID deleted", 1 );
+                                            TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, Existing Results for EventID: $eventID deleted. Response: $deleteRaceID.", 1 );
                                         }
                                     }
 
