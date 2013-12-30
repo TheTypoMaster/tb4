@@ -182,7 +182,7 @@ class RaceResult extends \Eloquent {
 
     static public function deleteResultsForRaceId($raceId) {
 
-        return \DB::statement('DELETE FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id INNER JOIN tbdb_event as e e.id on event_id WHERE e.id = '. $raceId);
+        return \DB::statement('DELETE sr.* FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id INNER JOIN tbdb_event as e on e.id = mk.event_id WHERE e.id ='. $raceId);
 
     }
 }
