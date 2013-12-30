@@ -180,7 +180,7 @@ class RaceResult extends \Eloquent {
 	}
 
 
-    public function deleteResultsForRaceId($raceId) {
+    static public function deleteResultsForRaceId($raceId) {
 
         return \DB::table('tbdb_selection_result AS sr')
             ->leftJoin('tbdb_selection AS s', 's.id', '=', 'sr.selection_id')
