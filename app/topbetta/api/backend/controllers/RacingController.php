@@ -618,7 +618,7 @@ class RacingController extends \BaseController {
 								if ($saveThisProduct) {
 									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
 
-                                    // if this is the 1st time through for this event clear all preveious results
+                                    // if this is the 1st time through for this event clear all previous results
                                     if($firstProcess == true){
 
                                         // update the flag so this only happens once
@@ -644,6 +644,8 @@ class RacingController extends \BaseController {
 
                                             // delete all results records for this event
                                             $deleteRaceID = deleteResultsForRaceId($eventID);
+
+                                            TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, Existing Results for EventID: $eventID deleted", 1 );
                                         }
                                     }
 
