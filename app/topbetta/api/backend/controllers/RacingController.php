@@ -587,6 +587,9 @@ class RacingController extends \BaseController {
 						// Result Data - the actual results of the race
 					case "ResultList" :
 						TopBetta\LogHelper::l ( "BackAPI: Racing - Processing $objectCount: Result" );
+
+                        $firstProcess = true;
+
 						foreach ( $racingArray as $dataArray ) {
 							$selectionsExists = $resultExists = 0;
 							
@@ -604,7 +607,8 @@ class RacingController extends \BaseController {
 								$placeNo = $dataArray ['PlaceNo'];
 								$payout = $dataArray ['Payout'];
 								$providerName = "igas";
-								 
+
+
 								/*
 								 * Check if this is a product we need to store in the DB
 								 */
@@ -613,7 +617,38 @@ class RacingController extends \BaseController {
 								// We want this product
 								if ($saveThisProduct) {
 									TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result. Starting: PriceType:$priceType. MeetID: $meetingId, RaceCode:, RaceNo:$raceNo, BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1 );
-									
+
+                                    // if this is the 1st time through for this event clear all previous results
+                                    if($firstProcess == true){
+
+                                        // update the flag so this only happens once
+                                        $firstProcess == false;
+
+                                        //
+                                        // delete all existing results data for this race
+                                        //
+
+                                        // Get ID of event record
+                                        $eventID = TopBetta\RaceEvent::eventExists ($meetingId, $raceNo);
+
+                                        // if there is an event found
+                                        if($eventID){
+                                            // grab the event
+                                            $raceEvent = TopBetta\RaceEvent::find ($eventID);
+
+                                            // reset all exotic results to NULL
+                                            $raceEvent->quinella_dividend = $raceEvent->exacta_dividend = $raceEvent->trifecta_dividend = $raceEvent->firstfour_dividend = NULL;
+
+                                            // save the update
+                                            $raceEvent->save();
+
+                                            // delete all results records for this event
+                                            $deleteRaceID = deleteResultsForRaceId($eventID);
+
+                                            TopBetta\LogHelper::l ( "BackAPI: Racing - Processing Result, Existing Results for EventID: $eventID deleted. Response: $deleteRaceID.", 1 );
+                                        }
+                                    }
+
 									// For win and place bets results are stored with the selection record
 									if ($betType == 'W' || $betType == 'P') {
 										// check if selection exists in the DB
