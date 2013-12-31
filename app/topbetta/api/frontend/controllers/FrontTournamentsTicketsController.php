@@ -123,7 +123,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
 			return array('success' => true, 'result' => array(
-				'id' => (int)$tournamentId,
+				'id' => (int)$myTicketID[0]->id,
 				'tournament_id' => (int)$tournamentId,
 				'tournament_name' => $tournament -> name,
 				'buy_in' => (int)$tournament -> buy_in,
