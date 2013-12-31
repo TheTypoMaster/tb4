@@ -622,7 +622,7 @@ class RacingController extends \BaseController {
                                     if($firstProcess == true){
 
                                         // update the flag so this only happens once
-                                        $firstProcess == false;
+                                        $firstProcess = false;
 
                                         //
                                         // delete all existing results data for this race
