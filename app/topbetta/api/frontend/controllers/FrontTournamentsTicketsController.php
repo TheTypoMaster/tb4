@@ -122,8 +122,11 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
-			return array('success' => true, 'result' => array(
-				'id' => (int)$tournamentId,
+            // get sport name for tournament ticket
+            $sport_name = \TopBetta\SportsSportName::find($tournament->tournament_sport_id)->pluck('sport_name');
+
+            return array('success' => true, 'result' => array(
+                'id' => (int)$myTicketID[0]->id,
 				'tournament_id' => (int)$tournamentId,
 				'tournament_name' => $tournament -> name,
 				'buy_in' => (int)$tournament -> buy_in,
@@ -134,7 +137,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 				'leaderboard_rank' => $rank,
 				'prize' => $prize,
 				'qualified' => ($leaderboardDetails -> qualified) ? true : false,
-				'sport_name' => $tournament -> sport_name,
+				'sport_name' => $sport_name,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
 				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false,
