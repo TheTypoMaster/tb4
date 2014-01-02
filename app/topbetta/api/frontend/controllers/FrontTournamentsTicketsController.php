@@ -123,7 +123,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
             // get sport name for tournament ticket
-            $sport_name = \TopBetta\SportsSportName::find($tournament->tournament_sport_id)->pluck('name');
+            $sport_name = \TopBetta\SportsSportName::getSportsNameByID($tournament->tournament_sport_id);
 
             return array('success' => true, 'result' => array(
                 'id' => (int)$myTicketID[0]->id,
