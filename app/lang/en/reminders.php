@@ -18,5 +18,11 @@ return array(
 	"user"     => "We can't find a user with that e-mail address.",
 
 	"token"    => "This password reset token is invalid.",
+    
+        "email_sent"    =>  "Please check your email address for further instructions.",
+    
+        "password_changed"  =>  "Your password has been changed successfully",
+    
+        "password_error"    =>  "There was a problem reseting your password. Please try again",
 
 );

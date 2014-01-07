@@ -47,6 +47,7 @@ class SportsEvents extends \Eloquent {
 		}
 		// TODO: is this actually needed?
 		// $query .= $dateQuery;
+		$query .= " WHERE e.display_flag = '1' ";
 		$query .= $compQuery;
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
@@ -72,7 +73,7 @@ class SportsEvents extends \Eloquent {
 		return $dateQuery;
 	}
 
-	public static function getNextEventsToJump($limit = 25) {
+	public static function getNextEventsToJump($limit = 25, $sportId = false) {
 
 		$query = "select ege.event_group_id AS comp_id, eg.name AS comp_name, e.*, ts.name AS sport_name
 		FROM tbdb_event AS e
@@ -81,7 +82,12 @@ class SportsEvents extends \Eloquent {
 		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
 		WHERE e.start_date > NOW()
 		AND eg.type_code IS NULL
-		ORDER BY e.start_date ASC
+		AND e.display_flag = '1'";
+		
+		if ($sportId) {
+			$query .= "AND eg.sport_id = $sportId";
+		}
+		$query .= " ORDER BY e.start_date ASC
 		LIMIT $limit";
 
 		$result = \DB::select($query);

@@ -47,8 +47,18 @@ class FrontCombinedTournamentsController extends \BaseController {
         $tournamentDetails = $tournamentDetails['result'];
         $tournamentDetails['tournament_id'] = (int)$tournId;
 
+        // tournament comments
+        $tournamentCommentsController = new FrontTournamentsCommentsController();
+        $tournamentComments = $tournamentCommentsController->index($tournId);
+
+        if ($tournamentComments['success']) {
+            $tournamentComments = $tournamentComments['result'];
+        } else {
+            $tournamentComments = $tournamentComments['error'];
+        }    
+
         // used for combining data below
-        $tournamentKey = array('group' => $group, 'tournament' => $tournament, 'details' => $tournamentDetails);
+        $tournamentKey = array('group' => $group, 'tournament' => $tournament, 'details' => $tournamentDetails, 'comments' => $tournamentComments);
         $combinedResult = false;
 
         // RACING TOURNAMENT

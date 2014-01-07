@@ -215,7 +215,8 @@ class Api_User extends JController {
                     $password2	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= JRequest::getString('source', null, 'post');
-					$btag		= JRequest::getString('btag', null, 'post');
+					$optbox		= JRequest::getVar('optbox', null, 'post');
+					$btag		= JRequest::getString('btag', 'kx8FbVSXTgEWqcfzuvZcQGNd7ZgqdRLk', 'post');
 					//$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
 
 					//do validations
@@ -482,6 +483,7 @@ class Api_User extends JController {
 					$mobile		= JRequest::getString('mobile', null, 'post');
 					$source		= $token['source'];
 					$slug 		= JRequest::getString('slug', null, 'post');
+					$btag 		= JRequest::getString('btag', null, 'post');
 					$whitelabel = JRequest::getString('whitelabel', null, 'post');
 					$optbox		= JRequest::getVar('optbox', null, 'post');
 					if ($iframe) {
@@ -489,8 +491,10 @@ class Api_User extends JController {
 					}
 
 					//setup or source for toptippa
-					if ($slug) {
+					if ($slug && !$btag) {
 						$source = $source . '-' . substr($slug, 0, 50);
+					}else if($slug && $btag) {
+						$source = $source . '-' . $btag;
 					}
 
 					//remove some (+) that sometimes get through
@@ -603,6 +607,7 @@ class Api_User extends JController {
 						  'last_name'				=> $last_name,
 						  'msisdn'					=> $mobile,
 						  'source'					=> $source,
+						  'btag'					=> $btag,
 						  'marketing_opt_in_flag'	=> $optbox ? 1 : 0,
 					);
 
@@ -2821,9 +2826,12 @@ Must be 18+<br>
 					'bet_time'		=> $bet->created_date,
 					'label'			=> $label,
 					'bet_type'		=> $wagering_bet->getBetTypeDisplayName($bet->bet_type),
-					'amount'		=> FORMAT::currency($bet->bet_amount),
-					'bet_total'		=> FORMAT::currency(abs($bet->bet_total)),
-					'bet_freebet_amount'		=> FORMAT::currency(abs($bet->bet_freebet_amount)),
+					// 'amount'		=> FORMAT::currency($bet->bet_amount),
+					'amount'		=> $bet->bet_amount,
+					// 'bet_total'		=> FORMAT::currency(abs($bet->bet_total)),
+					'bet_total'		=> abs($bet->bet_total),
+					// 'bet_freebet_amount'		=> FORMAT::currency(abs($bet->bet_freebet_amount)),
+					'bet_freebet_amount'		=> abs($bet->bet_freebet_amount),
 					'dividend'		=> '&mdash;',
 					'paid'			=> '&mdash;',
 					'result'		=> 'CONFIRMED',
@@ -2833,7 +2841,8 @@ Must be 18+<br>
 				if ($bet->refunded_flag && !$bet->win_amount) {
 					$bet_display_list[$bet->id]['result']	= 'REFUNDED';
 					if ($bet->refund_amount > 0) {
-						$bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);
+						// $bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);
+						$bet_display_list[$bet->id]['paid']	= $bet->refund_amount;
 					}
 
 				}
@@ -2846,7 +2855,8 @@ Must be 18+<br>
 					$bet_display_list[$bet->id]['paid']		= 'NIL';
 				} else if ($bet->resulted_flag) {
 					$bet_display_list[$bet->id]['result']	= 'WIN';
-					$bet_display_list[$bet->id]['paid']		= Format::currency($bet->win_amount);
+					// $bet_display_list[$bet->id]['paid']		= Format::currency($bet->win_amount);
+					$bet_display_list[$bet->id]['paid']		= $bet->win_amount;
 
 					if ($wagering_bet->isStandardBetType($bet->bet_type)) {
 						$selection_result	= $selection_result_model->getSelectionResultBySelectionID($bet->selection_id);
@@ -2855,15 +2865,19 @@ Must be 18+<br>
 
 						switch ($bet->bet_type) {
 							case WageringBet::BET_TYPE_WIN:
-								$bet_display_list[$bet->id]['dividend'] = Format::odds($win_dividend);
+								// $bet_display_list[$bet->id]['dividend'] = Format::odds($win_dividend);
+								$bet_display_list[$bet->id]['dividend'] = $win_dividend;
 								break;
 							case WageringBet::BET_TYPE_PLACE:
-								$bet_display_list[$bet->id]['dividend'] = Format::odds($place_dividend);
+								// $bet_display_list[$bet->id]['dividend'] = Format::odds($place_dividend);
+								$bet_display_list[$bet->id]['dividend'] = $place_dividend;
 								break;
 							case WageringBet::BET_TYPE_EACHWAY:
-								$bet_display_list[$bet->id]['dividend']  = Format::odds($win_dividend);
+								// $bet_display_list[$bet->id]['dividend']  = Format::odds($win_dividend);
+								$bet_display_list[$bet->id]['dividend']  = $win_dividend;
 								$bet_display_list[$bet->id]['dividend'] .= '/';
-								$bet_display_list[$bet->id]['dividend'] .= Format::odds($place_dividend);
+								// $bet_display_list[$bet->id]['dividend'] .= Format::odds($place_dividend);
+								$bet_display_list[$bet->id]['dividend'] .= $place_dividend;
 								break;
 						}
 					} else {
@@ -2873,11 +2887,13 @@ Must be 18+<br>
 						$dividends_count = count($bet_dividends);
 
 						if ($dividends_count == 1) {
-							$bet_display_list[$bet->id]['dividend'] = Format::odds(array_shift($bet_dividends));
+							// $bet_display_list[$bet->id]['dividend'] = Format::odds(array_shift($bet_dividends));
+							$bet_display_list[$bet->id]['dividend'] = array_shift($bet_dividends);
 						} else if ($dividends_count > 1) {
 							$bet_display_list[$bet->id]['dividend'] = array();
 							foreach ($bet_dividends as $combination => $bet_dividend) {
-								$bet_display_list[$bet->id]['dividend'][] = $combination . ': ' . Format::odds($bet_dividend);
+								// $bet_display_list[$bet->id]['dividend'][] = $combination . ': ' . Format::odds($bet_dividend);
+								$bet_display_list[$bet->id]['dividend'][] = $combination . ': ' . $bet_dividend;
 							}
 							$bet_display_list[$bet->id]['dividend'] = implode('<br />', $bet_display_list[$bet->id]['dividend']);
 						}
@@ -2896,7 +2912,8 @@ Must be 18+<br>
 							'amount'	=> '&mdash;',
 							'bet_total'	=> '&mdash;',
 							'dividend'	=> '&mdash;',
-							'paid'		=> Format::currency($bet->refund_amount),
+							// 'paid'		=> Format::currency($bet->refund_amount),
+							'paid'		=> $bet->refund_amount,
 							'result'	=> 'REFUND'
 						);
 					}

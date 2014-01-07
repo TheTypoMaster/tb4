@@ -20,4 +20,7 @@ class SportsSportName extends \Eloquent {
     static public function sportExists($sportName) {
     	return SportsSportName::where('name', '=', $sportName) -> pluck('id');
     }
+        static public function getSportsNameByID($sportId) {
+            return SportsSportName::where('id', '=', $sportId) -> pluck('name');
+    }
 }

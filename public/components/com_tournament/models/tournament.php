@@ -136,6 +136,10 @@ class TournamentModelTournament extends SuperModel
 			'name' 		=> 'Free credit prize',
 			'type' 		=> self::TYPE_INTEGER
 		)
+		//'feature_keyword' => array(
+		//		'name' 		=> 'Tournament Feature',
+		//		'type' 		=> self::TYPE_STRING
+		//)
 	);
 
 	/**

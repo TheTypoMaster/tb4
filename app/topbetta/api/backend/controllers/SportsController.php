@@ -430,6 +430,13 @@ class SportsController extends \BaseController {
 										$selectionModel->name = $dataArray['Selection'];
 									}
 									
+									// if selection suspended status will be S
+									if(isset($dataArray['Status'])){
+										if($dataArray['Status'] == 'S'){
+											$selectionModel->selection_status_id = $dataArray['Status'];
+										}
+									}
+									
 									// add/update the selection record
 									$selectionSave = $selectionModel->save();
 																		
@@ -458,7 +465,13 @@ class SportsController extends \BaseController {
 										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
 									}
 									TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId");
-										
+									
+									// Add the line to the market record for display purposes
+									$marketModel = TopBetta\SportsMarket::find($marketExists);
+									($line < 0) ? $marketModel->line = $line * -1 : $marketModel->line = str_replace("+", "", $line);
+									
+									$marketModel->save();
+									
 								}else {
 									TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection. No Market found for this selection. EID:$eventId, MarketID:$marketId, SelectionId:$selectionId Can't process", 2);
 								}
@@ -476,9 +489,30 @@ class SportsController extends \BaseController {
 							$score = $dataArray['Score'];
 							$scoreType = $dataArray['ScoreType'];
 
+							// update the market status if it's been included with the result data
+							if(isset($dataArray['MarketStatus'])){
+								// make sure the event this market is in exists
+								$eventExists = TopBetta\SportsMatches::eventExists($gameId);
+								if($eventExists){
+									// check if market record exists
+									$marketExists = TopBetta\SportsMarket::marketExists($marketId, $eventExists);
+										
+									// if market exists update that record
+									if($marketExists){
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Market, In DB: $marketExists", 1);
+										$marketModel = TopBetta\SportsMarket::find($marketExists);
+										$marketModel->market_status = $dataArray['MarketStatus'];
+										// save the market record
+										$marketModelSave = $marketModel->save();
+									}else{
+										TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: No Market found to update status: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
+									}
+								}
+							}
+							
 							TopBetta\LogHelper::l("BackAPI: Sports - Processing Result: GameID:$gameId, marketID:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType.", 1);
 							
-							if($marketStatus == 'R'){
+							if($marketStatus == 'C' OR $marketStatus == 'R'){
 								switch($scoreType){
 									// Non Line bet types
 									case 'W':

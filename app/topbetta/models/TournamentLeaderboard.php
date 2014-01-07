@@ -195,4 +195,19 @@ class TournamentLeaderboard extends \Eloquent {
 
 		return $result[0];
 	}
+
+	/**
+	 * Delete a record from the leaderboard when a user unregisters.
+	 *
+	 * @param integer $user_id
+	 * @param integer $tournament_id
+	 * @return boolean
+	 */
+	public function deleteByUserAndTournamentID($userId, $tournamentId) {
+
+		return \DB::table('tbdb_tournament_leaderboard')
+			->where('user_id', $userId)
+			->where('tournament_id', $tournamentId)
+			->delete();
+	}	
 }

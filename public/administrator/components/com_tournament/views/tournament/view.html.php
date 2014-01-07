@@ -147,6 +147,22 @@ class TournamentViewTournament extends JView
 		}
 		$this->venue_selected_list = FormHelper::getSelectedList($this->venue_option_list, $this->formdata['future_meeting_venue']);
 		
+		
+ 		// Build the tournament label list
+ 		//$this->tournament_label_option_list = array('-1' => JText::_('Select Tournament Labels'));
+		
+ 		if (!empty($this->tournament_label_list)) {
+ 			foreach($this->tournament_label_list as $label) {
+ 				$this->tournament_label_option_list[$label->id] = JText::_($label->label);
+ 			}
+ 		}
+ 		
+ 		//$test = print_r($this->tournament_label_selected_list,true);
+ 		//file_put_contents('/tmp/debug', $test, FILE_APPEND | LOCK_EX);
+ 		
+ 		//$this->tournament_label_selected_list = FormHelper::getSelectedList($this->tournament_label_option_list, $this->formdata['tournament_label_id']);
+		
+		
 		if (empty($this->formdata['jackpot_flag'])) {
 			$this->jackpot_yes_checked 	= '';
 			$this->jackpot_no_checked	= ' checked="checked"';

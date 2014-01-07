@@ -54,8 +54,8 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'localhost',
-			'database'  => 'topbetta_staging',
+			'host'      => '127.0.0.1',
+			'database'  => 'topbetta',
 			'username'  => 'root',
 			'password'  => 'mysqlp@ss',
 			'charset'   => 'utf8',

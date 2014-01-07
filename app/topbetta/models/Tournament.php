@@ -3,7 +3,9 @@ namespace TopBetta;
 
 class Tournament extends \Eloquent {
 
-	protected $table = 'tbdb_tournament';
+    protected $guarded = array();
+    public static $rules = array();
+    protected $table = 'tbdb_tournament';
 
 	/**
 	 * Array to content the Racing Sports to exclude from the list
@@ -11,9 +13,24 @@ class Tournament extends \Eloquent {
 	 */
 	public $excludeSports = array('galloping', 'greyhounds', 'harness');
 
-	protected $guarded = array();
+	// model relationships
+    public function tournamentlabels(){
+        return $this->belongsToMany('TopBetta\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
+    }
 
-	public static $rules = array();
+	static public function getTournamentWithEventGroup($eventGroupId){
+		return Tournament::where('event_group_id', '=', $eventGroupId)->get();
+	}
+
+    static public function isTournamentFeatured($tournamentId){
+        return \DB::table('tbdb_tournament')
+                        ->join('tb_tournament_label_tournament', 'tb_tournament_label_tournament.tournament_id', '=', 'tbdb_tournament.id')
+                        ->join('tb_tournament_labels', 'tb_tournament_labels.id', '=', 'tb_tournament_label_tournament.tournament_label_id')
+                        ->where('tbdb_tournament.id', $tournamentId)
+                        ->where('tb_tournament_labels.label', 'Featured')->pluck('tb_tournament_labels.id');
+
+        //return static::with('tournamentlabels')->where('id', $tournamentId)->get();
+    }
 
 	public function getTournamentActiveList($list_params = array()) {
 
@@ -28,8 +45,9 @@ class Tournament extends \Eloquent {
 		$sub_type = isset($list_params['sub_type']) ? $list_params['sub_type'] : null;
 		$event_group_id = isset($list_params['event_group_id']) ? $list_params['event_group_id'] : array();
 		$order = isset($list_params['order']) ? $list_params['order'] : null;
-
-		$query = '
+		$today = \Carbon\Carbon::today('Australia/Sydney');
+		
+		$query = "
 			SELECT
 				t.id,
 				t.tournament_sport_id,
@@ -54,6 +72,7 @@ class Tournament extends \Eloquent {
 				t.created_date,
 				t.updated_date,
 				t.private_flag,
+				t.bet_limit_flag,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,
@@ -63,7 +82,9 @@ class Tournament extends \Eloquent {
 				eg.events,
 				eg.track,
 				eg.weather,
-				c.name AS competition_name
+				c.name AS competition_name,
+				tl.label AS featured
+
 			FROM
 				tbdb_tournament AS t
 			INNER JOIN
@@ -78,13 +99,24 @@ class Tournament extends \Eloquent {
 				tbdb_tournament_competition AS c
 			ON
 				c.id = eg.tournament_competition_id
-			WHERE
-				t.end_date > NOW()
-			AND
+			LEFT JOIN
+			    tb_tournament_label_tournament AS tlt
+	        ON
+	            tlt.tournament_id = t.id
+			LEFT JOIN
+			    tb_tournament_labels AS tl
+	        ON
+	            tl.id = tlt.tournament_label_id
+			WHERE 
+				t.end_date > '" . $today;
+				
+		//		t.end_date > NOW()
+
+		$query .= "'	AND
 				t.status_flag = 1
 			AND
 				t.cancelled_flag = 0
-		';
+		";
 		/*
 		 if ($sport_id !== null) {
 		 $query .= ' AND t.tournament_sport_id = ' . $db -> quote($sport_id);
@@ -97,11 +129,11 @@ class Tournament extends \Eloquent {
 		 if ($jackpot !== false) {
 		 $query .= ' AND t.jackpot_flag = ' . $db -> quote($jackpot);
 		 }
-
-		 if ($private !== false) {
-		 $query .= ' AND t.private_flag = ' . $db -> quote($private);
-		 }
 		 */
+		 
+		 if ($private !== false) {
+		 $query .= ' AND t.private_flag = "' . $private . '"';
+		 }
 
 		// start with a sub_type, then fall back to type
 		if ($sub_type) {
@@ -285,4 +317,21 @@ class Tournament extends \Eloquent {
 		return (!empty($tournament->cancelled_flag) || strtotime($tournament->end_date) < time());
 	}
 
+	/**
+         * Gets the next event start time (sport/racing) for an event group id
+         * 
+         * @param type $groupId
+         * @return type string
+         */
+        public static function getNextEventStartTimeForEventGroupId($groupId) {
+		
+		return \DB::table('tbdb_event')
+                    ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                    ->join('tbdb_event_group',  'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+                    ->where('tbdb_event_group.id', $groupId)
+                    ->where('tbdb_event.event_status_id',1)
+                    ->orderBy('tbdb_event.start_date', 'asc')
+                    ->take(1)
+                    ->pluck('tbdb_event.start_date');
+	}         
 }
