@@ -148,15 +148,19 @@ class TournamentViewTournament extends JView
 		$this->venue_selected_list = FormHelper::getSelectedList($this->venue_option_list, $this->formdata['future_meeting_venue']);
 		
 		
-// 		// Build the tournament feature list
-// 		$this->tournament_feature_option_list = array('-1' => JText::_('Select Tournament Feature'));
+ 		// Build the tournament label list
+ 		//$this->tournament_label_option_list = array('-1' => JText::_('Select Tournament Labels'));
 		
-// 		if (!empty($this->tournament_feature_list)) {
-// 			foreach($this->tournament_feature_list as $feature) {
-// 				$this->tournament_feature_option_list[$feature->keyword] = JText::_($feature->keyword);
-// 			}
-// 		}
-// 		$this->tournament_feature_selected_list = FormHelper::getSelectedList($this->tournament_feature_option_list, $this->formdata['tournament_feature_id']);
+ 		if (!empty($this->tournament_label_list)) {
+ 			foreach($this->tournament_label_list as $label) {
+ 				$this->tournament_label_option_list[$label->id] = JText::_($label->label);
+ 			}
+ 		}
+ 		
+ 		//$test = print_r($this->tournament_label_selected_list,true);
+ 		//file_put_contents('/tmp/debug', $test, FILE_APPEND | LOCK_EX);
+ 		
+ 		//$this->tournament_label_selected_list = FormHelper::getSelectedList($this->tournament_label_option_list, $this->formdata['tournament_label_id']);
 		
 		
 		if (empty($this->formdata['jackpot_flag'])) {
