@@ -124,16 +124,46 @@ JToolBarHelper::cancel();
 						$<input type="text" name="start_currency" value="<?php echo $this->formdata['start_currency']; ?>" <?php echo $this->disabled;?> />
 					</td>
 					
+					
+					
+					
 					<td class='key'>
-						<label for="tournament_feature_id">Tournament Feature</label>
+						<label for="tournament_label_id">Tournament Labels</label>
 					</td>
+					
+					
 					<td>
-						<select name="tournament_feature_id" id="tournament_feature_id" <?php echo $this->disabled;?>>
-							<?php foreach($this->tournament_feature_option_list as $tournament_feature_id => $tournament_feature_name): ?>
-							<option value="<?php echo $tournament_feature_id; ?>"<?php echo $this->tournament_feature_selected_list[$tournament_feature_id]; ?>><?php echo $tournament_feature_name; ?></option>
+					
+						<select name="tournament_label_id[]" id="tournament_label_id"  multiple="multiple" size ='5'>
+							<?php foreach($this->tournament_label_option_list as $tournament_label_id => $tournament_label_label): ?>
+							<option value="<?php echo $tournament_label_id; ?>"<?php echo in_array($tournament_label_id, $this->tournament_label_selected_list) ? 'selected="selected"' : ''?>><?php echo $tournament_label_label; ?></option>
 							<?php endforeach; ?>
 						</select>
+					
+					
+					
+					
+					<!-- 
+						<select name="tournament_label_id" id="tournament_label_id" <?php echo $this->disabled;?> multiple="multiple" size ='5'>
+							<?php foreach($this->tournament_label_option_list as $tournament_label_id => $tournament_label_label): ?>
+							<option value="<?php echo $tournament_label_id; ?>"<?php echo $this->tournament_label_selected_list[$tournament_label_id]; ?>><?php echo $tournament_label_label; ?></option>
+							<?php endforeach; ?>
+						</select>
+						
+						
+						-->
 					</td>
+					
+					 
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					
 					
 					<?php if (!empty($this->id)) : ?>

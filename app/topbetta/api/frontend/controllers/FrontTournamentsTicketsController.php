@@ -44,7 +44,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				if ($next) {
 
-					$nextToJump[] = array('id' => (int)$activeTicket -> tournament_id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries);
+					$nextToJump[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries);
 
 				}
 			}
@@ -122,8 +122,11 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
-			return array('success' => true, 'result' => array(
-				'id' => (int)$tournamentId,
+            // get sport name for tournament ticket
+            $sport_name = \TopBetta\SportsSportName::getSportsNameByID($tournament->tournament_sport_id);
+
+            return array('success' => true, 'result' => array(
+                'id' => (int)$myTicketID[0]->id,
 				'tournament_id' => (int)$tournamentId,
 				'tournament_name' => $tournament -> name,
 				'buy_in' => (int)$tournament -> buy_in,
@@ -134,7 +137,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 				'leaderboard_rank' => $rank,
 				'prize' => $prize,
 				'qualified' => ($leaderboardDetails -> qualified) ? true : false,
-				'sport_name' => $tournament -> sport_name,
+				'sport_name' => $sport_name,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
 				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false,
