@@ -26,6 +26,7 @@ class FrontUsersTournamentsController extends \BaseController {
 		$offset = $limit * ($page - 1);
 
 		$excludeSports = array('galloping', 'greyhounds', 'harness');
+		$racingMap = array('galloping' => 'r', 'greyhounds' => 'g', 'harness' => 'h');
 
 		if ($report == 'transactions') {
 
@@ -116,7 +117,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			$userId = \Auth::user() -> id;
 
 			//cache for 30 seconds (.5 min)
-			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page) {
+			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap) {
 				
 				$ticket_model = new \TopBetta\TournamentTicket;	
 
@@ -136,12 +137,14 @@ class FrontUsersTournamentsController extends \BaseController {
 					$leaderboard_model				= new \TopBetta\TournamentLeaderboard;
 					$leaderboard					= $leaderboard_model->getLeaderBoardRankByUserAndTournament($userId, $tournament);
 					$tournament->leaderboard_rank	= $leaderboard->rank;
+					$tournament->num_entries		= $ticket_model->countTournamentEntrants($tournament->id);
 		
 					$tournament->prize				= null;
 					$tournament->ticket_awarded		= null;
 		
 					$tournament->type				= (in_array($tournament->sport_name, $excludeSports) ? 'racing' : 'sports');
-		
+					$tournament->sub_type			= (in_array($tournament->sport_name, $excludeSports) ? $racingMap[$tournament->sport_name] : $tournament->sport_name);
+
 					$transaction_record				= null;
 					$parent_tournament				= null;
 					if ($tournament->result_transaction_id) {
@@ -164,7 +167,7 @@ class FrontUsersTournamentsController extends \BaseController {
 							}
 						}
 					}
-					
+
 					//buid our single tournament history row						
 					$prize = (empty($tournament->ticket_awarded) && empty($tournament->prize)) ? '-' : null;
 					if ($tournament->ticket_awarded) {
@@ -179,11 +182,13 @@ class FrontUsersTournamentsController extends \BaseController {
 					$tournamentHistory[] = array(
 						'id' => (int)$tournament->id,
 						'sport' => $tournament->sport_name . ' - ' . $tournament->tournament_name,
+						'sub_type' => $tournament->sub_type,
 						'tournament_name' => $tournament->tournament_name,
 						'start_date' => \TimeHelper::isoDate($tournament->start_date),
                         'end_date' => \TimeHelper::isoDate($tournament->end_date),
 						'total' => (int)$tournament->betta_bucks,
 						'place' => $tournament->leaderboard_rank,
+						'num_entries' => (int)$tournament->num_entries,
 						'prize' => $prize,
 						'prize_amount' => (int)$tournament->prize
 					);
