@@ -42,6 +42,42 @@ class FrontRacesController extends \BaseController {
 
 	}
 
+	public function fastBetEvents() {
+                
+		$limit = Input::get('limit', 10);
+
+		// store fast bet events in cache for 1 min at a time
+		return \Cache::remember('fastBetEvents-' . $limit, 1, function() use ($limit) {
+
+			$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
+
+			$ret = array();
+			$ret['success'] = true;
+
+			$result = array();
+
+			foreach ($nextToJump as $next) {
+
+				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+
+				//convert the date to ISO 8601 format
+				$startDatetime = new \DateTime($next -> start_date);
+				$startDatetime = $startDatetime -> format('c');
+                                
+                                $runners = \TopBetta\RaceSelection::getRunnersForRaceId($next->id);
+                                $silk_base_url = "https://www.topbetta.com.au/silks/";
+
+				$result[] = array('id' => (int)$next -> id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'meeting_long_name' => $next->name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'distance' => $next -> distance, 'silk_base_url' => $silk_base_url, 'runners' => $runners);
+			}
+
+			$ret['result'] = $result;
+
+			return $ret;
+
+		});
+
+	}        
+        
 	/**
 	 * Display a listing of the resource.
 	 *
