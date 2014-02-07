@@ -34,7 +34,7 @@ class FrontPasswordResetsController extends \BaseController
                 return array('success' => false, 'error' => Lang::get('reminders.user'));
             }
 
-            if(isset($input['custom_remind_message'])) Config::set('auth.reminder.email', 'emails.auth.reminder_toptippa');
+            if(isset($input['custom_remind_message'])) \Config::set('auth.reminder.email', 'emails.auth.reminder_toptippa');
 
             Password::remind(array('email' => $input['email']), function($message) {
                 $message->subject('Your Password Reminder');
