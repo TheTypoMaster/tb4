@@ -20,12 +20,17 @@ class RiskManagerHelper
 
     public function sendRacingBet($betData)
     {
-        // $betData = json_encode($betData);     
         $response = RiskManagerHelper::curl('bets', 'post', $betData);
 
-        // TODO: add error checking with response		
-
-        return true;
+        if (!$response) {
+            return false;
+        }
+        
+        if ($response->status == 200) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function curl($endPoint, $type, $payload = array())
@@ -49,7 +54,7 @@ class RiskManagerHelper
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
-        $buffer = json_decode(curl_exec($ch), true);
+        $buffer = json_decode(curl_exec($ch));
 
         curl_close($ch);
 
