@@ -201,6 +201,10 @@ class TournamentController extends JController
 		$buy_in_model	= $this->getModel('TournamentBuyIn', 'TournamentModel');
 		$buy_in_list	= $buy_in_model->getTournamentBuyInList();
 		
+		// Tournament labels model
+		$tournament_label_model = $this->getModel('TournamentLabels', 'TournamentModel');
+		$tournament_labels = $tournament_label_model->getTournamentLabels();
+		
 		$entrants	= 0;
 		if (empty($id)) {
 			$formdata['start_time']	= '12:00:00';
@@ -225,6 +229,8 @@ class TournamentController extends JController
 			
 			$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
 			$entrants = $ticket_model->countTournamentEntrants($id);
+			
+			
 		}
 		$formdata['tod_flag'] 		= $tournament->tod_flag;
 		$formdata['free_credit']	= $tournament->free_credit_flag;
@@ -265,10 +271,6 @@ class TournamentController extends JController
 		$venue_list = JModel::getInstance('MeetingVenue', 'TournamentModel')
 						->getMeetingVenueList();
 
-		
-		// Get tournament features
-		//$tournament_feature_list = JModel::getInstance('TournamentFeature', 'TournamentModel')->getTournamentFeatureList();
-		
 		$list_params = array(
 			'type'	=> ($is_racing_sport ? 'racing' : 'sports'),
 			'order'	=> 'lower(t.name)'
@@ -296,7 +298,7 @@ class TournamentController extends JController
 		
 		$view->assign('venue_list', $venue_list);
 		
-		//$view->assign('tournament_feature_list', $tournament_feature_list);
+		
 
 		$view->assign('error_list', $error_list);
 		$view->assign('formdata', $formdata);
@@ -306,9 +308,21 @@ class TournamentController extends JController
 		
 		$view->assign('tod_list', $tod_list);
 		
+		/*
+		 * Tournament Labels
+		 */
+		// Get tournament labels
+		$tournament_label_list = JModel::getInstance('TournamentLabels', 'TournamentModel')->getTournamentLabels();
 		
+		// Get labels assigned to tournament
+		$tournament_labels_selected_list = JModel::getInstance('TournamentLabels', 'TournamentModel')->getTournamentLabelsByTournamentId($id);
 		
+		// Assign tournament Labels to the tournament edit view
+		$view->assign('tournament_label_list', $tournament_label_list);
 		
+		// Assign tournament selected Labels to the tournament edit view
+		$view->assign('tournament_label_selected_list', $tournament_labels_selected_list);
+			
 		$view->display();
 	}
 
@@ -324,8 +338,6 @@ class TournamentController extends JController
 		
 		$name			= JRequest::getVar('name', null);
 		$description	= JRequest::getVar('description', null);
-		
-		// $feature_keyword = JRequest::getVar('tournament_feature_id', null);
 		
 		$entrants				= 0;
 		$is_future_tournament	= false;
@@ -349,8 +361,7 @@ class TournamentController extends JController
 		$tournament->id										= (int)$id;
 		$tournament->name									= $name;
 		$tournament->description							= $description;
-		//$tournament->feature_keyword						= $feature_keyword;
-		
+				
 		$sport_model	=& $this->getModel('TournamentSport', 'TournamentModel');
 		
 		if ($entrants == 0) {
@@ -494,7 +505,27 @@ class TournamentController extends JController
 				$tournament->event_group_id	= (int)$event_group_id;
 			}
 			$tournament->save();
-					
+		
+			$post = JRequest::get( 'post' );
+			
+			
+			
+			// Get the tournament labels from the post
+			$tournament_labels = JRequest::getVar('tournament_label_id', '','array');
+						
+			// Get the labels model
+			$labels_model	=& $this->getModel('TournamentLabels', 'TournamentModel');
+			
+			// Remove existing labels for tournament
+			$labels_model->deleteTournamentLabelsByTournamentId($tournament->id);
+						
+			// Add new labels for tournament
+			foreach($tournament_labels as $label){
+				$labels_model->addTournamentLabelToTournament($tournament->id, $label);
+			}
+			
+			
+			
 			$change_log = $tournament->getChangeLog();
 			foreach ($change_log as $key => $value) {
 				$this->_saveAuditRecord($tournament->id, $key, $value, $tournament->$key);

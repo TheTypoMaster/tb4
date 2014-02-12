@@ -248,7 +248,9 @@ class FrontTournamentsController extends \BaseController {
 				$meetingId = $tournament -> event_group_id;
 				
 				$nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-				$nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime);
+                $nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
+                ($nextEventStartTime) ? $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TimeHelper::isoDate($tournament->start_date);
+                // $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime);
 
 				$tourns = array();
 
@@ -293,7 +295,10 @@ class FrontTournamentsController extends \BaseController {
 							$labels = $atpTournaments[$tourn -> id];
 						}		
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn -> name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels);
+                        // TEMP for tournament landing page until proper tournament group/labels are implimented
+                        ($tourn->featured == "Featured") ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
+
+						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn -> name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag);
 					}
 
 					//handle sub_type for racing
@@ -455,6 +460,9 @@ class FrontTournamentsController extends \BaseController {
 
 		$numRegistrations = count($playerList);
 
+       // TEMP for tournament landing page until proper tournament group/labels are implimented
+       (TopBetta\Tournament::isTournamentFeatured($tournament->id)) ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
+
 		//calculate tournament end date/betting open
 
 		// special case to send data back in a format for backbone - this ones for you Jase ;-)
@@ -470,6 +478,7 @@ class FrontTournamentsController extends \BaseController {
 				'places_paid' => $places_paid,
 				'start_currency' => (int)$tournament -> start_currency,
 				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
+                'featured' => $featuredTournamentFlag,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
