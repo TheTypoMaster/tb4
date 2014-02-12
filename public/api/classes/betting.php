@@ -1369,6 +1369,7 @@ class Api_Betting extends JController {
                                         'BetType' => $betTypeShort,
                                         'PriceType' => $toteType,
                                         'Selection' => $selection->selection_id,
+                                        'Position' => $selection->position
                                     )
                                 );				
 
