@@ -13,6 +13,13 @@ class BetResult
 {
 
     /**
+     * Our race results for this event if any
+     * 
+     * @var array 
+     */
+    private $raceResults;
+
+    /**
      * Find and result all unresulted bets for an event
      * 
      * @param int $eventId
@@ -42,7 +49,31 @@ class BetResult
      */
     public function resultBet(Bet $bet)
     {
-        $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_PAID);
+        $processBet = false;
+
+        // FIRST: check we have results for this event
+        $resultModel = new \TopBetta\RaceResult;
+        $this->raceResults = $resultModel->getResultsForRaceId($bet->event_id);
+        if (!$this->raceResults) {
+            return false;
+        }
+        // SECOND: Lookup event status
+        $eventStatus = \TopBetta\RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
+
+        if ($eventStatus == 6 && $bet->betType->name == 'win') {
+            // RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
+            $processBet = true;
+        } elseif ($eventStatus == 2) {
+            // RULE 2: Status paying - Result all other bets at Final Dividends
+            $processBet = true;
+            $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_PAID);
+            $bet->resulted_flag = 1;
+        }
+
+        if (!$processBet) {
+            return false;
+        }
+
         // TODO: check if bet should be refunded
         // $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_FULL_REFUND);
         // 
@@ -50,9 +81,9 @@ class BetResult
         if ($payout) {
             // WINNING BET
             $bet = $this->payoutBet($bet, $payout);
+            $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_PAID);
+            $bet->resulted_flag = 1;
         }
-
-        $bet->resulted_flag = 1;
 
         return $bet->save();
     }
@@ -69,6 +100,7 @@ class BetResult
         $payout = 0;
         $dividend = 0;
 
+        // TODO: maybe swap to using $this->raceResults for dividend
         switch ($bet->betType->name) {
             case 'win':
                 $dividend = \TopBetta\RaceResult::where('selection_id', $bet->selections[0]->selection_id)
