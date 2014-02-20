@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Facade;
  *
  * @author mic
  */
-class BetResult extends Facade
+class BetRepo extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'betresult';
+        return 'betrepo';
     }
 }

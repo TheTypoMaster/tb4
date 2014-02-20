@@ -9,12 +9,12 @@ use Illuminate\Support\ServiceProvider;
  *
  * @author mic
  */
-class BetResultServiceProvider extends ServiceProvider
+class BetRepoServiceProvider extends ServiceProvider
 {
 
     public function register()
     {
-        $this->app->bind('betresult', 'TopBetta\Repositories\BetResult');
+        $this->app->bind('betrepo', 'TopBetta\Repositories\BetRepo');
     }
 
 }

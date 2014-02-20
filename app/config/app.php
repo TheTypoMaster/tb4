@@ -114,7 +114,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-                'TopBetta\Providers\BetResultServiceProvider'
+                'TopBetta\Providers\BetResultRepoServiceProvider',
+                'TopBetta\Providers\BetRepoServiceProvider'
 
 	),
 
@@ -214,7 +215,8 @@ return array(
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
-                'BetResult' => 'TopBetta\Facades\BetResult'
+                'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
+                'BetRepo' => 'TopBetta\Facades\BetRepo'
 
 	),
 

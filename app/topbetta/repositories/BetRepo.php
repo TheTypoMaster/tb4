@@ -6,98 +6,15 @@ use TopBetta\AccountBalance;
 use TopBetta\Bet;
 use TopBetta\BetResultStatus;
 use TopBetta\FreeCreditBalance;
-use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
 /**
- * Description of BetResult
+ * Description of BetRepo
  *
  * @author mic
  */
-class BetResult
+class BetRepo
 {
-
-    /**
-     * Our race results for this event if any
-     * 
-     * @var array 
-     */
-    private $raceResults;
-
-    /**
-     * Find and result all unresulted bets for an event
-     * 
-     * @param int $eventId
-     * @return array
-     */
-    public function resultAllBetsForEvent($eventId)
-    {
-        // we only want bets that are "unresulted" status id: 1
-        $bets = Bet::where('event_id', $eventId)
-                ->where('bet_result_status_id', 1)
-                ->where('resulted_flag', 0)
-                ->with('selections', 'betType')
-                ->get();
-
-        $result = array();
-
-        foreach ($bets as $bet) {
-            $result[$bet->id] = $this->resultBet($bet);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Result an individual bet object
-     * 
-     * @param Bet $bet
-     * @return bool
-     */
-    public function resultBet(Bet $bet)
-    {
-        $processBet = false;
-
-        $resultModel = new RaceResult;
-        $this->raceResults = $resultModel->getResultsForRaceId($bet->event_id);
-
-        // Sanity check - Make sure we at least have a win_dividend
-        if (!isset($this->raceResults['positions'][1]['win_dividend'])) {
-            return false;
-        }
-
-        $eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
-
-        // RACE ABANDONED - REFUND BET
-        if ($eventStatus == 3) {
-            $bet = $this->refundBet($bet);
-
-            return $bet->save();
-        }
-
-        // RACE PAYING INTERIM/FINAL
-        if ($eventStatus == 6 && $bet->betType->name == 'win') {
-            // RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
-            $processBet = true;
-        } elseif ($eventStatus == 2) {
-            // RULE 2: Status paying - Result all other bets at Final Dividends
-            $processBet = true;
-            $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
-            $bet->resulted_flag = 1;
-        }
-
-        if (!$processBet) {
-            return false;
-        }
-
-        $payout = $this->getBetPayoutAmount($bet);
-        if ($payout) {
-            // WINNING BET
-            $bet = $this->payoutBet($bet, $payout);
-        }
-
-        return $bet->save();
-    }
 
     /**
      * Lookup results for the selections made for this bet
@@ -106,7 +23,7 @@ class BetResult
      * @param Bet $bet
      * @return int (cents)
      */
-    private function getBetPayoutAmount(Bet $bet)
+    public function getBetPayoutAmount(Bet $bet)
     {
         $payout = 0;
         $dividend = 0;
@@ -149,7 +66,7 @@ class BetResult
      * @param type $amount
      * @return Bet
      */
-    private function payoutBet(Bet $bet, $amount)
+    public function payoutBet(Bet $bet, $amount)
     {
         // Free credit bets, we keep the original stake
         if ($bet->bet_freebet_flag == 1) {
@@ -159,16 +76,16 @@ class BetResult
         $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
         $bet->resulted_flag = 1;
 
-        return $bet;
+        return $bet->save();
     }
 
     /**
      * Refund a bet
      * 
      * @param \TopBetta\Bet $bet
-     * @return \TopBetta\Bet
+     * @return Boolean
      */
-    private function refundBet(Bet $bet)
+    public function refundBet(Bet $bet)
     {
         // Full bet amount was on free credit
         if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
@@ -185,11 +102,11 @@ class BetResult
             $bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $bet->bet_amount);
         }
 
-        $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_FULL_REFUND);
+        $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_FULL_REFUND);
         $bet->refunded_flag = 1;
         $bet->resulted_flag = 1;
 
-        return $bet;
+        return $bet->save();
     }
 
     /**

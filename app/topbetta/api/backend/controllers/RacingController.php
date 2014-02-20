@@ -291,6 +291,9 @@ class RacingController extends \BaseController
                     // Race data - the races in the meeting
                     case "RaceList":
                         TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Race");
+                        
+                        $eventList = array();
+                        
                         foreach ($racingArray as $dataArray) {
 
                             if (isset($dataArray['MeetingId']) && $dataArray['RaceNo']) {
@@ -425,10 +428,22 @@ class RacingController extends \BaseController
                                     } else {
                                         TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process. MeetingID: $meetingId, RaceNumber: $raceNo", 2);
                                     }
+
+                                    // if this event was abandoned - add to list for bet resulting
+                                    if ($raceEvent->event_status_id == 3) {
+                                        if (!array_key_exists($raceEventID, array_flip($eventList))) {
+                                            array_push($eventList, $raceEventID);
+                                        }
+                                    }
                                 }
                             } else {
                                 TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. MeetingID or RaceNo not set. Can't process", 2);
                             }
+                        }
+
+                        // ALL RACES PROCESSED - RESULT ALL BETS FOR THE EVENT LIST (ABANDONED ONLY)
+                        foreach ($eventList as $eventId) {
+                            \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($eventId);
                         }
                         break;
 
@@ -607,8 +622,8 @@ class RacingController extends \BaseController
                                 if ($saveThisProduct) {
                                     TopBetta\LogHelper::l($log_msg_prefix . " PriceType:$priceType. BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 
-                                    $eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);  
-                                    if(!array_key_exists($eventID, array_flip($eventList))) {
+                                    $eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+                                    if (!array_key_exists($eventID, array_flip($eventList))) {
                                         array_push($eventList, $eventID);
                                         $firstProcess = true;
                                     }
@@ -624,7 +639,6 @@ class RacingController extends \BaseController
 
                                         // Get ID of event record
                                         // $eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
-
                                         // if there is an event found
                                         if ($eventID) {
                                             // grab the event
@@ -791,12 +805,12 @@ class RacingController extends \BaseController
                                 TopBetta\LogHelper::l($log_msg_prefix . " Missing Results data. Can't process", 2);
                             }
                         }
-                        
+
                         // ALL RESULTS PROCESSED - RESULT ALL BETS FOR THE EVENT LIST
                         foreach ($eventList as $eventId) {
-                            \TopBetta\Facades\BetResult::resultAllBetsForEvent($eventId);
+                            \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($eventId);
                         }
-                        
+
                         break;
 
                     // Price Data
