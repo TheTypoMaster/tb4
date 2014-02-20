@@ -2,7 +2,12 @@
 
 namespace TopBetta\Repositories;
 
+use TopBetta\AccountBalance;
 use TopBetta\Bet;
+use TopBetta\BetResultStatus;
+use TopBetta\FreeCreditBalance;
+use TopBetta\RaceEvent;
+use TopBetta\RaceResult;
 
 /**
  * Description of BetResult
@@ -44,29 +49,37 @@ class BetResult
     /**
      * Result an individual bet object
      * 
-     * @param \TopBetta\Bet $bet
+     * @param Bet $bet
      * @return bool
      */
     public function resultBet(Bet $bet)
     {
         $processBet = false;
 
-        // FIRST: check we have results for this event
-        $resultModel = new \TopBetta\RaceResult;
+        $resultModel = new RaceResult;
         $this->raceResults = $resultModel->getResultsForRaceId($bet->event_id);
+
         if (!$this->raceResults) {
             return false;
         }
-        // SECOND: Lookup event status
-        $eventStatus = \TopBetta\RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
 
+        $eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
+
+        // RACE ABANDONED - REFUND BET
+        if ($eventStatus == 3) {
+            $bet = $this->refundBet($bet);
+
+            return $bet->save();
+        }
+
+        // RACE PAYING INTERIM/FINAL
         if ($eventStatus == 6 && $bet->betType->name == 'win') {
             // RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
             $processBet = true;
         } elseif ($eventStatus == 2) {
             // RULE 2: Status paying - Result all other bets at Final Dividends
             $processBet = true;
-            $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_PAID);
+            $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
             $bet->resulted_flag = 1;
         }
 
@@ -74,15 +87,10 @@ class BetResult
             return false;
         }
 
-        // TODO: check if bet should be refunded
-        // $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_FULL_REFUND);
-        // 
         $payout = $this->getBetPayoutAmount($bet);
         if ($payout) {
             // WINNING BET
             $bet = $this->payoutBet($bet, $payout);
-            $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_PAID);
-            $bet->resulted_flag = 1;
         }
 
         return $bet->save();
@@ -92,7 +100,7 @@ class BetResult
      * Lookup results for the selections made for this bet
      * Return the payout amount in cents if a winning bet
      * 
-     * @param \TopBetta\Bet $bet
+     * @param Bet $bet
      * @return int (cents)
      */
     private function getBetPayoutAmount(Bet $bet)
@@ -103,14 +111,14 @@ class BetResult
         // TODO: maybe swap to using $this->raceResults for dividend
         switch ($bet->betType->name) {
             case 'win':
-                $dividend = \TopBetta\RaceResult::where('selection_id', $bet->selections[0]->selection_id)
+                $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
                         ->where('win_dividend', '>', 0)
                         ->pluck('win_dividend');
 
                 break;
 
             case 'place':
-                $dividend = \TopBetta\RaceResult::where('selection_id', $bet->selections[0]->selection_id)
+                $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
                         ->where('place_dividend', '>', 0)
                         ->pluck('place_dividend');
                 break;
@@ -134,9 +142,9 @@ class BetResult
     /**
      * Awards user cash for bet win
      * 
-     * @param \TopBetta\Bet $bet
+     * @param Bet $bet
      * @param type $amount
-     * @return \TopBetta\Bet
+     * @return Bet
      */
     private function payoutBet(Bet $bet, $amount)
     {
@@ -145,6 +153,38 @@ class BetResult
             $amount -= $bet->bet_freebet_amount;
         }
         $bet->result_transaction_id = $this->awardBetWin($bet->user_id, $amount);
+        $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
+        $bet->resulted_flag = 1;
+
+        return $bet;
+    }
+
+    /**
+     * Refund a bet
+     * 
+     * @param \TopBetta\Bet $bet
+     * @return \TopBetta\Bet
+     */
+    private function refundBet(Bet $bet)
+    {
+        // Full bet amount was on free credit
+        if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
+            $bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
+        } else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $bet->bet_amount) {
+            // Free bet amount was less then refund
+            $refundAmount = $bet->bet_amount - $bet->bet_freebet_amount;
+            // Refund free bet amount
+            $bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
+            // Refund balance to account
+            $bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refundAmount);
+        } else {
+            // No free credit was used - refund full amount to account
+            $bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $bet->bet_amount);
+        }
+
+        $bet->bet_result_status_id = \TopBetta\BetResultStatus::getBetResultStatusByName(\TopBetta\BetResultStatus::STATUS_FULL_REFUND);
+        $bet->refunded_flag = 1;
+        $bet->resulted_flag = 1;
 
         return $bet;
     }
@@ -158,24 +198,22 @@ class BetResult
      */
     private function awardCash($user_id, $amount, $keyword)
     {
-        //$this->account_balance->setUserId($user_id);        
-        return \TopBetta\AccountBalance::_increment($user_id, $amount, $keyword);
+        return AccountBalance::_increment($user_id, $amount, $keyword);
     }
 
     private function awardBetWin($user_id, $amount)
     {
-        return $this->awardCash($user_id, $amount, \TopBetta\AccountBalance::TYPE_BETWIN);
+        return $this->awardCash($user_id, $amount, AccountBalance::TYPE_BETWIN);
     }
 
     private function awardBetRefund($user_id, $amount)
     {
-        return $this->awardCash($user_id, $amount, \TopBetta\AccountBalance::TYPE_BETREFUND);
+        return $this->awardCash($user_id, $amount, AccountBalance::TYPE_BETREFUND);
     }
 
     private function awardFreeBetRefund($user_id, $amount)
     {
-        //$this->tournament_balance->setUserId($user_id);
-        return \TopBetta\FreeCreditBalance::_increment($user_id, $amount, \TopBetta\FreeCreditBalance::TYPE_FREEBETREFUND);
+        return FreeCreditBalance::_increment($user_id, $amount, FreeCreditBalance::TYPE_FREEBETREFUND);
     }
 
 }
