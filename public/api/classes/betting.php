@@ -1284,8 +1284,8 @@ class Api_Betting extends JController
                 if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time() + 600)) {
                     
                     $bet_confirmed = true;
-                    // TODO: confirm this status is correct
-                    $bet->bet_result_status_id = 5;
+                    // we are setting the bet status as unresulted status id: 1
+                    $bet->bet_result_status_id = 1;
                     $bet->save();
                         
                     /* START: HOLD BETS LOCAL

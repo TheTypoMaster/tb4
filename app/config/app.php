@@ -113,7 +113,8 @@ return array(
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
-		'Way\Generators\GeneratorsServiceProvider'
+		'Way\Generators\GeneratorsServiceProvider',
+                'TopBetta\Providers\BetResultServiceProvider'
 
 	),
 
@@ -212,7 +213,8 @@ return array(
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
-		'HeartBeat' => 'TopBetta\admin\HeartBeatController'
+		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
+                'BetResult' => 'TopBetta\Facades\BetResult'
 
 	),
 
