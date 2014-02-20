@@ -38,7 +38,9 @@ class BetResult
                 ->where('resulted_flag', 0)
                 ->with('selections', 'betType')
                 ->get();
-        $result = [];
+
+        $result = array();
+
         foreach ($bets as $bet) {
             $result[$bet->id] = $this->resultBet($bet);
         }
@@ -59,7 +61,8 @@ class BetResult
         $resultModel = new RaceResult;
         $this->raceResults = $resultModel->getResultsForRaceId($bet->event_id);
 
-        if (!$this->raceResults) {
+        // Sanity check - Make sure we at least have a win_dividend
+        if (!isset($this->raceResults['positions'][1]['win_dividend'])) {
             return false;
         }
 
