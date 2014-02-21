@@ -28,9 +28,9 @@ class BetRepo
         $payout = 0;
         $dividend = 0;
 
-        // TODO: maybe swap to using $this->raceResults for dividend
-        switch ($bet->betType->name) {
+        switch ($bet->betType()->name) {
             case 'win':
+                // simple check: do we have a result record for this selection id and win dividend
                 $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
                         ->where('win_dividend', '>', 0)
                         ->pluck('win_dividend');
@@ -38,13 +38,36 @@ class BetRepo
                 break;
 
             case 'place':
+                // simple check: do we have a result record for this selection id and place dividend
                 $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
                         ->where('place_dividend', '>', 0)
                         ->pluck('place_dividend');
                 break;
 
-            // TODO: EXOTICS
-            // NEED TO LOOP OVER EACH SELECTION AND CHECK POSITION
+            // EXOTICS
+            case 'quinella':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'quinella');
+                }
+                break;
+
+            case 'exacta':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'exacta');
+                }
+                break;
+
+            case 'trifecta':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'trifecta');
+                }
+                break;
+
+            case 'firstfour':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'firstfour');
+                }
+                break;
 
             default:
                 break;
@@ -55,8 +78,65 @@ class BetRepo
             $payout = $bet->bet_amount * round($dividend, 2);
         }
 
-
         return (int) $payout;
+    }
+
+    public function checkWinningExoticbet(Bet $bet)
+    {
+        $winCount = 0;
+
+        // loop over selections and find a matching record in the results table
+        foreach ($bet->selections as $selection) {
+            $position = RaceResult::where('selection_id', $selection->selection_id)
+                    ->where('position', '>', 0)
+                    ->pluck('position');
+
+            if ($bet->boxed_flag && $position) {
+                // boxed = true : just need a valid position to match selection
+                $winCount++;
+            } elseif ($selection->position == $position) {
+                // boxed = false : position must match selection position
+                $winCount++;
+            }
+        }
+
+        // did we get a win for every selection?
+        if ($winCount == count($bet->selections)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getExoticDividendForBet(Bet $bet, $exoticName = false)
+    {
+        if (!$exoticName) {
+            return 0;
+        }
+        
+        $fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
+        // all bets are flexi, calc the actual dividend amount
+        if ($bet->percentage < 100) {
+            $dividend = $fullDividend * ($bet->percentage / 100);
+        } else {
+            $dividend = $fullDividend;
+        }
+        
+        return $dividend;
+    }
+
+    private function getExoticDividendForEvent($exoticName, $eventId)
+    {
+        $exoticDividend = \TopBetta\RaceEvent::where('id', $eventId)
+                ->pluck($exoticName . '_dividend');
+
+        if ($exoticDividend) {
+            $uDividend = unserialize($exoticDividend);
+            $dividend = array_values($uDividend);
+            return $dividend[0];
+        }
+
+        return 0;
     }
 
     /**

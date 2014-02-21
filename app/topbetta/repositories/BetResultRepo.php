@@ -28,7 +28,7 @@ class BetResultRepo
         $bets = Bet::where('event_id', $eventId)
                 ->where('bet_result_status_id', 1)
                 ->where('resulted_flag', 0)
-                ->with('selections', 'betType')
+                ->with('selections')
                 ->get();
 
         $result = array();
@@ -47,7 +47,7 @@ class BetResultRepo
      * @return bool
      */
     public function resultBet(Bet $bet)
-    {
+    {        
         $processBet = false;
 
         $resultModel = new RaceResult;

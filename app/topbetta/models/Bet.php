@@ -13,7 +13,7 @@ class Bet extends \Eloquent {
         }
         
 	public function betType() {
-            return $this->hasOne('TopBetta\BetTypes', 'id', 'bet_type_id');
+            return BetTypes::find($this->bet_type_id);
         }        
         
         /**

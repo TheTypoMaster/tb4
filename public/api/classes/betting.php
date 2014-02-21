@@ -1604,6 +1604,7 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
+            /* START: HOLD BETS LOCAL
             // file_put_contents('/tmp/saveExoticsBet', "* Get API Instance\n", FILE_APPEND | LOCK_EX);
             $api = WageringApi::getInstance(WageringApi::API_IGASEXOTICS);
 
@@ -1613,6 +1614,8 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
             // file_put_contents('/tmp/saveExoticsBet', "* API Available\n", FILE_APPEND | LOCK_EX);
+             * END: HOLD BETS LOCAL
+             */
 
             $bet_origin = JRequest::getVar('bet_origin', null);
 
@@ -1732,6 +1735,8 @@ class Api_Betting extends JController
                         $bet->bet_freebet_amount = (float) $free_bet_amount;
                     }
                 }
+                
+                $bet->event_id = $race_id;
 
                 $bet_id = $bet->save();
 
@@ -1803,6 +1808,12 @@ class Api_Betting extends JController
                 $bet_confirmed = false;
                 // file_put_contents('/tmp/saveExoticsBet', "* About to place bet with IGAS\n", FILE_APPEND | LOCK_EX);
                 if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time() + 600)) {
+                    $bet_confirmed = true;
+                    // we are setting the bet status as unresulted status id: 1
+                    $bet->bet_result_status_id = 1;
+                    $bet->save();
+                    
+                    /* START: HOLD BETS LOCAL
                     $external_bet = $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, 'SUP', $meetingID);
                     $api_error = $api->getErrorList(true);
 
@@ -1834,6 +1845,8 @@ class Api_Betting extends JController
                         file_put_contents('/tmp/igas_exotics_betting.log', "* Bet NOT Placed\n", FILE_APPEND | LOCK_EX);
                         $bet->external_bet_error_message = (string) $api_error;
                     }
+                     * END: HOLD BETS LOCAL
+                     */
                 }
 
 
