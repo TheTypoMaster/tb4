@@ -83,6 +83,13 @@ class BetRepo
 
     public function checkWinningExoticbet(Bet $bet)
     {
+        $exoticsMinWin = array(
+            'quinella' => 2,
+            'exacta' => 2,
+            'trifecta' => 3,
+            'firstfour' => 4
+        );
+
         $winCount = 0;
 
         // loop over selections and find a matching record in the results table
@@ -91,17 +98,56 @@ class BetRepo
                     ->where('position', '>', 0)
                     ->pluck('position');
 
-            if ($bet->boxed_flag && $position) {
-                // boxed = true : just need a valid position to match selection
-                $winCount++;
-            } elseif ($selection->position == $position) {
-                // boxed = false : position must match selection position
-                $winCount++;
+            switch ($bet->betType()->name) {
+                case 'quinella':
+                    // 2 selections any order in 1st or 2nd position = WIN
+                    if ($position == 1 || $position == 2) {
+                        $winCount++;
+                    }
+                    break;
+
+                case 'exacta':
+                    // 2 selections with correct position in 1st & 2nd = WIN
+                    if ($position > 0 && $selection->position == $position) {
+                        $winCount++;
+                    }
+                    break;
+
+                case 'trifecta':
+                    if ($bet->boxed_flag) {
+                        // 3 or more selections any order in 1st-3rd = WIN
+                        if ($position > 0 && $position < 4) {
+                            $winCount++;
+                        }
+                    } else {
+                        // 3 or more selections with correct positions in 1st-3rd = WIN
+                        if ($position > 0 && $selection->position == $position) {
+                            $winCount++;
+                        }
+                    }
+                    break;
+
+                case 'firstfour':
+                    if ($bet->boxed_flag) {
+                        // 4 or more selections any order in 1st-4th = WIN
+                        if ($position > 0) {
+                            $winCount++;
+                        }
+                    } else {
+                        // 4 or more selections with correct positions in 1st-4th = WIN
+                        if ($position > 0 && $selection->position == $position) {
+                            $winCount++;
+                        }
+                    }
+                    break;
+
+                default :
+                    break;
             }
         }
 
-        // did we get a win for every selection?
-        if ($winCount == count($bet->selections)) {
+        // did we get min number of wins?
+        if ($winCount >= $exoticsMinWin[$bet->betType()->name]) {
             return true;
         }
 
@@ -113,7 +159,7 @@ class BetRepo
         if (!$exoticName) {
             return 0;
         }
-        
+
         $fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
         // all bets are flexi, calc the actual dividend amount
         if ($bet->percentage < 100) {
@@ -121,7 +167,7 @@ class BetRepo
         } else {
             $dividend = $fullDividend;
         }
-        
+
         return $dividend;
     }
 
