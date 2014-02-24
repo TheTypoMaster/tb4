@@ -24,7 +24,10 @@
 			"app/topbetta/libraries/wagering",
 			"app/topbetta/helpers"
 			
-		]
+		],
+                "psr-4": {
+                    "TopBetta\\": "app/TopBetta"
+                }
 	},
 	"scripts": {
 		"post-install-cmd": [

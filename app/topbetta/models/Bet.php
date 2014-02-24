@@ -8,7 +8,15 @@ class Bet extends \Eloquent {
 
 	public static $rules = array();
 
-	/**
+	public function selections() {
+            return $this->hasMany('TopBetta\BetSelection', 'bet_id', 'id');
+        }
+        
+	public function betType() {
+            return BetTypes::find($this->bet_type_id);
+        }        
+        
+        /**
 	 * Get bet transaction details.
 	 * @param $transactionID
 	 * @return int
