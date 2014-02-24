@@ -5,8 +5,11 @@ namespace TopBetta\Repositories;
 use TopBetta\AccountBalance;
 use TopBetta\Bet;
 use TopBetta\BetResultStatus;
+use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
+use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
+use TopBetta\SportsSelectionResults;
 
 /**
  * Description of BetRepo
@@ -30,11 +33,20 @@ class BetRepo
 
         switch ($bet->betType()->name) {
             case 'win':
-                // simple check: do we have a result record for this selection id and win dividend
-                $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
-                        ->where('win_dividend', '>', 0)
-                        ->pluck('win_dividend');
+                if ($bet->bet_origin_id == 2) {
+                    // RACING: simple check - do we have a result record for this selection id and win dividend
+                    $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
+                            ->where('win_dividend', '>', 0)
+                            ->pluck('win_dividend');
+                } elseif ($bet->bet_origin_id == 3) {
+                    // SPORTS: check for a result record
+                    $win = SportsSelectionResults::selectionResultExists($bet->selections[0]->selection_id);
 
+                    // Get fixed odd if it's a win
+                    if ($win) {
+                        $dividend = $this->getFixedOddsForSportsBet($bet);
+                    }
+                }
                 break;
 
             case 'place':
@@ -171,9 +183,9 @@ class BetRepo
         return $dividend;
     }
 
-    private function getExoticDividendForEvent($exoticName, $eventId)
+    public function getExoticDividendForEvent($exoticName, $eventId)
     {
-        $exoticDividend = \TopBetta\RaceEvent::where('id', $eventId)
+        $exoticDividend = RaceEvent::where('id', $eventId)
                 ->pluck($exoticName . '_dividend');
 
         if ($exoticDividend) {
@@ -183,6 +195,13 @@ class BetRepo
         }
 
         return 0;
+    }
+
+    public function getFixedOddsForSportsBet(Bet $bet)
+    {
+        return BetSelection::where('bet_id', $bet->id)
+                        ->where('selection_id', $bet->selections[0]->selection_id)
+                        ->pluck('fixed_odds');
     }
 
     /**
@@ -208,7 +227,7 @@ class BetRepo
     /**
      * Refund a bet
      * 
-     * @param \TopBetta\Bet $bet
+     * @param Bet $bet
      * @return Boolean
      */
     public function refundBet(Bet $bet)

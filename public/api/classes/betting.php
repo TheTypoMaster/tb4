@@ -1098,13 +1098,13 @@ class Api_Betting extends JController
 
 
             /* START: HOLD BETS LOCAL
-            $api = WageringApi::getInstance(WageringApi::API_IGASRACING);
+              $api = WageringApi::getInstance(WageringApi::API_IGASRACING);
 
-            $api_con = $api->checkConnection();
-            if (is_null($api_con)) {
-                $validation->error = JText::_('Service Not Available. Please Try Again Shortly');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
+              $api_con = $api->checkConnection();
+              if (is_null($api_con)) {
+              $validation->error = JText::_('Service Not Available. Please Try Again Shortly');
+              return OutputHelper::json(500, array('error_msg' => $validation->error));
+              }
              * END: HOLD BETS LOCAL
              */
 
@@ -1216,7 +1216,7 @@ class Api_Betting extends JController
 
                     return OutputHelper::json(500, array(
                                 'error_msg' => 'Cannot place this bet'
-                            ));
+                    ));
                 }
 
                 $bet->id = $bet_id;
@@ -1259,7 +1259,7 @@ class Api_Betting extends JController
                             $bet->save();
                             return OutputHelper::json(500, array(
                                         'error_msg' => 'Cannot store bet selections'
-                                    ));
+                            ));
                         }
                     }
                 }
@@ -1282,37 +1282,37 @@ class Api_Betting extends JController
 
 
                 if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time() + 600)) {
-                    
+
                     $bet_confirmed = true;
                     // we are setting the bet status as unresulted status id: 1
                     $bet->bet_result_status_id = 1;
                     $bet->save();
-                        
+
                     /* START: HOLD BETS LOCAL
-                    $external_bet = $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $betTypeShort, $toteType, $runner_number);
-                    $api_error = $api->getErrorList(true);
+                      $external_bet = $api->placeRacingBet($bet->user_id, $bet_id, $bet->bet_amount, $bet->flexi_flag, $meetingID, $raceNumber, $betTypeShort, $toteType, $runner_number);
+                      $api_error = $api->getErrorList(true);
 
-                    if (empty($api_error) && isset($external_bet->wagerId)) {
-                        $bet_confirmed = true;
-                        $bet->external_bet_id = $bet_id; //(int)$external_bet->wagerId;
-                        $bet->invoice_id = $external_bet->wagerId;
+                      if (empty($api_error) && isset($external_bet->wagerId)) {
+                      $bet_confirmed = true;
+                      $bet->external_bet_id = $bet_id; //(int)$external_bet->wagerId;
+                      $bet->invoice_id = $external_bet->wagerId;
 
-                        // Set the bet_status based on $external_bet->status
-                        $bet_status = 5;
-                        if ($external_bet->status == "N" || $external_bet->status == "E") {
-                            $bet_status = 5;
-                        } elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
-                            $bet_status = 1;
-                        } elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
-                            $bet_status = 4;
-                            $bet_confirmed = false;
-                        }
+                      // Set the bet_status based on $external_bet->status
+                      $bet_status = 5;
+                      if ($external_bet->status == "N" || $external_bet->status == "E") {
+                      $bet_status = 5;
+                      } elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
+                      $bet_status = 1;
+                      } elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
+                      $bet_status = 4;
+                      $bet_confirmed = false;
+                      }
 
-                        $bet->bet_result_status_id = (int) $bet_status;
-                        $bet->save();
-                    } else {
-                        $bet->external_bet_error_message = (string) $api_error;
-                    }
+                      $bet->bet_result_status_id = (int) $bet_status;
+                      $bet->save();
+                      } else {
+                      $bet->external_bet_error_message = (string) $api_error;
+                      }
                      * END: HOLD BETS LOCAL
                      */
                 }
@@ -1605,15 +1605,15 @@ class Api_Betting extends JController
             }
 
             /* START: HOLD BETS LOCAL
-            // file_put_contents('/tmp/saveExoticsBet', "* Get API Instance\n", FILE_APPEND | LOCK_EX);
-            $api = WageringApi::getInstance(WageringApi::API_IGASEXOTICS);
+              // file_put_contents('/tmp/saveExoticsBet', "* Get API Instance\n", FILE_APPEND | LOCK_EX);
+              $api = WageringApi::getInstance(WageringApi::API_IGASEXOTICS);
 
-            $api_con = $api->checkConnection();
-            if (is_null($api_con)) {
-                $validation->error = JText::_('Service Not Available. Please Try Again Shortly');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
-            // file_put_contents('/tmp/saveExoticsBet', "* API Available\n", FILE_APPEND | LOCK_EX);
+              $api_con = $api->checkConnection();
+              if (is_null($api_con)) {
+              $validation->error = JText::_('Service Not Available. Please Try Again Shortly');
+              return OutputHelper::json(500, array('error_msg' => $validation->error));
+              }
+              // file_put_contents('/tmp/saveExoticsBet', "* API Available\n", FILE_APPEND | LOCK_EX);
              * END: HOLD BETS LOCAL
              */
 
@@ -1735,7 +1735,7 @@ class Api_Betting extends JController
                         $bet->bet_freebet_amount = (float) $free_bet_amount;
                     }
                 }
-                
+
                 $bet->event_id = $race_id;
 
                 $bet_id = $bet->save();
@@ -1812,39 +1812,39 @@ class Api_Betting extends JController
                     // we are setting the bet status as unresulted status id: 1
                     $bet->bet_result_status_id = 1;
                     $bet->save();
-                    
+
                     /* START: HOLD BETS LOCAL
-                    $external_bet = $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, 'SUP', $meetingID);
-                    $api_error = $api->getErrorList(true);
+                      $external_bet = $api->placeRacingBet($wagering_bet, $meeting, $bet_id, $bet->user_id, $raceNumber, 'SUP', $meetingID);
+                      $api_error = $api->getErrorList(true);
 
-                    //$external_bet = 'test123';
-                    //$api_error = 'no';
+                      //$external_bet = 'test123';
+                      //$api_error = 'no';
 
-                    if (empty($api_error) && isset($external_bet->wagerId)) {
-                        // 	file_put_contents('/tmp/saveExoticsBet', "* Bet Placed\n", FILE_APPEND | LOCK_EX);
-                        $bet_confirmed = true;
-                        $bet->external_bet_id = $bet_id; //(int)$external_bet->wagerId;
-                        $bet->invoice_id = $external_bet->wagerId;
+                      if (empty($api_error) && isset($external_bet->wagerId)) {
+                      // 	file_put_contents('/tmp/saveExoticsBet', "* Bet Placed\n", FILE_APPEND | LOCK_EX);
+                      $bet_confirmed = true;
+                      $bet->external_bet_id = $bet_id; //(int)$external_bet->wagerId;
+                      $bet->invoice_id = $external_bet->wagerId;
 
-                        // Set the bet_status based on $external_bet->status
-                        $bet_status = 5;
-                        if ($external_bet->status == "N" || $external_bet->status == "E") {
-                            $bet_status = 5;
-                        } elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
-                            $bet_status = 1;
-                        } elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
-                            $bet_status = 4;
-                            $bet_confirmed = false;
-                        }
+                      // Set the bet_status based on $external_bet->status
+                      $bet_status = 5;
+                      if ($external_bet->status == "N" || $external_bet->status == "E") {
+                      $bet_status = 5;
+                      } elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
+                      $bet_status = 1;
+                      } elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
+                      $bet_status = 4;
+                      $bet_confirmed = false;
+                      }
 
 
-                        $bet->bet_result_status_id = (int) $bet_status;
-                        $bet->save();
-                        file_put_contents('/tmp/igas_exotics_betting.log', "* Bet Status Saved\n", FILE_APPEND | LOCK_EX);
-                    } else {
-                        file_put_contents('/tmp/igas_exotics_betting.log', "* Bet NOT Placed\n", FILE_APPEND | LOCK_EX);
-                        $bet->external_bet_error_message = (string) $api_error;
-                    }
+                      $bet->bet_result_status_id = (int) $bet_status;
+                      $bet->save();
+                      file_put_contents('/tmp/igas_exotics_betting.log', "* Bet Status Saved\n", FILE_APPEND | LOCK_EX);
+                      } else {
+                      file_put_contents('/tmp/igas_exotics_betting.log', "* Bet NOT Placed\n", FILE_APPEND | LOCK_EX);
+                      $bet->external_bet_error_message = (string) $api_error;
+                      }
                      * END: HOLD BETS LOCAL
                      */
                 }
@@ -2116,26 +2116,29 @@ class Api_Betting extends JController
                 file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
             }
 
-            // setup the API
-            $api = WageringApi::getInstance(WageringApi::API_IGASSPORTS);
+            /* START: HOLD BETS LOCAL
+              // setup the API
+              $api = WageringApi::getInstance(WageringApi::API_IGASSPORTS);
 
-            if ($debugflag == 1) {
-                $debug = "- Checking API connection\n";
-                file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-            }
+              if ($debugflag == 1) {
+              $debug = "- Checking API connection\n";
+              file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
+              }
 
-            // check api is available
-            $api_con = $api->checkConnection();
+              // check api is available
+              $api_con = $api->checkConnection();
 
-            if (is_null($api_con)) {
-                $validation->error = JText::_('Service Not Available. Please Try Again Shortly');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
+              if (is_null($api_con)) {
+              $validation->error = JText::_('Service Not Available. Please Try Again Shortly');
+              return OutputHelper::json(500, array('error_msg' => $validation->error));
+              }
 
-            if ($debugflag == 1) {
-                $debug = "- API connection OK\n";
-                file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-            }
+              if ($debugflag == 1) {
+              $debug = "- API connection OK\n";
+              file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
+              }
+             * END: HOLD BETS LOCAL
+             */
 
             $bet_origin = 'sportsbetting';
 
@@ -2212,6 +2215,7 @@ class Api_Betting extends JController
             $bet->bet_transaction_id = (int) $bet_transaction_id;
             $bet->bet_freebet_transaction_id = (int) $bet_freebet_transaction_id;
             $bet->flexi_flag = 0;
+            $bet->event_id = $betMatchID;
             //$bet->fixed_odds  				= (int)$bet_dividend;
             //save freebet into the database
             if ($free_bet_amount > 0) {
@@ -2226,7 +2230,11 @@ class Api_Betting extends JController
             if ($debugflag == 1) {
                 $debug = "- About to save bet\n";
                 file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-                $bet_id = $bet->save();
+            }
+
+            $bet_id = $bet->save();
+
+            if ($debugflag == 1) {
                 $debug = "- After save bet\n";
                 file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
             }
@@ -2297,46 +2305,54 @@ class Api_Betting extends JController
             $api_error = null;
             $bet_confirmed = false;
             if ($this->confirmAcceptance($bet_id, $user->id, 'bet', time() + 600)) {
-                if ($debugflag == 1) {
-                    $debug = "- About to send to iGAS API\n";
-                    file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-                }
-                $external_bet = $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $externalEventID, $externalMarketID, $line, $bet_dividend, $externalSelectionID);
-                $responseArray = print_r($external_bet, true);
-                if ($debugflag == 1) {
-                    $debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";
-                    file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-                }
+                $bet_confirmed = true;
+                // we are setting the bet status as unresulted status id: 1
+                $bet->bet_result_status_id = 1;
+                $bet->save();
 
-                // TODO: Need to get this check working
-                $api_error = $api->getErrorList(true);
-                //$api_error = '';
+                /* START: HOLD BETS LOCAL
+                  if ($debugflag == 1) {
+                  $debug = "- About to send to iGAS API\n";
+                  file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
+                  }
+                  $external_bet = $api->placeSportsBet($bet->user_id, $bet_id, $bet_value, $externalEventID, $externalMarketID, $line, $bet_dividend, $externalSelectionID);
+                  $responseArray = print_r($external_bet, true);
+                  if ($debugflag == 1) {
+                  $debug = "- After bet send to iGAS API, RESPONSE: $responseArray\n";
+                  file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
+                  }
 
-                if (empty($api_error) && isset($external_bet->wagerId)) {
-                    $bet_confirmed = true;
-                    if ($debugflag == 1) {
-                        $debug = "- no API error and wagering ID set\n";
-                        file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
-                    }
-                    $bet->external_bet_id = $bet_id; //(int)$external_bet->wagerId;
-                    $bet->invoice_id = $external_bet->wagerId;
+                  // TODO: Need to get this check working
+                  $api_error = $api->getErrorList(true);
+                  //$api_error = '';
 
-                    // Set the bet_status based on $external_bet->status
-                    $bet_status = 5;
-                    if ($external_bet->status == "N" || $external_bet->status == "E") {
-                        $bet_status = 5;
-                    } elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
-                        $bet_status = 1;
-                    } elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
-                        $bet_status = 4;
-                        $bet_confirmed = false;
-                    }
+                  if (empty($api_error) && isset($external_bet->wagerId)) {
+                  $bet_confirmed = true;
+                  if ($debugflag == 1) {
+                  $debug = "- no API error and wagering ID set\n";
+                  file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
+                  }
+                  $bet->external_bet_id = $bet_id; //(int)$external_bet->wagerId;
+                  $bet->invoice_id = $external_bet->wagerId;
 
-                    $bet->bet_result_status_id = (int) $bet_status;
-                    $bet->save();
-                } else {
-                    $bet->external_bet_error_message = (string) $api_error;
-                }
+                  // Set the bet_status based on $external_bet->status
+                  $bet_status = 5;
+                  if ($external_bet->status == "N" || $external_bet->status == "E") {
+                  $bet_status = 5;
+                  } elseif ($external_bet->status == "S" || $external_bet->status == "W" || $external_bet->status == "L") {
+                  $bet_status = 1;
+                  } elseif ($external_bet->status == "F" || $external_bet->status == "CN") {
+                  $bet_status = 4;
+                  $bet_confirmed = false;
+                  }
+
+                  $bet->bet_result_status_id = (int) $bet_status;
+                  $bet->save();
+                  } else {
+                  $bet->external_bet_error_message = (string) $api_error;
+                  }
+                 * END: HOLD BETS LOCAL
+                 */
             }
 
             // If the bet placement with the API failed
