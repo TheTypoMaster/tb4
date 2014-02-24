@@ -59,25 +59,25 @@ class BetRepo
             // EXOTICS
             case 'quinella':
                 if ($this->checkWinningExoticbet($bet)) {
-                    $dividend = $this->getExoticDividendForBet($bet, 'quinella');
+                    $payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
                 }
                 break;
 
             case 'exacta':
                 if ($this->checkWinningExoticbet($bet)) {
-                    $dividend = $this->getExoticDividendForBet($bet, 'exacta');
+                    $payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
                 }
                 break;
 
             case 'trifecta':
                 if ($this->checkWinningExoticbet($bet)) {
-                    $dividend = $this->getExoticDividendForBet($bet, 'trifecta');
+                    $payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
                 }
                 break;
 
             case 'firstfour':
                 if ($this->checkWinningExoticbet($bet)) {
-                    $dividend = $this->getExoticDividendForBet($bet, 'firstfour');
+                    $payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
                 }
                 break;
 
@@ -173,14 +173,7 @@ class BetRepo
         }
 
         $fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
-        // all bets are flexi, calc the actual dividend amount
-        if ($bet->percentage < 100) {
-            $dividend = $fullDividend * ($bet->percentage / 100);
-        } else {
-            $dividend = $fullDividend;
-        }
-
-        return $dividend;
+         return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
     }
 
     public function getExoticDividendForEvent($exoticName, $eventId)

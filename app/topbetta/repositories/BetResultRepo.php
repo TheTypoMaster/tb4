@@ -16,6 +16,23 @@ use TopBetta\RaceResult;
 class BetResultRepo
 {
 
+    // TEMP - DELETE AFTER TESTING IS DONE!!
+    public function findAndResultAllEvents()
+    {
+        $events = Bet::where('bet_result_status_id', 1)
+                ->where('resulted_flag', 0)
+                ->where('created_date', '>', '2014-02-24')
+                ->groupBy('event_id')
+                ->get();
+        $result = array();
+        foreach ($events as $event) {
+            echo "Resulting event: " . $event->event_id . " \n";
+            $result[$event->event_id] = BetResultRepo::resultAllBetsForEvent($event->event_id);
+        }
+
+        return $result;
+    }
+
     /**
      * Find and result all unresulted bets for an event
      * 
@@ -47,7 +64,7 @@ class BetResultRepo
      * @return bool
      */
     public function resultBet(Bet $bet)
-    {        
+    {
         $processBet = false;
 
         $resultModel = new RaceResult;
@@ -88,7 +105,5 @@ class BetResultRepo
 
         return $bet->save();
     }
-
-
 
 }
