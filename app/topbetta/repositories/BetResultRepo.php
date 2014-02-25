@@ -16,19 +16,37 @@ use TopBetta\RaceResult;
 class BetResultRepo
 {
 
-    // TEMP - DELETE AFTER TESTING IS DONE!!
-    public function findAndResultAllEvents()
+    /**
+     * Find and result all events that have pending bets if the 
+     * event is marked as paying.
+     * 
+     * This can be used as a watchdog to make sure all valid
+     * bets get paid when a race is set to status paid
+     * 
+     * @return string
+     */
+    public function resultAllBetsForPayingEvents()
     {
         $events = Bet::where('bet_result_status_id', 1)
                 ->where('resulted_flag', 0)
-                ->where('created_date', '>', '2014-02-24')
-                ->groupBy('event_id')
+                ->where('tbdb_event.event_status_id', 2)
+                ->join('tbdb_event', 'tbdb_bet.event_id', '=', 'tbdb_event.id')
+                ->groupBy('tbdb_bet.event_id')
+                ->select('tbdb_bet.event_id')
                 ->get();
+
         $result = array();
-        foreach ($events as $event) {
-            echo "Resulting event: " . $event->event_id . " \n";
-            $result[$event->event_id] = BetResultRepo::resultAllBetsForEvent($event->event_id);
+        
+        if (count($events)) {
+            foreach ($events as $event) {
+                echo "Resulting event: " . $event->event_id . " \n";
+                $result[$event->event_id] = $this->resultAllBetsForEvent($event->event_id);
+            }
+        } else {
+            $result[] = "No events to result";
         }
+        
+        echo "-------\n";
 
         return $result;
     }

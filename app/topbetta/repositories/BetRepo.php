@@ -184,7 +184,7 @@ class BetRepo
         if ($exoticDividend) {
             $uDividend = unserialize($exoticDividend);
             $dividend = array_values($uDividend);
-            return $dividend[0];
+            return str_replace(',', '', $dividend[0]);
         }
 
         return 0;
