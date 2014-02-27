@@ -102,6 +102,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
+        // special case where Risk Manager can push race results to TopBetta
+        Route::resource('risk-results', 'RiskResults', ['only' => ['store']]);        
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 });

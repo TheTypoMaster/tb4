@@ -3,6 +3,7 @@ namespace TopBetta;
 class RaceResult extends \Eloquent {
 
 	protected $table = 'tbdb_selection_result';
+        protected $fillable = array('selection_id', 'position', 'win_dividend', 'place_dividend');
 
 	public function getResultsForRaceId($raceId) {
 
