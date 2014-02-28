@@ -22,8 +22,10 @@
 			"app/topbetta/api/admin/controllers",
 			"app/topbetta/api/libraries",
 			"app/topbetta/libraries/wagering",
-			"app/topbetta/helpers"
-			
+			"app/topbetta/helpers",
+                        "app/topbetta/providers",
+                        "app/topbetta/repositories",
+                        "app/topbetta/facades"
 		],
                 "psr-4": {
                     "TopBetta\\": "app/topbetta"
