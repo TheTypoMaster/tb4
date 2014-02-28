@@ -1365,7 +1365,7 @@ class Api_Betting extends JController
                     'Type' => 'racing',
                     'BetList' => array(
                         'BetType' => $betTypeShort,
-                        'PriceType' => $toteType,
+                        'PriceType' => ($toteType) ? $toteType : 'TOP',
                         'Selection' => $selection->selection_id,
                         'Position' => $selection->position
                     )

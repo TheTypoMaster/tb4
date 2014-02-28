@@ -14,7 +14,15 @@ class RiskResultsController extends \BaseController
      */
     public function store()
     {
-        $input = Input::json()->all();
+        $input = Input::all();
+        if (!$input) {
+            $input = Input::json()->all();
+        }
+
+        if (!isset($input['race_id']) || !\TopBetta\RaceEvent::find($input['race_id'])) {
+            return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
+        }
+
         $errors = static::updateRaceResults($input, $input['race_id']);
 
         if (count($errors)) {
@@ -108,19 +116,22 @@ class RiskResultsController extends \BaseController
 
             $runner = \TopBetta\RaceSelection::getByEventIdAndRunnerNumber($raceId, $result['number']);
 
-            $resultData = array('selection_id' => $runner[0]->id,
-                'position' => $result['position']
-            );
+            if (count($runner)) {
 
-            if ($result['position'] == 1) {
-                $resultData['win_dividend'] = $result['win_dividend'];
-                $resultData['place_dividend'] = $result['place_dividend'];
-            } else {
-                $resultData['place_dividend'] = $result['place_dividend'];
-            }
+                $resultData = array('selection_id' => $runner[0]->id,
+                    'position' => $result['position']
+                );
 
-            if (\TopBetta\RaceResult::create($resultData)) {
-                $success++;
+                if ($result['position'] == 1) {
+                    $resultData['win_dividend'] = $result['win_dividend'];
+                    $resultData['place_dividend'] = $result['place_dividend'];
+                } else {
+                    $resultData['place_dividend'] = $result['place_dividend'];
+                }
+
+                if (\TopBetta\RaceResult::create($resultData)) {
+                    $success++;
+                }
             }
         }
 
