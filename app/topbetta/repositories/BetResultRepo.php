@@ -17,6 +17,41 @@ class BetResultRepo
 {
 
     /**
+     * Find and result all events that have pending bets if the 
+     * event is marked as paying.
+     * 
+     * This can be used as a watchdog to make sure all valid
+     * bets get paid when a race is set to status paid
+     * 
+     * @return string
+     */
+    public function resultAllBetsForPayingEvents()
+    {
+        $events = Bet::where('bet_result_status_id', 1)
+                ->where('resulted_flag', 0)
+                ->where('tbdb_event.event_status_id', 2)
+                ->join('tbdb_event', 'tbdb_bet.event_id', '=', 'tbdb_event.id')
+                ->groupBy('tbdb_bet.event_id')
+                ->select('tbdb_bet.event_id')
+                ->get();
+
+        $result = array();
+        
+        if (count($events)) {
+            foreach ($events as $event) {
+                echo "Resulting event: " . $event->event_id . " \n";
+                $result[$event->event_id] = $this->resultAllBetsForEvent($event->event_id);
+            }
+        } else {
+            $result[] = "No events to result";
+        }
+        
+        echo "-------\n";
+
+        return $result;
+    }
+
+    /**
      * Find and result all unresulted bets for an event
      * 
      * @param int $eventId
@@ -47,7 +82,7 @@ class BetResultRepo
      * @return bool
      */
     public function resultBet(Bet $bet)
-    {        
+    {
         $processBet = false;
 
         $resultModel = new RaceResult;
@@ -88,7 +123,5 @@ class BetResultRepo
 
         return $bet->save();
     }
-
-
 
 }
