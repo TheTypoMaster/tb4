@@ -186,4 +186,21 @@ class RaceResult extends \Eloquent {
         return \DB::statement('DELETE sr.* FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id INNER JOIN tbdb_event as e on e.id = mk.event_id WHERE e.id = '. $raceId);
 
     }
+    
+    static public function deleteExoticResultsForRaceId($raceId)
+    {
+        $event = \TopBetta\RaceEvent::find($raceId);
+
+        if (!$event) {
+            return false;
+        }
+        
+        // delete all exotic results for this event        
+        return $event->update(array('quinella_dividend' => null,
+            'exacta_dividend' => null,
+            'trifecta_dividend' => null,
+            'firstfour_dividend' => null));         
+        
+        
+    }
 }
