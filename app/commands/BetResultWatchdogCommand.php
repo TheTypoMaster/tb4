@@ -41,8 +41,7 @@ class BetResultWatchdogCommand extends Command
     {
         $this->info("Resulting any paying bets"); 
 
-        $result = BetResultRepo::resultAllBetsForPayingEvents();
-        $this->info(print_r($result));
+        BetResultRepo::resultAllBetsForPayingEvents();
         
         $this->info("Complete!");
     }

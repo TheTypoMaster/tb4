@@ -2,5 +2,5 @@
 
 return [
     'riskManagerAPI' => 'http://risk.mugbookie.com/api/v1',
-    'productionHost' => 'production'
+    'productionHost' => 'testing1'
 ];

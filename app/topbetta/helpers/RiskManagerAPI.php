@@ -10,8 +10,7 @@ class RiskManagerAPI
     public static function sendBetResult($betResultData)
     {
         // we only want to send to risk manager for production
-//         if (app()->environment() == Config::get('riskmanager.productionHost')) {
-         if ($_SERVER['HTTP_HOST'] != Config::get('riskmanager.productionHost')) {
+         if (app()->environment() != Config::get('riskmanager.productionHost')) {
             return false;
         }
 
