@@ -34,7 +34,8 @@ class RiskResultsController extends \BaseController
     private static function updateRaceResults(array $raceResults, $raceId)
     {
         // delete all results records for this event
-        \TopBetta\RaceResult::deleteResultsForRaceId($raceId);
+        \TopBetta\RaceResult::deleteResultsForRaceId($raceId);       
+        \TopBetta\RaceResult::deleteExoticResultsForRaceId($raceId);
 
         $errors = [];
 
@@ -77,6 +78,11 @@ class RiskResultsController extends \BaseController
         if ($eventStatus && $event) {
             $event->event_status_id = $eventStatus;
             $event->save();
+            
+            if ($eventStatus == 6 || $eventStatus == 2) {
+                // result bets for race status of interim or paying
+                \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
+            }
 
             return true;
         }
@@ -87,11 +93,11 @@ class RiskResultsController extends \BaseController
     private static function saveExoticResults($raceResult, $raceId)
     {
         $event = \TopBetta\RaceEvent::find($raceId);
+
         if (!$event) {
             return false;
         }
 
-        // default all exotic dividend's to empty to wipe out previous results
         $updateData = array('quinella_dividend' => null,
             'exacta_dividend' => null,
             'trifecta_dividend' => null,

@@ -173,7 +173,7 @@ class BetRepo
         }
 
         $fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
-         return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
+        return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
     }
 
     public function getExoticDividendForEvent($exoticName, $eventId)
@@ -214,7 +214,13 @@ class BetRepo
         $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
         $bet->resulted_flag = 1;
 
-        return $bet->save();
+        if ($bet->save()) {
+            $bet->resultAmount = $amount;
+            \TopBetta\RiskManagerAPI::sendBetResult($bet);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -227,24 +233,33 @@ class BetRepo
     {
         // Full bet amount was on free credit
         if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
-            $bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
+            $amount = $bet->bet_freebet_amount;
+            $bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $amount);
         } else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $bet->bet_amount) {
             // Free bet amount was less then refund
             $refundAmount = $bet->bet_amount - $bet->bet_freebet_amount;
+            $amount = $bet->bet_amount;
             // Refund free bet amount
             $bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
             // Refund balance to account
             $bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refundAmount);
         } else {
             // No free credit was used - refund full amount to account
-            $bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $bet->bet_amount);
+            $amount = $bet->bet_amount;
+            $bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
         }
 
         $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_FULL_REFUND);
         $bet->refunded_flag = 1;
         $bet->resulted_flag = 1;
 
-        return $bet->save();
+        if ($bet->save()) {
+            $bet->resultAmount = $amount;
+            \TopBetta\RiskManagerAPI::sendBetResult($bet);
+            return true;
+        }
+
+        return false;
     }
 
     /**

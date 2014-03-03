@@ -36,7 +36,7 @@ class BetResultRepo
                 ->get();
 
         $result = array();
-        
+
         if (count($events)) {
             foreach ($events as $event) {
                 echo "Resulting event: " . $event->event_id . " \n";
@@ -45,7 +45,7 @@ class BetResultRepo
         } else {
             $result[] = "No events to result";
         }
-        
+
         echo "-------\n";
 
         return $result;
@@ -101,7 +101,7 @@ class BetResultRepo
         }
 
         // RACE PAYING INTERIM/FINAL
-        if ($eventStatus == 6 && $bet->betType->name == 'win') {
+        if ($eventStatus == 6 && $bet->betType()->name == 'win') {
             // RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
             $processBet = true;
         } elseif ($eventStatus == 2) {
@@ -121,7 +121,14 @@ class BetResultRepo
             return BetRepo::payoutBet($bet, $payout);
         }
 
-        return $bet->save();
+        // if we get here, the bet was not a winning bet or not refunded
+        if ($bet->save()) {
+            $bet->resultAmount = 0;
+            \TopBetta\RiskManagerAPI::sendBetResult($bet);
+            return true;
+        }
+
+        return false;
     }
 
 }
