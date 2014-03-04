@@ -1905,6 +1905,29 @@ class Api_Betting extends JController
 
                     return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage));
                 }
+                
+                // send our bet off to Risk Manager
+                $riskBet = array(
+                    'ReferenceId' => $bet->id,
+                    'EventId' => $bet->event_id,
+                    'BetDate' => date(DATE_ISO8601),
+                    'ClientId' => $user->id,
+                    'ClientUsername' => $user->username,
+                    'Btag' => $tb_model->getUser($user->id)->btag,
+                    'Amount' => $bet->bet_amount,
+                    'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'Type' => 'exotic',
+                    'BetList' => array('BetType' => $bet_type_name->id, 'PriceType' => 'TOP'),
+                    'FlexiFlag' => $bet->flexi_flag,
+                    'BoxedFlag' => $bet->boxed_flag,
+                    'Combinations' => $bet->combinations,
+                    'Percentage' => $bet->percentage,
+                    'SelectionString' => $bet->selection_string,
+//                    'SelectionList' => $selection_list
+                );
+
+                RiskManagerHelper::sendRacingBet($riskBet);                
+                
             }
             return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
         } else {
