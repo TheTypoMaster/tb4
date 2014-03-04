@@ -978,6 +978,16 @@ class Api_Betting extends JController
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
+            
+            // special case for greyhounds to allow betting after jump time if allowed only
+            // all other race types are always closed via the race status only
+            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+            $overRide = $race->override_start;
+            
+            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+                $validation->error = JText::_('Betting was closed');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));                
+            }
 
             require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
             $bet_model = new BettingModelBet();
@@ -1489,6 +1499,16 @@ class Api_Betting extends JController
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
+            
+            // special case for greyhounds to allow betting after jump time if allowed only
+            // all other race types are always closed via the race status only
+            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+            $overRide = $race->override_start;
+            
+            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+                $validation->error = JText::_('Betting was closed');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));                
+            }            
 
             require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
             $bet_model = new BettingModelBet();

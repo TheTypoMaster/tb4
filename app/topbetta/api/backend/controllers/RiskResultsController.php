@@ -57,7 +57,7 @@ class RiskResultsController extends \BaseController
                     break;
 
                 case 'race_status':
-                    if (!static::updateRaceStatus($raceResult, $raceId)) {
+                    if (!\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
                         $errors[] = "Problem updating race status";
                     }
 
@@ -69,25 +69,6 @@ class RiskResultsController extends \BaseController
         }
 
         return $errors;
-    }
-
-    private static function updateRaceStatus($raceResult, $raceId)
-    {
-        $eventStatus = \RaceEventStatus::where('keyword', $raceResult)->pluck('id');
-        $event = \TopBetta\RaceEvent::find($raceId);
-        if ($eventStatus && $event) {
-            $event->event_status_id = $eventStatus;
-            $event->save();
-            
-            if ($eventStatus == 6 || $eventStatus == 2) {
-                // result bets for race status of interim or paying
-                \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     private static function saveExoticResults($raceResult, $raceId)
