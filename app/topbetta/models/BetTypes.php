@@ -1,10 +1,12 @@
-<?php namespace TopBetta;
+<?php
 
-class BetTypes extends \Eloquent {
-	
-	protected $table = 'tbdb_bet_type';
-	
+namespace TopBetta;
+
+class BetTypes extends \Eloquent
+{
+
+    protected $table = 'tbdb_bet_type';
     protected $guarded = array();
-
     public static $rules = array();
+
 }

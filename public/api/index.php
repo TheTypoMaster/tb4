@@ -21,6 +21,7 @@ defined('_JEXEC') or die('Restricted access');
 /* include our helpers */
 include 'helpers/request.php';
 include 'helpers/output.php';
+include 'helpers/riskmanager.php';
 
 /* include all our req classes */
 include 'classes/user.php';
