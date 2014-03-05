@@ -321,11 +321,11 @@ class RacingController extends \BaseController
 
                                             // build up the status check/order array
                                             $raceStatusCheckArray = array();
-                                            $raceStatusCheckArray[1] = 1;
-                                            $raceStatusCheckArray[5] = 2;
-                                            $raceStatusCheckArray[6] = 3;
-                                            $raceStatusCheckArray[2] = 4;
-                                            $raceStatusCheckArray[3] = 5;
+                                            $raceStatusCheckArray['S'] = 1;
+                                            $raceStatusCheckArray['C'] = 2;
+                                            $raceStatusCheckArray['I'] = 3;
+                                            $raceStatusCheckArray['R'] = 4;
+                                            $raceStatusCheckArray['A'] = 5;
 
                                             // get the races current status
                                             $currentRaceStatus = $raceEvent['event_status_id'];
