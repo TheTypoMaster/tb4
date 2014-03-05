@@ -318,6 +318,19 @@ class RacingController extends \BaseController
                                         if ($raceExists) {
                                             TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, In DB: $raceExists", 1);
                                             $raceEvent = TopBetta\RaceEvent::find($raceExists);
+
+                                            // build up the status check/order array
+                                            $raceStatusCheckArray = array();
+                                            $raceStatusCheckArray[1] = 1;
+                                            $raceStatusCheckArray[5] = 2;
+                                            $raceStatusCheckArray[6] = 3;
+                                            $raceStatusCheckArray[2] = 4;
+                                            $raceStatusCheckArray[3] = 5;
+
+                                            // get the races current status
+                                            $currentRaceStatus = $raceEvent['event_status_id'];
+
+
                                         } else {
                                             TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB: $raceExists", 1);
                                             $raceEvent = new TopBetta\RaceEvent;
@@ -357,34 +370,38 @@ class RacingController extends \BaseController
                                             }
                                         }
 
-                                        //TODO: Code Table lookup on different race status from provider
+                                          //TODO: Code Table lookup on different race status from provider
                                         //TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
                                         if (isset($dataArray['RaceStatus'])) {
-                                            switch ($dataArray['RaceStatus']) {
-                                                case "O":
-                                                    $raceEvent->event_status_id = '1'; // selling
-                                                    break;
-                                                case "C":
-                                                    $raceEvent->event_status_id = '5'; // closed
-                                                    break;
-                                                case "S":
-                                                    $raceEvent->event_status_id = '5'; // no suspended status in code table
-                                                    break;
-                                                case "I":
-                                                    $raceEvent->event_status_id = '6'; // interim
-                                                    break;
-                                                case "R":
-                                                    $raceEvent->event_status_id = '2'; // paying
-                                                    break;
-                                                case "A":
-                                                    $raceEvent->event_status_id = '3'; // abandoned
-                                                    break;
-                                                case "D":
-                                                    $raceEvent->event_status_id = '7'; // deleted
-                                                    break;
 
-                                                default:
-                                                    TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process. ", 2);
+                                            //example true || paying(4) < selling(1)
+                                            if(!$raceExists || $raceStatusCheckArray[$currentRaceStatus] < $raceStatusCheckArray[$dataArray['RaceStatus']]){
+                                                 switch ($dataArray['RaceStatus']) {
+                                                    case "O":
+                                                        $raceEvent->event_status_id = '1'; // selling
+                                                        break;
+                                                    case "C":
+                                                        $raceEvent->event_status_id = '5'; // closed
+                                                        break;
+                                                    case "S":
+                                                        $raceEvent->event_status_id = '5'; // no suspended status in code table
+                                                        break;
+                                                    case "I":
+                                                        $raceEvent->event_status_id = '6'; // interim
+                                                        break;
+                                                    case "R":
+                                                        $raceEvent->event_status_id = '2'; // paying
+                                                        break;
+                                                    case "A":
+                                                        $raceEvent->event_status_id = '3'; // abandoned
+                                                        break;
+                                                    case "D":
+                                                        $raceEvent->event_status_id = '7'; // deleted
+                                                        break;
+
+                                                    default:
+                                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. No valid race status found. Can't process. ", 2);
+                                                }
                                             }
                                         }
 
