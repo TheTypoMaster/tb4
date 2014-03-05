@@ -328,15 +328,6 @@ class RacingController extends \BaseController
                                             $raceStatusCheckArray['R'] = 4;
                                             $raceStatusCheckArray['A'] = 5;
 
-                                            $raceStatusCheck = array();
-
-                                            $raceStatusCheck[1] = 1;
-                                            $raceStatusCheck[5] = 2;
-                                            $raceStatusCheck[6] = 3;
-                                            $raceStatusCheck[2] = 4;
-                                            $raceStatusCheck[4] = 5;
-                                            $raceStatusCheck[7] = 6;
-
                                             // get the races current status
                                             $currentRaceStatus = $raceEvent['event_status_id'];
 
@@ -344,10 +335,21 @@ class RacingController extends \BaseController
                                         } else {
                                             TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB: $raceExists", 1);
                                             $raceEvent = new TopBetta\RaceEvent;
+                                            $currentRaceStatus = 0;
                                             if (isset($dataArray['MeetingId'])) {
                                                 $raceEvent->external_event_id = $meetingId;
                                             }
                                         }
+
+                                        // race status path array
+                                        $raceStatusCheck = array();
+                                        $raceStatusCheck[0] = 0;
+                                        $raceStatusCheck[1] = 1;
+                                        $raceStatusCheck[5] = 2;
+                                        $raceStatusCheck[6] = 3;
+                                        $raceStatusCheck[2] = 4;
+                                        $raceStatusCheck[4] = 5;
+                                        $raceStatusCheck[7] = 6;
 
                                         if (isset($dataArray ['RaceNo']) && isset($dataArray ['JumpTime'])) {
                                             $raceEvent->number = $dataArray ['RaceNo'];
