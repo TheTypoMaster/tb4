@@ -332,7 +332,8 @@ class RacingController extends \BaseController
                                             $raceStatusCheck[5] = 2;
                                             $raceStatusCheck[6] = 3;
                                             $raceStatusCheck[2] = 4;
-                                            $raceStatusCheck[7] = 5;
+                                            $raceStatusCheck[4] = 5;
+                                            $raceStatusCheck[7] = 6;
 
                                             // get the races current status
                                             $currentRaceStatus = $raceEvent['event_status_id'];
