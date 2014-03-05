@@ -383,7 +383,7 @@ class RacingController extends \BaseController
                                           //TODO: Code Table lookup on different race status from provider
                                         //TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
                                         if (isset($dataArray['RaceStatus'])) {
-                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Status:".$raceStatusCheckArray[$dataArray['RaceStatus']], 1);
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Status:".$currentRaceStatus, 1);
                                             //example true || paying(4) < selling(1)
                                             if(!$raceExists || $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$dataArray['RaceStatus']]){
                                                  switch ($dataArray['RaceStatus']) {
