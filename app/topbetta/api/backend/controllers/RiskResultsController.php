@@ -57,7 +57,7 @@ class RiskResultsController extends \BaseController
                     break;
 
                 case 'race_status':
-                    if (!\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
+                    if (!\TopBetta\backend\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
                         $errors[] = "Problem updating race status";
                     }
 

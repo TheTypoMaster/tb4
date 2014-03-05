@@ -984,7 +984,8 @@ class Api_Betting extends JController
             $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
             $overRide = $race->override_start;
             
-            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+//            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+            if ($pastStartCheck && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));                
             }
@@ -1505,7 +1506,8 @@ class Api_Betting extends JController
             $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
             $overRide = $race->override_start;
             
-            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+//            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+            if ($pastStartCheck && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));                
             }            
