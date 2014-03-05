@@ -370,12 +370,7 @@ class RacingController extends \BaseController
                                             }
                                         }
 
-
-                                        // ADD CHECK TO MAKE SURE THE STATUS IS WALKING FORWARDS
-
-
-
-                                        //TODO: Code Table lookup on different race status from provider
+                                          //TODO: Code Table lookup on different race status from provider
                                         //TODO: Triggers for tournament processing on race status of R (final divs) and A (abandoned) 
                                         if (isset($dataArray['RaceStatus'])) {
 
