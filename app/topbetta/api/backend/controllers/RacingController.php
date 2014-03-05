@@ -328,6 +328,7 @@ class RacingController extends \BaseController
                                             $raceStatusCheckArray['A'] = 5;
 
                                             $raceStatusCheck = array();
+                                            $raceStatusCheck[0] = 0;
                                             $raceStatusCheck[1] = 1;
                                             $raceStatusCheck[5] = 2;
                                             $raceStatusCheck[6] = 3;
