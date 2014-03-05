@@ -431,6 +431,9 @@ class BetResultsController extends \BaseController {
 		
 		// Set resulted flag to 0 in model
 		$betRecord->resulted_flag = 1;
+                
+                // Default result amount to 0
+                $resultAmount = 0;
 		
 		// Log some stuff
 		Topbetta\LogHelper::l('BackAPI: BetResults - Processing Bet ID: ' . $betArray['id'] .'. Bet free flag: '. $betArray['bet_freebet_flag']. '. Bet free amount: '. $betArray['bet_freebet_amount']);
@@ -442,6 +445,7 @@ class BetResultsController extends \BaseController {
 				Topbetta\LogHelper::l("BackAPI: BetResults - Full bet amount was on free credit");
 				$betRecord->refund_freebet_transaction_id = $this->awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
 				Topbetta\LogHelper::l('Free Bet full refund: ' . $betArray['bet_freebet_amount'] . ' cents');
+                                $resultAmount = $betArray['bet_freebet_amount'];
 			} else if ($betArray['bet_freebet_flag'] == 1 && $betArray['bet_freebet_amount'] < $transaction['returnAmount']) {
 				// Free bet amount was less then refund
 				Topbetta\LogHelper::l("BackAPI: BetResults - Free bet amount was less than refund");
@@ -452,10 +456,14 @@ class BetResultsController extends \BaseController {
 				// Refund balance to account
 				$betRecord->refund_transaction_id =$this->awardBetRefund($betArray['user_id'], $refund_amount);
 				Topbetta\LogHelper::l('Paid partial refund: ' . $refund_amount . ' cents');
+                                
+                                // TODO: confirm this
+                                $resultAmount = $betArray['bet_freebet_amount'] + $refund_amount;
 			} else {
 				// No free credit was used - refund full amount to account
 				$betRecord->refund_transaction_id = $this->awardBetRefund($betArray['user_id'], $transaction['returnAmount']);
 				Topbetta\LogHelper::l('Paid refund: ' . $transaction['returnAmount'] . ' cents');
+                                $resultAmount = $transaction['returnAmount'];
 			}
 			$betRecord->refunded_flag = 1;
 			$result_status = TopBetta\BetResultStatus::STATUS_FULL_REFUND;
@@ -480,6 +488,8 @@ class BetResultsController extends \BaseController {
 				Topbetta\LogHelper::l('BackAPI: BetResults - Paid win: ' . $transaction['returnAmount'] . ' cents');
 				Topbetta\LogHelper::l("BackAPI: BetResults - Transaction ID for Bet Win record: $betRecord->result_transaction_id");
 			}
+                        
+                        $resultAmount = $actual_win_amount;
 			
 			
 			// Is this used in racing or for tournaments? 
@@ -500,6 +510,15 @@ class BetResultsController extends \BaseController {
 				
 		// change
 		$betRecord->save();
+                
+                // send result to Risk Manager
+                TopBetta\RiskManagerAPI::sendBetResult(array(
+                            "ReferenceId" => $betArray['id'],
+                            "ClientId" => $betArray['user_id'],
+                            "Status" => $result_status,
+                            "Amount" => $resultAmount,
+                            "ResultDate" => date(DATE_ISO8601)
+                            ));                
 	}
 	
 		/**

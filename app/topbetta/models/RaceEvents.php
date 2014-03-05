@@ -3,6 +3,7 @@
 class RaceEvent extends \Eloquent {
 
 	protected $table = 'tbdb_event';
+        protected $fillable = array('quinella_dividend', 'exacta_dividend', 'trifecta_dividend', 'firstfour_dividend');
 	
 	
 	public function racemeetings(){

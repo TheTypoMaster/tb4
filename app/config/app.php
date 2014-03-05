@@ -113,7 +113,9 @@ return array(
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
-		'Way\Generators\GeneratorsServiceProvider'
+		'Way\Generators\GeneratorsServiceProvider',
+                'TopBetta\Providers\BetResultRepoServiceProvider',
+                'TopBetta\Providers\BetRepoServiceProvider'
 
 	),
 
@@ -210,9 +212,13 @@ return array(
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
+                'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
+                'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
-		'HeartBeat' => 'TopBetta\admin\HeartBeatController'
+		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
+                'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
+                'BetRepo' => 'TopBetta\Facades\BetRepo'
 
 	),
 
