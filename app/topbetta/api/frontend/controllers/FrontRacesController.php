@@ -85,8 +85,21 @@ class FrontRacesController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id) {
-		//
+	public function show($meetingId, $id) {
+				
+		$race = TopBetta\RaceEvent::find($id);
+		if ($race) {
+			//convert the date to ISO 8601 format
+			$startDatetime = new \DateTime($race -> start_date);
+			$startDatetime = $startDatetime -> format('c');	
+			
+			$result = array('id' => $race->id, 'race_number' => $race->number, 'name' => $race->name,
+				'distance' => $race->distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'status' => $race->event_status_id);
+
+			return array('success' => true, 'result' => $result);
+		}
+
+		return array('success' => false, 'error' => 'Race not found');
 	}
 
 	/**
