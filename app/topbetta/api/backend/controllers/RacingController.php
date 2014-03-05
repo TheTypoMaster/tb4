@@ -327,6 +327,13 @@ class RacingController extends \BaseController
                                             $raceStatusCheckArray['R'] = 4;
                                             $raceStatusCheckArray['A'] = 5;
 
+                                            $raceStatusCheck = array();
+                                            $raceStatusCheck[1] = 1;
+                                            $raceStatusCheck[5] = 2;
+                                            $raceStatusCheck[6] = 3;
+                                            $raceStatusCheck[2] = 4;
+                                            $raceStatusCheck[7] = 5;
+
                                             // get the races current status
                                             $currentRaceStatus = $raceEvent['event_status_id'];
 
@@ -375,7 +382,7 @@ class RacingController extends \BaseController
                                         if (isset($dataArray['RaceStatus'])) {
 
                                             //example true || paying(4) < selling(1)
-                                            if(!$raceExists || $raceStatusCheckArray[$currentRaceStatus] < $raceStatusCheckArray[$dataArray['RaceStatus']]){
+                                            if(!$raceExists || $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$dataArray['RaceStatus']]){
                                                  switch ($dataArray['RaceStatus']) {
                                                     case "O":
                                                         $raceEvent->event_status_id = '1'; // selling
