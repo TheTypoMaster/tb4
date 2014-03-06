@@ -269,7 +269,7 @@ class BetRepo
 
 		foreach ($betSelections as $betSelection) {
 			$bet = Bet::find($betSelection->bet_id);
-			if ($bet) {
+			if ($bet->bet_type_id <= 3) {
 				$this->refundBet($bet);
 			}
 		}
