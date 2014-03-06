@@ -479,7 +479,10 @@ class RacingController extends \BaseController
                     // Selection/Runner Data - The runners in the race
                     case "RunnerList":
                         TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Runner");
-                        foreach ($racingArray as $dataArray) {
+                        
+						$scratchList = array();
+						
+						foreach ($racingArray as $dataArray) {
                             $raceExists = $selectionsExists = 0;
                             // Check all required data is available in the JSON for the runner
                             if (isset($dataArray['MeetingId']) && isset($dataArray['RaceNo']) && isset($dataArray['RunnerNo'])) {
@@ -612,7 +615,20 @@ class RacingController extends \BaseController
                             } else {
                                 TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Missing Runner data. Can't process", 2);
                             }
-                        }
+							
+                            // if this event was abandoned - add to list for bet resulting
+							if ($raceRunner->selection_status_id == '2') {
+								if (!array_key_exists($raceRunner->id, array_flip($scratchList))) {
+									array_push($scratchList, $raceRunner->id);
+								}
+							}
+						}
+						
+                        // ALL RUNNERS PROCESSED - REFUND ANY BETS FOR SCRATCHED RUNNERS
+                        foreach ($scratchList as $scratchedId) {
+                            \TopBetta\Facades\BetRepo::refundBetsForRunnerId($scratchedId);
+                        }						
+						
                         break;
 
                     // Result Data - the actual results of the race
