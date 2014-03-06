@@ -268,7 +268,10 @@ class BetRepo
 		$betSelections = BetSelection::where('selection_id', $runnerId)->get();
 
 		foreach ($betSelections as $betSelection) {
-			$bet = Bet::find($betSelection->bet_id);
+			$bet = Bet::where('id', $betSelection->bet_id)
+				->where('refunded_flag', 0)
+				->where('resulted_flag',0)
+				->get();
 			if ($bet->bet_type_id <= 3) {
 				$this->refundBet($bet);
 			}
