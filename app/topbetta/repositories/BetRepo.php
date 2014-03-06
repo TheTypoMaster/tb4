@@ -271,8 +271,10 @@ class BetRepo
 			$bet = Bet::where('id', $betSelection->bet_id)
 				->where('refunded_flag', 0)
 				->where('resulted_flag',0)
-				->get();
-			if ($bet->bet_type_id <= 3) {
+				->first();
+			
+			if ($bet && $bet->bet_type_id <= 3) {
+				\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
 				$this->refundBet($bet);
 			}
 		}
