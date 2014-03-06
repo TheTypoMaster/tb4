@@ -619,7 +619,7 @@ class RacingController extends \BaseController
                             }
 							
                             // if this event was abandoned - add to list for bet resulting
-							if ($raceRunner->selection_status_id == '2') {
+							if (isset($raceRunner) && $raceRunner->selection_status_id == '2') {
 								if (!array_key_exists($raceRunner->id, array_flip($scratchList))) {
 									array_push($scratchList, $raceRunner->id);
 								}
