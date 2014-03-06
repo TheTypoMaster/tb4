@@ -53,10 +53,10 @@ class RiskRaceStatusController extends \BaseController
             $event->event_status_id = $eventStatus;
             $event->save();
 
-            if ($eventStatus == 6 || $eventStatus == 2) {
-                // result bets for race status of interim or paying
+            if ($eventStatus == 6 || $eventStatus == 2 || $eventStatus == 3) {
+                // result bets for race status of interim, paying or abandoned
                 \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
-            }
+            }			
 
             return true;
         }

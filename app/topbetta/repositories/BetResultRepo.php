@@ -85,19 +85,19 @@ class BetResultRepo
     {
         $processBet = false;
 
+       $eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
+
+        // RACE ABANDONED - REFUND BET
+        if ($eventStatus == 3) {
+            return BetRepo::refundBet($bet);
+        }		
+		
         $resultModel = new RaceResult;
         $raceResults = $resultModel->getResultsForRaceId($bet->event_id);
 
         // Sanity check - Make sure we at least have a win_dividend
         if (!isset($raceResults['positions'][1]['win_dividend'])) {
             return false;
-        }
-
-        $eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
-
-        // RACE ABANDONED - REFUND BET
-        if ($eventStatus == 3) {
-            return BetRepo::refundBet($bet);
         }
 
         // RACE PAYING INTERIM/FINAL
