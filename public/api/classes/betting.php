@@ -19,7 +19,7 @@ class Api_Betting extends JController
         // libraries/mobileactive/application/utilities/format.php:class Format
         // libraries/mobileactive/wagering/bet.php
     }
-
+	
     /*
      *
      * MAPS TO: /com_betting/controller.php->display
