@@ -20,6 +20,32 @@ class Api_Betting extends JController
         // libraries/mobileactive/wagering/bet.php
     }
 
+	function exoticRefund()
+	{
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
+		require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'betselection.php');
+		
+		$bet_model = new BettingModelBet();
+		$bet_selection_model = new BettingModelBetSelection();
+		
+		$bet = $bet_model->getBetDetails(86);
+		$wagering_bet	= WageringBet::newBet('trifecta', $bet->bet_amount, $boxed_flag, $bet->flexi_flag);
+		$boxed_flag			= $bet_model->isBoxedBet($bet->id);
+		$selection_list	= $bet_selection_model->getBetSelectionListByBetID($bet->id);
+		
+		foreach ($selection_list as $selection) {
+			$position = ($boxed_flag ? null : $selection->position);
+			$wagering_bet->addSelection($selection->number, $position);
+		}		
+		
+//		$wagering_bet	= WageringBet::newBet($bet_type->name, $bet->bet_amount, $boxed_flag, $bet->flexi_flag);
+		
+		var_dump($wagering_bet->getCombinationCount());
+		var_dump($wagering_bet->getFlexiPercentage());
+		
+		exit;
+	}
+	
     /*
      *
      * MAPS TO: /com_betting/controller.php->display

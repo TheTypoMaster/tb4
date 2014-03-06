@@ -48,6 +48,11 @@ switch($method) {
 		$motd = new Api_Motd();
 		echo $motd -> getMOTD();
 		break;
+	
+	case 'exoticRefund' :
+		$bet = new Api_Betting();
+		echo $bet->exoticRefund();
+		break;
 
 
 	/* RACE BETTING */
