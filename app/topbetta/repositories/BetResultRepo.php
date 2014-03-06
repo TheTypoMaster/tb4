@@ -30,11 +30,12 @@ class BetResultRepo
         $events = Bet::where('bet_result_status_id', 1)
                 ->where('resulted_flag', 0)
                 ->where('tbdb_event.event_status_id', 2)
+				->orWhere('tbdb_event.event_status_id', 4)
                 ->join('tbdb_event', 'tbdb_bet.event_id', '=', 'tbdb_event.id')
                 ->groupBy('tbdb_bet.event_id')
                 ->select('tbdb_bet.event_id')
                 ->get();
-
+		
         $result = array();
 
         if (count($events)) {
