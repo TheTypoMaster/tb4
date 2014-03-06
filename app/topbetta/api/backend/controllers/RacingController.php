@@ -349,7 +349,7 @@ class RacingController extends \BaseController
                                         $raceStatusCheck[6] = 3;
                                         $raceStatusCheck[2] = 4;
                                         $raceStatusCheck[4] = 5;
-                                        $raceStatusCheck[7] = 6;
+                                        $raceStatusCheck[3] = 6;
 
                                         if (isset($dataArray ['RaceNo']) && isset($dataArray ['JumpTime'])) {
                                             $raceEvent->number = $dataArray ['RaceNo'];
