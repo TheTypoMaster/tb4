@@ -105,7 +105,7 @@ class BetResultRepo
         if ($eventStatus == 6 && $bet->betType()->name == 'win') {
             // RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
             $processBet = true;
-        } elseif ($eventStatus == 2) {
+        } elseif ($eventStatus == 2 || $eventStatus == 4) {
             // RULE 2: Status paying - Result all other bets at Final Dividends
             $processBet = true;
             $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
