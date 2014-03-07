@@ -90,7 +90,8 @@ class BetResultRepo
 
         // RACE ABANDONED - REFUND BET
         if ($eventStatus == 3) {
-            return BetRepo::refundBet($bet);
+            \Log::info('ABANDONED: refunding bet: ' . $bet->id);
+			return BetRepo::refundBet($bet);
         }		
 		
         $resultModel = new RaceResult;
@@ -98,7 +99,8 @@ class BetResultRepo
 
         // Sanity check - Make sure we at least have a win_dividend
         if (!isset($raceResults['positions'][1]['win_dividend'])) {
-            return false;
+            \Log::info('NO WIN DIVIDEND: EventID - ' . $bet->event_id );
+			return false;
         }
 
         // RACE PAYING INTERIM/FINAL
