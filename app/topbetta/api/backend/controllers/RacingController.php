@@ -619,7 +619,7 @@ class RacingController extends \BaseController
                             }
 							
                             // if this event was abandoned - add to list for bet resulting
-							if ($raceRunner->selection_status_id == '2') {
+							if (isset($raceRunner) && $raceRunner->selection_status_id == '2') {
 								if (!array_key_exists($raceRunner->id, array_flip($scratchList))) {
 									array_push($scratchList, $raceRunner->id);
 								}
@@ -638,12 +638,12 @@ class RacingController extends \BaseController
                     // Result Data - the actual results of the race
                     case "ResultList" :
                         TopBetta\LogHelper::l("BackAPI: Racing - Processing $objectCount: Result");
-
-                        $firstProcess = true;
+                        
                         $eventList = array();
 
                         foreach ($racingArray as $dataArray) {
                             $selectionsExists = $resultExists = 0;
+							$firstProcess = false;
 
                             // Check required data to update a Result is in the JSON
                             if (isset($dataArray ['MeetingId']) && isset($dataArray ['RaceNo']) && isset($dataArray ['Selection']) && isset($dataArray ['BetType']) && isset($dataArray ['PriceType']) && isset($dataArray ['PlaceNo']) && isset($dataArray ['Payout'])) {
@@ -672,7 +672,8 @@ class RacingController extends \BaseController
                                     TopBetta\LogHelper::l($log_msg_prefix . " PriceType:$priceType. BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout", 1);
 
                                     $eventID = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
-                                    if (!array_key_exists($eventID, array_flip($eventList))) {
+                                    if ($eventID && !array_key_exists($eventID, array_flip($eventList))) {
+										\Log::info("EVENTID First Process: " . $eventID);
                                         array_push($eventList, $eventID);
                                         $firstProcess = true;
                                     }
