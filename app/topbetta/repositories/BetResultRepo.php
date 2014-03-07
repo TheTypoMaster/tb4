@@ -4,7 +4,6 @@ namespace TopBetta\Repositories;
 
 use TopBetta\Bet;
 use TopBetta\BetResultStatus;
-use TopBetta\Facades\BetRepo;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
@@ -16,122 +15,127 @@ use TopBetta\RaceResult;
 class BetResultRepo
 {
 
-    /**
-     * Find and result all events that have pending bets if the 
-     * event is marked as paying.
-     * 
-     * This can be used as a watchdog to make sure all valid
-     * bets get paid when a race is set to status paid
-     * 
-     * @return string
-     */
-    public function resultAllBetsForPayingEvents()
-    {
-        $events = Bet::where('bet_result_status_id', 1)
-                ->where('resulted_flag', 0)
-                ->where('tbdb_event.event_status_id', 2)
+	/**
+	 * Find and result all events that have pending bets if the 
+	 * event is marked as paying.
+	 * 
+	 * This can be used as a watchdog to make sure all valid
+	 * bets get paid when a race is set to status paid
+	 * 
+	 * @return string
+	 */
+	public function resultAllBetsForPayingEvents()
+	{
+		$events = Bet::where('bet_result_status_id', 1)
+				->where('resulted_flag', 0)
+				->where('tbdb_event.event_status_id', 2)
 				->orWhere('tbdb_event.event_status_id', 4)
-                ->join('tbdb_event', 'tbdb_bet.event_id', '=', 'tbdb_event.id')
-                ->groupBy('tbdb_bet.event_id')
-                ->select('tbdb_bet.event_id')
-                ->get();
-		
-        $result = array();
+				->join('tbdb_event', 'tbdb_bet.event_id', '=', 'tbdb_event.id')
+				->groupBy('tbdb_bet.event_id')
+				->select('tbdb_bet.event_id')
+				->get();
 
-        if (count($events)) {
-            foreach ($events as $event) {
-                echo "Resulting event: " . $event->event_id . " \n";
-                $result[$event->event_id] = $this->resultAllBetsForEvent($event->event_id);
-            }
-        } else {
-            $result[] = "No events to result";
-        }
+		$result = array();
 
-        echo "-------\n";
+		if (count($events)) {
+			foreach ($events as $event) {
+				echo "Resulting event: " . $event->event_id . " \n";
+				$result[$event->event_id] = $this->resultAllBetsForEvent($event->event_id);
+			}
+		} else {
+			$result[] = "No events to result";
+		}
 
-        return $result;
-    }
+		echo "-------\n";
 
-    /**
-     * Find and result all unresulted bets for an event
-     * 
-     * @param int $eventId
-     * @return array
-     */
-    public function resultAllBetsForEvent($eventId)
-    {
-        // we only want bets that are "unresulted" status id: 1
-        $bets = Bet::where('event_id', $eventId)
-                ->where('bet_result_status_id', 1)
-                ->where('resulted_flag', 0)
-                ->with('selections')
-                ->get();
+		return $result;
+	}
 
-        $result = array();
+	/**
+	 * Find and result all unresulted bets for an event
+	 * 
+	 * @param int $eventId
+	 * @return array
+	 */
+	public function resultAllBetsForEvent($eventId)
+	{
+		// we only want bets that are "unresulted" status id: 1
+		$bets = Bet::where('event_id', $eventId)
+				->where('bet_result_status_id', 1)
+				->where('resulted_flag', 0)
+				->with('selections')
+				->get();
 
-        foreach ($bets as $bet) {
-            $result[$bet->id] = $this->resultBet($bet);
-        }
+		$result = array();
 
-        return $result;
-    }
+		foreach ($bets as $bet) {
+			\Log::info('RESULTING BET: ' . $bet->id);
+			$result[$bet->id] = $this->resultBet($bet);
+		}
 
-    /**
-     * Result an individual bet object
-     * 
-     * @param Bet $bet
-     * @return bool
-     */
-    public function resultBet(Bet $bet)
-    {
-        $processBet = false;
+		return $result;
+	}
 
-       $eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
+	/**
+	 * Result an individual bet object
+	 * 
+	 * @param Bet $bet
+	 * @return bool
+	 */
+	public function resultBet(Bet $bet)
+	{
+		$processBet = false;
 
-        // RACE ABANDONED - REFUND BET
-        if ($eventStatus == 3) {
-            \Log::info('ABANDONED: refunding bet: ' . $bet->id);
-			return BetRepo::refundBet($bet);
-        }		
-		
-        $resultModel = new RaceResult;
-        $raceResults = $resultModel->getResultsForRaceId($bet->event_id);
+		$eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
 
-        // Sanity check - Make sure we at least have a win_dividend
-        if (!isset($raceResults['positions'][1]['win_dividend'])) {
-            \Log::info('NO WIN DIVIDEND: EventID - ' . $bet->event_id );
+		// RACE ABANDONED - REFUND BET
+		if ($eventStatus == 3) {
+			\Log::info('ABANDONED: refunding bet: ' . $bet->id);
+			return \TopBetta\Facades\BetRepo::refundBet($bet);
+		}
+
+		$resultModel = new RaceResult;
+		$raceResults = $resultModel->getResultsForRaceId($bet->event_id);
+
+		// Sanity check - Make sure we at least have a win_dividend
+		if (!isset($raceResults['positions'][1]['win_dividend'])) {
+			\Log::info('NO WIN DIVIDEND: EventID - ' . $bet->event_id);
 			return false;
-        }
+		}
 
-        // RACE PAYING INTERIM/FINAL
-        if ($eventStatus == 6 && $bet->betType()->name == 'win') {
-            // RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
-            $processBet = true;
-        } elseif ($eventStatus == 2 || $eventStatus == 4) {
-            // RULE 2: Status paying - Result all other bets at Final Dividends
-            $processBet = true;
-            $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
-            $bet->resulted_flag = 1;
-        }
+		// RACE PAYING INTERIM/FINAL
+		if ($eventStatus == 6 && $bet->betType()->name == 'win') {
+			// RULE 1: Status interim - Result all "Winning" bets for Win, leave the ones that didn't win in case there is a protest
+			$processBet = true;
+		} elseif ($eventStatus == 2 || $eventStatus == 4) {
+			// RULE 2: Status paying - Result all other bets at Final Dividends
+			$processBet = true;
+			$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
+			$bet->resulted_flag = 1;
+		}
 
-        if (!$processBet) {
-            return false;
-        }
+		if (!$processBet) {
+			return false;
+		}
 
-        $payout = BetRepo::getBetPayoutAmount($bet);
-        if ($payout) {
-            // WINNING BET
-            return BetRepo::payoutBet($bet, $payout);
-        }
+		$payout = \TopBetta\Facades\BetRepo::getBetPayoutAmount($bet);
+		\Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);
 
-        // if we get here, the bet was not a winning bet or not refunded
-        if ($bet->save()) {
-            $bet->resultAmount = 0;
-            \TopBetta\RiskManagerAPI::sendBetResult($bet);
-            return true;
-        }
+		if ($payout) {
+			// WINNING BET
+			\Log::info('WINNING BET: id - ' . $bet->id);
+			return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);
+		}
 
-        return false;
-    }
+		// if we get here, the bet was not a winning bet or not refunded
+		if ($bet->save()) {
+			$bet->resultAmount = 0;
+			\Log::info('LOSING BET: ' . $bet->id);
+			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+			return true;
+		}
+
+		return false;
+	}
 
 }
