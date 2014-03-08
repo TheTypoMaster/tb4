@@ -23,6 +23,10 @@ class RisaForm extends \Eloquent {
     static public function getRunnerLastStarts($runnerCode) {
     	return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('last_starts_summary');
     }
+
+    static public function getRunnerSilkId($runnerCode) {
+        return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('silk_image');
+    }
     
     static public function getRunnersFormForRunnerId($runnerId){
     	

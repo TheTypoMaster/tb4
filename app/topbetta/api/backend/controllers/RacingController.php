@@ -581,13 +581,26 @@ class RacingController extends \BaseController
 
                                             // Get last starts for this runner is we have them
                                             $raceRunnersLastStarts = TopBetta\RisaForm::getRunnerLastStarts($runnerCodeSelection);
-                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Last Starts: $raceRunner->last_starts");
 
                                             if (isset($raceRunnersLastStarts)) {
                                                 $raceRunner->last_starts = $raceRunnersLastStarts;
                                             } else {
                                                 $raceRunner->last_starts = "";
                                             }
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Last Starts: $raceRunner->last_starts");
+
+                                            // Get silk code for this runner is we have it
+                                            $raceRunnersSilkId = TopBetta\RisaForm::getRunnerSilkId($runnerCodeSelection);
+
+
+                                            if (isset($raceRunnersSilkId)) {
+                                                $raceRunner->silk_id = $raceRunnersSilkId;
+                                            } else {
+                                                $raceRunner->silk_id = "";
+                                            }
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Silk: $raceRunner->silk_id");
+
+
                                             // add the runner code
                                             $raceRunner->runner_code = $runnerCodeSelection;
                                         }
