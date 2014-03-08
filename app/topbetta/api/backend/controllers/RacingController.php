@@ -927,44 +927,49 @@ class RacingController extends \BaseController
                                             foreach ($oddsArray as $runnerOdds) {
                                                 TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds for Runner: $runnerCount", 1);
 
-                                                // check if selection exists in the DB
-                                                $selectionExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
+                                                if($runnerOdds != '0'){
+                                                    // check if selection exists in the DB
+                                                    $selectionExists = TopBetta\RaceSelection::selectionExists($meetingId, $raceNo, $runnerCount);
 
-                                                if ($selectionExists) {
-                                                    TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. In DB", 1);
-                                                    $priceExists = \DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
+                                                    if ($selectionExists) {
+                                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. In DB", 1);
+                                                        $priceExists = \DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
 
-                                                    // if result exists update that record otherwise create a new one
-                                                    if ($priceExists) {
-                                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, In DB: $priceExists", 1);
-                                                        //echo "Price in DB, ODDS:$runnerOdds, ";
-                                                        $runnerPrice = TopBetta\RaceSelectionPrice::find($priceExists);
+                                                        // if result exists update that record otherwise create a new one
+                                                        if ($priceExists) {
+                                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, In DB: $priceExists", 1);
+                                                            //echo "Price in DB, ODDS:$runnerOdds, ";
+                                                            $runnerPrice = TopBetta\RaceSelectionPrice::find($priceExists);
+                                                        } else {
+                                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, Added to DB: $priceExists", 1);
+                                                            $runnerPrice = new TopBetta\RaceSelectionPrice;
+                                                            $runnerPrice->selection_id = $selectionExists;
+                                                        }
+                                                        $oddsSet = 0;
+                                                        // update the correct field
+
+                                                        switch ($betType) {
+                                                            case "W":
+                                                                $runnerPrice->win_odds = $runnerOdds / 100;
+                                                                break;
+                                                            case "P":
+                                                                $runnerPrice->place_odds = $runnerOdds / 100;
+                                                                break;
+                                                            default:
+                                                                TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+                                                        }
+
+                                                        // save/update the price record
+                                                        $runnerPrice->save();
                                                     } else {
-                                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds, Added to DB: $priceExists", 1);
-                                                        $runnerPrice = new TopBetta\RaceSelectionPrice;
-                                                        $runnerPrice->selection_id = $selectionExists;
-                                                    }
-                                                    $oddsSet = 0;
-                                                    // update the correct field
-
-                                                    switch ($betType) {
-                                                        case "W":
-                                                            $runnerPrice->win_odds = $runnerOdds / 100;
-                                                            break;
-                                                        case "P":
-                                                            $runnerPrice->place_odds = $runnerOdds / 100;
-                                                            break;
-                                                        default:
-                                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. 'Bet Type' not valid: $betType. Can't process", 2);
+                                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No selction for Odds in DB. Can't process", 2);
                                                     }
 
-                                                    // save/update the price record
-                                                    $runnerPrice->save();
-                                                } else {
-                                                    TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No selction for Odds in DB. Can't process", 2);
                                                 }
                                                 $runnerCount++;
                                             }
+
+
                                         } else {
                                             TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds. No odds array found. Can't process", 2);
                                         }
