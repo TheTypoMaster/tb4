@@ -37,7 +37,7 @@ class RiskResultsController extends \BaseController
         \TopBetta\RaceResult::deleteResultsForRaceId($raceId);       
         \TopBetta\RaceResult::deleteExoticResultsForRaceId($raceId);
 
-        $errors = [];
+        $errors = array();
 
         foreach ($raceResults as $key => $raceResult) {
 

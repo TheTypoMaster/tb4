@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'riskManagerAPI' => 'http://risk.mugbookie.com/api/v1',
-    'productionHost' => 'testing1'
+    'riskManagerAPI' => 'http://test.risk.mugbookie.com/api/v1',
+    'productionHost' => 'production'
 ];
