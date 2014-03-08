@@ -16,8 +16,8 @@ class RiskManagerHelper
 {
 
     static $riskManagerAPI = 'http://risk.mugbookie.com/api/v1/';
-//    static $productionHost = 'services.topbetta.com.au';
-    static $productionHost = 'testing1.mugbookie.com';
+    static $productionHost = 'services.topbetta.com.au';
+//    static $productionHost = 'testing1.mugbookie.com';
 
     public function sendRacingBet($betData)
     {
