@@ -15,9 +15,16 @@
 class RiskManagerHelper
 {
 
-    static $riskManagerAPI = 'http://risk.mugbookie.com/api/v1/';
-    static $productionHost = 'services.topbetta.com.au';
-//    static $productionHost = 'testing1.mugbookie.com';
+	/**
+	 * array(HOSTNAME => RISK_API_ENDPOINT)
+	 * 
+	 * @var array
+	 */
+	static $riskConfig = array(
+		'services.topbetta.com.au' => 'http://risk.mugbookie.com/api/v1/',
+		'testing1.mugbookie.com' => 'http://riskier.mugbookie.com/api/v1/',
+		'tb4.dev' => 'http://riskmanager.dev/api/v1/'
+	);
 
     public function sendRacingBet($betData)
     {
@@ -36,11 +43,12 @@ class RiskManagerHelper
 
     private function curl($endPoint, $type, $payload = array())
     {
-        // we only want to send to risk manager for production
-        if ($_SERVER['HTTP_HOST'] != RiskManagerHelper::$productionHost) {
-            return false;
-        }
-        $url = RiskManagerHelper::$riskManagerAPI . $endPoint;
+        // map the right endpoint to this host
+		if (!array_key_exists($_SERVER['HTTP_HOST'], RiskManagerHelper::$riskConfig)) {
+			return false;
+		}
+
+        $url = RiskManagerHelper::$riskConfig[$_SERVER['HTTP_HOST']] . $endPoint;
 
         $ch = curl_init();
         if ($type == 'post') {
