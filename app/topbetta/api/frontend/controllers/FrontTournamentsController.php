@@ -248,7 +248,9 @@ class FrontTournamentsController extends \BaseController {
 				$meetingId = $tournament -> event_group_id;
 				
 				$nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-				$nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime);
+                $nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
+                ($nextEventStartTime) ? $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TimeHelper::isoDate($tournament->start_date);
+                // $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime);
 
 				$tourns = array();
 
