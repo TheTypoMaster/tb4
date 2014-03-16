@@ -135,7 +135,19 @@ class TournamentModelTournament extends SuperModel
 		'free_credit_flag' => array(
 			'name' 		=> 'Free credit prize',
 			'type' 		=> self::TYPE_INTEGER
-		)
+		),
+        'tournament_sponsor_name' => array(
+            'name' 		=> 'Tournament sponsor name',
+            'type' 		=> self::TYPE_STRING
+        ),
+        'tournament_sponsor_logo' => array(
+            'name' 		=> 'Tournament sponsor logo',
+            'type' 		=> self::TYPE_STRING
+        ),
+        'tournament_sponsor_logo_link' => array(
+            'name' 		=> 'Tournament sponsor logo link',
+            'type' 		=> self::TYPE_STRING
+        )
 		//'feature_keyword' => array(
 		//		'name' 		=> 'Tournament Feature',
 		//		'type' 		=> self::TYPE_STRING
