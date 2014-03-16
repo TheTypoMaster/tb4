@@ -321,7 +321,8 @@ class FrontTournamentsController extends \BaseController {
 
 				}
 
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'next_event_start' => $nextEventStartTime, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
+                ($tournament->tournament_sponsor_name) ? $meetingNameWithTournSponsor = $meetingName. ' - '. $tournament->tournament_sponsor_name: $meetingNameWithTournSponsor = $meetingName;
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingNameWithTournSponsor, 'next_event_start' => $nextEventStartTime, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
 			}
 		}
 
