@@ -141,31 +141,9 @@ JToolBarHelper::cancel();
 						</select>
 					
 					
-					
-					
-					<!-- 
-						<select name="tournament_label_id" id="tournament_label_id" <?php echo $this->disabled;?> multiple="multiple" size ='5'>
-							<?php foreach($this->tournament_label_option_list as $tournament_label_id => $tournament_label_label): ?>
-							<option value="<?php echo $tournament_label_id; ?>"<?php echo $this->tournament_label_selected_list[$tournament_label_id]; ?>><?php echo $tournament_label_label; ?></option>
-							<?php endforeach; ?>
-						</select>
-						
-						
-						-->
 					</td>
 					
-					 
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+
 					<?php if (!empty($this->id)) : ?>
 					<td colspan="2"></td>
 					<?php endif; ?>
@@ -259,15 +237,8 @@ JToolBarHelper::cancel();
                 </tr>
 
             </tbody>
-
-
         </table>
-        <input type="hidden" name="id" value="<?php echo $this->escape($this->id); ?>" />
-        <input type="hidden" name="task" value="" />
-        <input type="hidden" name="is_racing_sport" id="is_racing_sport" value="<?php echo $this->escape($this->is_racing_sport); ?>" <?php echo $this->disabled;?> />
     </fieldset>
-
-
 
 
 </form>
