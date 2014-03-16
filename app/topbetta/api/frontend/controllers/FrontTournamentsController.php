@@ -487,7 +487,11 @@ class FrontTournamentsController extends \BaseController {
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
 
-			$tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
+
+            $tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
+
+            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent -> name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent -> name;
+
 			return array('success' => true, 'result' => array(
 				'id' => (int)$tournamentParent -> id,
 				'name' => $tournamentParent -> name,
