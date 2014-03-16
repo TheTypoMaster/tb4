@@ -494,7 +494,7 @@ class FrontTournamentsController extends \BaseController {
 
 			return array('success' => true, 'result' => array(
 				'id' => (int)$tournamentParent -> id,
-				'name' => $tournamentParent -> name,
+				'name' => $tournamentName,
 				'state' => $tournamentParent -> state,
 				'weather' => $tournamentParent -> weather,
 				'track' => $tournamentParent -> track,
