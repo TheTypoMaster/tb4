@@ -293,12 +293,15 @@ class FrontTournamentsController extends \BaseController {
 						$labels = array();
 						if (array_key_exists($tourn -> id, $atpTournaments)) {
 							$labels = $atpTournaments[$tourn -> id];
-						}		
+						}
 
                         // TEMP for tournament landing page until proper tournament group/labels are implimented
                         ($tourn->featured == "Featured") ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn -> name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag);
+                        ($tourn->tournament_sponsor_name) ? $tournamentName = $tourn->name . ' - '.$tourn->tournament_sponsor_name  : $tournamentName = $tourn->name;
+
+
+						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tournamentName, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag);
 					}
 
 					//handle sub_type for racing

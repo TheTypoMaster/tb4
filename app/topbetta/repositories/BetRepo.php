@@ -119,9 +119,16 @@ class BetRepo
 					break;
 
 				case 'exacta':
-					// 2 selections with correct position in 1st & 2nd = WIN
-					if ($position > 0 && $selection->position == $position) {
-						$winCount++;
+					if ($bet->boxed_flag) {
+						// 2 selections any order in 1st or 2nd position = WIN
+						if ($position == 1 || $position == 2) {
+							$winCount++;
+						}
+					} else {
+						// 2 selections with correct position in 1st & 2nd = WIN
+						if ($position > 0 && $selection->position == $position) {
+							$winCount++;
+						}
 					}
 					break;
 
