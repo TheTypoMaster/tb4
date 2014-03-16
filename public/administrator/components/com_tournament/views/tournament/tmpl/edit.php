@@ -214,7 +214,7 @@ JToolBarHelper::cancel();
                         <label for="tournament_sponsor_name">Tournament Sponsor Name</label>
                     </td>
                     <td>
-                        <input type="text" name="tournament_sponsor_name" id="tournament_sponsor_name" value="<?php echo $this->formdata['tournament_sponsor_name']; ?>" />
+                        <input type="text" size="128" name="tournament_sponsor_name" id="tournament_sponsor_name" value="<?php echo $this->formdata['tournament_sponsor_name']; ?>" />
                     </td>
                 </tr>
 
@@ -223,7 +223,7 @@ JToolBarHelper::cancel();
                         <label for="tournament_sponsor_logo">Tournament Sponsor Logo</label>
                     </td>
                     <td>
-                        <input type="text" name="tournament_sponsor_logo" id="tournament_sponsor_logo" value="<?php echo $this->formdata['tournament_sponsor_logo']; ?>" />
+                        <input type="text" size="128" name="tournament_sponsor_logo" id="tournament_sponsor_logo" value="<?php echo $this->formdata['tournament_sponsor_logo']; ?>" />
                     </td>
                 </tr>
 
@@ -232,7 +232,7 @@ JToolBarHelper::cancel();
                         <label for="tournament_sponsor_logo_link">Tournament Sponsor Logo Link</label>
                     </td>
                     <td>
-                        <input type="text" name="tournament_sponsor_logo_link" id="tournament_sponsor_logo_link" value="<?php echo $this->formdata['tournament_sponsor_logo_link']; ?>" />
+                        <input type="text" size="128" name="tournament_sponsor_logo_link" id="tournament_sponsor_logo_link" value="<?php echo $this->formdata['tournament_sponsor_logo_link']; ?>" />
                     </td>
                 </tr>
 
