@@ -293,12 +293,15 @@ class FrontTournamentsController extends \BaseController {
 						$labels = array();
 						if (array_key_exists($tourn -> id, $atpTournaments)) {
 							$labels = $atpTournaments[$tourn -> id];
-						}		
+						}
 
                         // TEMP for tournament landing page until proper tournament group/labels are implimented
                         ($tourn->featured == "Featured") ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn -> name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag);
+                       // ($tourn->tournament_sponsor_name) ? $tournamentName = $tourn->name . ' - '.$tourn->tournament_sponsor_name  : $tournamentName = $tourn->name;
+
+
+						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn->name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag, 'tournament_sponsor_name' => $tourn->tournament_sponsor_name, 'tournament_sponsor_logo' => $tourn->tournament_sponsor_logo, 'tournament_sponsor_logo_link' => $tourn->tournament_sponsor_logo_link);
 					}
 
 					//handle sub_type for racing
@@ -318,7 +321,8 @@ class FrontTournamentsController extends \BaseController {
 
 				}
 
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'next_event_start' => $nextEventStartTime, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
+                ($tournament->tournament_sponsor_name) ? $meetingNameWithTournSponsor = $meetingName. ' - '. $tournament->tournament_sponsor_name: $meetingNameWithTournSponsor = $meetingName;
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingNameWithTournSponsor, 'next_event_start' => $nextEventStartTime, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
 			}
 		}
 
@@ -483,10 +487,14 @@ class FrontTournamentsController extends \BaseController {
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
 
-			$tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
+
+            $tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
+
+            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent -> name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent -> name;
+
 			return array('success' => true, 'result' => array(
 				'id' => (int)$tournamentParent -> id,
-				'name' => $tournamentParent -> name,
+				'name' => $tournamentName,
 				'state' => $tournamentParent -> state,
 				'weather' => $tournamentParent -> weather,
 				'track' => $tournamentParent -> track,

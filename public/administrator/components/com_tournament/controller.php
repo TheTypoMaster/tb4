@@ -172,7 +172,10 @@ class TournamentController extends JController
 			'betting_closed_date'					=> '',
 			'future_meeting_venue'					=> '',
 			'tod_flag'								=> '',
-			'free_credit_flag'						=> 0
+			'free_credit_flag'						=> 0,
+            'tournament_sponsor_name'                => '',
+            'tournament_sponsor_logo'                => '',
+            'tournament_sponsor_logo_link'           => ''
 			//'feature_keyword'						=> -1
 			
 		);
@@ -234,6 +237,12 @@ class TournamentController extends JController
 		}
 		$formdata['tod_flag'] 		= $tournament->tod_flag;
 		$formdata['free_credit']	= $tournament->free_credit_flag;
+
+        // tournament sponsor details
+        $formdata['tournament_sponsor_name']	= $tournament->tournament_sponsor_name;
+        $formdata['tournament_sponsor_logo']	= $tournament->tournament_sponsor_logo;
+        $formdata['tournament_sponsor_logo_link']	= $tournament->tournament_sponsor_logo_link;
+
 		//$formdata['tournament_feature_id'] = $tournament->feature_keyword;
 		
 		if ($sessFormData = $session->get('sessFormData', null, 'tournament'))
@@ -335,8 +344,12 @@ class TournamentController extends JController
 		
 		$tournament_sport_id		= JRequest::getVar('tournament_sport_id', null);
 		$tournament_competition_id	= JRequest::getVar('tournament_competition_id', null);
-		
-		$name			= JRequest::getVar('name', null);
+
+        $sponser_name   = JRequest::getVar('tournament_sponsor_name', null);
+        $sponsor_logo   = JRequest::getVar('tournament_sponsor_logo', null);
+        $sponsor_link   = JRequest::getVar('tournament_sponsor_logo_link', null);
+
+        $name			= JRequest::getVar('name', null);
 		$description	= JRequest::getVar('description', null);
 		
 		$entrants				= 0;
@@ -451,9 +464,10 @@ class TournamentController extends JController
 			$tournament->bet_limit_flag							= 0;
 			$tournament->tod_flag								= strtoupper($tod_flag);
 			$tournament->free_credit_flag						= (int)JRequest::getVar('free_credit_flag', 0);
+
 			//$tournament->feature_keyword						= $feature_keyword;
-		
-			if (!$is_racing) {
+
+           	if (!$is_racing) {
 				$tournament->closed_betting_on_first_match_flag		= (int)$closed_betting_on_first_match_flag;
 				$tournament->betting_closed_date					= $betting_closed_date;
 				$tournament->reinvest_winnings_flag					= (int)JRequest::getVar('reinvest_winnings_flag', 0);
@@ -504,6 +518,11 @@ class TournamentController extends JController
 				
 				$tournament->event_group_id	= (int)$event_group_id;
 			}
+
+            $tournament->tournament_sponsor_name = $sponser_name;
+            $tournament->tournament_sponsor_logo = $sponsor_logo;
+            $tournament->tournament_sponsor_logo_link = $sponsor_link;
+
 			$tournament->save();
 		
 			$post = JRequest::get( 'post' );
