@@ -141,31 +141,9 @@ JToolBarHelper::cancel();
 						</select>
 					
 					
-					
-					
-					<!-- 
-						<select name="tournament_label_id" id="tournament_label_id" <?php echo $this->disabled;?> multiple="multiple" size ='5'>
-							<?php foreach($this->tournament_label_option_list as $tournament_label_id => $tournament_label_label): ?>
-							<option value="<?php echo $tournament_label_id; ?>"<?php echo $this->tournament_label_selected_list[$tournament_label_id]; ?>><?php echo $tournament_label_label; ?></option>
-							<?php endforeach; ?>
-						</select>
-						
-						
-						-->
 					</td>
 					
-					 
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+
 					<?php if (!empty($this->id)) : ?>
 					<td colspan="2"></td>
 					<?php endif; ?>
@@ -223,6 +201,46 @@ JToolBarHelper::cancel();
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="is_racing_sport" id="is_racing_sport" value="<?php echo $this->escape($this->is_racing_sport); ?>" <?php echo $this->disabled;?> />
 	</fieldset>
+
+
+
+
+    <fieldset class="adminform">
+        <legend>Tournament Sponsors</legend>
+        <table class="admintable">
+            <tbody>
+                <tr>
+                    <td class='key'>
+                        <label for="tournament_sponsor_name">Tournament Sponsor Name</label>
+                    </td>
+                    <td>
+                        <input type="text" size="128" name="tournament_sponsor_name" id="tournament_sponsor_name" value="<?php echo $this->formdata['tournament_sponsor_name']; ?>" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class='key'>
+                        <label for="tournament_sponsor_logo">Tournament Sponsor Logo</label>
+                    </td>
+                    <td>
+                        <input type="text" size="128" name="tournament_sponsor_logo" id="tournament_sponsor_logo" value="<?php echo $this->formdata['tournament_sponsor_logo']; ?>" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class='key'>
+                        <label for="tournament_sponsor_logo_link">Tournament Sponsor Logo Link</label>
+                    </td>
+                    <td>
+                        <input type="text" size="128" name="tournament_sponsor_logo_link" id="tournament_sponsor_logo_link" value="<?php echo $this->formdata['tournament_sponsor_logo_link']; ?>" />
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </fieldset>
+
+
 </form>
 
 <script language="javascript">
