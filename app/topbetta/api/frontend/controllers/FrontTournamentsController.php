@@ -472,9 +472,11 @@ class FrontTournamentsController extends \BaseController {
 		// special case to send data back in a format for backbone - this ones for you Jase ;-)
 		if ($grouped == true) {
 
-			$tournamentDetails = array(
+            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournament->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournament->name;
+
+            $tournamentDetails = array(
 				'id' => (int)$tournament -> id,
-				'name' => $tournament->name,
+				'name' => $tournamentName,
 				'buy_in' => (int)$tournament -> buy_in,
 				'entry_fee' => (int)$tournament -> entry_fee,
 				'num_entries' => (int)$numRegistrations,
@@ -490,7 +492,7 @@ class FrontTournamentsController extends \BaseController {
 
             $tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
 
-            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent -> name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent -> name;
+            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent->name;
 
 			return array('success' => true, 'result' => array(
 				'id' => (int)$tournamentParent -> id,
