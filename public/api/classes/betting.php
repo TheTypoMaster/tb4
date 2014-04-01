@@ -2536,6 +2536,10 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => 'Tournament not found'), $save);
             }
 
+            if (strtotime($tournament->betting_closed_date) < time()) {
+                return OutputHelper::json(500, array('error_msg' => JText::_('Betting is already closed:')));
+            }
+
             $ticket_model = & $this->getModel('TournamentTicket', 'TournamentModel');
             $ticket = $ticket_model->getTournamentTicketByUserAndTournamentID($user->id, $tournament->id);
 
@@ -2617,6 +2621,16 @@ class Api_Betting extends JController
             if ($current_currency < $bet_total) {
                 $required = number_format(($bet_total - $current_currency) / 100, 2);
                 return OutputHelper::json(500, array('error_msg' => 'You do not have enough bucks to place that bet (' . $required . ' more needed)'));
+            }
+
+            if (!$tournament->reinvest_winnings_flag) {
+                $leaderboard_model = & $this->getModel('TournamentLeaderboard', 'TournamentModel');
+                $turnover = $leaderboard_model->getTurnedOverByUserAndTournamentID($user->id, $tournament->id);
+
+                if ($turnover + $bet_total > $tournament->start_currency) {
+                    $maximum_total_bet = number_format($tournament->start_currency / 100, 2);
+                    return OutputHelper::json(500, array('error_msg' => JText::_('Your total bets cannot be more than ' . $maximum_total_bet)));
+                }
             }
 
             // validation complete, so save or display depending on $save value

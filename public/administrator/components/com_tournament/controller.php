@@ -467,13 +467,15 @@ class TournamentController extends JController
 
 			//$tournament->feature_keyword						= $feature_keyword;
 
-           	if (!$is_racing) {
+           	//if (!$is_racing) {
 				$tournament->closed_betting_on_first_match_flag		= (int)$closed_betting_on_first_match_flag;
 				$tournament->betting_closed_date					= $betting_closed_date;
 				$tournament->reinvest_winnings_flag					= (int)JRequest::getVar('reinvest_winnings_flag', 0);
 				$tournament->bet_limit_flag							= (int)JRequest::getVar('bet_limit_flag', 0);
-			}
-			
+			//}
+
+
+
 			$is_future_tournament = ($is_racing && $future_meeting_venue != -1);
 			
 			if (!isset($error_list['event_group']) && $is_future_tournament && isset($type_code_lookup[$sport->name])) {
