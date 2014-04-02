@@ -728,13 +728,14 @@ class Api_Betting extends JController
                 $tournament_model = & $this->getModel('TournamentSportEvent', 'TournamentModel');
                 $tournament = $tournament_model->getTournamentSportsByTournamentID($id);
 
-                if (strtotime($tournament->betting_closed_date) < time()) {
-                    //return $this->ticketError(JText::_('Betting has already closed'), $save, $tournament);
-                    if ($iframe) {
-                        return array('status' => 500, 'error_msg' => 'Betting has already closed');
-                    } else {
-                        return OutputHelper::json(500, array('error_msg' => 'Betting has already closed'));
-                    }
+            }
+
+            if (strtotime($tournament->betting_closed_date) < time()) {
+                //return $this->ticketError(JText::_('Betting has already closed'), $save, $tournament);
+                if ($iframe) {
+                    return array('status' => 500, 'error_msg' => 'Betting has already closed');
+                } else {
+                    return OutputHelper::json(500, array('error_msg' => 'Betting has already closed'));
                 }
             }
 
