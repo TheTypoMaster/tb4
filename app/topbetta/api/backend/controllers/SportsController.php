@@ -433,7 +433,7 @@ class SportsController extends \BaseController {
 									// if selection suspended status will be S
 									if(isset($dataArray['Status'])){
 										if($dataArray['Status'] == 'S'){
-											$selectionModel->selection_status_id = $dataArray['Status'];
+											$selectionModel->selection_status_id = 4;
 										}
 									}
 									
