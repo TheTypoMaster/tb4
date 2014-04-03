@@ -44,7 +44,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				if ($next) {
 
-					$nextToJump[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries);
+					$nextToJump[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries, 'buy_in' => $activeTicket->buy_in);
 
 				}
 			}
