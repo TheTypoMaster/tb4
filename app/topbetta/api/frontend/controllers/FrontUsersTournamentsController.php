@@ -192,6 +192,7 @@ class FrontUsersTournamentsController extends \BaseController {
 						'prize' => $prize,
 						'prize_amount' => (int)$tournament->prize,
                         'entry_fee' => $tournament->entry_fee,
+                        'buy_in' => $tournament->buy_in,
                         'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
                         'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag,
                         'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag
