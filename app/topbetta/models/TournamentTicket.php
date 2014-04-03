@@ -302,6 +302,9 @@ class TournamentTicket extends \Eloquent {
 				t.start_currency,
 				t.name AS tournament_name,
 				t.jackpot_flag,
+				t.tournament_sponsor_name,
+				t.reinvest_winnings_flag,
+				t.closed_betting_on_first_match_flag,
 				t.parent_tournament_id,
 				c.name AS competition_name';
 				
