@@ -485,6 +485,9 @@ class FrontTournamentsController extends \BaseController {
 				'start_currency' => (int)$tournament -> start_currency,
 				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
                 'featured' => $featuredTournamentFlag,
+                'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag,
+                'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag,
+                'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
