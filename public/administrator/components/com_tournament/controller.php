@@ -635,7 +635,7 @@ class TournamentController extends JController
 				} else if (!empty($future_meeting_venue) && $future_meeting_venue != -1) {
 					$automated_text .= $future_meeting_venue;
 				}
-				$automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
+				// $automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
 				
 			//	if (!$jackpot_flag) {
 			//		$automated_text .= '/' . $minimum_prize_pool_amount;
