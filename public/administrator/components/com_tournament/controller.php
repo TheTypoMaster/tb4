@@ -670,7 +670,7 @@ class TournamentController extends JController
                     $automated_text .= ' You can not bet after the 1st event in this tournament starts.';
                 }
 
-                if ($reinvest_winnings_flag == 0){
+                if ($reinvest_winnings_flag == 0 && $closed_betting_on_first_match_flag != 1){
                     $automated_text .= ' You can not re-invest your winnings in this tournament.';
                 }
 				
