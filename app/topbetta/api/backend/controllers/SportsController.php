@@ -435,6 +435,9 @@ class SportsController extends \BaseController {
 										if($dataArray['Status'] == 'S'){
 											$selectionModel->selection_status_id = 4;
 										}
+                                        if($dataArray['Status'] == 'T'){
+                                            $selectionModel->selection_status_id = 1;
+                                        }
 									}
 									
 									// add/update the selection record
