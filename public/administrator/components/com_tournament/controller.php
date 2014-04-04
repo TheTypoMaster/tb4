@@ -613,8 +613,8 @@ class TournamentController extends JController
 		$minimum_prize_pool		= JRequest::getVar('minimum_prize_pool', 0);
 
 
-        $reinvest_winnings_flag = JRequest::getVar('reinvest_winnings_flag', null);
-        $closed_betting_on_first_match_flag = JRequest::getVar('closed_betting_on_first_match_flag', null);
+        $reinvest_winnings_flag = JRequest::getVar('reinvest_winnings_flag', 1);
+        $closed_betting_on_first_match_flag = JRequest::getVar('closed_betting_on_first_match_flag', 0);
         $tournament_sponsor_name = JRequest::getVar('tournament_sponsor_name', null);
 
 		
@@ -666,11 +666,11 @@ class TournamentController extends JController
 					
 				}
 
-                if (!$closed_betting_on_first_match_flag){
+                if ($closed_betting_on_first_match_flag == 1){
                     $automated_text .= ' You can not bet after the 1st event in this tournament starts.';
                 }
 
-                if ($reinvest_winnings_flag){
+                if ($reinvest_winnings_flag == 0){
                     $automated_text .= ' You can not re-invest your winnings in this tournament.';
                 }
 				
