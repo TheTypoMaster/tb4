@@ -156,7 +156,7 @@ class AjaxController extends JController
                 $buyIn = number_format($tournament->buy_in, 2);
 
                 $option_list[] = array(
-                    'title' => $tournament->name . "- $".$buyIn,
+                    'title' => $tournament->name . " - $".$buyIn,
                     'value' => $tournament->id
                 );
             }
