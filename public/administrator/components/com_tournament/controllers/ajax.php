@@ -126,6 +126,45 @@ class AjaxController extends JController
 		$this->_sendResponse($option_list);
 	}
 
+    public function getParentJackpotTournamentListBySportID()
+    {
+        $sport_id = JRequest::getVar('value', null);
+
+        $sport = JModel::getInstance('TournamentSport', 'TournamentModel')
+            ->load($sport_id);
+
+        $list_params = array(
+            'type'	=> ($sport->racing_flag ? 'racing' : 'sports'),
+            'order'	=> 'lower(t.name)',
+            'jackpot' => true
+
+        );
+
+        $parent_tournament_list = JModel::getInstance('Tournament', 'TournamentModel')
+            ->getJackPotTournamentActiveList($list_params);
+
+        $option_list = array(
+            array(
+                'title' => 'Select a Parent Tournament',
+                'value' => -1
+            )
+        );
+
+        if(!is_null($parent_tournament_list)) {
+            foreach($parent_tournament_list as $tournament) {
+
+                $buyIn = number_format($tournament->buy_in, 2);
+
+                $option_list[] = array(
+                    'title' => $tournament->name . "- $".$buyIn,
+                    'value' => $tournament->id
+                );
+            }
+        }
+
+        $this->_sendResponse($option_list);
+    }
+
 	protected function _sendResponse($output)
 	{
 		header('application/json');

@@ -786,6 +786,146 @@ class TournamentModelTournament extends SuperModel
 		return $db->loadObjectList();
 	}
 
+
+    public function getJackpotTournamentActiveList($list_params = array())
+    {
+//		$date_criteria = SuperModel::getFinderCriteria(
+//			'start_date',
+//			new DatabaseQueryTableValueFunction(DatabaseQueryHelperFunction::NOW),
+//			DatabaseQueryTableWhere::CONTEXT_AND,
+//			DatabaseQueryTableWhere::OPERATOR_GREATER_OR_EQUAL
+//		);
+//
+//		return $this->find(array(
+//			$date_criteria,
+//			SuperModel::getFinderCriteria('paid_flag', 0),
+//			SuperModel::getFinderCriteria('status_flag', 1)
+//		), SuperModel::FINDER_LIST);
+
+        $sport_id			= isset($list_params['sport_id']) ? $list_params['sport_id'] : null;
+        $competition_id		= isset($list_params['competition_id']) ? $list_params['competition_id'] : null;
+        $jackpot			= isset($list_params['jackpot']) ? $list_params['jackpot'] : false;
+        $private			= isset($list_params['private']) ? $list_params['private'] : false;
+        $limit				= isset($list_params['limit']) ? $list_params['limit'] : null;
+        $type				= isset($list_params['type']) ? $list_params['type'] : null;
+        $event_group_id		= isset($list_params['event_group_id']) ? $list_params['event_group_id'] : array();
+        $order				= isset($list_params['order']) ? $list_params['order'] : null;
+
+        $db =& $this->getDBO();
+        $query = '
+			SELECT
+				t.id,
+				t.tournament_sport_id,
+				t.parent_tournament_id,
+				t.event_group_id,
+				t.name,
+				t.description,
+				t.start_currency,
+				t.start_date,
+				t.end_date,
+				t.jackpot_flag,
+				t.buy_in,
+				t.entry_fee,
+				t.minimum_prize_pool,
+				t.free_credit_flag,
+				t.tod_flag,
+				t.paid_flag,
+				t.auto_create_flag,
+				t.cancelled_flag,
+				t.cancelled_reason,
+				t.status_flag,
+				t.created_date,
+				t.updated_date,
+				t.private_flag,
+				s.name AS sport_name,
+				s.description AS sport_description,
+				eg.id AS event_group_id,
+				eg.name AS event_group_name,
+				eg.meeting_code,
+				eg.events,
+				eg.track,
+				eg.weather,
+				c.name AS competition_name
+			FROM
+				' . $db->nameQuote('#__tournament') . ' AS t
+			INNER JOIN
+				' . $db->nameQuote('#__tournament_sport') . ' AS s
+			ON
+				t.tournament_sport_id = s.id
+			INNER JOIN
+				' . $db->nameQuote('#__event_group') . ' AS eg
+			ON
+				t.event_group_id = eg.id
+			INNER JOIN
+				' . $db->nameQuote('#__tournament_competition') . ' AS c
+			ON
+				c.id = eg.tournament_competition_id
+			WHERE
+				t.end_date > NOW()
+			AND
+				t.status_flag = 1
+			AND
+				t.cancelled_flag = 0
+		';
+
+        if ($sport_id !== null) {
+            $query .= ' AND t.tournament_sport_id = ' . $db->quote($sport_id);
+        }
+
+        if ($competition_id !== null) {
+            $query .= ' AND c.id = ' . $db->quote($competition_id);
+        }
+
+        if ($jackpot !== false) {
+            $query .= ' AND t.jackpot_flag = ' . $db->quote($jackpot);
+        }
+
+        if ($private !== false) {
+            $query .= ' AND t.private_flag = ' . $db->quote($private);
+        }
+
+        switch ($type) {
+            case 'sports':
+                $query .= ' AND LOWER(s.name) NOT IN ("galloping", "harness", "greyhounds")';
+                break;
+            case 'racing':
+                $query .= ' AND LOWER(s.name) IN ("galloping", "harness", "greyhounds")';
+                break;
+        }
+
+        if (!empty($event_group_id)) {
+            if (is_string($event_group_id)) {
+                $event_group_id = array($event_group_id);
+            }
+
+            $clean_event_group_id = array();
+            foreach ($event_group_id as $eg_id) {
+                $clean_event_group_id[] = $db->quote($eg_id);
+            }
+
+            $query .= ' AND t.event_group_id IN (' . implode(', ', $clean_event_group_id) . ')';
+        }
+
+        if (empty($order)) {
+            $query .= '
+				ORDER BY
+					t.start_date,
+					eg.name,
+					t.entry_fee';
+        } else {
+            $query .= '
+				ORDER BY ' . $order;
+        }
+
+        if ($limit !== null) {
+            $query .='
+				LIMIT ' . (int)$limit;
+        }
+
+        $db->setQuery($query);
+        return $db->loadObjectList();
+    }
+
 	public function getTournamentJackpotParentList($id)
 	{
 		$sport 			= new DatabaseQueryTable('#__tournament_sport');
