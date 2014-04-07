@@ -153,7 +153,7 @@ class AjaxController extends JController
         if(!is_null($parent_tournament_list)) {
             foreach($parent_tournament_list as $tournament) {
 
-                $buyIn = number_format($tournament->buy_in, 2);
+                $buyIn = number_format($tournament->buy_in, 2 )/ 100;
 
                 $option_list[] = array(
                     'title' => $tournament->name . " - $".$buyIn,
