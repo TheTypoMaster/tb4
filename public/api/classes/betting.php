@@ -731,7 +731,7 @@ class Api_Betting extends JController
                         if ($iframe) {
                             return array('status' => 500, 'error_msg' => 'Betting has already closed');
                         } else {
-                            return OutputHelper::json(500, array('error_msg' => 'Betting has already closed. :'.strtotime($tournament->betting_closed_date)."-".time() ));
+                            return OutputHelper::json(500, array('error_msg' => 'Betting has already closed. :'));
                         }
                     }
                 }
