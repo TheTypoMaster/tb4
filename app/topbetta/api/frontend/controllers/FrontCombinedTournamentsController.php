@@ -100,8 +100,8 @@ class FrontCombinedTournamentsController extends \BaseController {
 
             if ($racing['success']) {
 
-                // add sponsor to race meeting name
-                $racing['result']['meeting']['name'] = $tournamentKey['group']['name'];
+//                // add sponsor to race meeting name
+//                $racing['result']['meeting']['name'] = $tournamentKey['group']['name'];
 
                 $combinedResult = array_merge($tournamentKey, $racing['result'], array('selected' => array('race_id' => $nextEvent)));
             }

@@ -467,13 +467,15 @@ class TournamentController extends JController
 
 			//$tournament->feature_keyword						= $feature_keyword;
 
-           	if (!$is_racing) {
+           	//if (!$is_racing) {
 				$tournament->closed_betting_on_first_match_flag		= (int)$closed_betting_on_first_match_flag;
 				$tournament->betting_closed_date					= $betting_closed_date;
 				$tournament->reinvest_winnings_flag					= (int)JRequest::getVar('reinvest_winnings_flag', 0);
 				$tournament->bet_limit_flag							= (int)JRequest::getVar('bet_limit_flag', 0);
-			}
-			
+			//}
+
+
+
 			$is_future_tournament = ($is_racing && $future_meeting_venue != -1);
 			
 			if (!isset($error_list['event_group']) && $is_future_tournament && isset($type_code_lookup[$sport->name])) {
@@ -609,6 +611,12 @@ class TournamentController extends JController
 		$jackpot_flag			= JRequest::getVar('jackpot_flag', 0);
 		$parent_tournament_id	= JRequest::getVar('parent_tournament_id', null);
 		$minimum_prize_pool		= JRequest::getVar('minimum_prize_pool', 0);
+
+
+        $reinvest_winnings_flag = JRequest::getVar('reinvest_winnings_flag', 0);
+        $closed_betting_on_first_match_flag = JRequest::getVar('closed_betting_on_first_match_flag', 0);
+        $tournament_sponsor_name = JRequest::getVar('tournament_sponsor_name', null);
+
 		
 		$buyin_id					= JRequest::getVar('ticket_value', 1);
 		$buyin_model				=& $this->getModel('TournamentBuyIn', 'TournamentModel');
@@ -633,7 +641,7 @@ class TournamentController extends JController
 				} else if (!empty($future_meeting_venue) && $future_meeting_venue != -1) {
 					$automated_text .= $future_meeting_venue;
 				}
-				$automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
+				// $automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
 				
 			//	if (!$jackpot_flag) {
 			//		$automated_text .= '/' . $minimum_prize_pool_amount;
@@ -657,6 +665,14 @@ class TournamentController extends JController
 					$automated_text .= 'Free.';
 					
 				}
+
+                if ($closed_betting_on_first_match_flag == 1){
+                    $automated_text .= ' You can not bet after the 1st event in this tournament starts.';
+                }
+
+                if ($reinvest_winnings_flag == 0 && $closed_betting_on_first_match_flag != 1){
+                    $automated_text .= ' You can not re-invest your winnings in this tournament.';
+                }
 				
 				$automated_text .= ' Winners will receive';
 				

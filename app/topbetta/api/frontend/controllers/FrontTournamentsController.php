@@ -301,7 +301,7 @@ class FrontTournamentsController extends \BaseController {
                        // ($tourn->tournament_sponsor_name) ? $tournamentName = $tourn->name . ' - '.$tourn->tournament_sponsor_name  : $tournamentName = $tourn->name;
 
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn->name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag, 'tournament_sponsor_name' => $tourn->tournament_sponsor_name, 'tournament_sponsor_logo' => $tourn->tournament_sponsor_logo, 'tournament_sponsor_logo_link' => $tourn->tournament_sponsor_logo_link);
+						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn->name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag, 'tournament_sponsor_name' => $tourn->tournament_sponsor_name, 'tournament_sponsor_logo' => $tourn->tournament_sponsor_logo, 'tournament_sponsor_logo_link' => $tourn->tournament_sponsor_logo_link, 'reinvest_winnings_flag' => $tourn->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tourn->closed_betting_on_first_match_flag);
 					}
 
 					//handle sub_type for racing
@@ -321,8 +321,8 @@ class FrontTournamentsController extends \BaseController {
 
 				}
 
-                ($tournament->tournament_sponsor_name) ? $meetingNameWithTournSponsor = $meetingName. ' - '. $tournament->tournament_sponsor_name: $meetingNameWithTournSponsor = $meetingName;
-				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingNameWithTournSponsor, 'next_event_start' => $nextEventStartTime, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
+                //($tournament->tournament_sponsor_name) ? $meetingNameWithTournSponsor = $meetingName. ' - '. $tournament->tournament_sponsor_name: $meetingNameWithTournSponsor = $meetingName;
+				$eachMeeting[] = array('id' => (int)$meetingId, 'name' => $meetingName, 'next_event_start' => $nextEventStartTime, 'state' => $tournament -> state, 'weather' => $tournament -> weather, 'track' => $tournament -> track, 'num_tournaments' => $numTournaments, 'sub_type' => $sub_type_name, 'tournament_type' => $tournamentType, 'tournaments' => $tourns);
 			}
 		}
 
@@ -472,11 +472,11 @@ class FrontTournamentsController extends \BaseController {
 		// special case to send data back in a format for backbone - this ones for you Jase ;-)
 		if ($grouped == true) {
 
-            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournament->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournament->name;
+           // ($tournament->tournament_sponsor_name) ? $tournamentName = $tournament->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournament->name;
 
             $tournamentDetails = array(
 				'id' => (int)$tournament -> id,
-				'name' => $tournamentName,
+				'name' => $tournament->name,
 				'buy_in' => (int)$tournament -> buy_in,
 				'entry_fee' => (int)$tournament -> entry_fee,
 				'num_entries' => (int)$numRegistrations,
@@ -485,6 +485,9 @@ class FrontTournamentsController extends \BaseController {
 				'start_currency' => (int)$tournament -> start_currency,
 				'bet_limit_flag' => (int)$tournament -> bet_limit_flag,
                 'featured' => $featuredTournamentFlag,
+                'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag,
+                'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag,
+                'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date)
 			);
@@ -492,11 +495,11 @@ class FrontTournamentsController extends \BaseController {
 
             $tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
 
-            ($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent->name;
+            //($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent->name;
 
 			return array('success' => true, 'result' => array(
 				'id' => (int)$tournamentParent -> id,
-				'name' => $tournamentName,
+                'name' => $tournamentParent -> name,
 				'state' => $tournamentParent -> state,
 				'weather' => $tournamentParent -> weather,
 				'track' => $tournamentParent -> track,
@@ -511,12 +514,14 @@ class FrontTournamentsController extends \BaseController {
 		if ($isRacingTournament) {
 
 			// ::: racing related data :::
-			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r'));
+			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name));
+
+
 
 		} else {
 
 			// ::: sports related data :::
-			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's'));
+			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name));
 
 		}
 
