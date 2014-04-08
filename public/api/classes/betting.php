@@ -731,7 +731,7 @@ class Api_Betting extends JController
                         if ($iframe) {
                             return array('status' => 500, 'error_msg' => 'Betting has already closed');
                         } else {
-                            return OutputHelper::json(500, array('error_msg' => 'Betting has already closed. :'));
+                            return OutputHelper::json(500, array('error_msg' => 'TournamentBetready closed. :'));
                         }
                     }
                 }
@@ -2546,6 +2546,12 @@ class Api_Betting extends JController
 
             if (is_null($tournament)) {
                 return OutputHelper::json(500, array('error_msg' => 'Tournament not found'), $save);
+            }
+
+            if($tournament->closed_betting_on_first_match_flag){
+                if (strtotime($tournament->betting_closed_date) < time()) {
+                        return OutputHelper::json(500, array('error_msg' => 'Betting is already closed.'));
+                }
             }
 
             if (strtotime($tournament->betting_closed_date) < time()) {
