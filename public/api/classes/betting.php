@@ -2511,39 +2511,41 @@ class Api_Betting extends JController
 
                 'sport_bet_selections' => array(
 
-                    // Bet Selection Data - bet_selection record
-                    //'bet_selection_id' => '',
-                    //'bet_selection_dividend' => '', // is this fixed odds
+                    array(
+                        // Bet Selection Data - bet_selection record
+                        //'bet_selection_id' => '',
+                        //'bet_selection_dividend' => '', // is this fixed odds
 
-                    // Option Data - selection record
-                    'option_id' => $selection->selection_id,
-                    'option_name' => $selectionDetails->option_name,
-                    'option_odds' => $bet_dividend,  // is this fixed odds
-                    //   'option_line' => '',
-                    // 'option_bet_limit' => '', // ?
+                        // Option Data - selection record
+                        'option_id' => $selection->selection_id,
+                        'option_name' => $selectionDetails->option_name,
+                        'option_odds' => $bet_dividend,  // is this fixed odds
+                        //   'option_line' => '',
+                        // 'option_bet_limit' => '', // ?
 
-                    // Market Data - market recors
-                    'market_id' => $selectionDetails->market_id,
-                    'market_status' => $selectionDetails->market_status,
-                    //   'market_line' => '',
+                        // Market Data - market recors
+                        'market_id' => $selectionDetails->market_id,
+                        'market_status' => $selectionDetails->market_status,
+                        //   'market_line' => '',
 
-                    // Market Type Data
-                    'market_type_id' => $selectionDetails->market_type_id,
-                    'market_name' => $selectionDetails->market_type_name,
+                        // Market Type Data
+                        'market_type_id' => $selectionDetails->market_type_id,
+                        'market_name' => $selectionDetails->market_type_name,
 
-                    // Event Data
-                    'event_id' => $selectionDetails->event_id,
-                    'event_name' => $selectionDetails->event_name,
-                    'event_start_time' => $selectionDetails->event_start_time,
+                        // Event Data
+                        'event_id' => $selectionDetails->event_id,
+                        'event_name' => $selectionDetails->event_name,
+                        'event_start_time' => $selectionDetails->event_start_time,
 
-                    // Competition Data
-                    'competition_id' => $selectionDetails->competition_id,
-                    'competition_name' => $selectionDetails->competition_name,
-                    'competition_start_time' => $selectionDetails->competition_start_time,
+                        // Competition Data
+                        'competition_id' => $selectionDetails->competition_id,
+                        'competition_name' => $selectionDetails->competition_name,
+                        'competition_start_time' => $selectionDetails->competition_start_time,
 
-                    // Sport Data
-                    'sport_id' => $selectionDetails->sport_id,
-                    'sport_name' => $selectionDetails->sport_name,
+                        // Sport Data
+                        'sport_id' => $selectionDetails->sport_id,
+                        'sport_name' => $selectionDetails->sport_name,
+                    ),
 
                 ),
 
