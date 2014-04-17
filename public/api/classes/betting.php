@@ -2549,7 +2549,8 @@ class Api_Betting extends JController
 
             );
 
-            file_put_contents('/tmp/riskSportsBet', "RiskPayload" . print_r($riskBet, true) . "\n", FILE_APPEND | LOCK_EX);
+            $jsonPayload = json_encode($riskBet);
+            file_put_contents('/tmp/riskSportsBet', "RiskPayload: " . $jsonPayload . "\n", FILE_APPEND | LOCK_EX);
 
             RiskManagerHelper::sendSportBet($riskBet);
 
