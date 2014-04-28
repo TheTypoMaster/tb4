@@ -725,6 +725,7 @@ class Api_Betting extends JController
                 $tournament_model = & $this->getModel('TournamentRacing', 'TournamentModel');
                 $tournament = $tournament_model->getTournamentRacingByTournamentID($id);
 
+
                 if($tournament->closed_betting_on_first_match_flag){
                     if (strtotime($tournament->betting_closed_date) < time()) {
                         //return $this->ticketError(JText::_('Betting has already closed'), $save, $tournament);
