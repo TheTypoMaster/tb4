@@ -228,16 +228,14 @@ class TournamentSportOfferController extends JController
 				$market_model->setMarketToRefund($market_id);
 			} else {
 
-                // Check if selection already has a result
-                $resulted_selection = $offerresult_model->getSelectionResultBySelectionID($offer_id);
+                // delete existing result for this selection if it exists
+                $offerresult_model->deleteSelectionResultBySelectionID($offer_id);
 
-                if($resulted_selection) {
-                    $offer_result_params = array(
-                        'selection_id'	=> $offer_id
-                    );
+                $offer_result_params = array(
+                    'selection_id'	=> $offer_id
+                );
 
-                    $offer_result_id = $offer_result_model->store($offer_result_params);
-                }
+                $offer_result_id = $offer_result_model->store($offer_result_params);
 
 			}
 		}
