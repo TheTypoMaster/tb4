@@ -3,6 +3,11 @@
 class RaceMarket extends \Eloquent {
 
 	protected $table = 'tbdb_market';
+
+    public function event(){
+        return $this->belongsTo('TopBetta\RaceEvent', 'id', 'event_id');
+    }
+
 	
 	/**
 	 * Check if a meeting exists.
