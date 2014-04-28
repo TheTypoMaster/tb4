@@ -253,5 +253,21 @@ class TournamentModelMarket extends SuperModel
 
 		$this->store($params);
 	}
+
+    /**
+     * Set market restuled status
+     *
+     * @param integer $market_id
+     * @return void
+     */
+    public function setMarketToResulted($market_id)
+    {
+        $params = array(
+            'id' 			=> $market_id,
+            'market_status'	=> 'R'
+        );
+
+        $this->store($params);
+    }
 	
 }

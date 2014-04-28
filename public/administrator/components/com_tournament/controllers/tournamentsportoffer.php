@@ -237,6 +237,9 @@ class TournamentSportOfferController extends JController
 
                 $offer_result_id = $offer_result_model->store($offer_result_params);
 
+                // set market status to resulted
+                $market_model->setMarketToResulted($market_id);
+
 			}
 		}
 
