@@ -18,7 +18,7 @@ class DbMarketsRepository extends BaseEloquentRepository {
     }
 
     public function getMarketEventStartTime($marketId){
-        return RaceMarket::find($marketId)->events()->pluck('start_date');
+        return RaceMarket::find($marketId)->event()->pluck('start_date');
     }
 
 } 
