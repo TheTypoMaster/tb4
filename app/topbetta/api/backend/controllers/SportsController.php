@@ -452,6 +452,8 @@ class SportsController extends BaseController {
                                     // get the start time for the event from the DB
                                     $eventStartTime = $this->markets->getMarketEventStartTime($marketExists);
 
+                                    TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId - NowTime:". Carbon::now('Australia/Sydney'). ", StartTime:".$eventStartTime);
+
                                     // brush the odds update if the event has started
                                     if(Carbon::now('Australia/Sydney') < $eventStartTime){
 
