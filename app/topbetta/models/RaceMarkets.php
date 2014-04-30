@@ -5,7 +5,7 @@ class RaceMarket extends \Eloquent {
 	protected $table = 'tbdb_market';
 
     public function event(){
-        return $this->belongsTo('TopBetta\RaceEvent', 'id', 'event_id');
+        return $this->belongsTo('TopBetta\RaceEvent', 'event_id', 'id');
     }
 
 	
