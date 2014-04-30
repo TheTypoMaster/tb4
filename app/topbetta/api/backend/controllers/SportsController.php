@@ -3,7 +3,7 @@
 use BaseController;
 use Carbon\Carbon;
 use TopBetta;
-use TopBetta\RaceMarket;
+use TopBetta\Repositories\DbMarketsRepository;
 
 class SportsController extends BaseController {
 
@@ -52,7 +52,7 @@ class SportsController extends BaseController {
 
     protected $markets;
 
-	public function __construct(RaceMarket $markets)
+	public function __construct(DbMarketsRepository $markets)
 	{
         $this->markets = $markets;
 		//$this->beforeFilter('apiauth');
