@@ -2045,8 +2045,8 @@ class Api_Betting extends JController
              * TURN OFF ALL SPORTS BETTING TILL RE-ENABLED
              *
              */
-            $validation->error = JText::_('No sports betting available at this time');
-            return OutputHelper::json(500, array('error_msg' => $validation->error));
+//            $validation->error = JText::_('No sports betting available at this time');
+//            return OutputHelper::json(500, array('error_msg' => $validation->error));
 
 
             /*
