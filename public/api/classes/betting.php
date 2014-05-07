@@ -2094,6 +2094,13 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
+            $match =  $sportsBetting_model->getEventApi($betMatchID);
+
+            if (strtotime($match->start_date) < time()) {
+                return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
+            }
+
+
 //  			// check if market_id is in the DB
 //  			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
 //  			if (is_null($market_exists)) {
