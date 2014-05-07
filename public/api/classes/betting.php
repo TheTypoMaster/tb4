@@ -2039,6 +2039,16 @@ class Api_Betting extends JController
                 file_put_contents($file, "* Bet Selection:" . $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
             }
 
+
+
+            /*
+             * TURN OFF ALL SPORTS BETTING TILL RE-ENABLED
+             *
+             */
+            $validation->error = JText::_('No sports betting available at this time');
+            return OutputHelper::json(500, array('error_msg' => $validation->error));
+
+
             /*
              *  Check all required POST vars are there
              */
