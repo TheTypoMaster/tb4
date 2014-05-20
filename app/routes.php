@@ -34,7 +34,8 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 							"http://jason.mugbookie.com",
 							"http://evan.mugbookie.com",
 							"http://mic.mugbookie.com",
-							"http://greg.mugbookie.com"
+							"http://greg.mugbookie.com",
+							"http://jasontb.mugbookie.com"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){
