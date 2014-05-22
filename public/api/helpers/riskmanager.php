@@ -41,6 +41,21 @@ class RiskManagerHelper
         }
     }
 
+    public function sendSportBet($betData)
+    {
+        $response = RiskManagerHelper::curl('sportbets', 'post', $betData);
+
+        if (!$response) {
+            return false;
+        }
+
+        if ($response->status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function curl($endPoint, $type, $payload = array())
     {
         // map the right endpoint to this host
