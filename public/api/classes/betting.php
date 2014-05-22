@@ -2572,6 +2572,7 @@ class Api_Betting extends JController
             $jsonPayload = json_encode($riskBet);
             file_put_contents('/tmp/riskSportsBet', "RiskPayload: " . $jsonPayload . "\n", FILE_APPEND | LOCK_EX);
 
+
             RiskManagerHelper::sendSportBet($riskBet);
 
             // setup database object rather than use the SUPERMODEL
