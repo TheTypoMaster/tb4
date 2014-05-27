@@ -112,10 +112,10 @@ class FrontMeetingsController extends \BaseController {
 				->groupBy('ege.event_group_id');
 
 		// we want to include any events from meetings yesterday up until 5am the next day
-		if (\Carbon\Carbon::now()->lte(\Carbon\Carbon::today()->addHours(5))) {
-			$query->where('e.start_date', '<', $meetDate . ' 05:00');
+		if (\Carbon\Carbon::now()->lte(\Carbon\Carbon::today()->addHours(6))) {
+			$query->where('e.start_date', '<', $meetDate . ' 06:00');
 		} else {
-			$query->where('e.start_date', '>', $meetDate . ' 05:00');
+			$query->where('e.start_date', '>', $meetDate . ' 06:00');
 		}
 		
 		$events = $query->get();
