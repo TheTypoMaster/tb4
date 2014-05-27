@@ -24,6 +24,7 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 
 	$httpOrigin            = $requestHeaders['Origin'];
 	$allowedHttpOrigins   = array(
+                            "http://10.0.0.119:9778",
                             "http://localhost:9778",
                             "http://beta.mugbookie.com",
                             "http://localhost",
@@ -34,7 +35,8 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 							"http://jason.mugbookie.com",
 							"http://evan.mugbookie.com",
 							"http://mic.mugbookie.com",
-							"http://greg.mugbookie.com"
+							"http://greg.mugbookie.com",
+							"http://jasontb.mugbookie.com"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){
