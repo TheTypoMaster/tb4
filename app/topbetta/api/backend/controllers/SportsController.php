@@ -538,6 +538,11 @@ class SportsController extends \BaseController {
 												$selectionResultModel->position = 1;
 												$selectionResultModel->save();
 												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
+												
+												// result any sport bet for this selection
+												\Log::info('RESULTING: all sport bets for selection id: ' . $winningSelectionID);
+												$betResultRepo = new TopBetta\Repositories\BetResultRepo();
+												$betResultRepo->resultAllSportBetsForSelection($winningSelectionID);												
 											}
 											
 											// TAKEN OUT TILL WE GO FULL AUTO
