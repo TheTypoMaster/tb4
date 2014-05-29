@@ -123,13 +123,20 @@ class BetResultRepo
 		return $this->processBetPayout($bet);
 	}
 	
-	public function resultAllSportBetsForSelection($selectionId)
+	/**
+	 * Find all pending bets for a market and result them
+	 * 
+	 * @param type $extMarketId
+	 * @return type
+	 */
+	public function resultAllSportBetsForMarket($extMarketId)
 	{
 
 		$bets = Bet::where('bet_result_status_id', 1)
 				->join('tbdb_bet_selection as bs', 'bs.bet_id', '=', 'tbdb_bet.id')
+				->join('tbdb_selection as s', 'bs.selection_id', '=', 's.id')
 				->where('resulted_flag', 0)				
-				->where('bs.selection_id', $selectionId)
+				->where('s.external_market_id', $extMarketId)
 				->select('tbdb_bet.*')
 				->get();
 
@@ -156,7 +163,8 @@ class BetResultRepo
 		// TODO: do we need to check if event was abandoned or ready to payout
 		
 		// TODO: handle refunds
-		
+		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
+		$bet->resulted_flag = 1;		
 		$processBet = true;
 
 		if (!$processBet) {
