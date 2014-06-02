@@ -22,9 +22,15 @@ class RiskManagerAPI
         );
 
         $betResultJSON = json_encode($bet);
+		
+		$endPoint = 'bets/';
+		// sport bets are handled separately on risk
+		if ($betResultData->bet_origin_id == 3) {
+			$endPoint = 'sportbets/';
+		}
 
         // send bet result to risk manager
-        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.riskManagerAPI'), 'bets/' . $bet['ReferenceId'], 'PUT', $betResultJSON);
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.riskManagerAPI'), $endPoint . $bet['ReferenceId'], 'PUT', $betResultJSON);
 
         $response = json_decode($responseJSON);
 

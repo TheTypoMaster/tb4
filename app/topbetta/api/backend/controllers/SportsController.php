@@ -554,8 +554,14 @@ class SportsController extends BaseController {
 												$selectionResultModel->position = 1;
 												$selectionResultModel->save();
 												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
+												
 											}
 											
+											// result any sport bet for this market
+											\Log::info('RESULTING: all sport bets for market id: ' . $marketId);
+											$betResultRepo = new TopBetta\Repositories\BetResultRepo();
+											$betResultRepo->resultAllSportBetsForMarket($marketId);
+
 											// TAKEN OUT TILL WE GO FULL AUTO
 // 											// update the event status to paying
 // 											$eventExists = TopBetta\SportsMatches::eventExists($gameId);
