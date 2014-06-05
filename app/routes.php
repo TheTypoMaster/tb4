@@ -11,6 +11,7 @@
 |
 */
 
+Route::get('jason/tournamenthistory', 'FrontUsersTournaments@usersTournamentHistory');
 // apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
@@ -111,6 +112,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 });
+
 
 // Route group for consumer API
 Route::group(array('prefix' => '/api/v1'), function() {

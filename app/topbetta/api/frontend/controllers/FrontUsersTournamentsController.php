@@ -6,7 +6,7 @@ use TopBetta;
 class FrontUsersTournamentsController extends \BaseController {
 
 	public function __construct() {
-		$this -> beforeFilter('auth');
+//		$this -> beforeFilter('auth');
 	}
 
 	/**
@@ -205,6 +205,112 @@ class FrontUsersTournamentsController extends \BaseController {
 			});
 
 		}
+
+	}
+
+	public function usersTournamentHistory() {
+
+		$type = \Input::get('type', null);
+
+		$limit = \Input::get('per_page', 25);
+		$page = \Input::get('page', 1);
+
+		$offset = $limit * ($page - 1);
+
+		$excludeSports = array('galloping', 'greyhounds', 'harness');
+		$racingMap = array('galloping' => 'r', 'greyhounds' => 'g', 'harness' => 'h');
+
+		$userId = \Auth::user() -> id;
+
+		//cache for 30 seconds (.5 min)
+		$fn = function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap) {
+
+			$ticket_model = new \TopBetta\TournamentTicket;
+
+			// just grab the completed tournaments - this API needs to be re-addressed at some stage.
+			$paid = 1;
+
+			$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset, $paid);
+			$tournamentHistory = array();
+
+			foreach ($tournament_list['result'] as $tournament) {
+				//set bet open
+				$tournament->bet_open		= strtotime($tournament->end_date) > time();
+				//populate bettabucks
+				$tournament->betta_bucks	= $ticket_model->getAvailableTicketCurrency($tournament->id, $userId);
+				//get leaderboard rank
+
+				$leaderboard_model				= new \TopBetta\TournamentLeaderboard;
+				$leaderboard					= $leaderboard_model->getLeaderBoardRankByUserAndTournament($userId, $tournament);
+				$tournament->leaderboard_rank	= $leaderboard->rank;
+				$tournament->num_entries		= $ticket_model->countTournamentEntrants($tournament->id);
+
+				$tournament->prize				= null;
+				$tournament->ticket_awarded		= null;
+
+				$tournament->type				= (in_array($tournament->sport_name, $excludeSports) ? 'racing' : 'sports');
+				$tournament->sub_type			= (in_array($tournament->sport_name, $excludeSports) ? $racingMap[$tournament->sport_name] : $tournament->sport_name);
+
+				$transaction_record				= null;
+				$parent_tournament				= null;
+				if ($tournament->result_transaction_id) {
+					if ($tournament->jackpot_flag && !empty($tournament->parent_tournament_id) && -1 != $tournament->parent_tournament_id) {
+						$transaction_record = \TopBetta\FreeCreditBalance::find($tournament->result_transaction_id);
+						$parent_tournament = \TopBetta\Tournament::find($tournament->parent_tournament_id);
+					} else {
+						$transaction_record = \TopBetta\AccountBalance::find($tournament->result_transaction_id);
+					}
+				}
+				if ($transaction_record && $transaction_record->amount > 0) {
+					$tournament->prize = $transaction_record->amount;
+
+					if ($tournament->jackpot_flag && !empty($parent_tournament) && -1 != $tournament->parent_tournament_id) {
+						$ticket_cost = $parent_tournament->entry_fee + $parent_tournament->buy_in;
+
+						if ($tournament->prize > $ticket_cost) {
+							$tournament->ticket_awarded	= $parent_tournament->id;
+							$tournament->prize			= $tournament->prize - $ticket_cost;
+						}
+					}
+				}
+
+				//buid our single tournament history row
+				$prize = (empty($tournament->ticket_awarded) && empty($tournament->prize)) ? '-' : null;
+				if ($tournament->ticket_awarded) {
+					$prize .= '1 Ticket (#' . $tournament->ticket_awarded .')';
+				}
+
+				//TODO: is this really needed?
+				if ($tournament->prize) {
+					//$prize .= ' + ';
+				}
+
+				$tournamentHistory[] = array(
+					'id' => (int)$tournament->id,
+					'sport' => $tournament->sport_name . ' - ' . $tournament->tournament_name,
+					'sub_type' => $tournament->sub_type,
+					'tournament_name' => $tournament->tournament_name,
+					'start_date' => \TimeHelper::isoDate($tournament->start_date),
+					'end_date' => \TimeHelper::isoDate($tournament->end_date),
+					'total' => (int)$tournament->betta_bucks,
+					'place' => $tournament->leaderboard_rank,
+					'num_entries' => (int)$tournament->num_entries,
+					'prize' => $prize,
+					'prize_amount' => (int)$tournament->prize,
+					'entry_fee' => $tournament->entry_fee,
+					'buy_in' => $tournament->buy_in,
+					'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
+					'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag,
+					'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag
+				);
+			}
+
+			$numPages = ceil($tournament_list['num_rows'] -> total / $limit);
+			return array("success" => true, "result" => array('transactions' => $tournamentHistory, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
+
+		};
+
+		return $fn();
 
 	}
 
