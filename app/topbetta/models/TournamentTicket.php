@@ -432,7 +432,7 @@ class TournamentTicket extends \Eloquent {
 			$query .= ' AND t.paid_flag = 1 ';
 		}
 
-		$query .= ' AND t.end_date >= ' . $since;
+		$query .= ' AND t.end_date >= "' . $since .'"' ;
 
 		$countQuery = $selectCountQuery . $query;
 
