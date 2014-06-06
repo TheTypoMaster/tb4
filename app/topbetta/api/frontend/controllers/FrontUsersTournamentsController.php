@@ -234,7 +234,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			// just grab the completed tournaments - this API needs to be re-addressed at some stage.
 			$paid = false;
 
-			$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset, $paid, $since);
+			$tournament_list = $ticket_model->getUserTournamentListSince($userId, 'tk.id', 'DESC', $limit, $offset, $paid, $since);
 			$tournamentHistory = array();
 
 			foreach ($tournament_list['result'] as $tournament) {
