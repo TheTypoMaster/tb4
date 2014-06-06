@@ -209,5 +209,9 @@ class TournamentLeaderboard extends \Eloquent {
 			->where('user_id', $userId)
 			->where('tournament_id', $tournamentId)
 			->delete();
-	}	
+	}
+
+	public function tournament() {
+		return $this->belongsTo('\TopBetta\Tournament', 'tournament_id');
+	}
 }

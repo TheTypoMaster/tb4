@@ -16,7 +16,6 @@ use Whoops\Example\Exception;
 
 class UserTicketsRepository {
 
-
 	/**
 	 * @var \User
 	 */
@@ -38,7 +37,7 @@ class UserTicketsRepository {
 	public function getUsersTicketsAndTournaments($endDate = null) {
 
 		$user = $this->getUser();
-		$tournamentTickets = $user->tournamentTickets
+		$tournamentTickets = $user->tournamentTickets()
 			->join('tbdb_tournament', 'tbdb_tournament.id','=','tbdb_tournament_ticket.tournament_id');
 
 		if ($endDate !== null) {
@@ -47,8 +46,6 @@ class UserTicketsRepository {
 		}
 
 		return $tournamentTickets->get();
-
-
 	}
 
 	/**

@@ -8,7 +8,36 @@
 
 namespace TopBetta\Repositories;
 
+use TopBetta\Tournament;
 
-class TournamentsRepository {
+class TournamentsRepository extends BaseEloquentRepository {
 
-} 
+	/**
+	 * @var \TopBetta\Tournament
+	 */
+	private $model;
+
+	function __construct(Tournament $tournament) {
+		$this->model = $tournament;
+	}
+
+	public function getTournamentLeaderboard() {
+		return $this->model->leaderboards;
+	}
+
+	/**
+	 * @return \TopBetta\Tournament
+	 */
+	public function getTournament()
+	{
+		return $this->model;
+	}
+
+	/**
+	 * @param \TopBetta\Tournament $tournament
+	 */
+	public function setTournament($tournament)
+	{
+		$this->model = $tournament;
+	}
+}
