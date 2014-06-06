@@ -228,7 +228,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			$ticket_model = new \TopBetta\TournamentTicket;
 
 			// just grab the completed tournaments - this API needs to be re-addressed at some stage.
-			$paid = 1;
+			$paid = false;
 
 			$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset, $paid);
 			$tournamentHistory = array();

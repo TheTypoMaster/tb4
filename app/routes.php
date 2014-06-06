@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('jason/tournamenthistory', 'FrontUsersTournaments@usersTournamentHistory');
+Route::get('users/tournamenthistory', 'FrontUsersTournaments@usersTournamentHistory');
 // apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
