@@ -2,6 +2,7 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use \Carbon\Carbon;
 
 class FrontUsersTournamentsController extends \BaseController {
 
@@ -210,7 +211,10 @@ class FrontUsersTournamentsController extends \BaseController {
 
 	public function usersTournamentHistory() {
 
+		$c = new Carbon();
+
 		$type = \Input::get('type', null);
+		$since = \Input::get('since', $c->subDays(2));
 
 		$limit = \Input::get('per_page', 25);
 		$page = \Input::get('page', 1);
@@ -223,14 +227,14 @@ class FrontUsersTournamentsController extends \BaseController {
 		$userId = \Auth::user() -> id;
 
 		//cache for 30 seconds (.5 min)
-		$fn = function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap) {
+		$fn = function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap, $since) {
 
 			$ticket_model = new \TopBetta\TournamentTicket;
 
 			// just grab the completed tournaments - this API needs to be re-addressed at some stage.
 			$paid = false;
 
-			$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset, $paid);
+			$tournament_list = $ticket_model->getUserTournamentList($userId, 'tk.id', 'DESC', $limit, $offset, $paid, $since);
 			$tournamentHistory = array();
 
 			foreach ($tournament_list['result'] as $tournament) {
