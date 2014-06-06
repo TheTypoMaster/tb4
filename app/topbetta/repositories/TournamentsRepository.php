@@ -12,11 +12,6 @@ use TopBetta\Tournament;
 
 class TournamentsRepository extends BaseEloquentRepository {
 
-	/**
-	 * @var \TopBetta\Tournament
-	 */
-	private $model;
-
 	function __construct(Tournament $tournament) {
 		$this->model = $tournament;
 	}
