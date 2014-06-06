@@ -229,7 +229,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 		$c = new Carbon();
 		$twoDaysAgo = $c->subDays(2);
-		$sinceDate = Input::get('since', $twoDaysAgo);
+		$sinceDate = \Input::get('since', $twoDaysAgo);
 		$ticketsList = $this->userTicketsRepository->getUsersTicketsAndTournaments($sinceDate)->toArray();
 
 		// Create a new instance of a tournaments repository. This repository will be re-used while iterating through the
