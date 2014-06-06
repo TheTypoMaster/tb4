@@ -49,4 +49,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->email;
 	}
 
+	/**
+	 * A User can have many tickets for tournaments
+	 * @return mixed
+	 */
+	public function tournamentTickets() {
+		return $this->hasMany('\TopBetta\TournamentTicket', 'user_id');
+	}
+
 }

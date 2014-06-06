@@ -11,7 +11,6 @@
 |
 */
 
-Route::get('users/tournamenthistory', 'FrontUsersTournaments@usersTournamentHistory');
 // apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
@@ -95,6 +94,8 @@ Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), funct
 	Route::get('risaformimporter', 'TopBetta\admin\RisaFormImporter@formImporter');
 
 });
+
+Route::get('/api/v1/jason', 'FrontUsersTournaments@usersTournamentHistory');
 
 
 // Route group for backend API. Uses basic stateless auth filter

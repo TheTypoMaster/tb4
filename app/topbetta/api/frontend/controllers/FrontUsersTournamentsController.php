@@ -226,8 +226,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 		$userId = \Auth::user() -> id;
 
-		//cache for 30 seconds (.5 min)
-		$fn = function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap, $since) {
+		return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap, $since) {
 
 			$ticket_model = new \TopBetta\TournamentTicket;
 
@@ -312,7 +311,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			$numPages = ceil($tournament_list['num_rows'] -> total / $limit);
 			return array("success" => true, "result" => array('transactions' => $tournamentHistory, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
 
-		};
+		});
 
 		return $fn();
 
