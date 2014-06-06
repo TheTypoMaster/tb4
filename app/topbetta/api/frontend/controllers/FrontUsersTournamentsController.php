@@ -234,7 +234,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 		// Create a new instance of a tournaments repository. This repository will be re-used while iterating through the
 		// ticket list in order to get that tournaments leaderboard.
-		$tournamentsRepository = App::make('\TopBetta\TournamentsRepository');
+		$tournamentsRepository = \App::make('\TopBetta\TournamentsRepository');
 
 		var_dump($ticketsList);
 
