@@ -247,12 +247,14 @@ class FrontUsersTournamentsController extends \BaseController {
 			$minutes = 60;
 
 			// Get the position of the user in the tournament
-			if ((int)array_get($tournament, 'paid_flag', 0) === 1) {
+//			if ((int)array_get($tournament, 'paid_flag', 0) === 1) {
+//
+//				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
+//			} else {
+//				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
+//			}
 
-				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
-			} else {
-				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
-			}
+			$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 
 			// Build a response record. This should not belong here, but there isnt really a service layer
 			$response[] = array(
