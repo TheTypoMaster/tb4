@@ -247,13 +247,12 @@ class FrontUsersTournamentsController extends \BaseController {
 			$minutes = 60;
 
 			// Get the position of the user in the tournament
-//			if ((int)array_get($tournament, 'paid_flag', 0) === 1) {
-//
-//				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
-//			} else {
-//				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
-//			}
-			var_dump($tournament);
+			if ((int)array_get($tournament, 'paid_flag', 0) === 1) {
+				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
+			} else {
+				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
+			}
+
 			$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 
 			// Build a response record. This should not belong here, but there isnt really a service layer
@@ -264,7 +263,8 @@ class FrontUsersTournamentsController extends \BaseController {
 				'start_currency' => array_get($tournament, 'start_currency', 0),
 				'currency' => array_get($leaderboard, 'currency', 0),
 				'turned_over' => array_get($leaderboard, 'turned_over', 0),
-				'end_date' => array_get($tournament, 'end_date', '')
+				'end_date' => array_get($tournament, 'end_date', ''),
+				'paid_flag' => array_get($tournament, 'paid_flag', 0)
 			);
 		}
 
