@@ -43,7 +43,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 		$rank = null;
 
-		echo "User ID: $userId";
+		echo "User ID: $userId" . '|';
 
 		for ($i = 0; $i < count($leaderboard); $i++) {
 
