@@ -237,6 +237,8 @@ class FrontUsersTournamentsController extends \BaseController {
 		$tournamentsRepository = \App::make('\TopBetta\Repositories\TournamentsRepository');
 
 		foreach ($ticketsList as $ticket) {
+			dd($ticket);
+			dd($ticket);
 			$tournamentsRepository->setTournament($ticket['tournament']);
 			$tournamentsRepository->getUsersPosition($user->id);
 		}
