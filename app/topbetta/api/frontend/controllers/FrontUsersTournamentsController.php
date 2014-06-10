@@ -236,10 +236,29 @@ class FrontUsersTournamentsController extends \BaseController {
 		// ticket list in order to get that tournaments leaderboard.
 		$tournamentsRepository = \App::make('\TopBetta\Repositories\TournamentsRepository');
 
+		// Base response
+		$response = array();
+
 		foreach ($ticketsList as $ticket) {
+
+			// Get the tournament record
+			$tournament = $tournamentsRepository->find(array_get($ticket, 'tournament_id'));
+
+			// Get the position of the user in the tournament
 			$position = $tournamentsRepository->getUsersPosition($user->id, array_get($ticket, 'tournament_id'));
-			dd($position);
+
+			// Build a response record. This should not belong here, but there isnt really a service layer
+			$response[] = array(
+				'position' => $position,
+				'ticket_id' => array_get($ticket, 'id', 0),
+				'name' => array_get($tournament, 'name', ''),
+				'start_currency' => array_get($tournament, 'start_currency', 0),
+				'currency' => array_get($ticket, 'currency', 0),
+				'end_date' => array_get($tournament, 'end_date', '')
+			);
 		}
+
+		dd($response);
 
 
 

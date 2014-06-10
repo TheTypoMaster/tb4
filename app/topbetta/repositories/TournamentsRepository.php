@@ -16,6 +16,11 @@ class TournamentsRepository extends BaseEloquentRepository {
 		$this->model = $tournament;
 	}
 
+	public function find($id) {
+		$model = parent::find($id);
+		return $model->toArray();
+	}
+
 	public function getTournamentLeaderboard() {
 		return $this->model->leaderboards;
 	}
