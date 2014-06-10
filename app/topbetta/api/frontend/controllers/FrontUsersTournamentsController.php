@@ -238,6 +238,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 		foreach ($ticketsList as $ticket) {
 			$position = $tournamentsRepository->getUsersPosition($user->id, array_get($ticket, 'tournament_id'));
+			dd($position);
 		}
 
 

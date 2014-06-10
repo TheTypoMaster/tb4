@@ -27,16 +27,17 @@ class TournamentsRepository extends BaseEloquentRepository {
 			'tournament_id', '=', $tournamentId
 			)
 		->orderBy('currency', 'DESC')
-		->get()->toArray();
+		->get()->first()->toArray();
 	}
 
 	public function getUsersPosition($userId, $tournamentId) {
 
 		$leaderboard = $this->getQualifiedLeaderboard($tournamentId);
-		dd($leaderboard);
-
 		$previousValue = false;
-		$previousRank = 0;
+		$previousRank = null;
+
+		$rank = null;
+
 		for ($i = 0; $i < count($leaderboard); $i++) {
 
 			// Get the record
@@ -54,9 +55,12 @@ class TournamentsRepository extends BaseEloquentRepository {
 			}
 
 			if (array_get($row, 'user_id', false) === $userId) {
-				return $previousRank;
+				$rank = $previousRank;
+				break;
 			}
 		}
+
+		return $rank;
 
 
 	}
