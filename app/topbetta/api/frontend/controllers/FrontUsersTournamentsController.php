@@ -247,14 +247,21 @@ class FrontUsersTournamentsController extends \BaseController {
 			$minutes = 60;
 
 			// Get the position of the user in the tournament
-			if ((int)array_get($tournament, 'paid_flag', 0) === 1) {
+
+			// If the tournament is paid AND the last update was over an hour ago, get the cached version
+
+			$now = new Carbon();
+			$cachedPeriodAgo = $now->subHours($minutes);
+			$tournamentLastUpdated = new Carbon(array_get($tournament, 'updated_date'));
+
+			if (((int)array_get($tournament, 'paid_flag', 0) === 1) && ($tournamentLastUpdated < $cachedPeriodAgo)) {
 				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 			} else {
 				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 			}
 
 			// Build a response record. This should not belong here, but there isnt really a service layer
-			$response[] = array(
+			$response[$tournamentId] = array(
 				'position' => $leaderboard['position'],
 				'ticket_id' => array_get($ticket, 'id', 0),
 				'name' => array_get($tournament, 'name', ''),
@@ -268,7 +275,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 		$numPages = 0;
 		$page = 0;
-		
+
 		return array("success" => true, "result" => array('transactions' => $response, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
 
 	}

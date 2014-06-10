@@ -27,13 +27,12 @@ class TournamentsRepository extends BaseEloquentRepository {
 		return $this->model->leaderboards;
 	}
 
-	public function getQualifiedLeaderboard($tournamentId, $since) {
+	public function getQualifiedLeaderboard($tournamentId) {
 		return Tournament::join(
 			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
 		)->where(
 			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
 			)
-		->where('end_date', '>=', $since)
 		->whereRaw('tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency')
 		->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
 		->get()->toArray();
@@ -48,13 +47,13 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 	public function getNonCachedTournamentLeaderboards($userId, $tournamentId, $minutes = 60) {
 		$now = new Carbon();
-		return $this->getUsersPosition($userId, $tournamentId, $now->subHours($minutes));
+		return $this->getUsersPosition($userId, $tournamentId);
 	}
 
-	public function getUsersPosition($userId, $tournamentId, $since = null) {
+	public function getUsersPosition($userId, $tournamentId) {
 
 		$tournament = $this->find($tournamentId);
-		$leaderboard = $this->getQualifiedLeaderboard($tournamentId, $since);
+		$leaderboard = $this->getQualifiedLeaderboard($tournamentId);
 		$previousValue = false;
 		$previousRank = null;
 		$rank = null;
