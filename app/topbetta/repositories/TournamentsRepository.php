@@ -26,7 +26,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 		$tournaments = $this->getTournament()->join(
 			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
-		);
+		)->get();
 
 		dd($tournaments);
 
