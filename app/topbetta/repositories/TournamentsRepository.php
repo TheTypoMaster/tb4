@@ -9,6 +9,7 @@
 namespace TopBetta\Repositories;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use TopBetta\Tournament;
 
 class TournamentsRepository extends BaseEloquentRepository {
