@@ -341,6 +341,6 @@ class Tournament extends \Eloquent {
 	}
 
 	public function leaderboards() {
-		return $this->hasMany('\TopBetta\TournamentLeaderboards', 'tournament_id');
+		return $this->hasMany('\TopBetta\TournamentLeaderboard', 'tournament_id');
 	}
 }
