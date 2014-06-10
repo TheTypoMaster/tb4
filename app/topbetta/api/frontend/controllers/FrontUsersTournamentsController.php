@@ -261,7 +261,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			}
 
 			// Build a response record. This should not belong here, but there isnt really a service layer
-			$response[$tournamentId] = array(
+			$response[] = array(
 				'position' => $leaderboard['position'],
 				'ticket_id' => array_get($ticket, 'id', 0),
 				'name' => array_get($tournament, 'name', ''),
