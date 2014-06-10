@@ -253,7 +253,7 @@ class FrontUsersTournamentsController extends \BaseController {
 //			} else {
 //				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 //			}
-
+			var_dump($tournament);
 			$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 
 			// Build a response record. This should not belong here, but there isnt really a service layer
