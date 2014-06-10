@@ -61,8 +61,8 @@ class TournamentsRepository extends BaseEloquentRepository {
 				$previousValue = $value;
 			}
 
-			echo $previousRank;
-			echo $previousValue;
+			echo $previousRank . '|';
+			echo $previousValue. '|';
 
 
 			if (array_get($row, 'user_id', false) === $userId) {
