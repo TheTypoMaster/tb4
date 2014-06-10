@@ -247,7 +247,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			$minutes = 60;
 
 			// Get the position of the user in the tournament
-			if ((int)array_get($tournament, 'paid', 0) === 1) {
+			if ((int)array_get($tournament, 'paid_flag', 0) === 1) {
 
 				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
 			} else {
