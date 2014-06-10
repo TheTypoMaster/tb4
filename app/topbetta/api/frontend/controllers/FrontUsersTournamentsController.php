@@ -266,10 +266,10 @@ class FrontUsersTournamentsController extends \BaseController {
 			);
 		}
 
-		dd($response);
-
-
-
+		$numPages = 0;
+		$page = 0;
+		
+		return array("success" => true, "result" => array('transactions' => $response, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
 
 	}
 
