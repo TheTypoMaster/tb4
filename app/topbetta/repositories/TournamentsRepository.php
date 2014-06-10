@@ -37,13 +37,13 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 	public function getUsersPosition($userId, $tournamentId) {
 
+		echo "Tournament ID: $tournamentId";
+
 		$leaderboard = $this->getQualifiedLeaderboard($tournamentId);
 		$previousValue = false;
 		$previousRank = null;
 
 		$rank = null;
-
-		echo "User ID: $userId" . '|';
 
 		for ($i = 0; $i < count($leaderboard); $i++) {
 
@@ -61,16 +61,10 @@ class TournamentsRepository extends BaseEloquentRepository {
 				$previousValue = $value;
 			}
 
-			echo $previousRank . '|';
-			echo $previousValue. '|';
-
-
 			if (array_get($row, 'user_id', false) === $userId) {
 				$rank = $previousRank;
 				break;
 			}
-
-			echo "++++++++++++++++++++++++++++++++++++++++++++";
 		}
 
 		return $rank;
