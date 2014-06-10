@@ -27,7 +27,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 			'tournament_id', '=', $tournamentId
 			)
 		->orderBy('currency', 'DESC')
-		->get()->first()->toArray();
+		->get()->toArray();
 	}
 
 	public function getUsersPosition($userId, $tournamentId) {
