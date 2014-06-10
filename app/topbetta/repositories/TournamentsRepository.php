@@ -29,10 +29,10 @@ class TournamentsRepository extends BaseEloquentRepository {
 		return Tournament::join(
 			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
 		)->where(
-			'tournament_id', '=', $tournamentId
+			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
 			)
-		->where('turned_over', '>=', 'start_currency')
-		->orderBy('currency', 'DESC')
+		->where('tbdb_tournament_leaderboard.turned_over', '>=', 'tbdb_tournament.start_currency')
+		->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
 		->get()->toArray();
 	}
 
