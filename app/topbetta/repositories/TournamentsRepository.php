@@ -43,6 +43,8 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 		$rank = null;
 
+		dd($leaderboard);
+
 		for ($i = 0; $i < count($leaderboard); $i++) {
 
 			// Get the record
