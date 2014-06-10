@@ -31,7 +31,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 		)->where(
 			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
 			)
-		->where('tbdb_tournament_leaderboard.turned_over', '>=', '`tbdb_tournament.start_currency`')
+		->whereRaw('tbdb_tournament_leaderboard.turned_over', '>=', 'tbdb_tournament.start_currency')
 		->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
 		->get()->toArray();
 	}
