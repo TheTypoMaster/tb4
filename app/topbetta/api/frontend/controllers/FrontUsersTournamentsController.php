@@ -236,12 +236,9 @@ class FrontUsersTournamentsController extends \BaseController {
 		// ticket list in order to get that tournaments leaderboard.
 		$tournamentsRepository = \App::make('\TopBetta\Repositories\TournamentsRepository');
 
-		var_dump($ticketsList);
-
 		foreach ($ticketsList as $ticket) {
 			$tournamentsRepository->setModel($ticket['tournament']);
-			var_dump($tournamentsRepository->getTournamentLeaderboard());
-			echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+			$tournamentsRepository->getUsersPosition($user->id);
 		}
 
 

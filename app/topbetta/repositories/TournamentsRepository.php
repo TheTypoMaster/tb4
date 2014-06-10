@@ -20,6 +20,19 @@ class TournamentsRepository extends BaseEloquentRepository {
 		return $this->model->leaderboards;
 	}
 
+	public function getUsersPosition($userId) {
+
+		$leaderboard = $this->getTournamentLeaderboard();
+
+		foreach ($leaderboard as $leaderboardRow) {
+
+
+
+		}
+
+
+	}
+
 	/**
 	 * @return \TopBetta\Tournament
 	 */
