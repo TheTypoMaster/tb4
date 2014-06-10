@@ -264,6 +264,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			$response[] = array(
 				'position' => $leaderboard['position'],
 				'ticket_id' => array_get($ticket, 'id', 0),
+				'id' => array_get($ticket, 'id', 0),
 				'name' => array_get($tournament, 'name', ''),
 				'start_currency' => array_get($tournament, 'start_currency', 0),
 				'currency' => array_get($leaderboard, 'currency', 0),
