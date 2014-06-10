@@ -26,7 +26,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 	}
 
 	public function getQualifiedLeaderboard($tournamentId) {
-		return $this->model->join(
+		return Tournament::join(
 			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
 		)->where(
 			'tournament_id', '=', $tournamentId
