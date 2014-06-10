@@ -60,7 +60,8 @@ class TournamentsRepository extends BaseEloquentRepository {
 			}
 
 			if (array_get($row, 'user_id', false) === $userId) {
-				$rank = $previousRank;
+				$rank = $row;
+				$rank['position'] = $previousRank;
 				break;
 			}
 		}
