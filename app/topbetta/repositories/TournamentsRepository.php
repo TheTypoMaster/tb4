@@ -31,14 +31,12 @@ class TournamentsRepository extends BaseEloquentRepository {
 		)->where(
 			'tournament_id', '=', $tournamentId
 			)
+		->where('turned_over', '>=', 'start_currency')
 		->orderBy('currency', 'DESC')
 		->get()->toArray();
 	}
 
 	public function getUsersPosition($userId, $tournamentId) {
-
-		echo "Tournament ID: $tournamentId";
-
 		$leaderboard = $this->getQualifiedLeaderboard($tournamentId);
 		$previousValue = false;
 		$previousRank = null;
