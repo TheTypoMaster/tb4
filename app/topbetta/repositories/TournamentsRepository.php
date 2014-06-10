@@ -20,20 +20,42 @@ class TournamentsRepository extends BaseEloquentRepository {
 		return $this->model->leaderboards;
 	}
 
-	public function getUsersPosition($userId) {
-
-		$leaderboard = $this->getTournamentLeaderboard();
-
-		$tournaments = $this->getTournament()->join(
+	public function getQualifiedLeaderboard($tournamentId) {
+		return $this->model->join(
 			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
-		)->get();
+		)->where(
+			'tournament_id', '=', $tournamentId
+			)
+		->orderBy('currency', 'DESC')
+		->get()->toArray();
+	}
 
-		dd( $this->getTournament(), $tournaments);
+	public function getUsersPosition($userId, $tournamentId) {
 
-		foreach ($leaderboard as $leaderboardRow) {
+		$leaderboard = $this->getQualifiedLeaderboard($tournamentId);
+		dd($leaderboard);
 
+		$previousValue = false;
+		$previousRank = 0;
+		for ($i = 0; $i < count($leaderboard); $i++) {
 
+			// Get the record
+			$row = $leaderboard[$i];
 
+			// Get the current rows value
+			$value = array_get($row, 'currency');
+
+			// Check to see if the current value is the same as the previous value. If they are the same, it means that
+			// the rank of the current row is the same as the previous one, so dont bother changing anything, otherwise
+			// we need to update the previous rank and value
+			if ($previousValue !== $value) {
+				$previousRank = $i + 1;
+				$previousValue = $value;
+			}
+
+			if (array_get($row, 'user_id', false) === $userId) {
+				return $previousRank;
+			}
 		}
 
 
