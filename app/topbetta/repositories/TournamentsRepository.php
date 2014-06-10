@@ -43,7 +43,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 		$rank = null;
 
-		dd($leaderboard);
+		echo "User ID: $userId";
 
 		for ($i = 0; $i < count($leaderboard); $i++) {
 
@@ -61,10 +61,16 @@ class TournamentsRepository extends BaseEloquentRepository {
 				$previousValue = $value;
 			}
 
+			echo $previousRank;
+			echo $previousValue;
+
+
 			if (array_get($row, 'user_id', false) === $userId) {
 				$rank = $previousRank;
 				break;
 			}
+
+			echo "++++++++++++++++++++++++++++++++++++++++++++";
 		}
 
 		return $rank;
