@@ -218,7 +218,6 @@ class TournamentLeaderboard extends \Eloquent {
 	}
 
 	public function scopeQualified($query) {
-		dd($query);
-		return $query->where('turned_over', '>=', 'start_currency');
+		return $query->where('turned_over', '>=', 'tbdb_tournament.start_currency');
 	}
 }
