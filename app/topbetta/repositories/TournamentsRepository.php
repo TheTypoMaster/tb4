@@ -24,6 +24,12 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 		$leaderboard = $this->getTournamentLeaderboard();
 
+		$tournaments = $this->getTournament()->join(
+			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
+		);
+
+		dd($tournaments);
+
 		foreach ($leaderboard as $leaderboardRow) {
 
 
