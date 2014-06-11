@@ -183,9 +183,7 @@ class TournamentTicket extends \Eloquent {
 			$query .= ' AND refunded_flag != 1';
 		}
 		$result = \DB::select($query);
-		if (count($result) === 0) {
-			dd($query);
-		}
+
 		return $result;
 	}
 
@@ -264,7 +262,7 @@ class TournamentTicket extends \Eloquent {
 		$result = \DB::select($query);
 
 		if (count($result) === 0) {
-			dd($query);
+			return '-';
 		}
 
 		return $result[0]->current - $result[0]->unresulted;
