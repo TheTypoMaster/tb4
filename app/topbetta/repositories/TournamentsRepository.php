@@ -40,6 +40,9 @@ class TournamentsRepository extends BaseEloquentRepository {
 		->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
 		->orderBy('qualified', 'DESC')
 		->get()->toArray();
+
+//		return Tournament::select(\DB::raw('*, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))->join('tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id')->where('tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId)->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')->orderBy('qualified', 'DESC')->get()->toArray();
+
 	}
 
 	public function getCachedPaidTournamentLeaderboards($userId, $tournamentId, $minutes = 60) {
@@ -80,7 +83,12 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 			if (array_get($row, 'user_id', false) === $userId) {
 				$rank = $row;
-				$rank['position'] = $previousRank;
+				if (array_get($row, 'qualified', '0') === '1') {
+					$rank['position'] = $previousRank;
+				} else {
+					$rank['position'] = '';
+				}
+
 				break;
 			}
 		}
