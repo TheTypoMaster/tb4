@@ -262,7 +262,7 @@ class TournamentTicket extends \Eloquent {
 
 		$result = \DB::select($query);
 		var_dump($tournamentId, $userId, $ticket);
-		echo '|||';
+		die;
 		return $result[0]->current - $result[0]->unresulted;
 	}
 	
