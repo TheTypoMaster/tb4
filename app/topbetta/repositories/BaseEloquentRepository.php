@@ -1,33 +1,55 @@
-<?php namespace TopBetta\Repositories;
+<?php
 /**
- * Coded by Oliver Shanahan
- * File creation date: 28/04/2014
- * File creation time: 5:22 PM
- * Project: tb4
+ * Created by PhpStorm.
+ * User: jason
+ * Date: 6/06/14
+ * Time: 3:00 PM
  */
+
+namespace TopBetta\Repositories;
 
 
 class BaseEloquentRepository {
 
-    public function find($id) {
-        return $this->model->find($id);
-    }
+	protected $model;
+	/**
+	 * Find the model given an ID
+	 * @param $id
+	 * @return mixed
+	 */
+	public function find($id) {
+		return $this->model->find($id);
+	}
 
-    public function findAll() {
-        return $this->model->all();
-    }
+	/**
+	 * Find all models
+	 * @return mixed
+	 */
+	public function findAll() {
+		return $this->model->all();
+	}
 
-    public function firstOrNew(array $data) {
-        return $this->model->firstOrNew($data)->toArray();
-    }
+	/**
+	 * Update record with the given id and data
+	 * @param $id
+	 * @param $data
+	 * @return mixed
+	 */
+	public function updateWithId($id, $data) {
+		$model = $this->model->findOrFail($id);
+		return $model->update($data);
+	}
 
-    public function updateWithId($id, $data) {
-        $model = $this->find($id);
-        return $model->update($data);
-    }
+	/**
+	 * Create
+	 * @param $data
+	 * @return mixed
+	 */
+	public function create($data) {
+		return $this->model->create($data);
+	}
 
-    public function create($data) {
-        return $this->model->create($data);
-    }
-
-}
+	public function createNew($data) {
+		return new $this->model($data);
+	}
+} 
