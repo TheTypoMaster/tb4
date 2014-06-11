@@ -242,11 +242,16 @@ class FrontUsersTournamentsController extends \BaseController {
 		// Base response
 		$response = array();
 
+		// Copied from old method
+		$excludeSports = array('galloping', 'greyhounds', 'harness');
+		$racingMap = array('galloping' => 'r', 'greyhounds' => 'g', 'harness' => 'h');
+
 		foreach ($ticketsList as $ticket) {
 
 			// Get the tournament record
-			$tournament = $tournamentsRepository->find(array_get($ticket, 'tournament_id'));
-			$tournamentId = $tournament['id'];
+			$tournament = $tournamentsRepository->findWithSportName(array_get($ticket, 'tournament_id'));
+			$tournamentId = array_get($ticket, 'tournament_id');
+
 			$minutes = 60;
 
 			// Get the position of the user in the tournament
@@ -270,12 +275,13 @@ class FrontUsersTournamentsController extends \BaseController {
 				'qualified' => array_get($leaderboard, 'qualified', ''),
 				'ticket_id' => array_get($ticket, 'id', 0),
 				'id' => array_get($ticket, 'id', 0),
-				'name' => array_get($tournament, 'name', ''),
+				'name' => array_get($tournament, 'tournament_name', ''),
 				'start_currency' => array_get($tournament, 'start_currency', 0),
 				'currency' => $ticketModel->getAvailableTicketCurrency($tournamentId, $user->id),
 				'turned_over' => array_get($leaderboard, 'turned_over'),
 				'end_date' => array_get($tournament, 'end_date', ''),
 				'buy_in' => array_get($tournament, 'buy_in', ''),
+				'sub_type' => (in_array($tournament['sport_name'], $excludeSports) ? $racingMap[$tournament['sport_name']] : $tournament['sport_name']),
 				'paid_flag' => array_get($tournament, 'paid_flag', 0)
 			);
 		}
