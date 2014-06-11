@@ -20,7 +20,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 	}
 
 	public function findWithSportName($id) {
-		return $this->model->select(\DB::raw('*, tbdb_tournament_sport.name AS sport_name, tbdb_tournament.name as name, tbdb_tournament.id as tournament_id'))->join('tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id')->get()->first()->toArray();
+		return $this->model->select(\DB::raw('*, tbdb_tournament_sport.name AS sport_name, tbdb_tournament.name as name, tbdb_tournament.id as tbdb_tournament_id'))->join('tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id')->get()->first()->toArray();
 	}
 
 	public function find($id) {
