@@ -28,7 +28,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 //		return $this->model->leaderboards;
 		return TournamentLeaderboard::
 			where(
-				'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
+				'tournament_id', '=', $tournamentId
 			)
 			->count();
 	}
