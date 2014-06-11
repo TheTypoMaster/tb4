@@ -25,9 +25,6 @@ class TournamentsRepository extends BaseEloquentRepository {
 	}
 
 	public function getLeaderboardCount($tournamentId) {
-//		return $this->model->leaderboards;
-		$count  = TournamentLeaderboard::where('tournament_id', '=', $tournamentId)->count();
-		echo "Tournament: $tournamentId | Count: $count |";
 		return TournamentLeaderboard::where('tournament_id', '=', $tournamentId)->count();
 	}
 
@@ -86,7 +83,6 @@ class TournamentsRepository extends BaseEloquentRepository {
 		}
 
 		$rank['total_entrants'] = $this->getLeaderboardCount($tournamentId);
-		dd($rank);
 		return $rank;
 	}
 
