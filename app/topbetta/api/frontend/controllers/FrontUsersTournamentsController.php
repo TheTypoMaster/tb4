@@ -249,7 +249,7 @@ class FrontUsersTournamentsController extends \BaseController {
 		foreach ($ticketsList as $ticket) {
 
 			// Get the tournament record
-			$tournament = $tournamentsRepository->find(array_get($ticket, 'tournament_id'));
+			$tournament = $tournamentsRepository->findWithSportName(array_get($ticket, 'tournament_id'));
 			$tournamentId = $tournament['id'];
 			$minutes = 60;
 

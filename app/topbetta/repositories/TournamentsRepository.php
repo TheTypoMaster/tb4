@@ -19,6 +19,10 @@ class TournamentsRepository extends BaseEloquentRepository {
 		$this->model = $tournament;
 	}
 
+	public function findWithSportName($id) {
+		return $this->model->select(\DB::raw('*, tbdb_tournament_sport.name AS sport_name, tbdb_tournament.name as name'))->join('tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id')->get()->toArray();
+	}
+
 	public function find($id) {
 		$model = parent::find($id);
 		return $model->toArray();
@@ -29,15 +33,15 @@ class TournamentsRepository extends BaseEloquentRepository {
 	}
 
 	public function getQualifiedLeaderboard($tournamentId) {
-		return Tournament::select(\DB::raw('*, tbdb_tournament.name AS tournament_name, tbdb_tournament_sport.name AS sport_name, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))
+		return Tournament::select(\DB::raw('*, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))
 			->join(
 				'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
 			)
-			->join(
-				'tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id'
-			)
+//			->join(
+//				'tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id'
+//			)
 			->where(
-			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
+				'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
 			)
 //		->whereRaw('tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency')
 		->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
