@@ -250,8 +250,8 @@ class FrontUsersTournamentsController extends \BaseController {
 
 			// Get the tournament record
 			$tournament = $tournamentsRepository->findWithSportName(array_get($ticket, 'tournament_id'));
-			$tournamentId = array_get($ticket, 'tournament_id')
-			
+			$tournamentId = array_get($ticket, 'tournament_id');
+
 			$minutes = 60;
 
 			// Get the position of the user in the tournament
