@@ -182,7 +182,6 @@ class TournamentTicket extends \Eloquent {
 		if (!$includeRefunded) {
 			$query .= ' AND refunded_flag != 1';
 		}
-
 		$result = \DB::select($query);
 
 		return $result;
@@ -230,7 +229,7 @@ class TournamentTicket extends \Eloquent {
 	 */
 	public function getAvailableTicketCurrency($tournamentId, $userId)
 	{
-		$ticket = $this->getTournamentTicketByUserAndTournamentID($userId, $tournamentId);
+		$ticket = $this->getTournamentTicketByUserAndTournamentID($userId, $tournamentId, true);
 		if(is_null($ticket)) {
 			return -1;
 		}
@@ -261,6 +260,10 @@ class TournamentTicket extends \Eloquent {
 				b.tournament_ticket_id';
 
 		$result = \DB::select($query);
+
+		if (count($result) === 0) {
+			return '-';
+		}
 
 		return $result[0]->current - $result[0]->unresulted;
 	}
