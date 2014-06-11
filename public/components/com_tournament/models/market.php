@@ -56,7 +56,11 @@ class TournamentModelMarket extends SuperModel
 		'updated_date' => array(
 			'name' => 'Updated Date',
 			'type' => self::TYPE_DATETIME_UPDATED
-		)
+		),
+        'market_status' => array(
+            'name' => 'Market Status',
+            'type' => self::TYPE_STRING
+        )
 	);
 
 	public function getMarket($id)
@@ -253,5 +257,21 @@ class TournamentModelMarket extends SuperModel
 
 		$this->store($params);
 	}
+
+    /**
+     * Set market restuled status
+     *
+     * @param integer $market_id
+     * @return void
+     */
+    public function setMarketToResulted($market_id)
+    {
+        $params = array(
+            'id' 			=> $market_id,
+            'market_status'	=> 'R'
+        );
+
+        $this->store($params);
+    }
 	
 }
