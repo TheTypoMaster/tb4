@@ -30,10 +30,13 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 	public function getQualifiedLeaderboard($tournamentId) {
 		return Tournament::select(\DB::raw('*, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))
-
-		->join(
-			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
-		)->where(
+			->join(
+				'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
+			)
+			->join(
+				'tbdb_tournament_sport', 'tournament_sport_id = tbdb_tournament.id'
+			)
+			->where(
 			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
 			)
 //		->whereRaw('tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency')
