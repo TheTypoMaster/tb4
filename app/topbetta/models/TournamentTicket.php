@@ -185,10 +185,6 @@ class TournamentTicket extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		if (count($result) === 0) {
-			dd($userId, $tournamentId);
-		}
-
 		return $result;
 	}
 
