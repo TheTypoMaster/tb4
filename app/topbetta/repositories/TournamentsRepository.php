@@ -86,7 +86,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 		}
 
 		$rank['total_entrants'] = $this->getLeaderboardCount($tournamentId);
-
+		dd($rank);
 		return $rank;
 	}
 
