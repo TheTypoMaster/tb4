@@ -42,8 +42,6 @@ class TournamentsRepository extends BaseEloquentRepository {
 		->get()->toArray();
 	}
 
-//var_dump(\TopBetta\Tournament::select(DB::raw('*, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))->join('tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id')->where('tbdb_tournament_leaderboard.tournament_id', '=',54224)->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')->get()->toArray());
-
 	public function getCachedPaidTournamentLeaderboards($userId, $tournamentId, $minutes = 60) {
 		$tournamentsRepository = $this;
 		return Cache::remember("tournament-$tournamentId-leaderboard", $minutes, function() use ($tournamentsRepository, $tournamentId, $userId, $tournamentId) {
