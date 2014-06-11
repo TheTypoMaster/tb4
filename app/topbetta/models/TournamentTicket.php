@@ -261,7 +261,7 @@ class TournamentTicket extends \Eloquent {
 				b.tournament_ticket_id';
 
 		$result = \DB::select($query);
-		
+
 		return $result[0]->current - $result[0]->unresulted;
 	}
 	
