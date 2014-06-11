@@ -261,12 +261,9 @@ class TournamentTicket extends \Eloquent {
 				b.tournament_ticket_id';
 
 		$result = \DB::select($query);
-		try {
-			return $result[0]->current - $result[0]->unresulted;
-		} catch (\Exception $e) {
-			dd($tournamentId, $userId, $ticket);
-		}
-
+		var_dump($tournamentId, $userId, $ticket);
+		echo '|||';
+		return $result[0]->current - $result[0]->unresulted;
 	}
 	
 	/**
