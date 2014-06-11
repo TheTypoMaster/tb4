@@ -34,7 +34,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 				'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
 			)
 			->join(
-				'tbdb_tournament_sport', 'tournament_sport_id = tbdb_tournament.id'
+				'tbdb_tournament_sport', 'tournament_sport_id', '=', 'tbdb_tournament.id'
 			)
 			->where(
 			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
