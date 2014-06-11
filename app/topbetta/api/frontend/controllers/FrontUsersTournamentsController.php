@@ -221,6 +221,9 @@ class FrontUsersTournamentsController extends \BaseController {
 		// Get the logged in user
 		$user = Auth::user();
 
+		// ticket model. models don't use static methods :(
+		$ticketModel = new TopBetta\TournamentTicket();
+
 		// Set the user to the currently logged in user
 		$this->userTicketsRepository->setUser($user);
 
@@ -269,7 +272,7 @@ class FrontUsersTournamentsController extends \BaseController {
 				'id' => array_get($ticket, 'id', 0),
 				'name' => array_get($tournament, 'name', ''),
 				'start_currency' => array_get($tournament, 'start_currency', 0),
-				'currency' => $ticket->getAvailableTicketCurrency($tournamentId, $user->id),
+				'currency' => $ticketModel->getAvailableTicketCurrency($tournamentId, $user->id),
 				'turned_over' => array_get($leaderboard, 'turned_over'),
 				'end_date' => array_get($tournament, 'end_date', ''),
 				'buy_in' => array_get($tournament, 'buy_in', ''),
