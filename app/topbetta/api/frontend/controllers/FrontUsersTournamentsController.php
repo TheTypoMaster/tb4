@@ -262,14 +262,14 @@ class FrontUsersTournamentsController extends \BaseController {
 
 			// Build a response record. This should not belong here, but there isnt really a service layer
 			$response[] = array(
-				'position' => array_get($leaderboard, 'position', ''),
+				'position' => array_get($leaderboard, 'position'),
 				'total_entrants' => array_get($leaderboard, 'total_entrants', 'n/a'),
 				'ticket_id' => array_get($ticket, 'id', 0),
 				'id' => array_get($ticket, 'id', 0),
 				'name' => array_get($tournament, 'name', ''),
 				'start_currency' => array_get($tournament, 'start_currency', 0),
-				'currency' => array_get($leaderboard, 'currency', 0),
-				'turned_over' => array_get($leaderboard, 'turned_over', 0),
+				'currency' => array_get($leaderboard, 'currency'),
+				'turned_over' => array_get($leaderboard, 'turned_over'),
 				'end_date' => array_get($tournament, 'end_date', ''),
 				'buy_in' => array_get($tournament, 'buy_in', ''),
 				'paid_flag' => array_get($tournament, 'paid_flag', 0)
