@@ -263,6 +263,10 @@ class TournamentTicket extends \Eloquent {
 
 		$result = \DB::select($query);
 
+		if (count($result) === 0) {
+			dd($query);
+		}
+
 		return $result[0]->current - $result[0]->unresulted;
 	}
 	
