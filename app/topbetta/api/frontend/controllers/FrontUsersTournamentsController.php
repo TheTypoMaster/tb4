@@ -242,6 +242,10 @@ class FrontUsersTournamentsController extends \BaseController {
 		// Base response
 		$response = array();
 
+		// Copied from old method
+		$excludeSports = array('galloping', 'greyhounds', 'harness');
+		$racingMap = array('galloping' => 'r', 'greyhounds' => 'g', 'harness' => 'h');
+
 		foreach ($ticketsList as $ticket) {
 
 			// Get the tournament record
@@ -276,6 +280,7 @@ class FrontUsersTournamentsController extends \BaseController {
 				'turned_over' => array_get($leaderboard, 'turned_over'),
 				'end_date' => array_get($tournament, 'end_date', ''),
 				'buy_in' => array_get($tournament, 'buy_in', ''),
+				'sub_type' => (in_array($tournament['sport_name'], $excludeSports) ? $racingMap[$tournament['sport_name']] : $tournament['sport_name']),
 				'paid_flag' => array_get($tournament, 'paid_flag', 0)
 			);
 		}
