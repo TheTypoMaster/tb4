@@ -11,7 +11,6 @@
 |
 */
 
-Route::get('users/tournamenthistory', 'FrontUsersTournaments@usersTournamentHistory');
 // apc_clear_cache("user");
 
 //TODO: ****** this is not safe to be here for production - find a better fix ******
@@ -96,7 +95,6 @@ Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), funct
 
 });
 
-
 // Route group for backend API. Uses basic stateless auth filter
 Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
 	// incoming race data and results
@@ -118,7 +116,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 Route::group(array('prefix' => '/api/v1'), function() {
 
 	// ::: USER :::
-
+	Route::get('usersTournamentHistory', 'FrontUsersTournaments@usersTournamentHistory');
 	// 2 custom routes for users auth
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');

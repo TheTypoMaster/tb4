@@ -219,7 +219,6 @@ return array(
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
                 'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
                 'BetRepo' => 'TopBetta\Facades\BetRepo'
-
 	),
 
 );
