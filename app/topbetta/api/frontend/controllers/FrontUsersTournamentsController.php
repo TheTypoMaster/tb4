@@ -271,6 +271,7 @@ class FrontUsersTournamentsController extends \BaseController {
 				'currency' => array_get($leaderboard, 'currency', 0),
 				'turned_over' => array_get($leaderboard, 'turned_over', 0),
 				'end_date' => array_get($tournament, 'end_date', ''),
+				'buy_in' => array_get($tournament, 'buy_in', ''),
 				'paid_flag' => array_get($tournament, 'paid_flag', 0)
 			);
 		}
