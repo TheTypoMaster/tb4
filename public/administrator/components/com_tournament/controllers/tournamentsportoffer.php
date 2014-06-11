@@ -211,6 +211,7 @@ class TournamentSportOfferController extends JController
 		$offer_result_model 	=& $this->getModel('SelectionResult', 'TournamentModel');
 		$match_model  			=& $this->getModel('Event', 'TournamentModel');
 		$market_model 			=& $this->getModel('Market', 'TournamentModel');
+        $offerresult_model      = $this->getModel('SelectionResult', 'TournamentModel');
 
 
 		/**
@@ -226,11 +227,19 @@ class TournamentSportOfferController extends JController
 			if ($offer_id == 0){
 				$market_model->setMarketToRefund($market_id);
 			} else {
-				$offer_result_params = array(
-					'selection_id'	=> $offer_id
-				);
 
-				$offer_result_id = $offer_result_model->store($offer_result_params);
+                // delete existing result for this selection if it exists
+                $offerresult_model->deleteSelectionResultBySelectionID($offer_id);
+
+                $offer_result_params = array(
+                    'selection_id'	=> $offer_id
+                );
+
+                $offer_result_id = $offer_result_model->store($offer_result_params);
+
+                // set market status to resulted
+                $market_model->setMarketToResulted($market_id);
+
 			}
 		}
 
