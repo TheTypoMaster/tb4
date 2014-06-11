@@ -77,10 +77,11 @@ class TournamentsRepository extends BaseEloquentRepository {
 			if (array_get($row, 'user_id', false) === $userId) {
 				$rank = $row;
 				$rank['position'] = $previousRank;
-				$rank['total_entrants'] = count($this->getTournamentLeaderboard());
 				break;
 			}
 		}
+
+		$rank['total_entrants'] = count($this->getTournamentLeaderboard());
 
 		return $rank;
 	}
