@@ -11,6 +11,7 @@ namespace TopBetta\Repositories;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use TopBetta\Tournament;
+use TopBetta\TournamentLeaderboard;
 
 class TournamentsRepository extends BaseEloquentRepository {
 
@@ -25,13 +26,11 @@ class TournamentsRepository extends BaseEloquentRepository {
 
 	public function getLeaderboardCount($tournamentId) {
 //		return $this->model->leaderboards;
-		return Tournament::join(
-			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
-		)
-		->where(
-			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
-		)
-		->count();
+		return TournamentLeaderboard::
+			where(
+				'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
+			)
+			->count();
 	}
 
 	public function getQualifiedLeaderboard($tournamentId) {
