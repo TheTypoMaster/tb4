@@ -23,11 +23,15 @@ class TournamentsRepository extends BaseEloquentRepository {
 		return $model->toArray();
 	}
 
-	public function getTournamentLeaderboard() {
+	public function getLeaderboardCount($tournamentId) {
 //		return $this->model->leaderboards;
-		Tournament::join(
+		return Tournament::join(
 			'tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id'
-		)->get()->toArray();
+		)
+		->where(
+			'tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId
+		)
+		->count();
 	}
 
 	public function getQualifiedLeaderboard($tournamentId) {
@@ -84,7 +88,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 			}
 		}
 
-		$rank['total_entrants'] = count($this->getTournamentLeaderboard());
+		$rank['total_entrants'] = $this->getTournamentLeaderboard($tournamentId);
 
 		return $rank;
 	}
