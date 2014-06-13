@@ -36,7 +36,8 @@ $env = $app->detectEnvironment(array(
 	'testing2' => array('testing2.*'),
 	'testing3' => array('testing3.*'),
 	'production' => array('services.*'),
-    'testapi1' => array('topbetta-dvmh-test-02'),
+	'jason_development' => array('ZAPDOS'),
+    'testapi1' => array('topbetta-dvmh-test-02')
 
 
 
