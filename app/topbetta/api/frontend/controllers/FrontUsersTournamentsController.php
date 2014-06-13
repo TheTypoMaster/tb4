@@ -1,12 +1,20 @@
 <?php
 namespace TopBetta\frontend;
 
+use Auth;
 use TopBetta;
+use \Carbon\Carbon;
 
 class FrontUsersTournamentsController extends \BaseController {
 
-	public function __construct() {
-		$this -> beforeFilter('auth');
+	/**
+	 * @var \TopBetta\Repositories\UserTicketsRepository
+	 */
+	private $userTicketsRepository;
+
+	public function __construct(TopBetta\Repositories\UserTicketsRepository $userTicketsRepository) {
+//		$this -> beforeFilter('auth');
+		$this->userTicketsRepository = $userTicketsRepository;
 	}
 
 	/**
@@ -31,11 +39,11 @@ class FrontUsersTournamentsController extends \BaseController {
 		if ($report == 'transactions') {
 
 			//this runs a very heavy query - cache for 1 minute
-			return \Cache::remember('usersTournamentTransactions-' . \Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports, $page) {				
+			return \Cache::remember('usersTournamentTransactions-' . Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports, $page) {
 
 				$transactionModel = new \TopBetta\FreeCreditBalance;
 
-				$transactionList = $transactionModel -> listTransactions(\Auth::user() -> id, $type, $limit, $offset);
+				$transactionList = $transactionModel -> listTransactions(Auth::user() -> id, $type, $limit, $offset);
 
 				$transactions = array();
 
@@ -114,7 +122,7 @@ class FrontUsersTournamentsController extends \BaseController {
 
 		} elseif ($report == 'history') {
 			
-			$userId = \Auth::user() -> id;
+			$userId = Auth::user() -> id;
 
 			//cache for 30 seconds (.5 min)
 			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap) {
@@ -205,6 +213,83 @@ class FrontUsersTournamentsController extends \BaseController {
 			});
 
 		}
+
+	}
+
+	public function usersTournamentHistory() {
+
+		// Get the logged in user
+		$user = Auth::user();
+
+		// ticket model. models don't use static methods :(
+		$ticketModel = new TopBetta\TournamentTicket();
+
+		// Set the user to the currently logged in user
+		$this->userTicketsRepository->setUser($user);
+
+		// Get all of the users tournament tickets and tournaments. If a 'since' date was not passed in, default to the
+		// last two dats
+
+		$c = new Carbon();
+		$twoDaysAgo = $c->subDays(2);
+		$sinceDate = \Input::get('since', $twoDaysAgo);
+		$ticketsList = $this->userTicketsRepository->getUsersTicketsAndTournaments($sinceDate)->toArray();
+
+		// Create a new instance of a tournaments repository. This repository will be re-used while iterating through the
+		// ticket list in order to get that tournaments leaderboard.
+		$tournamentsRepository = \App::make('\TopBetta\Repositories\TournamentsRepository');
+
+		// Base response
+		$response = array();
+
+		// Copied from old method
+		$excludeSports = array('galloping', 'greyhounds', 'harness');
+		$racingMap = array('galloping' => 'r', 'greyhounds' => 'g', 'harness' => 'h');
+
+		foreach ($ticketsList as $ticket) {
+
+			// Get the tournament record
+			$tournament = $tournamentsRepository->findWithSportName(array_get($ticket, 'tournament_id'));
+			$tournamentId = array_get($ticket, 'tournament_id');
+
+			$minutes = 60;
+
+			// Get the position of the user in the tournament
+
+			// If the tournament is paid AND the last update was over an hour ago, get the cached version
+
+			$now = new Carbon();
+			$cachedPeriodAgo = $now->subHours($minutes);
+			$tournamentLastUpdated = new Carbon(array_get($tournament, 'updated_date'));
+
+			if (((int)array_get($tournament, 'paid_flag', 0) === 1) && ($tournamentLastUpdated < $cachedPeriodAgo)) {
+				$leaderboard = $tournamentsRepository->getCachedPaidTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
+			} else {
+				$leaderboard = $tournamentsRepository->getNonCachedTournamentLeaderboards($user->id, array_get($ticket, 'tournament_id'), $minutes);
+			}
+
+			// Build a response record. This should not belong here, but there isnt really a service layer
+			$response[] = array(
+				'position' => array_get($leaderboard, 'position'),
+				'total_entrants' => array_get($leaderboard, 'total_entrants', 'n/a'),
+				'qualified' => array_get($leaderboard, 'qualified', ''),
+				'ticket_id' => array_get($ticket, 'id', 0),
+				'id' => array_get($ticket, 'id', 0),
+				'name' => array_get($tournament, 'name', ''),
+				'start_currency' => array_get($tournament, 'start_currency', 0),
+				'currency' => $ticketModel->getAvailableTicketCurrency($tournamentId, $user->id),
+				'turned_over' => array_get($leaderboard, 'turned_over'),
+				'end_date' => array_get($tournament, 'end_date', ''),
+				'buy_in' => array_get($tournament, 'buy_in', ''),
+				'sub_type' => (in_array($tournament['sport_name'], $excludeSports) ? $racingMap[$tournament['sport_name']] : $tournament['sport_name']),
+				'paid_flag' => array_get($tournament, 'paid_flag', 0)
+			);
+		}
+
+		$numPages = 0;
+		$page = 0;
+
+		return array("success" => true, "result" => array('transactions' => $response, 'num_pages' => (int)$numPages, 'current_page' => (int)$page));
 
 	}
 
