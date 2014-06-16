@@ -2662,14 +2662,13 @@ class Api_Betting extends JController
             $race_status_model = new TournamentModelEventStatus();
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
 
-            if ($race->event_status_id != $selling_status->id) {
-                return OutputHelper::json(500, array('error_msg' => JText::_('Betting was closed')));
-            }
-
             if (is_null($race)) {
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
+            if ($race->event_status_id != $selling_status->id) {
+                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
+            }
 
             // Check to see if the race is past the start time as well as if the override flag is not true. This will allow
             // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
