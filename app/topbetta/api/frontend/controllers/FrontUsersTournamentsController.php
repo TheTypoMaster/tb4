@@ -275,7 +275,7 @@ class FrontUsersTournamentsController extends \BaseController {
 				'qualified' => array_get($leaderboard, 'qualified', ''),
 				'ticket_id' => array_get($ticket, 'id', 0),
 				'id' => array_get($ticket, 'id', 0),
-				'name' => array_get($tournament, 'name', ''),
+				'name' => array_get($tournament, 'tournament_name', ''),
 				'start_currency' => array_get($tournament, 'start_currency', 0),
 				'currency' => $ticketModel->getAvailableTicketCurrency($tournamentId, $user->id),
 				'turned_over' => array_get($leaderboard, 'turned_over'),
