@@ -15,5 +15,6 @@ return array(
 	"selection_not_found" => "selection not found",
 	"invalid_source" => "Invalid source",
 	"invalid_type" => "Invalid Type",
+	"exceed_bet_limit" => "Bet amount exceeds individual bet limit",
 	
 );

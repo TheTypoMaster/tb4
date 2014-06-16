@@ -3,6 +3,7 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Facades\BetLimitRepo;
 
 class FrontBetsController extends \BaseController {
 
@@ -237,7 +238,7 @@ class FrontBetsController extends \BaseController {
 	private function placeBet(&$betStatus, &$input, &$messages, &$errors, $exotic = false) {
 
 		//TODO: remove tournament bets from here - they belong in FrontTournamentsBetsController
-
+		
 		$l = new \TopBetta\LegacyApiHelper;
 		$betModel = new \TopBetta\Bet;
 
@@ -297,6 +298,13 @@ class FrontBetsController extends \BaseController {
 									$betData['chkFreeBet'] = $input['use_free_credit'];
 
 							}
+							
+							if (BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing')) {
+								$messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.exceed_bet_limit'));
+								$errors++;
+
+								return false;
+							}							
 
 							$bet = $l -> query('saveBet', $betData);
 
