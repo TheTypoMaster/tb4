@@ -2657,7 +2657,7 @@ class Api_Betting extends JController
             }
 
             $race_model = & $this->getModel('Race', 'TournamentModel');
-            $race = $race_model->getRaceApi($race_id);
+            $race = $race_model->getRace($race_id);
 
             if (is_null($race)) {
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
@@ -2668,7 +2668,7 @@ class Api_Betting extends JController
             // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
             // method
             $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
-            $overRide = $race->override_start ? $race->override_start : false;
+            $overRide = isset($race->override_start) ? $race->override_start : false;
 
 //            if (strtotime($race->start_date) < time()) {
             if ($pastStartCheck && !$overRide) {
