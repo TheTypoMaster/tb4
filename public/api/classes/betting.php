@@ -2657,7 +2657,7 @@ class Api_Betting extends JController
             }
 
             $race_model = & $this->getModel('Race', 'TournamentModel');
-            $race = $race_model->getRace($race_id);
+            $race = $race_model->getRaceApi($race_id);
 
             if (is_null($race)) {
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
