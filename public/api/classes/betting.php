@@ -2659,6 +2659,13 @@ class Api_Betting extends JController
             $race_model = & $this->getModel('Race', 'TournamentModel');
             $race = $race_model->getRace($race_id);
 
+            $race_status_model = new TournamentModelEventStatus();
+            $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
+
+            if ($race->event_status_id != $selling_status->id) {
+                return OutputHelper::json(500, array('error_msg' => JText::_('Betting was closed')));
+            }
+
             if (is_null($race)) {
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
