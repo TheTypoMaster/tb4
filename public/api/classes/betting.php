@@ -2659,8 +2659,9 @@ class Api_Betting extends JController
             $race_model = & $this->getModel('Race', 'TournamentModel');
             $race = $race_model->getRace($race_id);
 
+            require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'eventstatus.php');
             $race_status_model = new TournamentModelEventStatus();
-            return OutputHelper::json(500, array('error_msg' => "test"));
+
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
 
             if (is_null($race)) {
