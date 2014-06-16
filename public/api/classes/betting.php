@@ -2666,6 +2666,8 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
+            return OutputHelper::json(500, array('error_msg' => "$selling_status"));
+
             if ($race->event_status_id != $selling_status->id) {
                 return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
             }
