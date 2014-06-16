@@ -254,6 +254,13 @@ class FrontBetsController extends \BaseController {
 					$betData['chkFreeBet'] = $input['use_free_credit'];
 
 			}
+			
+			if (BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing')) {
+				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.exceed_bet_limit'));
+				$errors++;
+
+				return false;
+			}			
 
 			$bet = $l -> query('saveRacingBet', $betData);
 
