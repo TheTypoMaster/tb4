@@ -2668,7 +2668,7 @@ class Api_Betting extends JController
             // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
             // method
             $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
-            $overRide = $race->override_start;
+            $overRide = $race->override_start ? $race->override_start : false;
 
 //            if (strtotime($race->start_date) < time()) {
             if ($pastStartCheck && !$overRide) {
