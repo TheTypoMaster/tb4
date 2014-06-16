@@ -2675,8 +2675,9 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
             }
 
-            var_dump($pastStartCheck, $overRide, $race);
-            die;
+            $a = array($pastStartCheck, $overRide, $race);
+
+            return OutputHelper::json(500, array('error_msg' => implode(',', $a)));
 
             $bet_type_id = JRequest::getVar('bet_type_id', null);
             if (is_null($bet_type_id)) {
