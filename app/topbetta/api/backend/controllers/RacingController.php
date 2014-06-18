@@ -351,31 +351,31 @@ class RacingController extends \BaseController
                                         $raceStatusCheck[4] = 5;
                                         $raceStatusCheck[3] = 6;
 
-                                        if (isset($dataArray ['RaceNo']) && isset($dataArray ['JumpTime'])) {
-                                            $raceEvent->number = $dataArray ['RaceNo'];
+                                        if (isset($dataArray['RaceNo']) && isset($dataArray['JumpTime'])) {
+                                            $raceEvent->number = $dataArray['RaceNo'];
                                             // update meeting start time if it's race 1
-                                            if ($raceEvent->number == '1') {
-                                                $meetingRecord->start_date = $dataArray ['JumpTime'];
+                                            if ($meetingRecord->start_date == '0000-00-00 00:00:00' || $dataArray['JumpTime'] < $meetingRecord->start_date) {
+                                                $meetingRecord->start_date = $dataArray['JumpTime'];
                                                 $meetingRecord->save();
                                             }
                                         }
 
-                                        if (isset($dataArray ['JumpTime'])) {
-                                            $raceEvent->start_date = $dataArray ['JumpTime'];
+                                        if (isset($dataArray['JumpTime'])) {
+                                            $raceEvent->start_date = $dataArray['JumpTime'];
                                         }
 
                                         // update tournament start end times
-                                        if (isset($dataArray ['JumpTime']) && isset($dataArray ['RaceNo'])) {
+                                        if (isset($dataArray ['JumpTime']) && isset($dataArray['RaceNo'])) {
                                             $tournamentsOnMeeting = Topbetta\Tournament::getTournamentWithEventGroup($meetingExists);
                                             // loop on each tournament
                                             foreach ($tournamentsOnMeeting as $tournament) {
                                                 // if it's race 1 store the jump time as tourn start date.
                                                 $tournamentModel = Topbetta\Tournament::find($tournament->id);
-                                                if ($raceEvent->number == 1) {
-                                                    $tournamentModel->start_date = $dataArray ['JumpTime'];
+                                                if ($meetingRecord->start_date == '0000-00-00 00:00:00' || $dataArray['JumpTime'] < $meetingRecord->start_date) {
+                                                    $tournamentModel->start_date = $dataArray['JumpTime'];
                                                 } else {
-                                                    if ($dataArray ['JumpTime'] > $tournamentModel->end_date) {
-                                                        $tournamentModel->end_date = $dataArray ['JumpTime'];
+                                                    if ($dataArray['JumpTime'] > $tournamentModel->end_date) {
+                                                        $tournamentModel->end_date = $dataArray['JumpTime'];
                                                     }
                                                 }
                                                 $tournamentModel->save();

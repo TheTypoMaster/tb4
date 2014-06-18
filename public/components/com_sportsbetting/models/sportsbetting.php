@@ -134,15 +134,47 @@ class SportsbettingModelSportsbetting extends JModel {
 	}
 	
 
-	public function getExternalIDsApi($selecitonID)
+	public function getExternalIDsApi($selectionID)
 	{
 		$db =& $this->getDBO();
-		$query = "SELECT external_selection_id, external_market_id, external_event_id FROM `tbdb_selection` WHERE id ='".$selecitonID."'";
+		$query = "SELECT external_selection_id, external_market_id, external_event_id FROM `tbdb_selection` WHERE id ='".$selectionID."'";
 		$db->setQuery($query);
 	
 		return $db->loadObject();
 	}
-	
+
+
+    // eww
+
+    public function getSelectionDetailsApi($selectionID)
+    {
+        $db =& $this->getDBO();
+
+        $query = " SELECT s.id as option_id, s.name as option_name, sp.win_odds as option_odds,
+                    m.id as market_id, m.market_status as market_status, sp.line as market_line,
+                    mt.id as market_type_id, mt.name as market_type_name,
+                    e.id as event_id, e.name as event_name, e.start_date as event_start_time,
+                    eg.id as competition_id, eg.name as competition_name, eg.start_date as competition_start_time,
+                    ts.id as sport_id, ts.name as sport_name
+                    FROM tbdb_selection as s
+
+            inner join tbdb_selection_price as sp on sp.selection_id = s.id
+            inner join tbdb_market as m on m.id = s.market_id
+            inner join tbdb_market_type  as  mt on mt.id = m.market_type_id
+            inner join tbdb_event as e on e.id = m.event_id
+            inner join tbdb_event_group_event as ege on ege.event_id = e.id
+            inner join tbdb_event_group as eg on eg.id = ege.event_group_id
+            inner join tbdb_tournament_sport as ts on ts.id = eg.sport_id
+
+            WHERE s.id ='".$selectionID."'
+
+        ";
+
+        $db->setQuery($query);
+
+        return $db->loadObject();
+    }
+
 
 // ##############################################################
 /// split up functions for the API

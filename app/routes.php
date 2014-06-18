@@ -24,6 +24,7 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 
 	$httpOrigin            = $requestHeaders['Origin'];
 	$allowedHttpOrigins   = array(
+                            "http://10.0.0.119:9778",
                             "http://localhost:9778",
                             "http://beta.mugbookie.com",
                             "http://localhost",
@@ -34,7 +35,8 @@ if ( array_key_exists('Origin', $requestHeaders) ) {
 							"http://jason.mugbookie.com",
 							"http://evan.mugbookie.com",
 							"http://mic.mugbookie.com",
-							"http://greg.mugbookie.com"
+							"http://greg.mugbookie.com",
+							"http://jasontb.mugbookie.com"
                           );
 
 	if (in_array($httpOrigin, $allowedHttpOrigins)){
@@ -93,7 +95,6 @@ Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), funct
 
 });
 
-
 // Route group for backend API. Uses basic stateless auth filter
 Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
 	// incoming race data and results
@@ -110,11 +111,12 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('testjson', 'testJSON');
 });
 
+
 // Route group for consumer API
 Route::group(array('prefix' => '/api/v1'), function() {
 
 	// ::: USER :::
-
+	Route::get('usersTournamentHistory', 'FrontUsersTournaments@usersTournamentHistory');
 	// 2 custom routes for users auth
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
