@@ -40,7 +40,7 @@ Route::filter('auth', function()
 });
 
 Route::filter('auth.admin', function() {
-	if (Auth::guest()) return Redirect::guest('/admin/login');
+	if (Auth::guest() || Auth::user()->gid != 25) return Redirect::guest('/admin/login');
 });
 
 

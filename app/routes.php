@@ -196,7 +196,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin'), function() {
 	
 	Route::resource('dashboard', 'TopBetta\admin\controllers\DashboardController');
 	Route::resource('users', 'TopBetta\admin\controllers\UsersController');
-	Route::resource('users.bet-limits', 'TopBetta\admin\controllers\UserBetlimitsController');
+	Route::resource('users.bet-limits', 'TopBetta\admin\controllers\UserBetLimitsController');
 	Route::resource('users.bets', 'TopBetta\admin\controllers\UserBetsController', array('only' => array('index')));
 	Route::resource('users.tournaments', 'TopBetta\admin\controllers\UserTournamentsController');
 	Route::resource('users.account-transactions', 'TopBetta\admin\controllers\UserAccountTransactionsController');

@@ -13,7 +13,7 @@
 				{{ Form::select('bet_limit_type_id', $betLimitTypes, null, array('class' => 'form-control')) }}
 			</div>				
 			<div class="form-group">
-				{{ Form::label('amount', 'Amount (in $):') }}
+				{{ Form::label('amount', 'Amount (in $ or as %):') }}
 				{{ Form::text('amount', null, array('class' => 'form-control', 'placeholder' => 'e.g. 75.00')) }}
 			</div>										
 			<div class="form-group">

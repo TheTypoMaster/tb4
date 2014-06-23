@@ -19,7 +19,7 @@ class SessionController extends \BaseController
 	 */
 	public function create()
 	{
-		if (Auth::check()) {
+		if (Auth::check() && Auth::user()->gid == 25) {
 			// TODO: would be nice for user to set home page
 			return Redirect::to('/admin/dashboard');
 		}
