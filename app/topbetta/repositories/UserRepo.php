@@ -2,6 +2,7 @@
 
 namespace TopBetta\Repositories;
 
+use TopBetta\BetSelection;
 use TopBetta\Tournament;
 use TopBetta\TournamentTicket;
 use User;
@@ -13,6 +14,11 @@ use User;
  */
 class UserRepo
 {
+
+	/**
+	 * @var BetSelection
+	 */
+	private $betSelection;
 
 	/**
 	 * @var Tournament
@@ -29,11 +35,12 @@ class UserRepo
 	 */
 	private $user;
 
-	public function __construct(User $user, Tournament $tournament, TournamentTicket $tournamentTicket)
+	public function __construct(User $user, Tournament $tournament, TournamentTicket $tournamentTicket, BetSelection $betSelection)
 	{
 		$this->user = $user;
 		$this->tournamentTicket = $tournamentTicket;
 		$this->tournament = $tournament;
+		$this->betSelection = $betSelection;
 	}
 
 	public function search($search)
@@ -75,6 +82,16 @@ class UserRepo
 		return $this->tournament
 						->whereIn('id', $tickets)
 						->paginate();
+	}
+
+	public function sumUserBetsForSelectionAndType($selectionId, $betType)
+	{
+		return $this->betSelection
+						->join('tbdb_bet AS b', 'b.id', '=', 'tbdb_bet_selection.bet_id')
+						->where('selection_id', $selectionId)
+						->where('position', 0)
+						->where('bet_type_id', $betType)
+						->sum(\DB::raw('b.bet_amount + b.bet_freebet_amount'));
 	}
 
 }

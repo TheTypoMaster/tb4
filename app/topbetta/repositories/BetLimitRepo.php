@@ -15,14 +15,19 @@ use TopBetta\RaceMeeting;
 class BetLimitRepo
 {
 
+	/**
+	 * @var UserRepo
+	 */
+	private $userRepo;
 	private $betLimitType;
 	private $betLimitUser;
 	private $userBetLimits;
 
-	public function __construct(BetLimitType $betLimitType, BetLimitUser $betLimitUser)
+	public function __construct(BetLimitType $betLimitType, BetLimitUser $betLimitUser, UserRepo $userRepo)
 	{
 		$this->betLimitType = $betLimitType;
 		$this->betLimitUser = $betLimitUser;
+		$this->userRepo = $userRepo;
 	}
 
 	/**
@@ -95,7 +100,7 @@ class BetLimitRepo
 			}
 		}
 
-		// 2: if we didn't find a user rule matching, check against global default limits
+		// 2: if we didn't find a user rule matching, fetch global default limits
 		if (!$lowestLimit) {
 			$lowestLimit = $this->getDefaultBetLimit();
 		}
@@ -104,19 +109,25 @@ class BetLimitRepo
 			$lowestFlexiLimit = $this->getDefaultBetFlexiLimit();
 		}
 
+		// 3: do our checks now
 		if (BetTypes::find($betData['bet_type_id'])->isExotic()) {
 			// exotic bet
 			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst(BetTypes::where('id', $betData['bet_type_id'])->pluck('name'));
 			$exotic = new $exoticClass;
 			$exotic->selections = $betData['selection'];
 			$exotic->betAmount = $betData['value'];
-			
+
 			$flexiExceeds = $exotic->getFlexiPercentage() > $lowestFlexiLimit;
 			$betValueExceeds = $lowestLimit && $betData['value'] > $lowestLimit;
-			
+
 			return ($flexiExceeds || $betValueExceeds) ? true : false;
 		} else {
-			return ($lowestLimit && $betData['value'] > $lowestLimit) ? true : false;
+			$previousTotal = $this->userRepo
+					->sumUserBetsForSelectionAndType($betData['selection'], $betData['bet_type_id']);
+
+			$newTotal = (int) $previousTotal + (int) $betData['value'];
+
+			return ($lowestLimit && $newTotal > $lowestLimit) ? true : false;
 		}
 	}
 
@@ -146,7 +157,7 @@ class BetLimitRepo
 		$list = $this->betLimitType->lists('nickname', 'id');
 
 		return ($excludeGlobal) ?
-				array_except($list, array('1','2')) :
+				array_except($list, array('1', '2')) :
 				$list;
 	}
 

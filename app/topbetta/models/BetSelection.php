@@ -17,6 +17,10 @@ class BetSelection extends \Eloquent {
 		return $this->belongsTo('TopBetta\RaceSelection', 'selection_id', 'id');
 	}	
 	
+	public function bet() {
+		return $this->belongsTo('TopBetta\Bet', 'bet_id');
+	}
+	
 	public static function getExoticSelectionsForBetId($betId) {
 		
 		$selections = BetSelection::where('bet_id', '=', $betId)
