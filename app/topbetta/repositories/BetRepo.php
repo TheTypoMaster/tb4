@@ -31,7 +31,7 @@ class BetRepo
 		$payout = 0;
 		$dividend = 0;
 
-		switch ($bet->betType()->name) {
+		switch ($bet->betType->name) {
 			case 'win':
 				if ($bet->bet_origin_id == 2) {
 					// RACING: simple check - do we have a result record for this selection id and win dividend
@@ -110,7 +110,7 @@ class BetRepo
 					->where('position', '>', 0)
 					->pluck('position');
 
-			switch ($bet->betType()->name) {
+			switch ($bet->betType->name) {
 				case 'quinella':
 					// 2 selections any order in 1st or 2nd position = WIN
 					if ($position == 1 || $position == 2) {
@@ -166,7 +166,7 @@ class BetRepo
 		}
 
 		// did we get min number of wins?
-		if ($winCount >= $exoticsMinWin[$bet->betType()->name]) {
+		if ($winCount >= $exoticsMinWin[$bet->betType->name]) {
 			return true;
 		}
 

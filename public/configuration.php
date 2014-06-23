@@ -5,7 +5,7 @@ class JConfig {
 	public $editor = 'none';
 	public $list_limit = '20';
 	public $helpurl = 'http://help.joomla.org';
-	public $debug = '1';
+	public $debug = '0';
 	public $debug_lang = '0';
 	public $sef = '0';
 	public $sef_rewrite = '0';
@@ -34,8 +34,8 @@ class JConfig {
 	public $dbtype = 'mysql';
 	public $host = 'localhost';
 	public $user = 'root';
-	public $db = 'topbetta';
-	public $password = 'mysqlp@ss';
+	public $db = 'topbetta_staging';
+	public $password = 'root';
 	public $dbprefix = 'tbdb_';
 	public $mailer = 'mail';
 	public $mailfrom = 'help@topbetta.com';

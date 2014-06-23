@@ -15,6 +15,7 @@ class CreateTbdbBetLimitTypesTable extends Migration {
         Schema::create('tbdb_bet_limit_types', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name')->index();
+            $table->string('nickname');
 			$table->string('value');
 			$table->integer('default_amount');
 			$table->text('notes');

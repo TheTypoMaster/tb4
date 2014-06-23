@@ -18,6 +18,30 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 	protected $hidden = array('password');
+	
+	/**
+	 * Link our topbetta user to the standard user object :)
+	 * 
+	 * @return type
+	 */
+	public function topbettaUser() {
+		return $this->hasOne('TopBetta\TopBettaUser', 'user_id');
+	}
+	
+	public function bets() {
+		return $this->hasMany('TopBetta\Bet');
+	}
+	
+	public function accountTransactions() {
+		return $this->hasMany('TopBetta\AccountBalance', 'recipient_id');
+	}
+	public function freeCreditTransactions() {
+		return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
+	}
+	
+	public function tournamentTickets() {
+		return $this->hasMany('TopBetta\TournamentTicket');
+	}
 
 	/**
 	 * Get the unique identifier for the user.

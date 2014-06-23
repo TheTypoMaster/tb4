@@ -4,6 +4,7 @@ namespace TopBetta\Repositories;
 
 use BetLimitType;
 use BetLimitUser;
+use TopBetta\BetTypes;
 use TopBetta\RaceMeeting;
 
 /**
@@ -47,17 +48,29 @@ class BetLimitRepo
 		$meeting = RaceMeeting::find($betData['id']);
 
 		$lowestLimit = false;
+		$lowestFlexiLimit = false;
 
 		// 1: check every rule the user has for a match
 		foreach ($this->userBetLimits as $betLimit) {
 			$limit = $lowestLimit;
-			
+			$flexiLimit = $lowestFlexiLimit;
+
+
 			// ** NOTE: these case types need to match the database rule types (tbdb_bet_limit_types) **
 			switch ($betLimit->limitType->name) {
 				case 'bet_type':
 					// win/place/exotic
 					if ($betLimit->limitType->value == $betData['bet_type_id']) {
-						$limit = $betLimit->amount;
+						$limit = $betLimit->amount * 100;
+					}
+
+					break;
+
+				case 'bet_flexi':
+					// exotics only
+					if ($betLimit->limitType->value == $betData['bet_type_id']) {
+						// as percentage
+						$flexiLimit = $betLimit->amount;
 					}
 
 					break;
@@ -65,7 +78,7 @@ class BetLimitRepo
 				case 'meeting_type':
 					// R,G,H
 					if ($betLimit->limitType->value == $meeting->type_code) {
-						$limit = $betLimit->amount;
+						$limit = $betLimit->amount * 100;
 					}
 					break;
 
@@ -76,14 +89,35 @@ class BetLimitRepo
 			if (!$lowestLimit || $limit < $lowestLimit) {
 				$lowestLimit = $limit;
 			}
+
+			if (!$lowestFlexiLimit || $flexiLimit < $lowestFlexiLimit) {
+				$lowestFlexiLimit = $flexiLimit;
+			}
 		}
 
-		// 2: if we didn't find a user rule matching, check against global default limit
+		// 2: if we didn't find a user rule matching, check against global default limits
 		if (!$lowestLimit) {
 			$lowestLimit = $this->getDefaultBetLimit();
 		}
 
-		return ($lowestLimit && $betData['value'] > $lowestLimit) ? true : false;
+		if (!$lowestFlexiLimit) {
+			$lowestFlexiLimit = $this->getDefaultBetFlexiLimit();
+		}
+
+		if (BetTypes::find($betData['bet_type_id'])->isExotic()) {
+			// exotic bet
+			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst(BetTypes::where('id', $betData['bet_type_id'])->pluck('name'));
+			$exotic = new $exoticClass;
+			$exotic->selections = $betData['selection'];
+			$exotic->betAmount = $betData['value'];
+			
+			$flexiExceeds = $exotic->getFlexiPercentage() > $lowestFlexiLimit;
+			$betValueExceeds = $lowestLimit && $betData['value'] > $lowestLimit;
+			
+			return ($flexiExceeds || $betValueExceeds) ? true : false;
+		} else {
+			return ($lowestLimit && $betData['value'] > $lowestLimit) ? true : false;
+		}
 	}
 
 	/**
@@ -92,13 +126,28 @@ class BetLimitRepo
 	 * @param int $userId
 	 * @return collection
 	 */
-	public function getBetLimitsForUser($userId)
+	public function getBetLimitsForUser($userId, $paginate = false)
 	{
-		return $this->betLimitUser
-						->where('user_id', $userId)
-						->orderBy('amount', 'asc')
-						->with('limitType')
-						->get();
+		$query = $this->betLimitUser
+				->where('user_id', $userId)
+				->orderBy('amount', 'asc')
+				->with('limitType');
+
+		return ($paginate) ? $query->paginate() : $query->get();
+	}
+
+	public function getUserBetLimitWithId($id)
+	{
+		return $this->betLimitUser->find($id);
+	}
+
+	public function getAllLimitTypesNicknames($excludeGlobal = true)
+	{
+		$list = $this->betLimitType->lists('nickname', 'id');
+
+		return ($excludeGlobal) ?
+				array_except($list, array('1','2')) :
+				$list;
 	}
 
 	/**
@@ -110,6 +159,18 @@ class BetLimitRepo
 	{
 		return $this->betLimitType
 						->where('name', 'default')
+						->pluck('default_amount');
+	}
+
+	/**
+	 * Get the default global bet flexi limit
+	 * 
+	 * @return int
+	 */
+	public function getDefaultBetFlexiLimit()
+	{
+		return $this->betLimitType
+						->where('name', 'default_flexi')
 						->pluck('default_amount');
 	}
 

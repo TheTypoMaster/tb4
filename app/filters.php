@@ -39,6 +39,10 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Response::json(array("success" => false, "error" => "Please login first."), 401);
 });
 
+Route::filter('auth.admin', function() {
+	if (Auth::guest()) return Redirect::guest('/admin/login');
+});
+
 
 Route::filter('auth.basic', function()
 {
