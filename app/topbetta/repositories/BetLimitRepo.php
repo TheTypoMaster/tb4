@@ -123,7 +123,7 @@ class BetLimitRepo
 			return ($flexiExceeds || $betValueExceeds) ? true : false;
 		} else {
 			$previousTotal = $this->userRepo
-					->sumUserBetsForSelectionAndType($betData['selection'], $betData['bet_type_id']);
+					->sumUserBetsForSelectionAndType($betData['selection'], $betData['bet_type_id'], \Auth::user()->id);
 
 			$newTotal = (int) $previousTotal + (int) $betData['value'];
 

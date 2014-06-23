@@ -84,13 +84,14 @@ class UserRepo
 						->paginate();
 	}
 
-	public function sumUserBetsForSelectionAndType($selectionId, $betType)
+	public function sumUserBetsForSelectionAndType($selectionId, $betType, $userId)
 	{
 		return $this->betSelection
 						->join('tbdb_bet AS b', 'b.id', '=', 'tbdb_bet_selection.bet_id')
 						->where('selection_id', $selectionId)
 						->where('position', 0)
 						->where('bet_type_id', $betType)
+						->where('b.user_id', $userId)
 						->sum(\DB::raw('b.bet_amount + b.bet_freebet_amount'));
 	}
 
