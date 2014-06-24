@@ -4,6 +4,7 @@ namespace TopBetta\Repositories;
 
 use Carbon\Carbon;
 use DB;
+use Response;
 
 /**
  * Description of ReportRepo
@@ -37,7 +38,7 @@ class ReportRepo
 				->where('t.start_date', '<', $endDate);
 
 		return ($download) ?
-				$this->download($query->get(), 'Tournament', $startDate) :
+				$this->downloadCsv($query->get(), 'Tournaments', $startDate) :
 				$query->paginate();
 	}
 
@@ -64,18 +65,61 @@ class ReportRepo
 				->orderBy('venue', 'ASC');
 
 		return ($download) ?
-				$this->download($query->get(), 'Bets', $startDate) :
+				$this->downloadCsv($query->get(), 'Bets', $startDate) :
 				$query->paginate();
 	}
 
-	private function download($reportData, $name, $date)
+	/**
+	 * Convert the data to CSV and force download
+	 * 
+	 * @param array/collection $response
+	 * @param type $fileName
+	 * @param type $date
+	 * @return type
+	 */
+	public function downloadCsv($response, $fileName, $date = '')
 	{
-		return $reportData;
-		// TODO: generate a header row
-//		return Excel::create($name . ' Report - ' . $date)
-//						->sheet($name)
-//						->with($reportData)
-//						->export('xls');
+		$response = $this->toArrayForCsv($response);
+		$csv = '';
+
+		if ($response && count($response)) {
+			ob_start();
+			$handle = fopen('php://output', 'r+');
+
+			foreach ($response as $r) {
+				fputcsv($handle, array_values($r));
+			}
+
+			$csv = ob_get_clean();
+			fclose($handle);
+		}
+
+		return Response::make($csv, 200, array(
+					'Content-Type' => 'text/csv',
+					'Content-Disposition' => 'attachment;filename=' . $fileName . '-' . $date . '.csv'
+		));
+	}
+
+	private function toArrayForCsv($data)
+	{
+		$array = array();
+		foreach ($data[0] as $key => $value) {
+			$header[] = $key;
+		}
+
+		$array[] = $header;
+
+		foreach ($data as $row) {
+			$rowData = array();
+
+			foreach ($row as $value) {
+				array_push($rowData, $value);
+			}
+
+			$array[] = $rowData;
+		}
+
+		return $array;
 	}
 
 }

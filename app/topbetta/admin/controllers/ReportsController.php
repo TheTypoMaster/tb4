@@ -43,12 +43,12 @@ class ReportsController extends \BaseController
 		$year = Request::get('year', date('Y'));
 		$download = Request::get('download', false);
 		$data = null;
-		
+
 		switch ($report) {
 			case 'tournaments':
 				$data = $this->reportRepo->tournamentForMonthYear($month, $year, $download);
 				break;
-			
+
 			case 'bets':
 				$data = $this->reportRepo->betsForMonthYear($month, $year, $download);
 				break;
@@ -57,13 +57,13 @@ class ReportsController extends \BaseController
 				break;
 		}
 
-		
-		if($download) {
+
+		if ($download) {
 			return $data;
 		}
 
 		return View::make('admin::reports.show')
-						->with(compact('data', 'month', 'year','report'));
+						->with(compact('data', 'month', 'year', 'report'));
 	}
 
 }
