@@ -593,8 +593,4 @@ class TournamentTicket extends \Eloquent {
 		return $result;				
 	}
 
-	public function tournament() {
-		return $this->belongsTo('\TopBetta\Tournament', 'tournament_id');
-	}
-
 }
