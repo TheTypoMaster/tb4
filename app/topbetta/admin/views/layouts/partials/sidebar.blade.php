@@ -27,7 +27,7 @@
 				<a href="#"><i class="fa fa-money fa-fw"></i> Payments<span class="fa arrow"></span></a>
 				<ul class="nav nav-second-level">
 					<li>
-						<a href="#withdrawal-requests">Withdrawal Requests</a>
+						<a href="{{ route('admin.withdrawals.index') }}">Withdrawal Requests</a>
 					</li>
 					<li>
 						<a href="{{ route('admin.account-transactions.index') }}">Account Transactions</a>

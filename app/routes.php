@@ -201,8 +201,10 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin'), function() {
 	Route::resource('users.tournaments', 'TopBetta\admin\controllers\UserTournamentsController');
 	Route::resource('users.account-transactions', 'TopBetta\admin\controllers\UserAccountTransactionsController');
 	Route::resource('users.free-credit-transactions', 'TopBetta\admin\controllers\UserFreeCreditTransactionsController');
+	Route::resource('users.withdrawals', 'TopBetta\admin\controllers\UserWithdrawalsController');
 	Route::resource('bet-limits', 'TopBetta\admin\controllers\BetlimitsController');
 	Route::resource('bets', 'TopBetta\admin\controllers\BetsController');
+	Route::resource('withdrawals', 'TopBetta\admin\controllers\WithdrawalsController');
 	Route::resource('account-transactions', 'TopBetta\admin\controllers\AccountTransactionsController');
 	Route::resource('free-credit-transactions', 'TopBetta\admin\controllers\FreeCreditTransactionsController');
 	Route::resource('tournaments', 'TopBetta\admin\controllers\TournamentsController');
