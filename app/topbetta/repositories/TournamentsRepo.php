@@ -5,7 +5,7 @@ namespace TopBetta\Repositories;
 use TopBetta\Tournament;
 
 /**
- * Description of TournamentsRepo
+ * Tournament Repo for admin interface
  *
  * @author mic
  */
