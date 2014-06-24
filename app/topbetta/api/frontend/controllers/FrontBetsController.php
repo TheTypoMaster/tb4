@@ -2,7 +2,9 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use Lang;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Facades\BetLimitRepo;
 
 class FrontBetsController extends \BaseController {
 
@@ -237,7 +239,7 @@ class FrontBetsController extends \BaseController {
 	private function placeBet(&$betStatus, &$input, &$messages, &$errors, $exotic = false) {
 
 		//TODO: remove tournament bets from here - they belong in FrontTournamentsBetsController
-
+		
 		$l = new \TopBetta\LegacyApiHelper;
 		$betModel = new \TopBetta\Bet;
 
@@ -253,6 +255,23 @@ class FrontBetsController extends \BaseController {
 					$betData['chkFreeBet'] = $input['use_free_credit'];
 
 			}
+			
+			$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing');
+			if ($exceedBetLimit['result']) {
+				
+				$reason = Lang::get('bets.exceed_bet_limit_value_and_flexi', array('betValueLimit' => $exceedBetLimit['betValueLimit'], 'flexiLimit' => $exceedBetLimit['flexiLimit']));
+				
+				if ($exceedBetLimit['flexiExceeds'] && !$exceedBetLimit['betValueExceeds']) {
+					$reason = Lang::get('bets.exceed_bet_limit_flexi', array('flexiLimit' => $exceedBetLimit['flexiLimit']));
+				} else if(!$exceedBetLimit['flexiExceeds'] && $exceedBetLimit['betValueExceeds']) {
+					$reason = Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit']));
+				}
+				
+				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $reason);
+				$errors++;
+
+				return false;
+			}			
 
 			$bet = $l -> query('saveRacingBet', $betData);
 
@@ -297,6 +316,14 @@ class FrontBetsController extends \BaseController {
 									$betData['chkFreeBet'] = $input['use_free_credit'];
 
 							}
+							
+							$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing');
+							if ($exceedBetLimit['result']) {
+								$messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
+								$errors++;
+
+								return false;
+							}							
 
 							$bet = $l -> query('saveBet', $betData);
 

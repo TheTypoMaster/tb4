@@ -8,7 +8,17 @@ class AccountBalance extends \Eloquent {
     public static $rules = array();
     
     // table relationships
-    
+    public function transactionType() {
+		return $this->belongsTo('TopBetta\AccountTransactionTypes', 'account_transaction_type_id');
+	}
+	
+	public function giver() {
+		return $this->belongsTo('User', 'giver_id');
+	}
+	
+	public function recipient() {
+		return $this->belongsTo('User', 'recipient_id');
+	}
     
     
         

@@ -114,8 +114,9 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-                'TopBetta\Providers\BetResultRepoServiceProvider',
-                'TopBetta\Providers\BetRepoServiceProvider'
+		'TopBetta\Providers\BetResultRepoServiceProvider',
+		'TopBetta\Providers\BetRepoServiceProvider',
+		'TopBetta\Providers\BetLimitRepoServiceProvider'
 
 	),
 
@@ -208,17 +209,19 @@ return array(
 		'FrontCombinedRacing'	=> 'TopBetta\frontend\FrontCombinedRacingController',
 		'FrontCombinedSports'	=> 'TopBetta\frontend\FrontCombinedSportsController',
 		'FrontCombinedTournaments'	=> 'TopBetta\frontend\FrontCombinedTournamentsController',
-                'FrontPasswordResetsController' => 'TopBetta\frontend\FrontPasswordResetsController',
+		'FrontPasswordResetsController' => 'TopBetta\frontend\FrontPasswordResetsController',
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
-                'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
-                'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
+		'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
+		'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
-                'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
-                'BetRepo' => 'TopBetta\Facades\BetRepo'
+		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
+		'BetRepo' => 'TopBetta\Facades\BetRepo',
+		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
+
 	),
 
 );
