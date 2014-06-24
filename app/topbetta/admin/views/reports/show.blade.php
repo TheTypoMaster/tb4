@@ -6,7 +6,7 @@
 		<div class="row page-header">
 			<h2 class="col-lg-8">Show Report: {{{ ucwords($report) }}}
 				<small>
-					<a href="{{ route('admin.reports.show', array($report)) }}?download=true" class=""><span class="glyphicon glyphicon-download-alt"></span></a>
+					<a href="{{ route('admin.reports.show', array($report)) }}?{{ http_build_query($params) }}&download=true" class=""><span class="glyphicon glyphicon-download-alt"></span></a>
 				</small>
 			</h2>
 			<span class='pull-right'>{{ link_to_route('admin.reports.index', 'Back to Reports', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>

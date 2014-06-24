@@ -42,6 +42,8 @@ class ReportsController extends \BaseController
 		$month = Request::get('month', date('m'));
 		$year = Request::get('year', date('Y'));
 		$download = Request::get('download', false);
+		$params = Request::except(array('page'));
+		
 		$data = null;
 
 		switch ($report) {
@@ -63,7 +65,7 @@ class ReportsController extends \BaseController
 		}
 
 		return View::make('admin::reports.show')
-						->with(compact('data', 'month', 'year', 'report'));
+						->with(compact('data', 'month', 'year', 'report', 'params'));
 	}
 
 }
