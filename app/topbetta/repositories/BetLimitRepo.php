@@ -4,7 +4,9 @@ namespace TopBetta\Repositories;
 
 use BetLimitType;
 use BetLimitUser;
+use TopBetta\Bet;
 use TopBetta\BetTypes;
+use TopBetta\Facades\BetRepo;
 use TopBetta\RaceMeeting;
 
 /**
@@ -117,17 +119,55 @@ class BetLimitRepo
 			$exotic->selections = $betData['selection'];
 			$exotic->betAmount = $betData['value'];
 
-			$flexiExceeds = $exotic->getFlexiPercentage() > $lowestFlexiLimit;
-			$betValueExceeds = $lowestLimit && $betData['value'] > $lowestLimit;
+			$newExoticTotal = $betData['value'];
+			$newExoticPercent = $exotic->getFlexiPercentage();
 
-			return ($flexiExceeds || $betValueExceeds) ? true : false;
+			// look for any exotic bets of the same type for this event and user
+			$previousExoticBets = Bet::with('selections')
+					->where('event_id', $betData['race_id'])
+					->where('bet_type_id', $betData['bet_type_id'])
+					->where('user_id', \Auth::user()->id)
+					->get();
+
+			// check if any existing exotic bets match the current bet
+			foreach ($previousExoticBets as $bet) {
+				if (BetRepo::checkSelectionsMatchExoticBet($betData['selection'], $bet)) {
+					// identical exotic bet
+					$newExoticTotal += $bet->amount + $bet->bet_freebet_amount;
+					$newExoticPercent += $bet->percentage;
+				}
+			}
+
+			// does this exceed any matched limits
+			$flexiExceeds = $newExoticPercent > $lowestFlexiLimit;
+			$betValueExceeds = $lowestLimit && $newExoticTotal > $lowestLimit;
+
+			if ($flexiExceeds || $betValueExceeds) {
+				return array(
+					'result' => true,
+					'flexiExceeds' => $flexiExceeds,
+					'flexiLimit' => $lowestFlexiLimit,
+					'betValueExceeds' => $betValueExceeds,
+					'betValueLimit' => number_format($lowestLimit / 100, 2)
+				);
+			}
+
+			return array('result' => false);
 		} else {
 			$previousTotal = $this->userRepo
 					->sumUserBetsForSelectionAndType($betData['selection'], $betData['bet_type_id'], \Auth::user()->id);
 
 			$newTotal = (int) $previousTotal + (int) $betData['value'];
 
-			return ($lowestLimit && $newTotal > $lowestLimit) ? true : false;
+//			return ($lowestLimit && $newTotal > $lowestLimit) ? true : false;
+			if ($lowestLimit && $newTotal > $lowestLimit) {
+				return array(
+					'result' => true,
+					'betValueLimit' => number_format($lowestLimit / 100, 2)
+				);
+			}
+
+			return array('result' => false);			
 		}
 	}
 
