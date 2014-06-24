@@ -39,8 +39,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
 	}
 	
+	/**
+	 * A User can have many tickets for tournaments
+	 * @return mixed
+	 */
 	public function tournamentTickets() {
-		return $this->hasMany('TopBetta\TournamentTicket');
+		return $this->hasMany('\TopBetta\TournamentTicket', 'user_id');
 	}
 
 	/**
@@ -71,14 +75,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function getReminderEmail()
 	{
 		return $this->email;
-	}
-
-	/**
-	 * A User can have many tickets for tournaments
-	 * @return mixed
-	 */
-	public function tournamentTickets() {
-		return $this->hasMany('\TopBetta\TournamentTicket', 'user_id');
 	}
 
 }
