@@ -80,7 +80,6 @@ Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), funct
 	Route::get('risaformimporter', 'TopBetta\admin\RisaFormImporter@formImporter');
 });
 
-
 // Route group for backend API. Uses basic stateless auth filter
 Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
 	// incoming race data and results
@@ -97,10 +96,12 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('testjson', 'testJSON');
 });
 
+
 // Route group for consumer API
 Route::group(array('prefix' => '/api/v1'), function() {
 
 	// ::: USER :::
+	Route::get('usersTournamentHistory', 'FrontUsersTournaments@usersTournamentHistory');
 	// 2 custom routes for users auth
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');

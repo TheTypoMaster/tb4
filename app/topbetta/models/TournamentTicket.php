@@ -186,7 +186,6 @@ class TournamentTicket extends \Eloquent {
 		if (!$includeRefunded) {
 			$query .= ' AND refunded_flag != 1';
 		}
-
 		$result = \DB::select($query);
 
 		return $result;
@@ -234,7 +233,7 @@ class TournamentTicket extends \Eloquent {
 	 */
 	public function getAvailableTicketCurrency($tournamentId, $userId)
 	{
-		$ticket = $this->getTournamentTicketByUserAndTournamentID($userId, $tournamentId);
+		$ticket = $this->getTournamentTicketByUserAndTournamentID($userId, $tournamentId, true);
 		if(is_null($ticket)) {
 			return -1;
 		}
@@ -265,6 +264,10 @@ class TournamentTicket extends \Eloquent {
 				b.tournament_ticket_id';
 
 		$result = \DB::select($query);
+
+		if (count($result) === 0) {
+			return '-';
+		}
 
 		return $result[0]->current - $result[0]->unresulted;
 	}
@@ -370,7 +373,101 @@ class TournamentTicket extends \Eloquent {
 		$numRows = \DB::select($countQuery);
 
 		return array('result' => $result, 'num_rows' => $numRows[0]);	
-	}	
+	}
+
+	/**
+	 * This is a duplicate of the method above, but has the ability to accept a 'since' date. I opted to duplicated so I
+	 * didnt have to alter the method
+	 *
+	 * @param $user_id
+	 * @param string $order
+	 * @param string $direction
+	 * @param int $limit
+	 * @param null $offset
+	 * @param null $paid
+	 * @return array
+	 */
+	public function getUserTournamentListSince($user_id, $order = 't.id', $direction = 'ASC', $limit = 25, $offset = null, $paid = null, $since)
+	{
+		$selectQuery = 'SELECT
+				t.id,
+				tk.result_transaction_id,
+				tk.created_date,
+				t.buy_in,
+				t.entry_fee,
+				s.name AS sport_name,
+				t.start_date,
+				t.end_date,
+				t.cancelled_flag,
+				t.paid_flag,
+				t.start_currency,
+				t.name AS tournament_name,
+				t.jackpot_flag,
+				t.tournament_sponsor_name,
+				t.reinvest_winnings_flag,
+				t.closed_betting_on_first_match_flag,
+				t.parent_tournament_id,
+				c.name AS competition_name';
+
+		$selectCountQuery = "SELECT COUNT(*) AS total";
+
+		$query = ' FROM
+				tbdb_tournament_ticket AS tk
+			INNER JOIN
+				tbdb_tournament AS t
+			ON
+				t.id = tk.tournament_id
+			INNER JOIN
+				tbdb_tournament_sport AS s
+			ON
+				t.tournament_sport_id = s.id
+			INNER JOIN
+				tbdb_event_group AS eg
+			ON
+				eg.id = t.event_group_id
+			INNER JOIN
+				tbdb_tournament_competition AS c
+				ON c.id = eg.tournament_competition_id
+			WHERE
+				user_id = "' . $user_id . '"
+			AND
+				tk.refunded_flag != 1
+			AND
+				t.cancelled_flag != 1';
+
+		if ($paid) {
+			$query .= ' AND t.paid_flag = 1 ';
+		}
+
+		$query .= ' AND t.end_date >= "' . $since .'"' ;
+
+		$countQuery = $selectCountQuery . $query;
+
+		if(!is_null($order)) {
+			$query .= ' ORDER BY ' . $order;
+		}
+
+		if(!is_null($direction)) {
+			$query .= ' ' . $direction;
+		}
+
+		if ($offset) {
+			$query .= ' LIMIT ' . $offset . ',' . $limit;
+		} else {
+			$query .= ' LIMIT ' . $limit;
+		}
+
+
+		// handle our normal query with results
+		$fullQuery = $selectQuery . $query;
+
+		$result = \DB::select($fullQuery);
+
+		// handle our total count for this full query excluding page limits
+		$numRows = \DB::select($countQuery);
+
+		return array('result' => $result, 'num_rows' => $numRows[0]);
+	}
 
 	/**
 	 * Return data needed to determine if unregistering is allowed for a user
@@ -494,6 +591,10 @@ class TournamentTicket extends \Eloquent {
 		$result = \DB::select($query);
 
 		return $result;				
+	}
+
+	public function tournament() {
+		return $this->belongsTo('\TopBetta\Tournament', 'tournament_id');
 	}
 
 }

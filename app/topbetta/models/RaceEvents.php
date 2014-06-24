@@ -25,8 +25,7 @@ class RaceEvent extends \Eloquent {
 		  ON eg.tournament_competition_id = tc.id 
 		  INNER JOIN `tbdb_tournament_sport` AS ts 
 		  ON tc.tournament_sport_id = ts.id 
-		  WHERE e.start_date > NOW() 
-		  AND ts.racing_flag = 1 
+		  WHERE ts.racing_flag = 1
 		  AND es.keyword = 'selling'
 		  AND e.display_flag = 1 
 		  AND e.event_status_id != 7

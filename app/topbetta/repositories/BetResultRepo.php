@@ -4,6 +4,7 @@ namespace TopBetta\Repositories;
 
 use TopBetta\Bet;
 use TopBetta\BetResultStatus;
+use TopBetta\BetSelection;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
@@ -26,6 +27,7 @@ class BetResultRepo
 	 */
 	public function resultAllBetsForPayingEvents()
 	{
+		// TODO: remove sport bets from this list
 		$events = Bet::where('bet_result_status_id', 1)
 				->where('resulted_flag', 0)
 				->where('tbdb_event.event_status_id', 2)
@@ -118,6 +120,61 @@ class BetResultRepo
 			return false;
 		}
 
+		return $this->processBetPayout($bet);
+	}
+	
+	/**
+	 * Find all pending bets for a market and result them
+	 * 
+	 * @param type $extMarketId
+	 * @return type
+	 */
+	public function resultAllSportBetsForMarket($extMarketId)
+	{
+
+		$bets = Bet::where('bet_result_status_id', 1)
+				->join('tbdb_bet_selection as bs', 'bs.bet_id', '=', 'tbdb_bet.id')
+				->join('tbdb_selection as s', 'bs.selection_id', '=', 's.id')
+				->where('resulted_flag', 0)				
+				->where('s.external_market_id', $extMarketId)
+				->select('tbdb_bet.*')
+				->get();
+
+		$result = array();
+
+		foreach ($bets as $bet) {
+			\Log::info('RESULTING SPORT BET: ' . $bet->id);
+			$result[$bet->id] = $this->resultSportBet($bet);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Result an individual sport bet object
+	 * 
+	 * @param Bet $bet
+	 * @return bool
+	 */
+	public function resultSportBet(Bet $bet)
+	{
+		$processBet = false;
+
+		// TODO: do we need to check if event was abandoned or ready to payout
+		
+		// TODO: handle refunds
+		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
+		$bet->resulted_flag = 1;		
+		$processBet = true;
+
+		if (!$processBet) {
+			return false;
+		}
+
+		return $this->processBetPayout($bet);
+	}	
+	
+	private function processBetPayout(Bet $bet) {
 		$payout = \TopBetta\Facades\BetRepo::getBetPayoutAmount($bet);
 		\Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);
 
@@ -133,9 +190,8 @@ class BetResultRepo
 			\Log::info('LOSING BET: ' . $bet->id);
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);
 			return true;
-		}
-
+		}	
+		
 		return false;
 	}
-
 }

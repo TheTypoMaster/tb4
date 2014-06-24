@@ -350,5 +350,9 @@ class Tournament extends \Eloquent {
                     ->orderBy('tbdb_event.start_date', 'asc')
                     ->take(1)
                     ->pluck('tbdb_event.start_date');
-	}         
+	}
+
+	public function leaderboards() {
+		return $this->hasMany('\TopBetta\TournamentLeaderboard', 'tournament_id');
+	}
 }
