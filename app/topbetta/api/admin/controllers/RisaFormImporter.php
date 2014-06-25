@@ -39,8 +39,23 @@ class RisaFormImporter extends \BaseController {
 					$meetDate = $risaXML->MeetDate;
 					$codeType = $risaXML->CodeType;
 					$codeType = 'R';
-					$venueName = strtoupper ($risaXML->Venue [0]->attributes ()->VenueName);
-					// loop on each race
+
+                    // DIRTY hard coding
+                    switch($risaXML->Venue[0]->attributes ()->VenueName){
+                        case "Rosehill Gardens":
+                            $venueName = strtoupper(str_replace("Rosehill Gardens", "Rosehill",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        case "Sportingbet Park Sandown Hill":
+                            $venueName = strtoupper(str_replace("Sportingbet Park Sandown Hill", "Sandown",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        case "Royal Randwick":
+                            $venueName = strtoupper(str_replace("Royal Randwick", "Randwick",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        default:
+                            $venueName = strtoupper($risaXML->Venue[0]->attributes ()->VenueName);
+                    }
+
+                	// loop on each race
 					foreach ($risaXML->Races->Race as $risaRace) {
 						($risaRace->RaceNumber < 10) ? $raceNumber = '0' . $risaRace->RaceNumber : $raceNumber = $risaRace->RaceNumber;
 						// echo "Race Number: $raceNumber\n";

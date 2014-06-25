@@ -10,7 +10,7 @@ window.addEvent('domready', function() {
 			$$('.race_only').each(function(e) {
 				e.setStyle('display', '');
 			});
-			$('advanced_settings').setStyle('display', 'none');
+			$('advanced_settings').setStyle('display', '');
 		} else {
 			$$('.race_only').each(function(e) {
 				e.setStyle('display', 'none');
@@ -29,7 +29,7 @@ window.addEvent('domready', function() {
 		$$('.race_only').each(function(e) {
 			e.setStyle('display', '');
 		});
-		$('advanced_settings').setStyle('display', 'none');
+		$('advanced_settings').setStyle('display', '');
 	} else {
 		$$('.race_only').each(function(e) {
 			e.setStyle('display', 'none');

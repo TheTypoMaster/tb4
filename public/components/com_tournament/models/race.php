@@ -124,6 +124,14 @@ class TournamentModelRace extends TournamentModelEvent
 		'event_id' => array(
 			'name' 		=> 'BM Event ID',
 			'type' 		=> self::TYPE_INTEGER
+		),
+		'override_start' => array(
+			'name' 		=> 'Override Start',
+			'type' 		=> self::TYPE_INTEGER
+		),
+		'event_status_id' => array(
+			'name' 		=> 'Event Status ID',
+			'type' 		=> self::TYPE_INTEGER
 		)
 
 	);
@@ -148,7 +156,7 @@ class TournamentModelRace extends TournamentModelEvent
 	public function getRaceApi($id)
 	{
 		$db =& $this->getDBO();
-		$query = "SELECT e.id, e.tournament_competition_id, e.external_event_id, e.wagering_api_id, e.event_status_id, e.paid_flag, e.name, e.start_date, e.created_date, e.updated_date, e.distance, e.class, e.number, e.trifecta_pool, e.firstfour_pool, e.exacta_pool, e.quinella_pool, e.trifecta_dividend, e.firstfour_dividend, e.exacta_dividend, e.quinella_dividend, e.external_race_pool_id_list FROM `tbdb_event` AS e WHERE e.id =".$id;
+		$query = "SELECT e.id, e.tournament_competition_id, e.external_event_id, e.wagering_api_id, e.event_status_id, e.paid_flag, e.name, e.override_start, e.start_date, e.created_date, e.updated_date, e.distance, e.class, e.number, e.trifecta_pool, e.firstfour_pool, e.exacta_pool, e.quinella_pool, e.trifecta_dividend, e.firstfour_dividend, e.exacta_dividend, e.quinella_dividend, e.external_race_pool_id_list FROM `tbdb_event` AS e WHERE e.id =".$id;
 		//$query = "SELECT * FROM `#__race` WHERE `id`=".$id;
 		$db->setQuery($query);
 

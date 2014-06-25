@@ -17,6 +17,18 @@ class Tournament extends \Eloquent {
     public function tournamentlabels(){
         return $this->belongsToMany('TopBetta\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
     }
+	
+	public function parentTournament() {
+		return $this->belongsTo('TopBetta\Tournament', 'parent_tournament_id');
+	}
+	
+	public function eventGroup() {
+		return $this->belongsTo('TopBetta\RaceMeeting', 'event_group_id');
+	}
+	
+	public function sport() {
+		return $this->belongsTo('TopBetta\SportsSportName', 'tournament_sport_id');
+	}
 
 	static public function getTournamentWithEventGroup($eventGroupId){
 		return Tournament::where('event_group_id', '=', $eventGroupId)->get();
@@ -73,6 +85,11 @@ class Tournament extends \Eloquent {
 				t.updated_date,
 				t.private_flag,
 				t.bet_limit_flag,
+				t.tournament_sponsor_name,
+				t.tournament_sponsor_logo,
+				t.tournament_sponsor_logo_link,
+				t.closed_betting_on_first_match_flag,
+				t.reinvest_winnings_flag,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,
@@ -333,5 +350,9 @@ class Tournament extends \Eloquent {
                     ->orderBy('tbdb_event.start_date', 'asc')
                     ->take(1)
                     ->pluck('tbdb_event.start_date');
-	}         
+	}
+
+	public function leaderboards() {
+		return $this->hasMany('\TopBetta\TournamentLeaderboard', 'tournament_id');
+	}
 }

@@ -215,7 +215,7 @@ class TournamentViewTournament extends JView
 		$parent_js_option_list = json_encode(array(
 			'request_base' 		=> $ajax_base,
 			'select_id'			=> 'parent_tournament_id',
-			'callback'			=> 'getParentTournamentListBySportID',
+			'callback'			=> 'getParentJackpotTournamentListBySportID',
 			'trigger_id'		=> 'tournament_sport_id'
 		));
 

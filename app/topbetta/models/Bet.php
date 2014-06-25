@@ -8,6 +8,27 @@ class Bet extends \Eloquent {
 
 	public static $rules = array();
 
+	public function selections()
+	{
+		return $this->hasMany('TopBetta\BetSelection', 'bet_id', 'id');
+	}
+	
+	public function user() {
+		return $this->belongsTo('User', 'user_id', 'id');
+	}
+	
+	public function betType() {
+		return $this->belongsTo('TopBetta\BetTypes', 'bet_type_id');
+	}
+	
+	public function status() {
+		return $this->belongsTo('TopBetta\BetResultStatus', 'bet_result_status_id');
+	}
+	
+	public function payout() {
+		return $this->belongsTo('TopBetta\AccountBalance', 'result_transaction_id');
+	}
+
 	/**
 	 * Get bet transaction details.
 	 * @param $transactionID

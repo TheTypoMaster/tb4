@@ -4,6 +4,8 @@ namespace TopBetta;
 class TournamentLeaderboard extends \Eloquent {
     protected $guarded = array();
 
+	protected $table = 'tbdb_tournament_leaderboard';
+
     public static $rules = array();
 	
 	/**
@@ -209,5 +211,13 @@ class TournamentLeaderboard extends \Eloquent {
 			->where('user_id', $userId)
 			->where('tournament_id', $tournamentId)
 			->delete();
-	}	
+	}
+
+	public function tournament() {
+		return $this->belongsTo('\TopBetta\Tournament', 'tournament_id');
+	}
+
+	public function scopeQualified($query) {
+		return $query->where('turned_over', '>=', 'tbdb_tournament.start_currency');
+	}
 }
