@@ -2039,6 +2039,16 @@ class Api_Betting extends JController
                 file_put_contents($file, "* Bet Selection:" . $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
             }
 
+
+
+            /*
+             * TURN OFF ALL SPORTS BETTING TILL RE-ENABLED
+             *
+             */
+//            $validation->error = JText::_('No sports betting available at this time');
+//            return OutputHelper::json(500, array('error_msg' => $validation->error));
+
+
             /*
              *  Check all required POST vars are there
              */
@@ -2093,6 +2103,13 @@ class Api_Betting extends JController
                 $validation->error = JText::_('Match not available');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
+
+//            $match =  $sportsBetting_model->getEventApi($betMatchID);
+//
+//            if (strtotime($match->start_date) < time()) {
+//                return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
+//            }
+
 
 //  			// check if market_id is in the DB
 //  			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
@@ -2555,6 +2572,7 @@ class Api_Betting extends JController
             $jsonPayload = json_encode($riskBet);
             file_put_contents('/tmp/riskSportsBet', "RiskPayload: " . $jsonPayload . "\n", FILE_APPEND | LOCK_EX);
 
+
             RiskManagerHelper::sendSportBet($riskBet);
 
             // setup database object rather than use the SUPERMODEL
@@ -2641,11 +2659,27 @@ class Api_Betting extends JController
             $race_model = & $this->getModel('Race', 'TournamentModel');
             $race = $race_model->getRace($race_id);
 
+            require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'eventstatus.php');
+            $race_status_model = new TournamentModelEventStatus();
+
+            $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
+
             if (is_null($race)) {
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
-            if (strtotime($race->start_date) < time()) {
+            if ($race->event_status_id != $selling_status->id) {
+                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
+            }
+
+            // Check to see if the race is past the start time as well as if the override flag is not true. This will allow
+            // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
+            // method
+            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+            $overRide = $race->override_start;
+
+//            if (strtotime($race->start_date) < time()) {
+            if ($pastStartCheck && !$overRide) {
                 return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
             }
 
