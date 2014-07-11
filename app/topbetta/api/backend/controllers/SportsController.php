@@ -1,8 +1,11 @@
 <?php namespace TopBetta\backend;
 
+use BaseController;
+use Carbon\Carbon;
 use TopBetta;
+use TopBetta\Repositories\DbMarketsRepository;
 
-class SportsController extends \BaseController {
+class SportsController extends BaseController {
 
 	/**
 	 * Default log message type
@@ -46,9 +49,12 @@ class SportsController extends \BaseController {
 	 */
 	private $debug = true;
 		
-	
-	public function __construct()
+
+    protected $markets;
+
+	public function __construct(DbMarketsRepository $markets)
 	{
+        $this->markets = $markets;
 		//$this->beforeFilter('apiauth');
 	}
 	
@@ -439,34 +445,44 @@ class SportsController extends \BaseController {
                                             $selectionModel->selection_status_id = 1;
                                         }
 									}
-									
-									// add/update the selection record
-									$selectionSave = $selectionModel->save();
-																		
-									// update selection odds if there included in the data
-									if(isset($dataArray['Odds'])){
-										// check if odds record exists
-										$oddsExists = TopBetta\SportsSelectionPrice::selectionPriceExists($selectionModel->id);
-										
-										// if selection exists update that record
-										if($oddsExists){
-											TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, In DB: $oddsExists", 1);
-											$selectionPriceModel = TopBetta\SportsSelectionPrice::find($oddsExists);
-											$selectionPriceModel->line = $line;
-											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
-										}else{
-											TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, Adding to DB: $oddsExists", 1);
-											$selectionPriceModel = new TopBetta\SportsSelectionPrice;
-											$selectionPriceModel->selection_id = $selectionModel->id;
-											// TODO: $selectionPriceModel->bet_product_id = "Should we add an iGAS record"
-											$selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
-											$selectionPriceModel->line = $line;
-										}
-										
-										// Add/update the selection odds/price record
-										$selectionPriceModel->save();
-										TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
-									}
+
+                                    // add/update the selection record
+                                    $selectionSave = $selectionModel->save();
+
+                                    // get the start time for the event from the DB
+                                    $eventStartTime = $this->markets->getMarketEventStartTime($marketExists);
+
+                                    TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId - NowTime:". Carbon::now('Australia/Sydney'). ", StartTime:".$eventStartTime);
+
+                                    // brush the odds update if the event has started
+                                    if(Carbon::now('Australia/Sydney') < $eventStartTime){
+
+                                        // update selection odds if there included in the data
+                                        if(isset($dataArray['Odds'])){
+                                            // check if odds record exists
+                                            $oddsExists = TopBetta\SportsSelectionPrice::selectionPriceExists($selectionModel->id);
+
+                                            // if selection exists update that record
+                                            if($oddsExists){
+                                                TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, In DB: $oddsExists", 1);
+                                                $selectionPriceModel = TopBetta\SportsSelectionPrice::find($oddsExists);
+                                                $selectionPriceModel->line = $line;
+                                                $selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
+                                            }else{
+                                                TopBetta\LogHelper::l("BackAPI: Sports - Processing Selection Price, Adding to DB: $oddsExists", 1);
+                                                $selectionPriceModel = new TopBetta\SportsSelectionPrice;
+                                                $selectionPriceModel->selection_id = $selectionModel->id;
+                                                // TODO: $selectionPriceModel->bet_product_id = "Should we add an iGAS record"
+                                                $selectionPriceModel->win_odds = $dataArray['Odds'] / 100;
+                                                $selectionPriceModel->line = $line;
+                                            }
+
+                                            // Add/update the selection odds/price record
+                                            $selectionPriceModel->save();
+                                            TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection Price. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId, Odds:".$dataArray['Odds']);
+                                        }
+                                    }
+
 									TopBetta\LogHelper::l("BackAPI: Sports - Processed Selection. EID:$eventId , MarketId:$marketId, SelectionId:$selectionId");
 									
 									// Add the line to the market record for display purposes
@@ -538,8 +554,14 @@ class SportsController extends \BaseController {
 												$selectionResultModel->position = 1;
 												$selectionResultModel->save();
 												TopBetta\LogHelper::l("BackAPI: Sports - Processed Result: GameId:$gameId, MarketId:$marketId, MarketStatus:$marketStatus, Score:$score, ScoreType:$scoreType, ResultDB ID:$selectionResultModel->id.", 1);
+												
 											}
 											
+											// result any sport bet for this market
+											\Log::info('RESULTING: all sport bets for market id: ' . $marketId);
+											$betResultRepo = new TopBetta\Repositories\BetResultRepo();
+											$betResultRepo->resultAllSportBetsForMarket($marketId);
+
 											// TAKEN OUT TILL WE GO FULL AUTO
 // 											// update the event status to paying
 // 											$eventExists = TopBetta\SportsMatches::eventExists($gameId);

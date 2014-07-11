@@ -124,6 +124,14 @@ class TournamentModelRace extends TournamentModelEvent
 		'event_id' => array(
 			'name' 		=> 'BM Event ID',
 			'type' 		=> self::TYPE_INTEGER
+		),
+		'override_start' => array(
+			'name' 		=> 'Override Start',
+			'type' 		=> self::TYPE_INTEGER
+		),
+		'event_status_id' => array(
+			'name' 		=> 'Event Status ID',
+			'type' 		=> self::TYPE_INTEGER
 		)
 
 	);

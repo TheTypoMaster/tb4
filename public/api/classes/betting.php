@@ -725,6 +725,7 @@ class Api_Betting extends JController
                 $tournament_model = & $this->getModel('TournamentRacing', 'TournamentModel');
                 $tournament = $tournament_model->getTournamentRacingByTournamentID($id);
 
+
                 if($tournament->closed_betting_on_first_match_flag){
                     if (strtotime($tournament->betting_closed_date) < time()) {
                         //return $this->ticketError(JText::_('Betting has already closed'), $save, $tournament);
@@ -2038,6 +2039,16 @@ class Api_Betting extends JController
                 file_put_contents($file, "* Bet Selection:" . $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
             }
 
+
+
+            /*
+             * TURN OFF ALL SPORTS BETTING TILL RE-ENABLED
+             *
+             */
+//            $validation->error = JText::_('No sports betting available at this time');
+//            return OutputHelper::json(500, array('error_msg' => $validation->error));
+
+
             /*
              *  Check all required POST vars are there
              */
@@ -2093,12 +2104,26 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
+//            $match =  $sportsBetting_model->getEventApi($betMatchID);
+//
+//            if (strtotime($match->start_date) < time()) {
+//                return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
+//            }
+
+
 //  			// check if market_id is in the DB
 //  			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
 //  			if (is_null($market_exists)) {
 // 				$validation->error = JText::_('Market not available');
 // 				return OutputHelper::json(500, array('error_msg' => $validation->error ));
 //  			}
+
+
+
+            // get the selection/option details
+            $selectionDetails = $sportsBetting_model->getSelectionDetailsApi($selection);
+
+
             // grab the external id's
             $externalIDs = $sportsBetting_model->getExternalIDsApi($selection);
 
@@ -2478,12 +2503,77 @@ class Api_Betting extends JController
 
                 return OutputHelper::json(500, array('error_msg' => 'Bet Not Placed: ' . $errorMessage));
 
+
+
+
 // 					if (isset($external_bet->newOdds)){
 // 						return OutputHelper::json(400, array('error_msg' => 'Odds have changed', 'new_odds' => "$external_bet->newOdds" ));
 // 					}else{
 // 						return OutputHelper::json(500, array('error_msg' => 'Bet could not be registered :' . $api_error ));
 // 					}
             }
+
+
+            // send our bet off to Risk Manager
+            $riskBet = array(
+
+                'result_status' => '',
+                'dividend' => $bet_dividend, // fixed odds (overall odds for multibets - just same as selection one if only one selection)
+                'bet_amount' => $bet->bet_amount - $free_bet_amount, // total real $ amount
+                'free_bet_amount' => $free_bet_amount, // totoal FC amount
+                'placed_at' => date(DATE_ISO8601), // date bet placed
+                'bet_id' => (int) $bet_id, // TB bet ID
+                'client_id' => $user->id,
+                'client_username' => $user->username,
+                'client_btag' => $tb_model->getUser($user->id)->btag,
+
+                'sport_bet_selections' => array(
+
+                    array(
+                        // Bet Selection Data - bet_selection record
+                        //'bet_selection_id' => '',
+                        //'bet_selection_dividend' => '', // is this fixed odds
+
+                        // Option Data - selection record
+                        'option_id' => $selection->selection_id,
+                        'option_name' => $selectionDetails->option_name,
+                        'option_odds' => $bet_dividend,  // is this fixed odds
+                        //   'option_line' => '',
+                        // 'option_bet_limit' => '', // ?
+
+                        // Market Data - market recors
+                        'market_id' => $selectionDetails->market_id,
+                        'market_status' => $selectionDetails->market_status,
+                        //   'market_line' => '',
+
+                        // Market Type Data
+                        'market_type_id' => $selectionDetails->market_type_id,
+                        'market_name' => $selectionDetails->market_type_name,
+
+                        // Event Data
+                        'event_id' => $selectionDetails->event_id,
+                        'event_name' => $selectionDetails->event_name,
+                        'event_start_time' => $selectionDetails->event_start_time,
+
+                        // Competition Data
+                        'competition_id' => $selectionDetails->competition_id,
+                        'competition_name' => $selectionDetails->competition_name,
+                        'competition_start_time' => $selectionDetails->competition_start_time,
+
+                        // Sport Data
+                        'sport_id' => $selectionDetails->sport_id,
+                        'sport_name' => $selectionDetails->sport_name,
+                    ),
+
+                ),
+
+            );
+
+            $jsonPayload = json_encode($riskBet);
+            file_put_contents('/tmp/riskSportsBet', "RiskPayload: " . $jsonPayload . "\n", FILE_APPEND | LOCK_EX);
+
+
+            RiskManagerHelper::sendSportBet($riskBet);
 
             // setup database object rather than use the SUPERMODEL
             $db = & JFactory::getDBO();
@@ -2569,11 +2659,27 @@ class Api_Betting extends JController
             $race_model = & $this->getModel('Race', 'TournamentModel');
             $race = $race_model->getRace($race_id);
 
+            require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'eventstatus.php');
+            $race_status_model = new TournamentModelEventStatus();
+
+            $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
+
             if (is_null($race)) {
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
-            if (strtotime($race->start_date) < time()) {
+            if ($race->event_status_id != $selling_status->id) {
+                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
+            }
+
+            // Check to see if the race is past the start time as well as if the override flag is not true. This will allow
+            // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
+            // method
+            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+            $overRide = $race->override_start;
+
+//            if (strtotime($race->start_date) < time()) {
+            if ($pastStartCheck && !$overRide) {
                 return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
             }
 
