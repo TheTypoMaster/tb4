@@ -1,13 +1,82 @@
 <?php
 namespace TopBetta\frontend;
 
+use An;
+use TopBetta\Repositories\RisaFormRepository;
+
 class FrontCombinedRacingController extends \BaseController {
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+
+	/**
+	 * @var \TopBetta\Repositories\RisaFormRepository
+	 */
+	private $riseFormRepository;
+
+	function __construct(RisaFormRepository $riseFormRepository) {
+		$this->riseFormRepository = $riseFormRepository;
+	}
+
+	public function indexNew($type = 'r', $race = false, $meeting = false) {
+		// required input
+		$typeCode = \Input::get('type', $type);
+		$raceId = \Input::get('race', $race);
+		$meetingId = \Input::get('meeting', $meeting);
+
+		if (!$meetingId && !$raceId) {
+			return array("success" => false, "error" => "No meeting id or race id selected");
+		}
+
+		// work out meeting id based off race id only
+		if (!$meetingId && $raceId) {
+			$meetingId = \TopBetta\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+		}
+
+		$meetingsController = new FrontMeetingsController();
+		$meetingAndRaces = $meetingsController->show($meetingId, true);
+
+		if (!$meetingAndRaces['success']) {
+			return array("success" => false, "error" => "No meetings and races available");
+		}
+
+		$meetingAndRaces = $meetingAndRaces['result'];
+
+		$races = $meetingAndRaces['races'];
+
+		if ($races) {
+			foreach ($races as $key => $value) {
+				$races[$key]['meeting_id'] = $meetingAndRaces['id'];
+			}
+		}
+
+		unset($meetingAndRaces['races']);
+
+		$meeting = $meetingAndRaces;
+
+		$runnersController = new FrontRunnersController();
+		$runners = $runnersController->index(false, $raceId);
+
+
+		if (!$runners['success']) {
+			return array("success" => false, "error" => "No runners available");
+		}
+
+		$runners = $runners['result'];
+
+		foreach ($runners as $key => $value) {
+			$runnersForm = $this->riseFormRepository->getFormForRunnerCodeAndRace($runners[$key], (int)$raceId);
+		}
+
+		return array('success' => true, 'result' => array('meeting' => $meeting, 'races' => $races, 'runners' => $runners));
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @param string $type
+	 * @param bool $race
+	 * @param bool $meeting
+	 * @return Response
+	 */
     public function index($type = 'r', $race = false, $meeting = false)
     {
 
