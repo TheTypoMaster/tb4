@@ -29,8 +29,6 @@ class RisaFormRepository {
 		$runnersForm = $this->risaForm->with('lastStarts')->where('runner_code', $runner['runner_code'])->get();
 
 		$code = $runner['runner_code'];
-		$a = serialize($runner);
-		\Log::info("Runner $code: $a ");
 
 		// make sure we got some form for this runner
 		if(isset($runnersForm[0])){
