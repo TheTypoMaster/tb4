@@ -166,12 +166,15 @@ class FrontMeetingsController extends \BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  int $id
+	 * @param bool $showRaces
 	 * @return Response
 	 */
 	public function show($id, $showRaces = false) {
-		//
-		$meetingDetails = TopBetta\RaceMeeting::find($id);
+		// cache meeting query
+		$meetingDetails = \Cache::remember("meeting-$id", 5, function() use ($id) {
+			return \TopBetta\RaceMeeting::find($id);
+		});
 
 		if ($meetingDetails) {
 
