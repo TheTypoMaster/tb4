@@ -8,6 +8,7 @@
 
 namespace TopBetta\Repositories;
 
+use Illuminate\Support\Facades\Log;
 use TopBetta\RisaForm;
 
 class RisaFormRepository {
@@ -25,6 +26,9 @@ class RisaFormRepository {
 
 		$runner['race_id'] = $raceId;
 		$runnersForm = $this->risaForm->with('lastStarts')->where('runner_code', $runner['runner_code'])->get();
+
+		$code = $runner['runner_code'];
+		\Log::info("Runner $code: $runner ");
 
 		// make sure we got some form for this runner
 		if(isset($runnersForm[0])){

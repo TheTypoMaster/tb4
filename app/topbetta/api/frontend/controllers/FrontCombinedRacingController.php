@@ -66,6 +66,7 @@ class FrontCombinedRacingController extends \BaseController {
 			$runnersForm = \Cache::remember("risaform-runner-$key-race-$raceId", 5, function() use ($controller, $runners, $key, $raceId) {
 				return $controller->riseFormRepository->getFormForRunnerAndRaceId($runners[$key], (int)$raceId);
 			});
+			\Log::info("Runner Form: $runnersForm");
 		}
 
 		return array('success' => true, 'result' => array('meeting' => $meeting, 'races' => $races, 'runners' => $runners));
