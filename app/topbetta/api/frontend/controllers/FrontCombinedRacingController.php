@@ -1,11 +1,7 @@
 <?php
 namespace TopBetta\frontend;
 
-use An;
-use TopBetta\Repositories\RisaFormRepository;
-
 class FrontCombinedRacingController extends \BaseController {
-
 
 	/**
 	 * @var \TopBetta\Repositories\RisaFormRepository
@@ -62,8 +58,12 @@ class FrontCombinedRacingController extends \BaseController {
 
 		$runners = $runners['result'];
 
+		$controller = $this;
+
 		foreach ($runners as $key => $value) {
-			$runnersForm = $this->riseFormRepository->getFormForRunnerAndRaceId($runners[$key], (int)$raceId);
+			$runnersForm = \Cache::remember("risaform-runner-$key-race-$raceId", 5, function() use ($controller, $runners, $key, $raceId) {
+				return $controller->riseFormRepository->getFormForRunnerAndRaceId($runners[$key], (int)$raceId);
+			});
 		}
 
 		return array('success' => true, 'result' => array('meeting' => $meeting, 'races' => $races, 'runners' => $runners));
