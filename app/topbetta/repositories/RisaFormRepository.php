@@ -43,6 +43,7 @@ class RisaFormRepository {
 					'jockey_surname' => $last_starts->jockey_surname, 'handicap' => $last_starts->handicap, 'barrier' => (int)$last_starts->barrier, 'starting_win_price' => $last_starts->starting_win_price, 'other_runner_name' => $last_starts->other_runner_name,
 					'other_runner_barrier' => (int)$last_starts->other_runner_barrier, 'in_running_800' => $last_starts->in_running_800, 'in_running_400' => $last_starts->in_running_400, 'other_runner_time' => trim($last_starts->other_runner_time, '0:'), 'margin_decimal' => $last_starts->margin_decimal);
 			}
+			return $runner;
 		}
 	}
 
