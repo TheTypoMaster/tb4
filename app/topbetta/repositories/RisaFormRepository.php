@@ -21,7 +21,7 @@ class RisaFormRepository {
 		$this->risaForm = $risaForm;
 	}
 
-	public function getFormForRunnerAndRaceId($runner, $raceId) {
+	public function getFormForRunnerAndRaceId(&$runner, $raceId) {
 
 		$runner['race_id'] = $raceId;
 		$runnersForm = $this->risaForm->with('lastStarts')->where('runner_code', $runner['runner_code'])->get();
