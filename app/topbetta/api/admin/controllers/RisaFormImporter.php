@@ -51,6 +51,9 @@ class RisaFormImporter extends \BaseController {
                         case "Royal Randwick":
                             $venueName = strtoupper(str_replace("Royal Randwick", "Randwick",  $risaXML->Venue[0]->attributes ()->VenueName));
                             break;
+                        case "Geelong Synthetic":
+                            $venueName = strtoupper(str_replace("Geelong Synthetic", "Geelong",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
                         default:
                             $venueName = strtoupper($risaXML->Venue[0]->attributes ()->VenueName);
                     }
