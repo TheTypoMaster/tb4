@@ -1,6 +1,8 @@
 <?php
 namespace TopBetta\frontend;
 
+use TopBetta\Repositories\RisaFormRepository;
+
 class FrontCombinedRacingController extends \BaseController {
 
 	/**
