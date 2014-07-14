@@ -63,7 +63,7 @@ class FrontCombinedRacingController extends \BaseController {
 		$runners = $runners['result'];
 
 		foreach ($runners as $key => $value) {
-			$runnersForm = $this->riseFormRepository->getFormForRunnerCodeAndRace($runners[$key], (int)$raceId);
+			$runnersForm = $this->riseFormRepository->getFormForRunnerAndRaceId($runners[$key], (int)$raceId);
 		}
 
 		return array('success' => true, 'result' => array('meeting' => $meeting, 'races' => $races, 'runners' => $runners));
