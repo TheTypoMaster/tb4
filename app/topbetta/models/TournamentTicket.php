@@ -8,6 +8,10 @@ class TournamentTicket extends \Eloquent {
 
 	public static $rules = array();
 
+	public function tournament() {
+		return $this->belongsTo('TopBetta\Tournament', 'tournament_id');
+	}
+	
 	/**
 	 * Count the number of entrants in a tournament using tournament tickets.
 	 *
@@ -587,10 +591,6 @@ class TournamentTicket extends \Eloquent {
 		$result = \DB::select($query);
 
 		return $result;				
-	}
-
-	public function tournament() {
-		return $this->belongsTo('\TopBetta\Tournament', 'tournament_id');
 	}
 
 }
