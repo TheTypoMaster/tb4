@@ -186,12 +186,12 @@ Route::group(array('prefix' => '/api/v1'), function() {
 });
 
 Route::group(array('prefix' => 'admin'), function() {
-	Route::get('/', ['as' => 'home', 'uses' => 'TopBetta\admin\controllers\SessionController@create']);
+	Route::get('/', array('as' => 'home', 'uses' => 'TopBetta\admin\controllers\SessionController@create'));
 
 	Route::get('login', 'TopBetta\admin\controllers\SessionController@create');
 	Route::get('logout', 'TopBetta\admin\controllers\SessionController@destroy');
 
-	Route::resource('session', 'TopBetta\admin\controllers\SessionController', ['only' => ['create', 'store', 'destroy']]);	
+	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));	
 });
 
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin'), function() {
