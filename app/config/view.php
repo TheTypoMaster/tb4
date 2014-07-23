@@ -26,6 +26,8 @@ return array(
 	|
 	*/
 
-	'pagination' => 'pagination::slider',
+	// 'pagination' => 'pagination::slider',
+	// we want a bootstrap 3 compatible slider
+	'pagination' => 'admin::layouts.partials.slider',
 
 );

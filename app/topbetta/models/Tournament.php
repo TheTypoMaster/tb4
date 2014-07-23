@@ -17,6 +17,18 @@ class Tournament extends \Eloquent {
     public function tournamentlabels(){
         return $this->belongsToMany('TopBetta\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
     }
+	
+	public function parentTournament() {
+		return $this->belongsTo('TopBetta\Tournament', 'parent_tournament_id');
+	}
+	
+	public function eventGroup() {
+		return $this->belongsTo('TopBetta\RaceMeeting', 'event_group_id');
+	}
+	
+	public function sport() {
+		return $this->belongsTo('TopBetta\SportsSportName', 'tournament_sport_id');
+	}
 
 	static public function getTournamentWithEventGroup($eventGroupId){
 		return Tournament::where('event_group_id', '=', $eventGroupId)->get();
