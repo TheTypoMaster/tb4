@@ -8,6 +8,19 @@ class BetSelection extends \Eloquent {
 
     public static $rules = array();
 	
+	/**
+	 * Runner for this bet selection
+	 * 
+	 * @return type
+	 */
+	public function selection() {
+		return $this->belongsTo('TopBetta\RaceSelection', 'selection_id', 'id');
+	}	
+	
+	public function bet() {
+		return $this->belongsTo('TopBetta\Bet', 'bet_id');
+	}
+	
 	public static function getExoticSelectionsForBetId($betId) {
 		
 		$selections = BetSelection::where('bet_id', '=', $betId)

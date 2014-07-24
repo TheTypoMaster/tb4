@@ -31,7 +31,7 @@ class BetRepo
 		$payout = 0;
 		$dividend = 0;
 
-		switch ($bet->betType()->name) {
+		switch ($bet->betType->name) {
 			case 'win':
 				if ($bet->bet_origin_id == 2) {
 					// RACING: simple check - do we have a result record for this selection id and win dividend
@@ -110,7 +110,7 @@ class BetRepo
 					->where('position', '>', 0)
 					->pluck('position');
 
-			switch ($bet->betType()->name) {
+			switch ($bet->betType->name) {
 				case 'quinella':
 					// 2 selections any order in 1st or 2nd position = WIN
 					if ($position == 1 || $position == 2) {
@@ -166,7 +166,7 @@ class BetRepo
 		}
 
 		// did we get min number of wins?
-		if ($winCount >= $exoticsMinWin[$bet->betType()->name]) {
+		if ($winCount >= $exoticsMinWin[$bet->betType->name]) {
 			return true;
 		}
 
@@ -195,6 +195,34 @@ class BetRepo
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Pass in selections for a new bet and check against a bet for an exact match
+	 * 
+	 * @param array $selections
+	 * @param \TopBetta\Bet $bet
+	 * @return boolean
+	 */
+	public function checkSelectionsMatchExoticBet(array $selections, Bet $bet)
+	{
+		// build up an array from the existing bet with the same structure as the selections passed in
+		$positionMap = array('0' => 'first', '1' => 'first', '2' => 'second', '3' => 'third', '4' => 'fourth');
+		$existingSelections = array('first' => array(), 'second' => array(), 'third' => array(), 'fourth' => array());
+		
+		foreach ($bet->selections as $selection) {
+			$existingSelections[$positionMap[$selection['position']]][] = $selection->selection_id;
+		}
+
+		// little cleanup first to remove any unused positions
+		foreach ($existingSelections as $key => $position) {
+			if (count($position) == 0) {
+				unset($existingSelections[$key]);
+			}
+		}
+
+		// check we have an identical array
+		return ($selections == $existingSelections) ? true : false;
 	}
 
 	public function getFixedOddsForSportsBet(Bet $bet)
@@ -276,10 +304,10 @@ class BetRepo
 
 		foreach ($betSelections as $betSelection) {
 			$bet = Bet::where('id', $betSelection->bet_id)
-				->where('refunded_flag', 0)
-				->where('resulted_flag',0)
-				->first();
-			
+					->where('refunded_flag', 0)
+					->where('resulted_flag', 0)
+					->first();
+
 			if ($bet && $bet->bet_type_id <= 3) {
 				\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
 				$this->refundBet($bet);
@@ -287,7 +315,7 @@ class BetRepo
 		}
 
 		// TODO: partial refund exotic bets
-		
+
 		return true;
 	}
 
