@@ -8,7 +8,7 @@ class FrontCombinedRacingController extends \BaseController {
 	/**
 	 * @var \TopBetta\Repositories\RisaFormRepository
 	 */
-	private $riseFormRepository;
+	public $riseFormRepository;
 
 	function __construct(RisaFormRepository $riseFormRepository) {
 		$this->riseFormRepository = $riseFormRepository;
