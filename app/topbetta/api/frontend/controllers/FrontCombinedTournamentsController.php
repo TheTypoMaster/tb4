@@ -95,7 +95,7 @@ class FrontCombinedTournamentsController extends \BaseController {
                 $nextEvent = (int)$raceId;
             }
 
-            $racingController = \App::make('\TopBetta\frontend\FrontTournamentsController');
+            $racingController = \App::make('\TopBetta\frontend\FrontCombinedRacingController');
             $racing =  $racingController->index('r', $nextEvent, $meetingId);
 
             if ($racing['success']) {
