@@ -8,6 +8,19 @@ class FreeCreditBalance extends \Eloquent {
 	public static $rules = array();
 
 	const TYPE_FREEBETREFUND = 'freebetrefund';
+	
+    // table relationships
+    public function transactionType() {
+		return $this->belongsTo('TopBetta\FreeCreditTransactionTypes', 'tournament_transaction_type_id');
+	}
+	
+	public function giver() {
+		return $this->belongsTo('User', 'giver_id');
+	}
+	
+	public function recipient() {
+		return $this->belongsTo('User', 'recipient_id');
+	}	
 
 	/**
 	 * Get users free creit balance.

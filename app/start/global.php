@@ -81,3 +81,54 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+/*
+|--------------------------------------------------------------------------
+| Admin views
+|--------------------------------------------------------------------------
+*/
+
+View::addLocation(app('path').'/topbetta/admin/views');
+View::addNamespace('admin', app('path').'/topbetta/admin/views');
+
+/**
+ * Add the missing helper to L4.0 :)
+ * Create a select month field.
+ *
+ * @param  string  $name
+ * @param  string  $selected
+ * @param  array   $options
+ * @return string
+ */
+Form::macro('selectMonth', function ($name, $selected = null, $options = array())
+{
+	$months = array();
+
+	foreach (range(1, 12) as $month)
+	{
+		$months[$month] = strftime('%B', mktime(0, 0, 0, $month, 1));
+	}
+
+	return Form::select($name, $months, $selected, $options);
+});
+
+/**
+ * Added a year select to match ;)
+ * Create a select year field.
+ *
+ * @param  string  $name
+ * @param  string  $selected
+ * @param  array   $options
+ * @return string
+ */
+Form::macro('selectYear', function ($name, $selected = null, $options = array())
+{
+	$years = array();
+
+	foreach (range(date('Y')-4, date('Y')) as $year)
+	{
+		$years[$year] = $year;
+	}
+
+	return Form::select($name, $years, $selected, $options);
+});

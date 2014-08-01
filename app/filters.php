@@ -39,6 +39,10 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Response::json(array("success" => false, "error" => "Please login first."), 401);
 });
 
+Route::filter('auth.admin', function() {
+	if (Auth::guest() || Auth::user()->gid != 25) return Redirect::guest('/admin/login');
+});
+
 
 Route::filter('auth.basic', function()
 {
@@ -109,5 +113,21 @@ Route::filter('csrf', function()
 	if (Session::token() != Input::get('_token'))
 	{
 		throw new Illuminate\Session\TokenMismatchException;
+	}
+});
+
+Route::filter('topbetta_secure_links', function($route, $request, $response)
+{
+	if (\Config::get('topbetta.secure_links')) {
+		if($response instanceof \Illuminate\Http\Response)
+		{
+			$output = $response->getContent();
+			$host = \Illuminate\Support\Facades\URL::getRequest()->getHost();
+			
+			// swap out the http links to https for only our admin links
+			$output = str_replace("http://{$host}", "https://{$host}", $output);
+			
+			$response->setContent($output);
+		}
 	}
 });
