@@ -396,7 +396,10 @@ class FrontTournamentsController extends \BaseController {
 
 		//get entries/player list
 		$ticketModel = new \TopBetta\TournamentTicket;
-		$playerList = $ticketModel -> getTournamentEntrantList($tournamentId);
+
+		$playerList = \Cache::remember("tournament-$tournamentId-userlist", 1, function() use ($ticketModel, $tournamentId) {
+			return $ticketModel -> getTournamentEntrantList($tournamentId);
+		});
 
 		//leaderboard
 		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
@@ -427,8 +430,14 @@ class FrontTournamentsController extends \BaseController {
 		}
 
 		//get prize pool in cents & places paid
-		$prizePool = $tournamentModel -> calculateTournamentPrizePool($tournamentId);
-		$placeList = $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
+
+		$prizePool = \Cache::remember("tournament-$tournamentId-prizepool", 1, function() use ($tournamentModel, $tournamentId) {
+			return $tournamentModel -> calculateTournamentPrizePool($tournamentId);
+		});
+
+		$placeList = \Cache::remember("tournament-$tournamentId-placelist", 1, function() use ($tournamentModel, $tournament, $playerList, $prizePool) {
+			return $tournamentModel -> calculateTournamentPlacesPaid($tournament, count($playerList), $prizePool);
+		});
 
 		if ($tournament -> free_credit_flag && $placeList) {
 
