@@ -16,6 +16,7 @@ return array(
 	'debug' => true,
 
 	'providers' => array(
+
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
 		'Illuminate\Auth\AuthServiceProvider',
 		'Illuminate\Cache\CacheServiceProvider',
