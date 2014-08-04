@@ -6,6 +6,9 @@
 		"laravel/framework": "4.0.*",
 		"way/generators": "dev-master"
 	},
+	"require-dev": {
+		"itsgoingd/clockwork": "1.*"
+	},
 	"autoload": {
 		"classmap": [
 			"app/commands",

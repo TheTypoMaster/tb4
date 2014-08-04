@@ -15,5 +15,8 @@ return array(
 
 	'debug' => true,
 
+	'providers' => append_config(array(
+		'Clockwork\Support\Laravel\ClockworkServiceProvider'
+	))
 
 );
