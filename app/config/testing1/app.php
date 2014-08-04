@@ -14,8 +14,8 @@ return array(
 	*/
 
 	'debug' => true,
-
 	'providers' => array(
+
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
 		'Illuminate\Auth\AuthServiceProvider',
 		'Illuminate\Cache\CacheServiceProvider',
@@ -54,6 +54,6 @@ return array(
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
 		'Clockwork\Support\Laravel\ClockworkServiceProvider'
-	)
+	),
 
 );
