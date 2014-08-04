@@ -7,9 +7,6 @@
 		"way/generators": "dev-master",
 		"itsgoingd/clockwork": "1.*"
 	},
-	"require-dev": {
-		"itsgoingd/clockwork": "1.*"
-	},
 	"autoload": {
 		"classmap": [
 			"app/commands",
