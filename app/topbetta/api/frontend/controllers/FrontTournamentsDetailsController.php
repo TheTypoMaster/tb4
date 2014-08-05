@@ -35,8 +35,10 @@ class FrontTournamentsDetailsController extends \BaseController {
 		$meetingId = $tournament -> event_group_id;
 
 		//get entries/player list
-		$ticketModel = new \TopBetta\TournamentTicket;		
-		$playerList = $ticketModel -> getTournamentEntrantList($tournamentId);
+		$ticketModel = new \TopBetta\TournamentTicket;
+		$playerList = \Cache::remember("tournament-$tournamentId-userlist", 1, function() use ($ticketModel, $tournamentId) {
+			return $ticketModel -> getTournamentEntrantList($tournamentId);
+		});
 
 		//leaderboard
 		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
