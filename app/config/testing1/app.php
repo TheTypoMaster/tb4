@@ -14,6 +14,4 @@ return array(
 	*/
 
 	'debug' => true,
-
-
 );
