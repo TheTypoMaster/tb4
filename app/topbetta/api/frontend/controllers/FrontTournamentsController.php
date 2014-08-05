@@ -448,9 +448,13 @@ class FrontTournamentsController extends \BaseController {
                     $position++;
                 }
 
-                $player['rank'] = $position;
-
-                $player['qualified'] = ($player['qualified'] == 0) ? false : true;
+                if($player['qualified'] == 0){
+                    $player['qualified'] = false;
+                    $player['rank'] = '-';
+                }else{
+                    $player['qualified'] = true;
+                    $player['rank'] = $position;
+                }
 
                 $rankedleaderboard[] = $player;
 
