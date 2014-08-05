@@ -33,10 +33,10 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
                             ->where('tbdb_tournament_leaderboard.tournament_id', $tournamentID);
 
         if($qualified){
-            //$qualified = 1;
+            $qualified = 1;
             $query->where('tbdb_tournament_leaderboard.turned_over', '>=', $startCurrency);
         }else{
-            //$qualified = 0;
+            $qualified = 0;
             $query->where('tbdb_tournament_leaderboard.turned_over', '<', $startCurrency);
         }
 
