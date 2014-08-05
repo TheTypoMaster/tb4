@@ -411,9 +411,8 @@ class FrontTournamentsController extends \BaseController {
 		});
 
 		//leaderboard
-		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+		// $leaderboardModel = new \TopBetta\TournamentLeaderboard;
 
-		$leaderboard = array();
 		if (strtotime($tournament -> start_date) < time()) {
 
             // dirty controller business logic....
@@ -421,10 +420,16 @@ class FrontTournamentsController extends \BaseController {
 				$leaderboard = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, 50, $tournament->start_currency, true);
 			} else {
 
-                $leaderboardQualified = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, 50, $tournament->start_currency, true);
-                $leaderboardNotQualified = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, 50, $tournament->start_currency, false);
-                $leaderboard = array_merge($leaderboardQualified, $leaderboardNotQualified);
-			}
+                $leaderboard = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, 50, $tournament->start_currency, true);
+
+                $qualCount = count($leaderboard);
+
+                if($qualCount < 50){
+                    $unqualLimit = 50 - $qualCount;
+                    $leaderboardNotQualified = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, $unqualLimit, $tournament->start_currency, false);
+                    $leaderboard = array_merge($leaderboard, $leaderboardNotQualified);
+                }
+            }
 
             /*
              * Set players rank
