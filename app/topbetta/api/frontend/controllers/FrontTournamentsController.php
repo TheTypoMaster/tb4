@@ -412,6 +412,7 @@ class FrontTournamentsController extends \BaseController {
 
 		//leaderboard
 		// $leaderboardModel = new \TopBetta\TournamentLeaderboard;
+        $leaderboard = array();
 
 		if (strtotime($tournament -> start_date) < time()) {
 
