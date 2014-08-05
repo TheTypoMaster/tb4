@@ -2,9 +2,18 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use Illuminate\Support\Facades\Input;
 
+
 class FrontTournamentsController extends \BaseController {
+
+    protected $tournamentleaderboard;
+
+    function __construct(DbTournamentLeaderboardRepository $tournamentleaderboard) {
+        $this->tournamentleaderboard = $tournamentleaderboard;
+    }
+
 
 	protected $racingMap = array('r' => 'galloping', 'g' => 'greyhounds', 'h' => 'harness');
 
@@ -402,30 +411,79 @@ class FrontTournamentsController extends \BaseController {
 		});
 
 		//leaderboard
-		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+		// $leaderboardModel = new \TopBetta\TournamentLeaderboard;
+        $leaderboard = array();
 
-		$leaderboard = array();
 		if (strtotime($tournament -> start_date) < time()) {
 
-			if ($tournament -> paid_flag) {
-
-				$leaderboard = $leaderboardModel -> getLeaderBoardRank($tournament, 50, true);
-
+            // dirty controller business logic....
+            if ($tournament -> paid_flag) {
+				$leaderboard = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, 50, $tournament->start_currency, true);
 			} else {
 
-				$leaderboard = $leaderboardModel -> getLeaderBoardRank($tournament, 50);
+                $leaderboard = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, 50, $tournament->start_currency, true);
 
-			}
+                $qualCount = count($leaderboard);
 
-			foreach ($leaderboard as $id => $val) {
-				$leaderboard[$id] -> id = (int)$leaderboard[$id] -> id;
-				$leaderboard[$id] -> currency = (int)$leaderboard[$id] -> currency;
-				$leaderboard[$id] -> qualified = ($leaderboard[$id] -> qualified == 0) ? false : true;
+                if($qualCount < 50){
+                    $unqualLimit = 50 - $qualCount;
+                    $leaderboardNotQualified = $this->tournamentleaderboard->getTournamentLeaderboard($tournament->id, $unqualLimit, $tournament->start_currency, false);
+                    $leaderboard = array_merge($leaderboard, $leaderboardNotQualified);
+                }
+            }
 
-				// we don't really need these showing
-				unset($leaderboard[$id] -> name);
-				unset($leaderboard[$id] -> turned_over);
-			}
+            /*
+             * Set players rank
+             */
+            $rankedleaderboard = array();
+            $position = 1;
+            $firstRecord = true;
+            foreach($leaderboard as $player){
+                if($firstRecord) {
+                    $lastPlayerCurrency = $player['currency'];
+                    $firstRecord = false;
+                }
+
+                if($player['currency'] < $lastPlayerCurrency){
+                    $position++;
+                }
+
+                if($player['qualified'] == 0){
+                    $player['qualified'] = false;
+                    $player['rank'] = '-';
+                }else{
+                    $player['qualified'] = true;
+                    $player['rank'] = $position;
+                }
+
+                $rankedleaderboard[] = $player;
+
+                $lastPlayerCurrency = $player['currency'];
+            }
+
+            $leaderboard = $rankedleaderboard;
+
+
+
+//			if ($tournament -> paid_flag) {
+//
+//				$leaderboard = $leaderboardModel -> getLeaderBoardRank($tournament, 50, true);
+//
+//			} else {
+//
+//				$leaderboard = $leaderboardModel -> getLeaderBoardRank($tournament, 50);
+//
+//			}
+//
+//			foreach ($leaderboard as $id => $val) {
+//				$leaderboard[$id] -> id = (int)$leaderboard[$id] -> id;
+//				$leaderboard[$id] -> currency = (int)$leaderboard[$id] -> currency;
+//				$leaderboard[$id] -> qualified = ($leaderboard[$id] -> qualified == 0) ? false : true;
+//
+//				// we don't really need these showing
+//				unset($leaderboard[$id] -> name);
+//				unset($leaderboard[$id] -> turned_over);
+//			}
 
 		}
 
