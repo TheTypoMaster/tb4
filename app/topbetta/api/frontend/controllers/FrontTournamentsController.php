@@ -2,7 +2,7 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
-use TopBetta\Repositories\TournamentLeaderboardRepository;
+use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use Illuminate\Support\Facades\Input;
 
 
@@ -10,7 +10,7 @@ class FrontTournamentsController extends \BaseController {
 
     protected $tournamentleaderboard;
 
-    function __construct(TournamentLeaderboardRepository $tournamentleaderboard) {
+    function __construct(DbTournamentLeaderboardRepository $tournamentleaderboard) {
         $this->tournamentleaderboard = $tournamentleaderboard;
     }
 

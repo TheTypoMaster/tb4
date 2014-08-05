@@ -10,7 +10,7 @@ use TopBetta\TournamentLeaderboard;
 use DB;
 
 
-class TournamentLeaderboardRepository extends BaseEloquentRepository{
+class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
 
     protected $tournamentLeaderboard;
 
