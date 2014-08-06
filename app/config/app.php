@@ -116,7 +116,8 @@ return array(
 		'Way\Generators\GeneratorsServiceProvider',
 		'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
-		'TopBetta\Providers\BetLimitRepoServiceProvider'
+		'TopBetta\Providers\BetLimitRepoServiceProvider',
+		'Clockwork\Support\Laravel\ClockworkServiceProvider'
 
 	),
 
@@ -221,7 +222,7 @@ return array(
 		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
 		'BetRepo' => 'TopBetta\Facades\BetRepo',
 		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
-
+		'Clockwork' => 'Clockwork\Support\Laravel\Facade',
 	),
 
 );
