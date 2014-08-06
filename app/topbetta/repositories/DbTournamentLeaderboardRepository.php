@@ -30,7 +30,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
      */
     public function getTournamentLeaderboard($tournamentID, $limit = 50, $startCurrency, $qualified = false){
         $query = $this->model->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_tournament_leaderboard.user_id')
-                            ->where('tbdb_tournament_leaderboard.tournament_id', $tournamentID);
+            ->where('tbdb_tournament_leaderboard.tournament_id', $tournamentID);
 
         if($qualified){
             $qualified = 1;
@@ -41,10 +41,10 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
         }
 
         $tournamentLeaderboard = $query->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
-                                        ->take($limit)
-                                        ->select(DB::raw('tbdb_users.id as id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, '.$qualified.' as qualified'))
-                                        ->get()
-                                        ->toArray();
+            ->take($limit)
+            ->select(DB::raw('tbdb_users.id as id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, '.$qualified.' as qualified'))
+            ->get()
+            ->toArray();
 
         return $tournamentLeaderboard;
     }
