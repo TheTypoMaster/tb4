@@ -2,18 +2,18 @@
 
 class BaseController extends Controller {
 
-	function __construct()
-	{
-		$this->beforeFilter(function()
-		{
-			Event::fire('clockwork.controller.start');
-		});
-
-		$this->afterFilter(function()
-		{
-			Event::fire('clockwork.controller.end');
-		});
-	}
+//	function __construct()
+//	{
+//		$this->beforeFilter(function()
+//		{
+//			Event::fire('clockwork.controller.start');
+//		});
+//
+//		$this->afterFilter(function()
+//		{
+//			Event::fire('clockwork.controller.end');
+//		});
+//	}
 
 	/**
 	 * Setup the layout used by the controller.
