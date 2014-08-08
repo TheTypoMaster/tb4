@@ -975,9 +975,6 @@ class Api_Betting extends JController
 
             $raceNumber = $race->number;
 
-            //MC fix to get the correct race id to place a bet
-            //$race->id = $race_model->getRaceIdByEventIdRaceNum($id, $race_id)->id;
-
             if (is_null($race)) {
                 $validation->error = JText::_('Race was not found');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
@@ -987,18 +984,20 @@ class Api_Betting extends JController
             $race_status_model = new TournamentModelEventStatus();
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
 
-            if ($race->event_status_id != $selling_status->id) {
-                $validation->error = JText::_('Betting was closed');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
-            
             // special case for greyhounds to allow betting after jump time if allowed only
             // all other race types are always closed via the race status only
-            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+//            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+
+            
+//            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+//            if ($pastStartCheck && !$overRide) {
+//                $validation->error = JText::_('Betting was closed');
+//                return OutputHelper::json(500, array('error_msg' => $validation->error));
+//            }
+
             $overRide = $race->override_start;
 
-//            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
-            if ($pastStartCheck && !$overRide) {
+            if ($race->event_status_id != $selling_status->id || !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
@@ -2106,7 +2105,7 @@ class Api_Betting extends JController
 
             $match =  $sportsBetting_model->getEventApi($betMatchID);
 
-            if (strtotime($match->start_date) < time()) {
+            if (strtotime($match->start_date) > time()) {
                 return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
             }
 
