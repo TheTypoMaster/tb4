@@ -975,9 +975,6 @@ class Api_Betting extends JController
 
             $raceNumber = $race->number;
 
-            //MC fix to get the correct race id to place a bet
-            //$race->id = $race_model->getRaceIdByEventIdRaceNum($id, $race_id)->id;
-
             if (is_null($race)) {
                 $validation->error = JText::_('Race was not found');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
