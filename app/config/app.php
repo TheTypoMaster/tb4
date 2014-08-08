@@ -222,7 +222,7 @@ return array(
 		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
 		'BetRepo' => 'TopBetta\Facades\BetRepo',
 		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
-		'Clockwork' => 'Clockwork\Support\Laravel\Facade',
+		// 'Clockwork' => 'Clockwork\Support\Laravel\Facade',
 	),
 
 );
