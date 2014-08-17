@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta\Repositories;
 /**
  * Created by PhpStorm.
  * User: jason
@@ -6,12 +6,9 @@
  * Time: 3:00 PM
  */
 
-namespace TopBetta\Repositories;
-
 
 class BaseEloquentRepository {
 
-	protected $model;
 	/**
 	 * Find the model given an ID
 	 * @param $id
@@ -52,4 +49,24 @@ class BaseEloquentRepository {
 	public function createNew($data) {
 		return new $this->model($data);
 	}
+
+    public function updateOrCreate($input, $key = 'id')
+    {
+        // Instantiate new OR existing object
+        if (! empty($input[$key])){
+            $resource = $this->model->firstOrNew(array($key => $input[$key]));
+        }
+        else{
+            $resource = $this->model; // Use a clone to prevent overwriting the same object in case of recursion
+        }
+
+        // Fill object with user input using Mass Assignment
+        $resource->fill($input);
+
+        // Save data to db
+        if (! $resource->save()) return false;
+
+        return $resource->toArray();
+    }
+
 } 
