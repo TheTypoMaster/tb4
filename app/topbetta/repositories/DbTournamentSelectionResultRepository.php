@@ -6,14 +6,14 @@
  * Project: tb4
  */
 
-use TopBetta\Models\DbTournamentSelectionResultModel;
+use TopBetta\Models\TournamentSelectionResultModel;
 
 class DbTournamentSelectionResultRepository extends BaseEloquentRepository {
 
     protected $model;
 
-    public function __construct(DbTournamentSelectionResultModel $tournamentbetselectionresults){
-        $this->model = $tournamentbetselectionresults;
+    public function __construct(TournamentSelectionResultModel $tournamentselectionresults){
+        $this->model = $tournamentselectionresults;
     }
 //
 //    /**
