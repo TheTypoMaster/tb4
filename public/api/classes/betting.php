@@ -997,7 +997,7 @@ class Api_Betting extends JController
 
             $overRide = $race->override_start;
 
-            if ($race->event_status_id != $selling_status->id || !$overRide) {
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
@@ -1508,21 +1508,23 @@ class Api_Betting extends JController
             $race_status_model = new TournamentModelEventStatus();
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
 
-            if ($race->event_status_id != $selling_status->id) {
+            $overRide = $race->override_start;
+
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
             // special case for greyhounds to allow betting after jump time if allowed only
             // all other race types are always closed via the race status only
-            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
-            $overRide = $race->override_start;
+//           $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
 
+            
 //            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
-            if ($pastStartCheck && !$overRide) {
-                $validation->error = JText::_('Betting was closed');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
+//            if ($pastStartCheck && !$overRide) {
+//                $validation->error = JText::_('Betting was closed');
+//                return OutputHelper::json(500, array('error_msg' => $validation->error));
+//            }
 
             require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
             $bet_model = new BettingModelBet();
