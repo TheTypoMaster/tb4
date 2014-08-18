@@ -454,16 +454,19 @@ class RacingController extends \BaseController
                                         } else {
                                             TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, EGE in DB", 1);
                                         }
+
+                                        // if this event was abandoned - add to list for bet resulting
+                                        if ($raceEvent->event_status_id == 3) {
+                                            if (!array_key_exists($raceEventID, array_flip($eventList))) {
+                                                array_push($eventList, $raceEventID);
+                                            }
+                                        }
+
                                     } else {
                                         TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process. MeetingID: $meetingId, RaceNumber: $raceNo", 2);
                                     }
 
-                                    // if this event was abandoned - add to list for bet resulting
-                                    if ($raceEvent->event_status_id == 3) {
-                                        if (!array_key_exists($raceEventID, array_flip($eventList))) {
-                                            array_push($eventList, $raceEventID);
-                                        }
-                                    }
+
                                 }
                             } else {
                                 TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. MeetingID or RaceNo not set. Can't process", 2);
