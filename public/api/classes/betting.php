@@ -997,7 +997,7 @@ class Api_Betting extends JController
 
             $overRide = $race->override_start;
 
-            if ($race->event_status_id != $selling_status->id || !$overRide) {
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
@@ -1510,7 +1510,7 @@ class Api_Betting extends JController
 
             $overRide = $race->override_start;
 
-            if ($race->event_status_id != $selling_status->id || !$overRide) {
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
