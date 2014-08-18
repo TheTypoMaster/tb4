@@ -13,6 +13,7 @@ class TournamentBetModel extends Eloquent {
     protected $guarded = array();
     public static $rules = array();
     protected $table = 'tbdb_tournament_bet';
+    public $timestamps = false;
 
     /*
      * Model Relationships
