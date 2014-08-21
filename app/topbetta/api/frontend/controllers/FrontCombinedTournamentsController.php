@@ -22,7 +22,9 @@ class FrontCombinedTournamentsController extends \BaseController {
 
         }
 
-        $tournamentController = new FrontTournamentsController();
+        //$tournamentController = new FrontTournamentsController();
+        $tournamentController = \App::make('\TopBetta\frontend\FrontTournamentsController');
+
         $tournamentGrouped =  $tournamentController->show($tournId, true);
 
         if (!$tournamentGrouped['success']) {
@@ -95,7 +97,7 @@ class FrontCombinedTournamentsController extends \BaseController {
                 $nextEvent = (int)$raceId;
             }
 
-            $racingController = new FrontCombinedRacingController();
+            $racingController = \App::make('\TopBetta\frontend\FrontCombinedRacingController');
             $racing =  $racingController->index('r', $nextEvent, $meetingId);
 
             if ($racing['success']) {

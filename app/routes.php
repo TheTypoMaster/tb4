@@ -182,19 +182,20 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
+	Route::get('combined/racingNew', 'FrontCombinedRacing@indexNew');
 	Route::get('combined/sports', 'FrontCombinedSports@index');
 });
 
-Route::group(array('prefix' => 'admin'), function() {
-	Route::get('/', ['as' => 'home', 'uses' => 'TopBetta\admin\controllers\SessionController@create']);
+Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
+	Route::get('/', array('as' => 'home', 'uses' => 'TopBetta\admin\controllers\SessionController@create'));
 
 	Route::get('login', 'TopBetta\admin\controllers\SessionController@create');
 	Route::get('logout', 'TopBetta\admin\controllers\SessionController@destroy');
 
-	Route::resource('session', 'TopBetta\admin\controllers\SessionController', ['only' => ['create', 'store', 'destroy']]);	
+	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));	
 });
 
-Route::group(array('prefix' => 'admin', 'before' => 'auth.admin'), function() {
+Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
 	
 	Route::resource('dashboard', 'TopBetta\admin\controllers\DashboardController');
 	Route::resource('users', 'TopBetta\admin\controllers\UsersController');

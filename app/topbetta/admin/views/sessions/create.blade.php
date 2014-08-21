@@ -8,20 +8,20 @@
             <h3 class="panel-title">Please sign in</h3>
         </div>
         <div class="panel-body">
-                {{ Form::open(['route' => 'admin.session.store']) }}
+                {{ Form::open(array('route' => 'admin.session.store')) }}
                 <fieldset>
                     <div class="form-group">
-                        {{ Form::text('username', null, ['class' => 'form-control', 'placeholder' => 'Username']) }}
+                        {{ Form::text('username', null, array('class' => 'form-control', 'placeholder' => 'Username')) }}
                     </div>
                     <div class="form-group">
-                        {{ Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password']) }}
+                        {{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'Password')) }}
                     </div>
                     {{-- <div class="checkbox">
                         <label>
                             <input name="remember" type="checkbox" value="Remember Me"> Remember Me
                         </label>
                     </div> --}}
-                    {{ Form::submit('Login', ['class' => 'btn btn-lg btn-success btn-block']) }}
+                    {{ Form::submit('Login', array('class' => 'btn btn-lg btn-success btn-block')) }}
                 </fieldset>
             {{ Form::close() }}
         </div>

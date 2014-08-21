@@ -115,3 +115,19 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+Route::filter('topbetta_secure_links', function($route, $request, $response)
+{
+	if (\Config::get('topbetta.secure_links')) {
+		if($response instanceof \Illuminate\Http\Response)
+		{
+			$output = $response->getContent();
+			$host = \Illuminate\Support\Facades\URL::getRequest()->getHost();
+			
+			// swap out the http links to https for only our admin links
+			$output = str_replace("http://{$host}", "https://{$host}", $output);
+			
+			$response->setContent($output);
+		}
+	}
+});
