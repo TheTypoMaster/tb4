@@ -136,6 +136,8 @@ Route::group(array('prefix' => '/api/v1'), function() {
 
 	//Racing Races
 	Route::get('/racing/races/next-to-jump', 'FrontRaces@nextToJump');
+	Route::get('/racing/races/next-to-jump-eventids', 'FrontRaces@nextToJumpEventIds');
+	Route::get('/racing/fast-bet', 'FrontRaces@fastBetEvents');
 	Route::resource('racing/races', 'FrontRaces');
 
 	//Racing Runners
