@@ -2669,20 +2669,24 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
-            if ($race->event_status_id != $selling_status->id) {
-                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
-            }
+//            if ($race->event_status_id != $selling_status->id) {
+//                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
+//            }
 
             // Check to see if the race is past the start time as well as if the override flag is not true. This will allow
             // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
             // method
-            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+//            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
             $overRide = $race->override_start;
 
-//            if (strtotime($race->start_date) < time()) {
-            if ($pastStartCheck && !$overRide) {
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
             }
+
+//            if (strtotime($race->start_date) < time()) {
+//            if ($pastStartCheck && !$overRide) {
+//                return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
+//            }
 
             $bet_type_id = JRequest::getVar('bet_type_id', null);
             if (is_null($bet_type_id)) {
