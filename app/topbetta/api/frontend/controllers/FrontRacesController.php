@@ -41,6 +41,40 @@ class FrontRacesController extends \BaseController {
 		return $data;
 
 	}
+	
+	/**
+	 * Get the next to jump event id's only
+	 * 
+	 * This is useful client side to know when an event is no longer selling
+	 * as it's not present in this list anymore. Yes it's a roundabout way! :P
+	 * 
+	 * Only cached for about 10sec to be as close to jump time as practical.
+	 * Ideally should only be called if events have just past on the frontend.
+	 * 
+	 * @return type
+	 */
+	public function nextToJumpEventIds() {
+		$limit = Input::get('limit', 10);
+		
+		// just cache for 10sec, we need it as close to real time as we can
+		return \Cache::remember('nextToJumpEventIds-' . $limit, 0.16, function() use ($limit) {
+			// we only get events that are status selling
+			$nextToJump = TopBetta\RaceEvent::nextToJumpEventIds($limit);
+			
+			$ret = array();
+			$ret['success'] = true;
+
+			$result = array();
+			
+			foreach ($nextToJump as $event) {
+				$result[] = (int)$event->id;
+			}
+			
+			$ret['result'] = $result;
+
+			return $ret;
+		});
+	}
 
 	public function fastBetEvents() {
                 
