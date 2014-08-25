@@ -13,7 +13,7 @@ class SportsTypes extends \Eloquent {
 					INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id 
 					WHERE m.event_id = $eventId
 					AND m.display_flag = '1'
-					AND m.market_status != 'D'";
+					AND m.market_status NOT IN ('D', 'S')";
 
 		$result = \DB::select($query);
 
