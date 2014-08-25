@@ -2107,7 +2107,7 @@ class Api_Betting extends JController
 
             $match =  $sportsBetting_model->getEventApi($betMatchID);
 
-            if (strtotime($match->start_date) > time()) {
+            if (strtotime($match->start_date) < time()) {
                 return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
             }
 
