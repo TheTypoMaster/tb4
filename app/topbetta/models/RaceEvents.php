@@ -38,6 +38,27 @@ class RaceEvent extends \Eloquent {
 		  
 	}
 	
+	/**
+	 * Get the next jump event ids only
+	 * 
+	 * Nasty that it needs 2 joins, but we need to reliably determine the race type
+	 * from the event group.
+	 * 
+	 * @param type $limit
+	 * @return type
+	 */
+	static public function nextToJumpEventIds($limit = 10) {
+		return static::join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+				->join('tbdb_event_group', 'tbdb_event_group_event.event_group_id', '=', 'tbdb_event_group.id')
+				->where('tbdb_event.display_flag', 1)
+				->where('tbdb_event.event_status_id', 1)
+				->whereIn('tbdb_event_group.type_code', array('R','G','H'))
+				->orderBy('tbdb_event.start_date', 'ASC')
+				->take($limit)
+				->select('tbdb_event.id')
+				->get();
+	}
+	
 
 	/**
 	 * Check if a event exists.

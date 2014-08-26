@@ -41,7 +41,78 @@ class FrontRacesController extends \BaseController {
 		return $data;
 
 	}
+	
+	/**
+	 * Get the next to jump event id's only
+	 * 
+	 * This is useful client side to know when an event is no longer selling
+	 * as it's not present in this list anymore. Yes it's a roundabout way! :P
+	 * 
+	 * Only cached for about 10sec to be as close to jump time as practical.
+	 * Ideally should only be called if events have just past on the frontend.
+	 * 
+	 * @return type
+	 */
+	public function nextToJumpEventIds() {
+		$limit = Input::get('limit', 10);
+		
+		// just cache for 10sec, we need it as close to real time as we can
+		return \Cache::remember('nextToJumpEventIds-' . $limit, 0.16, function() use ($limit) {
+			// we only get events that are status selling
+			$nextToJump = TopBetta\RaceEvent::nextToJumpEventIds($limit);
+			
+			$ret = array();
+			$ret['success'] = true;
 
+			$result = array();
+			
+			foreach ($nextToJump as $event) {
+				$result[] = (int)$event->id;
+			}
+			
+			$ret['result'] = $result;
+
+			return $ret;
+		});
+	}
+
+	public function fastBetEvents() {
+                
+		$limit = Input::get('limit', 10);
+
+		// store fast bet events in cache for 1 min at a time
+		return \Cache::remember('fastBetEvents-' . $limit, 1, function() use ($limit) {
+
+			// we only get events that are status selling
+			$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
+
+			$ret = array();
+			$ret['success'] = true;
+
+			$result = array();
+
+			foreach ($nextToJump as $next) {
+
+				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+
+				//convert the date to ISO 8601 format
+				$startDatetime = new \DateTime($next -> start_date);
+				$startDatetime = $startDatetime -> format('c');
+                                
+                                $runners = \TopBetta\RaceSelection::getRunnersForRaceId($next->id);
+                                $silk_base_url = "https://www.topbetta.com.au/silks/";
+
+				$result[] = array('id' => (int)$next -> id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'meeting_long_name' => $next->name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'to_go' => $toGo, 'status' => 'Selling', 'start_datetime' => $startDatetime, 'distance' => $next -> distance, 'silk_base_url' => $silk_base_url, 'runners' => $runners);
+			}
+
+			$ret['result'] = $result;
+
+			return $ret;
+
+		});
+
+	}           
+        
 	/**
 	 * Display a listing of the resource.
 	 *
