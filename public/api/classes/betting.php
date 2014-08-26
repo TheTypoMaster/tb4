@@ -2105,7 +2105,7 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
-            $match =  $sportsBetting_model->getEventApi($betMatchID);
+            $match =  $sportsBetting_model->getEventDetailsApi($betMatchID);
 
             if (strtotime($match->start_date) < time()) {
                 return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
