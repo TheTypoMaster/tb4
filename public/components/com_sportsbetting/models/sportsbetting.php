@@ -108,6 +108,15 @@ class SportsbettingModelSportsbetting extends JModel {
 	
 		return $db->loadObject();
 	}
+
+    public function getEventDetailsApi($id)
+    {
+        $db =& $this->getDBO();
+        $query = "SELECT * FROM `tbdb_event`  WHERE id ='".$id."'";
+        $db->setQuery($query);
+
+        return $db->loadObject();
+    }
 	
 	public function getSelectionIDApi($event_id, $bet_place_ref)
 	{
