@@ -2520,8 +2520,8 @@ class Api_Betting extends JController
 
                 'result_status' => '',
                 'dividend' => $bet_dividend, // fixed odds (overall odds for multibets - just same as selection one if only one selection)
-                'bet_amount' => $bet->bet_amount - $free_bet_amount, // total real $ amount
-                'free_bet_amount' => $free_bet_amount, // totoal FC amount
+                'bet_amount' => $bet->bet_amount, // total real $ amount
+                'free_bet_amount' => $bet->bet_freebet_amount, // totoal FC amount
                 'placed_at' => date(DATE_ISO8601), // date bet placed
                 'bet_id' => (int) $bet_id, // TB bet ID
                 'client_id' => $user->id,
