@@ -896,7 +896,7 @@ class TournamentModelTournamentTicket extends JModel
 
 		if(!empty($cost)) {
             $account_model->setUserId($ticket->user_id);
-			$refund_id = $account_model->increment($cost, 'refund', null, $ticket->user_id);
+			$refund_id = $account_model->increment($cost, 'tournamentrefund', null, $ticket->user_id);
 
 			if(!$refund_id) {
 				return false;
