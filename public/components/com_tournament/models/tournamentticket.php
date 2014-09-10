@@ -885,6 +885,9 @@ class TournamentModelTournamentTicket extends JModel
 	{
 		$transaction_model =& JModel::getInstance('TournamentTransaction', 'TournamentDollarsModel');
 
+        $account_model		=& JModel::getInstance('AccountTransaction', 'PaymentModel');
+
+
 		if($full) {
 			$cost = $this->getTicketCost($ticket->id);
 		} else {
@@ -892,8 +895,8 @@ class TournamentModelTournamentTicket extends JModel
 		}
 
 		if(!empty($cost)) {
-			$transaction_model->setUserId($ticket->user_id);
-			$refund_id = $transaction_model->increment($cost, 'refund');
+            $account_model->setUserId($ticket->user_id);
+			$refund_id = $account_model->increment($cost, 'refund', null, $ticket->user_id);
 
 			if(!$refund_id) {
 				return false;
