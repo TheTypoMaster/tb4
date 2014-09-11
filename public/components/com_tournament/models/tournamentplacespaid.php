@@ -336,8 +336,20 @@ class TournamentModelTournamentPlacesPaid extends JModel
 		$place_count 		= count($place_list);
 		$qualified_count 	= count($qualified_list);
 
+        /*
+        * Temp custom payouts for TopBetta tournaments using the private payout options
+        */
+
+        $prize_format_model =& JModel::getInstance('TournamentPrizeFormat', 'TournamentModel');
+        $prize_format = $prize_format_model->getTournamentPrizeFormat($tournament->tournament_prize_format);
+        if($prize_format->keyword != self::PRIZE_FORMAT_MULTIPLE){
+            $place_count = $this->_getPrivateTournamentPaidPlaceCount($prize_format->keyword);
+        }
+        $place_list = $this->getPercentagePayoutList($place_count);
+
+
 		if($this->isPrivate($tournament)){
-			$prize_format_model =& JModel::getInstance('TournamentPrizeFormat', 'TournamentModel');
+
 			$prize_format = $prize_format_model->getTournamentPrizeFormat($tournament->prize_format_id);
 
 			if($prize_format->keyword != self::PRIZE_FORMAT_MULTIPLE){
@@ -345,6 +357,7 @@ class TournamentModelTournamentPlacesPaid extends JModel
 			}
 			$place_list = $this->getPercentagePayoutList($place_count);
 		}
+
 
 		if($place_count > $qualified_count) {
 			$place_list = $this->getPercentagePayoutList($qualified_count);
