@@ -114,7 +114,7 @@ class TournamentViewTournament extends JView
 
         if (!empty($this->prize_list)) {
             foreach($this->prize_list as $prize) {
-                $this->sport_option_list[$prize->id] = JText::_($prize->name);
+                $this->prize_option_list[$prize->id] = JText::_($prize->name);
             }
         }
 

@@ -630,10 +630,6 @@ class TournamentController extends JController
 		$minimum_prize_pool_amount	= number_format($minimum_prize_pool, 2);
 		$free_credit_flag 			= (int)JRequest::getVar('free_credit_flag', 0);
 
-        $prize_id                   = JRequest::getVar('tournament_prize_format_id', 1);
-        $prize_model				=& $this->getModel('TournamentPrizeFormat', 'TournamentModel');
-        $prize                      = $prize_model->getTournamentPrizeFormat($prize_id);
-		
 		$automated_text = '';
 		$tournamntType = '';
 		
