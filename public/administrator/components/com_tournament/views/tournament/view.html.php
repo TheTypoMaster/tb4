@@ -109,7 +109,18 @@ class TournamentViewTournament extends JView
 
 		$this->competition_selected_list = FormHelper::getSelectedList($this->competition_option_list, $this->formdata['tournament_competition_id']);
 
-		$this->event_group_option_list = array('-1' => JText::_('Select an Event Group'));
+
+        $this->prize_option_list = array('-1' => JText::_('Select Prize Format'));
+
+        if (!empty($this->prize_list)) {
+            foreach($this->prize_list as $prize) {
+                $this->sport_option_list[$prize->id] = JText::_($prize->name);
+            }
+        }
+
+        $this->prize_selected_list = FormHelper::getSelectedList($this->prize_option_list, $this->formdata['tournament_prize_format_id']);
+
+        $this->event_group_option_list = array('-1' => JText::_('Select an Event Group'));
 		if (!empty($this->event_group_list)) {
 			foreach($this->event_group_list as $eg_id => $eg) {
 				$this->event_group_option_list[$eg_id] = $eg->name . ' - ' . $eg->start_date;

@@ -175,7 +175,8 @@ class TournamentController extends JController
 			'free_credit_flag'						=> 0,
             'tournament_sponsor_name'                => '',
             'tournament_sponsor_logo'                => '',
-            'tournament_sponsor_logo_link'           => ''
+            'tournament_sponsor_logo_link'           => '',
+            'tournament_prize_format'               => '3',
 			//'feature_keyword'						=> -1
 			
 		);
@@ -203,6 +204,9 @@ class TournamentController extends JController
 		
 		$buy_in_model	= $this->getModel('TournamentBuyIn', 'TournamentModel');
 		$buy_in_list	= $buy_in_model->getTournamentBuyInList();
+
+        $prize_model	= $this->getModel('TournamentPrizeFormat', 'TournamentModel');
+        $prize_list	= $prize_model->getTournamentPrizeFormatList();
 		
 		// Tournament labels model
 		$tournament_label_model = $this->getModel('TournamentLabels', 'TournamentModel');
@@ -304,7 +308,8 @@ class TournamentController extends JController
 
 		$view->assign('event_group_list', $event_group_list);
 		$view->assign('buy_in_list', $buy_in_list);
-		
+		$view->assign('prize_list', $prize_list);
+
 		$view->assign('venue_list', $venue_list);
 		
 		
@@ -624,6 +629,10 @@ class TournamentController extends JController
 		$buyin_amount				= number_format($buyin->buy_in, 2);
 		$minimum_prize_pool_amount	= number_format($minimum_prize_pool, 2);
 		$free_credit_flag 			= (int)JRequest::getVar('free_credit_flag', 0);
+
+        $prize_id                   = JRequest::getVar('tournament_prize_format_id', 1);
+        $prize_model				=& $this->getModel('TournamentPrizeFormat', 'TournamentModel');
+        $prize                      = $prize_model->getTournamentPrizeFormat($prize_id);
 		
 		$automated_text = '';
 		$tournamntType = '';

@@ -30,6 +30,16 @@ JToolBarHelper::cancel();
 							<?php endforeach;?>
 						</select>
 					</td>
+                    <td class='key'>
+                        <label for="tournament_prize_format_id">Prize Payout Format</label>
+                    </td>
+                    <td>
+                        <select name="tournament_prize_format_id" id="tournament_prize_format_id" <?php echo $this->disabled;?>>
+                            <?php foreach($this->prize_option_list as $prize_format_id => $prize_format_name): ?>
+                                <option value="<?php echo $prize_format_id; ?>"<?php echo $this->prize_list[$prize_format_id]; ?>><?php echo $prize_format_name; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
 				</tr>
 				<tr>
 					<td class='key'>
