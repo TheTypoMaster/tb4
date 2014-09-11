@@ -437,15 +437,17 @@ class FrontTournamentsController extends \BaseController {
              */
             $rankedleaderboard = array();
             $position = 1;
+            $totalCount = 0;
             $firstRecord = true;
             foreach($leaderboard as $player){
+                $totalCount++;
                 if($firstRecord) {
                     $lastPlayerCurrency = $player['currency'];
                     $firstRecord = false;
                 }
 
                 if($player['currency'] < $lastPlayerCurrency){
-                    $position++;
+                    $position = $totalCount;
                 }
 
                 if($player['qualified'] == 0){
