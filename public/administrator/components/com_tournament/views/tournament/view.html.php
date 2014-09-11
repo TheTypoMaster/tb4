@@ -109,19 +109,9 @@ class TournamentViewTournament extends JView
 
 		$this->competition_selected_list = FormHelper::getSelectedList($this->competition_option_list, $this->formdata['tournament_competition_id']);
 
-
-        $this->prize_option_list = array('-1' => JText::_('Select Prize Format'));
-
-        if (!empty($this->prize_list)) {
-            foreach($this->prize_list as $prize) {
-                $this->prize_option_list[$prize->id] = JText::_($prize->name);
-            }
-        }
-
-        $this->prize_selected_list = FormHelper::getSelectedList($this->prize_option_list, $this->formdata['tournament_prize_format_id']);
-
         $this->event_group_option_list = array('-1' => JText::_('Select an Event Group'));
-		if (!empty($this->event_group_list)) {
+
+        if (!empty($this->event_group_list)) {
 			foreach($this->event_group_list as $eg_id => $eg) {
 				$this->event_group_option_list[$eg_id] = $eg->name . ' - ' . $eg->start_date;
 			}
@@ -130,16 +120,23 @@ class TournamentViewTournament extends JView
 		$this->event_group_selected_list = FormHelper::getSelectedList($this->event_group_option_list, $this->formdata['event_group_id']);
 		
 		$this->buy_in_option_list = array('-1' => JText::_('Select the ticket value'));
-
 		if (!empty($this->buy_in_list)) {
 			foreach($this->buy_in_list as $buyin) {
 				$this->buy_in_option_list[$buyin->id] = $this->_formatTicketValue($buyin->buy_in, $buyin->entry_fee);
 			}
 		}
-
 		$this->buy_in_selected_list = FormHelper::getSelectedList($this->buy_in_option_list, $this->formdata['ticket_value']);
 
-		$this->parent_tournament_option_list = array('-1' => JText::_('Select a Parent Tournament'));
+        //$this->prize_option_list = array('-1' => JText::_('Select Prize Format'));
+        if (!empty($this->prize_list)) {
+            foreach($this->prize_list as $prize) {
+                $this->prize_option_list[$prize->id] = JText::_($prize->name);
+            }
+        }
+        $this->prize_selected_list = FormHelper::getSelectedList($this->prize_option_list, $this->formdata['tournament_prize_format']);
+
+
+        $this->parent_tournament_option_list = array('-1' => JText::_('Select a Parent Tournament'));
 
 		if (!empty($this->parent_tournament_list)) {
 			foreach($this->parent_tournament_list as $parent) {

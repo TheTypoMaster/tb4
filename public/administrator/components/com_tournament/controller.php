@@ -356,6 +356,8 @@ class TournamentController extends JController
 
         $name			= JRequest::getVar('name', null);
 		$description	= JRequest::getVar('description', null);
+
+        $prize_id       = JRequest::getVar('tournament_prize_format', 3);
 		
 		$entrants				= 0;
 		$is_future_tournament	= false;
@@ -379,6 +381,7 @@ class TournamentController extends JController
 		$tournament->id										= (int)$id;
 		$tournament->name									= $name;
 		$tournament->description							= $description;
+        $tournament->tournament_prize_format                = $prize_id;
 				
 		$sport_model	=& $this->getModel('TournamentSport', 'TournamentModel');
 		
