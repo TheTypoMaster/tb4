@@ -246,7 +246,17 @@ class TournamentPlacesPaid extends \Eloquent {
 		$place_count 		= count($place_list);
 		$qualified_count 	= count($qualified_list);
 
-		if($this->isPrivate($tournament)){
+        /*
+        * Temp custom payouts for TopBetta tournaments using the private payout options
+        */
+        $prize_format = TournamentPrizeFormat::find($tournament->tournament_prize_format);
+        if($prize_format->keyword != self::PRIZE_FORMAT_MULTIPLE){
+            $place_count = $this->_getPrivateTournamentPaidPlaceCount($prize_format->keyword);
+        }
+        $place_list = $this->getPercentagePayoutList($place_count);
+
+
+        if($this->isPrivate($tournament)){
 			//$prize_format_model = new \TopBetta\TournamentPrizeFormat;
 			//$prize_format = $prize_format_model->getTournamentPrizeFormat($tournament->prize_format_id);
 			$prize_format = \TopBetta\TournamentPrizeFormat::find($tournament->prize_format_id);
