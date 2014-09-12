@@ -667,6 +667,14 @@ class Api_Betting extends JController
         $token_secret = JRequest::getString('tb_secret', null, 'post');
         $freeCreditFlag = (float) JRequest::getVar('chkFreeBet', 0);
 
+        if($freeCreditFlag){
+            if ($iframe) {
+                return array('status' => 500, 'error_msg' => 'Free Credit cannot be used to enter a tournament');
+            } else {
+                return OutputHelper::json(500, array('error_msg' => 'Free Credit cannot be used to enter a tournament'));
+            }
+        }
+
         $api_user = new Api_User();
         $token = $api_user->get_external_website_key_secret($token_key, $token_secret);
 
@@ -817,11 +825,11 @@ class Api_Betting extends JController
                     }
                 }
 
-                $tournament_dollars = $tournament_dollars_model->getTotal($user->id);
+                //$tournament_dollars = $tournament_dollars_model->getTotal($user->id);
                 $account_balance = $payment_dollars_model->getTotal($user->id);
 
                 $value = $tournament->entry_fee + $tournament->buy_in;
-                if ($value > ($tournament_dollars + $account_balance)) {
+                if ($value > $account_balance) {
                     //return $this->ticketError(JText::_('Insufficient funds to purchase the ticket'), $save, $tournament);
                     if ($iframe) {
                         return array('status' => 500, 'error_msg' => 'Insufficient funds to purchase the ticket');
@@ -831,7 +839,7 @@ class Api_Betting extends JController
                 }
 
                 //check the account balance spent with bet limit
-                $account_balance_spent = $tournament->entry_fee + $tournament->buy_in - $tournament_dollars;
+                $account_balance_spent = $tournament->entry_fee + $tournament->buy_in;
                 if ($account_balance_spent > 0 && !$this->_checkBetLimit($account_balance_spent)) {
                     //return $this->ticketError(JText::_('Exceed your bet limit'), $save, $tournament);
                     if ($iframe) {
@@ -3265,7 +3273,7 @@ class Api_Betting extends JController
              */
         } else {
             $ticket = $ticket_model->getTournamentTicket($ticket_id);
-            $refund_id = $user->tournament_dollars->increment($tournament->buy_in + $tournament->entry_fee, 'refund', null, $user->id);
+            $refund_id = $payment_dollars_model->increment($tournament->buy_in + $tournament->entry_fee, 'refund', null, $user->id);
 
             $ticket->refunded_flag = 1;
             $ticket->result_transaction_id = $refund_id;
