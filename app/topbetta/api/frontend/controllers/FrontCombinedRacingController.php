@@ -50,6 +50,32 @@ class FrontCombinedRacingController extends \BaseController {
 
 		$meeting = $meetingAndRaces;
 
+        // get the totes being paid fow win/place/exotic
+        $totesPaid = \TopBetta\ProductDefaults::getTotePaidForMeeting($meeting['country'], $meeting['meeting_grade'], $meeting['type_code']);
+
+        foreach($totesPaid as $tote){
+            switch($tote['bet_type']){
+                case 'W':
+                    $meeting['win_tote'] = $tote['provider_product_name'];
+                    break;
+                case 'P':
+                    $meeting['place_tote'] = $tote['provider_product_name'];
+                    break;
+                case 'E':
+                    $meeting['exacta_tote'] = $tote['provider_product_name'];
+                    break;
+                case 'Q':
+                    $meeting['quinella_tote'] = $tote['provider_product_name'];
+                    break;
+                case 'T':
+                    $meeting['trifecta_tote'] = $tote['provider_product_name'];
+                    break;
+                case 'FF':
+                    $meeting['firstfour_tote'] = $tote['provider_product_name'];
+                    break;
+            }
+        }
+
 		$runnersController = new FrontRunnersController();
 		$runners = $runnersController->index(false, $raceId);
 
