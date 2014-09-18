@@ -70,7 +70,7 @@ class FrontCombinedRacingController extends \BaseController {
                 case 'T':
                     $meeting['trifecta_tote'] = $tote['provider_product_name'];
                     break;
-                case 'F':
+                case 'FF':
                     $meeting['firstfour_tote'] = $tote['provider_product_name'];
                     break;
             }
