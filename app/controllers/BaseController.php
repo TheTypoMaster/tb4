@@ -1,4 +1,4 @@
-php artisan auth:reminders-controller<?php
+<?php
 
 class BaseController extends Controller {
 
