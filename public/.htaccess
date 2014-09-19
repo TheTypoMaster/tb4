@@ -1,14 +1,21 @@
-<IfModule mod_rewrite.c>
-    
+composer <IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
     RewriteEngine On
 
-	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule ^(.+)/$ http://%{HTTP_HOST}/$1 [R=301,L]
+    # Redirect Trailing Slashes...
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
 
+    #Joomla stuff
     RewriteCond %{QUERY_STRING} !^method=(.*)$
     RewriteCond %{REQUEST_URI} !^\/administrator
     RewriteCond %{REQUEST_URI} !^\/m
     RewriteCond %{REQUEST_URI} !^\/silks
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
