@@ -116,6 +116,7 @@ class RacingController extends \BaseController
          */
 
         // Log this
+        //
         TopBetta\LogHelper::l("BackAPI: Racing - Reciving POST");
 
         // get the JSON POST
@@ -928,7 +929,7 @@ class RacingController extends \BaseController
                                             $runnerCount = 1;
 
                                             foreach ($oddsArray as $runnerOdds) {
-                                                TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds for Runner: $runnerCount", 1);
+                                                // TopBetta\LogHelper::l("BackAPI: Racing - Processing Odds for Runner: $runnerCount", 1);
 
                                                 if($runnerOdds != '0'){
                                                     // check if selection exists in the DB
