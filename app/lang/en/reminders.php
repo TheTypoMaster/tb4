@@ -25,4 +25,7 @@ return array(
     
         "password_error"    =>  "There was a problem reseting your password. Please try again",
 
+    "sent" => "Password reminder sent!",
+
+    "reset" => "Password has been reset!",
 );
