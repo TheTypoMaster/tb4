@@ -3019,7 +3019,7 @@ class Api_Betting extends JController
                         $offer_bet_value_credit = $market_bet_limit - $offer_betted_value;
 
                         if ($offer_bet_value_credit < $pending_offer_bet_value) {
-                            $maximum_bet = number_format($offer_bet_value_credit, 2);
+                            $maximum_bet = number_format($offer_bet_value_credit/100, 2);
                             return OutputHelper::json(500, array('error_msg' => JText::_('Your bet for ' . $offer->name . ' (' . $offer->market_type . ') has exceeded the bet limit. You can only bet ' . $maximum_bet)));
                         }
                     }
