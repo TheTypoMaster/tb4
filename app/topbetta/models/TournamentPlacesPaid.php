@@ -246,7 +246,17 @@ class TournamentPlacesPaid extends \Eloquent {
 		$place_count 		= count($place_list);
 		$qualified_count 	= count($qualified_list);
 
-		if($this->isPrivate($tournament)){
+        /*
+        * Temp custom payouts for TopBetta tournaments using the private payout options
+        */
+        $prize_format = TournamentPrizeFormat::find($tournament->tournament_prize_format);
+        if($prize_format->keyword != self::PRIZE_FORMAT_MULTIPLE){
+            $place_count = $this->_getPrivateTournamentPaidPlaceCount($prize_format->keyword);
+        }
+        $place_list = $this->getPercentagePayoutList($place_count);
+
+
+        if($this->isPrivate($tournament)){
 			//$prize_format_model = new \TopBetta\TournamentPrizeFormat;
 			//$prize_format = $prize_format_model->getTournamentPrizeFormat($tournament->prize_format_id);
 			$prize_format = \TopBetta\TournamentPrizeFormat::find($tournament->prize_format_id);
@@ -484,22 +494,22 @@ class TournamentPlacesPaid extends \Eloquent {
 	private function _getCashPlaceList($tournament, $entrant_count, $prize_pool) {
 		$payout_list = $this->getCashPayoutList($entrant_count);
 
-		/*
-		if($this->isPrivate($tournament)){
-			//$prize_format_model =& JModel::getInstance('TournamentPrizeFormat', 'TournamentModel');
-			//$private_tournament_model =& JModel::getInstance('TournamentPrivate', 'TournamentModel');
-			//$private_tournament = $private_tournament_model->getTournamentPrivateByTournamentID($tournament->id);
-			$private_tournament = \TopBetta\TournamentPrivate::find($tournament->id);
 
-			//$prize_format = $prize_format_model->getTournamentPrizeFormat($private_tournament->tournament_prize_format_id);
-			$prize_format = \TopBetta\TournamentPrizeFormat::find($private_tournament->tournament_prize_format_id);
-
+//		if($this->isPrivate($tournament)){
+//			//$prize_format_model =& JModel::getInstance('TournamentPrizeFormat', 'TournamentModel');
+//			//$private_tournament_model =& JModel::getInstance('TournamentPrivate', 'TournamentModel');
+//			//$private_tournament = $private_tournament_model->getTournamentPrivateByTournamentID($tournament->id);
+//			$private_tournament = \TopBetta\TournamentPrivate::find($tournament->id);
+//
+//			//$prize_format = $prize_format_model->getTournamentPrizeFormat($private_tournament->tournament_prize_format_id);
+			$prize_format = TournamentPrizeFormat::find($tournament->tournament_prize_format);
+//
 			if($prize_format->keyword != self::PRIZE_FORMAT_MULTIPLE){
 				$place_count = $this->_getPrivateTournamentPaidPlaceCount($prize_format->keyword);
 				$payout_list = $this->getPercentagePayoutList($place_count);
 			}
-		}
-		*/
+//		}
+
 
 		$place_list = array('formula' => self::PRIZE_TYPE_CASH, 'place' => array());
 		foreach($payout_list as $rank => $percentage) {

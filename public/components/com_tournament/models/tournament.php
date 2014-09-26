@@ -147,6 +147,10 @@ class TournamentModelTournament extends SuperModel
         'tournament_sponsor_logo_link' => array(
             'name' 		=> 'Tournament sponsor logo link',
             'type' 		=> self::TYPE_STRING
+        ),
+        'tournament_prize_format' => array(
+            'name' 		=> 'Tournament Prize Format',
+            'type' 		=> self::TYPE_INTEGER
         )
 		//'feature_keyword' => array(
 		//		'name' 		=> 'Tournament Feature',

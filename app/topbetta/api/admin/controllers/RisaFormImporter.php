@@ -48,11 +48,26 @@ class RisaFormImporter extends \BaseController {
                         case "Sportingbet Park Sandown Hill":
                             $venueName = strtoupper(str_replace("Sportingbet Park Sandown Hill", "Sandown",  $risaXML->Venue[0]->attributes ()->VenueName));
                             break;
+                        case "Sportingbet Park Sandown Lake":
+                            $venueName = strtoupper(str_replace("Sportingbet Park Sandown Lake", "Sandown",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        case "Devonport Tapeta Synthetic":
+                            $venueName = strtoupper(str_replace("Devonport Tapeta Synthetic", "Devonport",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        case "Morphettville Parks":
+                            $venueName = strtoupper(str_replace("Morphettville Parks", "Morphettville",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
                         case "Royal Randwick":
                             $venueName = strtoupper(str_replace("Royal Randwick", "Randwick",  $risaXML->Venue[0]->attributes ()->VenueName));
                             break;
                         case "Geelong Synthetic":
                             $venueName = strtoupper(str_replace("Geelong Synthetic", "Geelong",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        case "Canterbury Park":
+                            $venueName = strtoupper(str_replace("Canterbury Park", "Canterbury",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
+                        case "Wodonga Nordcon LAND Park":
+                            $venueName = strtoupper(str_replace("Wodonga Nordcon LAND Park", "Wodonga",  $risaXML->Venue[0]->attributes ()->VenueName));
                             break;
                         default:
                             $venueName = strtoupper($risaXML->Venue[0]->attributes ()->VenueName);
