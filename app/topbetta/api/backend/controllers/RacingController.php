@@ -49,6 +49,8 @@ class RacingController extends \BaseController
      */
     private $debug = true;
 
+
+
     public function __construct()
     {
         //$this->beforeFilter('apiauth');
