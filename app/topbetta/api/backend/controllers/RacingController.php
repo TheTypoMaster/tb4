@@ -47,7 +47,7 @@ class RacingController extends \BaseController
      *
      * @var boolean
      */
-    private $debug = false;
+    private $debug = true;
 
     public function __construct()
     {
@@ -627,7 +627,7 @@ class RacingController extends \BaseController
                                     $raceRunner->wager_id = $raceRunner->id;
                                     $raceRunnerSave = $raceRunner->save();
 
-                                    //TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId, RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
+                                    TopBetta\LogHelper::l("BackAPI: Racing - Processed Runner. MID:$meetingId, RaceNo:$raceNo, RunnerNo:$runnerNo, Barrier:$raceRunner->barrier, Name:$raceRunner->name, Jockey:$raceRunner->associate, Scratched:$raceRunner->selection_status_id, Weight:$raceRunner->weight ");
                                 } else {
                                     TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. No race found for this runner. MID:$meetingId, Race:$raceNo, Runner:$runnerNo Can't process", 2);
                                 }
