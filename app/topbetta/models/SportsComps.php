@@ -9,6 +9,9 @@ class SportsComps extends \Eloquent {
 
     public static $rules = array();
 
+    public function sports(){
+        return $this->belongsTo('\TopBetta\TournamentSport', 'sport_id', 'id');
+    }
 
     /**
      * Check if a comp exists.

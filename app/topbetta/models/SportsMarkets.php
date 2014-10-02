@@ -3,7 +3,16 @@
 class SportsMarket extends \Eloquent {
 
 	protected $table = 'tbdb_market';
-	
+
+
+    public function markettypes(){
+        return $this->belongsTo('\TopBetta\SportsMarketType', 'market_type_id', 'id');
+    }
+
+    public function events(){
+        return $this->belongsTo('\TopBetta\Models\Events', 'event_id', 'id');
+    }
+
 	/**
 	 * Check if a meeting exists.
 	 *
