@@ -3,8 +3,7 @@
 	"description": "The Laravel Framework.",
 	"keywords": ["framework", "laravel"],
 	"require": {
-		"laravel/framework": "4.0.*",
-		"way/generators": "dev-master"
+		"laravel/framework": "4.2.*"
 	},
 	"autoload": {
 		"classmap": [
@@ -18,18 +17,18 @@
 			"app/topbetta/api/backend/controllers",
 			"app/topbetta/api/backend/models",
 			"app/topbetta/api/frontend/controllers",
-			"app/topbetta/api/frontend/models",		
+			"app/topbetta/api/frontend/models",
 			"app/topbetta/api/admin/controllers",
 			"app/topbetta/api/libraries",
 			"app/topbetta/libraries/wagering",
 			"app/topbetta/helpers",
-                        "app/topbetta/providers",
-                        "app/topbetta/repositories",
-                        "app/topbetta/facades"
+            "app/topbetta/providers",
+            "app/topbetta/repositories",
+            "app/topbetta/facades"
 		],
-                "psr-4": {
-                    "TopBetta\\": "app/topbetta"
-                }
+        "psr-4": {
+            "TopBetta\\": "app/topbetta"
+        }
 	},
 	"scripts": {
 		"post-install-cmd": [
