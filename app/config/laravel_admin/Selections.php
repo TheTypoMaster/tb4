@@ -67,19 +67,19 @@ return array(
 
     'edit_fields' => array(
 
-        'markets.events' => array(
-            'title' => 'Event Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
-
-        'markets.markettypes' => array(
-            'title' => 'Market Type Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
+//        'markets.events' => array(
+//            'title' => 'Event Name',
+//            'type' => 'relationship',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
+//
+//        'markets.markettypes' => array(
+//            'title' => 'Market Type Name',
+//            'type' => 'relationship',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
 
         'selection_status' => array(
             'title' => 'Selection Status',
@@ -102,10 +102,10 @@ return array(
      *
      * @type array
      */
-//    'sort' => array(
-//        'field' => 'created_at',
-//        'direction' => 'desc',
-//    ),
+    'sort' => array(
+        'field' => 'id',
+        'direction' => 'desc',
+    ),
 //
 //    /**
 //     * The validation rules for the form, based on the Laravel validation class
@@ -118,44 +118,36 @@ return array(
 ////    ),
 //
 //
-//    /**
-//     * The filter set
-//     */
-//    'filters' => array(
-//
-//        'markettypes' => array(
-//            'title' => 'Market Type Name',
-//            'type' => 'relationship',
-//            'name_field' => 'name',
-//            'autocomplete' => true,
-//            'num_options' => 5,
-//            'options_filter' => function($query)
-//                {
-//                    $query->where('id', '!=', '110');
-//                },
-//        ),
-//
-//        'events' => array(
-//            'title' => 'Event Name',
-//            'type' => 'relationship',
-//            'name_field' => 'name',
-//            'autocomplete' => true,
-//            'num_options' => 5,
-//        ),
-//
-//        'market_status' => array(
-//            'title' => 'Market Status',
-//            'type' => 'text'
-//        ),
-//
-//        'line' => array(
-//            'title' => 'Line',
-//            'type' => 'text'
-//        ),
-//
-//        'display_flag' => array(
-//            'title' => 'Show on TopBetta',
-//            'type' => 'bool'
-//        )
-//    ),
+    /**
+     * The filter set
+     */
+    'filters' => array(
+
+        'markettypes' => array(
+            'title' => 'Market Type Name',
+            'type' => 'relationship',
+            'name_field' => 'name',
+            'autocomplete' => true,
+            'num_options' => 5,
+            'options_filter' => function($query)
+                {
+                    $query->where('id', '!=', '110');
+                },
+        ),
+
+        'events' => array(
+            'title' => 'Event Name',
+            'type' => 'relationship',
+            'name_field' => 'name',
+            'autocomplete' => true,
+            'num_options' => 5,
+        ),
+
+        'selection_status' => array(
+            'title' => 'Selection Status',
+            'type' => 'text'
+        ),
+
+
+    ),
 );
