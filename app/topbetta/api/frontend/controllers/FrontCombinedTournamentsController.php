@@ -22,7 +22,9 @@ class FrontCombinedTournamentsController extends \BaseController {
 
         }
 
-        $tournamentController = new FrontTournamentsController();
+        //$tournamentController = new FrontTournamentsController();
+        $tournamentController = \App::make('\TopBetta\frontend\FrontTournamentsController');
+
         $tournamentGrouped =  $tournamentController->show($tournId, true);
 
         if (!$tournamentGrouped['success']) {

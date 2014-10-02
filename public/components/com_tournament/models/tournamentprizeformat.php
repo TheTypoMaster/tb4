@@ -80,4 +80,20 @@ class TournamentModelTournamentPrizeFormat extends SuperModel
 		return $db->loadObjectList();
 		
   	}
+
+    /**
+     * Load all possible buy-in values. Defaults to only active records.
+     *
+     * @return array
+     */
+    public function getTournamentPrizeFormatList()
+    {
+        $table = $this->_getTable();
+
+        $query = new DatabaseQuery($table);
+        $db =& $this->getDBO();
+
+        $db->setQuery($query->getSelect());
+        return $this->_loadModelList($db->loadObjectList());
+    }
 }

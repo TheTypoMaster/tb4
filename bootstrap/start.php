@@ -13,7 +13,7 @@
 
 $app = new Illuminate\Foundation\Application;
 
-$app->redirectIfTrailingSlash();
+//$app->redirectIfTrailingSlash();
 
 /*
 |--------------------------------------------------------------------------
@@ -29,14 +29,15 @@ $app->redirectIfTrailingSlash();
 $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
-	'ol_development' => array('olivers-mbp.*'),
+	'ol_development' => array('olivers-mbp.*', 'Olivers-MacBook-Pro.*'),
 	'ol_testing' => array('oltest.mugbookie.com'),
 	'mic_development' => array('Mics-MacBook-Pro.local','mics-mbp.gateway', 'mics-mbp'),
-	'testing1' => array('testing1.*'),
+	'testing1' => array('topbetta-dvmh-test-01'),
 	'testing2' => array('testing2.*'),
 	'testing3' => array('testing3.*'),
 	'production' => array('services.*'),
 	'jason_development' => array('ZAPDOS'),
+    'testapi1' => array('topbetta-dvmh-test-02'),
 
 
 
