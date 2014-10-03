@@ -34,8 +34,16 @@ class Api_User extends JController {
 	}
 
 	public function getUserDetails($iframe = FALSE) {
-		// fetch the joomla login hash required to process the login
-		$user = JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$user = & JFactory::getUser($l_user_id);
+		} else {
+			$user = & JFactory::getUser();
+		}
+		
 		if (!$user->guest) {
 
 			$component_list = array('topbetta_user');

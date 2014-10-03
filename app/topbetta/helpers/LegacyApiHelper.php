@@ -212,6 +212,13 @@ class LegacyApiHelper {
 					return $this -> curl('getBettingHistory', $this -> allowed_methods['getBettingHistory'], $payload);
 
 					break;
+				
+				case 'getUser' :
+
+					$payload['l_user_id'] = \Auth::user() -> id;
+					return $this -> curl('getUser', $this -> allowed_methods['getUser'], $payload);
+
+					break;				
 
 				default :
 
