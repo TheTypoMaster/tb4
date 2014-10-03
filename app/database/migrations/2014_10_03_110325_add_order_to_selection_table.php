@@ -13,7 +13,7 @@ class AddOrderToSelectionTable extends Migration {
 	public function up()
 	{
 		Schema::table('tbdb_selection', function(Blueprint $table) {
-			$table->integer('order')->after('runner_code');
+			$table->integer('order')->after('runner_code')->nullable();
 		});
 	}
 
