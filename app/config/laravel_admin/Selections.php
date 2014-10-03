@@ -46,11 +46,11 @@ return array(
             'select' => '(:table).win_odds',
         ),
 
-        'selection_result' => array(
-            'title' => 'Win Dividend',
-            'relationship' => 'selectionresult',
-            'select' => '(:table).win_dividend',
-        ),
+//        'selection_result' => array(
+//            'title' => 'Win Dividend',
+//            'relationship' => 'selectionresult',
+//            'select' => '(:table).win_dividend',
+//        ),
 
         'selection_status_id' => array(
             'title' => 'Selection Status'
@@ -67,23 +67,20 @@ return array(
 
     'edit_fields' => array(
 
-//        'markets.events' => array(
-//            'title' => 'Event Name',
+        'name' => array(
+            'title' => 'Selection Name',
+            'type' => 'text',
+        ),
+
+//        'selectionprice' => array(
+//            'title' => 'Price',
 //            'type' => 'relationship',
-//            'autocomplete' => true,
-//            'num_options' => 5,
-//        ),
-//
-//        'markets.markettypes' => array(
-//            'title' => 'Market Type Name',
-//            'type' => 'relationship',
-//            'autocomplete' => true,
-//            'num_options' => 5,
+//            'name_field' => 'win_odds'
 //        ),
 
         'selection_status' => array(
-            'title' => 'Selection Status',
-            'type' => 'text'
+            'title' => 'Status',
+            'type' => 'number'
         ),
 
 //        'line' => array(
@@ -123,24 +120,28 @@ return array(
      */
     'filters' => array(
 
-        'markettypes' => array(
-            'title' => 'Market Type Name',
-            'type' => 'relationship',
-            'name_field' => 'name',
-            'autocomplete' => true,
-            'num_options' => 5,
-            'options_filter' => function($query)
-                {
-                    $query->where('id', '!=', '110');
-                },
-        ),
+//        'markettypes' => array(
+//            'title' => 'Market Type Name',
+//            'type' => 'relationship',
+//            'name_field' => 'name',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//            'options_filter' => function($query)
+//                {
+//                    $query->where('id', '!=', '110');
+//                },
+//        ),
 
-        'events' => array(
-            'title' => 'Event Name',
-            'type' => 'relationship',
-            'name_field' => 'name',
-            'autocomplete' => true,
-            'num_options' => 5,
+//        'markets.events' => array(
+//            'title' => 'Event Name',
+//            'type' => 'relationship',
+//            'name_field' => 'name',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
+        'name' => array(
+            'title' => 'Selection Name',
+            'type' => 'text'
         ),
 
         'selection_status' => array(
@@ -150,4 +151,9 @@ return array(
 
 
     ),
+
+    'query_filter'=> function($query)
+    {
+        $query->whereNull('number');
+    },
 );

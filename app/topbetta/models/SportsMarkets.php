@@ -13,6 +13,10 @@ class SportsMarket extends \Eloquent {
         return $this->belongsTo('\TopBetta\Models\Events', 'event_id', 'id');
     }
 
+    public function eventsdate(){
+        return $this->belongsTo('\TopBetta\Models\Events', 'event_id', 'id');
+    }
+
 	/**
 	 * Check if a meeting exists.
 	 *

@@ -44,7 +44,7 @@ return array(
 
     'edit_fields' => array(
         'name' => array(
-            'title' => 'Sport Name',
+            'title' => 'Competition Name',
             'type' => 'text'
         ),
         'sports' => array(
@@ -58,14 +58,46 @@ return array(
             'time_format' => 'HH:mm',
         ),
         'close_time' => array(
-            'title' => 'End Date',
+            'title' => 'Close Date',
             'type' => 'datetime',
             'date_format' => 'yy-mm-dd',
             'time_format' => 'HH:mm',
         ),
+        'country' => array(
+            'title' => 'Country',
+            'type' => 'text'
+        ),
+
         'display_flag' => array(
             'title' => 'Display on TopBetta',
             'type' => 'bool'
+        ),
+
+
+        // non-nullable fields
+        'wagering_api_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'tournament_competition_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'created_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
+        'updated_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
+        'meeting_grade' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'rail_position' => array(
+            'visible' => false,
+            'value' => '0'
         ),
     ),
 
@@ -86,7 +118,10 @@ return array(
      */
     'rules' => array(
         'name' => 'required|max:64',
-        'sport_id' => 'required|integer'
+        'sport_id' => 'required|integer',
+        'country' => 'required',
+        'start_date' => 'required',
+        'close_time' => 'required',
     ),
 
 
@@ -97,71 +132,33 @@ return array(
      */
     'filters' => array(
 
+        'name' => array(
+            'title' => 'Competition Name',
+            'type' => 'text'
+        ),
+
         'sports' => array(
             'title' => 'Sport Name',
             'type' => 'relationship'
         ),
+
         'start_date' => array(
             'title' => 'Start Date',
             'type' => 'datetime',
             'date_format' => 'yy-mm-dd',
             'time_format' => 'HH:mm',
         ),
+
         'close_time' => array(
             'title' => 'End Date',
             'type' => 'datetime',
             'date_format' => 'yy-mm-dd',
             'time_format' => 'HH:mm',
         ),
+
         'display_flag' => array(
             'title' => 'Display on TopBetta',
             'type' => 'bool'
         ),
     ),
-
-    /**
-     * The filter set
-     */
-//    'filters' => array(
-//        'id',
-//        'first_name' => array(
-//            'title' => 'First Name',
-//        ),
-//        'last_name' => array(
-//            'title' => 'Last Name',
-//        ),
-//        'films' => array(
-//            'title' => 'Films',
-//            'type' => 'relationship',
-//            'name_field' => 'name',
-//        ),
-//        'birth_date' => array(
-//            'title' => 'Birth Date',
-//            'type' => 'date'
-//        ),
-//    ),
-//
-//    /**
-//     * The editable fields
-//     */
-//    'edit_fields' => array(
-//        'first_name' => array(
-//            'title' => 'First Name',
-//            'type' => 'text',
-//        ),
-//        'last_name' => array(
-//            'title' => 'Last Name',
-//            'type' => 'text',
-//        ),
-//        'birth_date' => array(
-//            'title' => 'Birth Date',
-//            'type' => 'date',
-//        ),
-//        'films' => array(
-//            'title' => 'Films',
-//            'type' => 'relationship',
-//            'name_field' => 'name',
-//        ),
-//    ),
-
 );

@@ -23,17 +23,27 @@ return array(
      */
     'columns' => array(
         'id',
+
         'name' => array(
             'title' => 'Event Name'
         ),
-        'competitions' => array(
-            'title' => 'Comeption Name',
-            'type' => 'relationship',
+
+        'competition_id' => array(
+            'title' => 'Comeption Id',
+            'relationship' => 'competitionpivot',
+            'select' => '(:table).event_group_id'
+        ),
+
+        'event_status' => array(
+            'title' => 'Event Status',
+            'relationship' => 'eventstatus',
             'select' => '(:table).name'
         ),
+
         'start_date' => array(
             'title' => 'Start Date'
         ),
+
         'display_flag' => array(
             'title' => 'Display on TopBetta'
         )
@@ -46,12 +56,12 @@ return array(
             'type' => 'text'
         ),
 
-        'competitions' => array(
-            'title' => 'Competiiton Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
+//        'competitions' => array(
+//            'title' => 'Competiiton Name',
+//            'type' => 'relationship',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
 
         'start_date' => array(
             'title' => 'Start Date',
@@ -59,10 +69,48 @@ return array(
             'date_format' => 'yy-mm-dd',
             'time_format' => 'HH:mm',
         ),
+
+        'eventstatus' => array(
+            'title' => 'Event Status',
+            'type' => 'relationship'
+        ),
+
         'display_flag' => array(
             'title' => 'Display on TopBetta',
             'type' => 'bool'
-        )
+        ),
+
+
+        // non-nullable fields
+        'created_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
+        'updated_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
+        'tournament_competition_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'external_event_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'event_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'wagering_api_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'score' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+
     ),
 
     /**
@@ -80,10 +128,10 @@ return array(
      *
      * @type array
      */
-//    'rules' => array(
-//        'name' => 'required|max:64',
-//        'description' => 'required|max:128'
-//    ),
+    'rules' => array(
+        'name' => 'required|max:64',
+        'start_date' => 'required'
+    ),
 
 
     /**
@@ -95,13 +143,13 @@ return array(
             'title' => 'Event Name',
             'type' => 'text'
         ),
-        'competitions' => array(
-            'title' => 'Comeption Name',
-            'type' => 'relationship',
-            'name_field' => 'name',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
+//        'competitions' => array(
+//            'title' => 'Comeption Name',
+//            'type' => 'relationship',
+//            'name_field' => 'name',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
         'start_date' => array(
             'title' => 'Start Date',
             'type' => 'datetime',
@@ -113,6 +161,12 @@ return array(
             'type' => 'bool',
         )
     ),
+
+
+    'query_filter'=> function($query)
+    {
+        $query->whereNull('number');
+    },
 
 
 );

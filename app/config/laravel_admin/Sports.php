@@ -48,6 +48,14 @@ return array(
             'title' => 'Status Flag',
             'type' => 'bool'
         ),
+        'created_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
+        'updated_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        )
     ),
 
     /**

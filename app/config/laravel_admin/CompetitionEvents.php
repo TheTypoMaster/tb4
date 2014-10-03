@@ -22,27 +22,28 @@ return array(
      * The display columns
      */
     'columns' => array(
-        'event_group_id' => array(
+
+        'competition_name' => array(
             'title' => 'Competition Name',
             'relationship' => 'competitions',
             'select' => '(:table).name'
         ),
-        'event_id' => array(
-            'title' => 'Event Name',
-            'relationship' => 'events',
-            'select' => '(:table).name'
-        )
+//        'event_name' => array(
+//            'title' => 'Event Name',
+//            'relationship' => 'events',
+//            'select' => '(:table).name'
+//        )
     ),
 
     'edit_fields' => array(
-        'competitions' => array(
-            'title' => 'Competition Name',
-            'type' => 'relationship'
-        )
-//        'events' => array(
-//            'title' => 'Event Name',
-//            'type' => 'relationship'
+//        'competitions' => array(
+//            'title' => 'Competition Name',
+//            'type' => 'relationship',
 //        ),
+        'events' => array(
+            'title' => 'Event Name',
+            'type' => 'relationship'
+        ),
     ),
 
     /**
@@ -74,20 +75,17 @@ return array(
     'filters' => array(
         'competitions' => array(
             'title' => 'Competition Name',
-            'type' => 'relationship'
-        )
-//        'events' => array(
-//            'title' => 'Event Name',
-//            'type' => 'relationship'
-//        ),
+            'type' => 'relationship',
+            'autocomplete' => true,
+            'num_options' => 5,
+        ),
+        'events' => array(
+            'title' => 'Event Name',
+            'type' => 'relationship',
+            'autocomplete' => true,
+            'num_options' => 5,
+        ),
     ),
-
-    'query_filter'=> function($query)
-        {
-
-                $query->where('tbdb_event_group.sport_id', '!=', '0');
-
-        }
 
 
 );

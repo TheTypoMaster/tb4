@@ -46,12 +46,13 @@ return array(
 	 *		'homepage_sliders',
 	 *		'users',
 	 *		'roles',
+     *
 	 *		'colors',
 	 *		'Settings' => array('settings.site', 'settings.ecommerce', 'settings.social'),
 	 * 		'Analytics' => array('E-Commerce' => 'page.ecommerce.analytics'),
 	 *	)
 	 */
-	'menu' => array('Sports', 'Competitions', 'Events', 'CompetitionEvents', 'Markets', 'Selections'),
+	'menu' => array('Sports', 'Competitions', 'CompetitionEvents', 'Events', 'Markets', 'Selections', 'SelectionPrices'),
 
 	/**
 	 * The permission option is the highest-level authentication check that lets you define a closure that should return true if the current user
@@ -61,7 +62,8 @@ return array(
 	 */
 	'permission'=> function()
 	{
-        return true;
+        //return false;
+        return Auth::basic();
 		//return Auth::check();
 	},
 

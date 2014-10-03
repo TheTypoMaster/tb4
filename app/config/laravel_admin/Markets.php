@@ -24,17 +24,27 @@ return array(
     'columns' => array(
         'id',
 
-        'event_name' => array(
-            'title' => 'Event Name',
-            'relationship' => 'events',
-            'select' => '(:table).name',
-        ),
-
         'market_type_name' => array(
             'title' => 'Market Type Name',
             'relationship' => 'markettypes',
             'select' => '(:table).name',
         ),
+
+        'event_name' => array(
+            'title' => 'Event Name',
+            'type' => 'text',
+            'relationship' => 'events',
+            'select' => '(:table).name',
+        ),
+
+        'event_date' => array(
+            'title' => 'Event Start',
+            'type' => 'text',
+            'relationship' => 'events',
+            'select' => '(:table).start_date',
+        ),
+
+
 
         'market_status' => array(
             'title' => 'Market Status'
@@ -112,7 +122,7 @@ return array(
             'type' => 'relationship',
             'name_field' => 'name',
             'autocomplete' => true,
-            'num_options' => 5,
+            'num_options' => 30,
             'options_filter' => function($query)
                 {
                     $query->where('id', '!=', '110');
@@ -124,8 +134,25 @@ return array(
             'type' => 'relationship',
             'name_field' => 'name',
             'autocomplete' => true,
-            'num_options' => 5,
+            'num_options' => 30,
+            'options_filter' => function($query)
+            {
+                $query->whereNull('number');
+            },
         ),
+
+        'eventsdate' => array(
+            'title' => 'Event Date',
+            'type' => 'relationship',
+            'name_field' => 'start_date',
+            'autocomplete' => true,
+            'num_options' => 30,
+            'options_filter' => function($query)
+            {
+                $query->whereNull('number');
+            },
+        ),
+
 
         'market_status' => array(
             'title' => 'Market Status',
@@ -142,4 +169,9 @@ return array(
             'type' => 'bool'
         )
     ),
+
+    'query_filter'=> function($query)
+    {
+        $query->where('market_type_id', '!=', '110');
+    },
 );
