@@ -52,6 +52,14 @@ return array(
 //            'select' => '(:table).win_dividend',
 //        ),
 
+        'image_url' => array(
+            'title' => 'Image URL'
+        ),
+
+        'order' => array(
+            'title' => 'Order Number'
+        ),
+
         'selection_status_id' => array(
             'title' => 'Selection Status'
         ),
@@ -77,6 +85,16 @@ return array(
 //            'type' => 'relationship',
 //            'name_field' => 'win_odds'
 //        ),
+
+        'image_url' => array(
+            'title' => 'Image URL',
+            'type' => 'number'
+        ),
+
+        'order' => array(
+            'title' => 'Order Number',
+            'type' => 'number'
+        ),
 
         'selection_status' => array(
             'title' => 'Status',
