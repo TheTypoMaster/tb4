@@ -110,7 +110,7 @@ return array(
         'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
-        //'Frozennode\Administrator\AdministratorServiceProvider'
+        'Frozennode\Administrator\AdministratorServiceProvider'
 
 	),
 
@@ -217,8 +217,7 @@ return array(
 		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
 		'BetRepo' => 'TopBetta\Facades\BetRepo',
 		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
-		// 'Clockwork' => 'Clockwork\Support\Laravel\Facade',
-	),
+    ),
 
     'cipher' => MCRYPT_RIJNDAEL_256,
 

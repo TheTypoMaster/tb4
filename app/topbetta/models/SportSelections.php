@@ -10,7 +10,22 @@ class SportsSelection extends \Eloquent {
 	{
 		return $this->belongsTo('TopBetta\SportsResults', 'selection_id', 'id');
 	}
-	
+
+    public function markets()
+    {
+        return $this->belongsTo('TopBetta\SportsMarket', 'market_id', 'id');
+    }
+
+    public function selectionprice()
+    {
+        return $this->hasOne('TopBetta\SportsSelectionPrice', 'selection_id', 'id');
+    }
+
+    public function selectionresult()
+    {
+        return $this->hasOne('TopBetta\SportsSelectionResults', 'selection_id', 'id');
+    }
+
 	
 	/**
 	 * Check if a selection exists.
