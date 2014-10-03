@@ -4,6 +4,9 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
+use View;
+use Auth;
+use Redirect;
 
 class FrontUsersController extends \BaseController {
 
@@ -385,4 +388,68 @@ class FrontUsersController extends \BaseController {
 		//
 	}
 
+    public function templogin(){
+        return View::make('users.login');
+    }
+
+    public function handlelogin(){
+        $input = Input::only(['username', 'password']);
+
+        $rules = array('username' => 'required', 'password' => 'required');
+
+        $validator = \Validator::make($input, $rules);
+
+        if ($validator -> fails()) {
+
+            return array("success" => false, "error" => $validator -> messages() -> all());
+
+        } else {
+
+            $l = new \TopBetta\LegacyApiHelper;
+            $login = $l->query('doUserLogin', $input);
+
+            if ($login['status'] == 200) {
+
+                // we do a standard laravel auth with the joomla user id in the DB
+                \Auth::loginUsingId($login['userInfo']['id']);
+
+                if (\Auth::check()) {
+
+                    if (!$login['userInfo']['full_account']) {
+
+                        $parts = explode(" ", \Auth::user()->name);
+                        $lastname = array_pop($parts);
+                        $firstname = implode(" ", $parts);
+
+                    } else {
+
+                        $lastname = $login['userInfo']['last_name'];
+                        $firstname = $login['userInfo']['first_name'];
+
+                    }
+
+                    $tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id)->first();
+
+                    $mobile = NULL;
+                    $verified = false;
+
+                    if ($tbUser) {
+                        $mobile = $tbUser->msisdn;
+                        $verified = ($tbUser->identity_verified_flag) ? true : false;
+                    }
+
+                    return Redirect::to('/laraveladmin');
+
+                } else {
+
+                    return Redirect::route('login')->withInput();
+
+                }
+            }
+
+
+        }
+
+
+    }
 }

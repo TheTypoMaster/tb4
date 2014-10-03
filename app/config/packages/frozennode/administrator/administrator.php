@@ -62,9 +62,7 @@ return array(
 	 */
 	'permission'=> function()
 	{
-        //return false;
-        return Auth::basic();
-		//return Auth::check();
+        return Auth::check();
 	},
 
 	/**
@@ -101,7 +99,7 @@ return array(
 	 *
 	 * @type string
 	 */
-	'login_path' => 'user/login',
+	'login_path' => 'login',
 
 	/**
 	 * The logout path is the path where Administrator will send the user when they click the logout link
