@@ -2,7 +2,7 @@
 <div class="container">
     <div>
         @if(Auth::check())
-            <p>Welcome to your profile page {{Auth::user()->first_name}} - {{Auth::user()->last_name}}</p>
+            <p>Welcome to your profile page {{Auth::user()->username}}</p>
         @endif
     </div>
 </div>
