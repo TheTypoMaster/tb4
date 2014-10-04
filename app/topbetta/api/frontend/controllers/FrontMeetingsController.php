@@ -104,7 +104,7 @@ class FrontMeetingsController extends \BaseController {
 //		$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . '" AND display_flag = 1') -> get();
 		
 		$query = TopBetta\RaceMeeting::select('tbdb_event_group.*')
-				->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'event_group.id')
+				->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
 				->join('tbdb_event AS e', 'ege.event_id', '=', 'e.id')
 				->where('e.start_date', 'like', $meetDate . '%')
 				->where('tbdb_event_group.type_code', $typeCode)
