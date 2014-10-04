@@ -12,7 +12,7 @@
 
 return array(
 
-    'title' => 'Competitions-Events',
+    'title' => 'Link Competitions & Events',
 
     'single' => 'competition-event',
 
@@ -28,21 +28,33 @@ return array(
             'relationship' => 'competitions',
             'select' => '(:table).name'
         ),
-//        'event_name' => array(
-//            'title' => 'Event Name',
-//            'relationship' => 'events',
-//            'select' => '(:table).name'
-//        )
+        'event_name' => array(
+            'title' => 'Event Name',
+            'relationship' => 'events',
+            'select' => '(:table).name'
+        ),
+        'event_date' => array(
+            'title' => 'Event Date',
+            'relationship' => 'events',
+            'select' => '(:table).start_date'
+        )
     ),
 
     'edit_fields' => array(
-//        'competitions' => array(
-//            'title' => 'Competition Name',
-//            'type' => 'relationship',
-//        ),
+
+        'competitions' => array(
+            'title' => 'Competition Name',
+            'type' => 'relationship',
+            'autocomplete' => true,
+            'num_options' => 5,
+            'name_field' => 'name'
+        ),
         'events' => array(
             'title' => 'Event Name',
-            'type' => 'relationship'
+            'type' => 'relationship',
+            'autocomplete' => true,
+            'num_options' => 5,
+            'name_field' => 'name'
         ),
     ),
 
@@ -51,10 +63,10 @@ return array(
      *
      * @type array
      */
-//    'sort' => array(
-//        'field' => 'event_group_id',
-//        'direction' => 'desc',
-//    ),
+    'sort' => array(
+        'field' => 'event_group_id',
+        'direction' => 'desc',
+    ),
 
     /**
      * The validation rules for the form, based on the Laravel validation class
@@ -73,18 +85,16 @@ return array(
      * @type array
      */
     'filters' => array(
-        'competitions' => array(
-            'title' => 'Competition Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
-        'events' => array(
-            'title' => 'Event Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
+       'event_group_id' => array(
+           'title' => 'Competition ID',
+           'type' => 'number',
+       ),
+//        'events' => array(
+//            'title' => 'Event Name',
+//            'type' => 'relationship',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
     ),
 
 
