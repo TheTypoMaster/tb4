@@ -3,7 +3,7 @@
 <head>
     <title>Temp Login Form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{HTML::style('http://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')}}
+    {{HTML::style('//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')}}
     <style>
         body{
             padding-top: 70px;
@@ -53,8 +53,8 @@
     </div>
     @yield('body')
 </div>
-{{HTML::script('http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')}}
-{{HTML::script('http://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')}}
+{{HTML::script('//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')}}
+{{HTML::script('//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')}}
 @show
 </body>
 </html>
