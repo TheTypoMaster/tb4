@@ -193,7 +193,7 @@ Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), fun
 	Route::get('login', 'TopBetta\admin\controllers\SessionController@create');
 	Route::get('logout', 'TopBetta\admin\controllers\SessionController@destroy');
 
-	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));	
+	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));
 });
 
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
@@ -220,3 +220,12 @@ Route::group(array('prefix' => 'api/backend/test'), function() {
 
 	Route::resource('url', 'UrlController');
 });
+
+
+Route::get('login', array('as' => 'login', 'uses' => 'TopBetta\frontend\FrontUsersController@tempLogin'));
+Route::post('/login', array('as' => 'login', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogin'));
+Route::get('/profile', array('as' => 'profile', 'uses' => 'TopBetta\frontend\FrontUsersController@handleProfile'));
+Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
+
+
+

@@ -12,7 +12,7 @@
 
 return array(
 
-    'title' => 'Competitions-Events',
+    'title' => 'Link Competitions & Events',
 
     'single' => 'competition-event',
 
@@ -23,26 +23,61 @@ return array(
      */
     'columns' => array(
 
+
+
+        'competition_id' => array(
+            'title' => 'Competition Id',
+            'relationship' => 'competitions',
+            'select' => '(:table).id'
+        ),
+
+        'competition_date' => array(
+            'title' => 'Competition Date',
+            'relationship' => 'competitions',
+            'select' => '(:table).start_date'
+        ),
+
         'competition_name' => array(
             'title' => 'Competition Name',
             'relationship' => 'competitions',
             'select' => '(:table).name'
         ),
-//        'event_name' => array(
-//            'title' => 'Event Name',
-//            'relationship' => 'events',
-//            'select' => '(:table).name'
-//        )
+
+        'event_id' => array(
+            'title' => 'Event Id',
+            'relationship' => 'events',
+            'select' => '(:table).id'
+        ),
+
+        'event_date' => array(
+            'title' => 'Event Date',
+            'relationship' => 'events',
+            'select' => '(:table).start_date'
+        ),
+
+        'event_name' => array(
+            'title' => 'Event Name',
+            'relationship' => 'events',
+            'select' => '(:table).name'
+        ),
+
     ),
 
     'edit_fields' => array(
-//        'competitions' => array(
-//            'title' => 'Competition Name',
-//            'type' => 'relationship',
-//        ),
+
+        'competitions' => array(
+            'title' => 'Competition Name',
+            'type' => 'relationship',
+            'autocomplete' => true,
+            'num_options' => 5,
+            'name_field' => 'name'
+        ),
         'events' => array(
             'title' => 'Event Name',
-            'type' => 'relationship'
+            'type' => 'relationship',
+            'autocomplete' => true,
+            'num_options' => 5,
+            'name_field' => 'name'
         ),
     ),
 
@@ -51,20 +86,20 @@ return array(
      *
      * @type array
      */
-//    'sort' => array(
-//        'field' => 'event_group_id',
-//        'direction' => 'desc',
-//    ),
+    'sort' => array(
+        'field' => 'event_group_id',
+        'direction' => 'desc',
+    ),
 
     /**
      * The validation rules for the form, based on the Laravel validation class
      *
      * @type array
      */
-//    'rules' => array(
-//        'name' => 'required|max:64',
-//        'sport_id' => 'required|integer'
-//    ),
+    'rules' => array(
+        'event_group_id' => 'required|integer',
+        'event_id' => 'required|integer'
+    ),
 
 
     /**
@@ -73,18 +108,16 @@ return array(
      * @type array
      */
     'filters' => array(
-        'competitions' => array(
-            'title' => 'Competition Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
-        'events' => array(
-            'title' => 'Event Name',
-            'type' => 'relationship',
-            'autocomplete' => true,
-            'num_options' => 5,
-        ),
+       'event_group_id' => array(
+           'title' => 'Competition ID',
+           'type' => 'number',
+       ),
+//        'events' => array(
+//            'title' => 'Event Name',
+//            'type' => 'relationship',
+//            'autocomplete' => true,
+//            'num_options' => 5,
+//        ),
     ),
 
 
