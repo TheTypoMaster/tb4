@@ -388,11 +388,11 @@ class FrontUsersController extends \BaseController {
 		//
 	}
 
-    public function templogin(){
+    public function tempLogin(){
         return View::make('users.login');
     }
 
-    public function handlelogin(){
+    public function handleLogin(){
         $input = Input::only(['username', 'password']);
 
         $rules = array('username' => 'required', 'password' => 'required');
@@ -438,7 +438,7 @@ class FrontUsersController extends \BaseController {
                         $verified = ($tbUser->identity_verified_flag) ? true : false;
                     }
 
-                    return Redirect::to('/laraveladmin');
+                    return Redirect::to('/profile');
 
                 } else {
 
@@ -451,5 +451,16 @@ class FrontUsersController extends \BaseController {
         }
 
 
+    }
+
+    public function handleProfile(){
+        return View::make('users.profile');
+    }
+
+    public function handleLogout(){
+        if(Auth::check()){
+            Auth::logout();
+        }
+        return Redirect::route('login');
     }
 }
