@@ -3,8 +3,8 @@ class SportEventGroupEvent extends \Eloquent {
 
 	protected $table = 'tbdb_event_group_event';
 
-    protected $primaryKey = 'event_group_id';
-	
+    protected $primaryKey = 'id';
+
 	/**
 	 * Check if a event group event exists.
 	 *
