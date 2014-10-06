@@ -6,15 +6,15 @@ class SportsSelection extends \Eloquent {
 	
 	
 	// Relationships
-	public function sportsResults()
-	{
-		return $this->belongsTo('TopBetta\SportsResults', 'selection_id', 'id');
-	}
-
     public function markets()
     {
         return $this->belongsTo('TopBetta\SportsMarket', 'market_id', 'id');
     }
+
+    public function sportsResults()
+	{
+		return $this->hasOne('TopBetta\SportsResults', 'selection_id', 'id');
+	}
 
     public function selectionprice()
     {
@@ -24,6 +24,11 @@ class SportsSelection extends \Eloquent {
     public function selectionresult()
     {
         return $this->hasOne('TopBetta\SportsSelectionResults', 'selection_id', 'id');
+    }
+
+    public function selectionstatus()
+    {
+        return $this->belongsTo('TopBetta\Models\SportsSelectionStatus', 'selection_status_id', 'id');
     }
 
 	
