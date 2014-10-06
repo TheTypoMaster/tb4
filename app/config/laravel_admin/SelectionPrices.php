@@ -36,6 +36,12 @@ return array(
             'select' => '(:table).name',
         ),
 
+        'event_date' => array(
+            'title' => 'Event Date',
+            'relationship' => 'selections.markets.events',
+            'select' => '(:table).start_date',
+        ),
+
         'market_type_name' => array(
             'title' => 'Market Type Name',
             'relationship' => 'selections.markets.markettypes',
@@ -51,6 +57,15 @@ return array(
 
     'edit_fields' => array(
 
+        'selections' => array(
+            'title' => 'Selection Name',
+            'type' => 'relationship',
+            'name_field' => 'name',
+            'autocomplete' => true,
+            'num_options' => 5,
+
+        ),
+
         'win_odds' => array(
            'title' => 'Odds',
            'type' => 'number',
@@ -60,6 +75,22 @@ return array(
            'decimal_separator' => '.',
         ),
 
+        'w_product_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'p_product_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'line' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'created_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
 
 
     ),
@@ -97,6 +128,7 @@ return array(
             'autocomplete' => true,
             'num_options' => 5,
         ),
+
     ),
 
     'query_filter'=> function($query)

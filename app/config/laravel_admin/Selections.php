@@ -27,23 +27,37 @@ return array(
         'name' => array(
             'title' => 'Selection Name'
         ),
+//
+        'event_id' => array(
+            'title' => 'Event Id',
+            'relationship' => 'markets.events',
+            'select' => '(:table).id',
+        ),
 
         'event_name' => array(
-            'title' => 'Event Name',
+            'title' => 'Event',
             'relationship' => 'markets.events',
             'select' => '(:table).name',
         ),
 
+        'market_id' => array(
+            'title' => 'Market Id',
+            'relationship' => 'markets',
+            'select' => '(:table).id',
+        ),
+
         'market_type_name' => array(
-            'title' => 'Market Type Name',
+            'title' => 'Market',
             'relationship' => 'markets.markettypes',
             'select' => '(:table).name',
         ),
 
         'selection_price' => array(
-            'title' => 'Fixed Odds',
+            'title' => 'Odds',
             'relationship' => 'selectionprice',
             'select' => '(:table).win_odds',
+            'decimals' => 2, //optional, defaults to 0
+            'decimal_separator' => '.',
         ),
 
 //        'selection_result' => array(
@@ -57,27 +71,31 @@ return array(
         ),
 
         'order' => array(
-            'title' => 'Order Number'
+            'title' => 'Order'
         ),
 
-        'selection_status_id' => array(
-            'title' => 'Selection Status'
+        'selection_status' => array(
+            'title' => 'Status',
+            'relationship' => 'selectionstatus',
+            'select' => '(:table).name',
         ),
-//
-//        'line' => array(
-//            'title' => 'Line'
-//        ),
-//
-//        'display_flag' => array(
-//            'title' => 'Available on TopBetta'
-//        )
     ),
+
 
     'edit_fields' => array(
 
         'name' => array(
             'title' => 'Selection Name',
             'type' => 'text',
+        ),
+
+        'markets' => array(
+            'title' => 'Market Id',
+            'type' => 'relationship',
+            'name_field' => 'id',
+            'autocomplete' => true,
+            'num_options' => 5,
+
         ),
 
 //        'selectionprice' => array(
@@ -88,7 +106,7 @@ return array(
 
         'image_url' => array(
             'title' => 'Image URL',
-            'type' => 'number'
+            'type' => 'text'
         ),
 
         'order' => array(
@@ -96,20 +114,68 @@ return array(
             'type' => 'number'
         ),
 
-        'selection_status' => array(
+        'selectionstatus' => array(
             'title' => 'Status',
-            'type' => 'number'
+            'type' => 'relationship'
         ),
 
-//        'line' => array(
-//            'title' => 'Line',
-//            'type' => 'text'
-//        ),
-//
-//        'display_flag' => array(
-//            'title' => 'Available on TopBetta',
-//            'type' => 'bool'
-//        )
+        // non-nullable fields
+        'external_selection_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'wagering_api_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'wager_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'silk_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'created_date' => array(
+            'visible' => false,
+            'value' => '2014-10-01 00:00:00'
+        ),
+        'weight' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'trainer' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'last_starts' => array(
+            'visible' => false,
+            'value' => ''
+        ),
+        'external_event_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'external_market_id' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'home_away' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'bet_type_ref' => array(
+            'visible' => false,
+            'value' => ''
+        ),
+        'bet_place_ref' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
+        'runner_code' => array(
+            'visible' => false,
+            'value' => '0'
+        ),
     ),
 
     /**
@@ -162,10 +228,10 @@ return array(
             'type' => 'text'
         ),
 
-        'selection_status' => array(
-            'title' => 'Selection Status',
-            'type' => 'text'
-        ),
+//        'selectionstatus' => array(
+//            'title' => 'Selection Status',
+//            'type' => 'relationship'
+//        ),
 
 
     ),
