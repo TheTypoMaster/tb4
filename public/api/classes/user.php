@@ -284,6 +284,7 @@ class Api_User extends JController {
 					$user->set('gid', $authorize->get_group_id( '', $newUsertype, 'ARO' ));
 					$date =& JFactory::getDate();
 					$user->set('registerDate', $date->toMySQL());
+					$user->set('isTopBetta', 0);
 
 					// If user activation is turned on, we need to set the activation information
 					$useractivation = $usersConfig->get( 'useractivation' );
@@ -2955,7 +2956,16 @@ Must be 18+<br>
 			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
 		}
 
-		$user	=& JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$user = & JFactory::getUser($l_user_id);
+		} else {
+			$user = & JFactory::getUser();
+		}
+		
 		$model	=& $this->getModel('TopbettaUser', 'TopbettaUserModel');
 
 		$exclusion_end_timestamp = time() + 60 * 60 * 24 * 7;
