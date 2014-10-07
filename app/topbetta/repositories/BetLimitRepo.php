@@ -45,11 +45,21 @@ class BetLimitRepo
 
 		if ($source == 'racing') {
 			return $this->checkExceedRacingLimits($betData);
+		} else if ($source == 'sports') {
+			return $this->checkExceedSportsLimits($betData);
 		} else {
 			return false;
 		}
 	}
 
+	/**
+	 * Check win/place/exotic bet limits for a bet
+	 * Returns result:true if exceeds with the limit set
+	 * Returns result:false if bet is ok to proceed
+	 * 
+	 * @param type $betData
+	 * @return type
+	 */
 	private function checkExceedRacingLimits($betData)
 	{
 		$meeting = RaceMeeting::find($betData['id']);
@@ -170,6 +180,41 @@ class BetLimitRepo
 			return array('result' => false);			
 		}
 	}
+	
+	/**
+	 * Check a sport bet option for bet limit
+	 * Returns result:true if exceeds with the limit set
+	 * Returns result:false if bet is ok to proceed
+	 * 
+	 * @param type $betData
+	 */
+	private function checkExceedSportsLimits($betData)
+	{
+		$lowestLimit = false;
+		// 1: check every rule the user has for a match
+		// TODO: NOT REQUIRED AS YET
+		
+		// 2: if we didn't find a user rule matching, fetch global sport default limit
+		if (!$lowestLimit) {
+			$lowestLimit = $this->getDefaultSportsBetLimit();
+		}
+
+		// 3: do our checks now	
+		// Bet comes through as selection_id => amount e.g. 1118253 => 500
+		$previousTotal = $this->userRepo
+				->sumUserBetsForSelectionAndType(key($betData['bets']), 1, \Auth::user()->id);
+
+		$newTotal = (int) $previousTotal + (int) current($betData['bets']);
+
+		if ($lowestLimit && $newTotal > $lowestLimit) {
+			return array(
+				'result' => true,
+				'betValueLimit' => number_format($lowestLimit / 100, 2)
+			);
+		}
+
+		return array('result' => false);
+	}
 
 	/**
 	 * Get all bet limits for a user
@@ -197,12 +242,12 @@ class BetLimitRepo
 		$list = $this->betLimitType->lists('nickname', 'id');
 
 		return ($excludeGlobal) ?
-				array_except($list, array('1', '2')) :
+				array_except($list, array('1', '2', '13')) :
 				$list;
 	}
 
 	/**
-	 * Get the default global bet limit
+	 * Get the default global racing bet limit
 	 * 
 	 * @return int
 	 */
@@ -224,6 +269,18 @@ class BetLimitRepo
 						->where('name', 'default_flexi')
 						->pluck('default_amount');
 	}
+	
+	/**
+	 * Get the default global sports bet limit
+	 * 
+	 * @return int
+	 */
+	public function getDefaultSportsBetLimit()
+	{
+		return $this->betLimitType
+						->where('name', 'default_sport')
+						->pluck('default_amount');
+	}	
 
 	/**
 	 * Find the bet limit for a type with a value

@@ -31,9 +31,10 @@ class SettingsController extends BaseController
 	{
 		$betLimit = $this->betLimitType->find(1);
 		$flexiLimit = $this->betLimitType->find(2);
+		$sportsBetLimit = $this->betLimitType->find(13);
 		
 		return View::make('admin::settings.index')
-						->with(compact('betLimit', 'flexiLimit'));
+						->with(compact('betLimit', 'flexiLimit', 'sportsBetLimit'));
 	}
 
 	/**
@@ -97,7 +98,13 @@ class SettingsController extends BaseController
 				$betLimit = $this->betLimitType->findOrFail(2);
 				$betLimit->default_amount = str_replace(',', '', Input::get('default_amount', 1000)) * 100;
 				$betLimit->save();
-				break;			
+				break;	
+			
+			case 'bet_limit_sport':
+				$betLimit = $this->betLimitType->findOrFail(13);
+				$betLimit->default_amount = str_replace(',', '', Input::get('default_amount', 1000)) * 100;
+				$betLimit->save();
+				break;	
 
 			default:
 				break;
