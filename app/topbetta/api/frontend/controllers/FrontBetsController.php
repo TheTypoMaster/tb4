@@ -399,7 +399,7 @@ class FrontBetsController extends \BaseController {
 							
 							$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'sports');
 							if ($exceedBetLimit['result']) {
-								$messages[] = array("id" => key($input['bets']), "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
+								$messages[] = array("bets" => $input['bets'], "type_id" => null, "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
 								$errors++;
 
 								return false;
