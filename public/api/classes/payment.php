@@ -30,7 +30,16 @@ class Api_Payment extends JController {
 	 */
 	public function doInstantDeposit() {
 
-        $loggedUser =& JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$loggedUser =& JFactory::getUser($l_user_id);
+		} else {
+			$loggedUser =& JFactory::getUser();
+		}        
+
         if ($loggedUser->guest) {
 			return OutputHelper::json(500, array('error_msg' => 'Please login to make a deposit'  ));
 		}
@@ -182,7 +191,15 @@ class Api_Payment extends JController {
 	public function doWithdrawRequest() {
 
    		$session =& JFactory::getSession();
-    	$loginUser =& JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$loginUser =& JFactory::getUser($l_user_id);
+		} else {
+			$loginUser =& JFactory::getUser();
+		}		
     	$config =& JComponentHelper::getParams( 'com_payment' );
 
     	if( $loginUser->guest )
@@ -391,8 +408,12 @@ class Api_Payment extends JController {
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'useraudit.php');
 		$audit_model = new TopbettaUserModelUserAudit();
 
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);	
+		
 		//get login user details
-		$user		= $user_model->getUser();
+		$user		= $user_model->getUser($l_user_id);
 
 		//init session
 		$session =& JFactory::getSession();
