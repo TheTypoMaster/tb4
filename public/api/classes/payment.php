@@ -259,7 +259,7 @@ class Api_Payment extends JController {
     	{
     		$err[$withdrawalType . '_amount'] = 'The minimum withdrawal amount is ' . $minWithdrawal . ' dollars';
     	}
-    	else if( $amount > ($paymentModel->getTotal()/100))
+    	else if( $amount > ($paymentModel->getTotal($l_user_id)/100))
     	{
     		$err[$withdrawalType . '_amount'] = 'Your account balance is not enough for this withdrawal';
     	}
@@ -383,7 +383,7 @@ class Api_Payment extends JController {
 
     	$emailBody	 = "A request for withdrawal has been made on $requestedDate for user {$user->username}\n\n";
     	$emailBody 	.= "Withdrawal Details:\nUser: {$user->first_name} {$user->last_name}\nAmount: $amountFormatted\nMethod: $withdrawalMethod\nAccount: $accountInfo\n\n";
-		$emailBody	.= 'Account balance: ' . '$'.number_format($paymentModel->getTotal()/100, 2, '.', ',') . "\n";
+		$emailBody	.= 'Account balance: ' . '$'.number_format($paymentModel->getTotal($l_user_id)/100, 2, '.', ',') . "\n";
 		$emailBody	.= "Bank account details:\nBank: $user->bank_name\nAccount name: $user->account_name\nBSB: $user->bsb_number\nAccount no.: $user->bank_account_number" . "\n\n";
     	$emailBody	.= 'ID Verified: ' . ($user->identity_verified_flag ? 'Yes' : 'No') . "\n\n";
     	$emailBody	.= "Contact Details:\n";
