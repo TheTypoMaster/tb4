@@ -104,7 +104,15 @@ class Tbdb_bet_limit_typesTableSeeder extends Seeder {
         				'value' => '7',
         				'default_amount' => 100000,
         				'notes' => 'First Four Flexi limit',
-        		),									
+        		),
+        		array (
+        				'id' => 13,
+        				'name' => 'default_sport',
+        				'nickname' => 'global_sport',
+        				'value' => 'all',
+        				'default_amount' => 100000,
+        				'notes' => '**safety net** If no user set or default sport value is in this table, this is the limit applied.',
+        		),			
         );
 
         // Uncomment the below to run the seeder
