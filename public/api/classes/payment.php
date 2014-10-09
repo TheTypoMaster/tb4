@@ -315,7 +315,7 @@ class Api_Payment extends JController {
 		}
 
 		$userModel = new TopbettaUserModelTopbettaUser();
-    	$user = $userModel->getUser();
+    	$user = $userModel->getUser($l_user_id);
 
 
     	$senderEmail	= $config->get('sender_email');
