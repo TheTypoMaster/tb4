@@ -79,17 +79,20 @@ class RiskResultsController extends \BaseController
             return false;
         }
 
-        $updateData = array('quinella_dividend' => null,
-            'exacta_dividend' => null,
-            'trifecta_dividend' => null,
-            'firstfour_dividend' => null);
+        $updateData = array('quinella_dividend' => array(),
+            'exacta_dividend' => array(),
+            'trifecta_dividend' => array(),
+            'firstfour_dividend' => array());
 
-        // loop over each exotic type and build our result
+        // loop over each exotic type and build our result, this handles dead heats as well
         foreach ($raceResult as $result) {
-            $updateData[$result['name'] . '_dividend'] = serialize(
-                    array($result['selections'] => $result['dividend'])
-            );
+            $updateData[$result['name'] . '_dividend'][$result['selections']] = $result['dividend'];
         }
+		
+		// we need to store the exotics results as serialized array
+		array_walk($updateData, function(&$item, $key) {
+			$item = serialize($item);
+		});
 
         return $event->update($updateData);
     }
