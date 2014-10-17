@@ -1185,7 +1185,7 @@ class Api_User extends JController {
 						$tournamentdollars_model = new TournamentdollarsModelTournamenttransaction();
 
 						if($promotion) {
-							$tournamentdollars_model->increment($promotion[0]->pro_value, 'promo');
+                            $tournamentdollars_model->increment_for_promo_code($promotion[0]->pro_value, 'promo',$user_id );
 						}
 					}
 
