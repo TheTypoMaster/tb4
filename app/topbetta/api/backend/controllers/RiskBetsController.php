@@ -1,4 +1,8 @@
-<?php
+<?php namespace TopBetta\backend;
+
+use TopBetta\Bet;
+use Illuminate\Support\Facades\Input;
+use TopBetta\Facades\BetRepo;
 
 class RiskBetsController extends \BaseController {
 
