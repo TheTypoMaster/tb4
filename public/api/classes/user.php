@@ -2848,7 +2848,15 @@ Must be 18+<br>
 					'half_refund'	=> false
 				);
 
-				if ($bet->refunded_flag && !$bet->win_amount) {
+                // http://jira.mugbookie.com/browse/TBL-280 (Cancel a bet via Risk)
+                if ($bet->refunded_flag && $bet->bet_result_status == 'cancelled') {
+                    $bet_display_list[$bet->id]['result']	= 'CANCELLED';
+                    if ($bet->refund_amount > 0) {
+                        // $bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);
+                        $bet_display_list[$bet->id]['paid']	= $bet->refund_amount;
+                    }
+                }
+                else if ($bet->refunded_flag && !$bet->win_amount) {
 					$bet_display_list[$bet->id]['result']	= 'REFUNDED';
 					if ($bet->refund_amount > 0) {
 						// $bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);

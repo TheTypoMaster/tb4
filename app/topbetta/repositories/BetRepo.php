@@ -262,9 +262,10 @@ class BetRepo
 	 * Refund a bet
 	 * 
 	 * @param Bet $bet
+     * @param Boolean $cancel
 	 * @return Boolean
 	 */
-	public function refundBet(Bet $bet)
+	public function refundBet(Bet $bet, $cancel = false)
 	{
 		// Full bet amount was on free credit
 		if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
@@ -284,7 +285,8 @@ class BetRepo
 			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
 		}
 
-		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_FULL_REFUND);
+		$resultStatusId = ($cancel) ? BetResultStatus::STATUS_CANCELLED : BetResultStatus::STATUS_FULL_REFUND;
+        $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName($resultStatusId);
 		$bet->refunded_flag = 1;
 		$bet->resulted_flag = 1;
 
