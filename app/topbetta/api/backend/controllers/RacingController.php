@@ -501,6 +501,8 @@ class RacingController extends \BaseController
                                 //check if race exists in DB
                                 $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
 
+                                TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Race Exists: ". print_r($raceExists,true), 1);
+
                                 //TODO: add error output to a log
                                 if ($raceExists) {
 
