@@ -499,7 +499,7 @@ class RacingController extends \BaseController
                                 $runnerNo = $dataArray['RunnerNo'];
 
                                 //check if race exists in DB
-                                $raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+                                $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
 
                                 //TODO: add error output to a log
                                 if ($raceExists) {
@@ -542,6 +542,8 @@ class RacingController extends \BaseController
                                     }
                                     if (isset($dataArray['RunnerNo'])) {
                                         $raceRunner->number = $dataArray['RunnerNo'];
+                                        $raceRunner->external_selection_id = $raceExists['external_race_id'].'_'.$raceNo.'_'.$dataArray['RunnerNo'];
+
                                     }
 
                                     //TODO: Code Table Lookup/Provider matching table							
