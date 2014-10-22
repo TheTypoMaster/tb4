@@ -164,7 +164,7 @@ class FrontRacesController extends \BaseController {
 			$startDatetime = new \DateTime($race -> start_date);
 			$startDatetime = $startDatetime -> format('c');	
 			
-			$result = array('id' => $race->id, 'race_number' => $race->number, 'name' => $race->name,
+			$result = array('id' => $race->id, 'external_race_id' => $race->external_event_id, 'race_number' => $race->number, 'name' => $race->name,
 				'distance' => $race->distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'status' => $race->event_status_id);
 
 			return array('success' => true, 'result' => $result);
