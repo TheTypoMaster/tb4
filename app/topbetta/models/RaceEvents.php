@@ -92,8 +92,7 @@ class RaceEvent extends \Eloquent {
             ->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
             ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
             ->where('tbdb_event_group.external_event_group_id',$meetingId )
-            ->where('tbdb_event.number',$raceNo)->first()
-            ->toArray();
+            ->where('tbdb_event.number',$raceNo)->first();
 
         //return $this::where('number', $raceNo)->where('external_event_group_id', '=', $meetingId)->racemeetings;
         //return self::racemeetings;
