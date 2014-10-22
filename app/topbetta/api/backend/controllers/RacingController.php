@@ -509,10 +509,10 @@ class RacingController extends \BaseController
 
                                     // if runner exists update that record
                                     if ($selectionsExists) {
-                                        //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, In DB: $selectionsExists", 1);
+                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, In DB: $selectionsExists", 1);
                                         $raceRunner = TopBetta\RaceSelection::find($selectionsExists);
                                     } else {
-                                        //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Added to DB: $selectionsExists", 1);
+                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Added to DB: $selectionsExists", 1);
                                         $raceRunner = new TopBetta\RaceSelection;
 
                                         // get market ID
@@ -529,7 +529,7 @@ class RacingController extends \BaseController
                                             $runnerMarket->save();
                                             $marketID = $runnerMarket->id;
 
-                                            //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
                                         }
                                         $raceRunner->market_id = $marketID;
                                     }
