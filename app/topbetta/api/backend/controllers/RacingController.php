@@ -529,7 +529,7 @@ class RacingController extends \BaseController
                                             $runnerMarket->save();
                                             $marketID = $runnerMarket->id;
 
-                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
+                                            //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Add market record for event: $raceExists");
                                         }
                                         $raceRunner->market_id = $marketID;
                                     }
