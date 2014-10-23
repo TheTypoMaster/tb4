@@ -4,6 +4,7 @@ class SportsMarket extends \Eloquent {
 
 	protected $table = 'tbdb_market';
 
+    protected $fillable = ['market_status'];
 
     public function markettypes(){
         return $this->belongsTo('\TopBetta\SportsMarketType', 'market_type_id', 'id');

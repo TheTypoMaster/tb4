@@ -211,6 +211,7 @@ return array(
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
 		'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
 		'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
+		'RiskResultSportMarket'		=> 'TopBetta\backend\RiskResultSportMarketController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
