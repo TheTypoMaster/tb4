@@ -501,7 +501,7 @@ class RacingController extends \BaseController
                                 //check if race exists in DB
                                 $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
 
-                                TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Race Exists: ". print_r($raceExists,true), 1);
+                                //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Race Exists: ". print_r($raceExists,true), 1);
 
                                 //TODO: add error output to a log
                                 if ($raceExists) {
@@ -511,10 +511,10 @@ class RacingController extends \BaseController
 
                                     // if runner exists update that record
                                     if ($selectionsExists) {
-                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, In DB: $selectionsExists", 1);
+                                        //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, In DB: $selectionsExists", 1);
                                         $raceRunner = TopBetta\RaceSelection::find($selectionsExists);
                                     } else {
-                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Added to DB: $selectionsExists", 1);
+                                        //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Added to DB: $selectionsExists", 1);
                                         $raceRunner = new TopBetta\RaceSelection;
 
                                         // get market ID
