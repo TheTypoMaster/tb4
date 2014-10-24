@@ -499,7 +499,9 @@ class RacingController extends \BaseController
                                 $runnerNo = $dataArray['RunnerNo'];
 
                                 //check if race exists in DB
-                                $raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+                                $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
+
+                                //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Race Exists: ". print_r($raceExists,true), 1);
 
                                 //TODO: add error output to a log
                                 if ($raceExists) {
@@ -519,12 +521,12 @@ class RacingController extends \BaseController
                                         $marketTypeID = TopBetta\RaceMarketType::where('name', '=', $marketName)->pluck('id');
 
                                         // check if market for event exists
-                                        $marketID = TopBetta\RaceMarket::marketExists($raceExists, $marketTypeID);
+                                        $marketID = TopBetta\RaceMarket::marketExists($raceExists['EventId'], $marketTypeID);
 
                                         if (!$marketID) {
                                             // add market record
                                             $runnerMarket = new TopBetta\RaceMarket;
-                                            $runnerMarket->event_id = $raceExists;
+                                            $runnerMarket->event_id = $raceExists['EventId'];
                                             $runnerMarket->market_type_id = 110; //TODO: this needs to come from db
                                             $runnerMarket->save();
                                             $marketID = $runnerMarket->id;
@@ -542,6 +544,8 @@ class RacingController extends \BaseController
                                     }
                                     if (isset($dataArray['RunnerNo'])) {
                                         $raceRunner->number = $dataArray['RunnerNo'];
+                                        $raceRunner->external_selection_id = $raceExists['ExternalEventId'].'_'.$raceNo.'_'.$dataArray['RunnerNo'];
+
                                     }
 
                                     //TODO: Code Table Lookup/Provider matching table							

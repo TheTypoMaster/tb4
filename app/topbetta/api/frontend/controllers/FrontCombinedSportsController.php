@@ -66,7 +66,7 @@ class FrontCombinedSportsController extends \BaseController {
 
         $events = $response->getOriginalContent();
 
-        if (!$events['success']) {
+        if (!$events['success'] || count($events['result']) < 1) {
             // return array("success" => false, "error" => "No events available");
             return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => array(), 'types' => array(), 'options' => array(), 'selected' => array('comp_id' => (int)$compId, 'event_id' => false, 'type_id' => false)));
         }
