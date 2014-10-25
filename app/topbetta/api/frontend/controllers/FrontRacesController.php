@@ -9,7 +9,7 @@ class FrontRacesController extends \BaseController {
 
     protected $nexttojumpcache;
 
-    public function __contruct(NextToJumpCacheService $nexttojumpcache){
+    public function __construct(NextToJumpCacheService $nexttojumpcache){
         $this->nexttojumpcache = $nexttojumpcache;
     }
 
