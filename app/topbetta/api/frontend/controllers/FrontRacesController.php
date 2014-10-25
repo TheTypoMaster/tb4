@@ -19,34 +19,28 @@ class FrontRacesController extends \BaseController {
 
 		// store next to jump in cache for 1 min at a time
 		$data = \Cache::tags('topbetta-nexttojump')->rememberforever('topbetta-nexttojump', function()  {
+            return $this->nexttojumpcache->getNextToJumpDBObject();
+        });
 
-            $nextToJump = $this->nexttojumpcache->getNextToJumpDBObject();
-			//$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
-			//return $nextToJump;
+        $ret = array();
+        $ret['success'] = true;
 
-			$ret = array();
-			$ret['success'] = true;
+        $result = array();
 
-			$result = array();
+        foreach ($data as $next) {
 
-			foreach ($nextToJump as $next) {
+            $toGo = \TimeHelper::nicetime(strtotime($next['start_date']), 2);
 
-				$toGo = \TimeHelper::nicetime(strtotime($next['start_date']), 2);
+            //convert the date to ISO 8601 format
+            $startDatetime = new \DateTime($next['start_date']);
+            $startDatetime = $startDatetime -> format('c');
 
-				//convert the date to ISO 8601 format
-				$startDatetime = new \DateTime($next['start_date']);
-				$startDatetime = $startDatetime -> format('c');
+            $result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime);
+        }
 
-				$result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime);
-			}
+        $ret['result'] = $result;
 
-			$ret['result'] = $result;
-
-			return $ret;
-
-		});
-
-		return $data;
+        return $ret;
 
 	}
 	
