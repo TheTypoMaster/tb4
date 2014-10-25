@@ -82,6 +82,9 @@ class NextToJumpCacheService {
     private function _oldRace($raceUpdate, $raceExisting){
 
         Log::debug('NextToJump: Procesing Old Race');
+        Log::debug('NextToJump: Procesing Old Race: Update status - '.$raceUpdate->event_status_id.', start time - '.$raceUpdate->start_date.', Existing Status - '.$raceExisting['EventStatusId']);
+
+
         // if race is selling and start time hase not been updated then we don't update the cache
         if($raceUpdate->event_status_id == 1 && $raceUpdate->start_date == $raceExisting['StartDate']) return false;
 
