@@ -113,7 +113,11 @@ class NextToJumpCacheService {
      */
     public function getNextToJumpCacheObject(){
         Log::debug('NextToJump: Getting cache object');
-        return Cache::tags('topbetta-nexttojump')->get('topbetta-nexttojump');
+        $nextToJump = Cache::tags('topbetta-nexttojump')->get('topbetta-nexttojump');
+    }
+
+    public function getNextToJumpDBObject(){
+        return $nextToJumpArray = $this->nexttojump->getNextToJump(10);
     }
 
     /**
