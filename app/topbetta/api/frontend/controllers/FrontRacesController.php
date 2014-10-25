@@ -31,13 +31,13 @@ class FrontRacesController extends \BaseController {
 
 			foreach ($nextToJump as $next) {
 
-				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+				$toGo = \TimeHelper::nicetime(strtotime($next['start_date']), 2);
 
 				//convert the date to ISO 8601 format
-				$startDatetime = new \DateTime($next -> start_date);
+				$startDatetime = new \DateTime($next['start_date']);
 				$startDatetime = $startDatetime -> format('c');
 
-				$result[] = array('id' => (int)$next -> id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'distance' => $next -> distance);
+				$result[] = array('id' => (int)$next['id'], 'type' => $next['type'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['meeting_name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'distance' => $next['distance']);
 			}
 
 			$ret['result'] = $result;
