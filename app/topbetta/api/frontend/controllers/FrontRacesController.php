@@ -18,7 +18,7 @@ class FrontRacesController extends \BaseController {
 		$limit = Input::get('limit', 10);
 
 		// store next to jump in cache for 1 min at a time
-		$data = \Cache::tags('topbetta-nexttojump')->forever('topbetta-nexttojump', function()  {
+		$data = \Cache::tags('topbetta-nexttojump')->rememberforever('topbetta-nexttojump', function()  {
 
             $nextToJump = $this->nexttojumpcache->getNextToJumpCacheObject();
 			//$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
