@@ -37,7 +37,7 @@ class FrontRacesController extends \BaseController {
 				$startDatetime = new \DateTime($next['start_date']);
 				$startDatetime = $startDatetime -> format('c');
 
-				$result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'distance' => $next['distance']);
+				$result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime);
 			}
 
 			$ret['result'] = $result;
