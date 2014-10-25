@@ -320,8 +320,8 @@ class RacingController extends \BaseController
 
                                         // if race exists update that record
                                         if ($raceExists) {
-                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, In DB: $raceExists", 1);
-                                            $raceEvent = TopBetta\RaceEvent::find($raceExists);
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, In DB: ".$raceExists['EventId'], 1);
+                                            $raceEvent = TopBetta\RaceEvent::find($raceExists['EventId']);
 
                                             // build up the status check/order array
                                             $raceStatusCheckArray = array();
@@ -337,7 +337,7 @@ class RacingController extends \BaseController
 
 
                                         } else {
-                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB: $raceExists", 1);
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Race, Added to DB", 1);
                                             $raceEvent = new TopBetta\RaceEvent;
                                             $currentRaceStatus = 0;
                                             if (isset($dataArray['MeetingId'])) {
