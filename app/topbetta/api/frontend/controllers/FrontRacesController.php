@@ -3,17 +3,25 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Caching\NextToJumpCacheService;
 
 class FrontRacesController extends \BaseController {
+
+    protected $nexttojumpcache;
+
+    public function __construct(NextToJumpCacheService $nexttojumpcache){
+        $this->nexttojumpcache = $nexttojumpcache;
+    }
 
 	public function nextToJump() {
 
 		$limit = Input::get('limit', 10);
 
 		// store next to jump in cache for 1 min at a time
-		$data = \Cache::remember('nextToJump-' . $limit, 1, function() use (&$limit) {
+		$data = \Cache::tags('topbetta-nexttojump')->rememberforever('topbetta-nexttojump', function()  {
 
-			$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
+            $nextToJump = $this->nexttojumpcache->getNextToJumpDBObject();
+			//$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
 			//return $nextToJump;
 
 			$ret = array();
@@ -23,13 +31,13 @@ class FrontRacesController extends \BaseController {
 
 			foreach ($nextToJump as $next) {
 
-				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+				$toGo = \TimeHelper::nicetime(strtotime($next['start_date']), 2);
 
 				//convert the date to ISO 8601 format
-				$startDatetime = new \DateTime($next -> start_date);
+				$startDatetime = new \DateTime($next['start_date']);
 				$startDatetime = $startDatetime -> format('c');
 
-				$result[] = array('id' => (int)$next -> id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'to_go' => $toGo, 'start_datetime' => $startDatetime, 'distance' => $next -> distance);
+				$result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime);
 			}
 
 			$ret['result'] = $result;
