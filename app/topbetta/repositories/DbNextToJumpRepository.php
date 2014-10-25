@@ -25,7 +25,7 @@ class DbNextToJumpRepository {
                             ->orderBy('tbdb_event.start_date', 'ASC')
                             ->take($limit)
                             ->select('tbdb_event.id', 'tbdb_event.start_date', 'tbdb_event.number', 'eg.type_code',
-                                     'eg.id as meeting_id', 'eg.name', 'eg.state', 'e.distance')
+                                     'eg.id as meeting_id', 'eg.name', 'eg.state', 'tbdb_event..distance')
                             ->get();
         if($nexttojump){
             return $nexttojump->toArray();
