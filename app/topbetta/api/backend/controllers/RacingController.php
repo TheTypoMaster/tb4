@@ -1,7 +1,7 @@
 <?php namespace TopBetta\backend;
 
 use TopBetta;
-use Topbetta\Services\Caching\NextToJumpCacheService;
+use TopBetta\Services\Caching\NextToJumpCacheService;
 
 class RacingController extends \BaseController
 {
