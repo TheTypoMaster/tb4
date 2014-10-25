@@ -111,7 +111,7 @@ class NextToJumpCacheService {
     /**
      * @return mixed
      */
-    private function _geteNextToJumpCacheObject(){
+    public function getNextToJumpCacheObject(){
         Log::debug('NextToJump: Getting cache object');
         return Cache::tags('topbetta-nexttojump')->get('topbetta-nexttojump');
     }

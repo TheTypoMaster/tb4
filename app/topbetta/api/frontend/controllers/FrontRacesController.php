@@ -3,17 +3,25 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Caching\NextToJumpCacheService;
 
 class FrontRacesController extends \BaseController {
+
+    protected $nexttojumpcache;
+
+    public function __contruct(NextToJumpCacheService $nexttojumpcache){
+        $this->nexttojumpcache = $nexttojumpcache;
+    }
 
 	public function nextToJump() {
 
 		$limit = Input::get('limit', 10);
 
 		// store next to jump in cache for 1 min at a time
-		$data = \Cache::remember('nextToJump-' . $limit, 1, function() use (&$limit) {
+		//$data = \Cache::remember('nextToJump-' . $limit, 1, function() use (&$limit) {
 
-			$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
+        $nextToJump = $this->nexttojumpcache->getNextToJumpCacheObject();
+			//$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
 			//return $nextToJump;
 
 			$ret = array();
@@ -36,7 +44,7 @@ class FrontRacesController extends \BaseController {
 
 			return $ret;
 
-		});
+		//});
 
 		return $data;
 
