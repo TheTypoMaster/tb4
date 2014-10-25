@@ -89,10 +89,13 @@ class NextToJumpCacheService {
         if($raceUpdate->event_status_id == 1 && $raceUpdate->start_date == $raceExisting['StartDate']) return false;
 
         // if race status is not changing from selling to closed we don't update the cache
-        if(!$raceUpdate->event_status_id == 5 && !$raceExisting['EventStatusId'] == 1) return false;
+        if($raceUpdate->event_status_id == 5 && $raceExisting['EventStatusId'] == 1) {
+            // add the current DB to cache object
+            return $this->_addDatabaseNextToJumpToCache();
+        }
+        return false;
 
-        // add the current DB to cache object
-        return $this->_addDatabaseNextToJumpToCache();
+
 
     }
 
