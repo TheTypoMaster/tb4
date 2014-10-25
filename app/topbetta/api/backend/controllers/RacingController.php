@@ -1,8 +1,7 @@
-<?php
-
-namespace TopBetta\backend;
+<?php namespace TopBetta\backend;
 
 use TopBetta;
+use Topbetta\Services\Caching\NextToJumpCacheService;
 
 class RacingController extends \BaseController
 {
@@ -49,10 +48,12 @@ class RacingController extends \BaseController
      */
     private $debug = false;
 
+    protected $nexttojump;
 
 
-    public function __construct()
+    public function __construct(NextToJumpCacheService $nexttojump)
     {
+        $this->nexttojump = $nexttojump;
         //$this->beforeFilter('apiauth');
     }
 
@@ -314,8 +315,8 @@ class RacingController extends \BaseController
 
                                         $meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
 
-                                        // check if race exists
-                                        $raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
+                                        //check if race exists in DB
+                                        $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
 
                                         // if race exists update that record
                                         if ($raceExists) {
@@ -464,6 +465,9 @@ class RacingController extends \BaseController
                                                 array_push($eventList, $raceEventID);
                                             }
                                         }
+
+                                        // N2J cache object check
+                                        $this->nexttojump->manageCache($raceExists, $raceEvent);
 
                                     } else {
                                         TopBetta\LogHelper::l("BackAPI: Racing - Processing Race. Meeting for race does not exist. Can't process. MeetingID: $meetingId, RaceNumber: $raceNo", 2);
