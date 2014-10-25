@@ -18,7 +18,7 @@ class DbNextToJumpRepository {
 
     public function getNextToJump($limit = 10){
         $nexttojump = $this->model->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'tbdb_event.id')
-                            ->join('tbdb_event_group as eg', 'eg.event_group_id', '=', 'ege.event_group_id')
+                            ->join('tbdb_event_group as eg', 'eg.id', '=', 'ege.event_group_id')
                             ->where('eg.sport_id', 0)
                             ->where('tbdb_event.event_status_id', 1)
                             ->where('tbdb_event.display_flag', 1)
