@@ -20,7 +20,7 @@ class DbNextToJumpRepository {
         $nexttojump = $this->model->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'tbdb_event.id')
                             ->join('tbdb_event_group as eg', 'eg.event_group_id', '=', 'ege.event_group_id')
                             ->where('eg.sport_id', 0)
-                            ->where('tbdb_event.event_status.id', 1)
+                            ->where('tbdb_event.event_status_id', 1)
                             ->where('tbdb_event.display_flag', 1)
                             ->orderBy('tbdb_event.start_date', 'ASC')
                             ->take($limit)
