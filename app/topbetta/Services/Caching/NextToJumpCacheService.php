@@ -41,7 +41,7 @@ class NextToJumpCacheService {
         if(!$raceUpdate->event_status_id == 1) return false;
 
         // get the current next to jump object
-        $nextToJumpCacheObject = $this->_geteNextToJumpCacheObject();
+        $nextToJumpCacheObject = $this->getNextToJumpCacheObject();
 
         // if no next to jump cache object
         if(!$nextToJumpCacheObject){
