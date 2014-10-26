@@ -92,6 +92,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
 	Route::resource('risk-race-status', 'RiskRaceStatus', array('only' => array('store')));
+    // special case where Risk Manager can push sport market results to TopBetta
+    Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 });
