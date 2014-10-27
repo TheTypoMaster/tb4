@@ -13,7 +13,7 @@ class RaceEvent extends \Eloquent {
 	static public function nextToJump($limit = 10) {
 			
 		//TODO: this query is straight from joomla. Rebuild in Eloquent
-		$query = "SELECT e.id, e.event_id, e.tournament_competition_id, e.external_event_id, e.wagering_api_id, e.event_status_id, e.paid_flag, e.name, e.start_date, e.created_date, e.updated_date, e.distance, e.weather, e.track_condition, e.class, e.number, e.trifecta_pool, e.firstfour_pool, e.exacta_pool, e.quinella_pool, e.trifecta_dividend, e.firstfour_dividend, e.exacta_dividend, e.quinella_dividend, e.external_race_pool_id_list, eg.name AS meeting_name, eg.id AS meeting_id, tc.name AS competition_name, eg.type_code AS type, eg.state 
+		$query = "SELECT e.id, e.event_id, e.external_event_id, e.tournament_competition_id, e.external_event_id, e.wagering_api_id, e.event_status_id, e.paid_flag, e.name, e.start_date, e.created_date, e.updated_date, e.distance, e.weather, e.track_condition, e.class, e.number, e.trifecta_pool, e.firstfour_pool, e.exacta_pool, e.quinella_pool, e.trifecta_dividend, e.firstfour_dividend, e.exacta_dividend, e.quinella_dividend, e.external_race_pool_id_list, eg.name AS meeting_name, eg.id AS meeting_id, tc.name AS competition_name, eg.type_code AS type, eg.state
 		  FROM `tbdb_event` AS e 
 		  INNER JOIN `tbdb_event_group_event` AS ege 
 		  ON e.id = ege.event_id 
@@ -79,5 +79,27 @@ class RaceEvent extends \Eloquent {
 		//return $this::where('number', $raceNo)->where('external_event_group_id', '=', $meetingId)->racemeetings;
 		//return self::racemeetings;
 	}
+
+    /**
+     * @param $meetingId
+     * @param $raceNo
+     * @return mixed
+     */
+    static public function getEventDetails($meetingId, $raceNo){
+
+        //TODO: can this be done outsideuery builder
+        $eventDetails =  static::join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->where('tbdb_event_group.external_event_group_id',$meetingId )
+            ->where('tbdb_event.number',$raceNo)->select('tbdb_event.id as EventId', 'tbdb_event.external_event_id as ExternalEventId',
+                                                    'tbdb_event.start_date as StartDate', 'tbdb_event.event_status_id as EventStatusId')
+            ->first();
+        if($eventDetails){
+            return $eventDetails->toArray();
+        }
+
+        return false;
+
+      }
 	
 }
