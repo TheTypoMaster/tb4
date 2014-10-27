@@ -279,7 +279,6 @@ class Api_User extends JController {
 
 					// Set some initial user values
 					$user->set('id', 0);
-                    $user->set('isTopBetta',0);
 					$user->set('usertype', $newUsertype);
 					$user->set('gid', $authorize->get_group_id( '', $newUsertype, 'ARO' ));
 					$date =& JFactory::getDate();
