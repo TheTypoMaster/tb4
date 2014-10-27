@@ -94,6 +94,7 @@ class FrontCombinedRacingController extends \BaseController {
 			});
 
 			$runners[$key]['race_id'] = $raceId;
+
 			if (isset($runnersForm['detailed_form'])) {
 				$runners[$key]['detailed_form'] = $runnersForm['detailed_form'];
 			}
