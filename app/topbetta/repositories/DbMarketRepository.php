@@ -64,9 +64,14 @@ class DbMarketsRepository extends BaseEloquentRepository {
 
             if ($selectionResultModel->save()) {
                 // result all bets for this market
-                \Log::info('Resulting bets for market id: ' . $marketId);
-                $betResultRepo = new BetResultRepo();
-                $betResultRepo->resultAllSportBetsForMarket($marketId);
+                $extMarket = SportsMarket::find($marketId);
+                if ($extMarket) {
+                    \Log::info('Resulting bets for ext market id: ' . $extMarket->external_market_id);
+                    $betResultRepo = new BetResultRepo();
+                    $betResultRepo->resultAllSportBetsForMarket($extMarket->external_market_id);
+                } else {
+                    \Log::info('Couldnt find market id: ' . $marketId);
+                }
             } else {
                 $errors[] = "Problem saving results for selection: $selectionId";
             }
