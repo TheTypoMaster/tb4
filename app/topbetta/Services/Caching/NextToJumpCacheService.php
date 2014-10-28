@@ -44,7 +44,7 @@ class NextToJumpCacheService {
         $nextToJumpCacheObject = $this->getNextToJumpCacheObject();
 
         // if no next to jump cache object
-        if(!$nextToJumpCacheObject){
+        if(!$nextToJumpCacheObject || count($nextToJumpCacheObject) < 10){
             Log::debug('NextToJump: Procesing New Race: No cache oject found');
             // run query to get the latest next to jump
             $nextToJumpArray = $this->nexttojump->getNextToJump(10);
@@ -68,7 +68,10 @@ class NextToJumpCacheService {
         $currentRaceUnix = strtotime($raceUpdate->start_date);
 
         // if it's between the current races then we need to update the cache object
-        if(!$currentRaceUnix >=  $firstRaceUnix && !$currentRaceUnix <= $lastRaceUnix) return false;
+        if(!$currentRaceUnix >=  $firstRaceUnix && !$currentRaceUnix <= $lastRaceUnix){
+            Log::debug('NextToJump: Procesing New Race: Race start time not in nextToJump');
+            return false;
+        }
 
         $this->_addDatabaseNextToJumpToCache();
 
