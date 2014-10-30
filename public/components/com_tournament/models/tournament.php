@@ -151,11 +151,11 @@ class TournamentModelTournament extends SuperModel
         'tournament_prize_format' => array(
             'name' 		=> 'Tournament Prize Format',
             'type' 		=> self::TYPE_INTEGER
-        )
-		//'feature_keyword' => array(
-		//		'name' 		=> 'Tournament Feature',
-		//		'type' 		=> self::TYPE_STRING
-		//)
+        ),
+		'entries_close' => array(
+			'name' 		=> 'Entries Close Date',
+			'type' 		=> self::TYPE_DATETIME
+		),
 	);
 
 	/**
