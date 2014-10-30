@@ -556,6 +556,7 @@ class TournamentModelTournament extends SuperModel
 				t.reinvest_winnings_flag
 				t.created_date,
 				t.updated_date,
+				t.entries_close,
 				eg.tournament_competition_id,
 				eg.name AS event_group_name,
 				c.name AS competition_name,
