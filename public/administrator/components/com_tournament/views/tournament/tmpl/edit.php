@@ -208,10 +208,10 @@ JToolBarHelper::cancel();
 
                 <tr>
                     <td class='key'>
-                        <label for="tournament_entries_close">Entries Close Date/Time (yyyy-mm-dd hh:mm:ss)</label>
+                        <label for="entries_close">Entries Close Date/Time (yyyy-mm-dd hh:mm:ss)</label>
                     </td>
                     <td>
-                        <input type="text" size="20" name="tournament_entries_close" id="tournament_entries_close" value="<?php echo $this->formdata['tournament_entries_close']; ?>" />
+                        <input type="text" size="20" name="entries_close" id="entries_close" value="<?php echo $this->formdata['entries_close']; ?>" />
                     </td>
                 </tr>
 
