@@ -177,6 +177,7 @@ class TournamentController extends JController
             'tournament_sponsor_logo'                => '',
             'tournament_sponsor_logo_link'           => '',
             'tournament_prize_format'               => '3',
+            'entries_close'                         => '',
 			//'feature_keyword'						=> -1
 			
 		);
@@ -246,6 +247,8 @@ class TournamentController extends JController
         $formdata['tournament_sponsor_name']	= $tournament->tournament_sponsor_name;
         $formdata['tournament_sponsor_logo']	= $tournament->tournament_sponsor_logo;
         $formdata['tournament_sponsor_logo_link']	= $tournament->tournament_sponsor_logo_link;
+
+        $this->formdata['entries_close']	= $tournament->entries_close;
 
 		//$formdata['tournament_feature_id'] = $tournament->feature_keyword;
 		
@@ -353,6 +356,9 @@ class TournamentController extends JController
         $sponser_name   = JRequest::getVar('tournament_sponsor_name', null);
         $sponsor_logo   = JRequest::getVar('tournament_sponsor_logo', null);
         $sponsor_link   = JRequest::getVar('tournament_sponsor_logo_link', null);
+
+        $entries_close   = JRequest::getVar('entries_close', null);
+
 
         $name			= JRequest::getVar('name', null);
 		$description	= JRequest::getVar('description', null);
@@ -533,7 +539,9 @@ class TournamentController extends JController
             $tournament->tournament_sponsor_logo = $sponsor_logo;
             $tournament->tournament_sponsor_logo_link = $sponsor_link;
 
-			$tournament->save();
+            $tournament->entries_close = $entries_close;
+
+            $tournament->save();
 		
 			$post = JRequest::get( 'post' );
 			

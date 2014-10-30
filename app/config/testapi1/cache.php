@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'driver' => 'file',
+	'driver' => 'memcached',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ return array(
 
 	'memcached' => array(
 
-		array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+		array('host' => '10.2.25.99', 'port' => 11211, 'weight' => 100),
 
 	),
 
@@ -84,6 +84,6 @@ return array(
 	|
 	*/
 
-	'prefix' => 'laravel',
+	'prefix' => 'laravel-testapi1-',
 
 );
