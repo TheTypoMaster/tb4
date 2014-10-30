@@ -177,7 +177,7 @@ class TournamentController extends JController
             'tournament_sponsor_logo'                => '',
             'tournament_sponsor_logo_link'           => '',
             'tournament_prize_format'               => '3',
-            'tournament_entries_close'              => '',
+            'entries_close'                         => '',
 			//'feature_keyword'						=> -1
 			
 		);
