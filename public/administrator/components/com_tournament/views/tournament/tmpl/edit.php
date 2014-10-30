@@ -215,6 +215,13 @@ JToolBarHelper::cancel();
                     </td>
                 </tr>
 
+                <tr>
+                <td colspan="3">
+                <input type="date" name="entries_date" id="entries_date" class="DatePicker" alt="{format:'yyyy-mm-dd',yearStart:2014}" value="<?php echo $this->formdata['entries_date']; ?>"  />
+                <input type="time" name="entries_time" id="entries_time" value="<?php echo $this->formdata['entries_time']; ?>"  />
+
+                </td>
+                </tr>
 
 
 
