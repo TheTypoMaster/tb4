@@ -249,8 +249,8 @@ class TournamentController extends JController
         $formdata['tournament_sponsor_logo_link']	= $tournament->tournament_sponsor_logo_link;
 
         //$this->formdata['entries_close']	= $tournament->entries_close;
-        $this->formdata['entries_date']	= substr($tournament->entries_close, 0 ,10);
-        $this->formdata['entries_time']	= substr($tournament->entries_close, 11, 8);
+        $formdata['entries_date']	= substr($tournament->entries_close, 0 ,10);
+        $formdata['entries_time']	= substr($tournament->entries_close, 11, 8);
 
 		//$formdata['tournament_feature_id'] = $tournament->feature_keyword;
 		
