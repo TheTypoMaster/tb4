@@ -768,12 +768,12 @@ class Api_Betting extends JController
                 }
             }
 
-            if (strtotime($tournament->entries_close) < time() && $tournament->entries_close != '0000-00-00 00:00:00' ) {
+            if (strtotime(strtotime($tournament->entries_close)) < time() && $tournament->entries_close != '0000-00-00 00:00:00' ) {
                 //return $this->ticketError(JText::_('Tournament has already finished'), $save, $tournament);
                 if ($iframe) {
                     return array('status' => 500, 'error_msg' => 'Tournament entries are closed');
                 } else {
-                    return OutputHelper::json(500, array('error_msg' => 'Tournament entries are closed'));
+                    return OutputHelper::json(500, array('error_msg' => 'Tournament entries closed @ '.$tournament->entries_close));
                 }
             }
 
