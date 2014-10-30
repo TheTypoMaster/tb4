@@ -210,12 +210,7 @@ JToolBarHelper::cancel();
                     <td class='key'>
                         <label for="entries_close">Entries Close Date/Time (yyyy-mm-dd hh:mm:ss)</label>
                     </td>
-                    <td>
-                        <input type="text" size="20" name="entries_close" id="entries_close" value="<?php echo $this->formdata['entries_close']; ?>" />
-                    </td>
-                </tr>
 
-                <tr>
                 <td colspan="3">
                 <input type="date" name="entries_date" id="entries_date" class="DatePicker" alt="{format:'yyyy-mm-dd',yearStart:2014}" value="<?php echo $this->formdata['entries_date']; ?>"  />
                 <input type="time" name="entries_time" id="entries_time" value="<?php echo $this->formdata['entries_time']; ?>"  />
