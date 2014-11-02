@@ -598,27 +598,19 @@ class RacingController extends \BaseController
                                             $runnerCodeSelection = str_replace(" ", "", $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber);
                                             TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
 
-                                            // Get last starts for this runner is we have them
-                                            $raceRunnersLastStarts = TopBetta\RisaForm::getRunnerLastStarts($runnerCodeSelection);
-
-                                            if (isset($raceRunnersLastStarts)) {
-                                                $raceRunner->last_starts = $raceRunnersLastStarts;
-                                            } else {
+                                            // get silks and last starts from the feed now.
+                                            if (isset($dataArray['LastStarts'])){
+                                                $raceRunner->last_starts = $dataArray['LastStarts'];
+                                            }else{
                                                 $raceRunner->last_starts = "";
                                             }
-                                            //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Last Starts: $raceRunner->last_starts");
 
-                                            // Get silk code for this runner is we have it
-                                            $raceRunnersSilkId = TopBetta\RisaForm::getRunnerSilkId($runnerCodeSelection);
-
-
-                                            if (isset($raceRunnersSilkId)) {
-                                                $raceRunner->silk_id = $raceRunnersSilkId;
+                                            if (isset($dataArray['SilkCode'])) {
+                                                $raceRunner->silk_id = $dataArray['SilkCode'];
                                             } else {
                                                 $raceRunner->silk_id = "";
                                             }
                                             //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Silk: $raceRunner->silk_id");
-
 
                                             // add the runner code
                                             $raceRunner->runner_code = $runnerCodeSelection;
