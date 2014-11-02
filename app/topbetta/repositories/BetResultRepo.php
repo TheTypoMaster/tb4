@@ -37,7 +37,7 @@ class BetResultRepo
 //				->select('tbdb_bet.event_id')
 //				->get();
 
-        $events = \TopBetta\Bet::where('bet_result_status_id', 1)
+        $events = Bet::where('bet_result_status_id', 1)
                                 ->where('resulted_flag', 0)
                                 // ->whereNotNull('tbdb_event.number') //TODO - this removes sports....
                                 ->where(function($query)
