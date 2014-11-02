@@ -580,7 +580,7 @@ class RacingController extends \BaseController
 
                                         // check if meeting exists in DB
                                         $meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
-                                        TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
+                                        //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
                                         if ($meetingExists) {
                                             // if meeting exists get the record
                                             $raceMeet = TopBetta\RaceMeeting::find($meetingExists);
@@ -596,7 +596,6 @@ class RacingController extends \BaseController
 
                                             // Build the runner code
                                             $runnerCodeSelection = str_replace(" ", "", $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber);
-                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection");
 
                                             // get silks and last starts from the feed now.
                                             if (isset($dataArray['LastStarts'])){
@@ -610,6 +609,9 @@ class RacingController extends \BaseController
                                             } else {
                                                 $raceRunner->silk_id = "";
                                             }
+
+                                            TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Code: $runnerCodeSelection, Silk: $raceRunner->silk_id, Last Starts: $raceRunner->last_starts = "".");
+
                                             //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Runner Silk: $raceRunner->silk_id");
 
                                             // add the runner code
