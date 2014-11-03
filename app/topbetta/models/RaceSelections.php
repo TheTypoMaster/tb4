@@ -88,7 +88,7 @@ class RaceSelection extends \Eloquent {
 
             // dirty....
             if($pricing['win'] == '0.01' ) $pricing['win'] = '';
-            if($pricing['place'] == '0.01' ) $pricing['win'] = '';
+            if($pricing['place'] == '0.01' ) $pricing['place'] = '';
 
 			$result[] = array('id' => (int)$runner -> id, 'external_runner_id' =>  $runner->external_selection_id, 'name' => $runner -> name, 'jockey' => $runner -> associate, 'trainer' => $runner -> trainer, 'weight' => (float)$runner -> weight, 'saddle' => (int)$runner -> number, 'barrier' => (int)$runner -> barrier, 'scratched' => $scratched, 'form' => $runner -> last_starts, 'pricing' => $pricing, 'risa_silk_id' => $runner -> silk_id, 'runner_code' => $runner->runner_code);
 
