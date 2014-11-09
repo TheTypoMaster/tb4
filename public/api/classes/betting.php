@@ -2770,7 +2770,7 @@ class Api_Betting extends JController
                 $leaderboard_model = & $this->getModel('TournamentLeaderboard', 'TournamentModel');
                 $turnover = $leaderboard_model->getTurnedOverByUserAndTournamentID($user->id, $tournament->id);
 
-                if ($turnover + $bet_total > $tournament->start_currency) {
+                if ($turnover + $bet_total > $tournament->start_currency + $ticket->extra_starting_currency) {
                     $maximum_total_bet = number_format($tournament->start_currency / 100, 2);
                     return OutputHelper::json(500, array('error_msg' => JText::_('Your total bets cannot be more than ' . $maximum_total_bet)));
                 }
@@ -3058,7 +3058,7 @@ class Api_Betting extends JController
             $leaderboard_model = & $this->getModel('TournamentLeaderboard', 'TournamentModel');
             $turnover = $leaderboard_model->getTurnedOverByUserAndTournamentID($user->id, $tournament->id);
 
-            if ($turnover + $bet_total > $tournament->start_currency) {
+            if ($turnover + $bet_total > $tournament->start_currency + $ticket->extra_starting_currency) {
                 $maximum_total_bet = number_format($tournament->start_currency / 100, 2);
                 return OutputHelper::json(500, array('error_msg' => JText::_('Your total bets cannot be more than ' . $maximum_total_bet)));
             }
