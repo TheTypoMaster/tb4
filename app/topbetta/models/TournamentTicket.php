@@ -269,7 +269,7 @@ class TournamentTicket extends \Eloquent {
 			return '-';
 		}
 
-		return $result[0]->current - $result[0]->unresulted + + $result[0]->extra_starting_currency;
+		return $result[0]->current - $result[0]->unresulted + $result[0]->extra_starting_currency;
 	}
 	
 	/**
