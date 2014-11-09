@@ -241,7 +241,7 @@ class TournamentTicket extends \Eloquent {
 		$query =
 			'SELECT
 				SUM(IF(b.resulted_flag=0,b.bet_amount,0)) AS unresulted,
-				l.currency AS current
+				l.currency AS current, tt.extra_starting_currency AS extra_starting_currency
 			FROM
 				tbdb_tournament_ticket AS tt
 			LEFT JOIN
@@ -269,7 +269,7 @@ class TournamentTicket extends \Eloquent {
 			return '-';
 		}
 
-		return $result[0]->current - $result[0]->unresulted;
+		return $result[0]->current - $result[0]->unresulted + + $result[0]->extra_starting_currency;
 	}
 	
 	/**
