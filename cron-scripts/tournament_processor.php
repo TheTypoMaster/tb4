@@ -133,6 +133,10 @@ class TournamentProcessor extends TopBettaCLI
 	{
 		$total = $this->tournament_ticket->getLeaderboardTicketCurrency($tournament_id, $user_id);
 		$this->leaderboard->updateLeaderboardByUserAndTournamentID($user_id, $tournament_id, $total);
+
+        // set the starting currency to 0
+        $this->tournament_ticket->updateExtraStartingCurrecnyTournamentTicketByUserAndTournamentID($user_id, $tournament_id, 0);
+
 	}
 
 	/**

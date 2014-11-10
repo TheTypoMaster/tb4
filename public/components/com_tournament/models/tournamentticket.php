@@ -1052,4 +1052,31 @@ class TournamentModelTournamentTicket extends JModel
 		$db->setQuery($query);
 		return $db->query();
 	}
+
+
+
+    /**
+     * Update the Tournament ticket for a user and tournament.
+     *
+     * @param integer $user_id
+     * @param integer $tournament_id
+     * @param integer $currency
+     * @return bool
+     */
+    public function updateExtraStartingCurrecnyTournamentTicketByUserAndTournamentID($user_id, $tournament_id, $currency) {
+        $db =& $this->getDBO();
+        $query =
+            'UPDATE
+				' . $db->nameQuote('#__tournament_ticket') . '
+			SET
+				extra_starting_currency = ' . $db->quote($currency) . ',
+				updated_date = NOW()
+			WHERE
+				user_id = ' . $db->quote($user_id) . '
+			AND
+				tournament_id = ' . $db->quote($tournament_id);
+
+        $db->setQuery($query);
+        return $db->query();
+    }
 }
