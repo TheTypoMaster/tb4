@@ -899,7 +899,7 @@ class TournamentModelTournamentTicket extends JModel
         $cost         = $this->$cost_method($ticket->id);
 
         if(!empty($cost)) {
-            if(!empty($tournament_dollars)) {
+            if(!empty($account_balance)) {
                 $account_balance->setUserId($ticket->user_id);
                 $refund_id = $account_balance->increment($cost, 'refund');
             } else {
