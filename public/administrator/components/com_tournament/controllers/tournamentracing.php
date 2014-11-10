@@ -432,7 +432,7 @@ class TournamentRacingController extends TournamentController
 
 		if($ticket = $ticket_model->getTournamentTicketByUserAndTournamentID($user->id, $tournament->id)) {
 			$tournament_dollars =& $this->getModel('Tournamenttransaction', 'TournamentDollarsModel');
-            $account_balance =& JModel::getInstance('AccountTransaction', 'PaymentModel');
+            $account_balance =& $this->getModel('AccountTransaction', 'PaymentModel');
 
 			if($ticket_model->refundTicketAdminAccountbalance($account_balance, $ticket->id,  true)) {
 				$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
