@@ -1403,6 +1403,7 @@ class Api_Betting extends JController
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
                     'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'FreeBetAmount' => $free_bet_amount,
                     'Type' => 'racing',
                     'BetList' => array(
                         'BetType' => $betTypeShort,
@@ -1970,6 +1971,7 @@ class Api_Betting extends JController
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
                     'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'FreeBetAmount' => $free_bet_amount,
                     'Type' => 'exotic',
                     'BetList' => array('BetType' => $bet_type_name->id, 'PriceType' => 'TOP'),
                     'FlexiFlag' => $bet->flexi_flag,
