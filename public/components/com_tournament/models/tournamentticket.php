@@ -885,6 +885,34 @@ class TournamentModelTournamentTicket extends JModel
 		return $this->store((array)$ticket);
 	}
 
+    /**
+     * Refund a tournament ticket.
+     *
+     * @param integer $ticket_id
+     * @param boolean $full
+     * @return bool
+     */
+    public function refundTicketAdminAccountbalance($account_balance, $ticket_id, $full = false)
+    {
+        $ticket       = $this->getTournamentTicket($ticket_id);
+        $cost_method  = ($full) ? 'getTicketCost' : 'getTicketBuyIn';
+        $cost         = $this->$cost_method($ticket->id);
+
+        if(!empty($cost)) {
+            if(!empty($tournament_dollars)) {
+                $account_balance->setUserId($ticket->user_id);
+                $refund_id = $account_balance->increment($cost, 'refund');
+            } else {
+                return false;
+            }
+
+            $ticket->result_transaction_id = $refund_id;
+        }
+
+        $ticket->refunded_flag = 1;
+        return $this->store((array)$ticket);
+    }
+
 	/**
 	 * A super magical method which can actually refund a ticket anywhere! ZOMG!
 	 *
