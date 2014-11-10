@@ -608,7 +608,7 @@ class TournamentModelTournamentTicket extends JModel
 
 		$data = $db->loadObject();
 		
-		return $tournament->start_currency - $data->bet_amount + $data->win_amount + $data->extra_starting_currency;
+		return $tournament->start_currency - $data->bet_amount + $data->win_amount;
 	}
 
 	/**
