@@ -585,8 +585,7 @@ class TournamentModelTournamentTicket extends JModel
 		$query =
 			'SELECT
 				SUM(bet_amount) AS bet_amount,
-				SUM(win_amount) AS win_amount,
-				tt.extra_starting_currency AS extra_starting_currency
+				SUM(win_amount) AS win_amount
 			FROM
 				' . $db->nameQuote('#__tournament') . ' AS t
 			INNER JOIN
@@ -608,7 +607,7 @@ class TournamentModelTournamentTicket extends JModel
 
 		$data = $db->loadObject();
 		
-		return $tournament->start_currency - $data->bet_amount + $data->win_amount + $data->extra_start_currency;
+		return $tournament->start_currency - $data->bet_amount + $data->win_amount + $ticket->extra_start_currency;
 	}
 
 	/**
