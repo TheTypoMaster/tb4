@@ -606,7 +606,7 @@ class TournamentModelTournamentTicket extends JModel
 		$db->setQuery($query);
 
 		$data = $db->loadObject();
-        echo "#### Tournament ID: $tournament_id, UserId:$user_id, Start Currency:{$tournament->start_currency}, Extra:{$ticket->extra_start_currency}\n";
+        echo "#### Tournament ID: $tournament_id, UserId:$user_id, Start Currency:{$tournament->start_currency}, Extra:{$ticket->extra_starting_currency}\n";
 		return $tournament->start_currency + $ticket->extra_starting_currency - $data->bet_amount + $data->win_amount;
 	}
 
