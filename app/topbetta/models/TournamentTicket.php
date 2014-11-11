@@ -175,7 +175,8 @@ class TournamentTicket extends \Eloquent {
 				refunded_flag,
 				resulted_flag,
 				created_date,
-				resulted_date
+				resulted_date,
+				extra_starting_currency
 			FROM
 				tbdb_tournament_ticket
 			WHERE
