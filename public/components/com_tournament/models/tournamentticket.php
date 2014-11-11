@@ -885,10 +885,10 @@ class TournamentModelTournamentTicket extends JModel
 	}
 
     /**
-     * Refund a tournament ticket.
-     *
-     * @param integer $ticket_id
-     * @param boolean $full
+     * Refund a tournament ticket
+     * @param $account_balance
+     * @param $ticket_id
+     * @param bool $full
      * @return bool
      */
     public function refundTicketAdminAccountbalance($account_balance, $ticket_id, $full = false)
@@ -900,7 +900,7 @@ class TournamentModelTournamentTicket extends JModel
         if(!empty($cost)) {
             if(!empty($account_balance)) {
                 $account_balance->setUserId($ticket->user_id);
-                $refund_id = $account_balance->increment($cost, 'refund');
+                $refund_id = $account_balance->increment($cost, 'refund', null, $ticket->user_id);
             } else {
                 return false;
             }
