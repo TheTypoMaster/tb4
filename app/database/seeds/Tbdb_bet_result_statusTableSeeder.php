@@ -65,6 +65,14 @@ class Tbdb_bet_result_statusTableSeeder extends Seeder {
         				'created_date' => new DateTime,
         				'updated_date' => new DateTime
         		),
+                array (
+                        'id' => '8',
+                        'name' => 'cancelled',
+                        'description' => 'This bet was cancelled by an admin user',
+                        'status_flag' => '1',
+                        'created_date' => new DateTime,
+                        'updated_date' => new DateTime
+                ),
         		
         );
 

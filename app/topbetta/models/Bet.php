@@ -24,8 +24,13 @@ class Bet extends \Eloquent {
 	public function status() {
 		return $this->belongsTo('TopBetta\BetResultStatus', 'bet_result_status_id');
 	}
-	
-	public function payout() {
+
+    /**
+     * Get the account transaction record for this bet RESULT (WIN)
+     *
+     * @return mixed
+     */
+    public function payout() {
 		return $this->belongsTo('TopBetta\AccountBalance', 'result_transaction_id');
 	}
 
