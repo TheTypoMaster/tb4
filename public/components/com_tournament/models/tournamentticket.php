@@ -28,7 +28,8 @@ class TournamentModelTournamentTicket extends JModel
 				refunded_flag,
 				resulted_flag,
 				created_date,
-				resulted_date
+				resulted_date,
+				extra_starting_currency
 			FROM
 				' . $db->nameQuote( '#__tournament_ticket' ) . '
 			WHERE
@@ -58,7 +59,8 @@ class TournamentModelTournamentTicket extends JModel
 				refunded_flag,
 				resulted_flag,
 				created_date,
-				resulted_date
+				resulted_date,
+				extra_starting_currency
 			FROM
 				' . $db->nameQuote( '#__tournament_ticket' ) . '
 			WHERE
@@ -88,6 +90,7 @@ class TournamentModelTournamentTicket extends JModel
 				tk.id,
 				tk.tournament_id,
 				tk.result_transaction_id,
+				tk.extra_starting_currency
 				t.buy_in,
 				t.entry_fee,
 				s.name AS sport_name,
@@ -143,6 +146,7 @@ class TournamentModelTournamentTicket extends JModel
 				tk.tournament_id,
 				tk.result_transaction_id,
 				tk.winner_alert_flag,
+				tk.extra_starting_currency
 				t.buy_in,
 				t.entry_fee,
 				s.name AS sport_name,
@@ -224,6 +228,7 @@ class TournamentModelTournamentTicket extends JModel
 				t.id,
 				tk.result_transaction_id,
 				tk.created_date,
+				tk.extra_starting_currency
 				t.buy_in,
 				t.entry_fee,
 				s.name AS sport_name,
@@ -317,6 +322,7 @@ class TournamentModelTournamentTicket extends JModel
 				entry_fee_transaction_id,
 				buy_in_transaction_id,
 				result_transaction_id,
+				extra_starting_currency
 				refunded_flag,
 				resulted_flag,
 				created_date,
@@ -489,6 +495,7 @@ class TournamentModelTournamentTicket extends JModel
 				entry_fee_transaction_id,
 				buy_in_transaction_id,
 				result_transaction_id,
+				extra_starting_currency
 				refunded_flag,
 				resulted_flag,
 				created_date,
@@ -504,7 +511,7 @@ class TournamentModelTournamentTicket extends JModel
 
 	/**
 	 * Calculate how much remaining currency a user has to spend by taking unresulted bets and subtracting from
-	 * the current leaderboard.
+	 * the current leaderboard and adding there extra starting currency.
 	 *
 	 * @param integer $tournament_id
 	 * @param integer $user_id
@@ -526,7 +533,7 @@ class TournamentModelTournamentTicket extends JModel
 		$query =
 			'SELECT
 				SUM(IF(b.resulted_flag=0,b.bet_amount,0)) AS unresulted,
-				l.currency AS current
+				l.currency AS current, tt.extra_starting_currency AS extra_starting_currency
 			FROM
 				' . $db->nameQuote('#__tournament_ticket') . ' AS tt
 			LEFT JOIN
@@ -551,12 +558,12 @@ class TournamentModelTournamentTicket extends JModel
 		$db->setQuery($query);
 		$total = $db->loadObject();
 
-		return $total->current - $total->unresulted;
+		return $total->current - $total->unresulted + $total->extra_starting_currency;
 	}
 
 	/**
 	 * Calculate how much currency a user has for leaderboard display by taking the starting value from tournament,
-	 * subtracting resulted bet amounts and adding resulted bet winnings.
+	 * subtracting resulted bet amounts and adding resulted bet winnings plus their extra starting currency.
 	 *
 	 * @param integer $tournament_id
 	 * @param integer $user_id
@@ -599,8 +606,8 @@ class TournamentModelTournamentTicket extends JModel
 		$db->setQuery($query);
 
 		$data = $db->loadObject();
-		
-		return $tournament->start_currency - $data->bet_amount + $data->win_amount;
+        echo "#### Tournament ID: $tournament_id, UserId:$user_id, Start Currency:{$tournament->start_currency}, Extra:{$ticket->extra_starting_currency}, Bet Amount:{$data->bet_amount}, Win Amount:{$data->win_amount}\n";
+		return $tournament->start_currency + $ticket->extra_starting_currency - $data->bet_amount + $data->win_amount;
 	}
 
 	/**
@@ -626,6 +633,7 @@ class TournamentModelTournamentTicket extends JModel
 				tt.resulted_flag,
 				tt.created_date,
 				tt.resulted_date,
+				tt.extra_starting_currency,
 				t.buy_in,
 				t.entry_fee
 			FROM
@@ -659,7 +667,8 @@ class TournamentModelTournamentTicket extends JModel
 				tt.refunded_flag,
 				tt.resulted_flag,
 				tt.created_date,
-				tt.resulted_date
+				tt.resulted_date,
+				tt.extra_starting_currency
 			FROM
 				' . $db->nameQuote('#__tournament_ticket') . ' AS tt
 			INNER JOIN
@@ -695,7 +704,8 @@ class TournamentModelTournamentTicket extends JModel
 				tt.refunded_flag,
 				tt.resulted_flag,
 				tt.created_date,
-				tt.resulted_date
+				tt.resulted_date,
+				tt.extra_starting_currency
 			FROM
 				' . $db->nameQuote('#__tournament_ticket') . ' AS tt
 			INNER JOIN
@@ -874,6 +884,34 @@ class TournamentModelTournamentTicket extends JModel
 		return $this->store((array)$ticket);
 	}
 
+    /**
+     * Refund a tournament ticket
+     * @param $account_balance
+     * @param $ticket_id
+     * @param bool $full
+     * @return bool
+     */
+    public function refundTicketAdminAccountbalance($account_balance, $ticket_id, $full = false)
+    {
+        $ticket       = $this->getTournamentTicket($ticket_id);
+        $cost_method  = ($full) ? 'getTicketCost' : 'getTicketBuyIn';
+        $cost         = $this->$cost_method($ticket->id);
+
+        if(!empty($cost)) {
+            if(!empty($account_balance)) {
+                $account_balance->setUserId($ticket->user_id);
+                $refund_id = $account_balance->increment($cost, 'refund', null, $ticket->user_id);
+            } else {
+                return false;
+            }
+
+            $ticket->result_transaction_id = $refund_id;
+        }
+
+        $ticket->refunded_flag = 1;
+        return $this->store((array)$ticket);
+    }
+
 	/**
 	 * A super magical method which can actually refund a ticket anywhere! ZOMG!
 	 *
@@ -1041,4 +1079,31 @@ class TournamentModelTournamentTicket extends JModel
 		$db->setQuery($query);
 		return $db->query();
 	}
+
+
+
+    /**
+     * Update the Tournament ticket for a user and tournament.
+     *
+     * @param integer $user_id
+     * @param integer $tournament_id
+     * @param integer $currency
+     * @return bool
+     */
+    public function updateExtraStartingCurrecnyTournamentTicketByUserAndTournamentID($user_id, $tournament_id, $currency) {
+        $db =& $this->getDBO();
+        $query =
+            'UPDATE
+				' . $db->nameQuote('#__tournament_ticket') . '
+			SET
+				extra_starting_currency = ' . $db->quote($currency) . ',
+				updated_date = NOW()
+			WHERE
+				user_id = ' . $db->quote($user_id) . '
+			AND
+				tournament_id = ' . $db->quote($tournament_id);
+
+        $db->setQuery($query);
+        return $db->query();
+    }
 }

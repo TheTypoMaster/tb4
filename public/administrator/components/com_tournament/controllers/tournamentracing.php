@@ -427,9 +427,10 @@ class TournamentRacingController extends TournamentController
 		$message = '';
 		$type = '';
 		$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
+
 		if($ticket = $ticket_model->getTournamentTicketByUserAndTournamentID($user->id, $tournament->id)) {
-			$tournament_dollars =& $this->getModel('Tournamenttransaction', 'TournamentDollarsModel');
-			if($ticket_model->refundTicketAdmin($tournament_dollars, $ticket->id, true)) {
+
+			if($ticket_model->refundTicketAnywhere($ticket,  true)) {
 				$leaderboard_model =& $this->getModel('TournamentLeaderboard', 'TournamentModel');
 				$leaderboard_model->deleteByUserAndTournamentID($user->id, $tournament->id);
 				$message  = JText::_('Ticket has been refunded');
