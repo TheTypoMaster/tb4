@@ -34,8 +34,16 @@ class Api_User extends JController {
 	}
 
 	public function getUserDetails($iframe = FALSE) {
-		// fetch the joomla login hash required to process the login
-		$user = JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$user = & JFactory::getUser($l_user_id);
+		} else {
+			$user = & JFactory::getUser();
+		}
+		
 		if (!$user->guest) {
 
 			$component_list = array('topbetta_user');
@@ -275,6 +283,7 @@ class Api_User extends JController {
 					$user->set('gid', $authorize->get_group_id( '', $newUsertype, 'ARO' ));
 					$date =& JFactory::getDate();
 					$user->set('registerDate', $date->toMySQL());
+					$user->set('isTopBetta', 0);
 
 					// If user activation is turned on, we need to set the activation information
 					$useractivation = $usersConfig->get( 'useractivation' );
@@ -1176,7 +1185,7 @@ class Api_User extends JController {
 						$tournamentdollars_model = new TournamentdollarsModelTournamenttransaction();
 
 						if($promotion) {
-							$tournamentdollars_model->increment($promotion[0]->pro_value, 'promo');
+                            $tournamentdollars_model->increment_for_promo_code($promotion[0]->pro_value, 'promo',$user_id );
 						}
 					}
 
@@ -2838,7 +2847,15 @@ Must be 18+<br>
 					'half_refund'	=> false
 				);
 
-				if ($bet->refunded_flag && !$bet->win_amount) {
+                // http://jira.mugbookie.com/browse/TBL-280 (Cancel a bet via Risk)
+                if ($bet->refunded_flag && $bet->bet_result_status == 'cancelled') {
+                    $bet_display_list[$bet->id]['result']	= 'CANCELLED';
+                    if ($bet->refund_amount > 0) {
+                        // $bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);
+                        $bet_display_list[$bet->id]['paid']	= $bet->refund_amount;
+                    }
+                }
+                else if ($bet->refunded_flag && !$bet->win_amount) {
 					$bet_display_list[$bet->id]['result']	= 'REFUNDED';
 					if ($bet->refund_amount > 0) {
 						// $bet_display_list[$bet->id]['paid']	= Format::currency($bet->refund_amount);
@@ -2946,7 +2963,16 @@ Must be 18+<br>
 			JLoader::import('topbettauser', JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models');
 		}
 
-		$user	=& JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$user = & JFactory::getUser($l_user_id);
+		} else {
+			$user = & JFactory::getUser();
+		}
+		
 		$model	=& $this->getModel('TopbettaUser', 'TopbettaUserModel');
 
 		$exclusion_end_timestamp = time() + 60 * 60 * 24 * 7;

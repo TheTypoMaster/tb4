@@ -175,7 +175,8 @@ class TournamentTicket extends \Eloquent {
 				refunded_flag,
 				resulted_flag,
 				created_date,
-				resulted_date
+				resulted_date,
+				extra_starting_currency
 			FROM
 				tbdb_tournament_ticket
 			WHERE
@@ -241,7 +242,7 @@ class TournamentTicket extends \Eloquent {
 		$query =
 			'SELECT
 				SUM(IF(b.resulted_flag=0,b.bet_amount,0)) AS unresulted,
-				l.currency AS current
+				l.currency AS current, tt.extra_starting_currency AS extra_starting_currency
 			FROM
 				tbdb_tournament_ticket AS tt
 			LEFT JOIN

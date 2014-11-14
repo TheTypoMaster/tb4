@@ -4,6 +4,9 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
+use View;
+use Auth;
+use Redirect;
 
 class FrontUsersController extends \BaseController {
 
@@ -385,4 +388,29 @@ class FrontUsersController extends \BaseController {
 		//
 	}
 
+    public function tempLogin(){
+        return View::make('users.login');
+    }
+
+    public function handleLogin(){
+
+        $data = Input::only(['username', 'password']);
+
+        if(Auth::attempt(['username' => $data['username'], 'password' => $data['password']])){
+            return Redirect::to('/laraveladmin');
+        }
+
+        return Redirect::route('login')->withInput();
+    }
+
+    public function handleProfile(){
+        return View::make('users.profile');
+    }
+
+    public function handleLogout(){
+        if(Auth::check()){
+            Auth::logout();
+        }
+        return Redirect::route('login');
+    }
 }

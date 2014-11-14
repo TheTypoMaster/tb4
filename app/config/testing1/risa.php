@@ -45,7 +45,7 @@ return array(
 |
 */
 'ftpFormPath' => 'Top Betta/Risa XML 3.5/',
-'ftpSilkPath' => 'Top Betta/Jockey silks/library/',
+'ftpSilkPath' => 'JockeySilks/Library/',
 
 /*
 |------------------------------

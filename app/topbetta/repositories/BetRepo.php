@@ -262,9 +262,10 @@ class BetRepo
 	 * Refund a bet
 	 * 
 	 * @param Bet $bet
+     * @param Boolean $cancel
 	 * @return Boolean
 	 */
-	public function refundBet(Bet $bet)
+	public function refundBet(Bet $bet, $cancel = false)
 	{
 		// Full bet amount was on free credit
 		if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
@@ -284,7 +285,13 @@ class BetRepo
 			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
 		}
 
-		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_FULL_REFUND);
+        // winning bets we take the return/win amount back as well
+        if ($bet->bet_result_status_id == BetResultStatus::getBetResultStatusByName('paid') && $bet->result_transaction_id) {
+            $this->cancelBetWin($bet);
+        }
+
+		$resultStatusId = ($cancel) ? BetResultStatus::STATUS_CANCELLED : BetResultStatus::STATUS_FULL_REFUND;
+        $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName($resultStatusId);
 		$bet->refunded_flag = 1;
 		$bet->resulted_flag = 1;
 
@@ -319,13 +326,15 @@ class BetRepo
 		return true;
 	}
 
-	/**
-	 * Increment a user's account balance
-	 *
-	 * @param object 	$user
-	 * @param integer 	$amount
-	 * @param string 	$keyword
-	 */
+    /**
+     * Increment a user's account balance
+     *
+     * @param $user_id
+     * @param integer $amount
+     * @param string $keyword
+     * @internal param object $user
+     * @return int
+     */
 	private function awardCash($user_id, $amount, $keyword)
 	{
 		return AccountBalance::_increment($user_id, $amount, $keyword);
@@ -345,5 +354,22 @@ class BetRepo
 	{
 		return FreeCreditBalance::_increment($user_id, $amount, FreeCreditBalance::TYPE_FREEBETREFUND);
 	}
+
+    /**
+     * Deduct bet win amount from user account balance
+     *
+     * @param Bet $bet
+     * @return bool|int
+     */
+    private function cancelBetWin(Bet $bet)
+    {
+        $resultTransaction = $bet->payout;
+        if ($resultTransaction && $resultTransaction->transactionType->keyword == 'betwin') {
+            // increment with a NEGATIVE amount
+            return AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+        }
+
+        return false;
+    }
 
 }

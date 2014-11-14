@@ -3,6 +3,11 @@
 class SportsSelectionPrice extends \Eloquent {
 
 	protected $table = 'tbdb_selection_price';
+
+    public function selections()
+    {
+        return $this->belongsTo('TopBetta\SportsSelection', 'selection_id', 'id')->whereNull('number');
+    }
 	
 	/**
 	 * Check if a selection price exists.

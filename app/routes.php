@@ -92,6 +92,12 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
 	Route::resource('risk-race-status', 'RiskRaceStatus', array('only' => array('store')));
+    // Risk can send query sport bets
+    Route::resource('risk-sport-bets', 'RiskSportBets');
+    // Risk can send query racing bets
+    Route::resource('risk-bets', 'RiskBets');
+    // special case where Risk Manager can push sport market results to TopBetta
+    Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 });
@@ -136,6 +142,8 @@ Route::group(array('prefix' => '/api/v1'), function() {
 
 	//Racing Races
 	Route::get('/racing/races/next-to-jump', 'FrontRaces@nextToJump');
+	Route::get('/racing/races/next-to-jump-eventids', 'FrontRaces@nextToJumpEventIds');
+	Route::get('/racing/fast-bet', 'FrontRaces@fastBetEvents');
 	Route::resource('racing/races', 'FrontRaces');
 
 	//Racing Runners
@@ -191,7 +199,7 @@ Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), fun
 	Route::get('login', 'TopBetta\admin\controllers\SessionController@create');
 	Route::get('logout', 'TopBetta\admin\controllers\SessionController@destroy');
 
-	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));	
+	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));
 });
 
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
@@ -218,3 +226,15 @@ Route::group(array('prefix' => 'api/backend/test'), function() {
 
 	Route::resource('url', 'UrlController');
 });
+
+
+Route::group(array('after' => 'topbetta_secure_links'), function() {
+    Route::get('login', array('as' => 'login', 'uses' => 'TopBetta\frontend\FrontUsersController@tempLogin'));
+    Route::post('/login', array('as' => 'login', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogin'));
+    Route::get('/profile', array('as' => 'profile', 'uses' => 'TopBetta\frontend\FrontUsersController@handleProfile'));
+    Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
+});
+
+
+
+

@@ -70,6 +70,7 @@ class LegacyApiHelper {
 
 					//2. perform login
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('doInstantDeposit', $this -> allowed_methods['doInstantDeposit'], $payload);
 
 					break;
@@ -81,6 +82,7 @@ class LegacyApiHelper {
 
 					//2. perform login
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('doWithdrawRequest', $this -> allowed_methods['doWithdrawRequest'], $payload);
 
 					break;
@@ -164,6 +166,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('setBetLimit', $this -> allowed_methods['setBetLimit'], $payload);
 
 					break;
@@ -175,6 +178,7 @@ class LegacyApiHelper {
 
 					//2. save bet
 					$payload[$login_hash['login_hash']] = 1;
+					$payload['l_user_id'] = \Auth::user() -> id;
 					return $this -> curl('doSelfExclude', $this -> allowed_methods['doSelfExclude'], $payload);
 
 					break;
@@ -212,6 +216,13 @@ class LegacyApiHelper {
 					return $this -> curl('getBettingHistory', $this -> allowed_methods['getBettingHistory'], $payload);
 
 					break;
+				
+				case 'getUser' :
+
+					$payload['l_user_id'] = \Auth::user() -> id;
+					return $this -> curl('getUser', $this -> allowed_methods['getUser'], $payload);
+
+					break;				
 
 				default :
 

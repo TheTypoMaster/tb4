@@ -2,7 +2,9 @@
 class SportEventGroupEvent extends \Eloquent {
 
 	protected $table = 'tbdb_event_group_event';
-	
+
+    protected $primaryKey = 'ege_id';
+
 	/**
 	 * Check if a event group event exists.
 	 *
@@ -13,4 +15,12 @@ class SportEventGroupEvent extends \Eloquent {
 		return SportEventGroupEvent::where('event_id', '=', $eventId )
 									  ->where('event_group_id', '=', $compId )->pluck('event_id');
 	}
+
+    public function competitions(){
+        return $this->belongsTo('\TopBetta\SportsComps', 'event_group_id', 'id');
+    }
+
+    public function events(){
+            return $this->belongsTo('\TopBetta\Models\Events', 'event_id', 'id');
+    }
 }

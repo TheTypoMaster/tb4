@@ -16,7 +16,8 @@ return array(
 	|
 	*/
 
-	'driver' => 'database',
+	'driver' => 'memcached',
+    'expire_on_close' => false,
 
 	/*
 	|--------------------------------------------------------------------------

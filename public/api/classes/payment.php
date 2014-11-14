@@ -30,7 +30,16 @@ class Api_Payment extends JController {
 	 */
 	public function doInstantDeposit() {
 
-        $loggedUser =& JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$loggedUser =& JFactory::getUser($l_user_id);
+		} else {
+			$loggedUser =& JFactory::getUser();
+		}        
+
         if ($loggedUser->guest) {
 			return OutputHelper::json(500, array('error_msg' => 'Please login to make a deposit'  ));
 		}
@@ -182,7 +191,15 @@ class Api_Payment extends JController {
 	public function doWithdrawRequest() {
 
    		$session =& JFactory::getSession();
-    	$loginUser =& JFactory::getUser();
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);
+
+		if ($l_user_id) {
+			$loginUser =& JFactory::getUser($l_user_id);
+		} else {
+			$loginUser =& JFactory::getUser();
+		}		
     	$config =& JComponentHelper::getParams( 'com_payment' );
 
     	if( $loginUser->guest )
@@ -242,7 +259,7 @@ class Api_Payment extends JController {
     	{
     		$err[$withdrawalType . '_amount'] = 'The minimum withdrawal amount is ' . $minWithdrawal . ' dollars';
     	}
-    	else if( $amount > ($paymentModel->getTotal()/100))
+    	else if( $amount > ($paymentModel->getTotal($l_user_id)/100))
     	{
     		$err[$withdrawalType . '_amount'] = 'Your account balance is not enough for this withdrawal';
     	}
@@ -298,7 +315,7 @@ class Api_Payment extends JController {
 		}
 
 		$userModel = new TopbettaUserModelTopbettaUser();
-    	$user = $userModel->getUser();
+    	$user = $userModel->getUser($l_user_id);
 
 
     	$senderEmail	= $config->get('sender_email');
@@ -366,7 +383,7 @@ class Api_Payment extends JController {
 
     	$emailBody	 = "A request for withdrawal has been made on $requestedDate for user {$user->username}\n\n";
     	$emailBody 	.= "Withdrawal Details:\nUser: {$user->first_name} {$user->last_name}\nAmount: $amountFormatted\nMethod: $withdrawalMethod\nAccount: $accountInfo\n\n";
-		$emailBody	.= 'Account balance: ' . '$'.number_format($paymentModel->getTotal()/100, 2, '.', ',') . "\n";
+		$emailBody	.= 'Account balance: ' . '$'.number_format($paymentModel->getTotal($l_user_id)/100, 2, '.', ',') . "\n";
 		$emailBody	.= "Bank account details:\nBank: $user->bank_name\nAccount name: $user->account_name\nBSB: $user->bsb_number\nAccount no.: $user->bank_account_number" . "\n\n";
     	$emailBody	.= 'ID Verified: ' . ($user->identity_verified_flag ? 'Yes' : 'No') . "\n\n";
     	$emailBody	.= "Contact Details:\n";
@@ -391,8 +408,12 @@ class Api_Payment extends JController {
 		require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'useraudit.php');
 		$audit_model = new TopbettaUserModelUserAudit();
 
+		// Joomla userid is being passed from Laravel
+		// this fixes Joomla forgetting who is logged in :-)
+		$l_user_id = JRequest::getVar('l_user_id', NULL);	
+		
 		//get login user details
-		$user		= $user_model->getUser();
+		$user		= $user_model->getUser($l_user_id);
 
 		//init session
 		$session =& JFactory::getSession();

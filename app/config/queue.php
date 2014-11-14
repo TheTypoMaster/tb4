@@ -53,8 +53,14 @@ return array(
 			'project' => 'your-project-id',
 			'token'   => 'your-token',
 			'queue'   => 'your-queue-name',
+            'encrypt' => true,
 		),
 
 	),
+
+    'failed' => array(
+        'database' => 'mysql', 'table' => 'failed_jobs',
+    ),
+
 
 );

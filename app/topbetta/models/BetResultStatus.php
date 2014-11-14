@@ -34,7 +34,14 @@ class BetResultStatus extends \Eloquent {
      * @var string
      */
     const STATUS_FULL_REFUND = 'fully-refunded';
-    
+
+    /**
+     * String ID for cancelled
+     *
+     * @var string
+     */
+    const STATUS_CANCELLED = 'cancelled';
+
     /**
      * String ID for pending bets
      *

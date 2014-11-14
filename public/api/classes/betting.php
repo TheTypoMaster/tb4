@@ -667,6 +667,14 @@ class Api_Betting extends JController
         $token_secret = JRequest::getString('tb_secret', null, 'post');
         $freeCreditFlag = (float) JRequest::getVar('chkFreeBet', 0);
 
+        if($freeCreditFlag){
+            if ($iframe) {
+                return array('status' => 500, 'error_msg' => 'Free Credit cannot be used to enter a tournament');
+            } else {
+                return OutputHelper::json(500, array('error_msg' => 'Free Credit cannot be used to enter a tournament'));
+            }
+        }
+
         $api_user = new Api_User();
         $token = $api_user->get_external_website_key_secret($token_key, $token_secret);
 
@@ -817,11 +825,11 @@ class Api_Betting extends JController
                     }
                 }
 
-                $tournament_dollars = $tournament_dollars_model->getTotal($user->id);
+                //$tournament_dollars = $tournament_dollars_model->getTotal($user->id);
                 $account_balance = $payment_dollars_model->getTotal($user->id);
 
                 $value = $tournament->entry_fee + $tournament->buy_in;
-                if ($value > ($tournament_dollars + $account_balance)) {
+                if ($value > $account_balance) {
                     //return $this->ticketError(JText::_('Insufficient funds to purchase the ticket'), $save, $tournament);
                     if ($iframe) {
                         return array('status' => 500, 'error_msg' => 'Insufficient funds to purchase the ticket');
@@ -831,7 +839,7 @@ class Api_Betting extends JController
                 }
 
                 //check the account balance spent with bet limit
-                $account_balance_spent = $tournament->entry_fee + $tournament->buy_in - $tournament_dollars;
+                $account_balance_spent = $tournament->entry_fee + $tournament->buy_in;
                 if ($account_balance_spent > 0 && !$this->_checkBetLimit($account_balance_spent)) {
                     //return $this->ticketError(JText::_('Exceed your bet limit'), $save, $tournament);
                     if ($iframe) {
@@ -975,9 +983,6 @@ class Api_Betting extends JController
 
             $raceNumber = $race->number;
 
-            //MC fix to get the correct race id to place a bet
-            //$race->id = $race_model->getRaceIdByEventIdRaceNum($id, $race_id)->id;
-
             if (is_null($race)) {
                 $validation->error = JText::_('Race was not found');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
@@ -987,18 +992,20 @@ class Api_Betting extends JController
             $race_status_model = new TournamentModelEventStatus();
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
 
-            if ($race->event_status_id != $selling_status->id) {
-                $validation->error = JText::_('Betting was closed');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
-            
             // special case for greyhounds to allow betting after jump time if allowed only
             // all other race types are always closed via the race status only
-            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+//            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+
+            
+//            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
+//            if ($pastStartCheck && !$overRide) {
+//                $validation->error = JText::_('Betting was closed');
+//                return OutputHelper::json(500, array('error_msg' => $validation->error));
+//            }
+
             $overRide = $race->override_start;
 
-//            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
-            if ($pastStartCheck && !$overRide) {
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
@@ -1386,6 +1393,7 @@ class Api_Betting extends JController
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
                     'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'FreeBetAmount' => $bet->bet_freebet_amount,
                     'Type' => 'racing',
                     'BetList' => array(
                         'BetType' => $betTypeShort,
@@ -1509,21 +1517,23 @@ class Api_Betting extends JController
             $race_status_model = new TournamentModelEventStatus();
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
 
-            if ($race->event_status_id != $selling_status->id) {
+            $overRide = $race->override_start;
+
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 $validation->error = JText::_('Betting was closed');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
             // special case for greyhounds to allow betting after jump time if allowed only
             // all other race types are always closed via the race status only
-            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
-            $overRide = $race->override_start;
+//           $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
 
+            
 //            if ($meeting->type_code == "G" && $pastStartCheck && !$overRide) {
-            if ($pastStartCheck && !$overRide) {
-                $validation->error = JText::_('Betting was closed');
-                return OutputHelper::json(500, array('error_msg' => $validation->error));
-            }
+//            if ($pastStartCheck && !$overRide) {
+//                $validation->error = JText::_('Betting was closed');
+//                return OutputHelper::json(500, array('error_msg' => $validation->error));
+//            }
 
             require_once (JPATH_BASE . DS . 'components' . DS . 'com_betting' . DS . 'models' . DS . 'bet.php');
             $bet_model = new BettingModelBet();
@@ -1951,6 +1961,7 @@ class Api_Betting extends JController
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
                     'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'FreeBetAmount' => $bet->bet_freebet_amount,
                     'Type' => 'exotic',
                     'BetList' => array('BetType' => $bet_type_name->id, 'PriceType' => 'TOP'),
                     'FlexiFlag' => $bet->flexi_flag,
@@ -2104,11 +2115,11 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
-//            $match =  $sportsBetting_model->getEventApi($betMatchID);
-//
-//            if (strtotime($match->start_date) < time()) {
-//                return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
-//            }
+            $match =  $sportsBetting_model->getEventDetailsApi($betMatchID);
+
+            if (strtotime($match->start_date) < time()) {
+                return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
+            }
 
 
 //  			// check if market_id is in the DB
@@ -2519,8 +2530,8 @@ class Api_Betting extends JController
 
                 'result_status' => '',
                 'dividend' => $bet_dividend, // fixed odds (overall odds for multibets - just same as selection one if only one selection)
-                'bet_amount' => $bet->bet_amount - $free_bet_amount, // total real $ amount
-                'free_bet_amount' => $free_bet_amount, // totoal FC amount
+                'bet_amount' => $bet->bet_amount, // total real $ amount
+                'free_bet_amount' => $bet->bet_freebet_amount, // totoal FC amount
                 'placed_at' => date(DATE_ISO8601), // date bet placed
                 'bet_id' => (int) $bet_id, // TB bet ID
                 'client_id' => $user->id,
@@ -2668,20 +2679,24 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
-            if ($race->event_status_id != $selling_status->id) {
-                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
-            }
+//            if ($race->event_status_id != $selling_status->id) {
+//                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
+//            }
 
             // Check to see if the race is past the start time as well as if the override flag is not true. This will allow
             // bets to be placed after start time when applicable. NOTE: This logic has been replicated from the `sveBet`
             // method
-            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
+//            $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
             $overRide = $race->override_start;
 
-//            if (strtotime($race->start_date) < time()) {
-            if ($pastStartCheck && !$overRide) {
+            if ($race->event_status_id != $selling_status->id && !$overRide) {
                 return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
             }
+
+//            if (strtotime($race->start_date) < time()) {
+//            if ($pastStartCheck && !$overRide) {
+//                return OutputHelper::json(500, array('error_msg' => 'Race has already jumped'));
+//            }
 
             $bet_type_id = JRequest::getVar('bet_type_id', null);
             if (is_null($bet_type_id)) {
@@ -3006,7 +3021,7 @@ class Api_Betting extends JController
                         $offer_bet_value_credit = $market_bet_limit - $offer_betted_value;
 
                         if ($offer_bet_value_credit < $pending_offer_bet_value) {
-                            $maximum_bet = number_format($offer_bet_value_credit, 2);
+                            $maximum_bet = number_format($offer_bet_value_credit/100, 2);
                             return OutputHelper::json(500, array('error_msg' => JText::_('Your bet for ' . $offer->name . ' (' . $offer->market_type . ') has exceeded the bet limit. You can only bet ' . $maximum_bet)));
                         }
                     }
@@ -3260,7 +3275,7 @@ class Api_Betting extends JController
              */
         } else {
             $ticket = $ticket_model->getTournamentTicket($ticket_id);
-            $refund_id = $user->tournament_dollars->increment($tournament->buy_in + $tournament->entry_fee, 'refund', null, $user->id);
+            $refund_id = $payment_dollars_model->increment($tournament->buy_in + $tournament->entry_fee, 'refund', null, $user->id);
 
             $ticket->refunded_flag = 1;
             $ticket->result_transaction_id = $refund_id;
