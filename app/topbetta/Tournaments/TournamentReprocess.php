@@ -15,7 +15,10 @@ use TopBetta\Repositories\DbTournamentBetRepository;
 use TopBetta\Repositories\DbTournamentBetSelectionRepository;
 use TopBetta\Repositories\DbTournamentSelectionResultRepository;
 
-
+/**
+ * Completely reprocess a tournament by re-resulting all bets.
+ * @package TopBetta\Tournaments
+ */
 class TournamentReprocess {
 
     protected $tournaments;
@@ -97,7 +100,7 @@ class TournamentReprocess {
                 $bet->save();
             }
             // update the leaderboard record
-            $leaderboarModel = $this->tournamentleaderboards-> updateLeaderboardRecordForUserInTournament($ticket->user_id, $tournamentId, $turnover, $currency);
+            $leaderboarModel = $this->tournamentleaderboards->updateLeaderboardRecordForUserInTournament($ticket->user_id, $tournamentId, $turnover, $currency);
             Log::debug('Tournament Reprocess - Ticket ID: '.$ticket->id.', Leaderboard Updated: '.print_r($leaderboarModel, true));
 
         }
