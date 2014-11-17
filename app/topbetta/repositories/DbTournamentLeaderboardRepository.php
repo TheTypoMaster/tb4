@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\TournamentLeaderboard;
+use TopBetta\Models\TournamentLeaderboardModel;
 use DB;
 
 
@@ -15,7 +15,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
     protected $tournamentLeaderboard;
 
 
-    function __construct(TournamentLeaderboard $tournamentLeaderboard) {
+    function __construct(TournamentLeaderboardModel $tournamentLeaderboard) {
         $this->model = $tournamentLeaderboard;
 
     }
@@ -47,5 +47,24 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
             ->toArray();
 
         return $tournamentLeaderboard;
+    }
+
+    public function getLeaderboardRecordForUserInTournament($userId, $tournamentId){
+        return $this->model->where('user_id', $userId)
+                            ->where('tournament_id', $tournamentId)
+                            ->first();
+    }
+
+    public function updateLeaderboardRecordForUserInTournament($userId, $tournamentId, $turnover, $currency){
+        $leaderboardModel =  $this->model->where('user_id', $userId)
+            ->where('tournament_id', $tournamentId)
+            ->first();
+
+        if($leaderboardModel){
+            $leaderboardModel->turned_over = $turnover;
+            $leaderboardModel->currency = $currency;
+            return $leaderboardModel->save();
+        }
+        return false;
     }
 }
