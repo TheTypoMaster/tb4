@@ -9,6 +9,8 @@
 
 class BaseEloquentRepository {
 
+    protected $model;
+
 	/**
 	 * Find the model given an ID
 	 * @param $id
