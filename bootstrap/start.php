@@ -29,14 +29,15 @@ $app = new Illuminate\Foundation\Application;
 $env = $app->detectEnvironment(array(
 
 	'local' => array('your-machine-name'),
-	'ol_development' => array('olivers-mbp.*'),
+	'ol_development' => array('olivers-mbp.*, Olivers-MBP.*'),
 	'ol_testing' => array('oltest.mugbookie.com'),
 	'mic_development' => array('Mics-MacBook-Pro.local','mics-mbp.gateway', 'mics-mbp'),
-	'testing1' => array('testing1.*'),
-	'testing2' => array('testing2.*'),
+	'testing1' => array('topbetta-dvmh-test-01'),
+	'testing2' => array('topbetta-dvmh-test-02'),
 	'testing3' => array('testing3.*'),
-	'production' => array('services.*'),
+	'production' => array('topbetta-dvmh-web-01', 'topbetta-dvmh-web-02'),
 	'jason_development' => array('ZAPDOS'),
+    'testapi1' => array('topbetta-dvmh-test-02'),
 
 
 
