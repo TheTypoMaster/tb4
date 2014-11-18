@@ -267,7 +267,7 @@ class SportsController extends BaseController {
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
 
-                                    // update the tournament revords that use this event
+                                    // update the tournament records that use this event
                                     $this->tournaments->updateTournamentByEventGroupId($compExists, $dataArray['EventTime']);
 
 								}
