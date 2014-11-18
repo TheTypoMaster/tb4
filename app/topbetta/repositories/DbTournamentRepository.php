@@ -16,4 +16,9 @@ class DbTournamentRepository extends BaseEloquentRepository {
         $this->model = $tournaments;
     }
 
+    public function updateTournamentByEventGroupId($eventGroupId, $closeDate){
+        return $this->model->where('event_group_id', $eventGroupId)
+                    ->update(array('betting_closed_date' => $closeDate, 'end_date' => $closeDate));
+    }
+
 } 
