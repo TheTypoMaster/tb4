@@ -277,6 +277,7 @@ class TournamentModelTournamentSportEvent extends TournamentModelTournament
 	        t.created_date,
 	        t.updated_date,
 	        t.private_flag,
+	        t.entries_close,
 	        s.name AS sport_name,
 	        s.description AS sport_description,
 	        t.reinvest_winnings_flag,
