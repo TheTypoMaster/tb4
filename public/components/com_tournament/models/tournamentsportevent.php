@@ -39,6 +39,7 @@ class TournamentModelTournamentSportEvent extends TournamentModelTournament
 		        betting_closed_date,
 		        reinvest_winnings_flag,
 		        bet_limit_flag,
+		        entries_close,
 		        status_flag,
 		        created_date,
 		        updated_date

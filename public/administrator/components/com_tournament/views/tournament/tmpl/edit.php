@@ -205,6 +205,21 @@ JToolBarHelper::cancel();
 					<td class='key'><label for="bet_limit_flag">Implement bet limit</label></td>
 					<td><input type="checkbox" name="bet_limit_flag" id="bet_limit_flag" value="1"<?php echo isset($this->formdata['bet_limit_flag']) && $this->formdata['bet_limit_flag'] ? 'checked="checked"' : '' ?> <?php echo $this->disabled;?> /></td>
 				</tr>
+
+                <tr>
+                    <td class='key'>
+                        <label for="entries_close">Entries Close Date/Time (yyyy-mm-dd hh:mm:ss)</label>
+                    </td>
+
+                <td colspan="3">
+                <input type="date" name="entries_date" id="entries_date" class="DatePicker" alt="{format:'yyyy-mm-dd',yearStart:2014}" value="<?php echo $this->formdata['entries_date']; ?>"  />
+                <input type="time" name="entries_time" id="entries_time" value="<?php echo $this->formdata['entries_time']; ?>"  />
+
+                </td>
+                </tr>
+
+
+
 			</tbody>
 		</table>
 		<input type="hidden" name="id" value="<?php echo $this->escape($this->id); ?>" />
