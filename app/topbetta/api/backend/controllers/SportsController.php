@@ -4,6 +4,7 @@ use BaseController;
 use Carbon\Carbon;
 use TopBetta;
 use TopBetta\Repositories\DbMarketsRepository;
+use TopBetta\Repositories\DbTournamentRepository;
 
 class SportsController extends BaseController {
 
@@ -51,10 +52,13 @@ class SportsController extends BaseController {
 		
 
     protected $markets;
+    protected $tournaments;
 
-	public function __construct(DbMarketsRepository $markets)
+	public function __construct(DbMarketsRepository $markets,
+                                DbTournamentRepository $tournaments)
 	{
         $this->markets = $markets;
+        $this->tournaments = $tournaments;
 		//$this->beforeFilter('apiauth');
 	}
 	
@@ -262,6 +266,10 @@ class SportsController extends BaseController {
 								if ($dataArray['EventTime'] > $compModel->close_time){
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
+
+                                    // update the tournament revords that use this event
+                                    $this->tournaments->updateTournamentByEventGroupId($compExists, $dataArray['EventTime']);
+
 								}
 								
 								// update competiton with new event start time if it's after the current stored time
