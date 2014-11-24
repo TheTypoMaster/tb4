@@ -20,6 +20,58 @@ class DbMarketsRepository extends BaseEloquentRepository {
         $this->model = $model;
     }
 
+    /**
+     * Market with type name and event name used for filtered list
+     * @param $search
+     * @return mixed
+     */
+    public function search($search)
+    {
+        return $this->model->join('tbdb_market_type', 'tbdb_market.market_type_id', '=', 'tbdb_market_type.id')
+                    ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+                    ->where('tbdb_market_type.name', 'LIKE', "%$search%")
+                    ->orWhere('tbdb_event.name', 'LIKE', "%$search%")
+                    ->select('tbdb_market.id as id', 'tbdb_market.display_flag as display_flag',
+                        'tbdb_market.created_at as created_at', 'tbdb_market.updated_at as updated_at',
+                        'tbdb_market_type.name as market_type_name', 'tbdb_event.name as event_name',
+                        'tbdb_market.market_status as market_status')
+                    ->orderBy('tbdb_market.id', 'DESC')
+                    ->paginate();
+    }
+
+    /**
+     * All Markets with type name and event name
+     * @return mixed
+     */
+    public function allMarkets()
+    {
+        return $this->model->join('tbdb_market_type', 'tbdb_market.market_type_id', '=', 'tbdb_market_type.id')
+                    ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+                    ->select('tbdb_market.id as id', 'tbdb_market.display_flag as display_flag',
+                        'tbdb_market.created_at as created_at', 'tbdb_market.updated_at as updated_at',
+                        'tbdb_market_type.name as market_type_name', 'tbdb_event.name as event_name',
+                        'tbdb_market.market_status as market_status')
+                    ->orderBy('tbdb_market.id', 'DESC')
+                    ->paginate();
+    }
+
+    /**
+     * Single Market with type name and event name used edit
+     * @param $id
+     * @return mixed
+     */
+    public function findWithMarketTypePlusEvent($id)
+    {
+        return $this->model->join('tbdb_market_type', 'tbdb_market.market_type_id', '=', 'tbdb_market_type.id')
+                    ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+                    ->where('tbdb_market.id', $id)
+                    ->select('tbdb_market.id as id', 'tbdb_market.display_flag as display_flag',
+                        'tbdb_market.created_at as created_at', 'tbdb_market.updated_at as updated_at',
+                        'tbdb_market_type.name as market_type_name', 'tbdb_event.name as event_name',
+                        'tbdb_market.market_status as market_status')
+                   ->first();
+    }
+
     public function getMarketEventStartTime($marketId){
         return RaceMarket::find($marketId)->event()->pluck('start_date');
     }
