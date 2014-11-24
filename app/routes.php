@@ -220,6 +220,12 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('tournaments', 'TopBetta\admin\controllers\TournamentsController');
 	Route::resource('reports', 'TopBetta\admin\controllers\ReportsController', array('only' => array('index', 'show')));
 	Route::resource('settings', 'TopBetta\admin\controllers\SettingsController');
+	Route::resource('sports', 'TopBetta\admin\controllers\SportsController');
+	Route::resource('competitions', 'TopBetta\admin\controllers\CompetitionsController');
+	Route::resource('markets', 'TopBetta\admin\controllers\marketsController');
+	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
+	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
+	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {
