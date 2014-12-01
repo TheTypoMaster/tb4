@@ -107,10 +107,13 @@ return array(
         'Illuminate\View\ViewServiceProvider',
         'Illuminate\Workbench\WorkbenchServiceProvider',
 
+
         'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
-        'Frozennode\Administrator\AdministratorServiceProvider'
+        'Serena\ServiceProviders\DataServiceProvider',
+        'Serena\ServiceProviders\RepositoryServiceProvider',
+        'Serena\ServiceProviders\EventServiceProvider'
 
 	),
 

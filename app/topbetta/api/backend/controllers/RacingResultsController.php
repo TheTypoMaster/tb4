@@ -7,11 +7,11 @@
  */
 
 use Input;
+use Response;
 use TopBetta\api\backend\Racing\RaceResulting;
 
 class RacingResultsController
 {
-
     protected $restults;
 
     public function __construct(RaceResulting $results){
@@ -21,15 +21,12 @@ class RacingResultsController
     public function store()
     {
         // get the JSON POST
-        $racingJSON = \Input::json();
+        $racingJSON = Input::json();
 
         foreach ($racingJSON as $key => $resultsArray) {
-            if (is_array($resultsArray) && $key == 'ResultList') {
-
-                $this->results->ResultEvents($resultsArray);
-
-
-            }
+            $result = $this->results->ResultEvents($resultsArray);
         }
+
+        return Response::json($result, 400);
     }
 }

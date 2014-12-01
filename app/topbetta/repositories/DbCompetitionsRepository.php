@@ -7,8 +7,9 @@
  */
 
 use TopBetta\Models\CompetitionsModel;
+use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
-class DbCompetitionsRepository extends BaseEloquentRepository{
+class DbCompetitionsRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
 
     protected $competitions;
 
@@ -36,5 +37,23 @@ class DbCompetitionsRepository extends BaseEloquentRepository{
         return $this->model
             ->orderBy('start_date', 'DESC')
             ->paginate();
+    }
+
+    /**
+     * get competition with provided external ID.
+     *
+     * @param $meetingId
+     * @return mixed
+     */
+    public function getMeetingDetails($meetingId) {
+        $racingCodes = array('R', 'G', 'H');
+
+        $meetings =  RaceMeeting::where('external_event_group_id', '=', $meetingId)
+                                ->whereIn('type_code', $racingCodes)->first();
+
+        if($meetings){
+            return $meetings->toArray();
+        }
+        return false;
     }
 } 

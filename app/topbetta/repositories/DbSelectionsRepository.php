@@ -7,8 +7,9 @@
  */
 
 use TopBetta\Models\SelectionsModel;
+use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
-class DbSelectionsRepository extends BaseEloquentRepository{
+class DbSelectionsRepository extends BaseEloquentRepository implements SelectionRepositoryInterface{
 
     protected $selections;
 
@@ -91,5 +92,23 @@ class DbSelectionsRepository extends BaseEloquentRepository{
                 'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name')
             ->first();
     }
+
+    /**
+     * Check if a selection exists.
+     *
+     * @param $meetingId
+     * @param $raceNo
+     * @param $runnerNo
+     * @return mixed
+     */
+     public function getSelectionModelFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $runnerNo){
+         return $this->model->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+                    ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+                    ->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+                    ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+                    ->where('tbdb_event_group.external_event_group_id',$meetingId )
+                    ->where('tbdb_event.number', $raceNo)
+                    ->where('tbdb_selection.number', $runnerNo)->first();
+     }
 
 } 
