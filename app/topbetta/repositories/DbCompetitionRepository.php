@@ -48,7 +48,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     public function getMeetingDetails($meetingId) {
         $racingCodes = array('R', 'G', 'H');
 
-        $meetings =  RaceMeeting::where('external_event_group_id', '=', $meetingId)
+        $meetings =  $this->model->where('external_event_group_id', '=', $meetingId)
                                 ->whereIn('type_code', $racingCodes)->first();
 
         if($meetings){
