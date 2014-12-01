@@ -204,7 +204,7 @@ class BetResultRepo
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
         $racingJSONlog = \Input::json()->all();
-        \File::append('/tmp/backAPIracingResultJSON-' .'-'. $bet->id.'-'.$currentTimeMs, print_r($bet). " - Payout :". $payout);
+        \File::append('/tmp/backAPIracingResultJSON-' .'-B'. $bet->id.'-'.$currentTimeMs, print_r($bet). " - Payout :". $payout);
 
 
 
