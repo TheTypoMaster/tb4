@@ -680,7 +680,6 @@ class RacingController extends \BaseController
                                 $selection = $dataArray ['Selection'];
                                 $placeNo = $dataArray ['PlaceNo'];
                                 $payout = $dataArray ['Payout'];
-                                if($payout == 'null' ) $payout = 0;
                                 $providerName = "igas";
                                 $log_msg_prefix = "BackAPI: Racing - Processing Result. MID:$meetingId, RN:$raceNo";
 
