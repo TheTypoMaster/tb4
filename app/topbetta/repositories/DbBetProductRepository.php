@@ -45,7 +45,7 @@ class DbBetProductRepository extends BaseEloquentRepository implements BetProduc
                             ->where('country', '=', $meetingCountry)
                             ->where('region', '=', $meetingGrade)
                             ->where('provider_name', '=', $providerName)
-                            ->pluck('tbdb_bet_product.id');
+                            ->first();
 
     }
 
