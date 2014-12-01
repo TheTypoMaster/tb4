@@ -1,7 +1,7 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Repositories\DbCompetitionsRepository;
+use TopBetta\Repositories\DbCompetitionRepository;
 use View;
 use BaseController;
 use Redirect;
@@ -15,7 +15,7 @@ class CompetitionsController extends BaseController
 	 */
 	private $competitionsrepo;
 
-	public function __construct(DbCompetitionsRepository $competitionsrepo)
+	public function __construct(DbCompetitionRepository $competitionsrepo)
 	{
 		$this->competitionsrepo = $competitionsrepo;
 	}

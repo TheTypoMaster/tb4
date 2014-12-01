@@ -9,7 +9,7 @@
 use TopBetta\Models\Events;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 
-class DbEventsRepository extends BaseEloquentRepository implements EventRepositoryInterface{
+class DbEventRepository extends BaseEloquentRepository implements EventRepositoryInterface{
 
     protected $events;
 

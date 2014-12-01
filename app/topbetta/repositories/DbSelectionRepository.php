@@ -9,7 +9,7 @@
 use TopBetta\Models\SelectionsModel;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
-class DbSelectionsRepository extends BaseEloquentRepository implements SelectionRepositoryInterface{
+class DbSelectionRepository extends BaseEloquentRepository implements SelectionRepositoryInterface{
 
     protected $selections;
 

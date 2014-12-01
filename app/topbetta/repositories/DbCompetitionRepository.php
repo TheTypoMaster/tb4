@@ -9,7 +9,7 @@
 use TopBetta\Models\CompetitionsModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
-class DbCompetitionsRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
+class DbCompetitionRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
 
     protected $competitions;
 
