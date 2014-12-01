@@ -8,7 +8,7 @@
 
 use Eloquent;
 
-class SelectionResultsModel extends Eloquent {
+class SelectionResultModel extends Eloquent {
 
     protected $table = 'tbdb_selection_result';
     protected $guarded = array();
