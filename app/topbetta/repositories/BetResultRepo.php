@@ -84,6 +84,14 @@ class BetResultRepo
 		$result = array();
 
 		foreach ($bets as $bet) {
+
+            // get current micro time
+            list($partMsec, $partSec) = explode(" ", microtime());
+            $currentTimeMs = $partSec.$partMsec;
+            $racingJSONlog = \Input::json()->all();
+            \File::append('/tmp/backAPIracingResultJSON-' .$eventId.'-'. $bet->id.'-'.$currentTimeMs, print_r($bet));
+
+
 			\Log::info('RESULTING BET: ' . $bet->id);
 			$result[$bet->id] = $this->resultBet($bet);
 		}
@@ -191,7 +199,16 @@ class BetResultRepo
 		$payout = \TopBetta\Facades\BetRepo::getBetPayoutAmount($bet);
 		\Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);
 
-		if ($payout) {
+
+        // get current micro time
+        list($partMsec, $partSec) = explode(" ", microtime());
+        $currentTimeMs = $partSec.$partMsec;
+        $racingJSONlog = \Input::json()->all();
+        \File::append('/tmp/backAPIracingResultJSON-' .'-'. $bet->id.'-'.$currentTimeMs, print_r($bet). " - Payout :". $payout);
+
+
+
+        if ($payout) {
 			// WINNING BET
 			\Log::info('WINNING BET: id - ' . $bet->id);
 			return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);
