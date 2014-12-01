@@ -271,6 +271,9 @@ class RaceResulting {
             // check if product is used
             $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 
+            Log::debug('### Product Used Respose: '.print_r($productUsed,true));
+
+
             if (!$productUsed) {
                 Log::debug("BackAPI: Racing - Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
                 return false;
