@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\Models\SelectionsModel;
+use TopBetta\Models\SelectionModel;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
 class DbSelectionRepository extends BaseEloquentRepository implements SelectionRepositoryInterface{

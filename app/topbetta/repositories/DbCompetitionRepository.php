@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\Models\CompetitionsModel;
+use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
 class DbCompetitionRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
