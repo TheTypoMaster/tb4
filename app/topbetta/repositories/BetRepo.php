@@ -252,7 +252,7 @@ class BetRepo
         // get current micro time
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
-        \File::append('/tmp/backAPIracingResultJSON-' .'-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
+        \File::append('/tmp/backAPIracingResultJSON-' .'B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
