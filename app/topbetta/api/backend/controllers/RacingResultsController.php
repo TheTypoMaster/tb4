@@ -1,4 +1,4 @@
-<?php namespace TopBetta\api\backend;
+<?php namespace TopBetta\backend;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 1/12/14
