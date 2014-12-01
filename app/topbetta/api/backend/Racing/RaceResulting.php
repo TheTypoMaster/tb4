@@ -261,6 +261,8 @@ class RaceResulting {
         // grab the meeting details we need
         $meetingTypeCodeResult = $this->competitions->getMeetingDetails($meetingId);
 
+        Log::debug('### MeetingType Respose: '.print_r($meetingTypeCodeResult,true));
+
         if($meetingTypeCodeResult){
             $meetingTypeCode = $meetingTypeCodeResult['type_code'];
             $meetingCountry = $meetingTypeCodeResult['country'];
