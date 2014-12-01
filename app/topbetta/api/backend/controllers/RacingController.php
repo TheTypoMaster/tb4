@@ -877,6 +877,10 @@ class RacingController extends \BaseController
                             }
                         }
 
+                        list($partMsec, $partSec) = explode(" ", microtime());
+                        $currentTimeMs = $partSec.$partMsec;
+                        $racingJSONlog = \Input::json()->all();
+                        \File::append('/tmp/backAPIracingResultJSON-EventList-C' .count($eventList).'-'. $currentTimeMs, print_r($eventList,true));
                         // ALL RESULTS PROCESSED - RESULT ALL BETS FOR THE EVENT LIST
                         foreach ($eventList as $eventId) {
                             \Log::info('RESULTING: all bets for event id: ' . $eventId);
