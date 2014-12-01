@@ -91,6 +91,7 @@ class Tournament extends \Eloquent {
 				t.tournament_prize_format,
 				t.closed_betting_on_first_match_flag,
 				t.reinvest_winnings_flag,
+				t.entries_close,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,

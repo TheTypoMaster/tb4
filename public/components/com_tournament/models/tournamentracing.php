@@ -79,6 +79,7 @@ class TournamentModelTournamentRacing extends TournamentModelTournament
 				t.betting_closed_date,
 				t.reinvest_winnings_flag,
 				t.closed_betting_on_first_match_flag,
+				t.entries_close,
 				eg.id AS meeting_id,
 				eg.tournament_competition_id,
 				s.name AS sport_name,
