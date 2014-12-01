@@ -15,7 +15,7 @@ class DbBetProductRepository extends BaseEloquentRepository implements BetProduc
 
     public function __construct(BetProductModel $betproducts)
     {
-        $this->betproducts = $betproducts;
+        $this->model = $betproducts;
     }
 
     public function isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName){
