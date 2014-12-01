@@ -18,24 +18,24 @@ class RepositoryServiceProvider extends ServiceProvider {
     public function register()
     {
         $this->app->bind(
-            'Serena\Repositories\Contracts\BetProductRepositoryInterface',
-            'Serena\Repositories\DbBetProductRepository'
+            'TopBetta\Repositories\Contracts\BetProductRepositoryInterface',
+            'TopBetta\Repositories\DbBetProductRepository'
         );
         $this->app->bind(
-            'Serena\Repositories\Contracts\CompetitionRepositoryInterface',
-            'Serena\Repositories\DbCompetitionRepository'
+            'TopBetta\Repositories\Contracts\CompetitionRepositoryInterface',
+            'TopBetta\Repositories\DbCompetitionRepository'
         );
         $this->app->bind(
-            'Serena\Repositories\Contracts\EventRepositoryInterface',
-            'Serena\Repositories\DbEventRepository'
+            'TopBetta\Repositories\Contracts\EventRepositoryInterface',
+            'TopBetta\Repositories\DbEventRepository'
         );
         $this->app->bind(
-            'Serena\Repositories\Contracts\SelectionRepositoryInterface',
-            'Serena\Repositories\DbSelectionRepository'
+            'TopBetta\Repositories\Contracts\SelectionRepositoryInterface',
+            'TopBetta\Repositories\DbSelectionRepository'
         );
         $this->app->bind(
-            'Serena\Repositories\Contracts\SelectionResultRepositoryInterface',
-            'Serena\Repositories\DbSelectionResultRepository'
+            'TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface',
+            'TopBetta\Repositories\DbSelectionResultRepository'
         );
     }
 } 
