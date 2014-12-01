@@ -259,7 +259,7 @@ class RaceResulting {
         $priceType = $dataArray['PriceType'];
 
         // grab the meeting details we need
-        $meetingTypeCodeResult = $this->competiions->getMeetingDetails($meetingId);
+        $meetingTypeCodeResult = $this->competitions->getMeetingDetails($meetingId);
 
         if($meetingTypeCodeResult){
             $meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
