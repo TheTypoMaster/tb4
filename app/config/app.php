@@ -111,9 +111,7 @@ return array(
         'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
-        'Serena\ServiceProviders\DataServiceProvider',
-        'Serena\ServiceProviders\RepositoryServiceProvider',
-        'Serena\ServiceProviders\EventServiceProvider'
+        'TopBetta\Repositories\RepositoryServiceProvider'
 
 	),
 
