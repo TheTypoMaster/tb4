@@ -249,6 +249,11 @@ class BetRepo
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
 		$bet->resulted_flag = 1;
 
+        // get current micro time
+        list($partMsec, $partSec) = explode(" ", microtime());
+        $currentTimeMs = $partSec.$partMsec;
+        \File::append('/tmp/backAPIracingResultJSON-' .'-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
+
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);
