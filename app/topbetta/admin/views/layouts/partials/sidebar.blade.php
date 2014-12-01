@@ -43,9 +43,36 @@
 			<li>
 				<a href="{{ route('admin.reports.index') }}"><i class="fa fa-file-text fa-fw"></i> Reports</a>
 			</li>
+
+
 			<li>
-				<a href="{{ route('admin.settings.index') }}"><i class="fa fa-cogs fa-fw"></i> Settings</a>
-			</li>
+                <a href="#"><i class="fa fa-list fa-fw"></i> Event Management<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{{ route('admin.sports.index') }}">Sports</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.competitions.index') }}">Competitions</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.events.index') }}">Events</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.markets.index') }}">Markets</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.selections.index') }}">Selections</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.selectionprices.index') }}">Prices</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.settings.index') }}"><i class="fa fa-cogs fa-fw"></i> Settings</a>
+            </li>
+
 			{{--
 			<li>
 				<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
