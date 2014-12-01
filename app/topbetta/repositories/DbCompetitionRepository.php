@@ -13,7 +13,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
     protected $competitions;
 
-    function __construct(CompetitionsModel $competitions) {
+    function __construct(CompetitionModel $competitions) {
         $this->model = $competitions;
     }
 
