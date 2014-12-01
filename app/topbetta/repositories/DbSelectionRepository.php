@@ -13,7 +13,7 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
 
     protected $selections;
 
-    function __construct(SelectionsModel $selections) {
+    function __construct(SelectionModel $selections) {
         $this->model = $selections;
     }
 
