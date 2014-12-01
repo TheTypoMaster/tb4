@@ -6,12 +6,12 @@
  * Project: tb4
  */
 
+use BaseController;
 use Input;
 use Response;
 use TopBetta\api\backend\Racing\RaceResulting;
 
-class RacingResultsController
-{
+class RacingResultsController extends BaseController {
     protected $restults;
 
     public function __construct(RaceResulting $results){
