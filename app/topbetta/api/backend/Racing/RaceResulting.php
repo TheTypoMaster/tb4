@@ -262,9 +262,9 @@ class RaceResulting {
         $meetingTypeCodeResult = $this->competitions->getMeetingDetails($meetingId);
 
         if($meetingTypeCodeResult){
-            $meetingTypeCode = $meetingTypeCodeResult[0]['type_code'];
-            $meetingCountry = $meetingTypeCodeResult[0]['country'];
-            $meetingGrade = $meetingTypeCodeResult[0]['meeting_grade'];
+            $meetingTypeCode = $meetingTypeCodeResult['type_code'];
+            $meetingCountry = $meetingTypeCodeResult['country'];
+            $meetingGrade = $meetingTypeCodeResult['meeting_grade'];
 
             // check if product is used
             $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
