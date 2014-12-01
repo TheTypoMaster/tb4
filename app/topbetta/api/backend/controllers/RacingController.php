@@ -886,7 +886,7 @@ class RacingController extends \BaseController
                             list($partMsec, $partSec) = explode(" ", microtime());
                             $currentTimeMs = $partSec.$partMsec;
                             $racingJSONlog = \Input::json()->all();
-                            \File::append('/tmp/backAPIracingResultJSON-' .$eventId.'-'. $currentTimeMs, json_encode($racingJSONlog));
+                            \File::append('/tmp/backAPIracingResultJSON-E' .$eventId.'-'. $currentTimeMs, json_encode($racingJSONlog));
 
                             $betResultRepo = new TopBetta\Repositories\BetResultRepo();
 							$betResultRepo->resultAllBetsForEvent($eventId);
