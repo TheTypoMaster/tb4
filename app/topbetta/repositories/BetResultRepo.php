@@ -88,7 +88,7 @@ class BetResultRepo
             // get current micro time
             list($partMsec, $partSec) = explode(" ", microtime());
             $currentTimeMs = $partSec.$partMsec;
-            \File::append('/tmp/backAPIracingResultJSON-' .$eventId.'-B'. $bet->id.'-'.$currentTimeMs, print_r($bet));
+            \File::append('/tmp/backAPIracingResultJSON-B'. $bet->id.'-E' .$eventId.'-'.$currentTimeMs, print_r($bet,true));
 
 
 			\Log::info('RESULTING BET: ' . $bet->id);
@@ -202,7 +202,7 @@ class BetResultRepo
         // get current micro time
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
-        \File::append('/tmp/backAPIracingResultJSON-' .'-B'. $bet->id.'-'.$currentTimeMs, print_r($bet). " - Payout :". $payout);
+        \File::append('/tmp/backAPIracingResultJSON-' .'B'. $bet->id.'-'.$currentTimeMs, print_r($bet,true). " - Payout :". $payout);
 
 
 
