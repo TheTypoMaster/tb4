@@ -101,14 +101,14 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
      * @param $runnerNo
      * @return mixed
      */
-     public function getSelectionModelFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $runnerNo){
+     public function getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $runnerNo){
          return $this->model->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
                     ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
                     ->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
                     ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
                     ->where('tbdb_event_group.external_event_group_id',$meetingId )
                     ->where('tbdb_event.number', $raceNo)
-                    ->where('tbdb_selection.number', $runnerNo)->first();
+                    ->where('tbdb_selection.number', $runnerNo)->pluck('tbdb_selection.id');
      }
 
 } 
