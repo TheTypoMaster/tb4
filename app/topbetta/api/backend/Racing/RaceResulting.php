@@ -40,7 +40,6 @@ class RaceResulting {
         $firstProcess = true;
 
         foreach ($racingArray as $dataArray) {
-            $selectionsExists = $resultExists = 0;
 
             // Check required data to update a Result is in the JSON
             if (!isset($dataArray ['MeetingId']) || !isset($dataArray ['RaceNo']) || !isset($dataArray ['Selection']) || !isset($dataArray ['BetType'])
@@ -102,8 +101,8 @@ class RaceResulting {
                 // check if selection exists in the DB
                 $selectionModel = $this->selections->getSelectionModelFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $selection);
 
-                if(!$selectionsExists) {
-                    Log::debug($log_msg_prefix . "  Not Processed! Selection not found. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+                if(!$selectionModel) {
+                    Log::debug($log_msg_prefix . " Not Processed! Selection not found. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
                     continue;
                 }
 
