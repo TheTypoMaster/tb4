@@ -26,7 +26,6 @@ class RacingResultsController extends BaseController {
         foreach ($racingJSON as $key => $resultsArray) {
             $result = $this->results->ResultEvents($resultsArray);
         }
-
-        return Response::json($result, 400);
+        return Response::json(array('error' => $result['error'], 'message' => $result['message']), $result['status_code']);
     }
 }

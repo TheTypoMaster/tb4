@@ -247,6 +247,11 @@ class RaceResulting {
             $betResultRepo = new \TopBetta\Repositories\BetResultRepo();
             $betResultRepo->resultAllBetsForEvent($eventId);
         }
+
+        return array('error' => false,
+                    'message' => "Error: No event found in database for meeting: $meetingId and race: $raceNo",
+                    'status_code' => 200);
+
     }
 
     private function _canProductBeProcessed($dataArray, $providerName, $raceNo, $type = null)
