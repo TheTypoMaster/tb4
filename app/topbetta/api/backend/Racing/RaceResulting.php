@@ -102,7 +102,7 @@ class RaceResulting {
                 $selectionId = $this->selections->getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $selection);
 
                 if(!$selectionId) {
-                    Log::debug($log_msg_prefix . " Not Processed! Selection not found - $selectionId. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout". $selectionModel);
+                    Log::debug($log_msg_prefix . " Not Processed! Selection not found - $selectionId. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
                     continue;
                 }
 
