@@ -99,17 +99,17 @@ class RaceResulting {
             // win and place bets results are stored with the selection record
             if ($betType == 'W' || $betType == 'P') {
                 // check if selection exists in the DB
-                $selectionId = $this->selections->getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $selection);
+                $selectionModel = $this->selections->getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $selection);
 
-                if(!$selectionId) {
-                    Log::debug($log_msg_prefix . " Not Processed! Selection not found - $selectionId. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+                if(!$selectionModel) {
+                    Log::debug($log_msg_prefix . " Not Processed! Selection not found - {$selectionModel->id}. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
                     continue;
                 }
 
                 // build new result record
                 $raceResult = array();
                 $raceResult['position'] = $placeNo;
-                $raceResult['selection_id'] = $selectionId;
+                $raceResult['selection_id'] = $selectionModel->id;
                 ($betType == 'W') ? $raceResult['position'] = 1 : $raceResult['position'] = $placeNo;
                 ($betType == 'W') ? $raceResult['win_dividend'] = $payout / 100 : $raceResult['place_dividend'] = $payout / 100;
 
