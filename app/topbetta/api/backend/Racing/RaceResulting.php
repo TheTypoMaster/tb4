@@ -7,6 +7,8 @@
  */
 
 use Log;
+use File;
+use Carbon;
 
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -36,8 +38,16 @@ class RaceResulting {
 
     public function ResultEvents($racingArray){
 
+        // Log the POST of results data
+        $date = substr(Carbon\Carbon::now(), 0, 8);
+        list($partMsec, $partSec) = explode(" ", microtime());
+        $currentTimeMs = $partSec.$partMsec;
+        //$racingJSONlog = \Input::json()->all();
+        File::append('/tmp/'.$date.'-ResultPost-'. $currentTimeMs, json_encode($racingArray));
+
         $eventList = array();
         $firstProcess = true;
+
 
         foreach ($racingArray as $dataArray) {
 
@@ -220,10 +230,6 @@ class RaceResulting {
 
         }
 
-
-
-
-
         /*
          * result BETS
          */
@@ -256,35 +262,28 @@ class RaceResulting {
 
     private function _canProductBeProcessed($dataArray, $providerName, $raceNo, $type = null)
     {
-
         $productUsed = false;
         $meetingId = $dataArray['MeetingId'];
         $betType = $dataArray['BetType'];
         $priceType = $dataArray['PriceType'];
 
-        // grab the meeting details we need
+        // get meeting details
         $meetingTypeCodeResult = $this->competitions->getMeetingDetails($meetingId);
 
-        Log::debug('### MeetingType Respose: '.print_r($meetingTypeCodeResult,true));
+        if(!$meetingTypeCodeResult) return false;
 
-        if($meetingTypeCodeResult){
-            $meetingTypeCode = $meetingTypeCodeResult['type_code'];
-            $meetingCountry = $meetingTypeCodeResult['country'];
-            $meetingGrade = $meetingTypeCodeResult['meeting_grade'];
+        $meetingTypeCode = $meetingTypeCodeResult['type_code'];
+        $meetingCountry = $meetingTypeCodeResult['country'];
+        $meetingGrade = $meetingTypeCodeResult['meeting_grade'];
 
-            // check if product is used
-            $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
+        // check if product is used
+        $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 
-            Log::debug('### Product Used Respose: '.print_r($productUsed,true));
-
-
-            if (!$productUsed) {
-                Log::debug("BackAPI: Racing - Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
-                return false;
-            }
-            Log::info("BackAPI: Racing - Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+        if (!$productUsed) {
+            Log::debug("BackAPI: Racing - Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+            return false;
         }
+        Log::info("BackAPI: Racing - Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
         return true;
     }
-
-} 
+}
