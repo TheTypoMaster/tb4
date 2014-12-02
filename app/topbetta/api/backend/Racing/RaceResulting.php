@@ -39,7 +39,7 @@ class RaceResulting {
     public function ResultEvents($racingArray){
 
         // Log the POST of results data
-        $date = substr(Carbon\Carbon::now(), 0, 8);
+        $date = substr(Carbon\Carbon::now(), 0, 10);
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
         //$racingJSONlog = \Input::json()->all();
