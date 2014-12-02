@@ -10,6 +10,7 @@ use TopBetta\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 use TopBetta\SportsSelectionResults;
+use Carbon;
 
 /**
  * Description of BetRepo
@@ -249,10 +250,12 @@ class BetRepo
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
 		$bet->resulted_flag = 1;
 
+        $date = substr(Carbon\Carbon::now(), 0, 10);
+
         // get current micro time
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
-        \File::append('/tmp/backAPIracingResultJSON-' .'B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
+        \File::append('/tmp/'.$date.'-ResultPost-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;

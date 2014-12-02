@@ -16,6 +16,8 @@ use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 
+use TopBetta\Repositories\BetResultRepo;
+
 class RaceResulting {
 
     protected $events;
@@ -23,17 +25,20 @@ class RaceResulting {
     protected $results;
     protected $competitions;
     protected $betproducts;
+    protected $betresults;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
                                 SelectionResultRepositoryInterface $results,
                                 CompetitionRepositoryInterface $competitions,
-                                BetProductRepositoryInterface $betproducts){
+                                BetProductRepositoryInterface $betproducts,
+                                BetResultRepo $betresults){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
         $this->competitions = $competitions;
         $this->betproducts = $betproducts;
+        $this->betresults = $betresults;
     }
 
     public function ResultEvents($racingArray){
@@ -42,12 +47,10 @@ class RaceResulting {
         $date = substr(Carbon\Carbon::now(), 0, 10);
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
-        //$racingJSONlog = \Input::json()->all();
         File::append('/tmp/'.$date.'-ResultPost-'. $currentTimeMs, json_encode($racingArray));
 
         $eventList = array();
         $firstProcess = true;
-
 
         foreach ($racingArray as $dataArray) {
 
@@ -230,32 +233,25 @@ class RaceResulting {
 
         }
 
+
         /*
          * result BETS
          */
 
-
-        list($partMsec, $partSec) = explode(" ", microtime());
-        $currentTimeMs = $partSec.$partMsec;
-        $racingJSONlog = \Input::json()->all();
-        \File::append('/tmp/backAPIracingResultJSON-EventList-C' .count($eventList).'-'. $currentTimeMs, print_r($eventList,true));
         // ALL RESULTS PROCESSED - RESULT ALL BETS FOR THE EVENT LIST
         foreach ($eventList as $eventId) {
-            \Log::info('RESULTING: all bets for event id: ' . $eventId);
-
+            Log::info('RESULTING: all bets for event id: ' . $eventId);
 
             // get current micro time
             list($partMsec, $partSec) = explode(" ", microtime());
             $currentTimeMs = $partSec.$partMsec;
-            $racingJSONlog = \Input::json()->all();
-            \File::append('/tmp/backAPIracingResultJSON-E' .$eventId.'-'. $currentTimeMs, json_encode($racingJSONlog));
+            File::append('/tmp/'.$date.'-ResultPost-E' .$eventId.'-'. $currentTimeMs, json_encode($racingArray));
 
-            $betResultRepo = new \TopBetta\Repositories\BetResultRepo();
-            $betResultRepo->resultAllBetsForEvent($eventId);
+            $this->betresults->resultAllBetsForEvent($eventId);
         }
 
         return array('error' => false,
-                    'message' => "Error: No event found in database for meeting: $meetingId and race: $raceNo",
+                    'message' => "OK: Processed Successfully",
                     'status_code' => 200);
 
     }
