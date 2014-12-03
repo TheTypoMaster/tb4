@@ -9,7 +9,7 @@
 
 use Eloquent;
 
-class SelectionsModel extends Eloquent{
+class SelectionModel extends Eloquent{
 
     protected $table = 'tbdb_selection';
     protected $guarded = array();

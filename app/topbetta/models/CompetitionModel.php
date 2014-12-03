@@ -8,7 +8,7 @@
 
 use Eloquent;
 
-class CompetitionsModel extends Eloquent {
+class CompetitionModel extends Eloquent {
 
     protected $table = 'tbdb_event_group';
     protected $guarded = array();

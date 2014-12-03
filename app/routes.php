@@ -31,6 +31,7 @@ if (array_key_exists('Origin', $requestHeaders)) {
 		"http://192.168.0.31:9778",
 		"https://www.topbetta.com.au",
 		"http://jason.mugbookie.com",
+        "http://jasontb.mugbookie.com",
 		"http://evan.mugbookie.com",
 		"http://mic.mugbookie.com",
 		"http://greg.mugbookie.com"
@@ -88,6 +89,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
+    //incoming race result data
+    Route::resource('raceresults', 'RaceResulting');
 	// special case where Risk Manager can push race results to TopBetta
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta

@@ -1,7 +1,7 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Repositories\DbSelectionsRepository;
+use TopBetta\Repositories\DbSelectionRepository;
 use View;
 use BaseController;
 use Redirect;
@@ -16,7 +16,7 @@ class SelectionsController extends BaseController
 	 */
 	private $selectionsrepo;
 
-	public function __construct(DbSelectionsRepository $selectionsrepo)
+	public function __construct(DbSelectionRepository $selectionsrepo)
 	{
 		$this->selectionsrepo = $selectionsrepo;
 	}

@@ -13,7 +13,7 @@ class AddEntriesCloseFieldToTournamentTable extends Migration {
     public function up()
     {
         Schema::table('tbdb_tournament', function(Blueprint $table) {
-            $table->dateTime('entries_close')->after('feature_keyword')->nullable();
+            $table->dateTime('entries_close')->after('tournament_prize_format')->nullable();
         });
     }
 

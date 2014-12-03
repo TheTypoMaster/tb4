@@ -1,7 +1,7 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Repositories\DbEventsRepository;
+use TopBetta\Repositories\DbEventRepository;
 use View;
 use BaseController;
 use Redirect;
@@ -15,7 +15,7 @@ class EventsController extends BaseController
 	 */
 	private $eventsrepo;
 
-	public function __construct(DbEventsRepository $eventsrepo)
+	public function __construct(DbEventRepository $eventsrepo)
 	{
 		$this->eventsrepo = $eventsrepo;
 	}
