@@ -101,28 +101,46 @@ class RisaFormImporter extends \BaseController {
 									case "SecondUp":
 										$secondUp = $this->getResultsSummary($resultsSummary);
 										break;
+                                    case "AtThisDistance":
+                                        $distanceResults = $this->getResultsSummary($resultsSummary);
+                                        break;
 									case "ThisTrack":
 										$thisTrack = $this->getResultsSummary($resultsSummary);
 										break;
 									case "TrackAndDistance":
 										$trackDistance = $this->getResultsSummary($resultsSummary);
 										break;
+                                    case "Firm":
+                                        $firmResults = $this->getResultsSummary($resultsSummary);
+                                        break;
 									case "Good":
 										$goodResults = $this->getResultsSummary($resultsSummary);
 										break;
-									case "Dead":
-										$deadResults = $this->getResultsSummary($resultsSummary);
+									case "Soft":
+										$softResults = $this->getResultsSummary($resultsSummary);
 										break;
-									case "Slow":
-										$slowResults = $this->getResultsSummary($resultsSummary);
+                                    case "Heavy":
+                                        $heavyResults = $this->getResultsSummary($resultsSummary);
+                                        break;
+									case "Synthetic":
+										$syntheticResults = $this->getResultsSummary($resultsSummary);
 										break;
-									case "Heavy":
-										$heavyResults = $this->getResultsSummary($resultsSummary);
-										break;
-									case "AtThisDistance":
-										$distanceResults = $this->getResultsSummary($resultsSummary);
-										break;
-										
+                                    case "Wet":
+                                        $wetResults = $this->getResultsSummary($resultsSummary);
+                                        break;
+                                    case "NonWet":
+                                        $nonWetResults = $this->getResultsSummary($resultsSummary);
+                                        break;
+                                    case "Night":
+                                        $nightResults = $this->getResultsSummary($resultsSummary);
+                                        break;
+                                    case "JumpsRecord":
+                                        $jumpsResults = $this->getResultsSummary($resultsSummary);
+                                        break;
+                                    case "ThisSeason":
+                                        $seasonResults = $this->getResultsSummary($resultsSummary);
+                                        break;
+
 								}
 							}
 												
@@ -152,8 +170,16 @@ class RisaFormImporter extends \BaseController {
 							$runnerForm->first_up_results = $firstUp;
 							$runnerForm->second_up_results = $secondUp;
 							$runnerForm->good_results = $goodResults;
-							$runnerForm->dead_results = $deadResults;
-							$runnerForm->slow_results = $slowResults;
+
+                            $runnerForm->firm_results = $firmResults;
+							$runnerForm->soft_results = $softResults;
+							$runnerForm->synthetic_results = $syntheticResults;
+							$runnerForm->wet_results = $wetResults;
+							$runnerForm->nonwet_results = $nonWetResults;
+							$runnerForm->night_results = $nightResults;
+							$runnerForm->jumps_results = $jumpsResults;
+							$runnerForm->season_results = $seasonResults;
+
 							$runnerForm->heavy_results = $heavyResults;
 							$runnerForm->last_starts_summary = $raceEntry->Form->LastStartsSummary;
 							$runnerForm->silk_image = $raceEntry->JockeySilksImage->attributes ()->FileName_NoExt;
