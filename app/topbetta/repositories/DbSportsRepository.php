@@ -38,4 +38,9 @@ class DbSportsRepository extends BaseEloquentRepository{
             ->orderBy('name', 'ASC')
             ->paginate();
     }
+
+    public function selectList(){
+        return $this->model->lists('name', 'id');
+    }
+
 } 

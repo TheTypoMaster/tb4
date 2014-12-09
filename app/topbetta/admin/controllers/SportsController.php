@@ -44,7 +44,7 @@ class SportsController extends BaseController
 	 */
 	public function create()
 	{
-		//
+        return View::make('admin::eventdata.sports.create');
 	}
 
 	/**
@@ -54,7 +54,11 @@ class SportsController extends BaseController
 	 */
 	public function store()
 	{
-		//
+        $data = Input::only('name', 'description');
+        $newModel = $this->sportsrepo->updateOrCreate($data);
+
+        return Redirect::route('admin.sports.index', array($newModel['id']))
+            ->with('flash_message', 'Saved!');
 	}
 
 	/**
