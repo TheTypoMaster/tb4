@@ -574,10 +574,6 @@ class RacingController extends \BaseController
                                     // Get silkID and Last Starts for runner from RISA table
                                     if ($meetingType == "R") {
 
-                                        if (isset($dataArray['SilkName'])) {
-                                            $raceRunner->silk_id = $dataArray['SilkName'];
-                                        }
-
                                         // check if meeting exists in DB
                                         $meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
                                         //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
@@ -597,13 +593,6 @@ class RacingController extends \BaseController
                                             // Build the runner code
                                             $runnerCodeSelection = str_replace(" ", "", $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber);
 
-                                            // get silks and last starts from the feed now.
-                                            if (isset($dataArray['LastStarts'])){
-                                                $raceRunner->last_starts = $dataArray['LastStarts'];
-                                            }else{
-                                                $raceRunner->last_starts = "";
-                                            }
-
                                             if (isset($dataArray['SilkCode'])) {
                                                 $raceRunner->silk_id = $dataArray['SilkCode'];
                                             } else {
@@ -617,6 +606,12 @@ class RacingController extends \BaseController
                                             // add the runner code
                                             $raceRunner->runner_code = $runnerCodeSelection;
                                         }
+                                    }
+
+                                    if (isset($dataArray['LastStarts'])){
+                                        $raceRunner->last_starts = $dataArray['LastStarts'];
+                                    }else{
+                                        $raceRunner->last_starts = "";
                                     }
 
                                     if (isset($dataArray['Jockey'])) {
