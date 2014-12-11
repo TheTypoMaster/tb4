@@ -1,11 +1,14 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Repositories\DbCompetitionRepository;
 use View;
 use BaseController;
 use Redirect;
 use Input;
+
+use TopBetta\Repositories\DbCompetitionRepository;
+use TopBetta\Repositories\DbSportsRepository;
+use TopBetta\Services\DataManagement\CompetitionService;
 
 class CompetitionsController extends BaseController
 {
@@ -13,11 +16,16 @@ class CompetitionsController extends BaseController
 	/**
 	 * @var \TopBetta\Repositories\DbCompetitionsRepository
 	 */
-	private $competitionsrepo;
+	protected $competitionsrepo;
+    protected $competitionservice;
 
-	public function __construct(DbCompetitionRepository $competitionsrepo)
+	public function __construct(DbCompetitionRepository $competitionsrepo,
+                                CompetitionService $competitionservice,
+                                DbSportsRepository $sportsrepo)
 	{
 		$this->competitionsrepo = $competitionsrepo;
+		$this->competitionservice = $competitionservice;
+        $this->sportsrepo = $sportsrepo;
 	}
 
 	/**
@@ -44,7 +52,8 @@ class CompetitionsController extends BaseController
 	 */
 	public function create()
 	{
-		//
+        $sports = $this->sportsrepo->selectList();
+        return View::make('admin::eventdata.competitions.create', compact('sports'));
 	}
 
 	/**
@@ -54,7 +63,12 @@ class CompetitionsController extends BaseController
 	 */
 	public function store()
 	{
-		//
+        $this->competitionservice->createCompetition(Input::All());
+        $competitions = $this->competitionsrepo->allCompetitions();
+
+        $search = Request::get('q', '');
+        return View::make('admin::eventdata.competitions.index', compact('competitions', 'search'));
+
 	}
 
 	/**

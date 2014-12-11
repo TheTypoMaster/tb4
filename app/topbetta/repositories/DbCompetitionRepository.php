@@ -56,4 +56,8 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         }
         return false;
     }
+
+    public function selectList(){
+        return $this->model->lists('name', 'id');
+    }
 } 

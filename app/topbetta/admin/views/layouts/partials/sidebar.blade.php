@@ -37,9 +37,21 @@
 					</li>
 				</ul>				
 			</li>
+
 			<li>
-				<a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-trophy fa-fw"></i> Tournaments</a>
-			</li>
+                <a href="#"><i class="fa fa-trophy fa-fw"></i> Tournaments<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-list fa-fw"></i> Tournament List</a>
+                    </li>
+                    {{--<li>--}}
+                        {{--<a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-plus fa-fw"></i> Create Tournament</a>--}}
+                    {{--</li>--}}
+
+                </ul>
+            </li>
+
+
 			<li>
 				<a href="{{ route('admin.reports.index') }}"><i class="fa fa-file-text fa-fw"></i> Reports</a>
 			</li>

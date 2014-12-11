@@ -4,7 +4,9 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row page-header">
-        			<h2 class="col-lg-4">Competitions <small>({{ number_format($competitions->getTotal()) }})</small></h2>
+        			<h2 class="col-lg-4">Competitions <small>({{ number_format($competitions->getTotal()) }})</small>
+        			    {{ link_to_route('admin.competitions.create', 'New', null, array('class' => 'btn btn-info')) }}
+        			</h2>
 
         			{{ Form::open(array('method' => 'GET')) }}
         			<div class="input-group custom-search-form col-lg-4 pull-right">
