@@ -71,4 +71,6 @@ class BaseEloquentRepository {
         return $resource->toArray();
     }
 
+
+
 } 

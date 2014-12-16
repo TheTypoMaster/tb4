@@ -56,4 +56,16 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     }
 
 
-} 
+    public function getEventDetails($externalEventId){
+
+        $eventDetails = $this->model->where('external_event_id',$externalEventId )
+                                    ->select('id as EventId', 'external_event_id as ExternalEventId',
+                                        'start_date as StartDate', 'event_status_id as EventStatusId')
+                                    ->first();
+        if($eventDetails){
+            return $eventDetails->toArray();
+        }
+        return false;
+    }
+
+}

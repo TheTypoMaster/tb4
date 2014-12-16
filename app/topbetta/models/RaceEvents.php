@@ -79,27 +79,4 @@ class RaceEvent extends \Eloquent {
 		//return $this::where('number', $raceNo)->where('external_event_group_id', '=', $meetingId)->racemeetings;
 		//return self::racemeetings;
 	}
-
-    /**
-     * @param $meetingId
-     * @param $raceNo
-     * @return mixed
-     */
-    static public function getEventDetails($meetingId, $raceNo){
-
-        //TODO: can this be done outsideuery builder
-        $eventDetails =  static::join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-            ->where('tbdb_event_group.external_event_group_id',$meetingId )
-            ->where('tbdb_event.number',$raceNo)->select('tbdb_event.id as EventId', 'tbdb_event.external_event_id as ExternalEventId',
-                                                    'tbdb_event.start_date as StartDate', 'tbdb_event.event_status_id as EventStatusId')
-            ->first();
-        if($eventDetails){
-            return $eventDetails->toArray();
-        }
-
-        return false;
-
-      }
-	
 }
