@@ -3,8 +3,13 @@
 	"description": "The Laravel Framework.",
 	"keywords": ["framework", "laravel"],
 	"require": {
-		"laravel/framework": "4.2.*",
-        "frozennode/administrator": "dev-master"
+		"laravel/framework": "4.2.*"
+	},
+	"require-dev": {
+	  "way/generators": "1.*",
+	  "barryvdh/laravel-ide-helper": "1.*",
+	  "barryvdh/laravel-migration-generator": "dev-master",
+	  "orangehill/iseed": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -33,15 +38,13 @@
 	},
 	"scripts": {
 		"post-install-cmd": [
-			"php artisan optimize",
-            "php artisan asset:publish frozennode/administrator"
+			"php artisan optimize"
         ],
 		"pre-update-cmd": [
 			"php artisan clear-compiled"
 		],
 		"post-update-cmd": [
-			"php artisan optimize",
-            "php artisan asset:publish frozennode/administrator"
+			"php artisan optimize"
 		],
 		"post-create-project-cmd": [
 			"php artisan key:generate"
@@ -50,6 +53,6 @@
 	"config": {
 		"preferred-install": "dist"
 	},
-	"minimum-stability": "dev"
+	"minimum-stability": "stable"
 
 }
