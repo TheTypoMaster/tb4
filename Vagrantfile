@@ -34,7 +34,7 @@ sudo service apache2 restart
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 
-echo "cd /var/www" >> /home/vagrant/.bashrc
+echo "cd /vagrant" >> /home/vagrant/.bashrc
 SCRIPT
 
 $vhost_setup = <<SCRIPT
@@ -53,12 +53,10 @@ echo "${VHOST}" > /etc/apache2/sites-enabled/000-default.conf
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.provision "shell", inline: $install_requirements
   config.vm.provision "shell", inline: $vhost_setup
+  config.vm.provision "shell", inline: $install_requirements
   config.vm.box = "precise64"
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
   config.vm.network "forwarded_port", guest: 80, host: 8080
-  #config.vm.network "forwarded_port", guest: 3306, host: 33306
-  #config.vm.synced_folder ".", "/var/www", owner: "www-data", group: "www-data"
   config.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=666"]
 end
