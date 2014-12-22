@@ -50,7 +50,7 @@
         			<td>{{ $competition->events }}</td>
         			<td>{{ $competition->track }}</td>
         			<td>{{ $competition->weather }}</td>
-        			<td>{{ $competition->type }}</td>
+        			<td>{{ $competition->type_code }}</td>
         			<td>{{ $competition->grade }}</td>
         			<td>{{ $competition->country }}</td>
         			<td>{{ $competition->start_date }}</td>

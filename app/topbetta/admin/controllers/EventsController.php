@@ -94,8 +94,11 @@ class EventsController extends BaseController
 	 */
 	public function update($id)
 	{
-        //$data = Input::only('name', 'description');
         $data = Input::all();
+
+		// deal with mysql setting '' on an integer field!!!!
+		if($data['number'] == '') $data['number'] = NULL;
+
         $this->eventsrepo->updateWithId($id, $data);
 
         return Redirect::route('admin.events.index', array($id))
