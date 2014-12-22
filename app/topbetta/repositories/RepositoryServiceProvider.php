@@ -37,5 +37,13 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface',
             'TopBetta\Repositories\DbSelectionResultRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\EventStatusRepositoryInterface',
+            'TopBetta\Repositories\DbEventStatusRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\EventRepositoryInterface',
+            'TopBetta\Repositories\DbEventRepository'
+        );
     }
 } 
