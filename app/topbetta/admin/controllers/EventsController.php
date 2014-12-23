@@ -1,7 +1,8 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Repositories\DbEventRepository;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use View;
 use BaseController;
 use Redirect;
@@ -14,10 +15,13 @@ class EventsController extends BaseController
 	 * @var \TopBetta\Repositories\DbEventsRepository
 	 */
 	private $eventsrepo;
+	private $eventstatusrepo;
 
-	public function __construct(DbEventRepository $eventsrepo)
+	public function __construct(EventRepositoryInterface $eventsrepo,
+								EventStatusRepositoryInterface $eventstatusrepo)
 	{
 		$this->eventsrepo = $eventsrepo;
+		$this->eventstatusrepo = $eventstatusrepo;
 	}
 
 	/**
@@ -79,11 +83,13 @@ class EventsController extends BaseController
         $event = $this->eventsrepo->find($id);
 
         if (is_null($event)) {
-            // TODO: flash message user not found
+            // TODO: flash message events not found
             return Redirect::route('admin.events.index');
         }
 
-        return View::make('admin::eventdata.events.edit', compact('event'));
+		$event_status = $this->eventstatusrepo->getEventStatusList();
+
+        return View::make('admin::eventdata.events.edit', compact('event', 'event_status'));
 	}
 
 	/**
@@ -94,8 +100,11 @@ class EventsController extends BaseController
 	 */
 	public function update($id)
 	{
-        //$data = Input::only('name', 'description');
         $data = Input::all();
+
+		// deal with mysql setting '' on an integer field!!!!
+		if($data['number'] == '') $data['number'] = NULL;
+
         $this->eventsrepo->updateWithId($id, $data);
 
         return Redirect::route('admin.events.index', array($id))

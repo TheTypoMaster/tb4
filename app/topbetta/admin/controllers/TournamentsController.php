@@ -3,8 +3,11 @@
 namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Repositories\TournamentsRepo;
 use View;
+use Input;
+use TopBetta\Repositories\TournamentsRepo;
+use TopBetta\Repositories\DbSportsRepository;
+use TopBetta\Tournaments\TournamentCreation;
 
 class TournamentsController extends \BaseController
 {
@@ -12,12 +15,18 @@ class TournamentsController extends \BaseController
 	/**
 	 * @var \TopBetta\Repositories\TournamentsRepo
 	 */
-	private $tournamentRepo;
+	protected $tournamentRepo;
+    protected $sportsrepo;
+    protected $tournamentcreation;
 
-	public function __construct(TournamentsRepo $tournamentRepo)
+	public function __construct(TournamentsRepo $tournamentRepo,
+                                DbSportsRepository $sportsrepo,
+                                TournamentCreation $tournamentcreation)
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
+        $this->sportsrepo = $sportsrepo;
+        $this->tournamentcreation = $tournamentcreation;
 	}
 
 	/**
@@ -44,7 +53,8 @@ class TournamentsController extends \BaseController
 	 */
 	public function create()
 	{
-		//
+        $sports = $this->sportsrepo->selectList();
+        return View::make('admin::tournaments.create', compact('sports'));
 	}
 
 	/**
@@ -54,7 +64,9 @@ class TournamentsController extends \BaseController
 	 */
 	public function store()
 	{
-		//
+        $this->tournamentcreation->createFutureTournament(Input::All());
+        $sports = $this->sportsrepo->selectList();
+        return View::make('admin::tournaments.create', compact('sports'));
 	}
 
 	/**

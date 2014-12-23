@@ -110,6 +110,9 @@ class CompetitionsController extends BaseController
 	{
         //$data = Input::only('name', 'description');
         $data = Input::all();
+		if($data['state'] == '') $data['state'] = NULL;
+		if($data['type_code'] == '') $data['type_code'] = NULL;
+
         $this->competitionsrepo->updateWithId($id, $data);
 
         return Redirect::route('admin.competitions.index', array($id))

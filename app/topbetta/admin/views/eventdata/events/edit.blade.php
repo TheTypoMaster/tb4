@@ -1,6 +1,15 @@
 @extends('layouts.master')
 
 @section('main')
+
+    {{ Form::macro('start_datetime', function($value) use ($event) {
+        return "<div class='input-group datepicker'>
+                    <input type='text' class='form-control' name='start_date' id='start_date' readonly value='$event->start_date'/>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
+                    </span>
+                </div>";
+                }); }}
+
 <div class="row">
 	<div class="col-lg-12">
 		<h2 class="page-header">Event: {{ $event->name }}
@@ -28,20 +37,32 @@
                 {{ Form::label('distance', 'Distance:') }}
                 {{ Form::text('distance', null, array('class' => 'form-control', 'placeholder' => 'Distance')) }}
             </div>
+
             <div class="form-group">
                 {{ Form::label('paid_flag', 'Paid:') }}
-                {{ Form::text('paid_flag', null, array('class' => 'form-control', 'placeholder' => 'Paid')) }}
+                {{ Form::select('paid_flag', array(
+                                '1' => 'Yes',
+                                '0' => 'No'), $event->paid,
+                                array('class' => 'form-control selected', 'placeholder' => $event->paid)) }}
             </div>
+
             <div class="form-group">
-                {{ Form::label('start_date', 'Start Date:') }}
-                {{ Form::text('start_date', null, array('class' => 'form-control', 'placeholder' => 'Start Date')) }}
+                {{ Form::label('start_date', 'Start Date') }}
+                {{ Form::start_datetime('start_date', null, array('class' => 'form-control input-sm datepicker','placeholder' => $event->start_date, 'readonly'))}}
             </div>
+
+            <div class="form-group">
+                {{ Form::label('event_status_id', 'Event Status') }}
+                {{ Form::select('event_status_id', $event_status, null, array('class' => 'form-control'))}}
+            </div>
+
             <div class="form-group">
                 {{ Form::label('display_flag', 'Display on Topbetta:') }}
-                {{ Form::text('display_flag', null, array('class' => 'form-control', 'placeholder' => 'Display')) }}
+                {{ Form::select('display_flag', array(
+                                '1' => 'Yes',
+                                '0' => 'No'), $event->display_flag,
+                                array('class' => 'form-control selected', 'placeholder' => $event->display_flag)) }}
             </div>
-
-
         </div>
 
         <div class="col-lg-12">
@@ -60,5 +81,10 @@
 	</div>
 	<!-- /.col-lg-12 -->
 </div>
+
+<script type="text/javascript">
+    $(".datepicker").datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+</script>
+
 <!-- /.row -->
 @stop

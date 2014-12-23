@@ -23,6 +23,7 @@
         		<tr>
         			<th>ID</th>
         			<th>Event Name</th>
+					<th>Competition</th>
         			<th>Number</th>
         			<th>Class</th>
         			<th>Distance</th>
@@ -41,11 +42,12 @@
         		<tr>
         			<td>{{ $event->id }}</td>
         			<td>{{ $event->name }}</td>
+        			<td>{{ $event->competition_name }}</td>
         			<td>{{ $event->number }}</td>
         			<td>{{ $event->class }}</td>
         			<td>{{ $event->distance }}</td>
-        			<td>{{ $event->event_status_id }}</td>
-        			<td>{{ $event->paid_flag }}</td>
+        			<td>{{ $event->event_status_name }}</td>
+        			<td>{{ ($event->paid_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $event->start_date }}</td>
         			<td>{{ ($event->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $event->created_at }}</td>
