@@ -244,6 +244,10 @@ Route::group(array('after' => 'topbetta_secure_links'), function() {
     Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
 });
 
+// used for token related things
+Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
+	Route::post('token/request', 'TopBetta\Frontend\FrontTokenController@tokenRequest');
+});
 
 
 
