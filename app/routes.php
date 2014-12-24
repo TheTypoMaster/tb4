@@ -245,7 +245,7 @@ Route::group(array('after' => 'topbetta_secure_links'), function() {
 });
 
 // used for token related things
-Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
+Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
 	Route::post('token/request', 'TopBetta\Frontend\FrontTokenController@tokenRequest');
 });
 
