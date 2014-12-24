@@ -114,7 +114,11 @@ class TokenAuthenticationService {
 
         $sharedSecret = $sourceDetails['shared_secret'];
 
-        $hashString = $input['source'] . $input['club_user_name'] . $input['betting_user_name'];
+        $clubname = '';
+
+        if(isset($input['club_user_name'])) $clubname = $input['club_user_name'];
+
+        $hashString = $input['source'] . $clubname . $input['betting_user_name'] . $sourceDetails['shared_secret'];
 
         if (Hash::check($hashString, $input['token'])) return true;
 
