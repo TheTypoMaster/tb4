@@ -239,16 +239,16 @@ class RaceResulting {
          */
 
         // ALL RESULTS PROCESSED - RESULT ALL BETS FOR THE EVENT LIST
-        foreach ($eventList as $eventId) {
-            Log::info('RESULTING: all bets for event id: ' . $eventId);
+       // foreach ($eventList as $eventId) {
+            Log::info('RESULTING: all bets for event id: ' . $eventModel->id);
 
             // get current micro time
             list($partMsec, $partSec) = explode(" ", microtime());
             $currentTimeMs = $partSec.$partMsec;
-            File::append('/tmp/'.$date.'-ResultPost-E' .$eventId.'-'. $currentTimeMs, json_encode($racingArray));
+            File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
-            $this->betresults->resultAllBetsForEvent($eventId);
-        }
+            $this->betresults->resultAllBetsForEvent($eventModel->id);
+        //}
 
         return array('error' => false,
                     'message' => "OK: Processed Successfully",
