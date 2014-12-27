@@ -44,6 +44,7 @@ class TokenAuthenticationService {
 
     /**
      * Public method that receives the request and performs source identification, validation and token reponse
+     *
      * @param $input
      * @return array
      * @throws ValidationException
@@ -158,6 +159,7 @@ class TokenAuthenticationService {
 
     /**
      * Stores a newly genreated token for a user id with a defined expiry time
+     *
      * @param $bettingUserId
      * @param $newtoken
      * @param $expiry
