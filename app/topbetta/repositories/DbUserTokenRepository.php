@@ -18,4 +18,11 @@ class DbUserTokenRepository extends BaseEloquentRepository implements UserTokenR
         $this->model = $usertoken;
     }
 
+    public function getTokenRecordByUserId($userID){
+        $record = $this->model->where('user_id', $userID)->first();
+
+        if($record) return $record->toArray();
+
+        return false;
+    }
 }

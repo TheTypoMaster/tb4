@@ -244,9 +244,11 @@ Route::group(array('after' => 'topbetta_secure_links'), function() {
     Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
 });
 
-// used for token related things
+// used for token related things (Token Creation / Logins / Child Betting account creation and funding)
 Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
 	Route::post('token/request', 'TopBetta\Frontend\FrontTokenController@tokenRequest');
+	Route::get('token/login', 'TopBetta\Frontend\FrontTokenController@tokenLogin');
+	Route::post('token/manage', 'TopBetta\Frontend\FrontTokenController@tokenManageFunds');
 });
 
 

@@ -8,6 +8,7 @@
 
 use App;
 use Hash;
+use Auth;
 use Carbon\Carbon;
 
 use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
@@ -51,8 +52,15 @@ class TokenAuthenticationService {
      */
     public function processTokenRequest($input){
 
+        $rules = array(
+            'source' => 'required',
+            //'club_name' => 'required',
+            'betting_user_name' => 'required',
+            'token' => 'required'
+        );
+
         // validate input
-        $validated = $this->_validateParams($input);
+        $validated = $this->_validateParams($input, $rules);
 
         // confirm source of request
         if(!$this->_checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
@@ -81,21 +89,60 @@ class TokenAuthenticationService {
         return array('token' => $newToken);
     }
 
+    /**
+     * Public method that attemps to log a user in with a token
+     *
+     * @param $input
+     * @return mixed
+     * @throws ValidationException
+     */
+    public function tokenLogin($input){
+
+        // get token, username and source and validate
+        $rules = array(
+            'source' => 'required',
+            'betting_user_name' => 'required',
+            'token' => 'required'
+        );
+        $validated = $this->_validateParams($input, $rules);
+
+        // get betting account user details
+        $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['betting_user_name']);
+        if(!$bettingUserDetails) throw new ValidationException("Validation Failed", 'Invalid Payload - betting account');
+
+        // if club_name is supplied then this is a child betting acount login and we need to make sure this username is a child of the source?
+        if(isset($input['club_name'])){
+            if(!$this->_confirmBettingAccount($input, $bettingUserDetails)) throw new ValidationException("Validation Failed", 'Invalid Payload - non child');
+        }
+
+        // get token record for the username
+        $tokenRecord = $this->usertoken->getTokenRecordByUserId($bettingUserDetails['id']);
+
+        if(!$tokenRecord) throw new ValidationException("Validation Failed", 'Invalid Payload - no token for betting');
+
+        // check the expiry
+        if($tokenRecord['expiry'] < Carbon::now('Australia/Sydney')) throw new ValidationException("Validation Failed", 'Invalid Payload - token expired:'.$tokenRecord['expiry']. ', Current Time: '.Carbon::now('Australia/Sydney'));
+
+        // compare the token
+        if($tokenRecord['token'] != $input['token']) throw new ValidationException("Validation Failed", 'Invalid Payload - token invalid');
+
+        $user = \TopBetta\Models\UserModel::find(6996);
+
+        // Log user In
+        Auth::login($user);
+
+        return Auth::user();
+    }
+
 
     /**
      * Validates the data
      *
      * @param $input
+     * @param array $rules
      * @return mixed
      */
-    private function _validateParams($input){
-
-        $rules = array(
-            'source' => 'required',
-            //'club_name' => 'required',
-            'betting_user_name' => 'required',
-            'token' => 'required'
-        );
+    private function _validateParams($input, array $rules){
 
         return App::make('\TopBetta\Services\Validation\Validator')->validate($input, $rules);
         //return $this->validator->validate($input, $rules);
@@ -171,6 +218,5 @@ class TokenAuthenticationService {
         return $this->usertoken->updateOrCreate($data, 'user_id');
 
     }
-
 
 }

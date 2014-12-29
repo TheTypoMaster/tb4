@@ -58,7 +58,30 @@ class FrontTokenController extends BaseController{
             return $this->response->failed($e->getErrors(), 500, 500, 'No good', 'No good');
 
         }
+    }
 
+    public function tokenLogin(){
+        $input = Input::all();
+
+        try {
+            $loginRequest = $this->tokenauth->tokenLogin($input);
+            return $this->response->success($loginRequest);
+        }catch(ValidationException $e){
+            return $this->response->failed($e->getErrors(), 500, 500, 'Login Failed', 'User login with token failed');
+        }
+    }
+
+    public function tokenManageFunds(){
+        $input = Input::all();
+
+        try {
+            $loginRequest = '';
+        }catch(ValidationException $e){
+
+        }
+    }
+
+    private function createChildAccount(){
 
     }
 
