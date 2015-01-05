@@ -134,6 +134,10 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	//The email gets sent via this method
 	Route::post('password_resets', 'FrontPasswordResetsController@store');
 
+
+	// Full account ONLY registration
+	Route::resource('registration', 'TopBetta\Frontend\Controllers\UserRegistrationController');
+
 	// ::: BETS :::
 	Route::resource('bets', 'FrontBets');
 

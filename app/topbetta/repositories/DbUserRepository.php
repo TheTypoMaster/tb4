@@ -7,55 +7,36 @@
  */
 
 use TopBetta\Models\UserModel;
-use TopBetta\Models\TopBettaUserModel;
+use TopBetta\Services\Validation\UserBasicValidator;
 
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 
-class DbUserRepository extends BaseEloquentRepository implements UserRepositoryInterface{
+class DbUserRepository extends BaseEloquentRepository implements UserRepositoryInterface {
 
-    protected $user;
+    protected $model;
+    protected $validator;
 
-    public function __construct(UserModel $user)
+    public function __construct(UserModel $basicUser,
+                                UserBasicValidator $validator)
     {
-        $this->model = $user;
+        $this->model = $basicUser;
+        $this->validator = $validator;
     }
 
     public function createBasicUser($input){
-
-        // validation
-        $rules = array('user_name' => 'required',
-                        'first_name' => 'required',
-                        'last_name' => 'required',
-                        'email' => 'required|email',
-                        'password' => 'required',
-                        'mobile' => 'required',
-                        'source' => 'required',
-                        'optbox' => 'required',
-                        'btag' => '');
-
-//        // Get user registration details from post.
-//        $username	= JRequest::getString('username', null, 'post');
-//        $first_name	= JRequest::getString('first_name', null, 'post');
-//        $last_name	= JRequest::getString('last_name', null, 'post');
-//        $email		= JRequest::getString('email', null, 'post');
-//        $email2		= JRequest::getString('email', null, 'post');
-//        $password	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
-//        $password2	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
-//        $mobile		= JRequest::getString('mobile', null, 'post');
-//        $source		= JRequest::getString('source', null, 'post');
-//        $optbox		= JRequest::getVar('optbox', null, 'post');
-//        $btag		= JRequest::getString('btag', 'kx8FbVSXTgEWqcfzuvZcQGNd7ZgqdRLk', 'post');
-
-    }
-
-    public function createFullUser($input){
-
-
-
+        return $this->create($input);
     }
 
     public function getUserDetailsFromUsername($username){
         $userDetails = $this->model->where('username', $username)->first();
+
+        if ($userDetails) return $userDetails->toArray();
+
+        return false;
+    }
+
+    public function getFullUserDetailsFromUsername($username){
+        $userDetails = $this->model->with('topbettauser')->where('username', $username)->first();
 
         if ($userDetails) return $userDetails->toArray();
 

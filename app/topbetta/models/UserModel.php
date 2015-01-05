@@ -14,8 +14,12 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
 
     protected $table = 'tbdb_users';
     protected $guarded = array();
-    public static $rules = array();
     protected $hidden = array('password', 'remember_token');
+
+    public function topbettauser() {
+        return $this->hasOne('TopBetta\Models\TopBettaUserModel', 'user_id');
+    }
+
 
     /**
      * Get the unique identifier for the user.

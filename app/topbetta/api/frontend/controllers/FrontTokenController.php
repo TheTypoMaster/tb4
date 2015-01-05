@@ -72,12 +72,13 @@ class FrontTokenController extends BaseController{
     }
 
     public function tokenManageFunds(){
-        $input = Input::all();
+        $input =Input::json()->all();
 
         try {
-            $loginRequest = '';
+            $manageRequest = $this->tokenauth->manageBettingAccount($input);
+            return $this->response->success($manageRequest);
         }catch(ValidationException $e){
-
+            return $this->response->failed($e->getErrors(), 500, 500, 'Manage Failed', 'Problem with manage request');
         }
     }
 
