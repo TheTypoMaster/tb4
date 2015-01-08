@@ -9,13 +9,13 @@ use TopBetta\Services\Response\ApiResponse;
 
 class UserRegistrationController extends BaseController {
 
-	protected $accountService;
+	protected $accountservice;
 	protected $response;
 
-	function __construct(UserAccountService $accountService,
+	function __construct(UserAccountService $accountservice,
 						 ApiResponse $response)
 	{
-		$this->accountService = $accountService;
+		$this->accountservice = $accountservice;
 		$this->response = $response;
 	}
 
@@ -25,13 +25,24 @@ class UserRegistrationController extends BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function createFull()
 	{
 		try{
-			$accountCreationResponse =  $this->accountService->createTopbettaUserAccount(Input::json()->all());
+			$accountCreationResponse = $this->accountservice->createTopbettaUserAccount(Input::json()->all());
 			return $this->response->success($accountCreationResponse);
 		}catch(ValidationException $e){
-			return $this->response->failed($e->getErrors(), 500, 500, 'User Registration Failed', 'User Registration Failed');
+			return $this->response->failed($e->getErrors(), 200, 101, 'User Registration Failed', 'User Registration Failed');
+		}
+
+	}
+
+	public function createFullChildFromClone()
+	{
+		try{
+			$accountCreationResponse = $this->accountservice->createUniqueChildUserAccount(Input::json()->all());
+			return $this->response->success($accountCreationResponse);
+		}catch(ValidationException $e){
+			return $this->response->failed($e->getErrors(), 200, 102, 'Child User Registration Failed', 'Child User Registration Failed');
 		}
 
 	}

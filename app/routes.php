@@ -134,10 +134,6 @@ Route::group(array('prefix' => '/api/v1'), function() {
 	//The email gets sent via this method
 	Route::post('password_resets', 'FrontPasswordResetsController@store');
 
-
-	// Full account ONLY registration
-	Route::resource('registration', 'TopBetta\Frontend\Controllers\UserRegistrationController');
-
 	// ::: BETS :::
 	Route::resource('bets', 'FrontBets');
 
@@ -248,11 +244,20 @@ Route::group(array('after' => 'topbetta_secure_links'), function() {
     Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
 });
 
-// used for token related things (Token Creation / Logins / Child Betting account creation and funding)
+// used for Punters Club application related things atm (Token Creation / Logins / Child Betting account creation and funding)
 Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
-	Route::post('token/request', 'TopBetta\Frontend\FrontTokenController@tokenRequest');
-	Route::get('token/login', 'TopBetta\Frontend\FrontTokenController@tokenLogin');
-	Route::post('token/manage', 'TopBetta\Frontend\FrontTokenController@tokenManageFunds');
+
+	// Token request and login
+	Route::post('authentication/request', 'TopBetta\Frontend\FrontTokenController@tokenRequest');
+	Route::get('authentication/login', 'TopBetta\Frontend\FrontTokenController@tokenLogin');
+
+	// Funds management/transfer
+	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
+
+	// Full user account registration routes
+	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
+	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildClone');
+
 });
 
 
