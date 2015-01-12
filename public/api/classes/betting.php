@@ -2559,7 +2559,7 @@ class Api_Betting extends JController
                         'option_id' => $selection->selection_id,
                         'option_name' => $selectionDetails->option_name,
                         'option_odds' => $bet_dividend,  // is this fixed odds
-                        'option_line' => ($selectionDetails->line === null) ? '' : $selectionDetails->line,
+                        'option_line' => ($selectionDetails->market_line === null) ? '' : $selectionDetails->market_line,
                         // 'option_bet_limit' => '', // ?
 
                         // Market Data - market recors
