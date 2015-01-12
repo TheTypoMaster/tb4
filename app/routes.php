@@ -31,6 +31,7 @@ if (array_key_exists('Origin', $requestHeaders)) {
 		"http://192.168.0.31:9778",
 		"https://www.topbetta.com.au",
 		"http://jason.mugbookie.com",
+        "http://jasontb.mugbookie.com",
 		"http://evan.mugbookie.com",
 		"http://mic.mugbookie.com",
 		"http://greg.mugbookie.com"
@@ -88,10 +89,18 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
+    //incoming race result data
+    Route::resource('raceresults', 'RaceResulting');
 	// special case where Risk Manager can push race results to TopBetta
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
 	Route::resource('risk-race-status', 'RiskRaceStatus', array('only' => array('store')));
+    // Risk can send query sport bets
+    Route::resource('risk-sport-bets', 'RiskSportBets');
+    // Risk can send query racing bets
+    Route::resource('risk-bets', 'RiskBets');
+    // special case where Risk Manager can push sport market results to TopBetta
+    Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 });
@@ -214,6 +223,12 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('tournaments', 'TopBetta\admin\controllers\TournamentsController');
 	Route::resource('reports', 'TopBetta\admin\controllers\ReportsController', array('only' => array('index', 'show')));
 	Route::resource('settings', 'TopBetta\admin\controllers\SettingsController');
+	Route::resource('sports', 'TopBetta\admin\controllers\SportsController');
+	Route::resource('competitions', 'TopBetta\admin\controllers\CompetitionsController');
+	Route::resource('markets', 'TopBetta\admin\controllers\MarketsController');
+	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
+	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
+	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

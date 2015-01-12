@@ -107,10 +107,11 @@ return array(
         'Illuminate\View\ViewServiceProvider',
         'Illuminate\Workbench\WorkbenchServiceProvider',
 
+
         'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
-        'Frozennode\Administrator\AdministratorServiceProvider'
+        'TopBetta\Repositories\RepositoryServiceProvider'
 
 	),
 
@@ -209,14 +210,19 @@ return array(
 		'BackRacing'	=> 'TopBetta\backend\RacingController',
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
+        'RaceResulting' => 'TopBetta\backend\RacingResultsController',
 		'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
 		'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
+		'RiskSportBets'		=> 'TopBetta\backend\RiskSportBetsController',
+		'RiskBets'		=> 'TopBetta\backend\RiskBetsController',
+		'RiskResultSportMarket'		=> 'TopBetta\backend\RiskResultSportMarketController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
 		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
 		'BetRepo' => 'TopBetta\Facades\BetRepo',
 		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
+
     ),
 
     'cipher' => MCRYPT_RIJNDAEL_256,

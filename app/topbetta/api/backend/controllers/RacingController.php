@@ -3,6 +3,8 @@
 use TopBetta;
 use TopBetta\Services\Caching\NextToJumpCacheService;
 
+use TopBetta\Repositories\DbEventRepository;
+
 class RacingController extends \BaseController
 {
 
@@ -49,12 +51,14 @@ class RacingController extends \BaseController
     private $debug = false;
 
     protected $nexttojump;
+    protected $events;
 
 
-    public function __construct(NextToJumpCacheService $nexttojump)
+    public function __construct(NextToJumpCacheService $nexttojump,
+                                DbEventRepository $events)
     {
         $this->nexttojump = $nexttojump;
-        //$this->beforeFilter('apiauth');
+        $this->events = $events;
     }
 
     /**
@@ -316,7 +320,7 @@ class RacingController extends \BaseController
                                         $meetingRecord = TopBetta\RaceMeeting::find($meetingExists);
 
                                         //check if race exists in DB
-                                        $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
+                                        $raceExists = $this->events->getEventDetails($meetingId.'_'.$raceNo);
 
                                         // if race exists update that record
                                         if ($raceExists) {
@@ -341,7 +345,7 @@ class RacingController extends \BaseController
                                             $raceEvent = new TopBetta\RaceEvent;
                                             $currentRaceStatus = 0;
                                             if (isset($dataArray['MeetingId'])) {
-                                                $raceEvent->external_event_id = $meetingId;
+                                                $raceEvent->external_event_id = $meetingId.'_'.$dataArray['RaceNo'];
                                             }
                                         }
 
@@ -370,11 +374,11 @@ class RacingController extends \BaseController
 
                                         // update tournament start end times
                                         if (isset($dataArray ['JumpTime']) && isset($dataArray['RaceNo'])) {
-                                            $tournamentsOnMeeting = Topbetta\Tournament::getTournamentWithEventGroup($meetingExists);
+                                            $tournamentsOnMeeting = TopBetta\Tournament::getTournamentWithEventGroup($meetingExists);
                                             // loop on each tournament
                                             foreach ($tournamentsOnMeeting as $tournament) {
                                                 // if it's race 1 store the jump time as tourn start date.
-                                                $tournamentModel = Topbetta\Tournament::find($tournament->id);
+                                                $tournamentModel = TopBetta\Tournament::find($tournament->id);
                                                 if ($meetingRecord->start_date == '0000-00-00 00:00:00' || $dataArray['JumpTime'] < $meetingRecord->start_date) {
                                                     $tournamentModel->start_date = $dataArray['JumpTime'];
                                                 } else {
@@ -503,7 +507,7 @@ class RacingController extends \BaseController
                                 $runnerNo = $dataArray['RunnerNo'];
 
                                 //check if race exists in DB
-                                $raceExists = TopBetta\RaceEvent::getEventDetails($meetingId, $raceNo);
+                                $raceExists = $this->events->getEventDetails($meetingId.'_'.$raceNo);
 
                                 //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner, Race Exists: ". print_r($raceExists,true), 1);
 
@@ -548,7 +552,7 @@ class RacingController extends \BaseController
                                     }
                                     if (isset($dataArray['RunnerNo'])) {
                                         $raceRunner->number = $dataArray['RunnerNo'];
-                                        $raceRunner->external_selection_id = $raceExists['ExternalEventId'].'_'.$raceNo.'_'.$dataArray['RunnerNo'];
+                                        $raceRunner->external_selection_id = $raceExists['ExternalEventId'].$dataArray['RunnerNo'];
 
                                     }
 
@@ -574,10 +578,6 @@ class RacingController extends \BaseController
                                     // Get silkID and Last Starts for runner from RISA table
                                     if ($meetingType == "R") {
 
-                                        if (isset($dataArray['SilkName'])) {
-                                            $raceRunner->silk_id = $dataArray['SilkName'];
-                                        }
-
                                         // check if meeting exists in DB
                                         $meetingExists = TopBetta\RaceMeeting::meetingExists($meetingId);
                                         //TopBetta\LogHelper::l("BackAPI: Racing - Processing Runner. Looking up silk and LastStarts");
@@ -597,13 +597,6 @@ class RacingController extends \BaseController
                                             // Build the runner code
                                             $runnerCodeSelection = str_replace(" ", "", $meetDate . "-" . $codeType . "-" . $venueName . "-" . $raceNumber . "-" . $runnerNumber);
 
-                                            // get silks and last starts from the feed now.
-                                            if (isset($dataArray['LastStarts'])){
-                                                $raceRunner->last_starts = $dataArray['LastStarts'];
-                                            }else{
-                                                $raceRunner->last_starts = "";
-                                            }
-
                                             if (isset($dataArray['SilkCode'])) {
                                                 $raceRunner->silk_id = $dataArray['SilkCode'];
                                             } else {
@@ -617,6 +610,12 @@ class RacingController extends \BaseController
                                             // add the runner code
                                             $raceRunner->runner_code = $runnerCodeSelection;
                                         }
+                                    }
+
+                                    if (isset($dataArray['LastStarts'])){
+                                        $raceRunner->last_starts = $dataArray['LastStarts'];
+                                    }else{
+                                        $raceRunner->last_starts = "";
                                     }
 
                                     if (isset($dataArray['Jockey'])) {
@@ -877,10 +876,22 @@ class RacingController extends \BaseController
                             }
                         }
 
+                        list($partMsec, $partSec) = explode(" ", microtime());
+                        $currentTimeMs = $partSec.$partMsec;
+                        $racingJSONlog = \Input::json()->all();
+                        \File::append('/tmp/backAPIracingResultJSON-EventList-C' .count($eventList).'-'. $currentTimeMs, print_r($eventList,true));
                         // ALL RESULTS PROCESSED - RESULT ALL BETS FOR THE EVENT LIST
                         foreach ($eventList as $eventId) {
                             \Log::info('RESULTING: all bets for event id: ' . $eventId);
-							$betResultRepo = new TopBetta\Repositories\BetResultRepo();
+
+
+                            // get current micro time
+                            list($partMsec, $partSec) = explode(" ", microtime());
+                            $currentTimeMs = $partSec.$partMsec;
+                            $racingJSONlog = \Input::json()->all();
+                            \File::append('/tmp/backAPIracingResultJSON-E' .$eventId.'-'. $currentTimeMs, json_encode($racingJSONlog));
+
+                            $betResultRepo = new TopBetta\Repositories\BetResultRepo();
 							$betResultRepo->resultAllBetsForEvent($eventId);
                         }
 
@@ -923,7 +934,7 @@ class RacingController extends \BaseController
                                     $raceExists = TopBetta\RaceEvent::eventExists($meetingId, $raceNo);
 
                                     // grab the race type code
-                                    $raceTypeCode = Topbetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
+                                    $raceTypeCode = TopBetta\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 
                                     // if race exists update that record
                                     if ($raceExists) {
@@ -1094,7 +1105,7 @@ class RacingController extends \BaseController
         $priceType = $dataArray['PriceType'];
 
         // grab the meeting details we need
-        $meetingTypeCodeResult = Topbetta\RaceMeeting::getMeetingDetails($meetingId);
+        $meetingTypeCodeResult = TopBetta\RaceMeeting::getMeetingDetails($meetingId);
 
         if (is_array($meetingTypeCodeResult)) {
             if (isset($meetingTypeCodeResult[0])) {

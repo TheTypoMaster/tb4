@@ -8,6 +8,8 @@ use TopBetta\BetSelection;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
+use Carbon;
+
 /**
  * Description of BetResult
  *
@@ -82,8 +84,16 @@ class BetResultRepo
 				->get();
 
 		$result = array();
+        $date = substr(Carbon\Carbon::now(), 0, 10);
 
 		foreach ($bets as $bet) {
+
+            // get current micro time
+            list($partMsec, $partSec) = explode(" ", microtime());
+            $currentTimeMs = $partSec.$partMsec;
+            \File::append('/tmp/'.$date.'-ResultPost-E'. $eventId. '-B'.$bet->id.'-'.$currentTimeMs, print_r($bet,true));
+
+
 			\Log::info('RESULTING BET: ' . $bet->id);
 			$result[$bet->id] = $this->resultBet($bet);
 		}
@@ -191,7 +201,17 @@ class BetResultRepo
 		$payout = \TopBetta\Facades\BetRepo::getBetPayoutAmount($bet);
 		\Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);
 
-		if ($payout) {
+
+        $date = substr(Carbon\Carbon::now(), 0, 10);
+
+        // get current micro time
+        list($partMsec, $partSec) = explode(" ", microtime());
+        $currentTimeMs = $partSec.$partMsec;
+        \File::append('/tmp/'.$date.'-ResultPost-' .'B'. $bet->id.'-'.$currentTimeMs, print_r($bet,true). " - Payout :". $payout);
+
+
+
+        if ($payout) {
 			// WINNING BET
 			\Log::info('WINNING BET: id - ' . $bet->id);
 			return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);

@@ -1,8 +1,8 @@
-<?php
-namespace TopBetta;
-use Doctrine\Tests\DBAL\Types\IntegerTest;
+<?php namespace TopBetta;
 
-class RaceMeeting extends \Eloquent {
+use Eloquent;
+
+class RaceMeeting extends Eloquent {
 
 	protected $table = 'tbdb_event_group';
 
@@ -73,7 +73,7 @@ class RaceMeeting extends \Eloquent {
 				
 			}			
 
-			$result[] = array('id' => $race -> id, 'external_race_id' => $race->external_event_id.'_'.$race -> number, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race -> class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
+			$result[] = array('id' => $race -> id, 'external_race_id' => $race->external_event_id.'_'.$race -> number, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
 
 		}	
 		

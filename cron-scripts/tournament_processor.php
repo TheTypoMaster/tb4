@@ -132,7 +132,9 @@ class TournamentProcessor extends TopBettaCLI
 	protected function _updateLeaderboard($tournament_id, $user_id)
 	{
 		$total = $this->tournament_ticket->getLeaderboardTicketCurrency($tournament_id, $user_id);
-		$this->leaderboard->updateLeaderboardByUserAndTournamentID($user_id, $tournament_id, $total);
+        echo "#### Tournament ID: $tournament_id, UserId:$user_id, Currency:$total\n";
+        file_put_contents('/tmp/tournament-leaderboard-'.$tournament_id, 'UserId:'.$user_id.', Currency:'.$total."\n", FILE_APPEND);
+        $this->leaderboard->updateLeaderboardByUserAndTournamentID($user_id, $tournament_id, $total);
 	}
 
 	/**
