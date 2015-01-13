@@ -1,5 +1,7 @@
 <?php namespace TopBetta\backend;
 
+use Config;
+
 use TopBetta;
 use TopBetta\Services\Caching\NextToJumpCacheService;
 
@@ -213,6 +215,10 @@ class RacingController extends \BaseController
                                         if (isset($dataArray['Id'])) {
                                             $raceMeet->external_event_group_id = $dataArray['Id'];
                                         }
+                                        // international meetings are not displayed by default
+                                        if (isset($dataArray['Country'])) {
+                                            if($dataArray['Country'] == 'INT') $raceMeet->display_flag = 0;
+                                        }
                                     }
 
                                     // add the meeting code to the model
@@ -275,6 +281,10 @@ class RacingController extends \BaseController
                                     }
                                     if (isset($dataArray['Country'])) {
                                         $raceMeet->country = $dataArray['Country'];
+
+                                        // by default we don't display INT races. This should be configured in the applciation at some stage
+                                        if($dataArray['Country'] == 'INT' && $raceMeet->display_flag != 1) $raceMeet->display_flag = 0;
+
                                     }
                                     if (isset($dataArray['MeetingType'])) {
                                         $raceMeet->meeting_grade = $dataArray['MeetingType'];
@@ -347,6 +357,7 @@ class RacingController extends \BaseController
                                             if (isset($dataArray['MeetingId'])) {
                                                 $raceEvent->external_event_id = $meetingId.'_'.$dataArray['RaceNo'];
                                             }
+                                            if($meetingRecord->display_flag == '0') $raceEvent->display_flag = 0;
                                         }
 
                                         // race status path array
