@@ -45,5 +45,29 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\EventRepositoryInterface',
             'TopBetta\Repositories\DbEventRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\BetOriginRepositoryInterface',
+            'TopBetta\Repositories\DbBetOriginRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\UserTokenRepositoryInterface',
+            'TopBetta\Repositories\DbUserTokenRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\UserRepositoryInterface',
+            'TopBetta\Repositories\DbUserRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\UserTopbettaRepositoryInterface',
+            'TopBetta\Repositories\DbUserTopbettaRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface',
+            'TopBetta\Repositories\DbAccountTransactionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface',
+            'TopBetta\Repositories\DbAccountTransactionTypeRepository'
+        );
     }
 } 
