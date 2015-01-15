@@ -58,7 +58,7 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbUserRepository'
         );
         $this->app->bind(
-            'TopBetta\Repositories\Contracts\UserTopbettaRepositoryInterface',
+            'TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface',
             'TopBetta\Repositories\DbUserTopbettaRepository'
         );
         $this->app->bind(
