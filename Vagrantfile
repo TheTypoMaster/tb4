@@ -27,7 +27,6 @@ sudo a2enmod rewrite
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php5/apache2/php.ini
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
 sed -i "s/disable_functions = .*/disable_functions = /" /etc/php5/cli/php.ini
-#sed -i "s/DocumentRoot .*/DocumentRoot \/var\/www\/public/" /etc/apache2/sites-available/000-default.conf
 
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
@@ -35,6 +34,15 @@ sudo mv composer.phar /usr/local/bin/composer
 echo "Australia/Sydney" | sudo tee /etc/timezone
 
 echo "cd /vagrant" >> /home/vagrant/.bashrc
+
+cd /vagrant
+composer install
+
+echo "192.168.33.10 services.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.11 topbetta.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.12 serena.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.13 risk.dev" | sudo tee -a /etc/hosts
+
 SCRIPT
 
 $vhost_setup = <<SCRIPT
@@ -42,6 +50,7 @@ VHOST=$(cat <<EOF
 <VirtualHost *:80>
   DocumentRoot "/vagrant/public"
   ServerName localhost
+  ServerAlias  services.dev
   <Directory "/vagrant/public">
     AllowOverride All
     Require all granted
