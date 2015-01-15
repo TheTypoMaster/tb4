@@ -33,6 +33,9 @@ sudo mv composer.phar /usr/local/bin/composer
 
 echo "cd /vagrant" >> /home/vagrant/.bashrc
 
+cd /vagrant
+composer install
+
 echo "192.168.33.10 services.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.11 topbetta.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.12 serena.dev" | sudo tee -a /etc/hosts
