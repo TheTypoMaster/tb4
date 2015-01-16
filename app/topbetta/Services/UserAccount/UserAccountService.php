@@ -181,32 +181,4 @@ class UserAccountService {
 
     }
 
-    /**
-     * Confirms the data is from a trusted source
-     *
-     * @param $input
-     * @return bool
-     */
-    public function checkSource($input){
-
-        $sourceDetails = $this->betsource->getSourceByKeyword($input['source']);
-
-        if(!$sourceDetails) return false;
-
-        $hashString = '';
-        foreach($input as $key => $field){
-            if($key != 'token') $hashString .= $field;
-        }
-
-        $hashString .= $sourceDetails['shared_secret'];
-
-        //$hashString = $input['source'] . $clubname . $bettingUserName . $clubBettingUserName . $bettingAmount . $sourceDetails['shared_secret'];
-
-        //dd($hashString);
-        if (Hash::check($hashString, $input['token'])) return true;
-
-        return false;
-
-    }
-
 }
