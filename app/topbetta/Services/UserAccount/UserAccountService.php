@@ -112,15 +112,15 @@ class UserAccountService {
         if ($validator->fails()) throw new ValidationException("Validation Failed", $validator->messages());
 
         // check if default unique betting username exists for this club (parent-user-name_personal-username)
-        $uniqueBettingUserDetails = $this->user->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
+        $uniqueBettingUserDetails = $this->basicUser->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
 
         if(!$uniqueBettingUserDetails) {
 
             // get details of betting acount to base club betting account off or throw exception if it does not exist
-            $bettingAccountDetails = $this->user->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
+            $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
             if(!$bettingAccountDetails) throw new ValidationException("Validation Failed", 'Personal betting account does not exist?');
 
-            $parentAccountDetails = $this->user->getFullUserDetailsFromUsername($input['parent_user_name']);
+            $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_user_name']);
             if(!$parentAccountDetails) throw new ValidationException("Validation Failed", 'Parent account does not exist?');
 
             // create club betting account
