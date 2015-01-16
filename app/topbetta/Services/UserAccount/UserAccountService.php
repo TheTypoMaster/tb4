@@ -96,7 +96,7 @@ class UserAccountService {
      * @return bool
      * @throws ValidationException
      */
-    public function createFullChildClone($input){
+    public function createUniqueChildUserAccount($input){
 
         // validation rules
         $rules = array(
