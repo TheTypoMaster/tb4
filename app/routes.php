@@ -256,7 +256,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 
 	// Full user account registration routes
 	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
-	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildClone');
+	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
 
 });
 
