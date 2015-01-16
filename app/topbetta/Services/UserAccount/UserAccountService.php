@@ -8,6 +8,7 @@
 
 use Carbon\Carbon;
 use Validator;
+use Hash;
 
 use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
