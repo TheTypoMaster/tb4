@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Validator;
 use Hash;
 
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -20,16 +20,16 @@ class UserAccountService {
 
     protected $basicUser;
     protected $fullUser;
-    protected $betorigin;
+    protected $betsource;
 
 
-    function __construct(BetOriginRepositoryInterface $betorigin,
+    function __construct(BetSourceRepositoryInterface $betsource,
                          UserRepositoryInterface $basicUser,
                          UserTopbettaRepositoryInterface $fullUser)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
-        $this->betorigin = $betorigin;;
+        $this->betsource = $betsource;
     }
 
 
@@ -161,7 +161,7 @@ class UserAccountService {
 
     public function checkSource($input){
 
-        $sourceDetails = $this->betorigin->getOriginByKeyword($input['source']);
+        $sourceDetails = $this->betsource->getOriginByKeyword($input['source']);
 
         if(!$sourceDetails) return false;
 
