@@ -9,6 +9,7 @@
 use Carbon\Carbon;
 use Validator;
 
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -18,12 +19,16 @@ class UserAccountService {
 
     protected $basicUser;
     protected $fullUser;
+    protected $betorigin;
 
-    function __construct(UserRepositoryInterface $basicUser,
+
+    function __construct(BetOriginRepositoryInterface $betorigin,
+                         UserRepositoryInterface $basicUser,
                          UserTopbettaRepositoryInterface $fullUser)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
+        $this->betorigin = $betorigin;;
     }
 
 
