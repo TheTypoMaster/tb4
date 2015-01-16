@@ -11,7 +11,7 @@ use Hash;
 use Auth;
 use Carbon\Carbon;
 
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTokenRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 
@@ -26,7 +26,7 @@ use TopBetta\Services\Validation\Exceptions\ValidationException;
  */
 class TokenAuthenticationService {
 
-    protected $betorigin;
+    protected $betsource;
     protected $usertoken;
     protected $user;
     protected $userservice;
@@ -34,17 +34,17 @@ class TokenAuthenticationService {
     /**
      *  Inject class dependencies
      *
-     * @param BetOriginRepositoryInterface $betorigin
+     * @param BetSourceRepositoryInterface $betsource
      * @param UserTokenRepositoryInterface $usertoken
      * @param UserRepositoryInterface $user
      * @param UserAccountService $userservice
      */
-    public function __construct(BetOriginRepositoryInterface $betorigin,
+    public function __construct(BetSourceRepositoryInterface $betsource,
                                 UserTokenRepositoryInterface $usertoken,
                                 UserRepositoryInterface $user,
                                 UserAccountService $userservice){
 
-        $this->betorigin = $betorigin;
+        $this->betsource = $betsource;
         $this->usertoken = $usertoken;
         $this->user = $user;
         $this->userservice = $userservice;
@@ -172,7 +172,7 @@ class TokenAuthenticationService {
      */
     public function checkSource($input){
 
-        $sourceDetails = $this->betorigin->getOriginByKeyword($input['source']);
+        $sourceDetails = $this->betsource->getSourceByKeyword($input['source']);
 
         if(!$sourceDetails) return false;
 

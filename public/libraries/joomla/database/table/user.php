@@ -158,6 +158,13 @@ class JTableUser extends JTable
 	var $betWinsToFbWall			= null;
 
 	/**
+	 * Parent User ID
+	 *
+	 * @var enum
+	 */
+	var $parent_user_id			= null;
+
+	/**
 	* @param database A database connector object
 	*/
 	function __construct( &$db )
@@ -170,6 +177,7 @@ class JTableUser extends JTable
 		$this->sendEmail = 0;
 		$this->isCorporate = 0;
 		$this->isTopBetta = 0;
+		$this->parent_user_id = 0;
 	}
 
 	/**

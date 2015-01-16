@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Repositories;
+<?php namespace TopBetta\ServiceProviders;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 2/12/14
@@ -48,6 +48,10 @@ class RepositoryServiceProvider extends ServiceProvider {
         $this->app->bind(
             'TopBetta\Repositories\Contracts\BetOriginRepositoryInterface',
             'TopBetta\Repositories\DbBetOriginRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\BetSourceRepositoryInterface',
+            'TopBetta\Repositories\DbBetSourceRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\UserTokenRepositoryInterface',

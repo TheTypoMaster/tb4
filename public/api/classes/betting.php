@@ -891,6 +891,7 @@ class Api_Betting extends JController
      * - Changed to use IGAS wagering provider
      * - NOTE: ONLY WIN and PLACE bets are catered for.
      * - NOTE: Exotics must use the saveRacing Bet function
+     * - If betting user had a parent_user_id then the bet will be recorded against the parent user account
      */
     public function saveBet()
     {
@@ -919,12 +920,16 @@ class Api_Betting extends JController
             return OutputHelper::json(401, array('error_msg' => 'Not logged in'));
         }
 
-        //Get user status
+        // get user status
         require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
         $tb_model = new TopbettaUserModelTopbettaUser();
         if (!$tb_model->isTopbettaUser($user->id)) {
             return OutputHelper::json(500, array('error_msg' => 'You have a basic account. Please upgrade it to place the bet'));
         }
+
+        // check if user has a parent account
+        //return var_dump($user);
+        // if($user->parent_user_id) return OutputHelper::json(500, array('error_msg' => $user->parent_user_id));
 
         //JRequest::setVar('id', '1268'); // Tournament ID
         //JRequest::setVar('race_id', '63837'); // Race ID
@@ -1215,10 +1220,20 @@ class Api_Betting extends JController
                 $bet_type_name = $bet_type_model->getBetTypeByName($wagering_bet->getBetType(), true);
                 $bet_product = $bet_product_model->getBetProduct($bet_origin->id);
 
+                if($user->parent_user_id){
+                    $betUserId = $user->parent_user_id;
+                    $parentUser = & JFactory::getUser($user->parent_user_id);
+                    $betUserName = $parentUser->username;
+                }else{
+                    $betUserId = $user->id;
+                    $betUserName = $user->username;
+
+                }
+
                 $bet = clone $bet_model;
 
                 $bet->external_bet_id = 0;
-                $bet->user_id = (int) $user->id;
+                $bet->user_id = (int) $betUserId;
                 $bet->bet_amount = (int) $wagering_bet->getBetAmount();
                 $bet->bet_type_id = (int) $bet_type_name->id;
                 $bet->bet_result_status_id = (int) $processing_status->id;
@@ -1398,8 +1413,8 @@ class Api_Betting extends JController
                 $riskBet = array(
                     'ReferenceId' => $bet->id,
                     'BetDate' => date(DATE_ISO8601),
-                    'ClientId' => $user->id,
-                    'ClientUsername' => $user->username,
+                    'ClientId' => $betUserId,
+                    'ClientUsername' => $betUserName,
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
                     'FreeCredit' => JRequest::getVar('chkFreeBet', 0),

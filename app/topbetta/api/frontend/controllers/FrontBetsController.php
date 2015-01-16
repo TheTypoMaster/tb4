@@ -243,6 +243,8 @@ class FrontBetsController extends \BaseController {
 		$l = new \TopBetta\LegacyApiHelper;
 		$betModel = new \TopBetta\Bet;
 
+		// set bet source
+		if(isset($input['']))
 		if ($exotic) {
 
 			$legacyData = $betModel -> getLegacyBetData($input['selections']['first'][0]);
