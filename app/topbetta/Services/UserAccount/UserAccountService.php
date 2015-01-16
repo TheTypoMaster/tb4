@@ -8,7 +8,9 @@
 
 use Carbon\Carbon;
 use Validator;
+use Hash;
 
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -18,12 +20,16 @@ class UserAccountService {
 
     protected $basicUser;
     protected $fullUser;
+    protected $betorigin;
 
-    function __construct(UserRepositoryInterface $basicUser,
+
+    function __construct(BetOriginRepositoryInterface $betorigin,
+                         UserRepositoryInterface $basicUser,
                          UserTopbettaRepositoryInterface $fullUser)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
+        $this->betorigin = $betorigin;;
     }
 
 
@@ -96,7 +102,7 @@ class UserAccountService {
      * @return bool
      * @throws ValidationException
      */
-    public function createFullChildClone($input){
+    public function createUniqueChildUserAccount($input){
 
         // validation rules
         $rules = array(
@@ -115,20 +121,20 @@ class UserAccountService {
         if(!$this->checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
 
         // check if default unique betting username exists for this club (parent-user-name_personal-username)
-        $uniqueBettingUserDetails = $this->user->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
+        $uniqueBettingUserDetails = $this->basicUser->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
 
         if(!$uniqueBettingUserDetails) {
 
             // get details of betting acount to base club betting account off or throw exception if it does not exist
-            $bettingAccountDetails = $this->user->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
+            $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
             if(!$bettingAccountDetails) throw new ValidationException("Validation Failed", 'Personal betting account does not exist?');
 
-            $parentAccountDetails = $this->user->getFullUserDetailsFromUsername($input['parent_user_name']);
+            $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_user_name']);
             if(!$parentAccountDetails) throw new ValidationException("Validation Failed", 'Parent account does not exist?');
 
             // create club betting account
             $data = array('username' => $input['parent_user_name'].'_'.$input['personal_betting_user_name'],
-                'email' => 'no-email_'.$bettingAccountDetails['email'],
+                'email' => $input['parent_user_name'].'+'.$bettingAccountDetails['email'],
                 'password' => substr( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ,mt_rand( 0 ,50 ) ,1 ) .substr( md5( time() ), 1),
                 'first_name' => $bettingAccountDetails['topbettauser']['first_name'],
                 'last_name' => $bettingAccountDetails['topbettauser']['last_name'],
@@ -149,8 +155,30 @@ class UserAccountService {
             return $this->createTopbettaUserAccount($data);
 
         } else {
-            throw new ValidationException("Validation Failed", 'Personal betting already exists');
+            throw new ValidationException("Validation Failed", 'Club betting account already exists');
         }
+    }
+
+    public function checkSource($input){
+
+        $sourceDetails = $this->betorigin->getOriginByKeyword($input['source']);
+
+        if(!$sourceDetails) return false;
+
+        $hashString = '';
+        foreach($input as $key => $field){
+            if($key != 'token') $hashString .= $field;
+        }
+
+        $hashString .= $sourceDetails['shared_secret'];
+
+        //$hashString = $input['source'] . $clubname . $bettingUserName . $clubBettingUserName . $bettingAmount . $sourceDetails['shared_secret'];
+
+        //dd($hashString);
+        if (Hash::check($hashString, $input['token'])) return true;
+
+        return false;
+
     }
 
     /**

@@ -31,7 +31,7 @@ class UserRegistrationController extends BaseController {
 			$accountCreationResponse = $this->accountservice->createTopbettaUserAccount(Input::json()->all());
 			return $this->response->success($accountCreationResponse);
 		}catch(ValidationException $e){
-			return $this->response->failed($e->getErrors(), 200, 101, 'User Registration Failed', 'User Registration Failed');
+			return $this->response->failed($e->getErrors(), 400, 101, 'User Registration Failed', 'User Registration Failed');
 		}
 
 	}
@@ -42,7 +42,7 @@ class UserRegistrationController extends BaseController {
 			$accountCreationResponse = $this->accountservice->createUniqueChildUserAccount(Input::json()->all());
 			return $this->response->success($accountCreationResponse);
 		}catch(ValidationException $e){
-			return $this->response->failed($e->getErrors(), 200, 102, 'Child User Registration Failed', 'Child User Registration Failed');
+			return $this->response->failed($e->getErrors(), 400, 102, 'Child User Registration Failed', 'Child User Registration Failed');
 		}
 
 	}

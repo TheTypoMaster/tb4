@@ -7,6 +7,6 @@
  */
 
 
-interface UserTopbettaRepositoryInterface {
+interface UserTopBettaRepositoryInterface {
 
 } 
