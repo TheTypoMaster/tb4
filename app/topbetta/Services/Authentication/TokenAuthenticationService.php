@@ -72,7 +72,7 @@ class TokenAuthenticationService {
         $validated = $this->_validateParams($input, $rules);
 
         // confirm source of request
-        if(!$this->_checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
+        if(!$this->checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
 
         // get betting account user details
         $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['betting_user_name']);

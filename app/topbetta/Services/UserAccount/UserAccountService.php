@@ -111,6 +111,9 @@ class UserAccountService {
         $validator = Validator::make($input, $rules);
         if ($validator->fails()) throw new ValidationException("Validation Failed", $validator->messages());
 
+        // confirm source of request
+        if(!$this->checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
+
         // check if default unique betting username exists for this club (parent-user-name_personal-username)
         $uniqueBettingUserDetails = $this->user->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
 
@@ -149,4 +152,33 @@ class UserAccountService {
             throw new ValidationException("Validation Failed", 'Personal betting already exists');
         }
     }
+
+    /**
+     * Confirms the data is from a trusted source
+     *
+     * @param $input
+     * @return bool
+     */
+    public function checkSource($input){
+
+        $sourceDetails = $this->betsource->getSourceByKeyword($input['source']);
+
+        if(!$sourceDetails) return false;
+
+        $hashString = '';
+        foreach($input as $key => $field){
+            if($key != 'token') $hashString .= $field;
+        }
+
+        $hashString .= $sourceDetails['shared_secret'];
+
+        //$hashString = $input['source'] . $clubname . $bettingUserName . $clubBettingUserName . $bettingAmount . $sourceDetails['shared_secret'];
+
+        //dd($hashString);
+        if (Hash::check($hashString, $input['token'])) return true;
+
+        return false;
+
+    }
+
 }
