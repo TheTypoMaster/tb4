@@ -134,7 +134,7 @@ class UserAccountService {
 
             // create club betting account
             $data = array('username' => $input['parent_user_name'].'_'.$input['personal_betting_user_name'],
-                'email' => 'no-email_'.$bettingAccountDetails['email'],
+                'email' => $input['parent_user_name'].'+'.$bettingAccountDetails['email'],
                 'password' => substr( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ,mt_rand( 0 ,50 ) ,1 ) .substr( md5( time() ), 1),
                 'first_name' => $bettingAccountDetails['topbettauser']['first_name'],
                 'last_name' => $bettingAccountDetails['topbettauser']['last_name'],
@@ -155,7 +155,7 @@ class UserAccountService {
             return $this->createTopbettaUserAccount($data);
 
         } else {
-            throw new ValidationException("Validation Failed", 'Personal betting already exists');
+            throw new ValidationException("Validation Failed", 'Club betting account already exists');
         }
     }
 
