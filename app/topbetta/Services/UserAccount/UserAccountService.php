@@ -203,7 +203,7 @@ class UserAccountService {
      */
     public function checkSource($input){
 
-        $sourceDetails = $this->betsource->getOriginByKeyword($input['source']);
+        $sourceDetails = $this->betsource->getSourceByKeyword($input['source']);
 
         if(!$sourceDetails) return false;
 
