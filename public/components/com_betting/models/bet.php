@@ -127,7 +127,11 @@ class BettingModelBet extends SuperModel
 		'event_id' => array(
 				'name' => 'Event ID',
 				'type' => self::TYPE_INTEGER
-		),			
+		),
+		'bet_source_id' => array(
+			'name' => 'Bet Source Id',
+			'type' => self::TYPE_INTEGER
+		),
 	);
 
 	/**
