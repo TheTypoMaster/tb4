@@ -1033,6 +1033,12 @@ class Api_Betting extends JController
             //	return OutputHelper::json(500, array('error_msg' => $validation->error ));
             //}
 
+            // get bet source
+            $betSourceId = JRequest::getVar('bet_source', null);
+            if (is_null($betSourceId)) {
+                $validation->error = JText::_('No bet source supplied');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));
+            }
 
             $bet_type_id = JRequest::getVar('bet_type_id', null);
             if (is_null($bet_type_id)) {
@@ -1243,6 +1249,7 @@ class Api_Betting extends JController
                 $bet->bet_freebet_transaction_id = (int) $bet_freebet_transaction_id;
                 $bet->flexi_flag = (int) $wagering_bet->isFlexiBet() ? 1 : 0;
                 $bet->event_id = $race_id;
+                $bet->bet_source_id = $betSourceId;
 
                 // save freebet into the database
                 if ($free_bet_amount > 0) {
@@ -1549,6 +1556,13 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
+            // get bet source
+            $betSourceId = JRequest::getVar('bet_source', null);
+            if (is_null($betSourceId)) {
+                $validation->error = JText::_('No bet source supplied');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));
+            }
+
             // special case for greyhounds to allow betting after jump time if allowed only
             // all other race types are always closed via the race status only
 //           $pastStartCheck = (time() > strtotime($race->start_date)) ? true : false;
@@ -1797,7 +1811,15 @@ class Api_Betting extends JController
 
                 $exoticCass = 'WageringBetExotic' . $type;
 
+                if($user->parent_user_id){
+                    $betUserId = $user->parent_user_id;
+                    $parentUser = & JFactory::getUser($user->parent_user_id);
+                    $betUserName = $parentUser->username;
+                }else{
+                    $betUserId = $user->id;
+                    $betUserName = $user->username;
 
+                }
 
                 $bet->external_bet_id = 0;
                 $bet->user_id = (int) $user->id;
@@ -1827,6 +1849,7 @@ class Api_Betting extends JController
                 }
 
                 $bet->event_id = $race_id;
+                $bet->bet_source_id = $betSourceId;
 
                 $bet_id = $bet->save();
 
@@ -2075,6 +2098,12 @@ class Api_Betting extends JController
                 file_put_contents($file, "* Bet Selection:" . $selection . ". Bet Amount: $betAmount\n", FILE_APPEND | LOCK_EX);
             }
 
+            // get bet source
+            $betSourceId = JRequest::getVar('bet_source', null);
+            if (is_null($betSourceId)) {
+                $validation->error = JText::_('No bet source supplied');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));
+            }
 
 
             /*
@@ -2339,6 +2368,17 @@ class Api_Betting extends JController
 
             $bet_product = $bet_product_model->getBetProduct($bet_origin->id);
 
+
+            if($user->parent_user_id){
+                $betUserId = $user->parent_user_id;
+                $parentUser = & JFactory::getUser($user->parent_user_id);
+                $betUserName = $parentUser->username;
+            }else{
+                $betUserId = $user->id;
+                $betUserName = $user->username;
+
+            }
+
             $bet = clone $bet_model;
 
             $bet->external_bet_id = 0;
@@ -2369,6 +2409,8 @@ class Api_Betting extends JController
                 $debug = "- About to save bet\n";
                 file_put_contents($file, $debug, FILE_APPEND | LOCK_EX);
             }
+
+            $bet->bet_source_id = $betSourceId;
 
             $bet_id = $bet->save();
 
