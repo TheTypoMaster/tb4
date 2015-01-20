@@ -143,6 +143,7 @@ class UserAccountService {
         // validation rules
         $rules = array(
             'source' => 'required',
+            'user_name' => 'alphadash',
             'parent_user_name' => 'required|alphadash',
             'personal_betting_user_name' => 'required|alphadash',
             'child_betting_user_name' => 'required|alphadash',
@@ -168,25 +169,31 @@ class UserAccountService {
             $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_user_name']);
             if(!$parentAccountDetails) throw new ValidationException("Validation Failed", 'Parent account does not exist?');
 
+            $data = array();
+
+            if(isset($input['user_name'])){
+                $data['username'] = $input['user_name'];
+            }else{
+                $data['username'] = $input['parent_user_name'].'_'.$input['personal_betting_user_name'];
+            }
+
             // create club betting account
-            $data = array('username' => $input['parent_user_name'].'_'.$input['personal_betting_user_name'],
-                'email' => $input['parent_user_name'].'+'.$bettingAccountDetails['email'],
-                'password' => substr( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ,mt_rand( 0 ,50 ) ,1 ) .substr( md5( time() ), 1),
-                'first_name' => $bettingAccountDetails['topbettauser']['first_name'],
-                'last_name' => $bettingAccountDetails['topbettauser']['last_name'],
-                'source' => $input['source'],
-                'title' => $bettingAccountDetails['topbettauser']['title'],
-                'dob_day' => $bettingAccountDetails['topbettauser']['dob_day'],
-                'dob_month' => $bettingAccountDetails['topbettauser']['dob_month'],
-                'dob_year' => $bettingAccountDetails['topbettauser']['dob_year'],
-                'postcode' => $bettingAccountDetails['topbettauser']['postcode'],
-                'street' => $bettingAccountDetails['topbettauser']['street'],
-                'city' => $bettingAccountDetails['topbettauser']['city'],
-                'state' => $bettingAccountDetails['topbettauser']['state'],
-                'country' => $bettingAccountDetails['topbettauser']['country'],
-                'marketing_opt_in_flag' => $bettingAccountDetails['topbettauser']['marketing_opt_in_flag'],
-                'parent_user_id' => $parentAccountDetails['id']
-            );
+            $data['email'] = $input['parent_user_name'].'+'.$bettingAccountDetails['email'];
+            $data['password'] = substr( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ,mt_rand( 0 ,50 ) ,1 ) .substr( md5( time() ), 1);
+            $data['first_name'] = $bettingAccountDetails['topbettauser']['first_name'];
+            $data['last_name'] = $bettingAccountDetails['topbettauser']['last_name'];
+            $data['source'] = $input['source'];
+            $data['title'] = $bettingAccountDetails['topbettauser']['title'];
+            $data['dob_day'] = $bettingAccountDetails['topbettauser']['dob_day'];
+            $data['dob_month'] = $bettingAccountDetails['topbettauser']['dob_month'];
+            $data['dob_year'] = $bettingAccountDetails['topbettauser']['dob_year'];
+            $data['postcode'] = $bettingAccountDetails['topbettauser']['postcode'];
+            $data['street'] = $bettingAccountDetails['topbettauser']['street'];
+            $data['city'] = $bettingAccountDetails['topbettauser']['city'];
+            $data['state'] = $bettingAccountDetails['topbettauser']['state'];
+            $data['country'] = $bettingAccountDetails['topbettauser']['country'];
+            $data['marketing_opt_in_flag'] = $bettingAccountDetails['topbettauser']['marketing_opt_in_flag'];
+            $data['parent_user_id'] = $parentAccountDetails['id'];
 
             return $this->createTopbettaUserAccount($data);
 
