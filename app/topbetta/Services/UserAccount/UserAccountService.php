@@ -146,7 +146,6 @@ class UserAccountService {
             'user_name' => 'alphadash',
             'parent_user_name' => 'required|alphadash',
             'personal_betting_user_name' => 'required|alphadash',
-            'child_betting_user_name' => 'required|alphadash',
             'token' => 'required'
         );
 
