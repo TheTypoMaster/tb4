@@ -143,9 +143,9 @@ class UserAccountService {
         // validation rules
         $rules = array(
             'source' => 'required',
-            'user_name' => 'alphadash',
             'parent_user_name' => 'required|alphadash',
             'personal_betting_user_name' => 'required|alphadash',
+            'child_betting_user_name' => 'alphadash',
             'token' => 'required'
         );
 
@@ -156,10 +156,18 @@ class UserAccountService {
         // confirm source of request
         if(!$this->checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
 
-        // check if default unique betting username exists for this club (parent-user-name_personal-username)
-        $uniqueBettingUserDetails = $this->basicUser->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
+        $autoGenerate = false;
 
-        if(!$uniqueBettingUserDetails) {
+        if(isset($input['child_betting_user_name'])){
+            $uniqueUsername = $input['child_betting_user_name'];
+        }else{
+            $uniqueUsername = $input['parent_user_name'].'_'.$input['personal_betting_user_name'];
+            $autoGenerate = true;
+        }
+
+        $username = $this->_generateUniqueUserNameFromBase($uniqueUsername, $autoGenerate);
+
+        //if(!$uniqueBettingUserDetails) {
 
             // get details of betting acount to base club betting account off or throw exception if it does not exist
             $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
@@ -170,8 +178,8 @@ class UserAccountService {
 
             $data = array();
 
-            if(isset($input['user_name'])){
-                $data['username'] = $input['user_name'];
+            if(isset($input['child_betting_user_name'])){
+                $data['username'] = $input['child_betting_user_name'];
             }else{
                 $data['username'] = $input['parent_user_name'].'_'.$input['personal_betting_user_name'];
             }
@@ -196,9 +204,9 @@ class UserAccountService {
 
             return $this->createTopbettaUserAccount($data);
 
-        } else {
-            throw new ValidationException("Validation Failed", 'Club betting account already exists');
-        }
+        //} else {
+        //    throw new ValidationException("Validation Failed", 'Club betting account already exists');
+        //}
     }
 
     /**
@@ -226,7 +234,18 @@ class UserAccountService {
         if (Hash::check($hashString, $input['token'])) return true;
 
         return false;
+    }
 
+    private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
+    {
+        $checkForName = $this->basicUser->getUserDetailsFromUsername($username);
+        if(!$checkForName || !$autoGenerate) {
+            return $checkForName;
+        }else{
+             $count++;
+             $newUserName = $this->_generateUniqueUserNameFromBase($username, $autoGenerate, $count);
+        }
+        return $newUserName;
     }
 
 }
