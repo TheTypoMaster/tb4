@@ -33,6 +33,10 @@ sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php5/apache2/php.i
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
 sed -i "s/disable_functions = .*/disable_functions = /" /etc/php5/cli/php.ini
 sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
+sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/my.cnf
+
+sudo service mysql restart
+sudo service apache2 restart
 
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
