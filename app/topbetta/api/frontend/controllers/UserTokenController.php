@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Frontend;
+<?php namespace TopBetta\Frontend\Controllers;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 23/12/14
@@ -15,10 +15,10 @@ use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Services\Response\ApiResponse;
 
 /**
- * Class FrontTokenController
- * @package TopBetta\Frontend
+ * Class UserTokenController
+ * @package TopBetta\Frontend\Controllers
  */
-class FrontTokenController extends BaseController{
+class UserTokenController extends BaseController {
 
     /**
      * @var TokenAuthenticationService

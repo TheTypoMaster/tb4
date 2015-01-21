@@ -37,6 +37,7 @@ sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/my.cnf
 
 sudo service mysql restart
 sudo service apache2 restart
+sudo service beantstalk restart
 
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer

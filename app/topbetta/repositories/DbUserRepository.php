@@ -32,7 +32,7 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
         if ($userDetails) return $userDetails->toArray();
 
-        return false;
+        return null;
     }
 
     public function getFullUserDetailsFromUsername($username){
@@ -40,7 +40,16 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
         if ($userDetails) return $userDetails->toArray();
 
-        return false;
+        return null;
     }
+
+    public function checkMD5PasswordForUser($username, $password){
+        $result = $this->model->where('username', $username)->where('password', md5($password))->first();
+
+        if($result) return $result->toArray();
+
+        return null;
+    }
+
 
 }
