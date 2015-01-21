@@ -18,9 +18,10 @@ class SelectionModel extends Eloquent{
     /*
      * Relationships
      */
-    public function markets()
+
+    public function market()
     {
-        return $this->belongsTo('TopBetta\SportsMarket', 'market_id', 'id');
+        return $this->belongsTo('TopBetta\Models\MarketModel', 'market_id', 'id');
     }
 
     public function sportsResults()
