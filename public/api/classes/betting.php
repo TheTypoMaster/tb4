@@ -1034,7 +1034,7 @@ class Api_Betting extends JController
             //}
 
             // get bet source
-            $betSourceId = JRequest::getVar('bet_source', null);
+            $betSourceId = JRequest::getVar('bet_source_id', null);
             if (is_null($betSourceId)) {
                 $validation->error = JText::_('No bet source supplied');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
@@ -1437,7 +1437,7 @@ class Api_Betting extends JController
 
                 RiskManagerHelper::sendRacingBet($riskBet);
             }
-            return OutputHelper::json(200, array('success' => 'Your bet(s) have been placed'));
+            return OutputHelper::json(200, array('bet_id' => $bet->id, 'success' => 'Your bet(s) have been placed'));
         } else {
 
             return OutputHelper::json(500, array('error_msg' => 'Invalid Token'));
@@ -2023,7 +2023,7 @@ class Api_Betting extends JController
                 RiskManagerHelper::sendRacingBet($riskBet);                
                 
             }
-            return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
+            return OutputHelper::json(200, array('bet_id' => $bet->id, 'success' => 'Your bet has been placed'));
         } else {
 
             return OutputHelper::json(500, array('error_msg' => 'Invalid Token'));
@@ -2661,7 +2661,7 @@ class Api_Betting extends JController
             $query = "UPDATE `tbdb_bet_selection` SET `fixed_odds` = '$bet_dividend' WHERE `bet_id` = '$bet_id' AND `selection_id` = '$selectionID'";
             $db->setQuery($query);
             $db->query();
-            return OutputHelper::json(200, array('success' => 'Your bet has been placed'));
+            return OutputHelper::json(200, array('bet_id' => $bet->id, 'success' => 'Your bet has been placed'));
         } else {
             return OutputHelper::json(500, array('error_msg' => 'Invalid Token'));
         }
