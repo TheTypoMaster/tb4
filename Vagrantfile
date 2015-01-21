@@ -14,19 +14,25 @@ sudo apt-get install -y vim curl python-software-properties
 sudo add-apt-repository -y ppa:ondrej/php5
 sudo apt-get update
 
-sudo apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-core php5-xdebug
+sudo apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-core php5-xdebug beanstalkd supervisor
 
 cat << EOF | sudo tee -a /etc/php5/mods-available/xdebug.ini
+xdebug.remote_enable = on
+xdebug.remote_connect_back = on
+xdebug.idekey = "vagrant"
 xdebug.scream=1
 xdebug.cli_color=1
 xdebug.show_local_vars=1
 EOF
+
+mysql -u root -proot -e"grant all on *.* to root@'192.168.33.1' IDENTIFIED BY 'root'" mysql
 
 sudo a2enmod rewrite
 
 sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php5/apache2/php.ini
 sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/apache2/php.ini
 sed -i "s/disable_functions = .*/disable_functions = /" /etc/php5/cli/php.ini
+sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
 
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
@@ -42,6 +48,7 @@ echo "192.168.33.10 services.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.11 topbetta.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.12 serena.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.13 risk.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.14 puntersclubapi.dev" | sudo tee -a /etc/hosts
 
 SCRIPT
 
