@@ -22,5 +22,10 @@ class MarketModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\EventModel', 'event_id', 'id');
     }
 
+    public function markettype()
+    {
+        return $this->belongsTo('TopBetta\Models\MarketTypeModel', 'market_type_id', 'id');
+    }
+
 
 }

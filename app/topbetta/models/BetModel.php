@@ -24,21 +24,34 @@ class BetModel extends Eloquent {
         return $this->hasMany('TopBetta\Models\BetSelectionModel', 'bet_id', 'id');
     }
 
-//    public function selection()
-//    {
-//        return $this->hasManyThrough('TopBetta\Models\SelectionModel', 'TopBetta\Models\BetSelectionModel', 'selection_id', 'id');
-//    }
+    public function selection()
+    {
+        return $this->belongsToMany('TopBetta\Models\SelectionModel', 'tbdb_bet_selection', 'bet_id', 'selection_id');
+    }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('TopBetta\Models\UserModel', 'user_id', 'id');
     }
 
-    public function bettype() {
+    public function type()
+    {
         return $this->belongsTo('TopBetta\Models\BetTypeModel', 'bet_type_id');
     }
 
-    public function status() {
+    public function status()
+    {
         return $this->belongsTo('TopBetta\Models\BetResultStatusModel', 'bet_result_status_id');
+    }
+
+    public function source()
+    {
+        return $this->belongsTo('TopBetta\Models\BetSourceModel', 'bet_source_id');
+    }
+
+    public function result()
+    {
+        return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'result_transaction_id');
     }
 
 }

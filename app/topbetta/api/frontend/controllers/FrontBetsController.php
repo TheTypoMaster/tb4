@@ -199,7 +199,7 @@ class FrontBetsController extends BaseController {
 
 			if(!$betSourceRecord) $betSourceRecord = $this->betsource->getSourceByKeyword('topbetta');
 
-			$input['bet_source_id'] = $betSourceRecord['id'];
+			$input['bet_source'] = $betSourceRecord['id'];
 
 			// type id 3 is each way
 			if ($input['type_id'] == 3) {
@@ -273,7 +273,7 @@ class FrontBetsController extends BaseController {
 
 			$legacyData = $betModel -> getLegacyBetData($input['selections']['first'][0]);
 
-			$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
+			$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source' => $input['bet_source']);
 
 			//set our free bet flag if passed in
 			if (isset($input['use_free_credit'])) {
@@ -334,7 +334,7 @@ class FrontBetsController extends BaseController {
 
 						if ($input['source'] == 'racing') {
 
-							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
+							$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source' => $input['bet_source']);
 
 							//set our free bet flag if passed in
 							if (isset($input['use_free_credit'])) {

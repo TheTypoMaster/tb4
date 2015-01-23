@@ -12,12 +12,18 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use Queue;
+use Log;
 
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 
 /**
  * Notify's external sources when bets are placed and resulted
+ * - Bet's Placed
+ * -- bet details are retrived from the database
+ * -- relevant data is extracted and payload is formatted for external API
+ * -- payload is put in a job on a queue
+ * -- email alerts are sent if there is an issue pushing bets to the API
  *
  * Class ExternalSourceBetNotificationService
  * @package TopBetta\Services
@@ -37,7 +43,7 @@ class ExternalSourceBetNotificationService {
 
 
     /**
-     * Notify bet source of bet placement
+     * Notify external bet source of bet placement
      *
      * @param $betSourceId
      * @param $betDetails
@@ -46,21 +52,16 @@ class ExternalSourceBetNotificationService {
     public function notifyBetPlacement($betSourceId, $betDetails)
     {
         // get the api endpoint for the source
-        if(!$apiEndpoint = $this->_sourceValidation($betSourceId)) return false;
+        if(!$betSourceDetails = $this->_sourceValidation($betSourceId)) return false;
 
-        // get the bet details for the bet
-       //  if(!$betDetailsFromDB = $this->_getbetDetails($betDetails[0]['bet_id'])) return false;
-
+        // get bet details
         $betDetailsFromDB = $this->_getbetDetails($betDetails[0]['bet_id']);
-
-    //    dd($betDetailsFromDB);
 
         // format the payload
         $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
 
-        return $BetDetailsPayload;
         // put it on the queue to be sent
-        $this->_queueJob($apiEndpoint, $BetDetailsPayload);
+        return $this->_queueJob($betSourceDetails, $BetDetailsPayload);
 
     }
 
@@ -76,7 +77,7 @@ class ExternalSourceBetNotificationService {
     }
 
     /**
-     * Vaidate the external source is valid and has an API endpoint to push bet information to
+     * Vaidate the external source and check that it has an API endpoint to push bet information to
      *
      * @param $betSourceId
      * @return bool
@@ -87,57 +88,92 @@ class ExternalSourceBetNotificationService {
         if(!$betSourceDetails = $this->source->find($betSourceId)) return false;
 
         // make sure the record has an endpoint
-        if(!$sourceApiEndpoint = $betSourceDetails['api_endpoint']) return false;
+        if(!$betSourceDetails['api_endpoint']) return false;
 
         // return api endpoint
-        return $sourceApiEndpoint;
+        return $betSourceDetails;
     }
 
+    /**
+     * Get the details of the bet and it's related resources
+     *
+     * @param $betId
+     * @return mixed
+     */
     private function _getbetDetails($betId){
         return $this->bet->getBetWithSelectionsByBetid($betId);
     }
 
+    /**
+     * Extracts and formats the bet information from the database that will be pushed to the API
+     *
+     * @param $betDetails
+     * @return array
+     */
     private function _formatBetPayload($betDetails){
 
-        $betSelections = array();
+        $betSelections =  array();
 
         // extract selecitons
-        foreach ($betDetails['betselection']['selection'] as $selection) {
-            $betSelections[]['bet_selection_external_id'] = $selection['id'];
-            $betSelections[]['bet_selection_sport'] =  $selection['market']['event']['competition']['sport']['name'];
-            $betSelections[]['bet_selection_competition'] =  $selection['market']['event']['competition']['name'];
-            $betSelections[]['bet_selection_event'] =  $selection['market']['event']['name'];
-            $betSelections[]['bet_selection_market'] =  $selection[''];
-            $betSelections[]['bet_selection_name'] =  $selection['name'];
-            $betSelections[]['bet_selection_placed_odd'] =  $selection[''];
-            $betSelections[]['bet_selection_resulted'] =  $selection[''];
-            $betSelections[]['bet_selection_dividend'] =  $selection[''];
-            $betSelections[]['bet_selection_win'] =  $selection[''];
+        foreach ($betDetails['betselection'] as $betSelection) {
+            $betSelectionPayload = array();
+            // always available
+            $betSelectionPayload['bet_selection_external_id'] =  (int) $betSelection['selection']['id'];
+            $betSelectionPayload['bet_selection_competition'] =  $betSelection['selection']['market']['event']['competition'][0]['name'];
+            $betSelectionPayload['bet_selection_event'] =  $betSelection['selection']['market']['event']['name'];
+            $betSelectionPayload['bet_selection_market'] =  $betSelection['selection']['market']['markettype']['name'];
+            $betSelectionPayload['bet_selection_name'] =  $betSelection['selection']['name'];
+            $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['fixed_odds'];
+            //$betSelectionPayload['bet_selection_resulted'] = $betSelection['status']['name'];
+
+            // sometimes available
+            if(isset($betSelection['selection']['market']['event']['competition']['sport'])){
+                $betSelectionPayload['bet_selection_sport'] =  $betSelection['selection']['market']['event']['competition']['sport']['name'];
+            } else {
+                $betSelectionPayload['bet_selection_sport'] = 'Racing';
+            }
+
+            if(isset($betSelection['selection']['result']['win_dividend']) && $betSelection['bettype']['name'] == 'win')
+                $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['win_dividend'];
+            if(isset($betSelection['selection']['result']['place_dividend']) && $betSelection['bettype']['name'] == 'place')
+                $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['place_dividend'];
+
+            $betSelectionPayload['bet_selection_resulted'] = 0;
+            $betSelectionPayload['bet_selection_dividend'] = "";
+            $betSelectionPayload['bet_selection_win'] = 0;
+
+            $betSelections[] = $betSelectionPayload;
         }
 
+        $payloadArray = array();
 
-        $payloadArray = array('bet_external_bet_id' => $betDetails['id'],
-                                'bet_multi' => 0,
-                                'bet_amount' => $betDetails['bet_amount'],
-                                'bet_status' => $betDetails['bet_amount'],
-                                'bet_source' => 'topbetta',
-                                'bet_manual' => 0,
-                                'bet_username' => $betDetails['username'],
-                                'bet_collect_amount' => '',
-                                'bet_selections' => $betSelections);
+         // always available
+        $payloadArray['bet_external_bet_id'] = (int) $betDetails['id'];
+        $payloadArray['bet_type'] = $betDetails['type']['name'];
+        $payloadArray['bet_amount'] = (int) $betDetails['bet_amount'];
+        $payloadArray['bet_status'] = $betDetails['status']['name'];
+        $payloadArray['bet_source'] = $betDetails['source']['keyword'];
+        $payloadArray['bet_username'] = $betDetails['user']['username'];
 
+        // default values ?
+        $payloadArray['bet_multi'] = 0;
+        $payloadArray['bet_manual'] = 0;
 
-       return $betDetails;
+        // sometimes available
+        if(isset($betDetails['result'])) $payloadArray['bet_collect_amount'] = $betDetails['result']['amount'];
 
+        // add selections
+        $payloadArray['bet_selections'] = $betSelections;
+
+        return $payloadArray;
     }
 
-    private function _queueJob($sourceApiEndpoint, $formattedBetDetails){
+    private function _queueJob($betSourceDetails, $formattedBetDetails){
 
-        $data = array('parameters' => array('api_endpoint' => $sourceApiEndpoint, 'notification' => 'email'), 'bet_data' => $formattedBetDetails);
+        $data = array('parameters' => array('source_details' => $betSourceDetails, 'notification' => 'email', 'request_type' => 'HTTP'), 'bet_data' => $formattedBetDetails);
 
-        Queue::push('\TopBetta\Services\Betting\ExternalSourceBetNotifcationQueueService', $data, 'bet-notification-api');
+        Log::debug('Bet Notification: About to queue job');
+        Queue::push('\TopBetta\Services\Betting\ExternalSourceBetNotifcationQueueService', $data, 'bet-notification');
 
     }
-
-
 }

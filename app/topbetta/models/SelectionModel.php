@@ -18,11 +18,24 @@ class SelectionModel extends Eloquent{
     /*
      * Relationships
      */
-
     public function market()
     {
-        return $this->belongsTo('TopBetta\Models\MarketModel', 'market_id', 'id');
+        return $this->hasOne('TopBetta\Models\MarketModel', 'id', 'market_id');
     }
+
+    public function price()
+    {
+        return $this->hasOne('TopBetta\Models\SelectionPricesModel', 'selecion_id', 'id');
+    }
+
+    public function result()
+    {
+        return $this->hasOne('TopBetta\Models\SelectionResultModel', 'selecion_id', 'id');
+    }
+
+
+
+
 
     public function sportsResults()
     {
