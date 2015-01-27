@@ -396,7 +396,7 @@ class FrontBetsController extends \BaseController {
 
 						if (count($legacyData) > 0) {
 
-							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'dividend' => $input['dividend'] );
+							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'dividend' => $input['dividend'], 'bet_source_id' => $input['bet_source_id']);
 
 							// add the line to the betData object if it exists
 							if(isset($input['line'])){
