@@ -50,7 +50,7 @@ Route::filter('not.excluded', function() {
 	if(Auth::check()){
 		if (Auth::user()->block == 1){
 			Auth::logout();
-			return Response::json(array("success" => false, "error" => "Your Account is blocked"), 401);
+			//return Response::json(array("success" => false, "error" => "Your Account is blocked"), 401);
 		}
 	}
 
