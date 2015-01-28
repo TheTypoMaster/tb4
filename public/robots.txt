@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /administrator/
+Disallow: /__admin_tools/
 Disallow: /cache/
 Disallow: /components/
 Disallow: /images/
