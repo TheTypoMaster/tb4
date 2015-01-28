@@ -13,7 +13,10 @@
 
 App::before(function($request)
 {
-	//
+	// If user account is blocked then log them out
+	//(Auth::user()->block == 1) ?: Auth::logout();
+
+	//dd(Auth::user()->block);
 });
 
 
@@ -41,6 +44,17 @@ Route::filter('auth', function()
 
 Route::filter('auth.admin', function() {
 	if (Auth::guest() || Auth::user()->gid != 25) return Redirect::guest('/admin/login');
+});
+
+Route::filter('not.excluded', function() {
+	if(Auth::check()){
+		if (Auth::user()->block == 1){
+			Auth::logout();
+			//return Response::json(array("success" => false, "error" => "Your Account is blocked"), 401);
+		}
+	}
+
+
 });
 
 

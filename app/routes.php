@@ -107,7 +107,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
 
 // Route group for consumer API
-Route::group(array('prefix' => '/api/v1'), function() {
+Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function() {
 
 	// ::: USER :::
 	Route::get('usersTournamentHistory', 'FrontUsersTournaments@usersTournamentHistory');
