@@ -179,6 +179,7 @@ class FrontBetsController extends \BaseController {
 
 		} else {
 
+
 			$messages = array();
 			$errors = 0;
 			$betStatus = 200;
