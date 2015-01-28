@@ -191,7 +191,6 @@ class FrontBetsController extends \BaseController {
 
 			if(!$betSourceRecord) $betSourceRecord = $this->betsource->getSourceByKeyword('topbetta');
 
-
 			$input['bet_source_id'] = $betSourceRecord['id'];
 
 			// type id 3 is each way
