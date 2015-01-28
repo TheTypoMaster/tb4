@@ -1557,7 +1557,7 @@ class Api_Betting extends JController
             }
 
             // get bet source
-            $betSourceId = JRequest::getVar('bet_source', null);
+            $betSourceId = JRequest::getVar('bet_source_id', null);
             if (is_null($betSourceId)) {
                 $validation->error = JText::_('No bet source supplied');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
@@ -2099,7 +2099,7 @@ class Api_Betting extends JController
             }
 
             // get bet source
-            $betSourceId = JRequest::getVar('bet_source', null);
+            $betSourceId = JRequest::getVar('bet_source_id', null);
             if (is_null($betSourceId)) {
                 $validation->error = JText::_('No bet source supplied');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
