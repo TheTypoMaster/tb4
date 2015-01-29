@@ -23,7 +23,8 @@ class RiskManagerHelper
 	static $riskConfig = array(
 		'services.topbetta.com.au' => 'http://risk.mugbookie.com/api/v1/',
 		'testing1.mugbookie.com' => 'http://riskier.mugbookie.com/api/v1/',
-		'tb4.dev' => 'http://riskmanager.dev/api/v1/'
+		'tb4.dev' => 'http://riskmanager.dev/api/v1/',
+        'localhost' => 'http://risk.dev/api/v1/'
 	);
 
     public function sendRacingBet($betData)
