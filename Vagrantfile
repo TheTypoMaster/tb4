@@ -40,6 +40,9 @@ echo "192.168.33.10 services.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.11 topbetta.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.12 serena.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.13 risk.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.14 puntersclubapi.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.15 api.toptippa.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.16 toptippa.dev" | sudo tee -a /etc/hosts
 
 SCRIPT
 
