@@ -7,7 +7,7 @@
 		<h3>TopTippa Password Reset</h3>
 
 		<p>
-			To reset your password, complete this form: https://www.toptippa.com.au/#password/remind/{{$token}}
+			To reset your password, complete this form: <a href="https://www.toptippa.com.au/#password/remind/{{$token}}">https://www.toptippa.com.au/#password/remind/{{$token}}</a>
                 </p>
                 <p>
                     If you are still experiencing issues, please phone our help desk on: 1300 886 503
