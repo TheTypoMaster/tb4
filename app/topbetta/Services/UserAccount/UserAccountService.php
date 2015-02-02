@@ -10,29 +10,53 @@ use Carbon\Carbon;
 use Validator;
 use Hash;
 
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 
+/**
+ * Class UserAccountService
+ * @package TopBetta\Services\UserAccount
+ */
 class UserAccountService {
 
+    /**
+     * @var UserRepositoryInterface
+     */
     protected $basicUser;
+    /**
+     * @var UserTopBettaRepositoryInterface
+     */
     protected $fullUser;
-    protected $betorigin;
+    /**
+     * @var BetSourceRepositoryInterface
+     */
+    protected $betsource;
 
 
-    function __construct(BetOriginRepositoryInterface $betorigin,
+    /**
+     * @param BetSourceRepositoryInterface $betsource
+     * @param UserRepositoryInterface $basicUser
+     * @param UserTopBettaRepositoryInterface $fullUser
+     */
+    function __construct(BetSourceRepositoryInterface $betsource,
                          UserRepositoryInterface $basicUser,
                          UserTopbettaRepositoryInterface $fullUser)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
-        $this->betorigin = $betorigin;;
+        $this->betsource = $betsource;
     }
 
 
+    /**
+     * Create a FULL topbetta user
+     * - adds records on both the users and topbetta users table
+     * @param $input
+     * @return array
+     */
     public function createTopbettaUserAccount($input){
 
         // set some other required fields
@@ -65,10 +89,22 @@ class UserAccountService {
     }
 
 
+    /**
+     * Create a basic user account
+     *
+     * @param $data
+     * @return mixed
+     */
     public function createBasicAccount($data){
         return $this->basicUser->create($data);
     }
 
+    /**
+     * Create a TopBetta User account
+     *
+     * @param $data
+     * @return mixed
+     */
     public function createFullAccount($data){
         return $this->fullUser->create($data);
     }
@@ -159,9 +195,15 @@ class UserAccountService {
         }
     }
 
+    /**
+     * Checks the source of the request is valid and known
+     *
+     * @param $input
+     * @return bool
+     */
     public function checkSource($input){
 
-        $sourceDetails = $this->betorigin->getOriginByKeyword($input['source']);
+        $sourceDetails = $this->betsource->getSourceByKeyword($input['source']);
 
         if(!$sourceDetails) return false;
 
@@ -180,4 +222,5 @@ class UserAccountService {
         return false;
 
     }
+
 }

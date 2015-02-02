@@ -18,6 +18,10 @@ return array(
 	'providers' => append_config(array(
 
 		'Way\Generators\GeneratorsServiceProvider',
+		'Orangehill\Iseed\IseedServiceProvider',
+		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
+		'Barryvdh\MigrationGenerator\MigrationGeneratorServiceProvider',
+
 	)),
 
 );
