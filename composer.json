@@ -3,7 +3,9 @@
 	"description": "The Laravel Framework.",
 	"keywords": ["framework", "laravel"],
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+		"guzzlehttp/guzzle": "~5.1",
+		"pda/pheanstalk": "~2.1"
 	},
 	"require-dev": {
 	  "way/generators": "1.*",

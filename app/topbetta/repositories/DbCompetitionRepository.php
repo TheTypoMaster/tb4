@@ -54,7 +54,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         if($meetings){
             return $meetings->toArray();
         }
-        return false;
+        return null;
     }
 
     public function selectList(){

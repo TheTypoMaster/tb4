@@ -244,6 +244,32 @@ Route::group(array('after' => 'topbetta_secure_links'), function() {
     Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
 });
 
+// used for Punters Club application related things atm (Token Creation / Logins / Child Betting account creation and funding)
+Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
+
+	// Token request and login
+	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
+	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
+
+	// Funds management/transfer
+	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
+
+	// Full user account registration routes
+	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
+	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
+
+});
+
+// new login/logout methods
+Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
+
+	// normal login
+	Route::post('authentication/login', 'TopBetta\Frontend\Controllers\UserSessionController@login');
+
+	// normal logout
+	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+});
 
 
 
