@@ -13,6 +13,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use Queue;
 use Log;
+use Auth;
 
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
@@ -56,6 +57,12 @@ class ExternalSourceBetNotificationService {
 
         // get bet details
         $betDetailsFromDB = $this->_getbetDetails($betDetails[0]['bet_id']);
+
+        // get logged in user details
+        $bettinguserName = Auth::user()->username;
+
+        // set username to the child betting user
+        $betDetailsFromDB['betting_username'] = $bettinguserName;
 
         // format the payload
         $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
@@ -153,7 +160,7 @@ class ExternalSourceBetNotificationService {
         $payloadArray['bet_amount'] = (int) $betDetails['bet_amount'];
         $payloadArray['bet_status'] = $betDetails['status']['name'];
         $payloadArray['bet_source'] = $betDetails['source']['keyword'];
-        $payloadArray['bet_username'] = $betDetails['user']['username'];
+        $payloadArray['bet_username'] = $betDetails['betting_username'];
 
         // default values ?
         $payloadArray['bet_multi'] = 0;
