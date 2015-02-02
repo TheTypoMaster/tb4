@@ -6,8 +6,11 @@
  * Time: 3:00 PM
  */
 
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 class BaseEloquentRepository {
+
+	protected $validator = null;
 
     protected $model;
 
@@ -45,7 +48,9 @@ class BaseEloquentRepository {
 	 * @return mixed
 	 */
 	public function create($data) {
-		return $this->model->create($data);
+		$this->validate($data);
+		$model =  $this->model->create($data);
+		return $model->toArray();
 	}
 
 	public function createNew($data) {
@@ -72,5 +77,12 @@ class BaseEloquentRepository {
     }
 
 
+	public function validate($input) {
+		return $this->validator ? $this->validator->validateForCreation($input) : true;
+	}
+
+	public function validateUpdate($input) {
+		return $this->validator ? $this->validator->validateForUpdate($input) : true;
+	}
 
 } 
