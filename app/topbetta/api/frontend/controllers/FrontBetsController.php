@@ -3,17 +3,25 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Lang;
+use BaseController;
+use Exception;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Facades\BetLimitRepo;
-use TopBetta\Repositories\DbBetSourceRepository;
+use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
+use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 
-class FrontBetsController extends \BaseController {
+
+class FrontBetsController extends BaseController {
 
 	protected $betsource;
+	protected $betnotificationservice;
 
-	public function __construct(DbBetSourceRepository $betsource) {
+	public function __construct(BetSourceRepositoryInterface $betsource,
+
+								ExternalSourceBetNotificationService $betnotificationservice) {
 		$this->beforeFilter('auth');
 		$this->betsource = $betsource;
+		$this->betnotificationservice = $betnotificationservice;
 	}
 
 	/**
@@ -228,8 +236,12 @@ class FrontBetsController extends \BaseController {
 
 				}
 
-
 			} else {
+
+				// if there is an API endpoint notify it of bet placement
+				if(!is_null($betSourceRecord['api_endpoint'])){
+					$messages = $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
+				}
 
 				// bet placed OK
 				return array("success" => true, "result" => $messages);
@@ -293,7 +305,7 @@ class FrontBetsController extends \BaseController {
 			//bet has been placed by now, deal with messages and errors
 			if ($bet['status'] == 200) {
 
-				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
+				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
 			} elseif ($bet['status'] == 401) {
 
@@ -344,7 +356,7 @@ class FrontBetsController extends \BaseController {
 
 						} elseif ($input['source'] == 'tournamentracing') {
 
-							$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id);
+							$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
 							$bet = $l -> query('saveTournamentBet', $betData);
 
 						} else {
@@ -358,7 +370,7 @@ class FrontBetsController extends \BaseController {
 						//bet has been placed by now, deal with messages and errors
 						if ($bet['status'] == 200) {
 
-							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
+							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
 						} elseif ($bet['status'] == 401) {
 
@@ -441,7 +453,7 @@ class FrontBetsController extends \BaseController {
 
 						if (count($legacyData) > 0) {
 
-							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets']);
+							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'bet_source_id' => $input['bet_source_id']);
 							$bet = $l -> query('saveTournamentSportsBet', $betData);
 
 						} else {
@@ -456,7 +468,7 @@ class FrontBetsController extends \BaseController {
 					//bet has been placed by now, deal with messages and errors
 					if ($bet['status'] == 200) {
 
-						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], "success" => true, "result" => $bet['success']);
+						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
 					} elseif ($bet['status'] == 401) {
 

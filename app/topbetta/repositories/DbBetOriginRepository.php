@@ -24,6 +24,6 @@ class DbBetOriginRepository extends BaseEloquentRepository implements BetOriginR
         if ($origin){
             return $origin->toArray();
         }
-        return false;
+        return null;
     }
 }

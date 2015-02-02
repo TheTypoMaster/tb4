@@ -145,7 +145,7 @@ class UserAccountService {
             'source' => 'required',
             'parent_user_name' => 'required|alphadash',
             'personal_betting_user_name' => 'required|alphadash',
-            'child_betting_user_name' => 'required|alphadash',
+            'child_betting_user_name' => 'alphadash',
             'token' => 'required'
         );
 
@@ -156,43 +156,45 @@ class UserAccountService {
         // confirm source of request
         if(!$this->checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
 
-        // check if default unique betting username exists for this club (parent-user-name_personal-username)
-        $uniqueBettingUserDetails = $this->basicUser->getUserDetailsFromUsername($input['parent_user_name'].'_'.$input['personal_betting_user_name']);
+        $autoGenerate = false;
 
-        if(!$uniqueBettingUserDetails) {
-
-            // get details of betting acount to base club betting account off or throw exception if it does not exist
-            $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
-            if(!$bettingAccountDetails) throw new ValidationException("Validation Failed", 'Personal betting account does not exist?');
-
-            $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_user_name']);
-            if(!$parentAccountDetails) throw new ValidationException("Validation Failed", 'Parent account does not exist?');
-
-            // create club betting account
-            $data = array('username' => $input['parent_user_name'].'_'.$input['personal_betting_user_name'],
-                'email' => $input['parent_user_name'].'+'.$bettingAccountDetails['email'],
-                'password' => substr( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ,mt_rand( 0 ,50 ) ,1 ) .substr( md5( time() ), 1),
-                'first_name' => $bettingAccountDetails['topbettauser']['first_name'],
-                'last_name' => $bettingAccountDetails['topbettauser']['last_name'],
-                'source' => $input['source'],
-                'title' => $bettingAccountDetails['topbettauser']['title'],
-                'dob_day' => $bettingAccountDetails['topbettauser']['dob_day'],
-                'dob_month' => $bettingAccountDetails['topbettauser']['dob_month'],
-                'dob_year' => $bettingAccountDetails['topbettauser']['dob_year'],
-                'postcode' => $bettingAccountDetails['topbettauser']['postcode'],
-                'street' => $bettingAccountDetails['topbettauser']['street'],
-                'city' => $bettingAccountDetails['topbettauser']['city'],
-                'state' => $bettingAccountDetails['topbettauser']['state'],
-                'country' => $bettingAccountDetails['topbettauser']['country'],
-                'marketing_opt_in_flag' => $bettingAccountDetails['topbettauser']['marketing_opt_in_flag'],
-                'parent_user_id' => $parentAccountDetails['id']
-            );
-
-            return $this->createTopbettaUserAccount($data);
-
-        } else {
-            throw new ValidationException("Validation Failed", 'Club betting account already exists');
+        if(isset($input['child_betting_user_name'])){
+            $uniqueUsername = $input['child_betting_user_name'];
+        }else{
+            $uniqueUsername = $input['parent_user_name'].'_'.$input['personal_betting_user_name'];
+            $autoGenerate = true;
         }
+
+        $username = $this->_generateUniqueUserNameFromBase($uniqueUsername, $autoGenerate);
+
+        // get details of betting acount to base club betting account off or throw exception if it does not exist
+        $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
+        if(!$bettingAccountDetails) throw new ValidationException("Validation Failed", 'Personal betting account does not exist?');
+
+        $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_user_name']);
+        if(!$parentAccountDetails) throw new ValidationException("Validation Failed", 'Parent account does not exist?');
+
+        // create club betting account
+        $data = array();
+        $data['username'] = $username;
+        $data['email'] = $username.'+'.$bettingAccountDetails['email'];
+        $data['password'] = substr( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ,mt_rand( 0 ,50 ) ,1 ) .substr( md5( time() ), 1);
+        $data['first_name'] = $bettingAccountDetails['topbettauser']['first_name'];
+        $data['last_name'] = $bettingAccountDetails['topbettauser']['last_name'];
+        $data['source'] = $input['source'];
+        $data['title'] = $bettingAccountDetails['topbettauser']['title'];
+        $data['dob_day'] = $bettingAccountDetails['topbettauser']['dob_day'];
+        $data['dob_month'] = $bettingAccountDetails['topbettauser']['dob_month'];
+        $data['dob_year'] = $bettingAccountDetails['topbettauser']['dob_year'];
+        $data['postcode'] = $bettingAccountDetails['topbettauser']['postcode'];
+        $data['street'] = $bettingAccountDetails['topbettauser']['street'];
+        $data['city'] = $bettingAccountDetails['topbettauser']['city'];
+        $data['state'] = $bettingAccountDetails['topbettauser']['state'];
+        $data['country'] = $bettingAccountDetails['topbettauser']['country'];
+        $data['marketing_opt_in_flag'] = $bettingAccountDetails['topbettauser']['marketing_opt_in_flag'];
+        $data['parent_user_id'] = $parentAccountDetails['id'];
+
+        return $this->createTopbettaUserAccount($data);
     }
 
     /**
@@ -220,7 +222,18 @@ class UserAccountService {
         if (Hash::check($hashString, $input['token'])) return true;
 
         return false;
+    }
 
+    private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
+    {
+        $checkForName = $this->basicUser->getUserDetailsFromUsername($username);
+        if(!$checkForName || !$autoGenerate) {
+            return $username;
+        }else{
+             $count++;
+             $newUserName = $this->_generateUniqueUserNameFromBase($username.$count, $autoGenerate, $count);
+        }
+        return $newUserName;
     }
 
 }

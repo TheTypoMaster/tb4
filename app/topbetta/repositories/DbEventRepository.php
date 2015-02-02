@@ -62,7 +62,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
                             ->first();
         if($eventModel) return $eventModel;
 
-        return false;
+        return null;
     }
 
 
@@ -75,6 +75,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         if($eventDetails){
             return $eventDetails->toArray();
         }
-        return false;
+        return null;
+    }
+
+    public function getEventWithStatusByEventId($eventId)
+    {
+        $eventDetails = $this->model->with('eventstatus')->where('id', $eventId)
+                                    ->first();
+        if (!$eventDetails) return null;
+
+        return $eventDetails;
     }
 }

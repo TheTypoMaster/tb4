@@ -17,6 +17,8 @@ class CreateTbBetSourceTable extends Migration {
 			$table->string('keyword');
 			$table->string('description');
 			$table->string('api_endpoint')->nullable();
+			$table->string('api_username')->nullable();
+			$table->string('api_password')->nullable();
 			$table->string('shared_secret')->nullable();
 			$table->timestamps();
 		});
