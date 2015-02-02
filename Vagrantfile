@@ -14,7 +14,7 @@ sudo apt-get install -y vim curl python-software-properties
 sudo add-apt-repository -y ppa:ondrej/php5
 sudo apt-get update
 
-sudo apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-core php5-xdebug beanstalkd supervisor
+sudo apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-core php5-xdebug beanstalkd supervisor memcached php5-memcached
 
 cat << EOF | sudo tee -a /etc/php5/mods-available/xdebug.ini
 xdebug.remote_enable = on
@@ -39,6 +39,7 @@ sudo service mysql restart
 sudo service apache2 restart
 sudo service beantstalkd start
 sudo service supervisor start
+sudo service memcached start
 
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
@@ -55,6 +56,8 @@ echo "192.168.33.11 topbetta.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.12 serena.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.13 risk.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.14 puntersclubapi.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.15 api.toptippa.dev" | sudo tee -a /etc/hosts
+echo "192.168.33.16 toptippa.dev" | sudo tee -a /etc/hosts
 
 SCRIPT
 

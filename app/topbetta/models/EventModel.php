@@ -22,4 +22,9 @@ class EventModel extends Eloquent {
         return $this->belongsToMany('TopBetta\Models\CompetitionModel', 'tbdb_event_group_event', 'event_id', 'event_group_id');
     }
 
+    public function eventstatus()
+    {
+        return $this->belongsTo('TopBetta\Models\EventStatusModel', 'event_status_id', 'id');
+    }
+
 }

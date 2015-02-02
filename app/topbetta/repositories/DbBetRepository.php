@@ -44,4 +44,19 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         return $details->toArray();
     }
 
+    /**
+     * @param $eventId
+     * @return null
+     */
+    public function getUnresultedBetsByEventID($eventId){
+        // we only want bets that are "unresulted" status id: 1
+        $bets = $this->model->where('event_id', $eventId)
+                            ->where('bet_result_status_id', 1)
+                            ->where('resulted_flag', 0)
+                            ->with('selection')
+                            ->get();
+        if(!$bets) return null;
+
+        return $bets->toArray();
+    }
 }
