@@ -78,7 +78,7 @@ class UserAccountService {
         // get the user id of the new account
         $input['user_id'] = $basic['id'];
 
-        // unset fields not required for full basic
+        // unset fields not required for full account
         unset($input['username'], $input['email'], $input['password']);
         if(isset($input['parent_user_id'])) unset($input['parent_user_id']);
 
@@ -87,10 +87,6 @@ class UserAccountService {
 
         // create the full account record
         $full = $this->createFullAccount($input);
-
-        // create aro records
-
-
 
         return array_merge($basic, $full);
 
