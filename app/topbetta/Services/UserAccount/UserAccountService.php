@@ -54,6 +54,7 @@ class UserAccountService {
     /**
      * Create a FULL topbetta user
      * - adds records on both the users and topbetta users table
+     * - adds aro records
      * @param $input
      * @return array
      */
@@ -77,12 +78,19 @@ class UserAccountService {
         // get the user id of the new account
         $input['user_id'] = $basic['id'];
 
-        // unset fields not required for basic
+        // unset fields not required for full basic
         unset($input['username'], $input['email'], $input['password']);
         if(isset($input['parent_user_id'])) unset($input['parent_user_id']);
 
+        // create aro records
+        $this->basicUser->createAroRecordsForJoomla(array('user_id' => $basic['id'], 'name' => $basicData['name']));
+
         // create the full account record
         $full = $this->createFullAccount($input);
+
+        // create aro records
+
+
 
         return array_merge($basic, $full);
 
