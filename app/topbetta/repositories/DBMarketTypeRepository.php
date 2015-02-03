@@ -10,6 +10,7 @@ namespace TopBetta\Repositories;
 
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use TopBetta\Models\MarketTypeModel;
+use DB;
 
 class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTypeRepositoryInterface {
 
@@ -20,7 +21,8 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
 
     public function allMarketTypes()
     {
-        return $this->model->all()->paginate();
+        //Use negative ordering to place records with ordering of NULL at the enbd
+        return $this->model->orderBy(DB::raw('-ordering'), 'DESC')->paginate(15);
     }
 
     public function searchMarketTypes($searchTerm)
@@ -28,6 +30,12 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
         return $this->model
                     ->where("name", "LIKE", "%$searchTerm%")
                     ->orWhere("description", "LIKE", "%$searchTerm%")
-                    ->paginate();
+                    ->orderBy(DB::raw('-ordering'), 'DESC')
+                    ->paginate(15);
+    }
+
+    public function getMarketTypeById($id)
+    {
+        return $this->model->find($id);
     }
 }

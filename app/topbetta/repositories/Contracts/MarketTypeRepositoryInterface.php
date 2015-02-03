@@ -13,4 +13,6 @@ interface MarketTypeRepositoryInterface  {
     public function allMarketTypes();
 
     public function searchMarketTypes($searchTerm);
+
+    public function getMarketTypeById($id);
 }

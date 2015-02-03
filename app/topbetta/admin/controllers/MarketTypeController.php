@@ -3,6 +3,9 @@
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 
 use View;
+use Request;
+use Input;
+use Redirect;
 
 class MarketTypeController extends \BaseController {
 
@@ -24,9 +27,14 @@ class MarketTypeController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('admin::eventdata.markettypes.index', array(
-			"marketTypes"	=> $this->marketTypeRepository->allMarketTypes(),
-		));
+		$search = Request::get('q', '');
+		if ($search) {
+			$marketTypes = $this->marketTypeRepository->searchMarketTypes($search);
+		} else {
+			$marketTypes = $this->marketTypeRepository->allMarketTypes();
+		}
+
+		return View::make('admin::eventdata.markettypes.index', compact('marketTypes', 'search'));
 	}
 
 
@@ -72,7 +80,16 @@ class MarketTypeController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		//Get search string for filtering after redirect
+		$search = Input::get("q", '');
+
+		$marketType = $this->marketTypeRepository->getMarketTypeById($id);
+
+		if(is_null($marketType)) {
+			return Redirect::route("admin.markettypes.index");
+		}
+
+		return View::make("admin::eventdata.markettypes.edit")->with(compact('marketType', 'search'));
 	}
 
 
@@ -84,7 +101,16 @@ class MarketTypeController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		//Get search string for filtering after redirect
+		$search = Input::get("q", '');
+
+		$data = Input::only('name', 'description', 'ordering');
+
+		$data['ordering'] = $data['ordering'] == '' ? null : $data['ordering'];
+		$this->marketTypeRepository->updateWithId($id, $data);
+
+		return Redirect::route('admin.markettypes.index', array($id, "q"=>$search))
+			->with('flash_message', 'Saved!');
 	}
 
 

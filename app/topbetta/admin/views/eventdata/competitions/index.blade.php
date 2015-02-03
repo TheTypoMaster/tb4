@@ -58,7 +58,7 @@
         			<td>{{ ($competition->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $competition->created_at }}</td>
         			<td>{{ $competition->updated_at }}</td>
-        			<td>{{ link_to_route('admin.competitions.edit', 'Edit', array($competition->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.competitions.edit', 'Edit', array($competition->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach

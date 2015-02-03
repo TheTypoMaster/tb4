@@ -90,14 +90,15 @@ class CompetitionsController extends BaseController
 	 */
 	public function edit($id)
 	{
-        $competition = $this->competitionsrepo->find($id);
+        $search = Input::get('q', '');
+		$competition = $this->competitionsrepo->find($id);
 
         if (is_null($competition)) {
             // TODO: flash message user not found
             return Redirect::route('admin.competitions.index');
         }
 
-        return View::make('admin::eventdata.competitions.edit', compact('competition'));
+        return View::make('admin::eventdata.competitions.edit', compact('competition', 'search'));
 	}
 
 	/**
@@ -108,14 +109,15 @@ class CompetitionsController extends BaseController
 	 */
 	public function update($id)
 	{
+        $search = Input::get("q", '');
         //$data = Input::only('name', 'description');
-        $data = Input::all();
+        $data = Input::except('q');
 		if($data['state'] == '') $data['state'] = NULL;
 		if($data['type_code'] == '') $data['type_code'] = NULL;
 
         $this->competitionsrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.competitions.index', array($id))
+        return Redirect::route('admin.competitions.index', array($id, "q" => $search))
             ->with('flash_message', 'Saved!');
 	}
 

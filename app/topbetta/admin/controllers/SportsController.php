@@ -80,14 +80,16 @@ class SportsController extends BaseController
 	 */
 	public function edit($id)
 	{
-        $sport = $this->sportsrepo->find($id);
+		//get search query so we remain filtered when redirecting after editing
+        $search = Input::get("q", '');
+		$sport = $this->sportsrepo->find($id);
 
         if (is_null($sport)) {
             // TODO: flash message user not found
-            return Redirect::route('admin.sports.index');
+            return Redirect::route('admin.sports.index', array("q" => $search));
         }
 
-        return View::make('admin::eventdata.sports.edit', compact('sport'));
+        return View::make('admin::eventdata.sports.edit', compact('sport', 'search'));
 	}
 
 	/**
@@ -98,10 +100,13 @@ class SportsController extends BaseController
 	 */
 	public function update($id)
 	{
-        $data = Input::only('name', 'description');
+        //Get the search string for filtering when redirecting
+		$search = Input::get("q", '');
+
+		$data = Input::only('name', 'description');
         $this->sportsrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.sports.index', array($id))
+        return Redirect::route('admin.sports.index', array($id, "q"=>$search))
             ->with('flash_message', 'Saved!');
 	}
 
