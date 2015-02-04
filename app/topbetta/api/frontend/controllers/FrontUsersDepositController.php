@@ -47,8 +47,9 @@ class FrontUsersDepositController extends \BaseController {
 				break;
 			
 			case 'query_eway_customer':
+
 				$ccTokenDetailsArray = array();
-			
+
 				// grab all the managedCustomerId's for the users stored CC's out of the database
 				$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
 			
@@ -436,10 +437,10 @@ class FrontUsersDepositController extends \BaseController {
 			\Log::info('EWAY SOAP RESPONSE:'.$soapClient->__getLastResponse());
 		} catch (\SoapFault $fault) {
 			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
-			return array("success" => false, "error" => $fault->faultcode." À ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." ï¿½ ".$fault->faultstring);
 		} catch(\Exception $fault){
 			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
-			return array("success" => false, "error" => $fault->faultcode." À ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." ï¿½ ".$fault->faultstring);
 		}
 	
 		// return response from soap request
@@ -483,8 +484,37 @@ class FrontUsersDepositController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id) {
-		//
+	public function destroy($id, $managedCustomerId) {
+
+		$type = Input::get("type", null);
+
+		//make sure a deposit type is specified
+		if ( ! $type ) {
+
+			return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
+
+		}
+
+		//check we are deleting credit cards
+		if($type == "query_eway_customer") {
+
+			//check the specified credit card token exists
+			if (TopBetta\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $managedCustomerId)) {
+				//delete the token
+				$paymentToken = TopBetta\PaymentEwayTokens::where("cc_token", "=", $managedCustomerId)->first();
+				//dd($paymentToken->cc_token);
+				$paymentToken->delete();
+
+				return array('success' => true, 'result' => array());
+			} else {
+				return array('success' => false, 'error' => "Token not found");
+			}
+
+		} else {
+
+			return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
+		}
+
 	}
 
 }
