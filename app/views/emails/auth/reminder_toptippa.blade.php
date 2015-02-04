@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		<h3>TopTippa Password Reset</h3>
+		<h3>TopTippa Password Reset for User: {{$username}}</h3>
 
 		<p>
 			To reset your password, complete this form: <a href="https://www.toptippa.com.au/#password/remind/{{$token}}">https://www.toptippa.com.au/#password/remind/{{$token}}</a>
