@@ -43,12 +43,14 @@ class SportsEvents extends \Eloquent {
 		$query .= ', e.name AS event_name, e.event_id AS ext_event_id ';
 		//$query.= ', ege.event_group_id AS compID, AS compName ';
 		$query .= ' FROM tbdb_event AS e ';
+		$query .= ' INNER JOIN tbdb_market AS m ON m.event_id = e.id';
 		if ($cid) { $query .= ' INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id ';
 		}
 		// TODO: is this actually needed?
 		// $query .= $dateQuery;
 		$query .= " WHERE e.display_flag = '1' ";
 		$query .= $compQuery;
+		$query .= ' GROUP BY id';
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
 
