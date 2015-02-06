@@ -46,32 +46,43 @@ class PoliTransactionService
         ));
 
         //Add Merchant data to payload for API
-        $data['MerchantReference'] = "TB_" . $poliTransaction['id'] . "_" . Auth::user()->id;
+        $data['MerchantReference'] = "TB_" . $poliTransaction['id'] . "_" . $user->id;
         $data['MerchantData'] = array(
-            "user"          => Auth::user()->id,
+            "user"          => $user->id,
             "transaction"   => $poliTransaction['id'],
         );
+        $data['NotificationUrl'] = route('api.v1.users.poli-deposit.store');
 
         //Send the request to the Poli API
         $client = $this->createClient();
 
         try {
             $response = $client->post(Config::get("poli.apiEndPoints.initiateTransaction"), array("body" => $data));
+        }
+
+        catch (RequestException $e) {
+            //error so mark record as failed
+            $errorCode = $e->getResponse() ? $e->getResponse()->json()['ErrorCode'] : 0;
+            $this->poliTransactionRepository->initializationFailed($poliTransaction['id'], $errorCode);
+            return $e->getResponse();
+        }
+
+        //everything worked so init
+        $this->poliTransactionRepository->initialize($poliTransaction['id'], $response->json()['TransactionRefNo']);
+
+        return $response;
+    }
+
+    public function getTransactionDetails($token) {
+
+        $client = $this->createClient();
+
+        try {
+            $response = $client->get(Config::get("poli.apiEndPoints.getTransactionDetails"), array("query" => array("token" => $token)));
         } catch (RequestException $e) {
-            $transactionData = array("status" => "Initialization failed");
-            $this->poliTransactionRepository->updateWithId($poliTransaction['id'], $transactionData);
-            dd($e->getRequest());
-        }
 
-        //check the response and update the transaction accordingly
-        if ($response['Success']) {
-            $transactionData = array(
-                "status" => "Initialized",
-                "poli_token" => $response['TransactionRefNo'],
-            );
+            return $e->getResponse();
         }
-
-        $this->poliTransactionRepository->updateWithId($poliTransaction['id'], $transactionData);
 
         return $response;
     }
@@ -79,9 +90,11 @@ class PoliTransactionService
     private function createClient()
     {
         return new Client(array(
-            "auth"  => array(
-                "username"  => Config::get("poli.merchantId"),
-                "password"  => Config::get("poli.password"),
+            "defaults" => array(
+                "auth"  => array(
+                    Config::get("poli.merchantId"),
+                    Config::get("poli.merchantPassword"),
+                ),
             ),
         ));
     }

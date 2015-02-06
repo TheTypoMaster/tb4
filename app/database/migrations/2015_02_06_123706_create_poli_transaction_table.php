@@ -20,6 +20,7 @@ class CreatePoliTransactionTable extends Migration {
 			$table->string('status');
 			$table->decimal('amount');
 			$table->string('currency_code');
+			$table->integer('poli_error_code')->unsigned();
 			$table->timestamps();
 		});
 	}

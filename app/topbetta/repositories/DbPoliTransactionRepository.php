@@ -17,4 +17,17 @@ class DbPoliTransactionRepository extends BaseEloquentRepository implements Poli
     public function __construct(PoliTransactionModel $poliTransaction) {
         $this->model= $poliTransaction;
     }
+
+    public function initialize($id, $token) {
+        $this->updateWithId($id, array(
+            "status"        => PoliTransactionModel::STATUS_INITIALIZED,
+            "poli_token"    => $token
+        ));
+    }
+
+    public function initializationFailed($id){
+        $this->updateWithId($id, array(
+            "status"        => PoliTransactionModel::STATUS_FAILED_INITIALIZE,
+        ));
+    }
 }
