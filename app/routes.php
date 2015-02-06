@@ -127,6 +127,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::resource('users.betting', 'FrontUsersBetting');
 	Route::resource('users.betting-limit', 'FrontUsersBettingLimit');
 	Route::resource('users.tournaments', 'FrontUsersTournaments');
+	Route::resource('users.poli-deposit', 'FrontUsersPoliDeposit');
 
 	// Password Resets
 	// The actual reset password method

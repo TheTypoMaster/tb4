@@ -184,6 +184,7 @@ return array(
 		'FrontUsersRefer'	=> 'TopBetta\frontend\FrontUsersReferController',
 		'FrontUsersBanking'	=> 'TopBetta\frontend\FrontUsersBankingController',
 		'FrontUsersDeposit'	=> 'TopBetta\frontend\FrontUsersDepositController',
+		'FrontUsersPoliDeposit'	=> 'TopBetta\frontend\FrontUsersPoliDepositController',
 		'FrontUsersWithdraw'	=> 'TopBetta\frontend\FrontUsersWithdrawController',
 		'FrontUsersBalances'	=> 'TopBetta\frontend\FrontUsersBalancesController',
 		'FrontUsersBetting'	=> 'TopBetta\frontend\FrontUsersBettingController',
