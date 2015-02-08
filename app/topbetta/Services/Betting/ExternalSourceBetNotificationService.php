@@ -177,7 +177,7 @@ class ExternalSourceBetNotificationService {
 
     private function _queueJob($betSourceDetails, $formattedBetDetails){
 
-        $data = array('parameters' => array('source_details' => $betSourceDetails, 'notification' => 'email', 'request_type' => 'HTTP'), 'bet_data' => $formattedBetDetails);
+        $data = array('parameters' => array('source_details' => $betSourceDetails, 'notification' => 'email', 'request_type' => 'POST'), 'bet_data' => $formattedBetDetails);
 
         Log::debug('Bet Notification: About to queue job');
         Queue::push('\TopBetta\Services\Betting\ExternalSourceBetNotifcationQueueService', $data, 'bet-notification');
