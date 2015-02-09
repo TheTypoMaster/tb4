@@ -43,7 +43,7 @@
         			<td>{{ ($market->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $market->created_at }}</td>
         			<td>{{ $market->updated_at }}</td>
-        			<td>{{ link_to_route('admin.markets.edit', 'Edit', array($market->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach

@@ -52,7 +52,7 @@
         			<td>{{ ($event->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $event->created_at }}</td>
         			<td>{{ $event->updated_at }}</td>
-        			<td>{{ link_to_route('admin.events.edit', 'Edit', array($event->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.events.edit', 'Edit', array($event->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach

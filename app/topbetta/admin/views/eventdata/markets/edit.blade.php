@@ -7,11 +7,11 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route('admin.markets.index', 'Back to Markets', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{{ link_to_route('admin.markets.index', 'Back to Markets', array("q" => $search), array('class' => 'btn btn-outline btn-warning')) }}</span>
         </ul>
 		<h4>Edit Market</h4>
 		<div class='col-lg-6'>
-        	{{ Form::model($market, array('method' => 'PATCH', 'route' => array('admin.markets.update', $market->id))) }}
+        	{{ Form::model($market, array('method' => 'PATCH', 'route' => array('admin.markets.update', $market->id, "q" => $search))) }}
         	<div class="form-group">
                 {{ Form::label('market_id', 'Market Id:') }}
                 {{ Form::text('market_id', null, array('class' => 'form-control', 'placeholder' => $market->id, 'disabled')) }}

@@ -7,11 +7,11 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route('admin.selections.index', 'Back to Selections', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{{ link_to_route('admin.selections.index', 'Back to Selections', array('q'=>$search), array('class' => 'btn btn-outline btn-warning')) }}</span>
         </ul>
 		<h4>Edit Selection</h4>
 		<div class='col-lg-6'>
-        	{{ Form::model($selection, array('method' => 'PATCH', 'route' => array('admin.selections.update', $selection->id))) }}
+        	{{ Form::model($selection, array('method' => 'PATCH', 'route' => array('admin.selections.update', $selection->id, "q" => $search))) }}
         	<div class="form-group">
                 {{ Form::label('id', 'Selection Id:') }}
                 {{ Form::text('id', null, array('class' => 'form-control', 'placeholder' => $selection->id, 'disabled')) }}

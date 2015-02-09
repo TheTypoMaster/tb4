@@ -7,11 +7,11 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route('admin.selectionprices.index', 'Back to Selection Prices', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{{ link_to_route('admin.selectionprices.index', 'Back to Selection Prices', array("q" => $search), array('class' => 'btn btn-outline btn-warning')) }}</span>
         </ul>
 		<h4>Edit Price</h4>
 		<div class='col-lg-6'>
-        	{{ Form::model($selectionprice, array('method' => 'PATCH', 'route' => array('admin.selectionprices.update', $selectionprice->id))) }}
+        	{{ Form::model($selectionprice, array('method' => 'PATCH', 'route' => array('admin.selectionprices.update', $selectionprice->id, "q" => $search))) }}
         	<div class="form-group">
                 {{ Form::label('id', 'Price Id:') }}
                 {{ Form::text('id', null, array('class' => 'form-control', 'placeholder' => $selectionprice->id, 'disabled')) }}

@@ -82,14 +82,17 @@ class SelectionsController extends BaseController
 	 */
 	public function edit($id)
 	{
-        $selection = $this->selectionsrepo->find($id);
+        //Get search string for filtering after redirection
+		$search = Input::get("q", '');
+
+		$selection = $this->selectionsrepo->find($id);
 
         if (is_null($selection)) {
             // TODO: flash message user not found
             return Redirect::route('admin.selections.index');
         }
 
-        return View::make('admin::eventdata.selections.edit', compact('selection'));
+        return View::make('admin::eventdata.selections.edit', compact('selection', 'search'));
 	}
 
 	/**
@@ -100,10 +103,13 @@ class SelectionsController extends BaseController
 	 */
 	public function update($id)
 	{
-        $data = Input::only('name', 'selection_status_id');
+        //Get search string for filtering after redirection
+		$search = Input::get("q", '');
+
+		$data = Input::only('name', 'selection_status_id');
         $this->selectionsrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.selections.index', array($id))
+        return Redirect::route('admin.selections.index', array($id, 'q'=>$search))
             ->with('flash_message', 'Saved!');
 	}
 

@@ -47,7 +47,7 @@
                     <td>{{ $selectionprice->status_name }}</td>
         			<td>{{ $selectionprice->created_at }}</td>
         			<td>{{ $selectionprice->updated_at }}</td>
-        			<td>{{ link_to_route('admin.selectionprices.edit', 'Edit', array($selectionprice->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.selectionprices.edit', 'Edit', array($selectionprice->id, 'q' => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach

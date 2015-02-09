@@ -1,5 +1,5 @@
 <?php
 
 return array(
-    'secure_links' => true
+    'secure_links' => false
 );
