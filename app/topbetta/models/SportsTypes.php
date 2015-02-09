@@ -8,7 +8,7 @@ class SportsTypes extends \Eloquent {
 
 	public function getTypes($eventId) {
 
-		$query = "SELECT m.id AS id, mt.name AS bet_type, m.market_status as status, m.line as line, mt.id AS market_type_id 
+		$query = "SELECT m.id AS id, mt.name AS bet_type, m.market_status as status, m.line as line, mt.id AS market_type_id, mt.ordering as ordering
 					FROM tbdb_market_type AS mt 
 					INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id 
 					WHERE m.event_id = $eventId
@@ -23,7 +23,7 @@ class SportsTypes extends \Eloquent {
 
 	public function getTournamentTypes($compId, $eventId) {
 
-		$query = "SELECT DISTINCT(m.id) AS id, mt.name AS bet_type, m.market_status as status, m.line as line, mt.id AS market_type_id
+		$query = "SELECT DISTINCT(m.id) AS id, mt.name AS bet_type, m.market_status as status, m.line as line, mt.id AS market_type_id, mt.ordering as ordering
 					FROM tbdb_market AS m
 					INNER JOIN tbdb_event as e on e.id = m.event_id
 					INNER JOIN tbdb_market_type AS mt ON mt.id = m.market_type_id

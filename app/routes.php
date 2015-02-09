@@ -226,6 +226,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('sports', 'TopBetta\admin\controllers\SportsController');
 	Route::resource('competitions', 'TopBetta\admin\controllers\CompetitionsController');
 	Route::resource('markets', 'TopBetta\admin\controllers\MarketsController');
+	Route::resource('markettypes', 'TopBetta\admin\controllers\MarketTypeController');
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');

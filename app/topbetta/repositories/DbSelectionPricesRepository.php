@@ -27,7 +27,7 @@ class DbSelectionPricesRepository extends BaseEloquentRepository
     public function search($search)
     {
         return $this->model->join('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_selection_price.selection_id')
-            ->join('tbdb_markett', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
             ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
             ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
             ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')

@@ -76,14 +76,17 @@ class MarketsController extends BaseController
 	 */
 	public function edit($id)
 	{
-        $market = $this->marketsrepo->findWithMarketTypePlusEvent($id);
+        //Get search string for filtering when redirecting after editing
+		$search = Input::get("q", '');
+
+		$market = $this->marketsrepo->findWithMarketTypePlusEvent($id);
 
         if (is_null($market)) {
             // TODO: flash message user not found
             return Redirect::route('admin.markets.index');
         }
 
-        return View::make('admin::eventdata.markets.edit', compact('market'));
+        return View::make('admin::eventdata.markets.edit', compact('market', 'search'));
 	}
 
 	/**
@@ -94,10 +97,13 @@ class MarketsController extends BaseController
 	 */
 	public function update($id)
 	{
-        $data = Input::only('market_status', 'display_flag');
+        //Get search string for filtering when redirecting
+		$search = Input::get('q', '');
+
+		$data = Input::only('market_status', 'display_flag');
         $this->marketsrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.markets.index', array($id))
+        return Redirect::route('admin.markets.index', array($id, 'q'=>$search))
             ->with('flash_message', 'Saved!');
 	}
 

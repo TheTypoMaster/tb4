@@ -81,14 +81,17 @@ class SelectionPricesController extends BaseController
 	 */
 	public function edit($id)
 	{
-        $selectionprice = $this->selectionpricesrepo->findWithSelection($id);
+        //Get search string for filtering after redirection
+		$search = Input::get("q", '');
+
+		$selectionprice = $this->selectionpricesrepo->findWithSelection($id);
 
         if (is_null($selectionprice)) {
             // TODO: flash message user not found
             return Redirect::route('admin.selectionprices.index');
         }
 
-        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice'));
+        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice', 'search'));
 	}
 
 	/**
@@ -99,10 +102,13 @@ class SelectionPricesController extends BaseController
 	 */
 	public function update($id)
 	{
-        $data = Input::only('win_odds', 'place_odds');
+        //Get search string for filtering after redirection
+		$search = Input::get("q", '');
+
+		$data = Input::only('win_odds', 'place_odds');
         $this->selectionpricesrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.selectionprices.index', array($id))
+        return Redirect::route('admin.selectionprices.index', array($id, 'q' => $search))
             ->with('flash_message', 'Saved!');
 	}
 

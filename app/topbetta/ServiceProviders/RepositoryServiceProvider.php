@@ -77,5 +77,9 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface',
             'TopBetta\Repositories\DbAccountTransactionTypeRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface',
+            'TopBetta\Repositories\DbMarketTypeRepository'
+        );
     }
 } 

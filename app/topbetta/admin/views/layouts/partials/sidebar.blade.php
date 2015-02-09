@@ -72,6 +72,9 @@
                     <li>
                         <a href="{{ route('admin.markets.index') }}">Markets</a>
                     </li>
+					<li>
+						<a href="{{ route('admin.markettypes.index') }}">Market Types</a>
+					</li>
                     <li>
                         <a href="{{ route('admin.selections.index') }}">Selections</a>
                     </li>
