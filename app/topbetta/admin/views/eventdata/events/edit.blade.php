@@ -16,11 +16,11 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route('admin.events.index', 'Back to Events', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{{ link_to_route('admin.events.index', 'Back to Events', array('q'=>$search), array('class' => 'btn btn-outline btn-warning')) }}</span>
         </ul>
 		<h4>Edit Event</h4>
 		<div class='col-lg-6'>
-        	{{ Form::model($event, array('method' => 'PATCH', 'route' => array('admin.events.update', $event->id))) }}
+        	{{ Form::model($event, array('method' => 'PATCH', 'route' => array('admin.events.update', $event->id, 'q' => $search))) }}
         	<div class="form-group">
         		{{ Form::label('name', 'Event Name:') }}
         		{{ Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}

@@ -8,6 +8,7 @@ use Hash;
 use Input;
 use User;
 use Lang;
+use View;
 
 class FrontPasswordResetsController extends \BaseController
 {
@@ -30,9 +31,17 @@ class FrontPasswordResetsController extends \BaseController
 
             return array("success" => false, "error" => $validator->messages()->all());
         } else {
-            if (!User::where('email', '=', $input['email'])->count()) {
+            $user = User::where('email', '=', $input['email']);
+            if (! $user->count()) {
                 return array('success' => false, 'error' => Lang::get('reminders.user'));
             }
+
+            $user = $user->first();
+            //View composer to inject the username of the user into the email view
+            View::composer(array('emails.auth.reminder', 'emails.auth.reminder_toptippa'), function ($view) use ($user){
+
+                $view->with('username', $user->username);
+            });
 
             if(isset($input['custom_remind_message'])){
                 \Config::set('auth.reminder.email', 'emails.auth.reminder_toptippa');

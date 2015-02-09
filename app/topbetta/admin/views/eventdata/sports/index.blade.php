@@ -42,7 +42,7 @@
         			<td>{{ ($sport->racing_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $sport->created_at }}</td>
         			<td>{{ $sport->updated_at }}</td>
-        			<td>{{ link_to_route('admin.sports.edit', 'Edit', array($sport->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.sports.edit', 'Edit', array($sport->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach

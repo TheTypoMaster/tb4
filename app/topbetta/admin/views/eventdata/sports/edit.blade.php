@@ -7,11 +7,11 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route('admin.sports.index', 'Back to Sports', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{{ link_to_route('admin.sports.index', 'Back to Sports', array("q"=>$search), array('class' => 'btn btn-outline btn-warning')) }}</span>
         </ul>
 		<h4>Edit Sport</h4>
 		<div class='col-lg-6'>
-        	{{ Form::model($sport, array('method' => 'PATCH', 'route' => array('admin.sports.update', $sport->id))) }}
+        	{{ Form::model($sport, array('method' => 'PATCH', 'route' => array('admin.sports.update', $sport->id, "q" => $search))) }}
         	<div class="form-group">
         		{{ Form::label('name', 'Sport Name:') }}
         		{{ Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}

@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		<h3>TopBetta Password Reset</h3>
+		<h3>TopBetta Password Reset for User: {{$username}}</h3>
 
 		<p>
 			To reset your password, complete this form: <a href="https://www.topbetta.com.au/#password_resets/{{$token}}">https://www.topbetta.com.au/#password_resets/{{$token}}</a>
