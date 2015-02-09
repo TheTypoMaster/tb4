@@ -65,11 +65,11 @@ class UserAccountService {
 
         $basicData['username'] = array_get($input, 'username');
         $basicData['email'] = array_get($input, 'email');
-        $basicData['password'] = array_get($input, 'password');
+       // $basicData['password'] = array_get($input, 'password');
         $basicData['parent_user_id'] = array_get($input, 'parent_user_id');
 //        if(isset($input['username'])) $basicData['username'] = $input['username'];
 //        if(isset($input['email'])) $basicData['email'] = $input['email'];
-//        if(isset($input['password'])) $basicData['password'] = md5($input['password']);
+        if(isset($input['password'])) $basicData['password'] = md5($input['password']);
 //        if(isset($input['parent_user_id'])) $basicData['parent_user_id'] = $input['parent_user_id'];
         $basicData['name'] = $input['first_name'].' '.$input['last_name'];
         $basicData['usertype'] = 'Registered';
