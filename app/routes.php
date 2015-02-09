@@ -12,43 +12,6 @@
  */
 
 // apc_clear_cache("user");
-//TODO: ****** this is not safe to be here for production - find a better fix ******
-
-if (function_exists('apache_request_headers')) {
-	$requestHeaders = apache_request_headers();
-} else {
-	$requestHeaders = array();
-}
-if (array_key_exists('Origin', $requestHeaders)) {
-
-	$httpOrigin = $requestHeaders['Origin'];
-	$allowedHttpOrigins = array(
-		"http://localhost:9778",
-		"http://beta.mugbookie.com",
-		"http://localhost",
-		"http://beta.tb4.dev",
-		"http://tb4test.mugbookie.com",
-		"http://192.168.0.31:9778",
-		"https://www.topbetta.com.au",
-		"http://jason.mugbookie.com",
-        "http://jasontb.mugbookie.com",
-		"http://evan.mugbookie.com",
-		"http://mic.mugbookie.com",
-		"http://greg.mugbookie.com"
-	);
-
-	if (in_array($httpOrigin, $allowedHttpOrigins)) {
-
-		@header("Access-Control-Allow-Origin: " . $httpOrigin);
-	}
-} else {
-
-	header('Access-Control-Allow-Origin: http://localhost:9778');
-}
-
-header('Access-Control-Allow-Credentials: true');
-
-
 
 
 Route::get('/', function() {
