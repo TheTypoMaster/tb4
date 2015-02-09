@@ -71,6 +71,7 @@ class UserAccountService {
         $basicData['gid'] = '18';
         $basicData['registerDate'] = Carbon::now();
         $basicData['lastVisitDate'] = Carbon::now();
+        $basicData['isTopBetta'] = '1';
 
         // create the basic user record
         $basic = $this->createBasicAccount($basicData);
