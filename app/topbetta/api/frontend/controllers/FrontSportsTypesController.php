@@ -45,10 +45,10 @@ class FrontSportsTypesController extends \BaseController {
 
 			if (count($types) > 0) {
 
-				// we need to type cast the strings to int
+				// we need to tbdb_markettype cast the strings to int
 				foreach ($types as $type) {
 	
-					$eachType[] = array('id' => (int)$type -> id, 'market_type_id' => (int)$type->market_type_id, 'bet_type' => $type -> bet_type, 'status' => $type->status, 'line' => $type->line);
+					$eachType[] = array('id' => (int)$type -> id, 'market_type_id' => (int)$type->market_type_id, 'bet_type' => $type -> bet_type, 'status' => $type->status, 'line' => $type->line, 'order' => $type->ordering);
 					
 				}
 

@@ -80,7 +80,9 @@ class EventsController extends BaseController
 	 */
 	public function edit($id)
 	{
-        $event = $this->eventsrepo->find($id);
+        //Get the search string if it exists so after updating we redirect back to filtered view
+		$search = Input::get("q", '');
+		$event = $this->eventsrepo->find($id);
 
         if (is_null($event)) {
             // TODO: flash message events not found
@@ -89,7 +91,7 @@ class EventsController extends BaseController
 
 		$event_status = $this->eventstatusrepo->getEventStatusList();
 
-        return View::make('admin::eventdata.events.edit', compact('event', 'event_status'));
+        return View::make('admin::eventdata.events.edit', compact('event', 'event_status', 'search'));
 	}
 
 	/**
@@ -100,14 +102,16 @@ class EventsController extends BaseController
 	 */
 	public function update($id)
 	{
-        $data = Input::all();
+        //Get the query string for use when redirecting
+		$search = Input::get("q", '');
+		$data = Input::except(array("q"));
 
 		// deal with mysql setting '' on an integer field!!!!
 		if($data['number'] == '') $data['number'] = NULL;
 
         $this->eventsrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.events.index', array($id))
+        return Redirect::route('admin.events.index', array($id, "q" => $search))
             ->with('flash_message', 'Saved!');
 	}
 

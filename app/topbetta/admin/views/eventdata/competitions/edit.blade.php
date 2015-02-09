@@ -29,7 +29,7 @@
         </ul>
 		<h4>Edit Competition</h4>
 		<div class='col-lg-6'>
-        	{{ Form::model($competition, array('method' => 'PATCH', 'route' => array('admin.competitions.update', $competition->id))) }}
+        	{{ Form::model($competition, array('method' => 'PATCH', 'route' => array('admin.competitions.update', $competition->id, "q" => $search))) }}
         	<div class="form-group">
         		{{ Form::label('name', 'Competition Name:') }}
         		{{ Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}

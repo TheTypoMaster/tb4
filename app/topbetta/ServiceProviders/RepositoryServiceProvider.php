@@ -81,5 +81,9 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\PoliTransactionRepositoryInterface',
             'TopBetta\Repositories\DbPoliTransactionRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface',
+            'TopBetta\Repositories\DbMarketTypeRepository'
+        );
     }
 } 

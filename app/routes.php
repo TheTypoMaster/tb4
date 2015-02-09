@@ -12,43 +12,6 @@
  */
 
 // apc_clear_cache("user");
-//TODO: ****** this is not safe to be here for production - find a better fix ******
-
-if (function_exists('apache_request_headers')) {
-	$requestHeaders = apache_request_headers();
-} else {
-	$requestHeaders = array();
-}
-if (array_key_exists('Origin', $requestHeaders)) {
-
-	$httpOrigin = $requestHeaders['Origin'];
-	$allowedHttpOrigins = array(
-		"http://localhost:9778",
-		"http://beta.mugbookie.com",
-		"http://localhost",
-		"http://beta.tb4.dev",
-		"http://tb4test.mugbookie.com",
-		"http://192.168.0.31:9778",
-		"https://www.topbetta.com.au",
-		"http://jason.mugbookie.com",
-        "http://jasontb.mugbookie.com",
-		"http://evan.mugbookie.com",
-		"http://mic.mugbookie.com",
-		"http://greg.mugbookie.com"
-	);
-
-	if (in_array($httpOrigin, $allowedHttpOrigins)) {
-
-		@header("Access-Control-Allow-Origin: " . $httpOrigin);
-	}
-} else {
-
-	header('Access-Control-Allow-Origin: http://localhost:9778');
-}
-
-header('Access-Control-Allow-Credentials: true');
-
-
 
 
 Route::get('/', function() {
@@ -227,6 +190,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('sports', 'TopBetta\admin\controllers\SportsController');
 	Route::resource('competitions', 'TopBetta\admin\controllers\CompetitionsController');
 	Route::resource('markets', 'TopBetta\admin\controllers\MarketsController');
+	Route::resource('markettypes', 'TopBetta\admin\controllers\MarketTypeController');
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');

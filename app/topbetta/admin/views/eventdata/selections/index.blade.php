@@ -49,7 +49,7 @@
         			<td>{{ ($selection->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $selection->created_at }}</td>
         			<td>{{ $selection->updated_at }}</td>
-        			<td>{{ link_to_route('admin.selections.edit', 'Edit', array($selection->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.selections.edit', 'Edit', array($selection->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach
