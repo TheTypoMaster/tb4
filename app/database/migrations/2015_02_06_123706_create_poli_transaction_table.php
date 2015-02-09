@@ -16,6 +16,7 @@ class CreatePoliTransactionTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('user_id')->unsigned();
+			$table->unsignedBigInteger('poli_ref_no');
 			$table->string('poli_token');
 			$table->string('status');
 			$table->decimal('amount');

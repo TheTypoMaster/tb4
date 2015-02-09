@@ -10,93 +10,114 @@ namespace TopBetta\Services\Accounting;
 
 use Config;
 use Auth;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use TopBetta\Repositories\Contracts\PoliTransactionRepositoryInterface;
+use TopBetta\Services\Accounting\AccountTransactionService;
+use TopBetta\Services\Accounting\Exceptions\TransactionNotFoundException;
+use TopBetta\Models\PoliTransactionModel;
 
 class PoliTransactionService
 {
 
+    const ACCT_TRANSACTION_KEYWORD = "polideposit";
     /**
      * @var PoliTransactionRepositoryInterface
      */
     private $poliTransactionRepository;
 
-    public function __construct(PoliTransactionRepositoryInterface $poliTransactionRepository)
+    /**
+     * @var AccountTransactionService
+     */
+    private $accountTransactionService;
+
+    public function __construct(PoliTransactionRepositoryInterface $poliTransactionRepository, AccountTransactionService $accountTransactionService)
     {
         $this->poliTransactionRepository = $poliTransactionRepository;
+        $this->accountTransactionService = $accountTransactionService;
+    }
+
+
+    public function createTransaction($userId, $amount, $currencyCode)
+    {
+        //create the transaction in the db
+        return $this->poliTransactionRepository->create(array(
+            "user_id"       => $userId,
+            "status"        => "Not Initialized",
+            "amount"        => $amount,
+            "currency_code" => $currencyCode,
+        ));
+
+    }
+
+    public function updateTransactionTokenAndStatus($transactionRefNo, $token, $transactionStatus, $errorCode = 0)
+    {
+        $poliTransaction = $this->poliTransactionRepository->findByRefNo($transactionRefNo);
+
+        if(! $poliTransaction ) {
+            throw new TransactionNotFoundException;
+        }
+
+        //sets the token if necessary
+        $poliTransaction = $this->poliTransactionRepository->setToken($poliTransaction, $token);
+
+        //Only change the status if the transaction is not in a terminal state
+        //This stops account balance being incremented more than once.
+        if( ! self::statusIsTerminal($poliTransaction->status) ) {
+            $poliTransaction = $this->updateStatus($poliTransaction, $transactionStatus, $errorCode);
+        }
+
+        return $poliTransaction;
+    }
+
+    public function updateStatus($poliTransaction, $transactionStatus, $errorCode = 0)
+    {
+
+        $poliTransaction = $this->poliTransactionRepository->updateStatus($poliTransaction, $transactionStatus, $errorCode);
+
+        //Increase the account balance if completed
+        if( $poliTransaction->isCompleted() ) {
+            $this->accountTransactionService->increaseAccountBalance(
+                $poliTransaction->user_id,
+                $poliTransaction->amount,
+                self::ACCT_TRANSACTION_KEYWORD,
+                "Poli Transaction id: ".$poliTransaction->poli_ref_no
+            );
+        }
+
+        return $poliTransaction;
+    }
+
+
+    public function initialize($poliTransactionId, $refNo)
+    {
+        return $this->poliTransactionRepository->initialize($poliTransactionId, $refNo);
+    }
+
+    public function initializationFailed($poliTransactionId, $errorCode)
+    {
+        return $this->poliTransactionRepository->initializationFailed($poliTransactionId, $errorCode);
     }
 
     /**
-     * Calls initializeTransaction in the Poli API
-     * @param $data
-     * @return mixed
+     * Checks if the given transaction status is a terminal status
+     * @param $transactionStatus
+     * @return bool
      */
-    public function initiateTransaction(array $data)
+    public static function statusIsTerminal($transactionStatus)
     {
-        //get the user
-        $user = Auth::user();
-
-        //create the transaction in the db
-        $poliTransaction = $this->poliTransactionRepository->create(array(
-            "user_id"       => $user->id,
-            "status"        => "Not Initialized",
-            "amount"        => $data['Amount'],
-            "currency_code" => $data['CurrencyCode'],
-        ));
-
-        //Add Merchant data to payload for API
-        $data['MerchantReference'] = "TB_" . $poliTransaction['id'] . "_" . $user->id;
-        $data['MerchantData'] = array(
-            "user"          => $user->id,
-            "transaction"   => $poliTransaction['id'],
-        );
-        $data['NotificationUrl'] = route('api.v1.users.poli-deposit.store');
-
-        //Send the request to the Poli API
-        $client = $this->createClient();
-
-        try {
-            $response = $client->post(Config::get("poli.apiEndPoints.initiateTransaction"), array("body" => $data));
+        switch($transactionStatus){
+            case PoliTransactionModel::STATUS_RECEIPT_UNVERIFIED:
+            case PoliTransactionModel::STATUS_COMPLETED:
+            case PoliTransactionModel::STATUS_INCOMPATIBLE:
+            case PoliTransactionModel::STATUS_REJECTED:
+            case PoliTransactionModel::STATUS_FAILED:
+            case PoliTransactionModel::STATUS_CANCELLED:
+            case PoliTransactionModel::STATUS_TIMED_OUT:
+                return true;
         }
 
-        catch (RequestException $e) {
-            //error so mark record as failed
-            $errorCode = $e->getResponse() ? $e->getResponse()->json()['ErrorCode'] : 0;
-            $this->poliTransactionRepository->initializationFailed($poliTransaction['id'], $errorCode);
-            return $e->getResponse();
-        }
-
-        //everything worked so init
-        $this->poliTransactionRepository->initialize($poliTransaction['id'], $response->json()['TransactionRefNo']);
-
-        return $response;
+        return false;
     }
 
-    public function getTransactionDetails($token) {
 
-        $client = $this->createClient();
-
-        try {
-            $response = $client->get(Config::get("poli.apiEndPoints.getTransactionDetails"), array("query" => array("token" => $token)));
-        } catch (RequestException $e) {
-
-            return $e->getResponse();
-        }
-
-        return $response;
-    }
-
-    private function createClient()
-    {
-        return new Client(array(
-            "defaults" => array(
-                "auth"  => array(
-                    Config::get("poli.merchantId"),
-                    Config::get("poli.merchantPassword"),
-                ),
-            ),
-        ));
-    }
 }
 

@@ -2,23 +2,36 @@
 namespace TopBetta\frontend;
 
 use Input;
+use Auth;
+use Config;
+use Redirect;
+use TopBetta\Services\Accounting\Exceptions\TransactionNotFoundException;
+use TopBetta\Services\Accounting\PoliApiService;
 use TopBetta\Services\Accounting\PoliTransactionService;
 use TopBetta\Services\Response\ApiResponse;
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 class FrontUsersPoliDepositController extends \BaseController {
 
 	/**
 	 * @var PoliService
 	 */
-	private $poliService;
+	private $poliTransactionService;
+
 	/**
 	 * @var ApiResponse
 	 */
 	private $response;
 
-	public function __construct(PoliTransactionService $poliService, ApiResponse $response){
-		$this->poliService = $poliService;
+	/**
+	 * @var PoliApiService
+	 */
+	private $poliApiService;
+
+	public function __construct(PoliTransactionService $poliTransactionService, PoliApiService $poliApiService,  ApiResponse $response){
+		$this->poliTransactionService = $poliTransactionService;
 		$this->response = $response;
+		$this->poliApiService = $poliApiService;
 	}
 
 
@@ -30,14 +43,32 @@ class FrontUsersPoliDepositController extends \BaseController {
 	public function index($id = false)
 	{
 		$data = Input::get();
+		$user = Auth::user();
 
-		$response = $this->poliService->initiateTransaction($data);
+		if(! ( $amount = array_get($data, 'Amount', 0) ) ) {
+			return $this->response->failed(array(), 400, null, "No Amount Specified");
+		}
+
+		//create the transaction in the database
+		$poliTransaction = $this->poliTransactionService->createTransaction($user->id, $amount, array_get($data, 'CurrencyCode', 'AUD'));
+
+		if( ! $poliTransaction) {
+			return $this->response->failed(array(), 500, null, "Unknown error occured when creating the transaction");
+		}
+
+		//initiate the transaction with POLI
+		$response = $this->poliApiService->initiateTransaction($data, $poliTransaction['id'], $user->id);
 		$responseArray = $response->json();
 
-		if($responseArray['Success']){
+		//check response
+		if( array_get($responseArray, 'Success', false) ) {
+			//successful so initialize transaction in DB
+			$this->poliTransactionService->initialize($poliTransaction['id'], $responseArray['TransactionRefNo']);
 			return $this->response->success($responseArray);
 		}
 
+		//unsuccessful so init failed
+		$this->poliTransactionService->initializationFailed($poliTransaction['id'], $responseArray['errorCode']);
 		return $this->response->failed($responseArray, $response->getStatusCode());
 	}
 
@@ -60,7 +91,9 @@ class FrontUsersPoliDepositController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		$token = \Input::get("token", null);
+
+		return $this->_getTransactionDetailsAndUpdate($token);
 	}
 
 
@@ -72,11 +105,19 @@ class FrontUsersPoliDepositController extends \BaseController {
 	 */
 	public function show($id, $token)
 	{
-		$token = urldecode('rXMidznVQqPSC%2FB697yiJQyVDg1aORlo');
+		$token = \Input::get("token", null);
 
-		dd($this->poliService->getTransactionDetails($token)->json());
+		$response = $this->_getTransactionDetailsAndUpdate($token);
 
-		return;
+		if( $response ) {
+			if(PoliTransactionService::statusIsTerminal($response['TransactionStatusCode'])) {
+				return Redirect::to(Config::get("poli.frontendReturnUrl").$response['TransactionStatusCode']);
+			}
+
+			return Redirect::to(Config::get("poli.frontendReturnUrl")."pending");
+		}
+
+		return Redirect::to(Config::get("poli.frontendReturnUrl")."failed");
 	}
 
 
@@ -114,6 +155,39 @@ class FrontUsersPoliDepositController extends \BaseController {
 	{
 		//
 	}
+
+	private function _getTransactionDetailsAndUpdate($token)
+	{
+		//get the transaction details from the Poli API
+		$response = $this->poliApiService->getTransactionDetails($token);
+		if( ! $response ) {
+			return null;
+		}
+
+		//get the response body from Poli
+		$responseArray = $response->json();
+
+		//check the transaction reference is returned
+		if( $transactionRefNo = array_get($responseArray, 'TransactionRefNo', false) ) {
+			try {
+				//update the transaction & add funds if completed.
+				$poliTransaction = $this->poliTransactionService->updateTransactionTokenAndStatus(
+					$transactionRefNo,
+					$token,
+					$responseArray['TransactionStatusCode'],
+					$responseArray['ErrorCode']
+				);
+			} catch (TransactionNotFoundException $e) {
+
+				return $responseArray;
+			}
+
+			return $responseArray;
+		}
+
+		return $responseArray;
+	}
+
 
 
 }
