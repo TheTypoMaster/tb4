@@ -50,7 +50,7 @@
         			<td>{{ $competition->events }}</td>
         			<td>{{ $competition->track }}</td>
         			<td>{{ $competition->weather }}</td>
-        			<td>{{ $competition->type }}</td>
+        			<td>{{ $competition->type_code }}</td>
         			<td>{{ $competition->grade }}</td>
         			<td>{{ $competition->country }}</td>
         			<td>{{ $competition->start_date }}</td>
@@ -58,7 +58,7 @@
         			<td>{{ ($competition->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $competition->created_at }}</td>
         			<td>{{ $competition->updated_at }}</td>
-        			<td>{{ link_to_route('admin.competitions.edit', 'Edit', array($competition->id), array('class' => 'btn btn-info')) }}</td>
+        			<td>{{ link_to_route('admin.competitions.edit', 'Edit', array($competition->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 
         		</tr>
         		@endforeach

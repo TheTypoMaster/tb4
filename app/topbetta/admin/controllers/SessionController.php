@@ -50,6 +50,7 @@ class SessionController extends \BaseController
 				$l = new \TopBetta\LegacyApiHelper;
 				$login = $l->query('doUserLogin', $input);
 
+				//dd('admin user found, login:'. print_r($login,true));
 				if ($login['status'] == 200) {
 
 					$attempt = Auth::loginUsingId($login['userInfo']['id']);

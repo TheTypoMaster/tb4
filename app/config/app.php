@@ -107,11 +107,12 @@ return array(
         'Illuminate\View\ViewServiceProvider',
         'Illuminate\Workbench\WorkbenchServiceProvider',
 
+		'Barryvdh\Cors\CorsServiceProvider',
 
         'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
-        'TopBetta\Repositories\RepositoryServiceProvider'
+        'TopBetta\ServiceProviders\RepositoryServiceProvider'
 
 	),
 

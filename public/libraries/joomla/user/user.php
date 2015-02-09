@@ -163,6 +163,15 @@ class JUser extends JObject
 	 */
 	var $betWinsToFbWall			= null;
 
+
+	/**
+	 * ParentUserId
+	 *
+	 * @var enum
+	 */
+	var $parent_user_id			= null;
+
+
 	/**
 	 * User parameters
 	 * @var object
@@ -200,6 +209,7 @@ class JUser extends JObject
 			$this->guest     = 1;
 			$this->isCorporate  = 0;
 			$this->isTopBetta =0;
+			$this->parent_user_id = 0;
 		}
 	}
 

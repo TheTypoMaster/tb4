@@ -23,9 +23,13 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
      */
     public function search($search)
     {
-        return $this->model
+        return $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event_status', 'tbdb_event_status.id', '=', 'tbdb_event.event_status_id')
+            ->select('tbdb_event.*', 'tbdb_event_group.name as competition_name', 'tbdb_event_status.name as event_status_name')
             ->orderBy('start_date', 'DESC')
-            ->where('name', 'LIKE', "%$search%")
+            ->where('tbdb_event.name', 'LIKE', "%$search%")
+            ->orWhere('tbdb_event_group.name', 'LIKE', "%$search%")
             ->paginate();
     }
 
@@ -34,25 +38,31 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
      */
     public function allEvents()
     {
-        return $this->model
+        return $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event_status', 'tbdb_event_status.id', '=', 'tbdb_event.event_status_id')
+            ->select('tbdb_event.*', 'tbdb_event_group.name as competition_name', 'tbdb_event_status.name as event_status_name')
             ->orderBy('start_date', 'DESC')
             ->paginate();
     }
 
     /**
-     * Check if a event exists.
+     * Return the requested event deatils if it exists.
      *
      * @param $meetingId
      * @param $raceNo
      * @return mixed
      */
     public function getEventForMeetingIdRaceId($meetingId, $raceNo){
-        return $this->model->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+        $eventModel = $this->model->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
                             ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
                             ->where('tbdb_event_group.external_event_group_id', $meetingId )
                             ->where('tbdb_event.number', $raceNo)
                             ->select('tbdb_event.*')
                             ->first();
+        if($eventModel) return $eventModel;
+
+        return null;
     }
 
 
@@ -65,7 +75,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         if($eventDetails){
             return $eventDetails->toArray();
         }
-        return false;
+        return null;
     }
 
+    public function getEventWithStatusByEventId($eventId)
+    {
+        $eventDetails = $this->model->with('eventstatus')->where('id', $eventId)
+                                    ->first();
+        if (!$eventDetails) return null;
+
+        return $eventDetails;
+    }
 }

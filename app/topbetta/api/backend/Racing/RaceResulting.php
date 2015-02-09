@@ -51,6 +51,7 @@ class RaceResulting {
 
         $eventList = array();
         $firstProcess = true;
+        $eventModel = false;
 
         foreach ($racingArray as $dataArray) {
 
@@ -82,7 +83,7 @@ class RaceResulting {
 
             // dont process if TB does not use this
             if(!$productUsed) {
-                Log::debug($log_msg_prefix . "Product Not Used: PriceType:$priceType. BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+                Log::debug($log_msg_prefix . " Product Not Used: PriceType:$priceType. BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
                 continue;
             }
 
@@ -237,17 +238,15 @@ class RaceResulting {
         /*
          * result BETS
          */
-
-        // ALL RESULTS PROCESSED - RESULT ALL BETS FOR THE EVENT LIST
-        foreach ($eventList as $eventId) {
-            Log::info('RESULTING: all bets for event id: ' . $eventId);
+        if($eventModel){
+            Log::info('RESULTING: all bets for event id: ' . $eventModel->id);
 
             // get current micro time
             list($partMsec, $partSec) = explode(" ", microtime());
             $currentTimeMs = $partSec.$partMsec;
-            File::append('/tmp/'.$date.'-ResultPost-E' .$eventId.'-'. $currentTimeMs, json_encode($racingArray));
+            File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
-            $this->betresults->resultAllBetsForEvent($eventId);
+            $this->betresults->resultAllBetsForEvent($eventModel->id);
         }
 
         return array('error' => false,

@@ -31,7 +31,7 @@ ClassLoader::addDirectories(array(
 |
 */
 
-$logFile = 'log-'.php_sapi_name().'.txt';
+$logFile = 'laravel.log';
 
 Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 
@@ -91,6 +91,13 @@ require app_path().'/filters.php';
 View::addLocation(app('path').'/topbetta/admin/views');
 View::addNamespace('admin', app('path').'/topbetta/admin/views');
 
+
+/*
+ * TopBetta Application Views
+ */
+View::addLocation(app('path').'/topbetta/Views');
+View::addNamespace('topbetta', app('path').'/topbetta/Views');
+
 /**
  * Add the missing helper to L4.0 :)
  * Create a select month field.
@@ -131,4 +138,22 @@ Form::macro('selectYear', function ($name, $selected = null, $options = array())
 	}
 
 	return Form::select($name, $years, $selected, $options);
+});
+
+/**
+ * This event is fired when a queued job fails.
+ *
+ * If we define a method on the job class called 'failed' it will be called at this time.
+ * This allows us to define job specific actions on failure.
+ */
+Queue::failing(function($connection, $job, $data)
+{
+	Log::debug('Failed Job: '.print_r($data,true));
+	// if we have a job(class) and it has a failed method we run it
+	if(isset($data['job'])){
+		if(in_array('failed', get_class_methods($data['job']))){
+			$appClass = App::make($data['job']);
+			$appClass->failed($data['data']);
+		}
+	}
 });

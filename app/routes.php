@@ -12,43 +12,6 @@
  */
 
 // apc_clear_cache("user");
-//TODO: ****** this is not safe to be here for production - find a better fix ******
-
-if (function_exists('apache_request_headers')) {
-	$requestHeaders = apache_request_headers();
-} else {
-	$requestHeaders = array();
-}
-if (array_key_exists('Origin', $requestHeaders)) {
-
-	$httpOrigin = $requestHeaders['Origin'];
-	$allowedHttpOrigins = array(
-		"http://localhost:9778",
-		"http://beta.mugbookie.com",
-		"http://localhost",
-		"http://beta.tb4.dev",
-		"http://tb4test.mugbookie.com",
-		"http://192.168.0.31:9778",
-		"https://www.topbetta.com.au",
-		"http://jason.mugbookie.com",
-        "http://jasontb.mugbookie.com",
-		"http://evan.mugbookie.com",
-		"http://mic.mugbookie.com",
-		"http://greg.mugbookie.com"
-	);
-
-	if (in_array($httpOrigin, $allowedHttpOrigins)) {
-
-		@header("Access-Control-Allow-Origin: " . $httpOrigin);
-	}
-} else {
-
-	header('Access-Control-Allow-Origin: http://localhost:9778');
-}
-
-header('Access-Control-Allow-Credentials: true');
-
-
 
 
 Route::get('/', function() {
@@ -107,7 +70,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
 
 // Route group for consumer API
-Route::group(array('prefix' => '/api/v1'), function() {
+Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function() {
 
 	// ::: USER :::
 	Route::get('usersTournamentHistory', 'FrontUsersTournaments@usersTournamentHistory');
@@ -226,6 +189,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('sports', 'TopBetta\admin\controllers\SportsController');
 	Route::resource('competitions', 'TopBetta\admin\controllers\CompetitionsController');
 	Route::resource('markets', 'TopBetta\admin\controllers\MarketsController');
+	Route::resource('markettypes', 'TopBetta\admin\controllers\MarketTypeController');
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
@@ -244,6 +208,32 @@ Route::group(array('after' => 'topbetta_secure_links'), function() {
     Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
 });
 
+// used for Punters Club application related things atm (Token Creation / Logins / Child Betting account creation and funding)
+Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
+
+	// Token request and login
+	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
+	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
+
+	// Funds management/transfer
+	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
+
+	// Full user account registration routes
+	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
+	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
+
+});
+
+// new login/logout methods
+Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
+
+	// normal login
+	Route::post('authentication/login', 'TopBetta\Frontend\Controllers\UserSessionController@login');
+
+	// normal logout
+	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+});
 
 
 
