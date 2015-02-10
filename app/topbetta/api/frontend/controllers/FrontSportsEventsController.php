@@ -9,7 +9,6 @@ class FrontSportsEventsController extends \BaseController {
 	public function nextToJump() {
 
 		$limit = Input::get('limit', 10);
-		\Cache::forget('nextToJump-sports-' . $limit);
 		// store next to jump in cache for 1 min at a time
 		return \Cache::remember('nextToJump-sports-' . $limit, 1, function() use (&$limit) {
 

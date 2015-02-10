@@ -28,7 +28,6 @@ class FrontSportsTypesController extends \BaseController {
 
 		}
 
-		\Cache::forget('sportsTypes-' . $eventCompId . '-' .$eventId. '-' . $getType);
 		// store sports types in cache for 10 min at a time
 		return \Cache::remember('sportsTypes-' . $eventCompId . '-' .$eventId. '-' . $getType, 10, function() use ($eventCompId, $tournamentFlag, $eventId) {
 
