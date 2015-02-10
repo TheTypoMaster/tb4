@@ -55,7 +55,6 @@ class SportsEvents extends \Eloquent {
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
 
-		dd($query);
 		$result = \DB::select($query);
 
 		return $result;
