@@ -34,8 +34,8 @@ class SportsComps extends \Eloquent {
     	$query .= ' FROM tbdb_event_group as eg';
 	    $query .= ' INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id';
 	    $query .= ' INNER JOIN tbdb_market AS m ON m.event_id = ege.event_id';
-	   	$query.= ' INNER JOIN tbdb_selection s ON s.market_id = m.id';
-	   	$query.= ' INNER JOIN tbdb_selection_price sp ON s.id = sp.selection_id';
+	   	$query.= ' INNER JOIN tbdb_selection sel ON sel.market_id = m.id';
+	   	$query.= ' INNER JOIN tbdb_selection_price sp ON sel.id = sp.selection_id';
     	$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.provider_value = eg.name ';
     	$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
     	$query .= ' LEFT JOIN tbdb_tournament_sport AS s ON s.id = eg.sport_id';
