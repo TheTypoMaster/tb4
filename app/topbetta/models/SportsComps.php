@@ -41,6 +41,7 @@ class SportsComps extends \Eloquent {
     	$query.= $dateQuery;
     	$query.= $sportQuery;
     	$query .= " AND eg.display_flag = '1'";
+	   	$query .= " AND m.market_status NOT IN ('D', 'S') ";
 	   	$query .= ' GROUP BY eventGroupId';
     	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
 		
@@ -68,7 +69,8 @@ class SportsComps extends \Eloquent {
 			$query.= ' INNER JOIN tbdb_market AS m ON m.event_id = ege.event_id';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
-			$query .= " AND c.display_flag = '1'";
+			$query .= " AND c.display_flag = '1' ";
+			$query .= " AND m.market_status NOT IN ('D', 'S') ";
 			$query.= " GROUP BY sportId, eventGroupId";
 			$query.= ' ORDER BY sportName, name ASC ';
 
