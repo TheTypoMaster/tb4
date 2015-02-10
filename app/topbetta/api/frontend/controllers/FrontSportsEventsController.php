@@ -9,7 +9,7 @@ class FrontSportsEventsController extends \BaseController {
 	public function nextToJump() {
 
 		$limit = Input::get('limit', 10);
-
+		\Cache::forget('nextToJump-sports-');
 		// store next to jump in cache for 1 min at a time
 		return \Cache::remember('nextToJump-sports-' . $limit, 1, function() use (&$limit) {
 
@@ -46,7 +46,6 @@ class FrontSportsEventsController extends \BaseController {
 		$date = Input::get('date', null);
 		$limit = Input::get('limit', null);
 
-		\Cache::forget('sportsEvents-' . $compId . $date . $limit);
 		// store sports events in cache for 10 min at a time
 		return \Cache::remember('sportsEvents-' . $compId . $date . $limit, 10, function() use (&$compId, &$date, &$limit) {
 			$sportsEvents = new TopBetta\SportsEvents;

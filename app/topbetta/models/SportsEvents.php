@@ -44,12 +44,16 @@ class SportsEvents extends \Eloquent {
 		//$query.= ', ege.event_group_id AS compID, AS compName ';
 		$query .= ' FROM tbdb_event AS e ';
 		$query .= ' INNER JOIN tbdb_market AS m ON m.event_id = e.id';
+		$query.= ' INNER JOIN tbdb_selection s ON s.market_id = m.id';
+		$query.= ' INNER JOIN tbdb_selection_price sp ON s.id = sp.selection_id';
 		if ($cid) { $query .= ' INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id ';
 		}
 		// TODO: is this actually needed?
 		// $query .= $dateQuery;
 		$query .= " WHERE e.display_flag = '1' ";
 		$query .= " AND m.market_status NOT IN ('D', 'S') ";
+		$query .= " AND sp.win_odds > 1";
+		$query .= " AND s.selection_status_id = '1'";
 		$query .= $compQuery;
 		$query .= ' GROUP BY id';
 		$query .= ' ORDER BY e.start_date ASC ';
@@ -83,9 +87,15 @@ class SportsEvents extends \Eloquent {
 		INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id
 		INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
 		INNER JOIN tbdb_tournament_sport AS ts ON ts.id = eg.sport_id
+		INNER JOIN tbdb_market AS m ON m.event_id = e.id
+		INNER JOIN tbdb_selection s ON s.market_id = m.id
+		INNER JOIN tbdb_selection_price sp ON s.id = sp.selection_id
 		WHERE e.start_date > NOW()
 		AND eg.type_code IS NULL
-		AND e.display_flag = '1'";
+		AND e.display_flag = '1'
+		AND m.market_status NOT IN ('D', 'S')
+	 	AND sp.win_odds > 1
+		AND s.selection_status_id = '1' ";
 		
 		if ($sportId) {
 			$query .= "AND eg.sport_id = $sportId";

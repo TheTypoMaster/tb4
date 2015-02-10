@@ -17,7 +17,6 @@ class FrontSportsController extends \BaseController {
 		$sid = Input::get('sport_id', null);
 
 		\Cache::forget('sportsComps-');
-
 		// store sports and comps in cache for 10 min at a time
 		return \Cache::remember('sportsComps-', 10, function() use (&$date, &$sid) {
 			$sportsComps = new TopBetta\SportsComps;
