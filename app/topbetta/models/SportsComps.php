@@ -45,7 +45,7 @@ class SportsComps extends \Eloquent {
     	$query .= " AND eg.display_flag = '1'";
 	   	$query .= " AND m.market_status NOT IN ('D', 'S') ";
 	    $query .= " AND sp.win_odds > 1";
-	    $query .= " AND s.selection_status_id = '1'";
+	    $query .= " AND sel.selection_status_id = '1'";
 	   	$query .= ' GROUP BY eventGroupId';
     	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
 		
