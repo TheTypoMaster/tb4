@@ -1005,7 +1005,7 @@ class Api_Betting extends JController
 
             //check display flag
             if( ! $race->display_flag ){
-                $validation->error = JText::_('Race display flag is 0');
+                $validation->error = JText::_('Betting is closed for this race');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
@@ -1553,7 +1553,7 @@ class Api_Betting extends JController
 
             //check display flag
             if( ! $race->display_flag ){
-                $validation->error = JText::_('Race display flag is 0');
+                $validation->error = JText::_('Betting is closed for this race');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
@@ -2188,7 +2188,7 @@ class Api_Betting extends JController
             }
 
             if( ! $match->display_flag ) {
-                return OutputHelper::json(500, array('error_msg' => JText::_('Match has display flag set to 0')));
+                return OutputHelper::json(500, array('error_msg' => JText::_('Betting is closed')));
             }
 
 
@@ -2764,7 +2764,7 @@ class Api_Betting extends JController
 
             //check display flag
             if( ! $race->display_flag ){
-                return OutputHelper::json(500, array('error_msg' => "Race has display flag set to 0"));
+                return OutputHelper::json(500, array('error_msg' => "Betting is closed"));
             }
 
 //            if ($race->event_status_id != $selling_status->id) {
@@ -3018,7 +3018,7 @@ class Api_Betting extends JController
         }
 
         if( ! $match->display_flag ) {
-            return OutputHelper::json(500, array('error_msg' => JText::_('Match has display flag set to 0')));
+            return OutputHelper::json(500, array('error_msg' => JText::_('Betting is closed')));
         }
 
         if (strtotime($tournament->betting_closed_date) < time()) {
