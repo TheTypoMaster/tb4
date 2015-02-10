@@ -100,6 +100,8 @@ class SportsEvents extends \Eloquent {
 		if ($sportId) {
 			$query .= "AND eg.sport_id = $sportId";
 		}
+
+		$query .= " GROUP BY e.id ";
 		$query .= " ORDER BY e.start_date ASC
 		LIMIT $limit";
 
