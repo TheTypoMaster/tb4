@@ -71,14 +71,14 @@ class SportsComps extends \Eloquent {
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
 			$query.= ' INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = c.id';
 			$query.= ' INNER JOIN tbdb_market AS m ON m.event_id = ege.event_id';
-			$query.= ' INNER JOIN tbdb_selection s ON s.market_id = m.id';
+			$query.= ' INNER JOIN tbdb_selection sel ON sel.market_id = m.id';
 			$query.= ' INNER JOIN tbdb_selection_price sp ON s.id = sp.selection_id';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
 			$query .= " AND c.display_flag = '1' ";
 			$query .= " AND m.market_status NOT IN ('D', 'S') ";
 			$query .= " AND sp.win_odds > 1";
-			$query .= " AND s.selection_status_id = '1'";
+			$query .= " AND sel.selection_status_id = '1'";
 			$query.= " GROUP BY sportId, eventGroupId";
 			$query.= ' ORDER BY sportName, name ASC ';
 
