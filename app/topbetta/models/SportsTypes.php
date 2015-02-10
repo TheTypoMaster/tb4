@@ -12,9 +12,12 @@ class SportsTypes extends \Eloquent {
 					FROM tbdb_market_type AS mt 
 					INNER JOIN tbdb_market AS m ON mt.id = m.market_type_id
 					INNER JOIN tbdb_selection s ON s.market_id = m.id
+					INNER JOIN tbdb_selection_price sp ON s.id = sp.select_id
 					WHERE m.event_id = $eventId
 					AND m.display_flag = '1'
 					AND m.market_status NOT IN ('D', 'S')
+					AND sp.win_odds > 1
+					AND s.selection_status_id = '1'
 					GROUP BY id
 					ORDER BY -(ordering) DESC";
 
