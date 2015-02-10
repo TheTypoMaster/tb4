@@ -121,11 +121,15 @@ class ExternalSourceBetNotificationService {
 
         $betSelections =  array();
 
+        //file_put_contents('/tmp/bet', json_encode($betDetails));
+
+
         // extract selecitons
         foreach ($betDetails['betselection'] as $betSelection) {
             $betSelectionPayload = array();
             // always available
             $betSelectionPayload['bet_selection_external_id'] =  (int) $betSelection['selection']['id'];
+            $betSelectionPayload['bet_selection_type'] = $betDetails['type']['name'];
             $betSelectionPayload['bet_selection_competition'] =  $betSelection['selection']['market']['event']['competition'][0]['name'];
             $betSelectionPayload['bet_selection_event'] =  $betSelection['selection']['market']['event']['name'];
             $betSelectionPayload['bet_selection_market'] =  $betSelection['selection']['market']['markettype']['name'];
@@ -161,6 +165,8 @@ class ExternalSourceBetNotificationService {
         $payloadArray['bet_status'] = $betDetails['status']['name'];
         $payloadArray['bet_source'] = $betDetails['source']['keyword'];
         $payloadArray['bet_username'] = $betDetails['betting_username'];
+        $payloadArray['bet_name'] = $betDetails['selection_string'];
+
 
         // default values ?
         $payloadArray['bet_multi'] = 0;

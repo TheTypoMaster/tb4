@@ -240,7 +240,7 @@ class FrontBetsController extends BaseController {
 
 				// if there is an API endpoint notify it of bet placement
 				if(!is_null($betSourceRecord['api_endpoint'])){
-					$messages = $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
+					$this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
 				}
 
 				// bet placed OK
