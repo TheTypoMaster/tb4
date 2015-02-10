@@ -33,6 +33,8 @@ class PoliApiService {
         $data['CancellationURL'] = $redirectUrl;
         $data['MerchantHomePageURL'] = Config::get("poli.homePage");
 
+        $data['Amount'] = (float) $data['Amount']/100;
+
 
         //Send the request to the Poli API
         $client = $this->createClient();

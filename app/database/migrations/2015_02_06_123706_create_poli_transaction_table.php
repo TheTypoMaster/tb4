@@ -19,7 +19,7 @@ class CreatePoliTransactionTable extends Migration {
 			$table->unsignedBigInteger('poli_ref_no');
 			$table->string('poli_token');
 			$table->string('status');
-			$table->decimal('amount');
+			$table->integer('amount');
 			$table->string('currency_code');
 			$table->integer('poli_error_code')->unsigned();
 			$table->timestamps();
