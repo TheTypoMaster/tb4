@@ -49,11 +49,13 @@ class SportsEvents extends \Eloquent {
 		// TODO: is this actually needed?
 		// $query .= $dateQuery;
 		$query .= " WHERE e.display_flag = '1' ";
+		$query .= " AND m.market_status NOT IN ('D', 'S') ";
 		$query .= $compQuery;
 		$query .= ' GROUP BY id';
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
 
+		dd($query);
 		$result = \DB::select($query);
 
 		return $result;
