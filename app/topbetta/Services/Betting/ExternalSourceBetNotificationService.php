@@ -187,6 +187,7 @@ class ExternalSourceBetNotificationService {
         $payloadArray['bet_manual'] = 0;
 
         // sometimes available
+        if(isset($betDetails['refund'])) $payloadArray['bet_collect_amount'] = $betDetails['refund']['amount'];
         if(isset($betDetails['result'])) $payloadArray['bet_collect_amount'] = $betDetails['result']['amount'];
 
         // add selections
