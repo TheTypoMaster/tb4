@@ -17,7 +17,7 @@ return array(
      */
     'defaults' => array(
         'supportsCredentials' => false,
-        'allowedOrigins' => array("http://localhost:9778"),
+        'allowedOrigins' => array(),
         'allowedHeaders' => array(),
         'allowedMethods' => array(),
         'exposedHeaders' => array(),
