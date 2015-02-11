@@ -40,7 +40,8 @@ return array(
                 "http://jasontb.mugbookie.com",
                 "http://evan.mugbookie.com",
                 "http://mic.mugbookie.com",
-                "http://greg.mugbookie.com"
+                "http://greg.mugbookie.com",
+                "http://topbetta.dev:9778"
             ),
             'allowedHeaders' => array('*'),
             'allowedMethods' => array('POST', 'PUT', 'GET', 'DELETE'),
