@@ -190,7 +190,7 @@ class ExternalSourceBetNotificationService {
         $payloadArray['bet_amount'] = (int) $betDetails['bet_amount'];
         $payloadArray['bet_status'] = $betDetails['status']['name'];
         $payloadArray['bet_source'] = $betDetails['source']['keyword'];
-        $payloadArray['bet_username'] = $betDetails['betting_username'];
+        if(isset($betDetails['betting_username'])) $payloadArray['bet_username'] = $betDetails['betting_username'];
         $payloadArray['bet_name'] = $betDetails['selection_string'];
 
         // default values ?
