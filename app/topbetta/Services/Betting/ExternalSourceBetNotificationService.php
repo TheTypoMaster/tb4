@@ -71,18 +71,29 @@ class ExternalSourceBetNotificationService {
         $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
 
         // put it on the queue to be sent
-        return $this->_queueJob($betSourceDetails, $BetDetailsPayload);
+        return $this->_queueJob($betSourceDetails, $BetDetailsPayload, 'POST');
 
     }
 
     /**
      * Notify bet source of bet result
      *
-     * @param $betSourceId
      * @param $betDetails
+     * @return bool|void
      */
-    public function notifyBetResult($betSourceId, $betDetails)
+    public function notifyBetResult($betDetails)
     {
+        // get the api endpoint for the source
+        if(!$betSourceDetails = $this->_sourceValidation($betDetails['bet_source_id'])) return false;
+
+        // get bet details
+        $betDetailsFromDB = $this->_getbetDetails($betDetails['id']);
+
+        // format the payload
+        $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
+
+        // put it on the queue to be sent
+        return $this->_queueJob($betSourceDetails, $BetDetailsPayload, 'PUT');
 
     }
 
@@ -124,7 +135,7 @@ class ExternalSourceBetNotificationService {
 
         $betSelections =  array();
 
-        file_put_contents('/tmp/bet', json_encode($betDetails));
+        file_put_contents('/tmp/bet', json_encode($betDetails) . "\n", FILE_APPEND);
 
 
         // extract selecitons
@@ -196,11 +207,11 @@ class ExternalSourceBetNotificationService {
         return $payloadArray;
     }
 
-    private function _queueJob($betSourceDetails, $formattedBetDetails){
+    private function _queueJob($betSourceDetails, $formattedBetDetails, $httpVerb){
 
-        $data = array('parameters' => array('source_details' => $betSourceDetails, 'notification' => 'email', 'request_type' => 'POST'), 'bet_data' => $formattedBetDetails);
+        $data = array('parameters' => array('source_details' => $betSourceDetails, 'notification' => 'email', 'request_type' => $httpVerb), 'bet_data' => $formattedBetDetails);
 
-        Log::debug('Bet Notification: About to queue job');
+        Log::debug('Bet Notification: About to queue job: '. $httpVerb );
         Queue::push('\TopBetta\Services\Betting\ExternalSourceBetNotifcationQueueService', $data, 'bet-notification');
 
     }
