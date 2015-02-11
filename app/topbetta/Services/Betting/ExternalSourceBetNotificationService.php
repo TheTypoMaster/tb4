@@ -150,7 +150,7 @@ class ExternalSourceBetNotificationService {
             $betSelectionPayload['bet_selection_market'] =  $betSelection['selection']['market']['markettype']['name'];
             $betSelectionPayload['bet_selection_name'] =  $betSelection['selection']['name'];
             $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['fixed_odds'];
-            $betSelectionPayload['bet_selection_resulted'] = $betDetails['bet_resulted_flag'];
+            $betSelectionPayload['bet_selection_resulted'] = $betDetails['resulted_flag'];
 
             // sport bet
             if(isset($betSelection['selection']['market']['event']['competition']['sport'])){
@@ -162,7 +162,7 @@ class ExternalSourceBetNotificationService {
                 $betSelectionPayload['bet_selection_sport'] = 'Racing';
 
                 // get current prices for selections
-                if($betDetails['bet_resulted_flag'] == 0) {
+                if($betDetails['resulted_flag'] == 0) {
                     if(isset($betSelection['selection']['price']['win_odds']) && $betSelection['bettype']['name'] == 'win')
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['win_odds'];
                     if(isset($betSelection['selection']['price']['place_odds']) && $betSelection['bettype']['name'] == 'place')
