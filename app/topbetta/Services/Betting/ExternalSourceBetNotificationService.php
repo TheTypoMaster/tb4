@@ -163,16 +163,16 @@ class ExternalSourceBetNotificationService {
 
                 // get current prices for selections
                 if($betDetails['resulted_flag'] == 0) {
-                    if(isset($betSelection['selection']['price']['win_odds']) && $betSelection['bettype']['name'] == 'win')
+                    if(isset($betSelection['selection']['price']['win_odds']) && $betSelection['type']['name'] == 'win')
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['win_odds'];
-                    if(isset($betSelection['selection']['price']['place_odds']) && $betSelection['bettype']['name'] == 'place')
+                    if(isset($betSelection['selection']['price']['place_odds']) && $betSelection['type']['name'] == 'place')
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['place_odds'];
 
                 // get result dividends for selections
                 } else {
-                    if(isset($betSelection['selection']['result']['win_dividend']) && $betSelection['bettype']['name'] == 'win')
+                    if(isset($betSelection['selection']['result']['win_dividend']) && $betSelection['type']['name'] == 'win')
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['win_dividend'];
-                    if(isset($betSelection['selection']['result']['place_dividend']) && $betSelection['bettype']['name'] == 'place')
+                    if(isset($betSelection['selection']['result']['place_dividend']) && $betSelection['type']['name'] == 'place')
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['place_dividend'];
                 }
             }
