@@ -193,6 +193,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
+
+	Route::resource('user-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

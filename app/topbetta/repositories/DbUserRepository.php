@@ -10,6 +10,7 @@ use TopBetta\Models\UserModel;
 use TopBetta\Services\Validation\UserBasicValidator;
 
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
+use Carbon\Carbon;
 
 class DbUserRepository extends BaseEloquentRepository implements UserRepositoryInterface {
 
@@ -49,6 +50,17 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
         if($result) return $result->toArray();
 
         return null;
+    }
+
+    public function getInactiveForNDaysUser($days, $page = null, $count = null)
+    {
+        $lastActivityDateThreshold = Carbon::now()->subDays($days);
+
+        return $this    -> model
+                        -> where('lastvisitDate', '<', $lastActivityDateThreshold->format('Y-m-d H:i:s'))
+                        -> forPage($page, $count)
+                        -> get();
+
     }
 
 
