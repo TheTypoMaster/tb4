@@ -24,7 +24,7 @@ class SportsEvents extends \Eloquent {
 
 	}
 
-	public function getEvents($limit = 0, $cid = 0, $date = NULL) {
+	public function getEvents($limit = 0, $cid = 0, $date = NULL, $tournamentFlag = false) {
 
 		//get the comp id if not set
 		$compQuery = ($cid != 0) ? ' AND ege.event_group_id = "' . $cid . '"' : false;
@@ -47,12 +47,14 @@ class SportsEvents extends \Eloquent {
 		if ($cid) { $query .= ' INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id ';
 		}
 		// TODO: is this actually needed?
-		// $query .= $dateQuery;
+
 		$query .= " WHERE e.display_flag = '1' ";
+		$query .= $tournamentFlag ? "" : $dateQuery;
 		$query .= $compQuery;
 		$query .= ' GROUP BY id';
 		$query .= ' ORDER BY e.start_date ASC ';
 		$query .= $limitQuery;
+
 
 		$result = \DB::select($query);
 
@@ -63,14 +65,14 @@ class SportsEvents extends \Eloquent {
 		if ($date && date('Y-m-d') != $date) {
 			if (strtotime($date) < time()) {
 				//date is in the past >> returns just on that date
-				$dateQuery = ' WHERE ' . $time_field . ' LIKE "' . $date . '%" ';
+				$dateQuery = ' AND ' . $time_field . ' LIKE "' . $date . '%" ';
 			} else {
 				//date is in the future >> returns from date to future
-				$dateQuery = ' WHERE UNIX_TIMESTAMP(' . $time_field . ') > ' . strtotime($date);
+				$dateQuery = ' AND UNIX_TIMESTAMP(' . $time_field . ') > ' . strtotime($date);
 			}
 		} else {
 			//no date or date is today >> returns from now to future
-			$dateQuery = ' WHERE UNIX_TIMESTAMP(' . $time_field . ') > ' . time();
+			$dateQuery = ' AND UNIX_TIMESTAMP(' . $time_field . ') > ' . time();
 		}
 		return $dateQuery;
 	}
