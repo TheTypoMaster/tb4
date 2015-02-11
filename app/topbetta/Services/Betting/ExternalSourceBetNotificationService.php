@@ -17,10 +17,10 @@ use Auth;
 
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 
 /**
  * Notify's external sources when bets are placed and resulted
- * - Bet's Placed
  * -- bet details are retrived from the database
  * -- relevant data is extracted and payload is formatted for external API
  * -- payload is put in a job on a queue
@@ -34,12 +34,15 @@ class ExternalSourceBetNotificationService {
 
     protected $source;
     protected $bet;
+    protected $transactions;
 
     function __construct(BetSourceRepositoryInterface $source,
-                         BetRepositoryInterface $bet)
+                         BetRepositoryInterface $bet,
+                         AccountTransactionRepositoryInterface $transactions)
     {
         $this->source = $source;
         $this->bet = $bet;
+        $this->transactions = $transactions;
     }
 
 
@@ -121,13 +124,14 @@ class ExternalSourceBetNotificationService {
 
         $betSelections =  array();
 
-        //file_put_contents('/tmp/bet', json_encode($betDetails));
+        file_put_contents('/tmp/bet', json_encode($betDetails));
 
 
         // extract selecitons
         foreach ($betDetails['betselection'] as $betSelection) {
             $betSelectionPayload = array();
-            // always available
+
+            // the same properties for sports and racing bets
             $betSelectionPayload['bet_selection_external_id'] =  (int) $betSelection['selection']['id'];
             $betSelectionPayload['bet_selection_type'] = $betDetails['type']['name'];
             $betSelectionPayload['bet_selection_competition'] =  $betSelection['selection']['market']['event']['competition'][0]['name'];
@@ -135,22 +139,33 @@ class ExternalSourceBetNotificationService {
             $betSelectionPayload['bet_selection_market'] =  $betSelection['selection']['market']['markettype']['name'];
             $betSelectionPayload['bet_selection_name'] =  $betSelection['selection']['name'];
             $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['fixed_odds'];
-            //$betSelectionPayload['bet_selection_resulted'] = $betSelection['status']['name'];
+            $betSelectionPayload['bet_selection_resulted'] = $betDetails['bet_resulted_flag'];
 
-            // sometimes available
+            // sport bet
             if(isset($betSelection['selection']['market']['event']['competition']['sport'])){
                 $betSelectionPayload['bet_selection_sport'] =  $betSelection['selection']['market']['event']['competition']['sport']['name'];
+                $betSelectionPayload['bet_selection_dividend'] = array_get($betSelection, 'fixed_odds');
+
+            // racing bet
             } else {
                 $betSelectionPayload['bet_selection_sport'] = 'Racing';
+
+                // get current prices for selections
+                if($betDetails['bet_resulted_flag'] == 0) {
+                    if(isset($betSelection['selection']['price']['win_odds']) && $betSelection['bettype']['name'] == 'win')
+                        $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['win_odds'];
+                    if(isset($betSelection['selection']['price']['place_odds']) && $betSelection['bettype']['name'] == 'place')
+                        $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['place_odds'];
+
+                // get result dividends for selections
+                } else {
+                    if(isset($betSelection['selection']['result']['win_dividend']) && $betSelection['bettype']['name'] == 'win')
+                        $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['win_dividend'];
+                    if(isset($betSelection['selection']['result']['place_dividend']) && $betSelection['bettype']['name'] == 'place')
+                        $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['place_dividend'];
+                }
             }
 
-            if(isset($betSelection['selection']['result']['win_dividend']) && $betSelection['bettype']['name'] == 'win')
-                $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['win_dividend'];
-            if(isset($betSelection['selection']['result']['place_dividend']) && $betSelection['bettype']['name'] == 'place')
-                $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['place_dividend'];
-
-            $betSelectionPayload['bet_selection_resulted'] = 0;
-            $betSelectionPayload['bet_selection_dividend'] = "";
             $betSelectionPayload['bet_selection_win'] = 0;
 
             $betSelections[] = $betSelectionPayload;
@@ -166,7 +181,6 @@ class ExternalSourceBetNotificationService {
         $payloadArray['bet_source'] = $betDetails['source']['keyword'];
         $payloadArray['bet_username'] = $betDetails['betting_username'];
         $payloadArray['bet_name'] = $betDetails['selection_string'];
-
 
         // default values ?
         $payloadArray['bet_multi'] = 0;
