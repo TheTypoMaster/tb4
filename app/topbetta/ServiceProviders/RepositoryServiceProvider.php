@@ -85,5 +85,9 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\FreeCreditTransactionRepository',
             'TopBetta\Repositories\DbFreeCreditTransactionRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',
+            'TopBetta\Repositories\DbProcessParamsRepository'
+        );
     }
 } 

@@ -33,6 +33,7 @@
 			"app/topbetta/helpers",
             "app/topbetta/providers",
             "app/topbetta/repositories",
+		  	"app/topbetta/processes",
             "app/topbetta/facades"
 		],
         "psr-4": {

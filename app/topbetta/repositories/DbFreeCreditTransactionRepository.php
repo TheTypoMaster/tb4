@@ -20,32 +20,26 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
         $this->model = $freeCreditTransaction;
     }
 
-    public function getNonZeroBalancesForInactiveUsers($days)
+    public function getFreeCreditBalanceForUser($userId)
     {
-        $lastActivityDateThreshold = Carbon::now()->subDays($days);
+        return $this    -> model
+                            -> where('recipient_id', '=', $userId)
+                            -> sum('amount');
 
-
-        $model = $this -> model
-                    //-> join('tbdb_users', 'tbdb_tournament_transaction.recipient_id', '=', 'tbdb_users.id')
-                    //-> where('tbdb_users.lastvisitDate', '<', $lastActivityDateThreshold->format('Y-m-d H:i:s'))
-                    -> groupBy('recipient_id')
-                    -> having('balance', '>', '0')
-                    ->forPage($page = 1, $count = 100)
-                    -> get( array(
-                        DB::raw("sum(amount) as balance"),
-                        //"tbdb_users.id",
-                    ));
-                //->having("balance", ">", "0");
-
-
-        dd($model);
 
     }
 
-    public function bulkInsert(array $data)
+    public function createTransaction($userId, $amount, $transactionTypeId, $notes)
     {
-        // TODO: Implement bulkInsert() method.
+        return $this->create(array(
+            "recipient_id"                      => $userId,
+            "giver_id"                          => '6996',
+            "session_id"                        => '-1',
+            "amount"                            => $amount,
+            "tournament_transaction_type_id"    => $transactionTypeId,
+            "notes"                             => $notes,
+            "created_date"                       => Carbon::now()->format("Y-m-d H:i:s"),
+        ));
     }
-
 
 }

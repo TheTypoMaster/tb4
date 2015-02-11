@@ -52,12 +52,11 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
         return null;
     }
 
-    public function getInactiveForNDaysUser($days, $page = null, $count = null)
+    public function getUsersWithLastActivityBetween($start, $end, $page = null, $count = null)
     {
-        $lastActivityDateThreshold = Carbon::now()->subDays($days);
-
         return $this    -> model
-                        -> where('lastvisitDate', '<', $lastActivityDateThreshold->format('Y-m-d H:i:s'))
+                        -> where('lastvisitDate', '>=', $start)
+                        -> where('lastvisitDate', '<=', $end)
                         -> forPage($page, $count)
                         -> get();
 

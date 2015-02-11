@@ -2,18 +2,20 @@
 
 
 
+use TopBetta\Services\Processes\RemoveFreeCreditsFromDormantUsersProcess;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 
 class FreeCreditManagementController extends \BaseController {
 
 	/**
-	 * @var UserFreeCreditService
+	 * @var RemoveFreeCreditsFromDormantUsersProcess
 	 */
-	private $userFreeCreditService;
+	private $removeFreeCreditsFromDormantUsersProcess;
 
-	public function __construct(UserFreeCreditService $userFreeCreditService)
+	public function __construct(RemoveFreeCreditsFromDormantUsersProcess $removeFreeCreditsFromDormantUsersProcess)
 	{
-		$this->userFreeCreditService = $userFreeCreditService;
+
+		$this->removeFreeCreditsFromDormantUsersProcess = $removeFreeCreditsFromDormantUsersProcess;
 	}
 
 	/**
@@ -23,7 +25,8 @@ class FreeCreditManagementController extends \BaseController {
 	 */
 	public function index()
 	{
-		return $this->userFreeCreditService->removeCreditsFromInactiveUsers(60);
+		$this->removeFreeCreditsFromDormantUsersProcess->setDormantDays(60);
+		return $this->removeFreeCreditsFromDormantUsersProcess->run();
 	}
 
 

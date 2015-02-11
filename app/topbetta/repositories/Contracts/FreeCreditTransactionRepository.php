@@ -11,7 +11,7 @@ namespace TopBetta\Repositories\Contracts;
 
 interface FreeCreditTransactionRepository {
 
-    public function getNonZeroBalancesForInactiveUsers($days);
+    public function getFreeCreditBalanceForUser($userId);
 
-    public function bulkInsert(array $data);
+
 }
