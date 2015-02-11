@@ -39,7 +39,7 @@ return array(
                 "http://evan.mugbookie.com",
                 "http://mic.mugbookie.com",
                 "http://greg.mugbookie.com",
-                "http://topbetta.dev", // Development Website
+                "http://topbetta.dev:9778", // Development Website
                 "http://services.dev" // Development API
             ),
             'allowedHeaders' => array('*'),
