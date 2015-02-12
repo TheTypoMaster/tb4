@@ -106,20 +106,21 @@ class FreeCreditManagementController extends \BaseController {
 
 		$days = \Input::get("days", self::REMOVE_CREDITS_DEFAULT_DAYS);
 
+		//make sure $days is an integer
 		if(! preg_match("/^[0-9]+$/", $days) )
 		{
-			return Redirect::route("admin.user-management.index")->with("flash_message", "Invalid Days");
+			return Redirect::route("admin.free-credit-management.index")->with("flash_message", "Invalid Days");
 		}
 
 		$this->removeFreeCreditsFromDormantUsersProcess->setDormantDays($days);
 		try{
 			$this->removeFreeCreditsFromDormantUsersProcess->run();
 		} catch (\Exception $e) {
-			return Redirect::route("admin.user-management.index")->with("flash_message", "An unexpected error occured with message: ".$e->getMessage());
+			return Redirect::route("admin.free-credit-management.index")->with("flash_message", "An unexpected error occured with message: ".$e->getMessage());
 		}
 
 
-		return Redirect::route("admin.user-management.index")->with("flash_message", "Success!");
+		return Redirect::route("admin.free-credit-management.index")->with("flash_message", "Success!");
 	}
 
 
