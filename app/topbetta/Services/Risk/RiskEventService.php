@@ -10,7 +10,7 @@ namespace TopBetta\Services\Risk;
 
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
-use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 
 class RiskEventService {
 
@@ -23,53 +23,32 @@ class RiskEventService {
      */
     private $competitionRepository;
 
-    public function __construct(EventRepositoryInterface $eventRepository, CompetitionRepositoryInterface $competitionRepository)
+    public function __construct(EventModelRepositoryInterface $eventRepository, CompetitionRepositoryInterface $competitionRepository)
     {
         $this->eventRepository = $eventRepository;
         $this->competitionRepository = $competitionRepository;
     }
 
-    public function showCompetition($competitionId)
-    {
-        return $this->setDisplayFlagForCompetition($competitionId, 1);
-    }
-
-    public function hideCompetition($competitionId)
-    {
-        return $this->setDisplayFlagForCompetition($competitionId, 0);
-    }
-
     public function showEvent($eventId)
     {
-        $event = $this->eventRepository->updateWithId($eventId, array("display_flag" => 1));
+        $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 1);
 
-        $this->competitionRepository->updateWithId($event->competition->first()->id, array("display_flag" => 1));
+        $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->id, 1);
 
         return $this;
     }
 
     public function hideEvent($eventId)
     {
-        $event = $this->eventRepository->updateWithId($eventId, array("display_flag" => 0));
+        $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 0);
 
         $competitionId = $event->competition->first()->id;
-        if( ! count( $this->competitionRepository->getDisplayedEventsForCompetitions($competitionId) ) ) {
-            $this->competitionRepository->updateWithId($competitionId, array("display_flag" => 0));
+        if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
+            $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
         }
 
         return $this;
     }
 
-    public function setDisplayFlagForCompetition($competitionId, $displayFlag)
-    {
-        $competition = $this->competitionRepository->updateWithId($competitionId, array("display_flag" => $displayFlag));
-
-        foreach($competition->events as $event)
-        {
-            $this->eventRepository->updateWithId($event->id, array("display_flag" => $displayFlag));
-        }
-
-        return $this;
-    }
 
 }

@@ -67,7 +67,11 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 
-	Route::put('risk-display-event/{$event}', "RiskEvent@displayEvent");
+	Route::put('risk-show-event/{event}', "RiskEvents@showEvent");
+	Route::put('risk-hide-event/{event}', "RiskEvents@hideEvent");
+
+	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
+	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
 });
 
 
