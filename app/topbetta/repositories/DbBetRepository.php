@@ -24,10 +24,9 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         $details = $this->model->with(array('status', 'type', 'source', 'user', 'result', 'refund',
                                             //  'selection'
                                             'betselection.selection.price',
+                                            'betselection.selection.result',
                                             'betselection.selection.market.event.competition.sport',
                                             'betselection.selection.market.markettype'
-//                                            'betselection.selection.prices',
-//                                            'betselection.selection.result'
                                             ))->where('id', $betId)->first();
 
 //        $details = $this->model->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
