@@ -39,4 +39,25 @@ abstract class AbstractProcess {
 
         return $processParam->save();
     }
+
+    public function isRunning()
+    {
+        return $this->processParamsRepository->getProcessParamsByName($this->serviceName)->is_running_flag;
+    }
+
+    public function start()
+    {
+        $processParam = $this->processParamsRepository->getProcessParamsByName($this->serviceName);
+        $processParam->is_running_flag = true;
+
+        return $processParam->save();
+    }
+
+    public function end()
+    {
+        $processParam = $this->processParamsRepository->getProcessParamsByName($this->serviceName);
+        $processParam->is_running_flag = false;
+
+        return $processParam->save();
+    }
 }

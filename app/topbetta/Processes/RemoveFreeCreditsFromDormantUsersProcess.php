@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Processes;
 
 
+use TopBetta\Processes\Exceptions\ProcessAlreadyRunningException;
 use TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 use Carbon\Carbon;
@@ -31,6 +32,11 @@ class RemoveFreeCreditsFromDormantUsersProcess extends AbstractProcess {
 
     public function run()
     {
+        //this should be abstracted to AbstractProcess
+        if( $this->isRunning() ) {
+            throw new ProcessAlreadyRunningException("The process is already running");
+        }
+        $this->start();
 
         $params = $this->getParams();
 
@@ -48,6 +54,9 @@ class RemoveFreeCreditsFromDormantUsersProcess extends AbstractProcess {
         $params['last_run_date'] = Carbon::now()->format("Y-m-d H:i:s");
         $params['last_run_days'] = $this->dormantDays;
         $this->updateParams($params);
+
+        //this should be abstracted to AbstractProcess
+        $this->end();
 
     }
 

@@ -17,6 +17,7 @@ class CreateProcessParamsTable extends Migration {
 			$table->increments('id');
 			$table->string("process_name");
 			$table->string('process_params');
+			$table->tinyInteger('is_running_flag');
 			$table->timestamps();
 		});
 	}
