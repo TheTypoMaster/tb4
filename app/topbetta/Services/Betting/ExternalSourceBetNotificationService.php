@@ -149,13 +149,16 @@ class ExternalSourceBetNotificationService {
             $betSelectionPayload['bet_selection_event'] =  $betSelection['selection']['market']['event']['name'];
             $betSelectionPayload['bet_selection_market'] =  $betSelection['selection']['market']['markettype']['name'];
             $betSelectionPayload['bet_selection_name'] =  $betSelection['selection']['name'];
-            $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['fixed_odds'];
             $betSelectionPayload['bet_selection_resulted'] = $betDetails['resulted_flag'];
 
             // sport bet
             if(isset($betSelection['selection']['market']['event']['competition']['sport'])){
                 $betSelectionPayload['bet_selection_sport'] =  $betSelection['selection']['market']['event']['competition']['sport']['name'];
-                $betSelectionPayload['bet_selection_dividend'] = array_get($betSelection, 'fixed_odds');
+                $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['fixed_odds'];
+
+                if($betDetails['resulted_flag'] == 1) {
+                    $betSelectionPayload['bet_selection_dividend'] = array_get($betSelection, 'fixed_odds');
+                }
 
             // racing bet
             } else {
@@ -164,9 +167,9 @@ class ExternalSourceBetNotificationService {
                 // get current prices for selections
                 if($betDetails['resulted_flag'] == 0) {
                     if(isset($betSelection['selection']['price']['win_odds']) && $betDetails['type']['name'] == 'win')
-                        $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['win_odds'];
+                        $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['selection']['price']['win_odds'];
                     if(isset($betSelection['selection']['price']['place_odds']) && $betDetails['type']['name'] == 'place')
-                        $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['price']['place_odds'];
+                        $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['selection']['price']['place_odds'];
 
                 // get result dividends for selections
                 } else {
