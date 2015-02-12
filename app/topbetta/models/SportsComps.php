@@ -34,6 +34,8 @@ class SportsComps extends \Eloquent {
     	$query .= ' FROM tbdb_event_group as eg';
 	    $query .= ' INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id';
 	    $query .= ' INNER JOIN tbdb_market AS m ON m.event_id = ege.event_id';
+	   	$query.= ' INNER JOIN tbdb_selection sel ON sel.market_id = m.id';
+	   	$query.= ' INNER JOIN tbdb_selection_price sp ON sel.id = sp.selection_id';
     	$query .= ' LEFT JOIN tb_data_ordering_provider_match AS dopm ON dopm.provider_value = eg.name ';
     	$query .= ' LEFT JOIN tb_data_ordering_order AS doo ON doo.topbetta_keyword = dopm.topbetta_keyword';
     	$query .= ' LEFT JOIN tbdb_tournament_sport AS s ON s.id = eg.sport_id';
@@ -41,6 +43,9 @@ class SportsComps extends \Eloquent {
     	$query.= $dateQuery;
     	$query.= $sportQuery;
     	$query .= " AND eg.display_flag = '1'";
+	   	$query .= " AND m.market_status NOT IN ('D', 'S') ";
+	    $query .= " AND sp.win_odds > 1";
+	    $query .= " AND sel.selection_status_id = '1'";
 	   	$query .= ' GROUP BY eventGroupId';
     	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
 		
@@ -66,9 +71,14 @@ class SportsComps extends \Eloquent {
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
 			$query.= ' INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = c.id';
 			$query.= ' INNER JOIN tbdb_market AS m ON m.event_id = ege.event_id';
+			$query.= ' INNER JOIN tbdb_selection sel ON sel.market_id = m.id';
+			$query.= ' INNER JOIN tbdb_selection_price sp ON sel.id = sp.selection_id';
 			$query.= $dateQuery;
 			$query.= $sportQuery;
-			$query .= " AND c.display_flag = '1'";
+			$query .= " AND c.display_flag = '1' ";
+			$query .= " AND m.market_status NOT IN ('D', 'S') ";
+			$query .= " AND sp.win_odds > 1";
+			$query .= " AND sel.selection_status_id = '1'";
 			$query.= " GROUP BY sportId, eventGroupId";
 			$query.= ' ORDER BY sportName, name ASC ';
 
