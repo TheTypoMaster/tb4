@@ -82,7 +82,7 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbMarketTypeRepository'
         );
         $this->app->bind(
-            'TopBetta\Repositories\Contracts\FreeCreditTransactionRepository',
+            'TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface',
             'TopBetta\Repositories\DbFreeCreditTransactionRepository'
         );
         $this->app->bind(

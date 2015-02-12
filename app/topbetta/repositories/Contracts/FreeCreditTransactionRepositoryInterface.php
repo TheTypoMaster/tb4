@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories\Contracts;
 
 
-interface FreeCreditTransactionRepository {
+interface FreeCreditTransactionRepositoryInterface {
 
     public function getFreeCreditBalanceForUser($userId);
 

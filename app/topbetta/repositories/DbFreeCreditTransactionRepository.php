@@ -11,9 +11,9 @@ namespace TopBetta\Repositories;
 use DB;
 use Carbon\Carbon;
 use TopBetta\models\FreeCreditTransactionModel;
-use TopBetta\Repositories\Contracts\FreeCreditTransactionRepository;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 
-class DbFreeCreditTransactionRepository extends BaseEloquentRepository implements FreeCreditTransactionRepository {
+class DbFreeCreditTransactionRepository extends BaseEloquentRepository implements FreeCreditTransactionRepositoryInterface {
 
     public function __construct(FreeCreditTransactionModel $freeCreditTransaction)
     {

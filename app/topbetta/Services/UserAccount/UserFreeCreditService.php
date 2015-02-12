@@ -9,7 +9,7 @@
 namespace TopBetta\Services\UserAccount;
 
 
-use TopBetta\Repositories\Contracts\FreeCreditTransactionRepository;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use Log;
 
@@ -29,7 +29,7 @@ class UserFreeCreditService {
 
 
     public function __construct(UserRepositoryInterface $userRepository,
-                                FreeCreditTransactionRepository $freeCreditTransactionRepository)
+                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository)
     {
         $this->userRepository = $userRepository;
         $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
