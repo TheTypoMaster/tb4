@@ -163,6 +163,7 @@ class ExternalSourceBetNotificationService {
             // racing bet
             } else {
                 $betSelectionPayload['bet_selection_sport'] = 'Racing';
+                $betSelectionPayload['bet_selection_dividend'] = '';
 
                 // get current prices for selections
                 if($betDetails['resulted_flag'] == 0) {
