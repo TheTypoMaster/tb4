@@ -87,7 +87,7 @@ class ExternalSourceBetNotificationService {
         if(!$betSourceDetails = $this->_sourceValidation($betDetails['bet_source_id'])) return false;
 
         // get bet details
-        $betDetailsFromDB = $this->_getbetDetails($betDetails['id']);
+        $betDetailsFromDB = $this->getBetDetailsWhenResulted($betDetails['id']);
 
         // format the payload
         $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
@@ -171,6 +171,7 @@ class ExternalSourceBetNotificationService {
                         $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['selection']['price']['win_odds'];
                     if(isset($betSelection['selection']['price']['place_odds']) && $betDetails['type']['name'] == 'place')
                         $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['selection']['price']['place_odds'];
+                    $betSelectionPayload['bet_selection_win'] = 0;
 
                 // get result dividends for selections
                 } else {
@@ -178,10 +179,11 @@ class ExternalSourceBetNotificationService {
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['win_dividend'];
                     if(isset($betSelection['selection']['result']['place_dividend']) && $betDetails['type']['name'] == 'place')
                         $betSelectionPayload['bet_selection_dividend'] = $betSelection['selection']['result']['place_dividend'];
+
+                    if(isset($betSelection['selection']['result'])) $betSelectionPayload['bet_selection_win'] = 1;
+
                 }
             }
-
-            $betSelectionPayload['bet_selection_win'] = 0;
 
             $betSelections[] = $betSelectionPayload;
         }
