@@ -66,6 +66,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
+
+	Route::put('risk-display-event/{$event}', "RiskEvent@displayEvent");
 });
 
 
