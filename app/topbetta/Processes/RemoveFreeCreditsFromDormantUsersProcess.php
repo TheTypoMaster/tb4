@@ -39,13 +39,14 @@ class RemoveFreeCreditsFromDormantUsersProcess extends AbstractProcess {
         }
 
         //get start and dates for use activity
-        $start = $params['last_run_date'];
+        $start = Carbon::createFromFormat("Y-m-d H:i:s", $params['last_run_date'])->subDays($params['last_run_days']);
         $end = Carbon::now()->subDays($this->dormantDays)->format("Y-m-d H:i:s");
 
         $this->userFreeCreditService->removeCreditsFromInactiveUsers($start, $end);
 
         //update params
         $params['last_run_date'] = Carbon::now()->format("Y-m-d H:i:s");
+        $params['last_run_days'] = $this->dormantDays;
         $this->updateParams($params);
 
     }

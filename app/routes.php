@@ -195,6 +195,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
 	Route::resource('user-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
+	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

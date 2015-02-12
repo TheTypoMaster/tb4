@@ -21,7 +21,7 @@ class FreeCreditTransactionModel extends Eloquent {
         "tournament_transaction_type_id",
         "amount",
         "notes",
-        "create_date",
+        "created_date",
     );
 
     public function recipients()

@@ -1,11 +1,14 @@
 <?php namespace TopBetta\admin\controllers;
 
 
-
+use View;
+use Redirect;
 use TopBetta\Services\Processes\RemoveFreeCreditsFromDormantUsersProcess;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 
 class FreeCreditManagementController extends \BaseController {
+
+	const REMOVE_CREDITS_DEFAULT_DAYS = 60;
 
 	/**
 	 * @var RemoveFreeCreditsFromDormantUsersProcess
@@ -25,8 +28,7 @@ class FreeCreditManagementController extends \BaseController {
 	 */
 	public function index()
 	{
-		$this->removeFreeCreditsFromDormantUsersProcess->setDormantDays(60);
-		return $this->removeFreeCreditsFromDormantUsersProcess->run();
+		return View::make("admin::freecredit.index")->with(array("defaultDays" => self::REMOVE_CREDITS_DEFAULT_DAYS));
 	}
 
 
@@ -97,6 +99,27 @@ class FreeCreditManagementController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+	}
+
+	public function removeDormantCredits()
+	{
+
+		$days = \Input::get("days", self::REMOVE_CREDITS_DEFAULT_DAYS);
+
+		if(! preg_match("/^[0-9]+$/", $days) )
+		{
+			return Redirect::route("admin.user-management.index")->with("flash_message", "Invalid Days");
+		}
+
+		$this->removeFreeCreditsFromDormantUsersProcess->setDormantDays($days);
+		try{
+			$this->removeFreeCreditsFromDormantUsersProcess->run();
+		} catch (\Exception $e) {
+			return Redirect::route("admin.user-management.index")->with("flash_message", "An unexpected error occured with message: ".$e->getMessage());
+		}
+
+
+		return Redirect::route("admin.user-management.index")->with("flash_message", "Success!");
 	}
 
 

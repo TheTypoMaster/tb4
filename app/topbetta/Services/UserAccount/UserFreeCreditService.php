@@ -15,6 +15,9 @@ use Log;
 
 class UserFreeCreditService {
 
+    const   REMOVE_CHUNK_SIZE           = 100,
+            REMOVE_GIVER_ID             = 6996,
+            REMOVE_TRANSACTION_TYPE     = 7;
     /**
      * @var UserRepositoryInterface
      */
@@ -34,9 +37,8 @@ class UserFreeCreditService {
 
     public function removeCreditsFromInactiveUsers($start, $end)
     {
-        $users = $this->userRepository->getUsersWithLastActivityBetween($start, $end, $page = 0, $count = 50);
+        $users = $this->userRepository->getUsersWithLastActivityBetween($start, $end, $page = 0, self::REMOVE_CHUNK_SIZE);
 
-        Log::debug("USER COUNT: ".count($users));
         //do some chunking so we don't use too much memory
         while(count($users) > 0) {
 
@@ -46,27 +48,31 @@ class UserFreeCreditService {
 
                 if($balance > 0){
                     //the user has free credits so remove them
-                    $this->decreaseFreeCreditBalance($user->id, $balance, 7, "Removed");
+                    $this->decreaseFreeCreditBalance(
+                        $user->id,
+                        self::REMOVE_GIVER_ID,
+                        $balance,
+                        self::REMOVE_TRANSACTION_TYPE,
+                        "Removal of free credit due to account inactivity"
+                    );
                 }
 
             }
 
-            Log::debug($page);
             //get the next chunk of users
             $page++;
-            $users = $this->userRepository->getUsersWithLastActivityBetween($start, $end, $page, $count);
+            $users = $this->userRepository->getUsersWithLastActivityBetween($start, $end, $page, self::REMOVE_CHUNK_SIZE);
         }
 
-
     }
 
-    public function increaseFreeCreditBalance($userId, $amount, $transactionType, $notes)
+    public function increaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes)
     {
-        return $this->freeCreditTransactionRepository->createTransaction($userId, $amount, $transactionType, $notes);
+        return $this->freeCreditTransactionRepository->createTransaction($userId, $giverId, $amount, $transactionType, $notes);
     }
 
-    public function decreaseFreeCreditBalance($userId, $amount, $transactionType, $notes)
+    public function decreaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes)
     {
-        return $this->increaseFreeCreditBalance($userId, -$amount, $transactionType, $notes);
+        return $this->increaseFreeCreditBalance($userId, $giverId, -$amount, $transactionType, $notes);
     }
 }

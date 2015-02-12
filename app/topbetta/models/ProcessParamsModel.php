@@ -25,4 +25,9 @@ class ProcessParamsModel extends Eloquent {
     {
         return json_decode($value, true);
     }
+
+    public function setProcessParamsAttribute($value)
+    {
+        $this->attributes['process_params'] = json_encode($value, JSON_FORCE_OBJECT);
+    }
 }
