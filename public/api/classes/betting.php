@@ -1003,6 +1003,12 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
+            //check display flag
+            if( ! $race->display_flag ){
+                $validation->error = JText::_('Betting is closed for this race');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));
+            }
+
             require_once (JPATH_BASE . DS . 'components' . DS . 'com_tournament' . DS . 'models' . DS . 'eventstatus.php');
             $race_status_model = new TournamentModelEventStatus();
             $selling_status = $race_status_model->getEventStatusByKeywordApi('selling');
@@ -1542,6 +1548,12 @@ class Api_Betting extends JController
 
             if (is_null($race)) {
                 $validation->error = JText::_('Race was not found');
+                return OutputHelper::json(500, array('error_msg' => $validation->error));
+            }
+
+            //check display flag
+            if( ! $race->display_flag ){
+                $validation->error = JText::_('Betting is closed for this race');
                 return OutputHelper::json(500, array('error_msg' => $validation->error));
             }
 
@@ -2175,6 +2187,10 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
             }
 
+            if( ! $match->display_flag ) {
+                return OutputHelper::json(500, array('error_msg' => JText::_('Betting is closed')));
+            }
+
 
 //  			// check if market_id is in the DB
 //  			$market_exists = $sportsBetting_model->getSelectionIDApi($betMatchID, $bet_option_id);
@@ -2746,6 +2762,11 @@ class Api_Betting extends JController
                 return OutputHelper::json(500, array('error_msg' => 'Race was not found'));
             }
 
+            //check display flag
+            if( ! $race->display_flag ){
+                return OutputHelper::json(500, array('error_msg' => "Betting is closed"));
+            }
+
 //            if ($race->event_status_id != $selling_status->id) {
 //                return OutputHelper::json(500, array('error_msg' => 'Betting was closed'));
 //            }
@@ -2994,6 +3015,10 @@ class Api_Betting extends JController
 
         if (strtotime($match->start_date) < time()) {
             return OutputHelper::json(500, array('error_msg' => JText::_('Match has already started')));
+        }
+
+        if( ! $match->display_flag ) {
+            return OutputHelper::json(500, array('error_msg' => JText::_('Betting is closed')));
         }
 
         if (strtotime($tournament->betting_closed_date) < time()) {

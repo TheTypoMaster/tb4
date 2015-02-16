@@ -41,10 +41,11 @@ class FrontCombinedSportsController extends \BaseController {
         }
 
         // SPORTS & COMP
-        $request = \Request::create("/api/v1/sports/$compId", 'GET');
+        $request = \Request::create("/api/v1/sports/$compId", 'GET', array("tournamentFlag" => $tournamentFlag));
         $response = \Route::dispatch($request);
 
         $sportsComps = $response->getOriginalContent();
+
 
         if (!$sportsComps['success']) {
             return array("success" => false, "error" => "No comps available");
@@ -61,10 +62,17 @@ class FrontCombinedSportsController extends \BaseController {
         $sport = $sportsComps;
 
         // EVENTS
+
+
+        $sportsEventsController = new FrontSportsEventsController;
+        $events = $sportsEventsController->index($compId, $tournamentFlag);
+
+        /*
         $request = \Request::create("/api/v1/sports/$compId/events", 'GET');
         $response = \Route::dispatch($request);
 
         $events = $response->getOriginalContent();
+        */
 
         if (!$events['success'] || count($events['result']) < 1) {
             // return array("success" => false, "error" => "No events available");
