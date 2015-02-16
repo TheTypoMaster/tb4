@@ -6,7 +6,7 @@
  * Time: 4:26 PM
  */
 
-namespace TopBetta\Services\Processes;
+namespace TopBetta\Processes;
 
 
 use TopBetta\Processes\Exceptions\ProcessAlreadyRunningException;

@@ -6,7 +6,7 @@
  * Time: 4:01 PM
  */
 
-namespace TopBetta\Services\Processes;
+namespace TopBetta\Processes;
 
 
 use TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface;

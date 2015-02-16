@@ -3,7 +3,7 @@
 
 use View;
 use Redirect;
-use TopBetta\Services\Processes\RemoveFreeCreditsFromDormantUsersProcess;
+use TopBetta\Processes\RemoveFreeCreditsFromDormantUsersProcess;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 
 class FreeCreditManagementController extends \BaseController {
