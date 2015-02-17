@@ -35,6 +35,9 @@ class RiskEventService {
 
         $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->id, 1);
 
+        //reload the competition to save the changes
+        $event->load('competition');
+
         return $event;
     }
 
