@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tbdb_components_add_tournament_grouping_recordsTableSeeder');
 		$this->call('Tbdb_bet_limit_typesTableSeeder');
 		$this->call('tb_bet_sourceTableSeeder');
+		$this->call('TbDataValuesTableSeeder');
+		$this->call('TbDataProviderMatchTableSeeder');
 	}
 
 }
