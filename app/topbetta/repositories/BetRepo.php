@@ -91,7 +91,7 @@ class BetRepo
 			$payout = $bet->bet_amount * round($dividend, 2);
 		}
 
-		return (int) $payout;
+		return (int) round($payout, 2);
 	}
 
 	public function checkWinningExoticbet(Bet $bet)
