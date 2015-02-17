@@ -24,24 +24,38 @@ class RiskCompetitionController extends \BaseController {
 
     public function showCompetition($competition)
     {
+
         try {
-            $this->competitionService->showCompetition($competition);
+            $competition = $this->competitionService->showCompetition($competition);
         } catch (\Exception $e) {
             return $this->apiResponse->failed($e->getMessage());
         }
 
-        return $this->apiResponse->success(array());
+        return $this->apiResponse->success($this->formatCompetitionPayload($competition));
     }
 
     public function hideCompetition($competition)
     {
         try {
-            $this->competitionService->hideCompetition($competition);
+            $competition = $this->competitionService->hideCompetition($competition);
         } catch (\Exception $e) {
             return $this->apiResponse->failed($e->getMessage());
         }
 
-        return $this->apiResponse->success(array());
+        return $this->apiResponse->success($this->formatCompetitionPayload($competition));
+    }
+
+    private function formatCompetitionPayload($competition)
+    {
+        $competitionArray = $competition->toArray();
+
+        //need to do this since events is already an attribute of Eloquent models
+        $competitionArray['races'] = array();
+        foreach($competition->events()->get() as $event) {
+            $competitionArray['races'][] = $event->toArray();
+        }
+
+        return $competitionArray;
     }
 
 }

@@ -35,7 +35,7 @@ class RiskEventService {
 
         $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->id, 1);
 
-        return $this;
+        return $event;
     }
 
     public function hideEvent($eventId)
@@ -47,7 +47,7 @@ class RiskEventService {
             $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
         }
 
-        return $this;
+        return $event;
     }
 
 
