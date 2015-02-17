@@ -125,7 +125,7 @@ class FrontMeetingsController extends \BaseController {
 		foreach ($events as $event) {
 
 			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);
-			
+
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {
 				$updatedAt = $updatedAt -> toISO8601String();
