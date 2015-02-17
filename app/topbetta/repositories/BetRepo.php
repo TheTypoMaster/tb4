@@ -88,10 +88,11 @@ class BetRepo
 
 		// CALC THE RETURN AMOUNT IF IT WAS A WINNING BET
 		if ($dividend > 0) {
-			$payout = $bet->bet_amount * round($dividend, 2);
+			//$payout = $bet->bet_amount * round($dividend, 2);
+			$payout = bcmul($bet->bet_amount, round($dividend, 2));
 		}
 
-		return (int) round($payout, 2);
+		return (int) $payout;
 	}
 
 	public function checkWinningExoticbet(Bet $bet)
