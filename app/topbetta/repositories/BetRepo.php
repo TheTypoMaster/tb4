@@ -180,8 +180,33 @@ class BetRepo
 			return 0;
 		}
 
-		$fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
+		$dividends = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
+
+		if(!$dividends) {
+			return 0;
+		}
+
+		$fullDividend = 0;
+
+		foreach($dividends as $winners => $dividend) {
+			if(array_intersect(explode("/", $winners), $bet->selections->toArray()) === explode("/", $winners)) {
+				$fullDividend += str_replace(',', '', $dividend);
+			}
+		}
+
 		return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
+	}
+
+	public function getExoticDividendsForEvent($exoticName, $eventId)
+	{
+		$exoticDividend = RaceEvent::where('id', $eventId)
+			->pluck($exoticName . '_dividend');
+
+		if ($exoticDividend) {
+			return unserialize($exoticDividend);
+		}
+
+		return 0;
 	}
 
 	public function getExoticDividendForEvent($exoticName, $eventId)
