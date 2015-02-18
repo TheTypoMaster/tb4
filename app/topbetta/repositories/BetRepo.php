@@ -59,28 +59,19 @@ class BetRepo
 
 			// EXOTICS
 			case 'quinella':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
 				break;
 
 			case 'exacta':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
 				break;
 
 			case 'trifecta':
-				//if ($this->checkWinningExoticbet($bet)) {
-
-					$payout = $this->_getExoticDividendForBet($bet, 'trifecta') * 100;
-				//}
+				$payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
 				break;
 
 			case 'firstfour':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
 				break;
 
 			default:
@@ -175,7 +166,13 @@ class BetRepo
 		return false;
 	}
 
-	public function _getExoticDividendForBet(Bet $bet, $exoticName = false)
+	/**
+	 * Calculates exotic dividend for a given exotic bet.
+	 * @param Bet $bet
+	 * @param bool $exoticName
+	 * @return float|int
+	 */
+	public function getExoticDividendForBet(Bet $bet, $exoticName = false)
 	{
 		if(!$exoticName) {
 			return 0;
@@ -183,42 +180,38 @@ class BetRepo
 
 		$dividends = $this->getExoticDividendsForEvent($exoticName, $bet->event_id);
 
-		$betSelection = array_map(function($value) {
+		//Should be a function in BetSelectionRepo or BetSelectionService for this.
+		//Gets the selection for a bet and organises them in to an array by position selected
+		$betSelection = array_map( function($value) {
 			return explode(",", $value);
 		}, explode("/", BetSelection::getExoticSelectionsForBetid($bet->id)));
 
 		$fullDividend = 0;
-		//clean up logic
-		foreach($dividends as $placeGetters => $dividend) {
+
+		foreach( $dividends as $placeGetters => $dividend ) {
 			$placeGettersArray = explode("/", $placeGetters);
 
-			if($bet->boxed_flag && count(array_intersect($placeGettersArray, $betSelection[0])) == count($placeGettersArray)) {
+			//Bet is boxed so only need to make sure the bet has the selections
+			if( $bet->boxed_flag && count(array_intersect($placeGettersArray, $betSelection[0])) == count($placeGettersArray) ) {
 				$fullDividend += $dividend;
-			} else {
+			} else if ( ! $bet->boxed_flag ) {
+				//Bet is not boxed so make sure positions are correct
 				$pays = true;
 				foreach($placeGettersArray as $key => $place) {
-					if(!in_array($place, $betSelection[$key])){
-						$pays= false;
+					//does the bet have the selection in this position
+					if( ! in_array($place, $betSelection[$key]) ) {
+						$pays = false;
 						break;
 					}
 				}
 
-				if($pays) {
+				//A selection has been found for each position so the bet is a winner
+				if( $pays ) {
 					$fullDividend += $dividend;
 				}
 			}
 		}
 
-		return $fullDividend;
-	}
-
-	public function getExoticDividendForBet(Bet $bet, $exoticName = false)
-	{
-		if (!$exoticName) {
-			return 0;
-		}
-
-		$fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
 		return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
 	}
 
