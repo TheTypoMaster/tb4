@@ -71,9 +71,10 @@ class BetRepo
 				break;
 
 			case 'trifecta':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
-				}
+				//if ($this->checkWinningExoticbet($bet)) {
+
+					$payout = $this->_getExoticDividendForBet($bet, 'trifecta') * 100;
+				//}
 				break;
 
 			case 'firstfour':
@@ -174,39 +175,51 @@ class BetRepo
 		return false;
 	}
 
+	public function _getExoticDividendForBet(Bet $bet, $exoticName = false)
+	{
+		if(!$exoticName) {
+			return 0;
+		}
+
+		$dividends = $this->getExoticDividendsForEvent($exoticName, $bet->event_id);
+
+		$betSelection = array_map(function($value) {
+			return explode(",", $value);
+		}, explode("/", BetSelection::getExoticSelectionsForBetid($bet->id)));
+
+		$fullDividend = 0;
+		//clean up logic
+		foreach($dividends as $placeGetters => $dividend) {
+			$placeGettersArray = explode("/", $placeGetters);
+
+			if($bet->boxed_flag && count(array_intersect($placeGettersArray, $betSelection[0])) == count($placeGettersArray)) {
+				$fullDividend += $dividend;
+			} else {
+				$pays = true;
+				foreach($placeGettersArray as $key => $place) {
+					if(!in_array($place, $betSelection[$key])){
+						$pays= false;
+						break;
+					}
+				}
+
+				if($pays) {
+					$fullDividend += $dividend;
+				}
+			}
+		}
+
+		return $fullDividend;
+	}
+
 	public function getExoticDividendForBet(Bet $bet, $exoticName = false)
 	{
 		if (!$exoticName) {
 			return 0;
 		}
 
-		$dividends = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
-
-		if(!$dividends) {
-			return 0;
-		}
-
-		$fullDividend = 0;
-
-		foreach($dividends as $winners => $dividend) {
-			if(array_intersect(explode("/", $winners), $bet->selections->toArray()) === explode("/", $winners)) {
-				$fullDividend += str_replace(',', '', $dividend);
-			}
-		}
-
+		$fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
 		return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
-	}
-
-	public function getExoticDividendsForEvent($exoticName, $eventId)
-	{
-		$exoticDividend = RaceEvent::where('id', $eventId)
-			->pluck($exoticName . '_dividend');
-
-		if ($exoticDividend) {
-			return unserialize($exoticDividend);
-		}
-
-		return 0;
 	}
 
 	public function getExoticDividendForEvent($exoticName, $eventId)
@@ -218,6 +231,19 @@ class BetRepo
 			$uDividend = unserialize($exoticDividend);
 			$dividend = array_values($uDividend);
 			return str_replace(',', '', $dividend[0]);
+		}
+
+		return 0;
+	}
+
+	public function getExoticDividendsForEvent($exoticName, $eventId)
+	{
+		$exoticDividend = RaceEvent::where('id', $eventId)
+			->pluck($exoticName . '_dividend');
+
+		if ($exoticDividend) {
+			return unserialize($exoticDividend);
+
 		}
 
 		return 0;
