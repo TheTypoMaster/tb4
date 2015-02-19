@@ -9,19 +9,27 @@ use Illuminate\Support\Facades\Input;
 use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
+use TopBetta\Services\Betting\SelectionService;
 
 
 class FrontBetsController extends BaseController {
 
 	protected $betsource;
 	protected $betnotificationservice;
+	/**
+	 * @var SelectionService
+	 */
+	private $selectionService;
 
 	public function __construct(BetSourceRepositoryInterface $betsource,
 
-								ExternalSourceBetNotificationService $betnotificationservice) {
+								ExternalSourceBetNotificationService $betnotificationservice,
+
+								SelectionService $selectionService) {
 		$this->beforeFilter('auth');
 		$this->betsource = $betsource;
 		$this->betnotificationservice = $betnotificationservice;
+		$this->selectionService = $selectionService;
 	}
 
 	/**
@@ -270,12 +278,23 @@ class FrontBetsController extends BaseController {
 		$l = new \TopBetta\LegacyApiHelper;
 		$betModel = new \TopBetta\Bet;
 
+
 		if ($exotic) {
 
 			$legacyData = $betModel -> getLegacyBetData($input['selections']['first'][0]);
 
 			$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
 
+			//check selections are not scratched.
+			foreach($input['selections'] as $selections) {
+				foreach($selections as $selection) {
+					if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
+						$messages = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+						$errors++;
+						return false;
+					}
+				}
+			}
 			//set our free bet flag if passed in
 			if (isset($input['use_free_credit'])) {
 
@@ -327,6 +346,12 @@ class FrontBetsController extends BaseController {
 				// racing
 
 				foreach ($input['selections'] as $selection) {
+
+					if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
+						$messages = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+						$errors++;
+						return false;
+					}
 
 					// assemble bet data such as meeting_id, race_id etc
 					$legacyData = $betModel -> getLegacyBetData($selection);
