@@ -152,6 +152,10 @@ class FrontBetsController extends BaseController {
 
 		$input = Input::json() -> all();
 
+		if( ! isset($input['source']) ) {
+			return array("success" => false, "error" => \Lang::get('bets.invalid_source'));
+		}
+
 		// change these common rules as required
 		$rules = array('source' => 'required|alpha');
 
