@@ -468,6 +468,9 @@ class FrontBetsController extends BaseController {
 
 					}
 
+					// tournament bets don't have this set... quick fix
+					if (!isset($bet['bet_id'])) $bet['bet_id'] = '';
+
 					//bet has been placed by now, deal with messages and errors
 					if ($bet['status'] == 200) {
 
