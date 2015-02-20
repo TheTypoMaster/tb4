@@ -483,8 +483,8 @@ class Api_User extends JController {
 					// Get user registration details from post.
 
 					$username	= JRequest::getString('username', null, 'post');
-					$first_name	= JRequest::getString('first_name', null, 'post');
-					$last_name	= JRequest::getString('last_name', null, 'post');
+					$first_name	= urldecode(JRequest::getString('first_name', null, 'post'));
+					$last_name	= urldecode(JRequest::getString('last_name', null, 'post'));
 					$email		= JRequest::getString('email', null, 'post');
 					$email2		= JRequest::getString('email', null, 'post');
 					$password	= urldecode(JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW));
