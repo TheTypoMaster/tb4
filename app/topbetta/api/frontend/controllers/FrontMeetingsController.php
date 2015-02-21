@@ -109,6 +109,7 @@ class FrontMeetingsController extends \BaseController {
 				->where('e.start_date', 'like', $meetDate . '%')
 				->where('tbdb_event_group.type_code', $typeCode)
 				->where('tbdb_event_group.display_flag', 1)
+				->where('tbdb_event.display_flag', 1)
 				->groupBy('ege.event_group_id');
 
 		// we want to include any events from meetings yesterday up until 6am the next day
