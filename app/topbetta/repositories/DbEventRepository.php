@@ -86,4 +86,5 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
         return $eventDetails;
     }
+
 }

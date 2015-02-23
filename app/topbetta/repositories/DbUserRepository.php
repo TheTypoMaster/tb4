@@ -10,6 +10,7 @@ use TopBetta\Models\UserModel;
 use TopBetta\Services\Validation\UserBasicValidator;
 
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
+use Carbon\Carbon;
 
 class DbUserRepository extends BaseEloquentRepository implements UserRepositoryInterface {
 
@@ -49,6 +50,16 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
         if($result) return $result->toArray();
 
         return null;
+    }
+
+    public function getUsersWithLastActivityBetween($start, $end, $page = null, $count = null)
+    {
+        return $this    -> model
+                        -> where('lastvisitDate', '>=', $start)
+                        -> where('lastvisitDate', '<=', $end)
+                        -> forPage($page, $count)
+                        -> get();
+
     }
 
 
