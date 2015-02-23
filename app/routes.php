@@ -199,6 +199,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
+
+	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
+	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

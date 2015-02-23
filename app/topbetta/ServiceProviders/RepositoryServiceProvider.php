@@ -82,6 +82,14 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbMarketTypeRepository'
         );
         $this->app->bind(
+            'TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface',
+            'TopBetta\Repositories\DbFreeCreditTransactionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',
+            'TopBetta\Repositories\DbProcessParamsRepository'
+		);
+		$this->app->bind(
             'TopBetta\Repositories\Contracts\EventModelRepositoryInterface',
             'TopBetta\Repositories\DbEventModelRepository'
         );
