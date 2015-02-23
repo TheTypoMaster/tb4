@@ -29,7 +29,7 @@ class CompetitionModel extends Eloquent {
      * @return mixed
      */
     public function events(){
-        return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_id', 'event_group_id');
+        return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
     }
 
 }
