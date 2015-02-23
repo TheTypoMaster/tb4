@@ -88,6 +88,10 @@ class RepositoryServiceProvider extends ServiceProvider {
         $this->app->bind(
             'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',
             'TopBetta\Repositories\DbProcessParamsRepository'
+		);
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\EventModelRepositoryInterface',
+            'TopBetta\Repositories\DbEventModelRepository'
         );
     }
 } 

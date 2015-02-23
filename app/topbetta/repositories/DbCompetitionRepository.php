@@ -60,4 +60,20 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     public function selectList(){
         return $this->model->lists('name', 'id');
     }
+
+    public function getDisplayedEventsForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)->events()->where("display_flag", "=", "1")->get();
+    }
+
+    public function setDisplayFlagForCompetition($competitionId, $displayFlag)
+    {
+        $competition = $this->model->find($competitionId);
+
+        $competition->display_flag = $displayFlag;
+
+        $competition->save();
+
+        return $competition;
+    }
 } 
