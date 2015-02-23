@@ -35,6 +35,9 @@
 					<li>
 						<a href="{{ route('admin.free-credit-transactions.index') }}">Free Credit Transactions</a>
 					</li>
+					<li>
+						<a href="{{ route('admin.free-credit-management.index') }}">Free Credit Management</a>
+					</li>
 				</ul>				
 			</li>
 
