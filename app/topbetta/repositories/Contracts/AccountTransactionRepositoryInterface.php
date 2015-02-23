@@ -9,4 +9,5 @@
 
 interface AccountTransactionRepositoryInterface {
 
+    public function getAccountBalanceByUserId($userId);
 }
