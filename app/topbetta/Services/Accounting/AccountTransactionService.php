@@ -142,5 +142,10 @@ class AccountTransactionService {
     }
 
 
+    public function getDepositsForUser($userId)
+    {
+        //return $this->
+    }
+
 
 }
