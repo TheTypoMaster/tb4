@@ -34,6 +34,34 @@ class Bet extends \Eloquent {
 		return $this->belongsTo('TopBetta\AccountBalance', 'result_transaction_id');
 	}
 
+	public function refund() {
+		return $this->belongsTo('TopBetta\AccountBalance', 'refund_transaction_id');
+	}
+
+	public function freeBetRefund() {
+		return $this->belongsTo('TopBetta\FreeCreditBalance', 'refund_freebet_transaction_id');
+	}
+
+	public function getRefundAmount()
+	{
+		return $this->refund ?	$this->refund->amount : 0;
+	}
+
+	public function getFreeCreditRefundAmount()
+	{
+		return $this->freeBetRefund ? $this->freeBetRefund->amount : 0;
+	}
+
+	public function getBetAmountAfterRefunds()
+	{
+		return $this->bet_amount - $this->getRefundAmount() - $this->getFreeCreditRefundAmount();
+	}
+
+	public function getFreeBetAmountAfterRefunds()
+	{
+		return $this->freebet_amount - $this->getFreeCreditRefundAmount();
+	}
+
 	/**
 	 * Get bet transaction details.
 	 * @param $transactionID

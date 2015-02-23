@@ -36,6 +36,7 @@ class DbBetSelectionRepository implements BetSelectionRepositoryInterface
     {
         $betSelectionsArray = $boxed ? self::$selectionBoxedTemplate : self::$selectionPositionTemplate;
 
+        //get bet selections which are not scratched.
         $betSelections = BetSelection::where("bet_id", "=", $betId)
             -> whereHas("selection", function($q) {
                 $q->where("selection_status_id", "=", 1);
