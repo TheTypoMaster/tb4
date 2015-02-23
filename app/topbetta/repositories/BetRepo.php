@@ -7,6 +7,8 @@ use TopBetta\Bet;
 use TopBetta\BetResultStatus;
 use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
+use TopBetta\libraries\exotic\ExoticBetFactory;
+use TopBetta\libraries\exotic\ExoticBetTrifecta;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 use TopBetta\SportsSelectionResults;
@@ -312,10 +314,42 @@ class BetRepo
 		return false;
 	}
 
+	public function partialRefundBet(Bet $bet, $amount)
+	{
+		// Full bet amount was on free credit
+		if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount >= $amount) {
+			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $amount);
+		} else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $amount) {
+			// Free bet amount was less then refund
+			$refundAmount = $amount - $bet->bet_freebet_amount;
+			// Refund free bet amount
+			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
+			// Refund balance to account
+			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refundAmount);
+		} else {
+			// No free credit was used - refund full amount to account
+			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
+		}
+
+		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PARTIAL_REFUND);
+		$bet->bet_amount = $bet->bet_amount - $amount;
+
+		if ($bet->save()) {
+			$bet->resultAmount = $amount;
+			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+			return true;
+		}
+
+		return false;
+	}
+
 	public function refundBetsForRunnerId($runnerId)
 	{
+		$exoticBetArray = array();
 		// refund win/place bets
 		$betSelections = BetSelection::where('selection_id', $runnerId)->get();
+
+
 
 		foreach ($betSelections as $betSelection) {
 			$bet = Bet::where('id', $betSelection->bet_id)
@@ -326,10 +360,41 @@ class BetRepo
 			if ($bet && $bet->bet_type_id <= 3) {
 				\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
 				$this->refundBet($bet);
+			} else if ($bet) {
+				$exoticBetArray[$bet->id] = $bet;
 			}
 		}
 
-		// TODO: partial refund exotic bets
+		//refund exotic bets
+		foreach($exoticBetArray as $bet) {
+			//get the selections for the bet in the correct format
+			$selections = DbBetSelectionRepository::getUnscratchedExoticSelectionsInPositionForBet($bet->id, (bool) $bet->boxed_flag);
+			//Create the exotic bet
+			$exoticBet = ExoticBetFactory::make($bet->betType->name, $bet->amount, $selections);
+
+			//get the combinations here so we don't have to calculate more then once
+			$combinationCount = $exoticBet->getCombinationCount();
+			if($combinationCount > 0) {
+				//calculate partial refund amount;
+				$newAmount = round($combinationCount * $bet->percentage, 0);
+				$refundAmount = $bet->bet_amount - $newAmount;
+
+				//check we can partial refund without going below bet minimum
+				if($newAmount > 50 && $refundAmount > 0) {
+					$bet->combinations = $combinationCount;
+					\Log::info("Partial refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id . " amount: " . $refundAmount);
+					$this->partialRefundBet($bet, $refundAmount);
+				} else if ($refundAmount > 0) {
+					\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
+					$this->refundBet($bet);
+				}
+
+			} else {
+				//no valid combinations so refund the bet
+				\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
+				$this->refundBet($bet);
+			}
+		}
 
 		return true;
 	}
