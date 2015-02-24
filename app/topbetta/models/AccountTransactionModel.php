@@ -21,4 +21,21 @@ class AccountTransactionModel extends Eloquent {
         return $this->belongsTo('TopBetta\AccountTransactionTypes', 'account_transaction_type_id');
     }
 
+    // --- Bets assosciated with the transaction if they exist ---
+
+    public function bet()
+    {
+        return $this->hasOne('TopBetta\\Models\\BetModel', 'bet_transaction_id');
+    }
+
+    public function betWin()
+    {
+        return $this->hasOne('TopBetta\\Models\\BetModel', 'result_transaction_id');
+    }
+
+    public function betRefund()
+    {
+        return $this->hasOne('TopBetta\\Models\\BetModel', 'refund_transaction_id');
+    }
+
 }

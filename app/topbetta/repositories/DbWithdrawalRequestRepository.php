@@ -19,13 +19,18 @@ class DbWithdrawalRequestRepository extends BaseEloquentRepository implements Wi
         $this->model = $withdrawalRequest;
     }
 
-
+    /**
+     * Gets the sum of the withdrawals for a user based on whether it was approved or not.
+     * @param $userId
+     * @param $approved
+     * @return mixed
+     */
     public function getTotalWithdrawalsForUserWithApproved($userId, $approved)
     {
         return $this
             ->model
-            ->where('request_id', '=', $userId)
-            ->where('approved_flag', '=', (int) $status)
+            ->where('requester_id', '=', $userId)
+            ->where('approved_flag', '=', (int) $approved)
             ->sum('amount');
     }
 }

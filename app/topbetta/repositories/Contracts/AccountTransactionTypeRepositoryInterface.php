@@ -9,6 +9,7 @@
 
 interface AccountTransactionTypeRepositoryInterface {
 
+    // VALID TRANSACTION TYPE NAMES
     const TYPE_TOURNAMENT_DOLLARS   = 'tournamentdollars';
     const TYPE_TOURNAMENT_WIN       = 'tournementwin';
     const TYPE_PAYPAL_DEPOSIT       = 'paypaldeposit';
@@ -27,6 +28,9 @@ interface AccountTransactionTypeRepositoryInterface {
     const TYPE_MONEYBOOKERS_DEPOSIT = 'moneybookersdeposit';
     const TYPE_TOURNAMENT_REFUND    = 'tournamentrefund';
     const TYPE_POLI_DEPOSIT         = 'polideposit';
+    const TYPE_WITHDRAWAL           = 'withdrawal';
+    const TYPE_BETWIN_CANCELLED     = 'betwincancelled';
 
+    public function getTransactionTypeByKeyword($keyword);
 
 }

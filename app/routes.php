@@ -66,6 +66,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
+	//Risk endpoint to get user account details
+	Route::resource('risk-user-account', 'RiskUserAccount', array('only' => array('show')));
 
 	Route::put('risk-show-event/{event}', "RiskEvents@showEvent");
 	Route::put('risk-hide-event/{event}', "RiskEvents@hideEvent");

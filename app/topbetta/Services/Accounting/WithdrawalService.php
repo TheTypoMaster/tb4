@@ -23,6 +23,11 @@ class WithdrawalService {
         $this->withdrawalRequestRepository = $withdrawalRequestRepository;
     }
 
+    /**
+     * Gets the sum of the total approved withdrawals for a user
+     * @param $userId
+     * @return mixed
+     */
     public function getTotalApprovedWithdrawalsForUser($userId)
     {
         return $this->withdrawalRequestRepository->getTotalWithdrawalsForUserWithApproved($userId, true);
