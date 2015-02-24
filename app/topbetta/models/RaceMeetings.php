@@ -49,7 +49,7 @@ class RaceMeeting extends Eloquent {
 
 	static public function isInternational($meetingId) {
 		$countryCode = RaceMeeting::where('id', '=', $meetingId)->pluck('country');
-		return $countryCode !== 'AU';
+		return $countryCode !== 'AU' && $countryCode !== 'NZ';
 	}
 
 	

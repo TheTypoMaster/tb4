@@ -46,7 +46,7 @@ class FrontCombinedRacingController extends \BaseController {
 				$races[$key]['meeting_id'] = $meetingAndRaces['id'];
 
                 //exclude international races
-                if($meetingAndRaces['country'] != 'AU') {
+                if($meetingAndRaces['country'] != 'AU' && $meetingAndRaces['country'] != 'NZ') {
                     $races[$key]['exclude_bet_types'] = BetTypes::getExcludedBetTypesForInternationalRaces();
 
                 } else {
