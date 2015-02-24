@@ -276,6 +276,14 @@ class FrontBetsController extends BaseController {
 
 			$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
 
+			//No Exotic bets on international races
+			if(TopBetta\RaceMeeting::isInternational($betData['id'])){
+				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.bet_type_not_valid_international'));
+				$errors++;
+
+				return false;
+			}
+
 			//set our free bet flag if passed in
 			if (isset($input['use_free_credit'])) {
 

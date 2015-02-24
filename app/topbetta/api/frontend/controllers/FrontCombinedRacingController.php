@@ -1,6 +1,7 @@
 <?php
 namespace TopBetta\frontend;
 
+use TopBetta\BetTypes;
 use TopBetta\Repositories\RisaFormRepository;
 
 class FrontCombinedRacingController extends \BaseController {
@@ -43,6 +44,14 @@ class FrontCombinedRacingController extends \BaseController {
 		if ($races) {
 			foreach ($races as $key => $value) {
 				$races[$key]['meeting_id'] = $meetingAndRaces['id'];
+
+                //exclude international races
+                if($meetingAndRaces['country'] != 'AU') {
+                    $races[$key]['exclude_bet_types'] = BetTypes::getExcludedBetTypesForInternationalRaces();
+
+                } else {
+                    $races[$key]['exclude_bet_types'] = array();
+                }
 			}
 		}
 

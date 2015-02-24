@@ -132,6 +132,7 @@ class FrontMeetingsController extends \BaseController {
 			} else {
 				$updatedAt = false;
 			}
+
 			
 			// grab the meeting start_date and format
 			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $event->start_date);

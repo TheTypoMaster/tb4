@@ -25,7 +25,8 @@ class RaceMeeting extends Eloquent {
 		return RaceMeeting::where('external_event_group_id', '=', $meetingId)
 		->whereIn('type_code', $racingCodes)->get()->toArray();
 	}
-	
+
+
 	/**
 	 * Check if a meeting exists.
 	 *
@@ -45,6 +46,12 @@ class RaceMeeting extends Eloquent {
 		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 		return ($type_code == 'NULL' ? false : true);
 	}
+
+	static public function isInternational($meetingId) {
+		$countryCode = RaceMeeting::where('id', '=', $meetingId)->pluck('country');
+		return $countryCode !== 'AU';
+	}
+
 	
 	static public function getRacesForMeetingId($meetingId) {
 		$races = RaceMeeting::find($meetingId) -> raceevents;
