@@ -10,4 +10,6 @@
 interface AccountTransactionRepositoryInterface {
 
     public function getAccountBalanceByUserId($userId);
+
+    public function getTotalTransactionsForUserByTypeIn($userId, $types);
 }

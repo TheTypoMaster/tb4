@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Repositories\DbAccountTransactionTypeRepository;
 use Validator;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
@@ -20,6 +21,15 @@ use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 
 class AccountTransactionService {
+
+     public static $depositTransactions  = array(
+         AccountTransactionTypeRepositoryInterface::TYPE_PAYPAL_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_EWAY_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_BPAY_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_BANK_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_POLI_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_MONEYBOOKERS_DEPOSIT,
+     );
 
     protected $accounttransactions;
     protected $accounttransactiontypes;
@@ -142,9 +152,30 @@ class AccountTransactionService {
     }
 
 
-    public function getDepositsForUser($userId)
+    public function getTotalDepositsForUser($userId)
     {
-        //return $this->
+        return $this->accounttransactions->getTotalTransactionsForUserByTypeIn(
+            $userId,
+            $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+
+    public function getLastNDepositsForUser($userId, $n)
+    {
+        return $this->accounttransactions->getLastNTransactionsForUserByTypeIn(
+            $userId,
+            $n,
+            $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+
+    private function getTransactionTypeIds($types)
+    {
+        $transactionTypeRepo = $this->accounttransactiontypes;
+
+        return array_map(function($transactionType) use ($transactionTypeRepo) {
+            return $transactionTypeRepo->getTransactionTypeByKeyword($transactionType)['id'];
+        }, $types);
     }
 
 
