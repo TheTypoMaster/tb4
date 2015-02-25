@@ -32,6 +32,7 @@ class UserRegistrationController extends BaseController {
 		try{
 			$accountCreationResponse = $this->accountservice->createTopbettaUserAccount(Input::json()->all());
 
+			//send the welcome/activation email if external_welcome_email is not specified or false
 			if( ! $externalWelcomeEmail ) {
 				$this->accountservice->sendWelcomeEmail($accountCreationResponse['id'], Input::get("email_source", null));
 			}
@@ -48,6 +49,7 @@ class UserRegistrationController extends BaseController {
 		try{
 			$accountCreationResponse = $this->accountservice->createBasicAccount(Input::json()->all());
 
+			//send the welcome/activation email if external_welcome_email is not specified or false
 			if( ! $externalWelcomeEmail ) {
 				$this->accountservice->sendWelcomeEmail($accountCreationResponse['id'], Input::json("external_source", null));
 			}

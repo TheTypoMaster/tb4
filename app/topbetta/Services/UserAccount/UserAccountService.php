@@ -233,12 +233,15 @@ class UserAccountService {
 
     public function sendWelcomeEmail($userId, $emailSource = null)
     {
+        //user the default source if one is not specified
         if( ! $emailSource ) {
             $emailSource = \Config::get("accountactivation.default_source");
         }
 
+        //get the user
         $user = $this->basicUser->find($userId);
 
+        //get the activation email config
         $config = \Config::get("accountactivation.email.".$emailSource);
 
         //send the welcome email
