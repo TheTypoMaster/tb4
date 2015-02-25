@@ -84,6 +84,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
 
+
 	// custom route for refer a friend
 	Route::resource('users/refer', 'FrontUsersRefer');
 
@@ -241,6 +242,11 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
 
 	// normal logout
 	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+	//create basic user
+	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
+
+	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
 
 });
 

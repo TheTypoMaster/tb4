@@ -9,6 +9,7 @@
 use Carbon\Carbon;
 use Validator;
 use Hash;
+use Mail;
 
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
@@ -57,22 +58,10 @@ class UserAccountService {
      * @param $input
      * @return array
      */
-    public function createTopbettaUserAccount($input){
-
-        // set some other required fields
-        $basicData = array();
-        if(isset($input['username'])) $basicData['username'] = $input['username'];
-        if(isset($input['email'])) $basicData['email'] = $input['email'];
-        if(isset($input['password'])) $basicData['password'] = $input['password'];
-        if(isset($input['parent_user_id'])) $basicData['parent_user_id'] = $input['parent_user_id'];
-        $basicData['name'] = $input['first_name'].' '.$input['last_name'];
-        $basicData['usertype'] = 'Registered';
-        $basicData['gid'] = '18';
-        $basicData['registerDate'] = Carbon::now();
-        $basicData['lastVisitDate'] = Carbon::now();
-
+    public function createTopbettaUserAccount($input)
+    {
         // create the basic user record
-        $basic = $this->createBasicAccount($basicData);
+        $basic = $this->createBasicAccount($input);
 
         // get the user id of the new account
         $input['user_id'] = $basic['id'];
@@ -85,18 +74,36 @@ class UserAccountService {
         $full = $this->createFullAccount($input);
 
         return array_merge($basic, $full);
-
     }
 
 
     /**
      * Create a basic user account
      *
-     * @param $data
+     * @param $input
      * @return mixed
      */
-    public function createBasicAccount($data){
-        return $this->basicUser->create($data);
+    public function createBasicAccount($input)
+    {
+        // set some other required fields
+        $basicData = array();
+        if(isset($input['username'])) $basicData['username'] = $input['username'];
+        if(isset($input['email'])) $basicData['email'] = $input['email'];
+        if(isset($input['password'])) $basicData['password'] = $input['password'];
+        if(isset($input['parent_user_id'])) $basicData['parent_user_id'] = $input['parent_user_id'];
+        $basicData['name'] = $input['first_name'].' '.$input['last_name'];
+        $basicData['usertype'] = 'Registered';
+        $basicData['gid'] = '18';
+        $basicData['registerDate'] = Carbon::now();
+        $basicData['lastVisitDate'] = Carbon::now();
+
+        //generate activation code. Check to make sure it is unique first. Shouldn't need to check too much as long as
+        //activation codes are cleared.
+        while($this->basicUser->getUserWithActivationHash($activationHash = str_random(40)));
+
+        $basicData['activation'] = $activationHash;
+
+        return $this->basicUser->create($basicData);
     }
 
     /**
@@ -222,6 +229,47 @@ class UserAccountService {
         if (Hash::check($hashString, $input['token'])) return true;
 
         return false;
+    }
+
+    public function sendWelcomeEmail($userId, $emailSource = null)
+    {
+        if( ! $emailSource ) {
+            $emailSource = \Config::get("accountactivation.default_source");
+        }
+
+        $user = $this->basicUser->find($userId);
+
+        $config = \Config::get("accountactivation.email.".$emailSource);
+
+        //send the welcome email
+        Mail::send(
+            array_get($config, "email"),
+
+            array("user" => $user, "activationUrl" => \Config::get("accountactivation.activation_url")),
+
+            function ($message) use ($user, $config) {
+               $message
+                   ->to($user->email)
+                   ->subject(array_get($config, "subject"));
+
+               //if from config is setup use it, otherwise default is fine
+                if( array_get($config, "from", false) ) {
+                   $message->from(
+                       array_get($config, "from.address"),
+                       array_get($config, "from.name")
+                   );
+               }
+            }
+        );
+    }
+
+    public function activateUser($activationHash)
+    {
+        //activate user. Clear activation so can't unblock twice.
+        return $this->basicUser->updateByActivationHash($activationHash, array(
+            "activated_flag"    => 1,
+            "activation"        => ""
+        ));
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
