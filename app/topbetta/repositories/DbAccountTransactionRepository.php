@@ -87,28 +87,28 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
 
     // ----- TRANSACTION ASSOSCIATED WITH BETS ----
 
-    public function getTotalBetTransactionsForUserByOrigin($userId, $origin)
+    public function getTotalBetTransactionsForUserByOrigin($userId, array $origin)
     {
         return $this->getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, self::BET_TRANSACTION_BET, $origin);
     }
 
-    public function getTotalBetWinTransactionsForUserByOrigin($userId, $origin)
+    public function getTotalBetWinTransactionsForUserByOrigin($userId, array $origin)
     {
         return $this->getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, self::BET_TRANSACTION_WIN, $origin);
     }
 
-    public function getTotalBetRefundTransactionsForUserByOrigin($userId, $origin)
+    public function getTotalBetRefundTransactionsForUserByOrigin($userId, array $origin)
     {
         return $this->getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, self::BET_TRANSACTION_REFUND, $origin);
     }
 
-    public function getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, $transactionType, $origin)
+    public function getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, $transactionType, array $origin)
     {
         return $this
             ->model
             ->where('recipient_id', '=', $userId)
             ->whereHas($transactionType, function($q) use ($origin) {
-                $q->where('bet_origin_id', '=', $origin);
+                $q->whereIn('bet_origin_id', $origin);
             })
             ->sum('amount');
     }

@@ -23,11 +23,11 @@ interface AccountTransactionRepositoryInterface {
 
     public function getLastNPositiveTransactionsForUserByTypeIn($userId, $n, $types);
 
-    public function getTotalBetTransactionsForUserByOrigin($userId, $origin);
+    public function getTotalBetTransactionsForUserByOrigin($userId, array $origin);
 
-    public function getTotalBetWinTransactionsForUserByOrigin($userId, $origin);
+    public function getTotalBetWinTransactionsForUserByOrigin($userId, array $origin);
 
-    public function getTotalBetRefundTransactionsForUserByOrigin($userId, $origin);
+    public function getTotalBetRefundTransactionsForUserByOrigin($userId, array $origin);
 
-    public function getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, $transactionType, $origin);
+    public function getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, $transactionType, array $origin);
 }

@@ -16,7 +16,7 @@ use TopBetta\Services\UserAccount\UserFreeCreditService;
 
 class RiskUserAccountController extends \BaseController {
 
-    const RECENT_DEPOSIT_HISTORY_NO = 3;
+    const RECENT_DEPOSIT_HISTORY_COUNT = 3;
     /**
      * @var AccountTransactionService
      */
@@ -53,29 +53,29 @@ class RiskUserAccountController extends \BaseController {
 
         try{
             //get total account balance
-            $accountData['account-balance'] = $this->accountTransactionService->getAccountBalanceForUser($id);
+            $accountData['account_balance'] = $this->accountTransactionService->getAccountBalanceForUser($id);
 
             //get free credit balance
-            $accountData['free-credit-balance'] = $this->userFreeCreditService->getFreeCreditBalanceForUser($id);
+            $accountData['free_credit_balance'] = $this->userFreeCreditService->getFreeCreditBalanceForUser($id);
 
             //get the total deposits made by user
-            $accountData['total-deposits'] = $this->accountTransactionService->getTotalDepositsForUser($id);
+            $accountData['total_deposits'] = $this->accountTransactionService->getTotalDepositsForUser($id);
 
             //get the last 3 deposits for the user
-            $accountData['recent-deposits'] = $this->accountTransactionService->getLastNDepositsForUser(
+            $accountData['recent_deposits'] = $this->accountTransactionService->getLastNDepositsForUser(
                 $id,
-                self::RECENT_DEPOSIT_HISTORY_NO
+                self::RECENT_DEPOSIT_HISTORY_COUNT
             )->toArray();
 
             //get the total withdrawals
             //use withdrawal requests for this value as some withdrawals are under deposit transaction types in the DB
-            $accountData['total-withdrawals'] = $this->withdrawalService->getTotalApprovedWithdrawalsForUser($id);
+            $accountData['total_withdrawals'] = $this->withdrawalService->getTotalApprovedWithdrawalsForUser($id);
 
             //get the win - loss for sports betting
-            $accountData['win-loss-sports'] = $this->accountTransactionService->getSportsWinLossForUser($id);
+            $accountData['win_loss_sports'] = $this->accountTransactionService->getSportsWinLossForUser($id);
 
             //get the win - loss for racing bets
-            $accountData['win-loss-racing'] = $this->accountTransactionService->getRacingWinLossForUser($id);
+            $accountData['win_loss_racing'] = $this->accountTransactionService->getRacingWinLossForUser($id);
         } catch ( \Exception $e ) {
             return $this->apiResponse->failed(array($e->getMessage(), $accountData));
         }

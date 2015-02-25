@@ -15,7 +15,7 @@ interface AccountTransactionTypeRepositoryInterface {
     const TYPE_PAYPAL_DEPOSIT       = 'paypaldeposit';
     const TYPE_BET_WIN              = 'betwin';
     const TYPE_BET_ENTRY            = 'betentry';
-    const TYPE_EWAY_DEPOSIT         = 'ewaydepsosit';
+    const TYPE_EWAY_DEPOSIT         = 'ewaydeposit';
     const TYPE_BANK_DEPOSIT         = 'bankdeposit';
     const TYPE_BPAY_DEPOSIT         = 'bpaydeposit';
     const TYPE_ADMIN                = 'admin';

@@ -40,6 +40,12 @@ class AccountTransactionService {
     protected $betOriginRepository;
     protected $user;
 
+    /**
+     * Save the bet origin Ids after we fetch them once
+     * @var array
+     */
+    protected $betOrigins = array();
+
     public function __construct(AccountTransactionRepositoryInterface $accounttransactions,
                                 AccountTransactionTypeRepositoryInterface $accounttransactiontypes,
                                 UserRepositoryInterface $user,
@@ -183,8 +189,8 @@ class AccountTransactionService {
     public function getRacingWinLossForUser($userId)
     {
         //racing win loss = wins - losses + refunds
-       $a = $this->getTotalRacingBetsForUser($userId);
-        dd(\DB::getQueryLog());
+       //$a = $this->getTotalRacingBetsForUser($userId);
+        //dd(\DB::getQueryLog());
         return $this->getTotalRacingBetsForUser($userId) +
             $this->getTotalRacingBetWinsForUser($userId) + 
             $this->getTotalRacingBetRefundForUser($userId);
@@ -210,7 +216,7 @@ class AccountTransactionService {
     {
         return $this->accounttransactions->getTotalBetTransactionsForUserByOrigin(
             $userId,
-            $this->betOriginRepository->getOriginByKeyWord(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING)['id']
+            array($this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING))
         );
     }
 
@@ -218,7 +224,7 @@ class AccountTransactionService {
     {
         return $this->accounttransactions->getTotalBetWinTransactionsForUserByOrigin(
             $userId,
-            $this->betOriginRepository->getOriginByKeyWord(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING)['id']
+            array($this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING))
         );
     }
 
@@ -226,7 +232,7 @@ class AccountTransactionService {
     {
         return $this->accounttransactions->getTotalBetRefundTransactionsForUserByOrigin(
             $userId,
-            $this->betOriginRepository->getOriginByKeyWord(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING)['id']
+            array($this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING))
         );
     }
 
@@ -240,7 +246,10 @@ class AccountTransactionService {
     {
         return $this->accounttransactions->getTotalBetTransactionsForUserByOrigin(
             $userId,
-            $this->betOriginRepository->getOriginByKeyWord(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING)['id']
+            array(
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING),
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
+            )
         );
     }
 
@@ -248,7 +257,10 @@ class AccountTransactionService {
     {
         return $this->accounttransactions->getTotalBetWinTransactionsForUserByOrigin(
             $userId,
-            $this->betOriginRepository->getOriginByKeyWord(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING)['id']
+            array(
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING),
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
+            )
         );
     }
 
@@ -256,7 +268,10 @@ class AccountTransactionService {
     {
         return $this->accounttransactions->getTotalBetRefundTransactionsForUserByOrigin(
             $userId,
-            $this->betOriginRepository->getOriginByKeyWord(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING)['id']
+            array(
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING),
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
+            )
         );
     }
 
@@ -273,6 +288,15 @@ class AccountTransactionService {
         return array_map(function($transactionType) use ($transactionTypeRepo) {
             return $transactionTypeRepo->getTransactionTypeByKeyword($transactionType)['id'];
         }, $types);
+    }
+
+    private function getBetOriginId($betOriginName)
+    {
+        if( ! isset($this->betOrigins[$betOriginName]) ) {
+            $this->betOrigins[$betOriginName] = $this->betOriginRepository->getOriginByKeyWord($betOriginName)['id'];
+        }
+
+        return $this->betOrigins[$betOriginName];
     }
 
 }
