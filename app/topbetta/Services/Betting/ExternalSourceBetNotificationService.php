@@ -92,6 +92,9 @@ class ExternalSourceBetNotificationService {
         // format the payload
         $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
 
+        // add the betid to the api endpoint
+        $betSourceDetails['api_endpoint'] .= '/'.$BetDetailsPayload['bet_external_bet_id'];
+
         // put it on the queue to be sent
         return $this->_queueJob($betSourceDetails, $BetDetailsPayload, 'PUT');
 
