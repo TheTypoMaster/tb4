@@ -12,6 +12,7 @@ use TopBetta\Models\UserAroMapModel;
 use TopBetta\Services\Validation\UserBasicValidator;
 
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
+use Carbon\Carbon;
 
 class DbUserRepository extends BaseEloquentRepository implements UserRepositoryInterface {
 
@@ -66,6 +67,15 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
         $aroRecord = $this->aro->create($data);
 
         $aroMapRecord = $this->aromap->create(array('group_id' => 18, 'aro_id' => $aroRecord->id));
+	}
+        
+    public function getUsersWithLastActivityBetween($start, $end, $page = null, $count = null)
+    {
+        return $this    -> model
+                        -> where('lastvisitDate', '>=', $start)
+                        -> where('lastvisitDate', '<=', $end)
+                        -> forPage($page, $count)
+                        -> get();
 
     }
 

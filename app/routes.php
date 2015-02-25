@@ -66,6 +66,12 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
+
+	Route::put('risk-show-event/{event}', "RiskEvents@showEvent");
+	Route::put('risk-hide-event/{event}', "RiskEvents@hideEvent");
+
+	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
+	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
 });
 
 
@@ -193,6 +199,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
+
+	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
+	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

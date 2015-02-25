@@ -9,7 +9,6 @@ class FrontSportsEventsController extends \BaseController {
 	public function nextToJump() {
 
 		$limit = Input::get('limit', 10);
-
 		// store next to jump in cache for 1 min at a time
 		return \Cache::remember('nextToJump-sports-' . $limit, 1, function() use (&$limit) {
 
@@ -39,7 +38,7 @@ class FrontSportsEventsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index($compId = false) {
+	public function index($compId = false, $tournamentFlag = false) {
 
 		//special case to allow for events to be called directly with the comp id passed in
 		$compId = Input::get('comp_id', $compId);
@@ -47,9 +46,9 @@ class FrontSportsEventsController extends \BaseController {
 		$limit = Input::get('limit', null);
 
 		// store sports events in cache for 10 min at a time
-		return \Cache::remember('sportsEvents-' . $compId . $date . $limit, 10, function() use (&$compId, &$date, &$limit) {
+		return \Cache::remember('sportsEvents-' . $compId . $date . $limit . $tournamentFlag, 10, function() use (&$compId, &$date, &$limit, $tournamentFlag) {
 			$sportsEvents = new TopBetta\SportsEvents;
-			$events = $sportsEvents -> getEvents($limit, (int)$compId, $date);
+			$events = $sportsEvents -> getEvents($limit, (int)$compId, $date, $tournamentFlag);
 
 			//var_dump(\DB::getQueryLog());
 
