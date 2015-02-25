@@ -97,19 +97,20 @@ class FrontMeetingsController extends \BaseController {
 
 	}
 
-	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r') {
+	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r', $displayOnly = true) {
 
-		//fetch our meetings for the specified type i.e. r = racing, g = greyhouds, h = harness
-		// needs to grab any meetings that have events for the date selected - this will include events that span 2 days
-//		$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . '" AND display_flag = 1') -> get();
-		
 		$query = TopBetta\RaceMeeting::select('tbdb_event_group.*')
-				->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
-				->join('tbdb_event AS e', 'ege.event_id', '=', 'e.id')
-				->where('e.start_date', 'like', $meetDate . '%')
-				->where('tbdb_event_group.type_code', $typeCode)
-				->where('tbdb_event_group.display_flag', 1)
-				->groupBy('ege.event_group_id');
+			->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
+			->join('tbdb_event AS e', 'ege.event_id', '=', 'e.id')
+			->where('e.start_date', 'like', $meetDate . '%')
+			->where('tbdb_event_group.type_code', $typeCode);
+
+		if ($displayOnly) {
+			$query->where('tbdb_event_group.display_flag', 1)
+				->where('e.display_flag', 1);
+		}
+
+		$query->groupBy('ege.event_group_id');
 
 		// we want to include any events from meetings yesterday up until 6am the next day
 		if (\Carbon\Carbon::now()->gte(\Carbon\Carbon::today()->addHours(6))) {
@@ -124,7 +125,7 @@ class FrontMeetingsController extends \BaseController {
 
 		foreach ($events as $event) {
 
-			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);
+			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id, $displayOnly);
 
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {

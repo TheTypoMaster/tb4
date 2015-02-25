@@ -46,13 +46,15 @@ class RaceMeeting extends Eloquent {
 		return ($type_code == 'NULL' ? false : true);
 	}
 	
-	static public function getRacesForMeetingId($meetingId) {
+	static public function getRacesForMeetingId($meetingId, $displayOnly = true) {
 		$races = RaceMeeting::find($meetingId) -> raceevents;
 
 		$result = array();
 
 		foreach ($races as $race) {
-				
+
+			if($displayOnly && $race->display_flag == 0) continue;
+
 			$resultsModel = new \TopBetta\RaceResult; 	
 			$results = $resultsModel -> getResultsForRaceId($race -> id);	
 			
