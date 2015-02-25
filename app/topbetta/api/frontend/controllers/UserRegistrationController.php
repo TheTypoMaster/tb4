@@ -58,6 +58,16 @@ class UserRegistrationController extends BaseController {
 		}
 	}
 
+	public function resendWelcomeEmail($userId)
+	{
+		try {
+			$this->accountservice->sendWelcomeEmail($userId, Input::get("external_source", null));
+			return $this->response->success(array());
+		} catch(ValidationException $e) {
+			return $this->response->failed($e->getErrors(), 500, 101, 'Sending failed', 'Sending failed');
+		}
+	}
+
 	public function activate($activationHash)
 	{
 		try {
