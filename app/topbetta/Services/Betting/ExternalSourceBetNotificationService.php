@@ -87,7 +87,7 @@ class ExternalSourceBetNotificationService {
         if(!$betSourceDetails = $this->_sourceValidation($betDetails['bet_source_id'])) return false;
 
         // get bet details
-        $betDetailsFromDB = $this->getBetDetailsWhenResulted($betDetails['id']);
+        $betDetailsFromDB = $this->bet->getBetDetailsWhenResulted($betDetails['id']);
 
         // format the payload
         $BetDetailsPayload = $this->_formatBetPayload($betDetailsFromDB);
