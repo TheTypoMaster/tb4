@@ -19,12 +19,29 @@ class FrontMeetingsController extends \BaseController {
 			return $date -> format('Y-m-d');
 		});
 
+		// Get the all param if it exists and enforce boolean
+		$all = Input::get('all', false);
+		$all = $all == '1' ? true:false;
+
 		$typeCode = Input::get('type', 'r');
 
 		$changedSince = Input::get('changed_since', false);
 
 		// default to show all todays races
 		if (!$changedSince) {
+
+			// If the all flag has been passed through in the URL, load from cache all of the meetings, otherwise filter
+			// by meetings with the display flag
+			if ($all) {
+
+				return \Cache::remember('all-meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
+
+					$eachMeeting = FrontMeetingsController::getMeetingsAndRaces($meetDate, $typeCode, false);
+
+					return array('success' => true, 'result' => $eachMeeting);
+
+				});
+			}
 
 			// store meetings & races in cache for 1 min at a time
 			return \Cache::remember('meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
