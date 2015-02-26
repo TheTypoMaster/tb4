@@ -160,6 +160,10 @@ class FrontBetsController extends BaseController {
 
 		$input = Input::json() -> all();
 
+		if( ! isset($input['source']) ) {
+			return array("success" => false, "error" => \Lang::get('bets.invalid_source'));
+		}
+
 		// change these common rules as required
 		$rules = array('source' => 'required|alpha');
 
@@ -295,6 +299,16 @@ class FrontBetsController extends BaseController {
 					}
 				}
 			}
+
+			//No Exotic bets on international races
+			if(TopBetta\RaceMeeting::isInternational($betData['id'])){
+				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.bet_type_not_valid_international'));
+				$errors++;
+
+				return false;
+			}
+
+
 			//set our free bet flag if passed in
 			if (isset($input['use_free_credit'])) {
 
@@ -492,6 +506,9 @@ class FrontBetsController extends BaseController {
 						}
 
 					}
+
+					// tournament bets don't have this set... quick fix
+					if (!isset($bet['bet_id'])) $bet['bet_id'] = '';
 
 					//bet has been placed by now, deal with messages and errors
 					if ($bet['status'] == 200) {

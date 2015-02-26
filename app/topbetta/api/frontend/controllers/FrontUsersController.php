@@ -41,20 +41,22 @@ class FrontUsersController extends \BaseController {
 
 				if (\Auth::check()) {
 
-					if (!$login['userInfo']['full_account']) {
+					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id) -> first();
 
+					if (!$login['userInfo']['full_account']) {
 						$parts = explode(" ", \Auth::user()->name);
 						$lastname = array_pop($parts);
 						$firstname = implode(" ", $parts);
-
-					} else {
+					} else if ( $tbUser ) {
+						//redundant but don't want to break anything
+						$lastname = $tbUser->last_name;
+						$firstname = $tbUser->first_name;
+					} else  {
 
 						$lastname = $login['userInfo']['last_name'];
 						$firstname = $login['userInfo']['first_name'];
 
 					}
-
-					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id) -> first();
 
 					$mobile = NULL;
 					$verified = false;
