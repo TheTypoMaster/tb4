@@ -378,6 +378,7 @@ class TournamentSportEventController extends JController
 			
 		}
 
+
 		$view->assign('sports_all', $sports_all);
 		$view->assign('competitions', $competitions);
 		$view->assign('event_group_data', $event_group_data);
@@ -433,18 +434,8 @@ class TournamentSportEventController extends JController
 		$event_group_model =& $this->getModel('TournamentEventGroup', 'TournamentModel');
 		if ($event_group_id > 0) {
 			$start_date				= $event_group_model->getEventGroupFirstAndLastEventTimeByEventGroupID($event_group_id)->first_match_time;
-			$tournament_bet_model	=& $this->getModel('TournamentBet','TournamentModel');
-			$betting_started		= $tournament_bet_model->isBettingStartedByEventGroupId($event_group_id);
-			if ($betting_started){
-				JError::raiseWarning(0, "Sorry! You can't change the event as betting has already started.");
-				return false;
-			}
 		}
 
-		if((!empty($start_date) && time() >= strtotime($start_date)) || empty($start_date) && strtotime("today") > strtotime($event_start_date)) {
-			JError::raiseWarning(0, 'Sorry! This event has already started.');
-			return false;
-		}
 
 		if (!empty($start_date) && strtotime($event_start_date) > strtotime($start_date)) {
 			$event_start_date = $start_date;
