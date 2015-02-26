@@ -57,7 +57,7 @@ class FrontMeetingsController extends \BaseController {
 			//this is used for giving changes only with polling client side - temp solution until sockets inplemented
 
 			// fetch all the meetings and races as per usual
-			$eachMeeting = $this -> getMeetingsAndRaces($meetDate, $typeCode);
+			$eachMeeting = $this -> getMeetingsAndRaces($meetDate, $typeCode, $all);
 
 			// remove any meeting or race that has not updated
 			// we need to keep a meeting if it has child races
