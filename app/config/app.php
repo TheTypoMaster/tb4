@@ -219,6 +219,7 @@ return array(
 		'RiskResultSportMarket'		=> 'TopBetta\backend\RiskResultSportMarketController',
 		'RiskEvents' => 'TopBetta\backend\RiskEventsController',
 		'RiskCompetition' => 'TopBetta\backend\RiskCompetitionController',
+		'RiskUserAccount' => 'TopBetta\backend\RiskUserAccountController',
 		'testJSON' => 'TopBetta\backend\TestJSONController',
 		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
 		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
