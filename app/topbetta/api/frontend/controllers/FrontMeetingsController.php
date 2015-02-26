@@ -19,12 +19,29 @@ class FrontMeetingsController extends \BaseController {
 			return $date -> format('Y-m-d');
 		});
 
+		// Get the all param if it exists and enforce boolean
+		$all = Input::get('all', false);
+		$all = $all == '1' ? true:false;
+
 		$typeCode = Input::get('type', 'r');
 
 		$changedSince = Input::get('changed_since', false);
 
 		// default to show all todays races
 		if (!$changedSince) {
+
+			// If the all flag has been passed through in the URL, load from cache all of the meetings, otherwise filter
+			// by meetings with the display flag
+			if ($all) {
+
+				return \Cache::remember('all-meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
+
+					$eachMeeting = FrontMeetingsController::getMeetingsAndRaces($meetDate, $typeCode, false);
+
+					return array('success' => true, 'result' => $eachMeeting);
+
+				});
+			}
 
 			// store meetings & races in cache for 1 min at a time
 			return \Cache::remember('meetings-' . $meetDate . $typeCode, 1, function() use (&$meetDate, &$typeCode) {
@@ -40,7 +57,7 @@ class FrontMeetingsController extends \BaseController {
 			//this is used for giving changes only with polling client side - temp solution until sockets inplemented
 
 			// fetch all the meetings and races as per usual
-			$eachMeeting = $this -> getMeetingsAndRaces($meetDate, $typeCode);
+			$eachMeeting = $this -> getMeetingsAndRaces($meetDate, $typeCode, $all);
 
 			// remove any meeting or race that has not updated
 			// we need to keep a meeting if it has child races
@@ -97,19 +114,20 @@ class FrontMeetingsController extends \BaseController {
 
 	}
 
-	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r') {
+	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r', $displayOnly = true) {
 
-		//fetch our meetings for the specified type i.e. r = racing, g = greyhouds, h = harness
-		// needs to grab any meetings that have events for the date selected - this will include events that span 2 days
-//		$events = TopBetta\RaceMeeting::whereRaw('start_date LIKE "' . $meetDate . '%" AND type_code = "' . $typeCode . '" AND display_flag = 1') -> get();
-		
 		$query = TopBetta\RaceMeeting::select('tbdb_event_group.*')
-				->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
-				->join('tbdb_event AS e', 'ege.event_id', '=', 'e.id')
-				->where('e.start_date', 'like', $meetDate . '%')
-				->where('tbdb_event_group.type_code', $typeCode)
-				->where('tbdb_event_group.display_flag', 1)
-				->groupBy('ege.event_group_id');
+			->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
+			->join('tbdb_event AS e', 'ege.event_id', '=', 'e.id')
+			->where('e.start_date', 'like', $meetDate . '%')
+			->where('tbdb_event_group.type_code', $typeCode);
+
+		if ($displayOnly) {
+			$query->where('tbdb_event_group.display_flag', 1)
+				->where('e.display_flag', 1);
+		}
+
+		$query->groupBy('ege.event_group_id');
 
 		// we want to include any events from meetings yesterday up until 6am the next day
 		if (\Carbon\Carbon::now()->gte(\Carbon\Carbon::today()->addHours(6))) {
@@ -124,7 +142,7 @@ class FrontMeetingsController extends \BaseController {
 
 		foreach ($events as $event) {
 
-			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id);
+			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id, $displayOnly);
 
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {
@@ -132,12 +150,13 @@ class FrontMeetingsController extends \BaseController {
 			} else {
 				$updatedAt = false;
 			}
+
 			
 			// grab the meeting start_date and format
 			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $event->start_date);
 			$startDateISO8601 = $startDate->toISO8601String();
-												
-			$meetingAndRaces = array('id' => (int)$event -> id, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'start_date' => $startDateISO8601, 'updated_at' => $updatedAt, 'races' => $races);
+
+			$meetingAndRaces = array('id' => (int)$event -> id, 'display' => $event->display_flag, 'name' => $event -> name, 'meeting_grade' => $event -> meeting_grade, 'state' => $event -> state, 'weather' => $event -> weather, 'track' => $event -> track, 'start_date' => $startDateISO8601, 'updated_at' => $updatedAt, 'races' => $races);
 			$eachMeeting[] = $meetingAndRaces;
 		}
 
