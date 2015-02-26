@@ -500,8 +500,8 @@ class Api_User extends JController {
 					}
 
 					//setup or source for toptippa
-					if ($slug && !$btag) {
-						$source = $source . '-' . substr($slug, 0, 50);
+					if ($slug && $whitelabel) {
+						$source = $source . '-' . $whitelabel;
 					}else if($slug && $btag) {
 						$source = $source . '-' . $btag;
 					}
