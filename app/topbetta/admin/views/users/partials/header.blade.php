@@ -18,7 +18,5 @@
 	</li>
 	<li class="{{($active != 'withdrawals') ?: 'active' }}">{{ link_to_route('admin.users.withdrawals.index', 'Withdrawal Requests', array($user->id), array()) }}
 	</li>
-	<li class="{{($active != 'data-points') ?: 'active' }}">{{ link_to_route('admin.users.datapoints.index', 'Data Points', array($user->id), array()) }}
-	</li>
 	<span class='pull-right'>{{ link_to_route('admin.users.index', 'Back to Users', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
 </ul>
