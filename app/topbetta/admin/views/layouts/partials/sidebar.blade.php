@@ -87,6 +87,10 @@
                 </ul>
             </li>
 
+			<li>
+				<a href="{{ route('admin.promotions.index') }}"><i class="fa fa-money fa-fw"></i> Promotions</a>
+			</li>
+
             <li>
                 <a href="{{ route('admin.settings.index') }}"><i class="fa fa-cogs fa-fw"></i> Settings</a>
             </li>

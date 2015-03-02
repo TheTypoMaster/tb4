@@ -51,7 +51,8 @@ class PromotionService {
     public function updatePromotion($id, $data)
     {
         //test for uniqueness of promo code when updating. Need to find a better way to do this!
-        if($this->promotionRepository->getByPromoCode($data['pro_code'])->pro_id !== $id) {
+        $existingPromotion = $this->promotionRepository->getByPromoCode($data['pro_code']);
+        if($existingPromotion && $existingPromotion->pro_id !== $id) {
             throw new ValidationException("Promotion code must be unique", new MessageBag(array("promotion code must be unique")));
         }
 
