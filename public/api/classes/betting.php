@@ -2856,14 +2856,14 @@ class Api_Betting extends JController
                 }
             }
 
-            // add bet limits per race
-            $bet_model = & $this->getModel('TournamentBet', 'TournamentModel');
-            $totalBetOnEvent = $bet_model->getTournamentBetTotalsByEventIDAndTicketID($race->id, $ticket->id);
-            $amountLeftToBet = $tournament->bet_limit_per_event - $totalBetOnEvent;
-
-            if($bet_total > $amountLeftToBet) {
-                return OutputHelper::json(500, array('error_msg' => JText::_('Total bets for the race cant be over $' . $tournament->bet_limit_per_event / 100)));
-            }
+//            // add bet limits per race
+//            $bet_model = & $this->getModel('TournamentBet', 'TournamentModel');
+//            $totalBetOnEvent = $bet_model->getTournamentBetTotalsByEventIDAndTicketID($race->id, $ticket->id);
+//            $amountLeftToBet = $tournament->bet_limit_per_event - $totalBetOnEvent;
+//
+//            if($bet_total > $amountLeftToBet) {
+//                return OutputHelper::json(500, array('error_msg' => JText::_('Total bets for the race cant be over $' . $tournament->bet_limit_per_event / 100)));
+//            }
 
             // validation complete, so save or display depending on $save value
             if ($save) {
