@@ -8,25 +8,19 @@
 
 <h5>Details</h5>
 
-<dl>
-    <dt>Promo Code: </dt>
-    <dd>{{ $promoCode }}</dd>
+<ul>
+    <li><b>Promo Code:</b> {{ $promoCode }}</li>
 
-    <dt>User Id: </dt>
-    <dd>{{ $user->id }}</dd>
+    <li><b>User Id:</b> {{ $user->id }}</li>
 
-    <dt>User Name: </dt>
-    <dd>{{ $user->username  }}</dd>
+    <li><b>User Name:</b> {{ $user->username  }}</li>
 
-    <dt>Name: </dt>
-    <dd>{{ $user->name  }}</dd>
+    <li><b>Name:</b> {{ $user->name  }}</li>
 
-    <dt>Amount: </dt>
-    <dd>{{ $amount }}</dd>
+    <li><b>Amount:</b> {{ $amount }}</li>
 
-    <dt>Payment Method: </dt>
-    <dd>{{ $paymentMethod }}</dd>
-</dl>
+    <li><b>Payment Method:</b> {{ $paymentMethod }}</li>
+</ul>
 
 <p>
     <br>TopBetta<br>

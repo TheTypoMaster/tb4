@@ -166,9 +166,8 @@ class FrontUsersDepositController extends \BaseController {
 					return array("success" => false, "error" => \Lang::get('banking.missing_action'));
 				}
 				
-				//$result = $this->ewayTokenCreditCard($action);
+				$result = $this->ewayTokenCreditCard($action);
 
-				$result = array('success'=>true, "result"=>"");
 				break;
 
 			default :
@@ -176,16 +175,32 @@ class FrontUsersDepositController extends \BaseController {
 				break;
 		}
 
+		//Send email to help@topbetta.com if a promo code is present
 		if($result['success'] && $promoCode = \Input::json("promo_code", false)) {
-			$this->sendPromoCodeEmail($promoCode, \Input::get("amount"), $type);
-			$result['result'] .= " Someone will be in contact with you shortly to apply the promotion";
+			try {
+
+				$this->sendPromoCodeEmail($promoCode, \Input::json("amount"), $type);
+
+				//success so update result
+				$result['result'] .= \Lang::get("banking.promo_code_deposit");
+
+			} catch (\Exception $e) {
+				//error sending email
+				\Log::error("Error sending promo code information with message " . $e->getMessage() . ", User " . \Auth::user()->id . " Promo code " . $promoCode . " Deposit Amount " . \Input::json("amount"));
+
+				$result['result'] .= \Lang::get("banking.promo_code_deposit_error");
+			}
 		}
 
 		return $result;
-
 	}
 
-
+	/**
+	 * Send promo code email
+	 * @param $promoCode
+	 * @param $amount
+	 * @param $method
+	 */
 	private function sendPromoCodeEmail($promoCode, $amount, $method)
 	{
 		$user = \Auth::user();
@@ -195,7 +210,7 @@ class FrontUsersDepositController extends \BaseController {
 			array(
 				"user"          => $user,
 				"amount"        => $amount,
-				"paymentMethod" => $method,
+				"paymentMethod" => $this->depositTypeMapping[$method],
 				"promoCode"     => $promoCode
 			),
 			function($message) use ($user) {
