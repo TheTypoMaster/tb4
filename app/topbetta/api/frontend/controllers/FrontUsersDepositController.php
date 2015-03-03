@@ -2,9 +2,15 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use Mail;
+use Auth;
 use Illuminate\Support\Facades\Input;
 
 class FrontUsersDepositController extends \BaseController {
+
+	private $depositTypeMapping = array(
+		"tokencreditcard" => "Eway",
+	);
 
 	public function __construct() {
 		$this -> beforeFilter('auth');
@@ -160,15 +166,45 @@ class FrontUsersDepositController extends \BaseController {
 					return array("success" => false, "error" => \Lang::get('banking.missing_action'));
 				}
 				
-				return $this->ewayTokenCreditCard($action);
+				//$result = $this->ewayTokenCreditCard($action);
+
+				$result = array('success'=>true, "result"=>"");
 				break;
 
 			default :
 				return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
 				break;
 		}
+
+		if($result['success'] && $promoCode = \Input::json("promo_code", false)) {
+			$this->sendPromoCodeEmail($promoCode, \Input::get("amount"), $type);
+			$result['result'] .= " Someone will be in contact with you shortly to apply the promotion";
+		}
+
+		return $result;
+
 	}
 
+
+	private function sendPromoCodeEmail($promoCode, $amount, $method)
+	{
+		$user = \Auth::user();
+
+		Mail::send(
+			'emails.promo_code',
+			array(
+				"user"          => $user,
+				"amount"        => $amount,
+				"paymentMethod" => $method,
+				"promoCode"     => $promoCode
+			),
+			function($message) use ($user) {
+				$message
+					->to(\Config::get('mail.from.address'), \Config::get('mail.from.name'))
+					->subject("Promo Code for User " . $user->id);
+			}
+		);
+	}
 	/**
 	 * Credit card deposit via legacy api
 	 *
@@ -436,10 +472,10 @@ class FrontUsersDepositController extends \BaseController {
 			\Log::info('EWAY SOAP RESPONSE:'.$soapClient->__getLastResponse());
 		} catch (\SoapFault $fault) {
 			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
-			return array("success" => false, "error" => $fault->faultcode." À ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." ï¿½ ".$fault->faultstring);
 		} catch(\Exception $fault){
 			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
-			return array("success" => false, "error" => $fault->faultcode." À ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." ï¿½ ".$fault->faultstring);
 		}
 	
 		// return response from soap request
