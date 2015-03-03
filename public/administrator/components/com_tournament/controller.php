@@ -178,6 +178,7 @@ class TournamentController extends JController
             'tournament_sponsor_logo_link'           => '',
             'tournament_prize_format'               => '3',
             'entries_close'                         => '',
+            'bet_limit_per_event' 					=> '',
 			//'feature_keyword'						=> -1
 			
 		);
@@ -233,6 +234,7 @@ class TournamentController extends JController
 			$formdata['end_date']	= '';
 			$formdata['end_time']	= '';
 			$formdata['start_currency'] = $formdata['start_currency'] / 100;
+			$formdata['bet_limit_per_event'] = $formdata['bet_limit_per_event'] / 100;
 			$formdata['minimum_prize_pool'] = $formdata['minimum_prize_pool'] / 100;
 			
 			$ticket_model =& $this->getModel('TournamentTicket', 'TournamentModel');
@@ -483,6 +485,7 @@ class TournamentController extends JController
 			$tournament->bet_limit_flag							= 0;
 			$tournament->tod_flag								= strtoupper($tod_flag);
 			$tournament->free_credit_flag						= (int)JRequest::getVar('free_credit_flag', 0);
+            $tournament->bet_limit_per_event					= (int)(JRequest::getVar('bet_limit_per_event', null) * 100);
 
 			//$tournament->feature_keyword						= $feature_keyword;
 

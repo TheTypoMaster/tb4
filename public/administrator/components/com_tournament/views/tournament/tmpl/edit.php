@@ -205,6 +205,14 @@ JToolBarHelper::cancel();
 					<td class='key'><label for="bet_limit_flag">Implement bet limit</label></td>
 					<td><input type="checkbox" name="bet_limit_flag" id="bet_limit_flag" value="1"<?php echo isset($this->formdata['bet_limit_flag']) && $this->formdata['bet_limit_flag'] ? 'checked="checked"' : '' ?> <?php echo $this->disabled;?> /></td>
 				</tr>
+                <tr>
+                    <td class='key'>
+                        <label for="bet_limit_per_event">Bet limit per event</label>
+                    </td>
+                    <td>
+                        $<input type="text" size="8" name="bet_limit_per_event" value="<?php echo $this->formdata['bet_limit_per_event']; ?>" <?php echo $this->disabled;?> />
+                    </td>
+                </tr>
 
                 <tr>
                     <td class='key'>
