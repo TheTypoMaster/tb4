@@ -21,7 +21,7 @@ return array(
 	"already_started" => "Can't refund a ticket for a tournament which has commenced",
 	"refunded_ticket" => "Ticket #:ticketId has been refunded",
 	"refund_ticket_problem" => "Ticket #:ticketId could not be refunded",
-    "bet_limit_exceeded" => "Maxium amount allowed to bet per race is #:tournamentBetLimit",
+    "bet_limit_exceeded" => "Maxium bet amount bet per race is",
 
 	// COMMENTS/SLEDGE
 	"comment_posted" => "Comment Posted!",

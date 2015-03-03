@@ -397,18 +397,20 @@ class FrontBetsController extends BaseController {
 
                             ($input['type_id'] == 3) ? $bet_total = $input['amount'] * 2 : $bet_total = $input['amount'];
 
+                            $betLimited = false;
                             if($bet_total > $amountLeftToBet) {
                                 // dd($amountLeftToBet);
                                 \Log::error('Bet so far: '.print_r($totalBetOnEvent,true). ', Tournament Bet Limit: '.$tournamentBetLimit.', Bet Total: '.$bet_total );
-
-                                $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.bet_limit_exceeded'));
-                                $errors++;
+                                $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.bet_limit_exceeded'). ' $'.$tournamentBetLimit/100);
+                                $betLimited = true;
+                                $bet['status'] = '403';
                             }
 
+                            $betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
 
-							$betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
-							$bet = $l -> query('saveTournamentBet', $betData);
-
+                            if(!$betLimited){
+                               $bet = $l -> query('saveTournamentBet', $betData);
+                            }
 						} else {
 
 							//invalid source
@@ -431,7 +433,11 @@ class FrontBetsController extends BaseController {
 							$betStatus = 401;
 							$errors++;
 
-						}  else {
+						}  elseif ($bet['status'] == 403) {
+                            $betStatus = 403;
+                            $errors++;
+
+                        } else {
 
 							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $bet['error_msg']);
 							$errors++;
