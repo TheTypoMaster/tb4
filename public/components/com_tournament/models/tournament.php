@@ -707,7 +707,6 @@ class TournamentModelTournament extends SuperModel
 				t.updated_date,
 				t.private_flag,
 				t.bet_limit_per_event,
-				t.bet_limit_per_event,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,
