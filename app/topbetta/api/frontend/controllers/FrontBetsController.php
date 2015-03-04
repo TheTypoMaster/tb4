@@ -209,6 +209,50 @@ class FrontBetsController extends BaseController {
 			// type id 3 is each way
 			if ($input['type_id'] == 3) {
 
+
+                // if tournament racing bet lts check the bet limit stuff... torture class
+                if ($input['source'] == 'tournamentracing'){
+                    // get tournament details
+                    $tournament = \TopBetta\Tournament::find($input['tournament_id']);
+
+                    $tournamentBetLimit = $tournament->bet_limit_per_event;
+
+                    $betModel = new \TopBetta\Bet;
+                    $legacyData = $betModel -> getLegacyBetData($input['selections'][0]);
+
+                    // get tournament ticket for user
+                    $ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
+                    if (!$ticket) {
+                        return array("success" => false, "error" => "Account not registered in tournament");
+                    } else {
+                        $ticketId = $ticket->id;
+                    }
+
+                    // get bet total for user in tournament
+                    $totalBetOnEvent = \TopBetta\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+                        ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
+                        ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
+                        // ->where('tbdb_tournament_')
+                        ->where('tournament_ticket_id', $ticketId)
+                        ->where('m.event_id', $legacyData[0]->race_id)
+                        ->sum('bet_amount');
+
+                    if (!$totalBetOnEvent) $totalBetOnEvent = 0;
+
+                    $amountLeftToBet = $tournament->bet_limit_per_event - $totalBetOnEvent;
+
+                    ($input['type_id'] == 3) ? $bet_total = $input['amount'] * 2 : $bet_total = $input['amount'];
+
+                    if($bet_total > $amountLeftToBet) {
+                        // dd($amountLeftToBet);
+                        \Log::error('Bet so far: '.print_r($totalBetOnEvent,true). ', Tournament Bet Limit: '.$tournamentBetLimit.', Bet Total: '.$bet_total );
+                        return array("success" => false, "error" => \Lang::get('tournaments.bet_limit_exceeded'). ' $'.$tournamentBetLimit/100);
+                    }
+                }
+
+
+
+
 				//do our win bets
 				$input['type_id'] = 1;
 				$this -> placeBet($betStatus, $input, $messages, $errors);
@@ -368,49 +412,49 @@ class FrontBetsController extends BaseController {
 
 						} elseif ($input['source'] == 'tournamentracing') {
 
-                            // get tournament details
-                            $tournament = \TopBetta\Tournament::find($input['tournament_id']);
-
-                            $tournamentBetLimit = $tournament->bet_limit_per_event;
-
-                            // get tournament ticket for user
-                            $ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
-                            if (!$ticket) {
-                                $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.ticket_not_found'));
-                                $errors++;
-                            } else {
-                                $ticketId = $ticket->id;
-                            }
-
-                            // get bet total for user in tournament
-                            $totalBetOnEvent = \TopBetta\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
-                                                                ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
-                                                                ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
-                                                               // ->where('tbdb_tournament_')
-                                                                ->where('tournament_ticket_id', $ticketId)
-                                                                ->where('m.event_id', $legacyData[0]->race_id)
-                                                                ->sum('bet_amount');
-
-                            if (!$totalBetOnEvent) $totalBetOnEvent = 0;
-
-                            $amountLeftToBet = $tournament->bet_limit_per_event - $totalBetOnEvent;
-
-                            ($input['type_id'] == 3) ? $bet_total = $input['amount'] * 2 : $bet_total = $input['amount'];
-
-                            $betLimited = false;
-                            if($bet_total > $amountLeftToBet) {
-                                // dd($amountLeftToBet);
-                                \Log::error('Bet so far: '.print_r($totalBetOnEvent,true). ', Tournament Bet Limit: '.$tournamentBetLimit.', Bet Total: '.$bet_total );
-                                $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.bet_limit_exceeded'). ' $'.$tournamentBetLimit/100);
-                                $betLimited = true;
-                                $bet['status'] = '403';
-                            }
-
+//                            // get tournament details
+//                            $tournament = \TopBetta\Tournament::find($input['tournament_id']);
+//
+//                            $tournamentBetLimit = $tournament->bet_limit_per_event;
+//
+//                            // get tournament ticket for user
+//                            $ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
+//                            if (!$ticket) {
+//                                $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.ticket_not_found'));
+//                                $errors++;
+//                            } else {
+//                                $ticketId = $ticket->id;
+//                            }
+//
+//                            // get bet total for user in tournament
+//                            $totalBetOnEvent = \TopBetta\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+//                                                                ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
+//                                                                ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
+//                                                               // ->where('tbdb_tournament_')
+//                                                                ->where('tournament_ticket_id', $ticketId)
+//                                                                ->where('m.event_id', $legacyData[0]->race_id)
+//                                                                ->sum('bet_amount');
+//
+//                            if (!$totalBetOnEvent) $totalBetOnEvent = 0;
+//
+//                            $amountLeftToBet = $tournament->bet_limit_per_event - $totalBetOnEvent;
+//
+//                            ($input['type_id'] == 3) ? $bet_total = $input['amount'] * 2 : $bet_total = $input['amount'];
+//
+//                            $betLimited = false;
+//                            if($bet_total > $amountLeftToBet) {
+//                                // dd($amountLeftToBet);
+//                                \Log::error('Bet so far: '.print_r($totalBetOnEvent,true). ', Tournament Bet Limit: '.$tournamentBetLimit.', Bet Total: '.$bet_total );
+//                                $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.bet_limit_exceeded'). ' $'.$tournamentBetLimit/100);
+//                                $betLimited = true;
+//                                $bet['status'] = '403';
+//                            }
+//
                             $betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
-
-                            if(!$betLimited){
+//
+//                            if(!$betLimited){
                                $bet = $l -> query('saveTournamentBet', $betData);
-                            }
+//                            }
 						} else {
 
 							//invalid source
@@ -433,9 +477,9 @@ class FrontBetsController extends BaseController {
 							$betStatus = 401;
 							$errors++;
 
-						}  elseif ($bet['status'] == 403) {
-                            $betStatus = 403;
-                            $errors++;
+//						}  elseif ($bet['status'] == 403) {
+//                            $betStatus = 403;
+//                            $errors++;
 
                         } else {
 
