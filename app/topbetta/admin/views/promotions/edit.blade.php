@@ -31,7 +31,10 @@
 
                 <div class="form-group">
                     {{ Form::label('pro_value', 'Value:') }}
-                    {{ Form::number('pro_value', null, array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Value')) }}
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        {{ Form::text('pro_value', number_format($promotion->pro_value, 2), array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Value')) }}
+                    </div>
                 </div>
 
                 <div class="form-group">

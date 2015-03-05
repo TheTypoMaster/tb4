@@ -18,8 +18,7 @@ class PromotionValidator extends Validator {
      */
 
     public $rules = array(
-        'pro_value'         => 'integer',
-        'pro_description'   => 'alphanum',
+        'pro_value'         => 'numeric',
         'pro_use_once_flag' => 'in:0,1',
         'pro_start_date'    => 'date',
         'pro_end_date'      => 'date|after:pro_start_date',

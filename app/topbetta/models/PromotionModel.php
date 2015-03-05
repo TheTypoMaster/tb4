@@ -21,4 +21,14 @@ class PromotionModel extends Eloquent {
 		return $this->belongsTo('TopBetta\models\UserModel', 'pro_entered_by');
 	}
 
+	public function getProValueAttribute($value)
+	{
+		return $value / 100;
+	}
+
+	public function setProValueAttribute($value)
+	{
+		$this->attributes['pro_value'] = $value * 100;
+	}
+
 }

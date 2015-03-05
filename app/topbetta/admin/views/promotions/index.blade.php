@@ -42,7 +42,7 @@
         		<tr>
         			<td>{{ $promotion->pro_id }}</td>
         			<td>{{ $promotion->pro_code }}</td>
-        			<td>{{ $promotion->pro_value }}</td>
+        			<td>${{ number_format($promotion->pro_value, 2) }}</td>
         			<td>{{ $promotion->Pro_description }}</td>
         			<td>{{ $promotion->pro_use_once_flag ? 'Yes' : 'No' }}</td>
         			<td>{{ $promotion->pro_start_date }}</td>
@@ -52,8 +52,8 @@
         			<td>{{ $promotion->pro_status }}</td>
         			<td>{{ link_to_route('admin.promotions.edit', 'Edit', array($promotion->pro_id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
 					<td>
-						{{Form::open(array("method" => "DELETE", "route" => array("admin.promotions.destroy", $promotion->pro_id, "q"=>$search)))}}
-						<button class="btn btn-danger" type="submit">Delete</button>
+						{{Form::open(array("method" => "DELETE", "route" => array("admin.promotions.destroy", $promotion->pro_id, "q"=>$search), "class"=>"delete-promotion"))}}
+						<button class="btn btn-danger"type="submit">Delete</button>
 						{{Form::close()}}
 					</td>
 
@@ -69,4 +69,10 @@
 	<!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
+
+<script type="text/javascript">
+	$(".delete-promotion").submit(function(e){
+		return confirm("Are you sure you want to delete this promotion") ? true : false;
+	});
+</script>
 @stop
