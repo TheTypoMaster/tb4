@@ -17,7 +17,7 @@
 
     <li><b>Name:</b> {{ $user->name  }}</li>
 
-    <li><b>Amount:</b> {{ $amount }}</li>
+    <li><b>Amount:</b> {{ number_format($amount / 100, 2) }}</li>
 
     <li><b>Payment Method:</b> {{ $paymentMethod }}</li>
 </ul>

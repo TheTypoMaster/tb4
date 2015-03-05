@@ -201,7 +201,7 @@ class FrontUsersDepositController extends \BaseController {
 	 * @param $amount
 	 * @param $method
 	 */
-	private function sendPromoCodeEmail($promoCode, $amount, $method)
+	public function sendPromoCodeEmail($promoCode, $amount, $method)
 	{
 		$user = \Auth::user();
 
@@ -215,7 +215,7 @@ class FrontUsersDepositController extends \BaseController {
 			),
 			function($message) use ($user) {
 				$message
-					->to(\Config::get('mail.from.address'), \Config::get('mail.from.name'))
+					->to(\Config::get('mail.promo_code_to.address'), \Config::get('mail.promo_code_to.name'))
 					->subject("Promo Code for User " . $user->id);
 			}
 		);
@@ -301,8 +301,31 @@ class FrontUsersDepositController extends \BaseController {
 				// Validate the data required to make a new customer and initial deposit is correct
 				$rules = array('CCNumber' => 'required|max:20', 'CCName' => 'max:50',
 							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:1000' );
+
+				$validationMessages = array(
+					"CCNumber"      => array(
+						"required" => "The card number is required",
+						"max"      => "Card number cannot be more than 20 characters",
+					),
+					"CCName"        => array(
+						"required" => "The card name is required",
+						"max"      => "Card name cannot be more than 50 characters",
+					),
+					"CCExpiryMonth" => array(
+						"required" => "The card expiry month is required",
+						"size"     => "Card expiry month must be 2 characters"
+					),
+					"CCExpiryYear"  => array(
+						"required" => "The card expiry year is required",
+						"size"     => "Card expiry year must be 2 characters"
+					),
+					"Amount"        => array(
+						"required" => "Amount is required",
+						"min"      => "The deposit amount must be at least $10"
+					)
+				);
 				
-				$validator = \Validator::make($input, $rules);
+				$validator = \Validator::make($input, $rules, $validationMessages);
 				if ($validator -> fails()) {				
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
