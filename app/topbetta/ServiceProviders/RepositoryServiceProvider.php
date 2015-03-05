@@ -101,5 +101,9 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\WithdrawalRequestRepositoryInterface',
             'TopBetta\Repositories\DbWithdrawalRequestRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\PromotionRepositoryInterface',
+            'TopBetta\Repositories\DbPromotionRepository'
+        );
     }
 } 
