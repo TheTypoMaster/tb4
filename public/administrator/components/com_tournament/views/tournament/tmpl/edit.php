@@ -202,12 +202,12 @@ JToolBarHelper::cancel();
 					<td><input type="checkbox" name="reinvest_winnings_flag" id="reinvest_winnings_flag" value="1"<?php echo isset($this->formdata['reinvest_winnings_flag']) && $this->formdata['reinvest_winnings_flag'] ? 'checked="checked"' : '' ?> <?php echo $this->disabled;?> /></td>
 				</tr>
 				<tr>
-					<td class='key'><label for="bet_limit_flag">Implement bet limit</label></td>
+					<td class='key'><label for="bet_limit_flag">Implement bet limit (Racing & Sports)</label></td>
 					<td><input type="checkbox" name="bet_limit_flag" id="bet_limit_flag" value="1"<?php echo isset($this->formdata['bet_limit_flag']) && $this->formdata['bet_limit_flag'] ? 'checked="checked"' : '' ?> <?php echo $this->disabled;?> /></td>
 				</tr>
                 <tr>
                     <td class='key'>
-                        <label for="bet_limit_per_event">Bet limit per event</label>
+                        <label for="bet_limit_per_event">Bet limit per event (Racing only)</label>
                     </td>
                     <td>
                         $<input type="text" size="8" name="bet_limit_per_event" value="<?php echo $this->formdata['bet_limit_per_event']; ?>" <?php echo $this->disabled;?> />
