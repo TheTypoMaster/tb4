@@ -214,9 +214,10 @@ class FrontBetsController extends BaseController {
                     // get tournament details
                     $tournament = \TopBetta\Tournament::find($input['tournament_id']);
 
+                    $betLimitEnabled = $tournament->bet_limit_flag;
                     $tournamentBetLimit = $tournament->bet_limit_per_event;
 
-                    if(!is_null($tournamentBetLimit)){
+                    if($betLimitEnabled){
                         $betModel = new \TopBetta\Bet;
                         $legacyData = $betModel -> getLegacyBetData($input['selections'][0]);
 
@@ -413,12 +414,13 @@ class FrontBetsController extends BaseController {
                             // get tournament details
                             $tournament = \TopBetta\Tournament::find($input['tournament_id']);
 
+                            $betLimitEnabled = $tournament->bet_limit_flag;
                             $tournamentBetLimit = $tournament->bet_limit_per_event;
 
                             $betLimited = false;
 
                             // only check bet limits is there is one set
-                            if(!is_null($tournamentBetLimit)){
+                            if($betLimitEnabled){
 
                                 // get tournament ticket for user
                                 $ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
@@ -451,12 +453,13 @@ class FrontBetsController extends BaseController {
                                     $betLimited = true;
                                     $bet['status'] = '403';
                                 }
-                                $betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
                             }
 
                             if(!$betLimited){
-                               $bet = $l -> query('saveTournamentBet', $betData);
+                                $betData = array('id' => $input['tournament_id'], 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $selection, 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
+                                $bet = $l -> query('saveTournamentBet', $betData);
                             }
+
 						} else {
 
 							//invalid source
