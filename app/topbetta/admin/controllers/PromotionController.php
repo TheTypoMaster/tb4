@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta\Admin\Controllers;
+namespace TopBetta\admin\controllers;
 
 use TopBetta\Services\Accounting\PromotionService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
