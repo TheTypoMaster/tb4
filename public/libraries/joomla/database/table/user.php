@@ -164,6 +164,8 @@ class JTableUser extends JTable
 	 */
 	var $parent_user_id			= null;
 
+	var $activated_flag			= null;
+
 	/**
 	* @param database A database connector object
 	*/
@@ -178,6 +180,7 @@ class JTableUser extends JTable
 		$this->isCorporate = 0;
 		$this->isTopBetta = 0;
 		$this->parent_user_id = 0;
+		$this->activated_flag = 0;
 	}
 
 	/**
