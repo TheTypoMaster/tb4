@@ -47,7 +47,7 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
     public function checkMD5PasswordForUser($username, $password){
         //$result = $this->model->where('username', $username)->where('password', md5($password))->first();
 
-        $result = $this->model->where('username', $username)->first();
+        $result = $this->model->where('username', $username)->orWhere('email', $username)->first();
         if($result) {
 
             if(str_contains($result->password, ":")) {
