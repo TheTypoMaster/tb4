@@ -97,7 +97,7 @@ class UserAccountService {
         $basicData['registerDate'] = Carbon::now();
         $basicData['lastVisitDate'] = Carbon::now();
 
-        if( array_get($input['auto_activate'], false) ) {
+        if( array_get($input, 'auto_activate', false) ) {
             $basicData['activated_flag'] = true;
         } else {
             //generate activation code. Check to make sure it is unique first. Shouldn't need to check too much as long as
