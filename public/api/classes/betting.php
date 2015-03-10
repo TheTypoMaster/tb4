@@ -2852,9 +2852,18 @@ class Api_Betting extends JController
 
                 if ($turnover + $bet_total > $tournament->start_currency) {
                     $maximum_total_bet = number_format($tournament->start_currency / 100, 2);
-                    return OutputHelper::json(500, array('error_msg' => JText::_('Your total bets cannot be more than ' . $maximum_total_bet)));
+                    return OutputHelper::json(500, array('error_msg' => JText::_('Your total bets cannot be more than $' . $maximum_total_bet)));
                 }
             }
+
+//            // add bet limits per race
+//            $bet_model = & $this->getModel('TournamentBet', 'TournamentModel');
+//            $totalBetOnEvent = $bet_model->getTournamentBetTotalsByEventIDAndTicketID($race->id, $ticket->id);
+//            $amountLeftToBet = $tournament->bet_limit_per_event - $totalBetOnEvent;
+//
+//            if($bet_total > $amountLeftToBet) {
+//                return OutputHelper::json(500, array('error_msg' => JText::_('Total bets for the race cant be over $' . $tournament->bet_limit_per_event / 100)));
+//            }
 
             // validation complete, so save or display depending on $save value
             if ($save) {
