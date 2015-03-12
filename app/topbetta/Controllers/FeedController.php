@@ -63,7 +63,7 @@ class FeedController extends BaseController {
         if($input['type'] != 'sport' && $input['type'] != 'racing') return $this->response->failed('Valid type not specified', 400, 801, 'Valid type not specified: '.$input['type'], 'Add a type=racing or type=sport query string paramater');
 
         // check that resource is valid
-        $validResources = ['sports', 'competitions'];
+        $validResources = ['sports', 'competitions', 'events'];
         if(!in_array($input['resource'], $validResources)) return $this->response->failed('Valid resource not specified', 400, 801, 'Valid resource not specified', 'resource=sports or resource=competitions query string paramater');
 
 
@@ -77,6 +77,9 @@ class FeedController extends BaseController {
                 break;
 
             case 'competitions':
+                if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney')->toDateString();
+                if(!isset($input['to'])) $input['to'] = Carbon::now('Australia/Sydney')->addDay()->toDateString();
+
                 $response = Cache::remember('topbetta-xml-feed-sports-'.$input['from'].'-'.$input['to'], 1, function() use ($input)
                 {
                     return $this->_getCompetitions($input);
@@ -85,7 +88,8 @@ class FeedController extends BaseController {
                 break;
 
             case 'events':
-                $response = $this->_getEvents($input);
+                if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney');
+                $response = $this->_getEvents($input['from'], $input['to']);
                 break;
         }
 
@@ -108,15 +112,16 @@ class FeedController extends BaseController {
         foreach($competitions as $competition){
             $competition['competition_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'];
             // get events for competition
-            $events = $this->_getEvents($competition['competition_id']);
+            $events = $this->event->getEventsforCompetitionId($competition['competition_id'], $input['from'], $input['to']);
+            // $events = $this->_getEvents($competition['competition_id'], $input['from'], $input['to']);
 
             // loop on each event
             foreach($events as $event){
                 $event['event_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'].'/'.$event['event_id'];
                 // get markets
-                $markets = $this->_getMarkets($event['event_id']);
+                $markets = $this->market->getMarketsForEventId($event['event_id']);
+                //$markets = $this->_getMarkets($event['event_id']);
 
-                $m = array();
                 // loop on each market
                 foreach($markets as $market){
                     $market['market_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'].'/'.$event['event_id'].'/'.$market['market_id'];
@@ -141,8 +146,35 @@ class FeedController extends BaseController {
     }
 
 
-    private function _getEvents($id){
-        return $this->event->getEventsforCompetitionId($id);
+    private function _getEvents($from, $to){
+
+        $events = $this->event->getEventsforDateRange($from, $to);
+        $response = array();
+
+        foreach($events as $event){
+            $event['event_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$event['competition_id'].'/'.$event['event_id'];
+            // get markets
+            $markets = $this->market->getMarketsForEventId($event['event_id']);
+            //$markets = $this->_getMarkets($event['event_id']);
+
+            // loop on each market
+            foreach($markets as $market){
+                $market['market_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$event['competition_id'].'/'.$event['event_id'].'/'.$market['market_id'];
+                // get selections
+                $selections = $this->_getSelections($market['market_id']);
+                if($selections){
+                    $market['selections'] = $selections;
+                    $event['markets'][] = $market;
+                }
+
+            }
+            if(isset($event['markets'])){
+                $response['events'][] = $event;
+              //  $competition['events'][] =  $event;
+            }
+
+        }
+        return $response;
     }
 
 

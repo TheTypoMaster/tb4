@@ -91,8 +91,9 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
 
                                     ->where('tbdb_event_group.sport_id', '!=', 0)
-                                    ->where('tbdb_event_group.start_date', '>', $input['from'])
-                                    ->where('tbdb_event_group.start_date', '<', $input['to'])
+                                    ->where('tbdb_event_group.display_flag', 1)
+                                  //  ->where('tbdb_event_group.start_date', '>', $input['from'])
+                                  //  ->where('tbdb_event_group.start_date', '<', $input['to'])
                                     ->where('tbdb_tournament_sport.status_flag', 1)
 
                                    ->select(array('tbdb_event_group.id as competition_id',  'tbdb_tournament_sport.name as competition_sport', 'tbdb_event_group.name as competition_name', 'start_date as competition_start_date'))
