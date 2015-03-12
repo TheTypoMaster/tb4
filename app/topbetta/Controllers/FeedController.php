@@ -16,6 +16,7 @@ use File;
 use Response;
 use Request;
 use Config;
+use Cache;
 
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -74,20 +75,19 @@ class FeedController extends BaseController {
             case 'sports':
                 $response = $this->_getSports();
                 break;
+
             case 'competitions':
-                $response = $this->_getCompetitions($input);
+                $response = Cache::remember('topbetta-xml-feed-sports-'.$input['from'].'-'.$input['to'], 1, function() use ($input)
+                {
+                    return $this->_getCompetitions($input);
+                });
+
                 break;
+
             case 'events':
                 $response = $this->_getEvents($input);
                 break;
         }
-
-
-/*        $xml_response = new SimpleXMLElement("<?xml version=\"1.0\"?><student_info></student_info>"); */
-
-        // function call to convert array to xml
-        // $this->array_to_xml($response, $xml_response);
-
 
         $ext = File::extension(Request::url());
 
