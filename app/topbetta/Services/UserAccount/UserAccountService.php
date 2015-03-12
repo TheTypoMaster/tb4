@@ -97,11 +97,15 @@ class UserAccountService {
         $basicData['registerDate'] = Carbon::now();
         $basicData['lastVisitDate'] = Carbon::now();
 
-        //generate activation code. Check to make sure it is unique first. Shouldn't need to check too much as long as
-        //activation codes are cleared.
-        while($this->basicUser->getUserWithActivationHash($activationHash = str_random(40)));
+        if( array_get($input, 'auto_activate', false) ) {
+            $basicData['activated_flag'] = true;
+        } else {
+            //generate activation code. Check to make sure it is unique first. Shouldn't need to check too much as long as
+            //activation codes are cleared.
+            while ($this->basicUser->getUserWithActivationHash($activationHash = str_random(40))) ;
 
-        $basicData['activation'] = $activationHash;
+            $basicData['activation'] = $activationHash;
+        }
 
         return $this->basicUser->create($basicData);
     }

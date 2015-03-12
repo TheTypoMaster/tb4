@@ -50,7 +50,7 @@ class UserRegistrationController extends BaseController {
 			$accountCreationResponse = $this->accountservice->createBasicAccount(Input::json()->all());
 
 			//send the welcome/activation email if external_welcome_email is not specified or false
-			if( ! $externalWelcomeEmail ) {
+			if( ! $externalWelcomeEmail && ! Input::json("auto_activate", false) ) {
 				$this->accountservice->sendWelcomeEmail($accountCreationResponse['id'], Input::json("external_source", null));
 			}
 

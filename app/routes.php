@@ -247,6 +247,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
 	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
 
+	//create basic user
+	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
+
+	//activation routes
+	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
+
+	Route::get('registration/resend-welcome-email/{userId}', 'TopBetta\Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
+
 });
 
 // new login/logout methods
@@ -257,13 +265,6 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
 
 	// normal logout
 	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
-
-	//create basic user
-	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
-
-	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
-
-	Route::get('registration/resend-welcome-email/{userId}', 'TopBetta\Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
 
 });
 

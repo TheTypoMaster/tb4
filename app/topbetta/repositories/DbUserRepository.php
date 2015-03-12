@@ -75,6 +75,7 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
     }
 
+
     public function getUserWithActivationHash($activationHash)
     {
         return $this->model->where('activation', '=', $activationHash)->first();
