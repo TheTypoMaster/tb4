@@ -113,6 +113,17 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
                     ->first();
      }
 
+    public function getSelectionsforMarketId($id){
+        $selections = $this->model->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
+                                    ->where('tbdb_selection.market_id', $id)
+                                    ->where('tbdb_selection_price.win_odds', '>', '1')
+                                    ->select('tbdb_selection.name as selection_name', 'tbdb_selection_price.win_odds as selection_odds')
+                        ->get();
+        if(!$selections) return null;
+
+        return $selections->toArray();
+    }
+
 
 
 } 

@@ -14,6 +14,8 @@
 // apc_clear_cache("user");
 
 
+
+
 Route::get('/', function() {
 
 	return \Redirect::to('https://www.topbetta.com.au');
@@ -165,6 +167,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
 	Route::get('combined/racingNew', 'FrontCombinedRacing@indexNew');
 	Route::get('combined/sports', 'FrontCombinedSports@index');
+
+    // Temporary feed routes for sports - another branch has a better implimentation
+    Route::get('feed/sports.{ext}', 'TopBetta\Controllers\FeedController@index');
+    //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
+   // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+
+
+
 });
 
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
