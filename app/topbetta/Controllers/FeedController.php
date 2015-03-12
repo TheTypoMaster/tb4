@@ -15,6 +15,8 @@ use SimpleXMLElement;
 use File;
 use Response;
 use Request;
+use Config;
+
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
@@ -104,18 +106,20 @@ class FeedController extends BaseController {
 
         // loop on each competition
         foreach($competitions as $competition){
-
+            $competition['competition_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'];
             // get events for competition
-           $events = $this->_getEvents($competition['competition_id']);
+            $events = $this->_getEvents($competition['competition_id']);
 
             // loop on each event
             foreach($events as $event){
+                $event['event_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'].'/'.$event['event_id'];
                 // get markets
                 $markets = $this->_getMarkets($event['event_id']);
 
                 $m = array();
                 // loop on each market
                 foreach($markets as $market){
+                    $market['market_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'].'/'.$event['event_id'].'/'.$market;
                     // get selections
                     $selections = $this->_getSelections($market['market_id']);
                     if($selections){
