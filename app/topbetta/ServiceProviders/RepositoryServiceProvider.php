@@ -82,6 +82,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbMarketTypeRepository'
         );
         $this->app->bind(
+            'TopBetta\Repositories\Contracts\MarketRepositoryInterface',
+            'TopBetta\Repositories\DbMarketsRepository'
+        );
+        $this->app->bind(
             'TopBetta\Repositories\Contracts\SelectionStatusRepositoryInterface',
             'TopBetta\Repositories\DbSelectionStatusRepository'
 		);
@@ -104,6 +108,10 @@ class RepositoryServiceProvider extends ServiceProvider {
         $this->app->bind(
             'TopBetta\Repositories\Contracts\PromotionRepositoryInterface',
             'TopBetta\Repositories\DbPromotionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SportRepositoryInterface',
+            'TopBetta\Repositories\DbSportsRepository'
         );
     }
 } 

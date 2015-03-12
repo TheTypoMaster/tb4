@@ -76,4 +76,34 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
         return $competition;
     }
+
+    public function competitionFeed($input){
+
+
+        $competitions = $this->model
+//                                    ->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id')
+//                                    ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_group_id', '=', 'tbdb_event_group.id')
+//                                    ->join('tbdb_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+//                                    ->join('tbdb_market', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+//                                    ->join('tbdb_market_type', 'tbdb_market_type.id', '=', 'tbdb_market.market_type_id')
+//                                    ->join('tbdb_selection', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+//                                    ->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
+
+
+                                    ->where('tbdb_event_group.sport_id', '!=', 0)
+                                    ->where('tbdb_event_group.start_date', '>', $input['from'])
+                                    ->where('tbdb_event_group.start_date', '<', $input['to'])
+                                   // ->where('tbdb_market.market_status', 'O')
+
+                                   ->select(array('id as competition_id', 'tbdb_event_group.name as competition_name', 'start_date as competition_start_date'))
+
+                                    ->get();
+
+      //  dd($input);
+
+        if(!$competitions) return null;
+
+        return $competitions->toArray();
+
+    }
 } 

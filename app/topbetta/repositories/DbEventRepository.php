@@ -87,4 +87,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $eventDetails;
     }
 
+    public function getEventsforCompetitionId($id){
+        $events = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                                ->where('tbdb_event_group_event.event_group_id', $id)
+                                ->select(array('id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
+                                ->get();
+
+        if(!$events) return null;
+
+        return $events->toArray();
+    }
+
 }
