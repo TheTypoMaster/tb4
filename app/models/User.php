@@ -92,4 +92,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         return 'remember_token';
     }
 
+	// --- Accessors for urlencoded ' in user's names ---
+	public function getNameAttribute($value) {
+		return str_replace("\\", "", urldecode($value));
+	}
+
 }

@@ -277,6 +277,11 @@ class UserAccountService {
             "activated_flag"    => 1,
             "activation"        => ""
         ));
+	}
+	
+    public function getTopBettaUser($userId)
+    {
+        return $this->basicUser->getWithTopBettaUser($userId);
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

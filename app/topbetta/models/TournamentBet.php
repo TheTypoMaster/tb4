@@ -5,6 +5,8 @@ class TournamentBet extends \Eloquent {
     protected $guarded = array();
 
     public static $rules = array();
+
+    protected $table = "tbdb_tournament_bet";
 	
 	public function getTournamentBetListByTicketID($ticketId)
 	{

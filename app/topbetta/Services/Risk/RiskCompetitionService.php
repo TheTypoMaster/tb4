@@ -50,7 +50,7 @@ class RiskCompetitionService {
             $this->eventRepository->setDisplayFlagForEvent($event->id, $displayFlag);
         }
 
-        return $this;
+        return $competition;
     }
 
 }

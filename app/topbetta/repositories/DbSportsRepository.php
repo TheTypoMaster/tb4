@@ -6,9 +6,10 @@
  * Project: tb4
  */
 
+use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\TournamentSport;
 
-class DbSportsRepository extends BaseEloquentRepository{
+class DbSportsRepository extends BaseEloquentRepository implements SportRepositoryInterface{
 
     protected $sports;
 
@@ -41,6 +42,16 @@ class DbSportsRepository extends BaseEloquentRepository{
 
     public function selectList(){
         return $this->model->lists('name', 'id');
+    }
+
+    public function sportsFeed(){
+        $sports =  $this->model->where('status_flag', '1')
+            ->where('racing_flag', '0')
+            ->select(array('id as sport_id','name as sport_name'))
+            ->get();
+        if(!$sports) return null;
+
+        return $sports->toArray();
     }
 
 } 
