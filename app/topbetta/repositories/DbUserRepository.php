@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use TopBetta\Models\AccountTransactionModel;
 use TopBetta\Models\UserModel;
 use TopBetta\Services\Validation\UserBasicValidator;
 
@@ -74,6 +75,24 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
                         -> get();
 
     }
+
+    public function getDormantUsersWithNoDormantChargeAfter($dormantTransactionType, $days, $chargeDate)
+    {
+        return $this    ->model
+                        ->whereNotInRelationship('accountTransactions', function($q) use (  $dormantTransactionType, $days, $chargeDate ) {
+                            $q  ->where('created_date', '>=', Carbon::now()->subDays($days)->toDateTimeString())
+                                ->where('account_transaction_type_id', '!=', $dormantTransactionType);
+
+                            $q->orWhere(function($q) use ( $dormantTransactionType, $chargeDate ) {
+                                $q  ->where('account_transaction_type_id', $dormantTransactionType)
+                                    ->where('created_date', '>=', $chargeDate);
+                            });
+
+                        })
+                        ->get();
+    }
+
+
 
 
     public function getUserWithActivationHash($activationHash)

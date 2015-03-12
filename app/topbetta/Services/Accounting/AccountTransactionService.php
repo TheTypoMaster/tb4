@@ -61,10 +61,11 @@ class AccountTransactionService {
         $this->betOriginRepository = $betOriginRepository;
     }
 
-    public function increaseAccountBalance($userID, $amount, $keyword, $desc = null){
+    public function increaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
 
         // get the transaction type details for the keyword
         $transactionTypeDetails = $this->accounttransactiontypes->getTransactionTypeByKeyword($keyword);
+
 
         if(!$transactionTypeDetails) {
             return false;
@@ -90,15 +91,15 @@ class AccountTransactionService {
             'amount' 					=> $amount,
             'notes' 					=> $desc,
             'account_transaction_type_id' 	=> $transactionTypeDetails['id'],
-            'created_date'              => Carbon::now('Australia/Sydney')
+            'created_date'              => $transactionDate ? $transactionDate : Carbon::now('Australia/Sydney')
 
         );
 
         return $this->accounttransactions->create($params);
     }
 
-    public function decreaseAccountBalance($userID, $amount, $keyword, $desc = null){
-        return $this->increaseAccountBalance($userID, -$amount, $keyword, $desc);
+    public function decreaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
+        return $this->increaseAccountBalance($userID, -$amount, $keyword, $desc, $transactionDate);
     }
 
 
@@ -155,6 +156,31 @@ class AccountTransactionService {
 
         return $addFunds;
 
+    }
+
+    public function chargeDormantAccounts($dormantDays, $dormantChargeDate, $dormantAmount, $transactionDate)
+    {
+        //get the transaction type
+        $dormantTransactionType = $this->accounttransactiontypes->getTransactionTypeByKeyword(
+            AccountTransactionTypeRepositoryInterface::TYPE_DORMANT_CHARGE
+        );
+
+        //Get the dormant users
+        $dormantUsers = $this->user->getDormantUsersWIthNoDormantChargeAfter($dormantTransactionType['id'], $dormantDays, $dormantChargeDate);
+
+        foreach ($dormantUsers as $user) {
+            //charge dormant accounts
+            if ( ($balance = $this->getAccountBalanceForUser($user->id)) > 0) {
+                //charge either dormantAmount or whole balance if balance is < dormantAmount
+                $this->decreaseAccountBalance(
+                    $user->id,
+                    min($balance, $dormantAmount),
+                    AccountTransactionTypeRepositoryInterface::TYPE_DORMANT_CHARGE,
+                    null,
+                    $transactionDate
+                );
+            }
+        }
     }
 
     public function getAccountBalanceForUser($userId)

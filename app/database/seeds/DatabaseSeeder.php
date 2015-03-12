@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('TbDataValuesTableSeeder');
 		$this->call('TbDataProviderMatchTableSeeder');
 		$this->call('TbProcessParamsTableSeeder');
+		$this->call('TbdbAccountTransactionTypeTableSeeder');
 	}
 
 }
