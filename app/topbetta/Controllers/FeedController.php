@@ -134,9 +134,8 @@ class FeedController extends BaseController {
 
             }
             if(isset($competition['events'])){
-                $response[] = $competition;
-           }
-
+                $response['competitions'][] = $competition;
+            }
         }
         return $response;
     }
