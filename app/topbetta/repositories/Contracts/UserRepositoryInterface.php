@@ -11,5 +11,5 @@ use Carbon\Carbon;
 
 interface UserRepositoryInterface {
 
-    public function getUsersWithNoAccountTransactionsInLastNDays($days, $excludedTransactionTypes = array());
+    public function getDormantUsersWithNoDormantChargeAfter($dormantTransactionType, $days, $chargeDate);
 }

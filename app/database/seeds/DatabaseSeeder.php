@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tbdb_bet_limit_typesTableSeeder');
 		$this->call('tb_bet_sourceTableSeeder');
 		$this->call('TbProcessParamsTableSeeder');
+		$this->call('TbdbAccountTransactionTypeTableSeeder');
 	}
 
 }

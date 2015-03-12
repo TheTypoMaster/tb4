@@ -158,7 +158,7 @@ class AccountTransactionService {
 
     }
 
-    public function chargeDormantAccounts($dormantDays, $dormantAmount, $transactionDate)
+    public function chargeDormantAccounts($dormantDays, $dormantChargeDate, $dormantAmount, $transactionDate)
     {
         //get the transaction type
         $dormantTransactionType = $this->accounttransactiontypes->getTransactionTypeByKeyword(
@@ -166,11 +166,11 @@ class AccountTransactionService {
         );
 
         //Get the dormant users
-        $dormantUsers = $this->user->getUsersWithNoAccountTransactionsInLastNDays($dormantDays, array($dormantTransactionType['id']));
+        $dormantUsers = $this->user->getDormantUsersWIthNoDormantChargeAfter($dormantTransactionType['id'], $dormantDays, $dormantChargeDate);
 
         foreach ($dormantUsers as $user) {
             //charge dormant accounts
-            if ( ($balance = $this->getAccountBalanceForUser($user->id)) > 0 ) {
+            if ( ($balance = $this->getAccountBalanceForUser($user->id)) > 0) {
                 //charge either dormantAmount or whole balance if balance is < dormantAmount
                 $this->decreaseAccountBalance(
                     $user->id,

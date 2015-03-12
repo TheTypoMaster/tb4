@@ -69,18 +69,20 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
     }
 
-    public function getUsersWithNoAccountTransactionsInLastNDays($days, $excludedTransactionTypes = array())
+    public function getDormantUsersWithNoDormantChargeAfter($dormantTransactionType, $days, $chargeDate)
     {
         return $this    ->model
-                        ->whereNotInRelationship('accountTransactions', function($q) use ( $days, $excludedTransactionTypes ) {
-                            $q->where('created_date', '>=', Carbon::now()->subDays($days)->toDateTimeString());
+                        ->whereNotInRelationship('accountTransactions', function($q) use (  $dormantTransactionType, $days, $chargeDate ) {
+                            $q  ->where('created_date', '>=', Carbon::now()->subDays($days)->toDateTimeString())
+                                ->where('account_transaction_type_id', '!=', $dormantTransactionType);
 
-                            foreach($excludedTransactionTypes as $transactionType) {
-                                $q->where('account_transaction_type_id', '!=', $transactionType);
-                            }
+                            $q->orWhere(function($q) use ( $dormantTransactionType, $chargeDate ) {
+                                $q  ->where('account_transaction_type_id', $dormantTransactionType)
+                                    ->where('created_date', '>=', $chargeDate);
+                            });
+
                         })
                         ->get();
-
     }
 
 

@@ -56,9 +56,10 @@ class ChargeDormantAccounts extends Command {
 	{
 		$this->info("Charging accounts");
 		$date = \Carbon\Carbon::now()->subMonth()->endOfMonth();
+		$chargeDate = \Carbon\Carbon::now()->subMonth()->startOfMonth();
 		try {
 			\Log::info("Charging dormant accounts for date " . $date->toDateTimeString());
-			$this->accountTransactionService->chargeDormantAccounts(self::DORMANT_DAYS, self::DORMANT_CHARGE, $date->toDateTimeString());
+			$this->accountTransactionService->chargeDormantAccounts(self::DORMANT_DAYS, $chargeDate->toDateTimeString(), self::DORMANT_CHARGE, $date->toDateTimeString());
 		} catch (\Exception $e) {
 			\Log::error("Charging accounts failed with message " . $e->getMessage());
 		}
