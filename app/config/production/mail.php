@@ -64,7 +64,7 @@ return array(
 	|
 	 */
 
-	"promo_code_to" => array("address" => "testing.account@topbetta.com", "name" => "TopBetta"),
+	"promo_code_to" => array("address" => "help@topbetta.com", "name" => "TopBetta"),
 
 	/*
 	|--------------------------------------------------------------------------
