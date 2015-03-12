@@ -46,10 +46,9 @@ class UserSessionController extends BaseController {
             return $this->response->failed($e->getErrors(), 400, 102, 'Login details incorrect', 'Login details incorrect');
         }
 
-        Auth::loginUsingId($userDetails['id']);
+        $user = Auth::loginUsingId($userDetails['id']);
 
-
-        return $this->response->success(Auth::user());
+        return $this->response->success($user->load('topbettaUser'));
 
     }
 
