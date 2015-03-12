@@ -75,6 +75,21 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
     }
 
+
+    public function getUserWithActivationHash($activationHash)
+    {
+        return $this->model->where('activation', '=', $activationHash)->first();
+    }
+
+    public function updateByActivationHash($activationHash, $data)
+    {
+        $user = $this->model->where('activation', '=', $activationHash)->firstOrFail();
+
+        $user->update($data);
+
+        return $user;
+	}
+	
     public function getWithTopBettaUser($userId)
     {
         return $this    -> model

@@ -88,6 +88,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
 
+
 	// custom route for refer a friend
 	Route::resource('users/refer', 'FrontUsersRefer');
 
@@ -245,6 +246,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 	// Full user account registration routes
 	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
 	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
+
+	//create basic user
+	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
+
+	//activation routes
+	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
+
+	Route::get('registration/resend-welcome-email/{userId}', 'TopBetta\Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
 
 });
 

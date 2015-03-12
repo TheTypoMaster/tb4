@@ -9,4 +9,5 @@
 
 interface UserRepositoryInterface {
 
-} 
+    public function getUserWithActivationHash($activationHash);
+}
