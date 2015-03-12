@@ -11,7 +11,10 @@ use BaseController;
 use Carbon\Carbon;
 use Input;
 use TopBetta\Services\Response\ApiResponse;
-
+use SimpleXMLElement;
+use File;
+use Response;
+use Request;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
@@ -77,6 +80,17 @@ class FeedController extends BaseController {
                 break;
         }
 
+
+/*        $xml_response = new SimpleXMLElement("<?xml version=\"1.0\"?><student_info></student_info>"); */
+
+        // function call to convert array to xml
+        // $this->array_to_xml($response, $xml_response);
+
+
+        $ext = File::extension(Request::url());
+
+        return Response::$ext($response);
+
         return $this->response->success($response, 200);
     }
 
@@ -117,7 +131,7 @@ class FeedController extends BaseController {
             }
             if(isset($competition['events'])){
                 $response[] = $competition;
-            }
+           }
 
         }
         return $response;
@@ -135,6 +149,25 @@ class FeedController extends BaseController {
 
     private function _getSelections($id){
         return $this->selection->getSelectionsforMarketId($id);
+    }
+
+    // function defination to convert array to xml
+    function array_to_xml($responseArray, &$xml_response) {
+        foreach($responseArray as $key => $value) {
+            if(is_array($value)) {
+                if(!is_numeric($key)){
+                    $subnode = $xml_response->addChild("$key");
+                    $this->array_to_xml($value, $subnode);
+                }
+                else{
+                    $subnode = $xml_response->addChild("item$key");
+                    $this->array_to_xml($value, $subnode);
+                }
+            }
+            else {
+                $xml_response->addChild("$key",htmlspecialchars("$value"));
+            }
+        }
     }
 
 }
