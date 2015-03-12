@@ -139,6 +139,7 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
 
         $markets = $this->model->join('tbdb_market_type', 'tbdb_market_type.id', '=', 'tbdb_market.market_type_id')
                                 ->where('tbdb_market.event_id', $id)
+                                ->where('tbdb_market.market_status', 'O')
                                 ->select(array('tbdb_market.id as market_id', 'tbdb_market_type.name as market_name', 'tbdb_market.line as market_line'))
                                 ->get();
 
