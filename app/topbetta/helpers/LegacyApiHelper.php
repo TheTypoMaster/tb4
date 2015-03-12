@@ -247,6 +247,7 @@ class LegacyApiHelper {
 	private function curl($method, $type, $payload = array(), $del_cookie = true) {
 
 		$url = \URL::to('/api/?method=') . $method;
+       // $url = 'http://services.dev/api/?method=' . $method;
 
 		$ch = curl_init();
 		if ($type == 'post') {

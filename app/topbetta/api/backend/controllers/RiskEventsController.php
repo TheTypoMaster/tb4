@@ -25,25 +25,33 @@ class RiskEventsController extends \BaseController {
 	public function showEvent($event)
 	{
 		try {
-			$this->eventService->showEvent($event);
+			$event = $this->eventService->showEvent($event);
 		} catch (\Exception $e) {
 			return $this->apiResponse->failed($e->getMessage());
 		}
 
-		return $this->apiResponse->success(array());
+		return $this->apiResponse->success($this->formatEventPayload($event));
 	}
 
 	public function hideEvent($event)
 	{
 		try {
-			$this->eventService->hideEvent($event);
+			$event = $this->eventService->hideEvent($event);
 		} catch (\Exception $e) {
 			return $this->apiResponse->failed($e->getMessage());
 		}
 
-		return $this->apiResponse->success(array());
+		return $this->apiResponse->success($this->formatEventPayload($event));
 	}
 
+	private function formatEventPayload($event)
+	{
+		$eventArray = $event->toArray();
+
+		$eventArray['competition'] = $eventArray['competition'][0];
+
+		return $eventArray;
+	}
 
 
 }

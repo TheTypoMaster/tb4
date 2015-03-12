@@ -231,6 +231,7 @@ class UserAccountService {
         return false;
     }
 
+
     public function sendWelcomeEmail($userId, $emailSource = null)
     {
         //user the default source if one is not specified
@@ -273,6 +274,12 @@ class UserAccountService {
             "activated_flag"    => 1,
             "activation"        => ""
         ));
+	}
+	
+    public function getTopBettaUser($userId)
+    {
+        return $this->basicUser->getWithTopBettaUser($userId);
+
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

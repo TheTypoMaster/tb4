@@ -35,6 +35,11 @@ class UserFreeCreditService {
         $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
     }
 
+    public function getFreeCreditBalanceForUser($userId)
+    {
+        return $this->freeCreditTransactionRepository->getFreeCreditBalanceForUser($userId);
+    }
+
     public function removeCreditsFromInactiveUsers($start, $end)
     {
         $users = $this->userRepository->getUsersWithLastActivityBetween($start, $end, $page = 0, self::REMOVE_CHUNK_SIZE);

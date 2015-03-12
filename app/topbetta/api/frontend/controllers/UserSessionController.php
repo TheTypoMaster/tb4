@@ -53,7 +53,7 @@ class UserSessionController extends BaseController {
         Auth::loginUsingId($userDetails['id']);
 
 
-        return $this->response->success(Auth::user());
+        return $this->response->success($user->load('topbettaUser'));
 
     }
 

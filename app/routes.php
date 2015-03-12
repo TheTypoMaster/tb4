@@ -14,6 +14,8 @@
 // apc_clear_cache("user");
 
 
+
+
 Route::get('/', function() {
 
 	return \Redirect::to('https://www.topbetta.com.au');
@@ -66,6 +68,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
+	//Risk endpoint to get user account details
+	Route::resource('risk-user-account', 'RiskUserAccount', array('only' => array('show')));
 
 	Route::put('risk-show-event/{event}', "RiskEvents@showEvent");
 	Route::put('risk-hide-event/{event}', "RiskEvents@hideEvent");
@@ -97,6 +101,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::resource('users.betting', 'FrontUsersBetting');
 	Route::resource('users.betting-limit', 'FrontUsersBettingLimit');
 	Route::resource('users.tournaments', 'FrontUsersTournaments');
+	Route::resource('users.poli-deposit', 'FrontUsersPoliDeposit');
 
 	// Password Resets
 	// The actual reset password method
@@ -164,6 +169,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
 	Route::get('combined/racingNew', 'FrontCombinedRacing@indexNew');
 	Route::get('combined/sports', 'FrontCombinedSports@index');
+
+    // Temporary feed routes for sports - another branch has a better implimentation
+    Route::get('feed/sports.{ext}', 'TopBetta\Controllers\FeedController@index');
+    //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
+   // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+
+
+
 });
 
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
@@ -200,6 +213,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
+
+	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
