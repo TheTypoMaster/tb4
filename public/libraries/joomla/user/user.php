@@ -171,6 +171,13 @@ class JUser extends JObject
 	 */
 	var $parent_user_id			= null;
 
+	/**
+	 * Activation flag
+	 *
+	 * @var null
+	 */
+	var $activated_flag 		= null;
+
 
 	/**
 	 * User parameters
@@ -183,6 +190,8 @@ class JUser extends JObject
 	 * @var string
 	 */
 	var $_errorMsg	= null;
+
+
 
 
 	/**
@@ -210,6 +219,7 @@ class JUser extends JObject
 			$this->isCorporate  = 0;
 			$this->isTopBetta =0;
 			$this->parent_user_id = 0;
+			$this->activated_flag = 0;
 		}
 	}
 
