@@ -119,7 +119,7 @@ class FeedController extends BaseController {
                 $m = array();
                 // loop on each market
                 foreach($markets as $market){
-                    $market['market_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'].'/'.$event['event_id'].'/'.$market;
+                    $market['market_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'].'/'.$event['event_id'].'/'.$market['market_id'];
                     // get selections
                     $selections = $this->_getSelections($market['market_id']);
                     if($selections){
