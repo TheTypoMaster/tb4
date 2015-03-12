@@ -12,4 +12,7 @@ use Carbon\Carbon;
 interface UserRepositoryInterface {
 
     public function getDormantUsersWithNoDormantChargeAfter($dormantTransactionType, $days, $chargeDate);
+
+    public function getUserWithActivationHash($activationHash);
+
 }

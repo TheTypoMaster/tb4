@@ -14,6 +14,8 @@
 // apc_clear_cache("user");
 
 
+
+
 Route::get('/', function() {
 
 	return \Redirect::to('https://www.topbetta.com.au');
@@ -86,6 +88,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
 
+
 	// custom route for refer a friend
 	Route::resource('users/refer', 'FrontUsersRefer');
 
@@ -98,6 +101,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::resource('users.betting', 'FrontUsersBetting');
 	Route::resource('users.betting-limit', 'FrontUsersBettingLimit');
 	Route::resource('users.tournaments', 'FrontUsersTournaments');
+	Route::resource('users.poli-deposit', 'FrontUsersPoliDeposit');
 
 	// Password Resets
 	// The actual reset password method
@@ -165,6 +169,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
 	Route::get('combined/racingNew', 'FrontCombinedRacing@indexNew');
 	Route::get('combined/sports', 'FrontCombinedSports@index');
+
+    // Temporary feed routes for sports - another branch has a better implimentation
+    Route::get('feed/sports.{ext}', 'TopBetta\Controllers\FeedController@index');
+    //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
+   // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+
+
+
 });
 
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
@@ -234,6 +246,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 	// Full user account registration routes
 	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
 	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
+
+	//create basic user
+	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
+
+	//activation routes
+	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
+
+	Route::get('registration/resend-welcome-email/{userId}', 'TopBetta\Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
 
 });
 

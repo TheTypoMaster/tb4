@@ -46,15 +46,22 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
     }
 
     public function checkMD5PasswordForUser($username, $password){
-        $result = $this->model
-            ->where(function ($query) use ($username) {
-                $query
-                    ->where("username","=",$username)
-                    ->orWhere("email", '=', $username);
-            })
-            ->where('password', md5($password))->first();
+        //$result = $this->model->where('username', $username)->where('password', md5($password))->first();
 
-        if($result) return $result->toArray();
+        $result = $this->model->where('username', $username)->orWhere('email', $username)->first();
+        if($result) {
+
+            if(str_contains($result->password, ":")) {
+                //Joomla credential check
+                $userPassword = explode(":", $result->password);
+                if (md5($password . $userPassword[1]) === $userPassword[0]) {
+                    return $result->toArray();
+                }
+            } else if ($result->password === md5($password)) {
+                return $result->toArray();
+            }
+
+        }
 
         return null;
     }
@@ -86,6 +93,29 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
     }
 
 
+
+
+    public function getUserWithActivationHash($activationHash)
+    {
+        return $this->model->where('activation', '=', $activationHash)->first();
+    }
+
+    public function updateByActivationHash($activationHash, $data)
+    {
+        $user = $this->model->where('activation', '=', $activationHash)->firstOrFail();
+
+        $user->update($data);
+
+        return $user;
+	}
+	
+    public function getWithTopBettaUser($userId)
+    {
+        return $this    -> model
+                        -> where('id', $userId)
+                        -> with('topbettauser')
+                        -> first();
+    }
 
 
 }
