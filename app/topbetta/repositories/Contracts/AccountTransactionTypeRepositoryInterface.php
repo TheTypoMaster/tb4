@@ -30,6 +30,7 @@ interface AccountTransactionTypeRepositoryInterface {
     const TYPE_POLI_DEPOSIT         = 'polideposit';
     const TYPE_WITHDRAWAL           = 'withdrawal';
     const TYPE_BETWIN_CANCELLED     = 'betwincancelled';
+    const TYPE_DORMANT_CHARGE       = 'dormantcharge';
 
     public function getTransactionTypeByKeyword($keyword);
 
