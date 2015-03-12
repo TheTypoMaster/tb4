@@ -12,6 +12,7 @@ namespace TopBetta\backend;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\WithdrawalService;
 use TopBetta\Services\Response\ApiResponse;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 
 class RiskUserAccountController extends \BaseController {
@@ -35,16 +36,22 @@ class RiskUserAccountController extends \BaseController {
      * @var ApiResponse
      */
     private $apiResponse;
+    /**
+     * @var UserAccountService
+     */
+    private $userService;
 
     public function __construct(AccountTransactionService $accountTransactionService,
                                 WithdrawalService $withdrawalService,
                                 UserFreeCreditService $userFreeCreditService,
+                                UserAccountService $userService,
                                 ApiResponse $apiResponse)
     {
         $this->accountTransactionService = $accountTransactionService;
         $this->withdrawalService = $withdrawalService;
         $this->userFreeCreditService = $userFreeCreditService;
         $this->apiResponse = $apiResponse;
+        $this->userService = $userService;
     }
 
     public function show($id)
@@ -52,6 +59,9 @@ class RiskUserAccountController extends \BaseController {
         $accountData = array();
 
         try{
+            //get user info
+            $accountData['user'] = $this->userService->getTopBettaUser($id);
+
             //get total account balance
             $accountData['account_balance'] = $this->accountTransactionService->getAccountBalanceForUser($id);
 

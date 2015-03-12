@@ -224,6 +224,11 @@ class UserAccountService {
         return false;
     }
 
+    public function getTopBettaUser($userId)
+    {
+        return $this->basicUser->getWithTopBettaUser($userId);
+    }
+
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
     {
         $checkForName = $this->basicUser->getUserDetailsFromUsername($username);

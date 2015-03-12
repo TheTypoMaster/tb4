@@ -75,5 +75,13 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
     }
 
+    public function getWithTopBettaUser($userId)
+    {
+        return $this    -> model
+                        -> where('id', $userId)
+                        -> with('topbettauser')
+                        -> first();
+    }
+
 
 }
