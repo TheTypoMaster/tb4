@@ -11,3 +11,5 @@
 |
 */
 Artisan::resolve('BetResultWatchdogCommand');
+
+Artisan::resolve('ChargeDormantAccounts');

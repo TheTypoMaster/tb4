@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use TopBetta\Models\AccountTransactionModel;
 use TopBetta\Models\UserModel;
 use TopBetta\Services\Validation\UserBasicValidator;
 
@@ -67,6 +68,22 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
                         -> get();
 
     }
+
+    public function getUsersWithNoAccountTransactionsInLastNDays($days, $excludedTransactionTypes = array())
+    {
+        return $this    ->model
+                        ->whereNotInRelationship('accountTransactions', function($q) use ( $days, $excludedTransactionTypes ) {
+                            $q->where('created_date', '>=', Carbon::now()->subDays($days)->toDateTimeString());
+
+                            foreach($excludedTransactionTypes as $transactionType) {
+                                $q->where('account_transaction_type_id', '!=', $transactionType);
+                            }
+                        })
+                        ->get();
+
+    }
+
+
 
 
 }
