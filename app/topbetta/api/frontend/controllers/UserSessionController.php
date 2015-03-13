@@ -50,8 +50,7 @@ class UserSessionController extends BaseController {
             return $this->response->failed(array(), 400, 0, "Account not activated", "Account not activated");
         }
 
-        Auth::loginUsingId($userDetails['id']);
-
+        $user = Auth::loginUsingId($userDetails['id']);
 
         return $this->response->success($user->load('topbettaUser'));
 
