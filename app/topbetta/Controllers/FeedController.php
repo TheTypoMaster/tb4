@@ -11,7 +11,6 @@ use BaseController;
 use Carbon\Carbon;
 use Input;
 use TopBetta\Services\Response\ApiResponse;
-use SimpleXMLElement;
 use File;
 use Response;
 use Request;
@@ -189,7 +188,7 @@ class FeedController extends BaseController {
     }
 
     // function defination to convert array to xml
-    function array_to_xml($responseArray, &$xml_response) {
+    private function array_to_xml($responseArray, &$xml_response) {
         foreach($responseArray as $key => $value) {
             if(is_array($value)) {
                 if(!is_numeric($key)){
