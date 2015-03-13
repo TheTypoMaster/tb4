@@ -86,4 +86,32 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
         return $eventDetails;
     }
+
+    public function getEventsforCompetitionId($id, $from, $to){
+        $events = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                                ->where('tbdb_event_group_event.event_group_id', $id)
+                                ->where('tbdb_event.start_date', '>', $from)
+                                ->where('tbdb_event.start_date', '<', $to)
+                                ->select(array('id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
+                                ->get();
+
+        if(!$events) return null;
+
+        return $events->toArray();
+    }
+
+    public function getEventsforDateRange($from, $to){
+        $events = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+                            ->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id')
+                            ->where('tbdb_event.start_date', '>', $from)
+                            ->where('tbdb_event.start_date', '<', $to)
+                            ->select(array('tbdb_event_group.id as competition_id', 'tbdb_event_group.name as competition_name',  'tbdb_tournament_sport.name as sport_name', 'tbdb_event.id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
+                            ->get();
+
+        if(!$events) return null;
+
+        return $events->toArray();
+    }
+
 }

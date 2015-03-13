@@ -35,6 +35,9 @@
 					<li>
 						<a href="{{ route('admin.free-credit-transactions.index') }}">Free Credit Transactions</a>
 					</li>
+					<li>
+						<a href="{{ route('admin.free-credit-management.index') }}">Free Credit Management</a>
+					</li>
 				</ul>				
 			</li>
 
@@ -83,6 +86,10 @@
                     </li>
                 </ul>
             </li>
+
+			<li>
+				<a href="{{ route('admin.promotions.index') }}"><i class="fa fa-money fa-fw"></i> Promotions</a>
+			</li>
 
             <li>
                 <a href="{{ route('admin.settings.index') }}"><i class="fa fa-cogs fa-fw"></i> Settings</a>

@@ -7,6 +7,8 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
+use TopBetta\Repositories\DbAccountTransactionTypeRepository;
 use Validator;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
@@ -21,29 +23,49 @@ use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 class AccountTransactionService {
 
+    //Deposit transaction types
+    public static $depositTransactions  = array(
+         AccountTransactionTypeRepositoryInterface::TYPE_PAYPAL_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_EWAY_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_BPAY_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_BANK_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_POLI_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_MONEYBOOKERS_DEPOSIT,
+     );
+
     protected $accounttransactions;
     protected $accounttransactiontypes;
     protected $authentication;
     protected $useraccountservice;
+    protected $betOriginRepository;
     protected $user;
+
+    /**
+     * Save the bet origin Ids after we fetch them once
+     * @var array
+     */
+    protected $betOrigins = array();
 
     public function __construct(AccountTransactionRepositoryInterface $accounttransactions,
                                 AccountTransactionTypeRepositoryInterface $accounttransactiontypes,
                                 UserRepositoryInterface $user,
                                 UserAccountService $useraccountservice,
-                                TokenAuthenticationService $authentication)
+                                TokenAuthenticationService $authentication,
+                                BetOriginRepositoryInterface $betOriginRepository)
     {
         $this->accounttransactions = $accounttransactions;
         $this->accounttransactiontypes = $accounttransactiontypes;
         $this->user = $user;
         $this->authentication = $authentication;
         $this->useraccountservice = $useraccountservice;
+        $this->betOriginRepository = $betOriginRepository;
     }
 
-    public function increaseAccountBalance($userID, $amount, $keyword, $desc = null){
+    public function increaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
 
         // get the transaction type details for the keyword
         $transactionTypeDetails = $this->accounttransactiontypes->getTransactionTypeByKeyword($keyword);
+
 
         if(!$transactionTypeDetails) {
             return false;
@@ -69,15 +91,15 @@ class AccountTransactionService {
             'amount' 					=> $amount,
             'notes' 					=> $desc,
             'account_transaction_type_id' 	=> $transactionTypeDetails['id'],
-            'created_date'              => Carbon::now('Australia/Sydney')
+            'created_date'              => $transactionDate ? $transactionDate : Carbon::now('Australia/Sydney')
 
         );
 
         return $this->accounttransactions->create($params);
     }
 
-    public function decreaseAccountBalance($userID, $amount, $keyword, $desc = null){
-        return $this->increaseAccountBalance($userID, -$amount, $keyword, $desc);
+    public function decreaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
+        return $this->increaseAccountBalance($userID, -$amount, $keyword, $desc, $transactionDate);
     }
 
 
@@ -136,6 +158,171 @@ class AccountTransactionService {
 
     }
 
+    public function chargeDormantAccounts($dormantDays, $dormantChargeDate, $dormantAmount, $transactionDate)
+    {
+        //get the transaction type
+        $dormantTransactionType = $this->accounttransactiontypes->getTransactionTypeByKeyword(
+            AccountTransactionTypeRepositoryInterface::TYPE_DORMANT_CHARGE
+        );
 
+        //Get the dormant users
+        $dormantUsers = $this->user->getDormantUsersWIthNoDormantChargeAfter($dormantTransactionType['id'], $dormantDays, $dormantChargeDate);
+
+        foreach ($dormantUsers as $user) {
+            //charge dormant accounts
+            if ( ($balance = $this->getAccountBalanceForUser($user->id)) > 0) {
+                //charge either dormantAmount or whole balance if balance is < dormantAmount
+                $this->decreaseAccountBalance(
+                    $user->id,
+                    min($balance, $dormantAmount),
+                    AccountTransactionTypeRepositoryInterface::TYPE_DORMANT_CHARGE,
+                    null,
+                    $transactionDate
+                );
+            }
+        }
+    }
+
+    public function getAccountBalanceForUser($userId)
+    {
+        return $this->accounttransactions->getAccountBalanceByUserId($userId);
+    }
+
+
+    public function getTotalDepositsForUser($userId)
+    {
+        //get positive deposit transactions only
+        return $this->accounttransactions->getTotalOnlyPositiveTransactionsForUserByTypeIn(
+            $userId,
+            $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+
+    /**
+     * @param $userId
+     * @param $n
+     * @return \Illuminate\Database\Eloquent\Collection;
+     */
+    public function getLastNDepositsForUser($userId, $n)
+    {
+        return $this->accounttransactions->getLastNPositiveTransactionsForUserByTypeIn(
+            $userId,
+            $n,
+            $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+    
+    public function getRacingWinLossForUser($userId)
+    {
+        //racing win loss = wins - losses + refunds
+       //$a = $this->getTotalRacingBetsForUser($userId);
+        //dd(\DB::getQueryLog());
+        return $this->getTotalRacingBetsForUser($userId) +
+            $this->getTotalRacingBetWinsForUser($userId) + 
+            $this->getTotalRacingBetRefundForUser($userId);
+    }
+
+    public function getSportsWinLossForUser($userId)
+    {
+        //sports win loss = wins - losses + refunds
+        return $this->getTotalSportsBetsForUser($userId) +
+            $this->getTotalSportsBetWinsForUser($userId) +
+            $this->getTotalSportsBetRefundForUser($userId);
+    }
+
+    // --- BETTING TRANSACTION VALUES ---
+
+    /**
+    * Gets total spent on sports bet for a user
+    * Returns negative amount!
+    * @param $userId
+    * @return mixed
+    */
+    public function getTotalSportsBetsForUser($userId)
+    {
+        return $this->accounttransactions->getTotalBetTransactionsForUserByOrigin(
+            $userId,
+            array($this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING))
+        );
+    }
+
+    public function getTotalSportsBetWinsForUser($userId)
+    {
+        return $this->accounttransactions->getTotalBetWinTransactionsForUserByOrigin(
+            $userId,
+            array($this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING))
+        );
+    }
+
+    public function getTotalSportsBetRefundForUser($userId)
+    {
+        return $this->accounttransactions->getTotalBetRefundTransactionsForUserByOrigin(
+            $userId,
+            array($this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_SPORTS_BETTING))
+        );
+    }
+
+    /**
+     * Gets total spent on racing bets for a user
+     * Returns negative amount!
+     * @param $userId
+     * @return mixed
+     */
+    public function getTotalRacingBetsForUser($userId)
+    {
+        return $this->accounttransactions->getTotalBetTransactionsForUserByOrigin(
+            $userId,
+            array(
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING),
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
+            )
+        );
+    }
+
+    public function getTotalRacingBetWinsForUser($userId)
+    {
+        return $this->accounttransactions->getTotalBetWinTransactionsForUserByOrigin(
+            $userId,
+            array(
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING),
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
+            )
+        );
+    }
+
+    public function getTotalRacingBetRefundForUser($userId)
+    {
+        return $this->accounttransactions->getTotalBetRefundTransactionsForUserByOrigin(
+            $userId,
+            array(
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_RACE_BETTING),
+                $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
+            )
+        );
+    }
+
+    /**
+     * Converts array of account transaction type names
+     *  to array of account transaction type ids
+     * @param $types
+     * @return array
+     */
+    private function getTransactionTypeIds($types)
+    {
+        $transactionTypeRepo = $this->accounttransactiontypes;
+
+        return array_map(function($transactionType) use ($transactionTypeRepo) {
+            return $transactionTypeRepo->getTransactionTypeByKeyword($transactionType)['id'];
+        }, $types);
+    }
+
+    private function getBetOriginId($betOriginName)
+    {
+        if( ! isset($this->betOrigins[$betOriginName]) ) {
+            $this->betOrigins[$betOriginName] = $this->betOriginRepository->getOriginByKeyWord($betOriginName)['id'];
+        }
+
+        return $this->betOrigins[$betOriginName];
+    }
 
 }

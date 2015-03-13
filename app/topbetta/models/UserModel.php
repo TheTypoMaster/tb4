@@ -20,6 +20,10 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
         return $this->hasOne('TopBetta\Models\TopBettaUserModel', 'user_id');
     }
 
+    public function accountTransactions() {
+        return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id');
+    }
+
 
     /**
      * Get the unique identifier for the user.
@@ -64,6 +68,31 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
     public function getRememberTokenName()
     {
         return 'remember_token';
+    }
+
+    // --- Accessors for urlencoded ' in user's names ---
+    public function getNameAttribute($value) {
+        return str_replace("\\", "", urldecode($value));
+    }
+
+    public function whereNotInRelationship($relationship, $closure)
+    {
+        $relationship = $this->$relationship();
+
+        if(method_exists($relationship, 'getOtherKey')) {
+            $localField = $relationship->getForeignKey();
+            $relationshipField = $relationship->getQualifiedOtherKeyName();
+        } else {
+            $localField = $relationship->getQualifiedParentKeyName();
+            $relationshipField = $relationship->getForeignKey();
+        }
+
+        return $this->whereNotIn($localField, function ($q) use ($relationship, $relationshipField, $closure) {
+
+            $q  ->select($relationshipField)
+                ->from($relationship->getModel()->getTable())
+                ->where($closure);
+        });
     }
 
 

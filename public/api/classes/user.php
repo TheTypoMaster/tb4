@@ -285,6 +285,9 @@ class Api_User extends JController {
 					$user->set('registerDate', $date->toMySQL());
 					$user->set('isTopBetta', 0);
 
+					//set default activated
+					$user->set('activated_flag',1);
+
 					// If user activation is turned on, we need to set the activation information
 					$useractivation = $usersConfig->get( 'useractivation' );
 					if ($useractivation == '1') {
@@ -483,8 +486,8 @@ class Api_User extends JController {
 					// Get user registration details from post.
 
 					$username	= JRequest::getString('username', null, 'post');
-					$first_name	= JRequest::getString('first_name', null, 'post');
-					$last_name	= JRequest::getString('last_name', null, 'post');
+					$first_name	= urldecode(JRequest::getString('first_name', null, 'post'));
+					$last_name	= urldecode(JRequest::getString('last_name', null, 'post'));
 					$email		= JRequest::getString('email', null, 'post');
 					$email2		= JRequest::getString('email', null, 'post');
 					$password	= urldecode(JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW));
@@ -500,8 +503,8 @@ class Api_User extends JController {
 					}
 
 					//setup or source for toptippa
-					if ($slug && !$btag) {
-						$source = $source . '-' . substr($slug, 0, 50);
+					if ($slug && $whitelabel) {
+						$source = $source . '-' . $whitelabel;
 					}else if($slug && $btag) {
 						$source = $source . '-' . $btag;
 					}
@@ -578,6 +581,9 @@ class Api_User extends JController {
 					$user->set('freeWinsToFbWall',0);
 					$user->set('paidWinsToFbWall',0);
 					$user->set('betWinsToFbWall',0);
+
+					//default to activated for legacy
+					$user->set('activated_flag', 1);
 
 					// If user activation is turned on, we need to set the activation information
 					$useractivation = $usersConfig->get( 'useractivation' );
@@ -865,6 +871,9 @@ class Api_User extends JController {
 					$date =& JFactory::getDate();
 					$user->set('registerDate', $date->toMySQL());
                     $user->set('isTopBetta', 1 );
+
+					//set default activated
+					$user->set('activated_flag',1);
 
 					// If user activation is turned on, we need to set the activation information
 					$useractivation = $usersConfig->get( 'useractivation' );

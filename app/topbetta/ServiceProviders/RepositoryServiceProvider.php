@@ -78,8 +78,44 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbAccountTransactionTypeRepository'
         );
         $this->app->bind(
+            'TopBetta\Repositories\Contracts\PoliTransactionRepositoryInterface',
+            'TopBetta\Repositories\DbPoliTransactionRepository'
+        );
+        $this->app->bind(
             'TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface',
             'TopBetta\Repositories\DbMarketTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\MarketRepositoryInterface',
+            'TopBetta\Repositories\DbMarketsRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SelectionStatusRepositoryInterface',
+            'TopBetta\Repositories\DbSelectionStatusRepository'
+		);
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface',
+            'TopBetta\Repositories\DbFreeCreditTransactionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',
+            'TopBetta\Repositories\DbProcessParamsRepository'
+		);
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\EventModelRepositoryInterface',
+            'TopBetta\Repositories\DbEventModelRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\WithdrawalRequestRepositoryInterface',
+            'TopBetta\Repositories\DbWithdrawalRequestRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\PromotionRepositoryInterface',
+            'TopBetta\Repositories\DbPromotionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SportRepositoryInterface',
+            'TopBetta\Repositories\DbSportsRepository'
         );
     }
 } 
