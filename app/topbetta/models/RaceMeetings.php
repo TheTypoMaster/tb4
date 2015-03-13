@@ -82,7 +82,7 @@ class RaceMeeting extends Eloquent {
 				
 			}			
 
-			$result[] = array('id' => $race -> id, 'display' => $race->display_flag, 'external_race_id' => $race->external_event_id.'_'.$race -> number, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
+			$result[] = array('id' => $race -> id, 'display' => $race->display_flag, 'external_race_id' => $race->external_event_id, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
 
 		}	
 		

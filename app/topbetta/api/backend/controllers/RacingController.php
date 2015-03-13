@@ -566,7 +566,7 @@ class RacingController extends \BaseController
                                     }
                                     if (isset($dataArray['RunnerNo'])) {
                                         $raceRunner->number = $dataArray['RunnerNo'];
-                                        $raceRunner->external_selection_id = $raceExists['ExternalEventId'].$dataArray['RunnerNo'];
+                                        $raceRunner->external_selection_id = $raceExists['ExternalEventId'].'_'.$dataArray['RunnerNo'];
 
                                     }
 
