@@ -2,9 +2,15 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use Mail;
+use Auth;
 use Illuminate\Support\Facades\Input;
 
 class FrontUsersDepositController extends \BaseController {
+
+	private $depositTypeMapping = array(
+		"tokencreditcard" => "Eway",
+	);
 
 	public function __construct() {
 		$this -> beforeFilter('auth');
@@ -161,15 +167,60 @@ class FrontUsersDepositController extends \BaseController {
 					return array("success" => false, "error" => \Lang::get('banking.missing_action'));
 				}
 				
-				return $this->ewayTokenCreditCard($action);
+				$result = $this->ewayTokenCreditCard($action);
+
 				break;
 
 			default :
 				return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
 				break;
 		}
+
+		//Send email to help@topbetta.com if a promo code is present
+		if($result['success'] && $promoCode = \Input::json("promo_code", false)) {
+			try {
+
+				$this->sendPromoCodeEmail($promoCode, \Input::json("amount"), $type);
+
+				//success so update result
+				$result['result'] .= \Lang::get("banking.promo_code_deposit");
+
+			} catch (\Exception $e) {
+				//error sending email
+				\Log::error("Error sending promo code information with message " . $e->getMessage() . ", User " . \Auth::user()->id . " Promo code " . $promoCode . " Deposit Amount " . \Input::json("amount"));
+
+				$result['result'] .= \Lang::get("banking.promo_code_deposit_error");
+			}
+		}
+
+		return $result;
 	}
 
+	/**
+	 * Send promo code email
+	 * @param $promoCode
+	 * @param $amount
+	 * @param $method
+	 */
+	public function sendPromoCodeEmail($promoCode, $amount, $method)
+	{
+		$user = \Auth::user();
+
+		Mail::send(
+			'emails.promo_code',
+			array(
+				"user"          => $user,
+				"amount"        => $amount,
+				"paymentMethod" => $this->depositTypeMapping[$method],
+				"promoCode"     => $promoCode
+			),
+			function($message) use ($user) {
+				$message
+					->to(\Config::get('mail.promo_code_to.address'), \Config::get('mail.promo_code_to.name'))
+					->subject("Promo Code for User " . $user->id);
+			}
+		);
+	}
 	/**
 	 * Credit card deposit via legacy api
 	 *
@@ -251,8 +302,31 @@ class FrontUsersDepositController extends \BaseController {
 				// Validate the data required to make a new customer and initial deposit is correct
 				$rules = array('CCNumber' => 'required|max:20', 'CCName' => 'max:50',
 							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:1000' );
+
+				$validationMessages = array(
+					"CCNumber"      => array(
+						"required" => "The card number is required",
+						"max"      => "Card number cannot be more than 20 characters",
+					),
+					"CCName"        => array(
+						"required" => "The card name is required",
+						"max"      => "Card name cannot be more than 50 characters",
+					),
+					"CCExpiryMonth" => array(
+						"required" => "The card expiry month is required",
+						"size"     => "Card expiry month must be 2 characters"
+					),
+					"CCExpiryYear"  => array(
+						"required" => "The card expiry year is required",
+						"size"     => "Card expiry year must be 2 characters"
+					),
+					"Amount"        => array(
+						"required" => "Amount is required",
+						"min"      => "The deposit amount must be at least $10"
+					)
+				);
 				
-				$validator = \Validator::make($input, $rules);
+				$validator = \Validator::make($input, $rules, $validationMessages);
 				if ($validator -> fails()) {				
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
