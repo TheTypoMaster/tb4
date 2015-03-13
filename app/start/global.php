@@ -168,7 +168,7 @@ Response::macro('xml', function($vars, $status = 200, array $header = array(), $
     }
 
     if (is_null($xml)) {
-        $xml = new SimpleXMLElement('<' . $rootElement . '/>');
+        $xml = new TopBetta\Helpers\LibSimpleXMLElement('<' . $rootElement . '/>');
     }
     foreach ($vars as $key => $value) {
         if (is_array($value)) {
