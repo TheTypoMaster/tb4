@@ -46,10 +46,13 @@ class UserSessionController extends BaseController {
             return $this->response->failed($e->getErrors(), 400, 102, 'Login details incorrect', 'Login details incorrect');
         }
 
-        Auth::loginUsingId($userDetails['id']);
+        if( ! $userDetails['activated_flag'] ) {
+            return $this->response->failed(array(), 400, 0, "Account not activated", "Account not activated");
+        }
 
+        $user = Auth::loginUsingId($userDetails['id']);
 
-        return $this->response->success(Auth::user());
+        return $this->response->success($user->load('topbettaUser'));
 
     }
 
