@@ -61,11 +61,7 @@ class AccountTransactionService {
         $this->betOriginRepository = $betOriginRepository;
     }
 
-<<<<<<< HEAD
-    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null){
-=======
-    public function increaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
->>>>>>> e60b175e678e3b5f5b66148c77b2257de77174d6
+    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
 
         // get the transaction type details for the keyword
         $transactionTypeDetails = $this->accounttransactiontypes->getTransactionTypeByKeyword($keyword);
@@ -102,8 +98,8 @@ class AccountTransactionService {
         return $this->accounttransactions->create($params);
     }
 
-    public function decreaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
-        return $this->increaseAccountBalance($userID, -$amount, $keyword, $desc, $transactionDate);
+    public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
+        return $this->increaseAccountBalance($userID, -$amount, $keyword, $giverId, $desc, $transactionDate);
     }
 
 
@@ -180,6 +176,7 @@ class AccountTransactionService {
                     $user->id,
                     min($balance, $dormantAmount),
                     AccountTransactionTypeRepositoryInterface::TYPE_DORMANT_CHARGE,
+                    -1,
                     null,
                     $transactionDate
                 );
