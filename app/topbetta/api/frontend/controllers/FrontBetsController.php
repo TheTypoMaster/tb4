@@ -506,7 +506,7 @@ class FrontBetsController extends BaseController {
 						//bet has been placed by now, deal with messages and errors
 						if ($bet['status'] == 200) {
 
-							$details = $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
+							$details[0] = $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
                             // if there is an API endpoint notify it of bet placement
                             if(!is_null($betSourceRecord['api_endpoint'])){
                                 $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $details);
