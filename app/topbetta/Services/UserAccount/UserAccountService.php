@@ -98,6 +98,7 @@ class UserAccountService {
         $basicData['name'] = $input['first_name'].' '.$input['last_name'];
         $basicData['usertype'] = 'Registered';
         $basicData['gid'] = '18';
+        $basicData['isTopBetta'] = '1';
         $basicData['registerDate'] = Carbon::now();
         $basicData['lastVisitDate'] = Carbon::now();
 
