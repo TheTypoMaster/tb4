@@ -68,7 +68,7 @@ class UserAccountService {
         $input['user_id'] = $basic['id'];
 
         // unset fields not required for full account
-        unset($input['username'], $input['email'], $input['password']);
+        unset($input['username'], $input['email'], $input['password'], $input['auto_activate']);
         if(isset($input['parent_user_id'])) unset($input['parent_user_id']);
 
         // create aro records
