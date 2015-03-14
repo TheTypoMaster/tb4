@@ -72,7 +72,7 @@ class UserAccountService {
         if(isset($input['parent_user_id'])) unset($input['parent_user_id']);
 
         // create aro records
-        $this->basicUser->createAroRecordsForJoomla(array('user_id' => $basic['id'], 'name' => $basicData['name']));
+        $this->basicUser->createAroRecordsForJoomla(array('user_id' => $basic['id'], 'name' => $basic['name']));
 
         // create the full account record
         $full = $this->createFullAccount($input);
