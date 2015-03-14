@@ -262,19 +262,19 @@ class FrontBetsController extends BaseController {
 
 				//do our win bets
 				$input['type_id'] = 1;
-				$this -> placeBet($betStatus, $input, $messages, $errors);
+				$this -> placeBet($betStatus, $input, $messages, $errors, $betSourceRecord);
 
 				//do our place bets
 				$input['type_id'] = 2;
-				$this -> placeBet($betStatus, $input, $messages, $errors);
+				$this -> placeBet($betStatus, $input, $messages, $errors, $betSourceRecord);
 
 			} elseif ($input['type_id'] < 3) {
 
-				$this -> placeBet($betStatus, $input, $messages, $errors);
+				$this -> placeBet($betStatus, $input, $messages, $errors, $betSourceRecord);
 
 			} else {
 
-				$this -> placeBet($betStatus, $input, $messages, $errors, true);
+				$this -> placeBet($betStatus, $input, $messages, $errors, $betSourceRecord, true);
 
 			}
 
@@ -293,10 +293,10 @@ class FrontBetsController extends BaseController {
 
 			} else {
 
-				// if there is an API endpoint notify it of bet placement
-				if(!is_null($betSourceRecord['api_endpoint'])){
-					$this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
-				}
+//				// if there is an API endpoint notify it of bet placement
+//				if(!is_null($betSourceRecord['api_endpoint'])){
+//					$this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
+//				}
 
 				// bet placed OK
 				return array("success" => true, "result" => $messages);
@@ -318,7 +318,7 @@ class FrontBetsController extends BaseController {
 	 * @param $errors int
 	 *
 	 */
-	private function placeBet(&$betStatus, &$input, &$messages, &$errors, $exotic = false) {
+	private function placeBet(&$betStatus, &$input, &$messages, &$errors, $betSourceRecord, $exotic = false) {
 
 		//TODO: remove tournament bets from here - they belong in FrontTournamentsBetsController
 		
@@ -380,6 +380,11 @@ class FrontBetsController extends BaseController {
 
 			//bet has been placed by now, deal with messages and errors
 			if ($bet['status'] == 200) {
+
+                // if there is an API endpoint notify it of bet placement
+                if(!is_null($betSourceRecord['api_endpoint'])){
+                    $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
+                }
 
 				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
@@ -490,7 +495,7 @@ class FrontBetsController extends BaseController {
 						} else {
 
 							//invalid source
-							$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.invalid_source'));
+							$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => \Lang::get('bets.invalid_source'));
 							$errors++;
 
 						}
@@ -606,9 +611,14 @@ class FrontBetsController extends BaseController {
 					//bet has been placed by now, deal with messages and errors
 					if ($bet['status'] == 200) {
 
+                        // if there is an API endpoint notify it of bet placement
+                        if(!is_null($betSourceRecord['api_endpoint'])){
+                            $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
+                        }
+
 						$messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
-					} elseif ($bet['status'] == 401) {
+                       } elseif ($bet['status'] == 401) {
 
 						// return \Response::json(array("success" => false, "error" => "Please login first."), 401);
 						$betStatus = 401;
