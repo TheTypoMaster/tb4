@@ -170,11 +170,12 @@ class ExternalSourceBetNotificationService {
 
                 // get current prices for selections
                 if($betDetails['resulted_flag'] == 0) {
+                    $betSelectionPayload['bet_selection_win'] = 0;
+                    $betSelectionPayload['bet_selection_placed_odd'] = 0;
                     if(isset($betSelection['selection']['price']['win_odds']) && $betDetails['type']['name'] == 'win')
                         $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['selection']['price']['win_odds'];
                     if(isset($betSelection['selection']['price']['place_odds']) && $betDetails['type']['name'] == 'place')
                         $betSelectionPayload['bet_selection_placed_odd'] = $betSelection['selection']['price']['place_odds'];
-                    $betSelectionPayload['bet_selection_win'] = 0;
 
                 // get result dividends for selections
                 } else {
