@@ -199,6 +199,21 @@ class AccountTransactionService {
     }
 
     /**
+     * Gets all deposits for user in the last $daysPrevious
+     * @param $userId
+     * @param $daysPrevious
+     * @return mixed
+     */
+    public function getRecentDepositsForUser($userId, $daysPrevious)
+    {
+        return $this->accounttransactions->getRecentPositiveTransactionsForUserByTypeIn(
+            $userId,
+            Carbon::now()->subDays($daysPrevious)->toDateTimeString(),
+            $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+
+    /**
      * @param $userId
      * @param $n
      * @return \Illuminate\Database\Eloquent\Collection;
