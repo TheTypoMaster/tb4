@@ -37,4 +37,16 @@ class FrontAccountingController extends BaseController{
 
         }
     }
+
+    public function returnFunds(){
+        $input = Input::json()->all();
+
+        try {
+            return $this->response->success($this->accountservice->returnFunds($input));
+
+        }catch(ValidationException $e){
+            return $this->response->failed($e->getErrors(), 200, 201, 'Funds not transferred', 'Funds not transaferred, refer to error object');
+
+        }
+    }
 }

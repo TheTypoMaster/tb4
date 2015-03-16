@@ -140,6 +140,16 @@ class UserAccountService {
     }
 
     /**
+     * Get child user accounts
+     *
+     * @param $parentUserId
+     * @return mixed
+     */
+    public function getChildBettingAccounts($parentUserId){
+        return $this->basicUser->getChildUserAccounts($parentUserId);
+    }
+
+    /**
      * Creates a new unique child betting account
      * - bets placed in these accounts are linked to the parent account
      * - cost of bet comes from the child account

@@ -7,19 +7,16 @@
  */
 
 use Carbon\Carbon;
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
-use TopBetta\Repositories\DbAccountTransactionTypeRepository;
 use Validator;
 
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
+use TopBetta\Repositories\DbAccountTransactionTypeRepository;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
-
 use TopBetta\Services\Authentication\TokenAuthenticationService;
 use TopBetta\Services\UserAccount\UserAccountService;
-
 use TopBetta\Services\Validation\Exceptions\ValidationException;
-
 
 class AccountTransactionService {
 
@@ -133,7 +130,7 @@ class AccountTransactionService {
         $parentUserDetails = $this->user->getUserDetailsFromUsername($input['parent_user_name']);
         if(!$parentUserDetails) throw new ValidationException("Validation Failed", 'Parent user acccount not found');
 
-        // check that the parent betting account exists
+        // check that the child betting account exists
         $childBettingUserDetails = $this->user->getUserDetailsFromUsername($input['child_betting_user_name']);
         if(!$childBettingUserDetails) throw new ValidationException("Validation Failed", 'Betting user not found');
 
@@ -147,14 +144,73 @@ class AccountTransactionService {
         if($parentAccountBalance < $input['transfer_amount']) throw new ValidationException("Validation Failed", 'Insuffcient parent betting funds');
 
         // remove the funds from the parent account
-        $removeFunds = $this->decreaseAccountBalance($parentUserDetails['id'], $input['transfer_amount'], 'clubfundaccount');
+        $removeFunds = $this->decreaseAccountBalance($parentUserDetails['id'], $input['transfer_amount'], 'parentfundaccount');
         if (!$removeFunds) throw new ValidationException("Validation Failed", 'Failed to decrease parent account');
 
         // increase child account
-        $addFunds = $this->increaseAccountBalance($childBettingUserDetails['id'], $input['transfer_amount'], 'bettingfundaccount');
+        $addFunds = $this->increaseAccountBalance($childBettingUserDetails['id'], $input['transfer_amount'], 'childaccountfunded');
         if (!$addFunds) throw new ValidationException("Validation Failed", 'Failed to increase child betting account');
 
         return $addFunds;
+
+    }
+
+    /**
+     * Return un-used funds from child betting account back to the parent
+     *
+     * @param $input
+     * @return array
+     * @throws ValidationException
+     */
+
+    public function returnFunds($input){
+
+        // validation rules
+        $rules = array(
+            'source' => 'required',
+            'parent_user_name' => 'required',
+            'token' => 'required'
+        );
+
+        // validate input
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) throw new ValidationException("Validation Failed", $validator->messages());
+
+        // confirm source of request
+        if(!$this->authentication->checkSource($input)) throw new ValidationException("Validation Failed", 'Source not confirmed');
+
+        // check and get the parent user account details
+        $parentUserDetails = $this->user->getUserDetailsFromUsername($input['parent_user_name']);
+        if(!$parentUserDetails) throw new ValidationException("Validation Failed", 'Parent user acccount not found');
+
+        // get the child accounts
+        $childUserAccounts = $this->user->getChildUserAccounts($parentUserDetails['id']);
+        if(!$childUserAccounts) throw new ValidationException("Validation Failed", 'No child acccounts found');
+
+        //dd(count($childUserAccounts));
+        // remove funds fom child accounts
+        // $returnArray = array();
+        foreach($childUserAccounts as $childAccount){
+
+            // get current account balance of child account
+            $childAccountBalance = $this->accounttransactions->getAccountBalanceByUserId($childAccount['id']);
+
+            // remove funds from child account
+            if($childAccountBalance > 0) $removedFunds = $this->decreaseAccountBalance($childAccount['id'], $childAccountBalance, 'childfundaccount');
+
+            if(isset($removedFunds)){
+                $details = array();
+                $details['user_name'] = $childAccount['username'];
+                $details['amount'] = $childAccountBalance;
+
+                // add funds to parent account
+                $addFunds = $this->increaseAccountBalance($parentUserDetails['id'], $childAccountBalance, 'parentaccountfunded');
+               // if (!$addFunds) throw new ValidationException("Validation Failed", 'Failed to increase child betting account');
+            }
+        }
+
+        // return username and cents
+        return $returnArray = array($details);
 
     }
 
