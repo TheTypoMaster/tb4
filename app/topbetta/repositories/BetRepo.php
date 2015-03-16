@@ -287,11 +287,13 @@ class BetRepo
 	 */
 	public function payoutBet(Bet $bet, $amount)
 	{
+
 		// Free credit bets, we keep the original stake
 		if ($bet->bet_freebet_flag == 1) {
 			$amount -= $bet->bet_freebet_amount;
 		}
 		$bet->result_transaction_id = $this->awardBetWin($bet->user_id, $amount);
+
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
 		$bet->resulted_flag = 1;
 
@@ -300,7 +302,7 @@ class BetRepo
         // get current micro time
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
-        \File::append('/tmp/'.$date.'-ResultPost-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
+        \File::append('/tmp/'.$date.'-ResultPost-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet, true));
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
