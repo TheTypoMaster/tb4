@@ -20,6 +20,8 @@ class AddFieldsToEventTable extends Migration {
             $table->string('description')->after('default_name');
 
             $table->integer('icon_id')->after('wagering_api_id')->unsigned();
+
+            $table->integer('orderiing')->after('override_start');
 		});
 	}
 
@@ -36,6 +38,7 @@ class AddFieldsToEventTable extends Migration {
             $table->dropColumn('default_name');
             $table->dropColumn('description');
             $table->dropColumn('icon_id');
+            $table->dropColumn('ordering');
 		});
 	}
 
