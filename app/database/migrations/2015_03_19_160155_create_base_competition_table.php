@@ -16,6 +16,8 @@ class CreateBaseCompetitionTable extends Migration {
 		{
 			$table->increments('id');
 
+            $table->integer('external_base_competition_id')->unsigned();
+
             $table->integer('sport_id')->unsigned();
 
             $table->string('name');
