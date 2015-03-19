@@ -17,7 +17,7 @@ class CreateSportsTable extends Migration {
 			$table->increments('id');
 
             //names
-            $table->string('long_name');
+            $table->string('name');
             $table->string('short_name');
             $table->string('default_name');
 
