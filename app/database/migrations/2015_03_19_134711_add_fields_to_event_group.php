@@ -14,7 +14,9 @@ class AddFieldsToEventGroup extends Migration {
 	{
 		Schema::table('tbdb_event_group', function(Blueprint $table)
 		{
-			$table->string('short_name')->after('name');
+			$table->integer('base_competition_id')->after('wagering_api_id')->unsigned();
+
+            $table->string('short_name')->after('name');
 
             $table->string('default_name')->after('short_name');
 
