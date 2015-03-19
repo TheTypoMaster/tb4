@@ -20,6 +20,8 @@ class CreateBaseCompetitionTable extends Migration {
 
             $table->integer('sport_id')->unsigned();
 
+            $table->integer('region_id')->unsigned();
+
             $table->string('name');
             $table->string('short_name');
             $table->string('default_name');
