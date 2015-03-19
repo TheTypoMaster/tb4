@@ -37,7 +37,8 @@ class AddFieldsToEventGroup extends Migration {
 	{
 		Schema::table('tbdb_event_group', function(Blueprint $table)
 		{
-			$table->dropColumn('short_name');
+			$table->dropColumn('base_competition_id');
+            $table->dropColumn('short_name');
             $table->dropColumn('default_name');
             $table->dropColumn('description');
             $table->dropColumn('icon_id');
