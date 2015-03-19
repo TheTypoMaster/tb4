@@ -113,4 +113,16 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
             ->sum('amount');
     }
 
+    public function getRecentPositiveTransactionsForUserByTypeIn($userId, $dateAfter, $types)
+    {
+        return $this
+            ->model
+            ->where('recipient_id', $userId)
+            ->where('amount', '>', 0)
+            ->whereIn('account_transaction_type_id', $types)
+            ->where('created_date', '>=', $dateAfter)
+            ->orderBy('created_date', 'DESC')
+            ->get();
+    }
+
 }
