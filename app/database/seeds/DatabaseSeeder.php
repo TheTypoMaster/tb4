@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('TbdbAccountTransactionTypeTableSeeder');
 
 		$this->call('TbSportTableSeeder');
+		$this->call('TbIconTypesTableSeeder');
 	}
 
 }
