@@ -9,9 +9,5 @@ namespace TopBetta\Repositories\Contracts;
 
 interface MarketOrderingRepositoryInterface
 {
-    public function getDefaultMarketTypes();
-
-    public function getMarketTypesForCompetition($competitionId);
-
-    public function getMarketTypesForUser($userId, $competitionId);
+    public function getMarketOrdering($competitionId = 0, $userId = 0);
 }

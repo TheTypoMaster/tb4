@@ -4,12 +4,11 @@ namespace TopBetta\Models;
 
 use Eloquent;
 
-class MarketOrderingModel extends Eloquent {
+class BaseCompetitionModel extends Eloquent {
 
-    protected $table = 'tb_market_order';
+    protected $table = 'tb_base_competition';
 
 	protected $guarded = array();
 
 	public static $rules = array();
-
 }

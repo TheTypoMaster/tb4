@@ -28,4 +28,13 @@ class MarketOrderingService {
         $this->marketOrderingRepository = $marketOrderingRepository;
         $this->marketTypeRepository = $marketTypeRepository;
     }
+
+    public function getDefaultMarketTypes($competitionId = 0)
+    {
+        $marketOrderingModel = $this->marketOrderingRepository->getMarketOrdering($competitionId);
+
+        $marketTypes = json_decode($marketOrderingModel->market_types);
+
+        return $this->marketTypeRepository->getMarketTypesIn($marketTypes);
+    }
 }

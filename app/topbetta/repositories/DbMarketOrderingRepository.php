@@ -20,7 +20,12 @@ class DbMarketOrderingRepository extends BaseEloquentRepository implements Marke
         $this->model = $marketOrderingModel;
     }
 
-
-
+    public function getMarketOrdering($competitionId = 0, $userId = 0)
+    {
+        return $this->model
+            ->where('user_id', $userId)
+            ->where('base_competition_id', $competitionId)
+            ->first();
+    }
 
 }

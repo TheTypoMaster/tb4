@@ -31,6 +31,10 @@ class BaseEloquentRepository {
 		return $this->model->all();
 	}
 
+    public function findAllPaginated($paginate = 15) {
+        return $this->model->paginate($paginate);
+    }
+
 	/**
 	 * Update record with the given id and data
 	 * @param $id
