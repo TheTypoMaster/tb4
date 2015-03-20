@@ -5,8 +5,6 @@ class Tbdb_bet_typeTableSeeder extends Seeder
 
     public function run()
     {
-
-
         $tbdb_bet_type = array(
 
             array(
