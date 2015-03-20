@@ -16,7 +16,6 @@ class CreateMarketOrderingTable extends Migration {
 		{
 			$table->increments('id');
 
-            $table->integer('sport_id')->unsigned();
             $table->integer('base_competition_id')->unsigned();
 
             $table->integer('user_id')->unsigned();
