@@ -24,7 +24,6 @@ class MarketOrderingController extends \BaseController {
 	public function index()
 	{
 		$competitionId = Input::get("competition", 0);
-
 	}
 
 
