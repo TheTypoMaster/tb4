@@ -20,7 +20,7 @@ class CreateSelectionCompetitorPivot extends Migration {
 
             $table->integer('competitor_id')->unsigned();
 
-            $table->string('competition_type');
+            $table->string('competitor_type');
 		});
 	}
 

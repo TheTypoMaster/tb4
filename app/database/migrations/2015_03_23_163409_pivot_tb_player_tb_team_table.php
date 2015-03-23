@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class PivotTbTeamTbdbEventTable extends Migration {
+class PivotTbPlayerTbTeamTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,13 +12,12 @@ class PivotTbTeamTbdbEventTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('tb_team_tbdb_event', function(Blueprint $table) {
+		Schema::create('tb_player_tb_team', function(Blueprint $table) {
 			$table->increments('id');
+			$table->integer('tb_player_id')->unsigned()->index();
 			$table->integer('tb_team_id')->unsigned()->index();
-			$table->integer('tbdb_event_id')->unsigned()->index();
-            $table->string('team_position');
+			$table->foreign('tb_player_id')->references('id')->on('tb_players')->onDelete('cascade');
 			$table->foreign('tb_team_id')->references('id')->on('tb_teams')->onDelete('cascade');
-			$table->foreign('tbdb_event_id')->references('id')->on('tbdb_event')->onDelete('cascade');
 		});
 	}
 
@@ -31,7 +30,7 @@ class PivotTbTeamTbdbEventTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('tb_team_tbdb_event');
+		Schema::drop('tb_player_tb_team');
 	}
 
 }
