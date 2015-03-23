@@ -33,8 +33,32 @@ class MarketOrderingService {
     {
         $marketOrderingModel = $this->marketOrderingRepository->getMarketOrdering($competitionId);
 
+        if( ! $marketOrderingModel ) {
+            return array();
+        }
+
         $marketTypes = json_decode($marketOrderingModel->market_types);
 
+        if(empty($marketTypes)) {
+            return array();
+        }
+
         return $this->marketTypeRepository->getMarketTypesIn($marketTypes);
+    }
+
+    public function createOrUpdateForCompetition($marketTypes, $competitionId = 0)
+    {
+        $marketOrdering = $this->marketOrderingRepository->getMarketOrdering($competitionId);
+
+        if( ! $marketOrdering ) {
+            return $this->marketOrderingRepository->create(array(
+                "base_competition_id" => $competitionId,
+                "market_types" => json_encode($marketTypes),
+            ));
+        }
+
+        return $this->marketOrderingRepository->updateWithId($marketOrdering->id, array(
+            "market_types" => json_encode($marketTypes)
+        ));
     }
 }

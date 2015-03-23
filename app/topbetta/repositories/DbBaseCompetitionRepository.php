@@ -9,8 +9,10 @@
 namespace TopBetta\Repositories;
 
 use TopBetta\Models\BaseCompetitionModel;
+use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
 
-class DbBaseCompetitionRepository extends BaseEloquentRepository {
+class DbBaseCompetitionRepository extends BaseEloquentRepository implements BaseCompetitionRepositoryInterface
+{
 
     public function __construct(BaseCompetitionModel $baseCompetitionModel)
     {

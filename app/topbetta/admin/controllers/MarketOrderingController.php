@@ -2,6 +2,12 @@
 
 namespace TopBetta\admin\Controllers;
 
+use Input;
+use Redirect;
+use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use View;
+use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use TopBetta\Services\Markets\MarketOrderingService;
 
 class MarketOrderingController extends \BaseController {
@@ -10,10 +16,22 @@ class MarketOrderingController extends \BaseController {
      * @var MarketOrderingService
      */
     private $marketOrderingService;
+    /**
+     * @var MarketTypeRepositoryInterface
+     */
+    private $marketTypeRepository;
+    /**
+     * @var BaseCompetitionRepositoryInterface
+     */
+    private $baseCompetitionRepository;
 
-    public function __construct(MarketOrderingService $marketOrderingService)
+    public function __construct(MarketOrderingService $marketOrderingService,
+                                MarketTypeRepositoryInterface $marketTypeRepository,
+                                BaseCompetitionRepositoryInterface $baseCompetitionRepository)
     {
         $this->marketOrderingService = $marketOrderingService;
+        $this->marketTypeRepository = $marketTypeRepository;
+        $this->baseCompetitionRepository = $baseCompetitionRepository;
     }
 
     /**
@@ -23,7 +41,21 @@ class MarketOrderingController extends \BaseController {
 	 */
 	public function index()
 	{
-		$competitionId = Input::get("competition", 0);
+
+        $competitionId = Input::get("competition", 0);
+
+        $marketTypes = array();
+        if( $competitionId ) {
+            $marketTypes = $this->marketTypeRepository->getMarketTypesForBaseCompetition($competitionId);
+        } else {
+            $marketTypes = $this->marketTypeRepository->findAll();
+        }
+
+        $marketOrdering = $this->marketOrderingService->getDefaultMarketTypes($competitionId);
+
+        $competitions = $this->baseCompetitionRepository->findAll();
+
+        return View::make('admin::eventdata.marketordering.index', compact('marketTypes', 'marketOrdering', 'competitions', 'competitionId'));
 	}
 
 
@@ -45,7 +77,13 @@ class MarketOrderingController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+        $competitionId = Input::get("competition", 0);
+        $marketTypes = Input::get('market-types', array());
+
+        $this->marketOrderingService->createOrUpdateForCompetition($marketTypes, $competitionId);
+
+        return Redirect::route('admin.marketordering.index', array("competition" => $competitionId));
+
 	}
 
 

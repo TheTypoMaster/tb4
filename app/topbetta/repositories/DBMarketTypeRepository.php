@@ -59,8 +59,9 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
                 $join->on('tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
                     ->on('tbdb_event_group.base_competition_id', '=', DB::raw($competitionId));
             })
-            ->get();
-
-
+            ->groupBy('tbdb_market_type.id')
+            ->get(array(
+                'tbdb_market_type.*',
+            ));
     }
 }
