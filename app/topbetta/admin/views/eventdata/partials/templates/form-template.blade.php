@@ -1,7 +1,7 @@
 @section('main')
 <div class="row">
     <div class="col-lg-12">
-        <h2 class="page-header"> {{ $modelName }} {{ $model->name }}
+        <h2 class="page-header"> {{ $modelName }} {{ $model ? $model->name : ""}}
 
         </h2>
         <ul class="nav nav-tabs">
@@ -9,11 +9,11 @@
         </ul>
         <h4>Edit {{ $modelName }}</h4>
         <div class='col-lg-6'>
-            {{ Form::model($model, array('method' => 'PATCH', 'route' => array($updateRoute, $model->id, "q" => $search))) }}
+            {{ Form::model($model, $formAction) }}
             @if(count($icons))
             <div class="form-group">
                 {{ Form::label('icon_id', 'Icon:') }}
-                <select class="icon-select form-control">
+                <select class="icon-select form-control" name="icon_id">
                     @foreach($icons as $icon)
                         <option value="{{ $icon->id }}" data-icon-url="{{ $icon->icon_url  }}" >{{ $icon->name }}</option>
                     @endforeach
@@ -48,14 +48,16 @@
             </div>
 
             @foreach($extraFields as $header=>$field)
-                {{ Form::label($field['field'], $header) }}
-                @if($field['type'] == 'icon-select')
-                    <select name="{{ $field['field'] }}" class="icon-select" >
-                        @foreach($field['icons'] as $icon)
-                            <option value="{{ $icon->id }}" data-icon-url="{{ $icon->icon_url  }}" >{{ $icon->name }}</option>
-                        @endforeach
-                    </select>
-                @endif
+                <div class="form-group">
+                    {{ Form::label($field['field'], $header) }}
+                    @if($field['type'] == 'icon-select')
+                        <select name="{{ $field['field'] }}" class="icon-select form-control" >
+                            @foreach($field['icons'] as $icon)
+                                <option value="{{ $icon->id }}" data-icon-url="{{ $icon->icon_url  }}" >{{ $icon->name }}</option>
+                            @endforeach
+                        </select>
+                    @endif
+                </div>
             @endforeach
         </div>
 

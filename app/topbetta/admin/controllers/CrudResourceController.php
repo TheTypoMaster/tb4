@@ -8,46 +8,107 @@
 
 namespace TopBetta\admin\controllers;
 
+use Request;
+use Redirect;
+use Input;
+use View;
+use App;
+use TopBetta\Services\Icons\IconService;
 
-class CrudResourceController {
+class CrudResourceController extends \BaseController{
 
+    protected $repositoryName;
 
     protected $repository;
 
-    protected $iconRepository;
+    protected $iconService;
+
+    protected $iconType;
+
+    protected $modelName;
+
+    protected $indexRoute;
+
+    protected $editRoute;
+
+    protected $createRoute;
+
+    protected $storeRoute;
+
+    protected $updateRoute;
+
+    protected $deleteRoute;
 
     protected $indexView;
 
+    protected $createView;
+
     protected $editView;
 
-    protected $createView;
+
+    /**
+     * @param IconService $iconService
+     */
+    public function __construct(IconService $iconService)
+    {
+        $this->iconService = $iconService;
+        $this->repository = App::make($this->repositoryName);
+    }
+
 
     /**
      * Display a listing of the resource.
      *
+     * @param array $extraData
      * @return Response
      */
-    public function index()
+    public function index($extraData = array())
     {
         $search = Request::get('q', '');
         if ($search) {
-            $sports = $this->repository->search($search);
+            $modelCollection = $this->repository->search($search);
         } else {
-            $sports = $this->repository->paginated();
+            $modelCollection = $this->repository->paginated();
         }
 
-        return View::make($this->indexView, compact('sports', 'search'));
+        $data = array(
+            "modelName"       => $this->modelName,
+            "modelCollection" => $modelCollection,
+            "createRoute"     => $this->createRoute,
+            "editRoute"       => $this->editRoute,
+            "deleteRoute"     => $this->deleteRoute,
+            "extraFields"     => $extraData,
+            "search"          => $search,
+        );
+
+        return View::make($this->indexView, compact('data'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param array $extraData
      * @return Response
      */
-    public function create()
+    public function create($extraData = array())
     {
-        $icons = $this->
-        return View::make($this->createView);
+        $search = Input::get('q', '');
+
+        $allIcons = Input::get("all_icons", false);
+
+        $icons = $this->iconService->getIcons($allIcons ? null : $this->iconType);
+
+        $data = array(
+            "model"       => null,
+            "modelName"   => $this->modelName,
+            "returnRoute" => $this->indexRoute,
+            "formAction" => array("method" => "POST", "route"  => array($this->storeRoute, "q" => $search)),
+            "extraFields" => $extraData,
+            "icons"       => $icons,
+            "search"      => $search
+        );
+
+        return View::make($this->createView, compact('data'));
     }
 
     /**
@@ -57,10 +118,10 @@ class CrudResourceController {
      */
     public function store()
     {
-        $data = Input::only('name', 'description');
-        $newModel = $this->sportsrepo->updateOrCreate($data);
+        $data = Input::except('q');
+        $newModel = $this->repository->updateOrCreate($data);
 
-        return Redirect::route('admin.sports.index', array($newModel['id']))
+        return Redirect::route($this->indexRoute, array($newModel['id']))
             ->with('flash_message', 'Saved!');
     }
 
@@ -78,22 +139,29 @@ class CrudResourceController {
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     * @param array $extraData
      * @return Response
      */
-    public function edit($id)
+    public function edit($id, $extraData = array())
     {
-        //get search query so we remain filtered when redirecting after editing
-        $search = Input::get("q", '');
-        $sport = $this->sportsrepo->find($id);
+        $search = Input::get('q', '');
 
-        $icons = IconModel::all();
-        if (is_null($sport)) {
-            // TODO: flash message user not found
-            return Redirect::route('admin.sports.index', array("q" => $search));
-        }
+        $allIcons = Input::get("all_icons", false);
 
-        return View::make('admin::eventdata.sports.edit', compact('sport', 'search', 'icons'));
+        $icons = $this->iconService->getIcons($allIcons ? null : $this->iconType);
+
+        $data = array(
+            "model"       => $this->repository->find($id),
+            "modelName"   => $this->modelName,
+            "returnRoute" => $this->indexRoute,
+            "formAction"  => array("method" => "PUT", "route"  => array($this->updateRoute, $id, "q" => $search)),
+            "extraFields" => $extraData,
+            "icons"       => $icons,
+            'search'      => $search
+        );
+
+        return View::make($this->editView, compact('data'));
     }
 
     /**
@@ -107,10 +175,10 @@ class CrudResourceController {
         //Get the search string for filtering when redirecting
         $search = Input::get("q", '');
 
-        $data = Input::only('name', 'description');
-        $this->sportsrepo->updateWithId($id, $data);
+        $data = Input::except('q');
+        $this->repository->updateWithId($id, $data);
 
-        return Redirect::route('admin.sports.index', array($id, "q"=>$search))
+        return Redirect::route($this->indexRoute, array($id, "q"=>$search))
             ->with('flash_message', 'Saved!');
     }
 
@@ -122,6 +190,12 @@ class CrudResourceController {
      */
     public function destroy($id)
     {
-        //
+        $search = Input::get('q', '');
+
+        $model = $this->repository->find($id);
+
+        $model->delete();
+
+        return Redirect::route($this->indexRoute, array("q" => $search));
     }
 }

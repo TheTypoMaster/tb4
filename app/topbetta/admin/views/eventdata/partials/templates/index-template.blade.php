@@ -1,7 +1,10 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="row page-header">
-            <h2 class="col-lg-4">{{ $modelName }} <small>({{ number_format($modelCollection->getTotal()) }})</small></h2>
+            <h2 class="col-lg-4">
+                {{ $modelName }} <small>({{ number_format($modelCollection->getTotal()) }})</small>
+                <a href="{{route($createRoute, array("q" => $search))}}" class="btn btn-primary">Create <i class="glyphicon glyphicon-plus"></i></a>
+            </h2>
 
             {{ Form::open(array('method' => 'GET')) }}
             <div class="input-group custom-search-form col-lg-4 pull-right">

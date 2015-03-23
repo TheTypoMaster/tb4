@@ -1,126 +1,97 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
-use TopBetta\Models\IconModel;
-use TopBetta\Repositories\DbSportsRepository;
 use View;
-use BaseController;
 use Redirect;
 use Input;
+use TopBetta\Models\IconModel;
+use TopBetta\Repositories\Contracts\IconTypeRepositoryInterface;
 
-class SportsController extends BaseController
+class SportsController extends CrudResourceController
 {
+    protected $repositoryName = 'TopBetta\Repositories\Contracts\SportRepositoryInterface';
 
-	/**
-	 * @var \TopBetta\Repositories\DbSportsRepository
-	 */
-	private $sportsrepo;
+    protected $iconType = IconTypeRepositoryInterface::TYPE_SPORT;
 
-	public function __construct(DbSportsRepository $sportsrepo)
+    protected $modelName = 'Sports';
+
+    protected $indexRoute = 'admin.sports.index';
+
+    protected $editRoute = 'admin.sports.edit';
+
+    protected $createRoute = 'admin.sports.create';
+
+    protected $storeRoute  = 'admin.sports.store';
+
+    protected $updateRoute = 'admin.sports.update';
+
+    protected $deleteRoute = 'admin.sports.destroy';
+
+    protected $indexView = 'admin::eventdata.sports.index';
+
+    protected $createView = 'admin::eventdata.sports.create';
+
+    protected $editView = 'admin::eventdata.sports.edit';
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param array $extraData
+     * @return Response
+     */
+	public function index($extraData = array())
 	{
-		$this->sportsrepo = $sportsrepo;
+        $extraData = array(
+            "Default Competition Icon" => array(
+                "type" => "image",
+                "field" => "defaultCompetitionIcon.icon_url"
+            ),
+        );
+
+        return parent::index($extraData);
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @param array $extraData
+     * @return Response
+     */
+	public function create($extraData = array())
 	{
-		$search = Request::get('q', '');
-		if ($search) {
-			$sports = $this->sportsrepo->search($search);
-		} else {
-			$sports = $this->sportsrepo->allSports();
-		}
+        $compIcons = $this->iconService->getIcons(IconTypeRepositoryInterface::TYPE_BASE_COMPETITION);
 
-		return View::make('admin::eventdata.sports.index', compact('sports', 'search'));
+        $extraData = array(
+            "Default Competition Icon" => array(
+                "type" => "icon-select",
+                "field" => 'default_competition_icon_id',
+                'icons' => $compIcons,
+            ),
+        );
+
+        return parent::create($extraData);
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int $id
+     * @param array $extraData
+     * @return Response
+     */
+	public function edit($id, $extraData = array())
 	{
-        return View::make('admin::eventdata.sports.create');
-	}
+		$compIcons = $this->iconService->getIcons(IconTypeRepositoryInterface::TYPE_BASE_COMPETITION);
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-        $data = Input::only('name', 'description');
-        $newModel = $this->sportsrepo->updateOrCreate($data);
+        $extraData = array(
+            "Default Competition Icon" => array(
+                "type" => "icon-select",
+                "field" => 'default_competition_icon_id',
+                'icons' => $compIcons,
+            ),
+        );
 
-        return Redirect::route('admin.sports.index', array($newModel['id']))
-            ->with('flash_message', 'Saved!');
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//get search query so we remain filtered when redirecting after editing
-        $search = Input::get("q", '');
-		$sport = $this->sportsrepo->find($id);
-
-        $icons = IconModel::all();
-        if (is_null($sport)) {
-            // TODO: flash message user not found
-            return Redirect::route('admin.sports.index', array("q" => $search));
-        }
-
-        return View::make('admin::eventdata.sports.edit', compact('sport', 'search', 'icons'));
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-        //Get the search string for filtering when redirecting
-		$search = Input::get("q", '');
-
-		$data = Input::only('name', 'description');
-        $this->sportsrepo->updateWithId($id, $data);
-
-        return Redirect::route('admin.sports.index', array($id, "q"=>$search))
-            ->with('flash_message', 'Saved!');
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
+        return parent::edit($id, $extraData);
 	}
 
 }

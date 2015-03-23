@@ -17,6 +17,13 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
         $this->model = $sports;
     }
 
+    public function paginated($paginate = 15)
+    {
+        return $this->model
+            ->orderBy('name', 'ASC')
+            ->paginate($paginate);
+    }
+
     /**
      * @param $search
      * @return mixed

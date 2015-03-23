@@ -125,5 +125,13 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface',
             'TopBetta\Repositories\DbBaseCompetitionRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\IconRepositoryInterface',
+            'TopBetta\Repositories\DbIconRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\IconTypeRepositoryInterface',
+            'TopBetta\Repositories\DbIconTypeRepository'
+        );
     }
 } 
