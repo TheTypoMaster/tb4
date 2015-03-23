@@ -7,10 +7,10 @@
             <div class="input-group custom-search-form col-lg-4 pull-right">
                 {{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
                 <span class="input-group-btn">
-        					<button class="btn btn-default" type="button">
-                                <i class="fa fa-search"></i>
-                            </button>
-        				</span>
+                    <button class="btn btn-default" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
             </div>
             {{ Form::close() }}
         </div>
@@ -41,7 +41,7 @@
                         <td>{{ $model->id }}</td>
                         <td>
                             @if($model->icon)
-                                <img src="{{ $model->icon->icon_url }}">
+                                <img src="{{ $model->icon->icon_url }}" style="width:25px;height:25px;">
                             @endif
                         </td>
                         <td>{{ $model->name }}</td>

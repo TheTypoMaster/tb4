@@ -1,6 +1,7 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
+use TopBetta\Models\IconModel;
 use TopBetta\Repositories\DbSportsRepository;
 use View;
 use BaseController;
@@ -84,12 +85,13 @@ class SportsController extends BaseController
         $search = Input::get("q", '');
 		$sport = $this->sportsrepo->find($id);
 
+        $icons = IconModel::all();
         if (is_null($sport)) {
             // TODO: flash message user not found
             return Redirect::route('admin.sports.index', array("q" => $search));
         }
 
-        return View::make('admin::eventdata.sports.edit', compact('sport', 'search'));
+        return View::make('admin::eventdata.sports.edit', compact('sport', 'search', 'icons'));
 	}
 
 	/**
