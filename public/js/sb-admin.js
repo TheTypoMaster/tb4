@@ -20,3 +20,20 @@ $(function() {
 $(function() {
 	$('.alert-dismissable').fadeOut(5000);
 });
+
+//Sets up icon selection
+$(function() {
+
+    function iconSelectFormat( state ) {
+        if(!state.id) {
+            return state.text;
+        }
+
+        return $('<span><img src="' + $(state.element).data('icon-url') + '" style="height:25px;width:25px;"/> ' + state.text + '</span>');
+    }
+
+    $(".icon-select").select2({
+        templateResult: iconSelectFormat,
+        templateSelection: iconSelectFormat
+    });
+});
