@@ -9,10 +9,11 @@ namespace TopBetta\Repositories\Contracts;
 
 interface IconTypeRepositoryInterface
 {
-    const TYPE_SPORT = 'sport';
+    const TYPE_SPORT            = 'sport';
     const TYPE_BASE_COMPETITION = 'base_competition';
-    const TYPE_EVENT_GROUP = 'event_group';
-    const TYPE_EVENT = 'event';
-    const TYPE_MARKET_TYPE = 'market_type';
-    const TYPE_TEAM = 'team';
+    const TYPE_EVENT_GROUP      = 'event_group';
+    const TYPE_EVENT            = 'event';
+    const TYPE_MARKET_TYPE      = 'market_type';
+    const TYPE_TEAM             = 'team';
+    const TYPE_PLAYER           = 'player';
 }

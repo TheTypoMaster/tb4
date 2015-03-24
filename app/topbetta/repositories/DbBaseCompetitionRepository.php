@@ -13,6 +13,7 @@ use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
 
 class DbBaseCompetitionRepository extends BaseEloquentRepository implements BaseCompetitionRepositoryInterface
 {
+    protected $order = array('name', 'ASC');
 
     public function __construct(BaseCompetitionModel $baseCompetitionModel)
     {

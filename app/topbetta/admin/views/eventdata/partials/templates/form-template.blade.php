@@ -1,4 +1,13 @@
 @section('main')
+    {{ Form::macro('datetime', function($name, $value) {
+        return "<div class='input-group datepicker'>
+                    <input type='text' class='form-control' name='$name' id='$name' value='$value' readonly/>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
+                    </span>
+                </div>";
+    }); }}
+
+
 <div class="row">
     <div class="col-lg-12">
         <h2 class="page-header"> {{ $modelName }} {{ $model ? $model->name : ""}}
@@ -32,10 +41,14 @@
                 {{ Form::label('default_name', 'Default Name:') }}
                 {{ Form::text('default_name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}
             </div>
+
+            @if( ! in_array( 'description', $excludedFields ) )
             <div class="form-group">
                 {{ Form::label('description', 'Description:') }}
                 {{ Form::text('description', null, array('class' => 'form-control', 'placeholder' => 'Description')) }}
             </div>
+            @endif
+
             <div class="form-group">
                 <label>Display: </label>
 
@@ -56,6 +69,22 @@
                                 <option value="{{ $icon->id }}" data-icon-url="{{ $icon->icon_url  }}" >{{ $icon->name }}</option>
                             @endforeach
                         </select>
+                    @elseif($field['type'] == 'datetime')
+                        {{ Form::datetime($field['field'], object_get($model, $field['field'])) }}
+                    @elseif($field['type'] == 'select')
+                        <select name="{{ $field['field'] }}" class="form-control">
+                            @foreach($field['data'] as $option)
+                                <option value="{{ $option->id }}" {{object_get($model, $field['field']) == $option->id ? "selected" : ""}}>{{ $option->name }}</option>
+                            @endforeach
+                        </select>
+                    @elseif($field['type'] == 'multi-select')
+                        <select name="{{ $field['field'] }}[]" class="form-control" multiple>
+                            @foreach($field['data'] as $option)
+                                <option value="{{ $option->id }}" {{ in_array($option->id, $model ? $model->$field['field']->lists('id') : array()) ? "selected" : ""}}>{{ $option->name }}</option>
+                            @endforeach
+                        </select>
+                    @else
+                        {{ Form::text($field['field'], null,  array('class' => 'form-control', 'placeholder' => $header)) }}
                     @endif
                 </div>
             @endforeach
@@ -79,7 +108,8 @@
 </div>
 
 <script type="text/javascript">
-
+    $(".datepicker").datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+    $('select').select2();
 </script>
 <!-- /.row -->
 @stop

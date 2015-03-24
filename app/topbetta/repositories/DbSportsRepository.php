@@ -13,15 +13,10 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
 
     protected $sports;
 
+    protected $order = array('name', 'ASC');
+
     function __construct(SportModel $sports) {
         $this->model = $sports;
-    }
-
-    public function paginated($paginate = 15)
-    {
-        return $this->model
-            ->orderBy('name', 'ASC')
-            ->paginate($paginate);
     }
 
     /**

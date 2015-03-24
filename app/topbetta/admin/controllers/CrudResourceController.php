@@ -45,6 +45,8 @@ class CrudResourceController extends \BaseController{
 
     protected $editView;
 
+    protected $excludedFields = array();
+
 
     /**
      * @param IconService $iconService
@@ -59,16 +61,20 @@ class CrudResourceController extends \BaseController{
     /**
      * Display a listing of the resource.
      *
+     * @param array $relations
      * @param array $extraData
      * @return Response
      */
-    public function index($extraData = array())
+    public function index($relations = array(), $extraData = array())
     {
         $search = Request::get('q', '');
+
+        $relations[] = 'icon';
+
         if ($search) {
-            $modelCollection = $this->repository->search($search);
+            $modelCollection = $this->repository->search($search, $relations);
         } else {
-            $modelCollection = $this->repository->paginated();
+            $modelCollection = $this->repository->findAllPaginated($relations);
         }
 
         $data = array(
@@ -79,6 +85,7 @@ class CrudResourceController extends \BaseController{
             "deleteRoute"     => $this->deleteRoute,
             "extraFields"     => $extraData,
             "search"          => $search,
+            "excludedFields"  => $this->excludedFields,
         );
 
         return View::make($this->indexView, compact('data'));
@@ -105,7 +112,8 @@ class CrudResourceController extends \BaseController{
             "formAction" => array("method" => "POST", "route"  => array($this->storeRoute, "q" => $search)),
             "extraFields" => $extraData,
             "icons"       => $icons,
-            "search"      => $search
+            "search"      => $search,
+            "excludedFields"  => $this->excludedFields,
         );
 
         return View::make($this->createView, compact('data'));
@@ -158,7 +166,8 @@ class CrudResourceController extends \BaseController{
             "formAction"  => array("method" => "PUT", "route"  => array($this->updateRoute, $id, "q" => $search)),
             "extraFields" => $extraData,
             "icons"       => $icons,
-            'search'      => $search
+            'search'      => $search,
+            "excludedFields"  => $this->excludedFields,
         );
 
         return View::make($this->editView, compact('data'));

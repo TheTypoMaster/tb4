@@ -14,9 +14,12 @@ use DB;
 
 class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTypeRepositoryInterface {
 
+    protected $order;
+
     public function __construct(MarketTypeModel $marketTypeModel)
     {
         $this->model = $marketTypeModel;
+        $this->order = array(DB::raw('-ordering'), 'DESC');
     }
 
     public function allMarketTypes()
@@ -32,6 +35,11 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
                     ->orWhere("description", "LIKE", "%$searchTerm%")
                     ->orderBy(DB::raw('-ordering'), 'DESC')
                     ->paginate(15);
+    }
+
+    public function search($searchTerm)
+    {
+        return $this->searchMarketTypes($searchTerm);
     }
 
     public function getMarketTypeById($id)

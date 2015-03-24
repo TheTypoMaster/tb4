@@ -57,8 +57,10 @@
                             <td>
                                 @if($field['type'] == 'image')
                                     <img src="{{ object_get($model, $field['field']) }}" />
+                                @elseif($field['type'] == 'closure')
+                                    {{ call_user_func($field['field'], $model) }}
                                 @else
-                                    {{ object_get($mode, $field['field']) }}
+                                    {{ object_get($model, $field['field']) }}
                                 @endif
                             </td>
                         @endforeach

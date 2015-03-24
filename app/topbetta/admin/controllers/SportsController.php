@@ -36,10 +36,11 @@ class SportsController extends CrudResourceController
     /**
      * Display a listing of the resource.
      *
+     * @param array $relations
      * @param array $extraData
      * @return Response
      */
-	public function index($extraData = array())
+	public function index($relations = array(), $extraData = array())
 	{
         $extraData = array(
             "Default Competition Icon" => array(
@@ -48,7 +49,11 @@ class SportsController extends CrudResourceController
             ),
         );
 
-        return parent::index($extraData);
+        $relations = array(
+            'defaultCompetitionIcon'
+        );
+
+        return parent::index($relations, $extraData);
 	}
 
     /**

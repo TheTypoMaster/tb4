@@ -32,4 +32,16 @@ class CompetitionModel extends Eloquent {
         return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
     }
 
+    public function baseCompetition() {
+        return $this->belongsTo('TopBetta\Models\BaseCompetitionModel', 'base_competition_id');
+    }
+
+    public function icon() {
+        return $this->belongsTo('TopBetta\Models\IconModel');
+    }
+
+    public function defaultEventIcon() {
+        return $this->belongsTo('TopBetta\Models\IconModel', 'default_event_icon_id');
+    }
+
 }
