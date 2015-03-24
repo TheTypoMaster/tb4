@@ -15,18 +15,51 @@ use View;
 use App;
 use TopBetta\Services\Icons\IconService;
 
-class CrudResourceController extends \BaseController{
 
+/**
+ * Handles CRUD CMS operations for resources
+ * Implementing controllers should make sure to provided values for all variables
+ * Class CrudResourceController
+ * @package TopBetta\admin\controllers
+ */
+abstract class CrudResourceController extends \BaseController{
+
+    /**
+     * Name of the resource repository
+     * @var $repositoryName
+     */
     protected $repositoryName;
 
+    /**
+     * The resource repository retrieved from the IoC container
+     * @var $repository
+     */
     protected $repository;
 
+    /**
+     * @var IconService
+     */
     protected $iconService;
 
+    /**
+     * The type of icons to load for the resource
+     * @var
+     */
     protected $iconType;
 
+    /**
+     * The name of the resource for display purposes
+     * @var String
+     */
     protected $modelName;
 
+    /**
+     * Any default fields to exclude for a resource
+     * @var array
+     */
+    protected $excludedFields = array();
+
+    // --- ROUTES --- //
     protected $indexRoute;
 
     protected $editRoute;
@@ -39,14 +72,12 @@ class CrudResourceController extends \BaseController{
 
     protected $deleteRoute;
 
+    // --- VIEWS --- //
     protected $indexView;
 
     protected $createView;
 
     protected $editView;
-
-    protected $excludedFields = array();
-
 
     /**
      * @param IconService $iconService
@@ -77,6 +108,7 @@ class CrudResourceController extends \BaseController{
             $modelCollection = $this->repository->findAllPaginated($relations);
         }
 
+        //the data array for display
         $data = array(
             "modelName"       => $this->modelName,
             "modelCollection" => $modelCollection,
@@ -103,6 +135,7 @@ class CrudResourceController extends \BaseController{
 
         $allIcons = Input::get("all_icons", false);
 
+        //get the icons
         $icons = $this->iconService->getIcons($allIcons ? null : $this->iconType);
 
         $data = array(
@@ -157,6 +190,7 @@ class CrudResourceController extends \BaseController{
 
         $allIcons = Input::get("all_icons", false);
 
+        //get the icons
         $icons = $this->iconService->getIcons($allIcons ? null : $this->iconType);
 
         $data = array(

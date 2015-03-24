@@ -63,4 +63,13 @@ class DbPlayersRepository extends BaseEloquentRepository implements PlayersRepos
         return $resource->toArray();
     }
 
+    public function search($searchTerm)
+    {
+        return $this->model
+            ->where('name', 'LIKE', "%$searchTerm%")
+            ->orWhere('short_name', 'LIKE', "%$searchTerm%")
+            ->orWhere('default_name', 'LIKE', "%$searchTerm%")
+            ->get();
+    }
+
 }

@@ -20,4 +20,13 @@ class DbBaseCompetitionRepository extends BaseEloquentRepository implements Base
         $this->model = $baseCompetitionModel;
     }
 
+    public function search($searchTerm)
+    {
+        return $this->model
+            ->where('name', 'LIKE', "%$searchTerm%")
+            ->orWhere('short_name', 'LIKE', "%$searchTerm%")
+            ->orWhere('default_name', 'LIKE', "%$searchTerm%")
+            ->get();
+    }
+
 }

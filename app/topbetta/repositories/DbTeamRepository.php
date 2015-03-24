@@ -18,4 +18,13 @@ class DbTeamRepository extends BaseEloquentRepository implements TeamRepositoryI
     {
         $this->model = $teamModel;
     }
+
+    public function search($searchTerm)
+    {
+        return $this->model
+            ->where('name', 'LIKE', "%$searchTerm%")
+            ->orWhere('short_name', 'LIKE', "%$searchTerm%")
+            ->orWhere('default_name', 'LIKE', "%$searchTerm%")
+            ->get();
+    }
 }
