@@ -12,13 +12,23 @@ class BaseCompetitionModel extends Eloquent {
 
 	public static $rules = array();
 
-    public function defaultEventGroupModel()
+    public function defaultEventGroupIcon()
     {
         return $this->belongsTo('TopBetta\Models\IconModel', 'default_event_group_icon_id');
     }
 
     public function icon()
     {
-        return $this->belongsTo('Topbetta\Models\IconModel');
+        return $this->belongsTo('TopBetta\Models\IconModel');
+    }
+
+    public function region()
+    {
+        return $this->belongsTo('TopBetta\Models\CompetitionRegionModel');
+    }
+
+    public function sport()
+    {
+        return $this->belongsTo('TopBetta\Models\SportModel');
     }
 }

@@ -8,7 +8,10 @@
 
 namespace TopBetta\admin\controllers;
 
+use TopBetta\Repositories\Contracts\CompetitionRegionRepositoryInterface;
 use TopBetta\Repositories\Contracts\IconTypeRepositoryInterface;
+use TopBetta\Repositories\Contracts\SportRepositoryInterface;
+use TopBetta\Services\Icons\IconService;
 
 class BaseCompetitionController extends CrudResourceController
 {
@@ -37,6 +40,17 @@ class BaseCompetitionController extends CrudResourceController
 
     protected $editView = 'admin::eventdata.basecompetitions.edit';
 
+    private $sportRepository;
+
+    private $competitionRegionRepository;
+
+    public function __construct(SportRepositoryInterface $sportRepository, CompetitionRegionRepositoryInterface $competitionRegionRepository, IconService $iconService)
+    {
+        $this->sportRepository = $sportRepository;
+        $this->competitionRegionRepository = $competitionRegionRepository;
+        parent::__construct($iconService);
+    }
+
 
     public function index($relations = array(), $extraData = array())
     {
@@ -45,10 +59,20 @@ class BaseCompetitionController extends CrudResourceController
                 "type" => "image",
                 "field" => "defaultEventGroupIcon.icon_url"
             ),
+            "Sport" => array(
+                "type" => "text",
+                "field" => "sport.name",
+            ),
+            "Region" => array(
+                "type" => "text",
+                "field" => "region.name",
+            ),
         );
 
         $relations = array(
-            'defaultEventGroupIcon'
+            'defaultEventGroupIcon',
+            'sport',
+            'region'
         );
 
         return parent::index($relations, $extraData);
@@ -56,31 +80,36 @@ class BaseCompetitionController extends CrudResourceController
 
     public function create($extraData = array())
     {
-        $compIcons = $this->iconService->getIcons(IconTypeRepositoryInterface::TYPE_BASE_COMPETITION);
-
-        $extraData = array(
-            "Default Event Group Icon" => array(
-                "type" => "icon-select",
-                "field" => 'default_event_group_icon_id',
-                'icons' => $compIcons,
-            ),
-        );
-
-        return parent::create($extraData);
+        return parent::create($this->getExtraData());
     }
 
     public function edit($id, $extraData = array())
     {
-        $compIcons = $this->iconService->getIcons(IconTypeRepositoryInterface::TYPE_BASE_COMPETITION);
+        return parent::edit($id, $this->getExtraData());
+    }
 
-        $extraData = array(
+    private function getExtraData()
+    {
+        $compIcons = $this->iconService->getIcons(IconTypeRepositoryInterface::TYPE_BASE_COMPETITION);
+        $sports = $this->sportRepository->findAll();
+        $regions = $this->competitionRegionRepository->findAll();
+
+        return array(
             "Default Event Group Icon" => array(
                 "type" => "icon-select",
                 "field" => 'default_event_group_icon_id',
                 'icons' => $compIcons,
             ),
+            "Sport" => array(
+                "type" => "select",
+                "field" => "sport_id",
+                "data" => $sports,
+            ),
+            "Region" => array(
+                "type" => "select",
+                "field" => "region_id",
+                "data" => $regions,
+            ),
         );
-
-        return parent::edit($id, $extraData);
     }
 }
