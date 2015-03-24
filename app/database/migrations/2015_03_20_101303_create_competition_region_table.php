@@ -24,6 +24,8 @@ class CreateCompetitionRegionTable extends Migration {
 
             $table->string('description');
 
+            $table->tinyInteger('display_flag');
+
 			$table->timestamps();
 		});
 	}
