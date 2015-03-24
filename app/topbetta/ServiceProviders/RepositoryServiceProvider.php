@@ -141,5 +141,9 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\PlayersRepositoryInterface',
             'TopBetta\Repositories\DbPlayersRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\CompetitionRegionRepositoryInterface',
+            'TopBetta\Repositories\DbCompetitionRegionRepository'
+        );
     }
 } 

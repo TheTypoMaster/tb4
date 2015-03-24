@@ -222,6 +222,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::resource('players', 'TopBetta\admin\controllers\PlayerController');
 
+    Route::resource('competitionregions', 'TopBetta\admin\controllers\CompetitionRegionController');
+
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');

@@ -16,4 +16,5 @@ interface IconTypeRepositoryInterface
     const TYPE_MARKET_TYPE      = 'market_type';
     const TYPE_TEAM             = 'team';
     const TYPE_PLAYER           = 'player';
+    const TYPE_REGION           = 'region';
 }
