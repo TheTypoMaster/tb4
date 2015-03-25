@@ -106,7 +106,7 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
         $user->update($data);
 
-        return $user;
+        return $user->toArray();
 	}
 	
     public function getWithTopBettaUser($userId)
