@@ -2,6 +2,7 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
 use View;
@@ -10,12 +11,17 @@ use Redirect;
 
 class FrontUsersController extends \BaseController {
 
-	public function __construct() {
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $userDashboardNotificationService;
 
+    public function __construct(UserDashboardNotificationService $userDashboardNotificationService) {
 		//we are only protecting certain routes in this controller
 		$this -> beforeFilter('auth', array('only' => array('index')));
 
-	}
+        $this->userDashboardNotificationService = $userDashboardNotificationService;
+    }
 
 	public function login() {
 
@@ -321,6 +327,8 @@ class FrontUsersController extends \BaseController {
 			}
 
 			if ($user['status'] == 200) {
+
+                $this->userDashboardNotificationService->notify($user);
 
 				if ($input['type'] != 'upgrade') {
 

@@ -13,7 +13,7 @@ use Queue;
 
 abstract class AbstractDashboardNotificationService {
 
-    protected $queueService = 'Topbetta\Services\DashboardNotification\DashboardNotificationQueueService';
+    protected $queueService = 'TopBetta\Services\DashboardNotification\DashboardNotificationQueueService';
 
     public function notify($data)
     {
