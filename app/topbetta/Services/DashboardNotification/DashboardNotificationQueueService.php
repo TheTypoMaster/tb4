@@ -40,4 +40,9 @@ class DashboardNotificationQueueService {
         $job->delete();
     }
 
+    public function failed($data)
+    {
+        Log::error("Added to failed job list : " . $data);
+    }
+
 }
