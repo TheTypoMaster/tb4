@@ -78,6 +78,9 @@ class RisaFormImporter extends \BaseController {
                         case "William Hill Park Lakeside":
                             $venueName = strtoupper(str_replace("William Hill Park Lakeside", "Sandown",  $risaXML->Venue[0]->attributes ()->VenueName));
                             break;
+                        case "Racing.com Park":
+                            $venueName = strtoupper(str_replace("Racing.com Park", "Pakenham",  $risaXML->Venue[0]->attributes ()->VenueName));
+                            break;
                         default:
                             $venueName = strtoupper($risaXML->Venue[0]->attributes ()->VenueName);
                     }
