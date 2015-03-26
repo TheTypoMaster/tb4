@@ -42,7 +42,6 @@ class DashboardNotificationQueueService {
         }
 
         $job->delete();
-
     }
 
     public function failed($data)

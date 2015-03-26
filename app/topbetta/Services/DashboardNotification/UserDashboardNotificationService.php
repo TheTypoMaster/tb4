@@ -12,7 +12,7 @@ namespace TopBetta\Services\DashboardNotification;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
-class UserDashboardNotificationService extends AbstractDashboardNotificationService {
+class UserDashboardNotificationService extends AbstractUserDashboardNotificationService {
 
     /**
      * @var UserRepositoryInterface
@@ -39,22 +39,8 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
         //get the user
         $user = $this->userRepository->getFullUserDetailsFromUsername($data['username']);
 
-        //get the users name
-        if( array_get($user, 'topbettauser', null) ) {
-            $firstName = array_get($user, 'topbettauser.first_name', null);
-            $lastName = array_get($user, 'topbettauser.last_name', null);;
-        } else {
-            $names = explode(' ', array_get($user, 'name', null));
-            $firstName = array_get($names, 0, "");
-            $lastName = array_get($names, 1, "");
-        }
-
         //create payload
         $payload = array(
-            "user_username"         => array_get($user, 'username', null),
-            "user_first_name"       => $firstName,
-            "user_last_name"        => $lastName,
-            "user_email"            => array_get($user, 'email', null),
             "user_street"           => array_get($user, 'topbettauser.street', null),
             "user_city"             => array_get($user, 'topbettauser.city', null),
             "user_state"            => array_get($user, 'topbettauser.state', null),
@@ -70,6 +56,6 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
             "user_btag"             => array_get($user, 'topbettauser.btag', null),
         );
 
-        return $payload;
+        return array_merge($payload, parent::formatPayload($user));
     }
 }
