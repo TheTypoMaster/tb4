@@ -59,6 +59,9 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
                     "transaction_amount"      => $transaction->amount,
                     "transaction_type_name"   => $transaction->transasctionType->name,
                     "transaction_external_id" => $transaction->id,
+                    "transaction_parent_key"  => "RECIPIENT",
+                    "transaction_child_key"   => "GIVER",
+
                     //add the giver
                     "users"                   => array(
                         $transaction->giver ?: $this->formatUser($transaction->giver)
