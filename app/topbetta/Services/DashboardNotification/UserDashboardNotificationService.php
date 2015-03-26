@@ -56,12 +56,12 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
 
                 //add the transaction
                 $payload['transactions'][] = array(
-                    "transaction_amount" => $transaction->amount,
-                    "transaction_type_name" => $transaction->transasctionType->name,
+                    "transaction_amount"      => $transaction->amount,
+                    "transaction_type_name"   => $transaction->transasctionType->name,
                     "transaction_external_id" => $transaction->id,
                     //add the giver
-                    "users" => array(
-                        $transaction->giver ? : $this->formatUser($transaction->giver)
+                    "users"                   => array(
+                        $transaction->giver ?: $this->formatUser($transaction->giver)
                     ),
                 );
             }
