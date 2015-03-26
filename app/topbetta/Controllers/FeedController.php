@@ -76,10 +76,11 @@ class FeedController extends BaseController {
                 $response = $this->_getSports();
                 break;
 
+
             case 'competitions':
                 if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney')->subDay()->toDateString();
 
-                $response = Cache::remember('topbetta-xml-feed-sports-comps_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to']. $sport, 0 , 10), 1, function() use ($input)
+                $response = Cache::remember('topbetta-xml-feed-sports-comps_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to'], 0 , 10). $sport, 1, function() use ($input)
                 {
                     return $this->_getCompetitions($input);
                 });
@@ -89,7 +90,7 @@ class FeedController extends BaseController {
             case 'events':
                 if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney');
 
-                $response = Cache::remember('topbetta-xml-feed-sports-events_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to']. $sport, 0 , 10), 1, function() use ($input)
+                $response = Cache::remember('topbetta-xml-feed-sports-events_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to'], 0 , 10). $sport, 1, function() use ($input)
                 {
                     return $this->_getEvents($input['from'], $input['to']);
                 });
