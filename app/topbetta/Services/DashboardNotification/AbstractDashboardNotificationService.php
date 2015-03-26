@@ -15,6 +15,10 @@ abstract class AbstractDashboardNotificationService {
 
     protected $queueService = 'TopBetta\Services\DashboardNotification\DashboardNotificationQueueService';
 
+    /**
+     * Puts a job on the queue to send a notification to the dashboard based on implementation
+     * @param $data
+     */
     public function notify($data)
     {
         //get the formatted payload
