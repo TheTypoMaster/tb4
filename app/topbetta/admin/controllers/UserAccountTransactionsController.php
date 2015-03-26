@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use TopBetta\Repositories\AccountTransactionRepo;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
+use TopBetta\Services\Accounting\AccountTransactionService;
 use User;
 use View;
 use Input;
@@ -19,24 +20,23 @@ class UserAccountTransactionsController extends \BaseController
 	 * @var User
 	 */
 	private $user;
-
-	/**
-	 * @var AccountTransactionRepo
-	 */
-	private $accountTransactionRepo;
     /**
      * @var AccountTransactionTypeRepositoryInterface
      */
     private $accountTransactionTypeRepository;
+    /**
+     * @var AccountTransactionService
+     */
+    private $accountTransactionService;
 
-    public function __construct(AccountTransactionRepositoryInterface $accountTransactionRepo,
+    public function __construct(AccountTransactionService $accountTransactionService,
                                 AccountTransactionTypeRepositoryInterface $accountTransactionTypeRepository,
                                 User $user)
 	{
 
-		$this->accountTransactionRepo = $accountTransactionRepo;
 		$this->user = $user;
         $this->accountTransactionTypeRepository = $accountTransactionTypeRepository;
+        $this->accountTransactionService = $accountTransactionService;
     }
 
 	/**
@@ -47,7 +47,7 @@ class UserAccountTransactionsController extends \BaseController
 	public function index($userId)
 	{
 		$user = $this->user->find($userId);
-		$transactions = $this->accountTransactionRepo->getUserTransactionsPaginated($user->id);
+		$transactions = $this->accountTransactionService->getAccountTransactionsForUserPaginated($user->id);
 
 		return View::make('admin::transactions.user.index')
 						->with(compact('transactions', 'user'))
@@ -70,13 +70,7 @@ class UserAccountTransactionsController extends \BaseController
     {
         $data = Input::all();
 
-        $data['amount'] = 100*$data['amount'];
-        $data['created_date'] = Carbon::now()->toDateTimeString();
-        $data['recipient_id'] = $userId;
-        $data['giver_id'] = \Auth::user()->id;
-        $data['session_tracking_id'] = -1;
-
-        $this->accountTransactionRepo->create($data);
+        $this->accountTransactionService->increaseAccountBalance($userId, $data['amount']*100, $data['transaction_type'], \Auth::user()->id, $data['notes']);
 
         return Redirect::route('admin.users.account-transactions.index', array($userId));
     }

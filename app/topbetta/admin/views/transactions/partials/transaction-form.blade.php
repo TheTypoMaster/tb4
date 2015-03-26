@@ -1,8 +1,8 @@
 {{ Form::open(array("method" => "POST", "route" => array("admin.users.account-transactions.store", $user->id))) }}
 
 <div class="form-group">
-    <label for="account_tranasction_type">Tranasction Type</label>
-    <select class="form-control" name="account_transaction_type">
+    <label for="tranasction_type">Tranasction Type</label>
+    <select class="form-control" name="transaction_type">
         @foreach($transactionTypes as $transactionType)
             <option value="{{$transactionType->keyword}}">{{ $transactionType->name }}</option>
         @endforeach
