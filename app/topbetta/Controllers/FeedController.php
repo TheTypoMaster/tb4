@@ -65,9 +65,11 @@ class FeedController extends BaseController {
         $validResources = ['sports', 'competitions', 'events'];
         if(!in_array($input['resource'], $validResources)) return $this->response->failed('Valid resource not specified', 400, 801, 'Valid resource not specified', 'resource=sports or resource=competitions query string paramater');
 
-
         // set from and to dates if not provided
         if(!isset($input['to'])) $input['to'] = Carbon::now('Australia/Sydney')->addDay()->toDateString();
+
+        $sport = '';
+        if(isset($input['sport'])) $sport = '_'.$input['sport'];
 
         switch($input['resource']){
             case 'sports':
@@ -77,7 +79,7 @@ class FeedController extends BaseController {
             case 'competitions':
                 if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney')->subDay()->toDateString();
 
-                $response = Cache::remember('topbetta-xml-feed-sports-comps_'.$input['from'].'-'.substr($input['to'], 0 , 10), 1, function() use ($input)
+                $response = Cache::remember('topbetta-xml-feed-sports-comps_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to']. $sport, 0 , 10), 1, function() use ($input)
                 {
                     return $this->_getCompetitions($input);
                 });
@@ -87,7 +89,7 @@ class FeedController extends BaseController {
             case 'events':
                 if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney');
 
-                $response = Cache::remember('topbetta-xml-feed-sports-events_'.$input['from'].'-'.substr($input['to'], 0 , 10), 1, function() use ($input)
+                $response = Cache::remember('topbetta-xml-feed-sports-events_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to']. $sport, 0 , 10), 1, function() use ($input)
                 {
                     return $this->_getEvents($input['from'], $input['to']);
                 });
