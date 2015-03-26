@@ -25,7 +25,7 @@ class BetDashboardNotificationService extends AbstractDashboardNotificationServi
 
     public function getEndpoint()
     {
-        return "bets";
+        return "test-notify";
     }
 
     public function getHttpMethod()
@@ -40,7 +40,7 @@ class BetDashboardNotificationService extends AbstractDashboardNotificationServi
             return array();
         }
 
-        $bet = $this->betRepository->findWithTransactions($data['id']);
+        $bet = $this->betRepository->getWithUserAndTransactions($data['id']);
 
         $payload = array(
             "bet_amount" => array_get($bet, 'amount', 0),
@@ -54,7 +54,7 @@ class BetDashboardNotificationService extends AbstractDashboardNotificationServi
             "transactions" => array(),
         );
 
-        if($transaction = array_get($bet, 'betTransaction', null)) {
+        if($transaction = array_get($bet, 'bet_transaction', null)) {
             $payload['tranasactions'][] = $this->formatTransaction($transaction);
         }
 
@@ -62,7 +62,7 @@ class BetDashboardNotificationService extends AbstractDashboardNotificationServi
             $payload['tranasactions'][] = $this->formatTransaction($transaction);
         }
 
-        if($transaction = array_get($bet, 'refundTransaction', null)) {
+        if($transaction = array_get($bet, 'refund_transaction', null)) {
             $payload['tranasactions'][] = $this->formatTransaction($transaction);
         }
 
@@ -73,7 +73,7 @@ class BetDashboardNotificationService extends AbstractDashboardNotificationServi
     {
         return array(
             "transaction_amount" => array_get($transaction, 'amount', 0),
-            "transaction_type_name" => array_get($transaction, 'transactionType.name', null),
+            "transaction_type_name" => array_get($transaction, 'transaction_type.name', null),
             "external_id" => array_get($transaction, "id", 0),
         );
     }

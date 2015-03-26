@@ -567,8 +567,8 @@ class SportsController extends BaseController {
 											
 											// result any sport bet for this market
 											\Log::info('RESULTING: all sport bets for market id: ' . $marketId);
-											$betResultRepo = new TopBetta\Repositories\BetResultRepo();
-											$betResultRepo->resultAllSportBetsForMarket($marketId);
+
+											\TopBetta\Facades\BetResultRepo::resultAllSportBetsForMarket($marketId);
 
 											// TAKEN OUT TILL WE GO FULL AUTO
 // 											// update the event status to paying

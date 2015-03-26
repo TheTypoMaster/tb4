@@ -498,8 +498,7 @@ class RacingController extends \BaseController
                         // ALL RACES PROCESSED - RESULT ALL BETS FOR THE EVENT LIST (ABANDONED ONLY)
                         foreach ($eventList as $eventId) {
                             \Log::info('ABANDONED: refund all bets for event id: ' . $eventId);
-							$betResultRepo = new TopBetta\Repositories\BetResultRepo();
-							$betResultRepo->resultAllBetsForEvent($eventId);
+                            \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($eventId);
                         }
                         break;
 
@@ -660,8 +659,7 @@ class RacingController extends \BaseController
                         // ALL RUNNERS PROCESSED - REFUND ANY BETS FOR SCRATCHED RUNNERS
                         foreach ($scratchList as $scratchedId) {
                             \Log::info('SCRATCHED: refunding bets for runner id: ' . $scratchedId);
-							$betRepo = new TopBetta\Repositories\BetRepo();
-							$betRepo->refundBetsForRunnerId($scratchedId);
+							\TopBetta\Facades\BetRepo::refundBetsForRunnerId($scratchedId);
                         }						
 						
                         break;
@@ -902,8 +900,7 @@ class RacingController extends \BaseController
                             $racingJSONlog = \Input::json()->all();
                             \File::append('/tmp/backAPIracingResultJSON-E' .$eventId.'-'. $currentTimeMs, json_encode($racingJSONlog));
 
-                            $betResultRepo = new TopBetta\Repositories\BetResultRepo();
-							$betResultRepo->resultAllBetsForEvent($eventId);
+							\TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($eventId);
                         }
 
                         break;

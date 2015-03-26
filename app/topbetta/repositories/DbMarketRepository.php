@@ -120,8 +120,8 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
                 $extMarket = SportsMarket::find($marketId);
                 if ($extMarket) {
                     \Log::info('Resulting bets for ext market id: ' . $extMarket->external_market_id);
-                    $betResultRepo = new BetResultRepo();
-                    $betResultRepo->resultAllSportBetsForMarket($extMarket->external_market_id);
+
+                    \TopBetta\Facades\BetResultRepo::resultAllSportBetsForMarket($extMarket->external_market_id);
                 } else {
                     \Log::info('Couldnt find market id: ' . $marketId);
                 }
