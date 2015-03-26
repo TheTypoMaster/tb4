@@ -78,7 +78,7 @@ class FeedController extends BaseController {
 
 
             case 'competitions':
-                if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney')->subDay()->toDateString();
+                if(!isset($input['from'])) $input['from'] = Carbon::now('Australia/Sydney')->toDateString();
 
                 $response = Cache::remember('topbetta-xml-feed-sports-comps_'.$input['resource'].'_'.$input['from'].'-'.substr($input['to'], 0 , 10). $sport, 1, function() use ($input)
                 {
@@ -116,7 +116,7 @@ class FeedController extends BaseController {
         foreach($competitions as $competition){
             $competition['competition_url'] = Config::get('topbetta.SPORTS_LINK').'/'.$competition['competition_id'];
             // get events for competition
-            $events = $this->event->getEventsforCompetitionId($competition['competition_id'], $input['from'], $input['to']);
+            $events = $this->event->getEventsforCompetitionId($competition['competition_id'], $input['from']);
             // $events = $this->_getEvents($competition['competition_id'], $input['from'], $input['to']);
 
             // loop on each event
