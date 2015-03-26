@@ -56,6 +56,7 @@ class ExternalSourceBetNotifcationQueueService {
         $parameterData = $data['parameters'];
         $betData = $data['bet_data'];
 
+        file_put_contents('/tmp/pc-bet', json_encode($betData). "\n", FILE_APPEND);
         // create guzzle client
         $client = new Client();
 
