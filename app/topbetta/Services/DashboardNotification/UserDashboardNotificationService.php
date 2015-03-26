@@ -12,7 +12,7 @@ namespace TopBetta\Services\DashboardNotification;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
-class UserDashboardNotificationService extends AbstractUserDashboardNotificationService {
+class UserDashboardNotificationService extends AbstractDashboardNotificationService {
 
     /**
      * @var UserRepositoryInterface
