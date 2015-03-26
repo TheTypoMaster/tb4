@@ -59,4 +59,22 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
 
         return $bets->toArray();
     }
+
+    public function getWithUserAndTransactions($betId)
+    {
+        return $this->model
+            ->where('id', $betId)
+            ->with(array(
+                'betTransaction',
+                'betTransaction.transactionType',
+                'result',
+                'result.transactionType',
+                'refundTransaction',
+                'refundTransaction.transactionType',
+                'user',
+                'type'
+            ))
+            ->first()
+            ->toArray();
+    }
 }
