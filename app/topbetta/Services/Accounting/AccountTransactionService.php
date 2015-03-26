@@ -183,6 +183,11 @@ class AccountTransactionService {
         }
     }
 
+    public function getTransaction($transactionId)
+    {
+        return $this->accounttransactions->find($transactionId);
+    }
+
     public function getAccountBalanceForUser($userId)
     {
         return $this->accounttransactions->getAccountBalanceByUserId($userId);
