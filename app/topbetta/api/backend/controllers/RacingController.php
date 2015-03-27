@@ -4,6 +4,7 @@ use Config;
 
 use TopBetta;
 use TopBetta\Services\Caching\NextToJumpCacheService;
+use TopBetta\Repositories\BetResultRepo;
 
 use TopBetta\Repositories\DbEventRepository;
 
@@ -57,10 +58,12 @@ class RacingController extends \BaseController
 
 
     public function __construct(NextToJumpCacheService $nexttojump,
-                                DbEventRepository $events)
+                                DbEventRepository $events,
+                                BetResultRepo  $betrepository)
     {
         $this->nexttojump = $nexttojump;
         $this->events = $events;
+        $this->betrepository = $betrepository;
     }
 
     /**
@@ -498,7 +501,8 @@ class RacingController extends \BaseController
                         // ALL RACES PROCESSED - RESULT ALL BETS FOR THE EVENT LIST (ABANDONED ONLY)
                         foreach ($eventList as $eventId) {
                             \Log::info('ABANDONED: refund all bets for event id: ' . $eventId);
-                            \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($eventId);
+							// $betResultRepo = new TopBetta\Repositories\BetResultRepo();
+                            $this->betrepository->resultAllBetsForEvent($eventId);
                         }
                         break;
 
@@ -900,7 +904,8 @@ class RacingController extends \BaseController
                             $racingJSONlog = \Input::json()->all();
                             \File::append('/tmp/backAPIracingResultJSON-E' .$eventId.'-'. $currentTimeMs, json_encode($racingJSONlog));
 
-							\TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($eventId);
+                            //$betResultRepo = new TopBetta\Repositories\BetResultRepo();
+                            $this->betrepository->resultAllBetsForEvent($eventId);
                         }
 
                         break;

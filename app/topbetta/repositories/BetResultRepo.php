@@ -11,6 +11,8 @@ use TopBetta\RaceResult;
 use Carbon;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
+use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
+
 /**
  * Description of BetResult
  *
@@ -19,17 +21,22 @@ use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 class BetResultRepo
 {
 
+
     /**
      * @var BetDashboardNotificationService
      */
     private $dashboardNotificationService;
 
-    public function __construct(BetDashboardNotificationService $dashboardNotificationService)
+	protected $notifications;
+
+    public function __construct(BetDashboardNotificationService $dashboardNotificationService, ExternalSourceBetNotificationService $notifications)
     {
         $this->dashboardNotificationService = $dashboardNotificationService;
+		$this->notifications = $notifications;
     }
 
-    /**
+
+	/**
 	 * Find and result all events that have pending bets if the 
 	 * event is marked as paying.
 	 * 
@@ -154,13 +161,16 @@ class BetResultRepo
 			return false;
 		}
 
-		$result =  $this->processBetPayout($bet);
 
-        if($result) {
+		$resultBet = $this->processBetPayout($bet);
+
+		if($resultBet) {
             $this->dashboardNotificationService->notify(array("id" => $bet->id));
+			$this->notifications->notifyBetResult($bet);
         }
 
-        return $result;
+		return $resultBet;
+
 	}
 	
 	/**

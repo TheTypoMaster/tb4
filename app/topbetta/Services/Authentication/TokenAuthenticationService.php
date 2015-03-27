@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTokenRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
+use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 
 use TopBetta\Services\UserAccount\UserAccountService;
 
@@ -29,6 +30,7 @@ class TokenAuthenticationService {
     protected $betsource;
     protected $usertoken;
     protected $user;
+    protected $usertopbetta;
     protected $userservice;
 
     /**
@@ -42,11 +44,13 @@ class TokenAuthenticationService {
     public function __construct(BetSourceRepositoryInterface $betsource,
                                 UserTokenRepositoryInterface $usertoken,
                                 UserRepositoryInterface $user,
+                                UserTopBettaRepositoryInterface $usertopbetta,
                                 UserAccountService $userservice){
 
         $this->betsource = $betsource;
         $this->usertoken = $usertoken;
         $this->user = $user;
+        $this->usertopbetta = $usertopbetta;
         $this->userservice = $userservice;
 
     }
@@ -142,8 +146,15 @@ class TokenAuthenticationService {
         // log betting user In
         Auth::login($user);
 
+        // get both user model details
+        $userBasic = Auth::user()->toArray();
+        $userFull = $this->usertopbetta->getUserDetailsFromUserId($userBasic['id']);
+
+        // return user and topbetta_user model
+        return array_merge($userBasic, $userFull);
+
         // return user model
-        return Auth::user();
+        //return Auth::user();
     }
 
 
