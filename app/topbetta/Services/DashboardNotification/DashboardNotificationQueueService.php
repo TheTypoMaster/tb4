@@ -24,7 +24,7 @@ class DashboardNotificationQueueService {
         //create the request
         $client = new Client();
 
-        $request = $client->createRequest($parameters['http_method'], $parameters['api_endpont'], array(
+        $request = $client->createRequest($parameters['http_method'], $parameters['api_endpoint'], array(
             "auth" => array(
                 $parameters['api_user'],
                 $parameters['api_password'],
@@ -40,7 +40,7 @@ class DashboardNotificationQueueService {
             return false;
         }
 
-        if( $response['http_status_code'] != 200 ) {
+        if( $response->json()['http_status_code'] != 200 ) {
             Log::error("Dashboard API error : " . print_r($response, true));
         }
 
