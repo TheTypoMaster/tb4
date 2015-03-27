@@ -46,7 +46,7 @@ abstract class AbstractTransactionDashboardNotificationService extends AbstractD
 
         return array(
             "transaction_amount"    => array_get($transaction, 'amount', 0),
-            'transaction_type_name' => array_get($this->transactionTypeMapping, array_get($transaction, 'transaction_type.name', null), null),
+            'transaction_type_name' => array_get($this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', null), null),
             "external_id"           => array_get($transaction, 'id', 0),
         );
     }
