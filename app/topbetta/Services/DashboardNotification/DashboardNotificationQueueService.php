@@ -16,10 +16,12 @@ class DashboardNotificationQueueService {
 
     public function fire($job, $data)
     {
+        //get the payload and parameters
         $payload = $data['payload'];
 
         $parameters = $data['parameters'];
 
+        //create the request
         $client = new Client();
 
         $request = $client->createRequest($parameters['http_method'], $parameters['api_endpoint'], array(
@@ -30,11 +32,16 @@ class DashboardNotificationQueueService {
             'json' => $payload,
         ));
 
+        //send the request
         try {
-            $client->send($request);
+            $response = $client->send($request);
         } catch (RequestException $e) {
             Log::error("DashboardNotificationQueueService Guzzle Request Exception : " . $e->getMessage() . " Response " . $e->getResponse());
             return false;
+        }
+
+        if( $response->json()['http_status_code'] != 200 ) {
+            Log::error("Dashboard API error : " . print_r($response->json(), true));
         }
 
         $job->delete();
