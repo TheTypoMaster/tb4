@@ -9,6 +9,7 @@
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 use TopBetta\Repositories\DbAccountTransactionTypeRepository;
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use Validator;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
@@ -45,13 +46,18 @@ class AccountTransactionService {
      * @var array
      */
     protected $betOrigins = array();
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $userDashboardNotificationService;
 
     public function __construct(AccountTransactionRepositoryInterface $accounttransactions,
                                 AccountTransactionTypeRepositoryInterface $accounttransactiontypes,
                                 UserRepositoryInterface $user,
                                 UserAccountService $useraccountservice,
                                 TokenAuthenticationService $authentication,
-                                BetOriginRepositoryInterface $betOriginRepository)
+                                BetOriginRepositoryInterface $betOriginRepository,
+                                UserDashboardNotificationService $userDashboardNotificationService)
     {
         $this->accounttransactions = $accounttransactions;
         $this->accounttransactiontypes = $accounttransactiontypes;
@@ -59,6 +65,7 @@ class AccountTransactionService {
         $this->authentication = $authentication;
         $this->useraccountservice = $useraccountservice;
         $this->betOriginRepository = $betOriginRepository;
+        $this->userDashboardNotificationService = $userDashboardNotificationService;
     }
 
     public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
@@ -95,7 +102,13 @@ class AccountTransactionService {
 
         );
 
-        return $this->accounttransactions->create($params);
+        $transaction = $this->accounttransactions->create($params);
+
+        if( $transaction ) {
+            $this->userDashboardNotificationService->notify(array("id" => $userID, "transactions" => array( $transaction['id'] )));
+        }
+
+        return $transaction;
     }
 
     public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){

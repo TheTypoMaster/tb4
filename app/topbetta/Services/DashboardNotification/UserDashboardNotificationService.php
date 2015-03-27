@@ -9,6 +9,7 @@
 namespace TopBetta\Services\DashboardNotification;
 
 
+use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
@@ -19,14 +20,14 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
      */
     private $userRepository;
     /**
-     * @var AccountTransactionService
+     * @var AccountTransactionRepositoryInterface
      */
-    private $transactionService;
+    private $transactionRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository, AccountTransactionService $transactionService)
+    public function __construct(UserRepositoryInterface $userRepository, AccountTransactionRepositoryInterface $transactionRepository)
     {
         $this->userRepository = $userRepository;
-        $this->transactionService = $transactionService;
+        $this->transactionRepository = $transactionRepository;
     }
 
     public function getEndpoint()
@@ -41,8 +42,14 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
 
     public function formatPayload($data)
     {
+        //check the id exists
+        if( ! $data['id'] ) {
+            \Log::error("No user id specidfied in UserDashboardNotificationService");
+            return false;
+        }
+
         //get the user
-        $user = $this->userRepository->getFullUserDetailsFromUsername($data['username']);
+        $user = $this->userRepository->find($data['id']);
 
         $payload = $this->formatUser($user);
 
@@ -52,7 +59,7 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
         if( $transactions = array_get($data, 'transactions', false) ) {
             foreach($transactions as $transactionId) {
                 //get the transaction
-                $transaction = $this->transactionService->getTransaction($transactionId);
+                $transaction = $this->transactionRepository->find($transactionId);
 
                 //add the transaction
                 $payload['transactions'][] = array(

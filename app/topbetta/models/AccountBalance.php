@@ -172,6 +172,10 @@ class AccountBalance extends \Eloquent {
     	}
     	// return the new transaction ID
      	LogHelper::l("AccountBalance newTransaction: Saved: ID:$transaction->id.");
+
+        $notifier = \App::make('TopBetta\Services\DashboardNotification\UserDashboardNotificationService');
+        $notifier->notify(array("id" => $transaction->recipient_id, "transactions" => array($transaction->id)));
+
     	return $transaction->id;
     }
     
@@ -187,7 +191,6 @@ class AccountBalance extends \Eloquent {
     //TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
     static public function _increment($userID, $amount, $keyword, $desc = null)
     {
-    	
     	// Grab the ID for the keyword
     	$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($keyword);
        	$tracking_id = -1;
@@ -201,7 +204,7 @@ class AccountBalance extends \Eloquent {
     	if(!$transactionTypeId) {
     		return false;
     	}
-    
+
     	if(null == $desc) {
     		$transactionTypeRec = AccountTransactionTypes::getTransactionType($keyword)->toArray();
     		
@@ -233,7 +236,9 @@ class AccountBalance extends \Eloquent {
     			'notes' 					=> $desc,
     			'account_transaction_type' 	=> $keyword,
     	);
-    
+
+
+
     	return AccountBalance::newTransaction($params);
     }
     
