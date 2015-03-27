@@ -11,7 +11,7 @@ namespace TopBetta\Services\DashboardNotification;
 
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 
-class BetDashboardNotificationService extends AbstractDashboardNotificationService {
+class BetDashboardNotificationService extends AbstractTransactionDashboardNotificationService {
 
     /**
      * @var BetRepositoryInterface
@@ -67,15 +67,6 @@ class BetDashboardNotificationService extends AbstractDashboardNotificationServi
         }
 
         return $payload;
-    }
-
-    private function formatTransaction($transaction)
-    {
-        return array(
-            "transaction_amount" => array_get($transaction, 'amount', 0),
-            "transaction_type_name" => array_get($transaction, 'transaction_type.name', null),
-            "external_id" => array_get($transaction, "id", 0),
-        );
     }
 
 }
