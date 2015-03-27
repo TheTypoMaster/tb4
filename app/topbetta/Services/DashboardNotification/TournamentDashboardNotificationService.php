@@ -16,7 +16,7 @@ class TournamentDashboardNotificationService extends AbstractTransactionDashboar
     /**
      * @var DbTournamentTicketRepository
      */
-    private $tournamenTicketRepository;
+    private $tournamentTicketRepository;
 
     public function __construct(DbTournamentTicketRepository $tournamentTicketRepository) {
 
@@ -41,7 +41,7 @@ class TournamentDashboardNotificationService extends AbstractTransactionDashboar
         }
 
         //get tournament ticket
-        $tournamentTicket = $this->tournamenTicketRepository->getWithUserAndTransactions($data['id']);
+        $tournamentTicket = $this->tournamentTicketRepository->getWithUserAndTransactions($data['id']);
 
         //create payload
         $payload = array(
@@ -52,6 +52,7 @@ class TournamentDashboardNotificationService extends AbstractTransactionDashboar
             "transactions" => array(),
         );
 
+        \Log::info($tournamentTicket);
         //format transactions
         if( array_get($tournamentTicket,'entry_fee_transaction_id', null) ) {
             $payload['transactions'][] = $this->formatTransaction($tournamentTicket['entry_fee_transaction_id']);

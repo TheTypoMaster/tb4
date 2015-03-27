@@ -866,9 +866,9 @@ class Api_Betting extends JController
 
             if ($ticket_result['status'] == 200) {
                 if ($iframe) {
-                    return array('status' => 200, 'success' => $ticket_result['message']);
+                    return array('status' => 200, 'success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id']);
                 } else {
-                    return OutputHelper::json(200, array('success' => $ticket_result['message']));
+                    return OutputHelper::json(200, array('success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id']));
                 }
             } else {
                 if ($iframe) {
@@ -3353,6 +3353,7 @@ class Api_Betting extends JController
             //$url = '/tournament/'.$tournament_type.'/game/' . $tournament->id;
             $ticket_result['message'] = JText::_('Ticket purchase confirmed');
             $ticket_result['status'] = 200;
+            $ticket_result['ticket_id'] = $ticket_id;
             //$type = 'message';
 
             /*
@@ -3387,6 +3388,7 @@ class Api_Betting extends JController
             //$message = JText::_('Ticket could not be purchased');
             $ticket_result['message'] = JText::_('Ticket could not be purchased');
             $ticket_result['status'] = 500;
+            $ticket_result['ticket_id'] = $ticket_id;
             //$type = 'error';
         }
         //$this->setRedirect($url, $message, $type);
