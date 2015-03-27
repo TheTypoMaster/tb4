@@ -41,7 +41,7 @@ class DashboardNotificationQueueService {
         }
 
         if( $response->json()['http_status_code'] != 200 ) {
-            Log::error("Dashboard API error : " . print_r($response, true));
+            Log::error("Dashboard API error : " . print_r($response->json(), true));
         }
 
         $job->delete();
