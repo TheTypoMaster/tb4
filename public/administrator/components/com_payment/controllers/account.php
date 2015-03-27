@@ -178,7 +178,7 @@ class PaymentControllerAccount extends JController {
 		{
 			$err['recipient'] = 'Please enter a recipient';
 		}
-		else if( !preg_match('/^\[#([0-9]+)\s([a-zA-Z0-9]+)\]\s([a-zA-Z0-9\s\-\']*)$/', $recipient, $m) )
+		else if( !preg_match('/^\[#([0-9)]+)\s([a-zA-Z0-9_]+)\]\s([a-zA-Z0-9\s\-\']*)$/', $recipient, $m) )
 		{
 			$err['recipient'] = 'Invalid recipient';
 		}
