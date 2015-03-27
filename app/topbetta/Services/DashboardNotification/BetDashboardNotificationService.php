@@ -55,15 +55,15 @@ class BetDashboardNotificationService extends AbstractTransactionDashboardNotifi
         );
 
         if($transaction = array_get($bet, 'bet_transaction', null)) {
-            $payload['tranasactions'][] = $this->formatTransaction($transaction);
+            $payload['transactions'][] = $this->formatTransaction($transaction);
         }
 
         if($transaction = array_get($bet, 'result', null)) {
-            $payload['tranasactions'][] = $this->formatTransaction($transaction);
+            $payload['transactions'][] = $this->formatTransaction($transaction);
         }
 
         if($transaction = array_get($bet, 'refund_transaction', null)) {
-            $payload['tranasactions'][] = $this->formatTransaction($transaction);
+            $payload['transactions'][] = $this->formatTransaction($transaction);
         }
 
         return $payload;
