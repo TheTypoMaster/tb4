@@ -32,7 +32,7 @@ class UserDashboardNotificationService extends AbstractTransactionDashboardNotif
 
     public function getEndpoint()
     {
-        return "test-notify";
+        return "users";
     }
 
     public function getHttpMethod()
