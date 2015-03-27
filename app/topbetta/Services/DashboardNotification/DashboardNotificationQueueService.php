@@ -40,7 +40,7 @@ class DashboardNotificationQueueService {
             return false;
         }
 
-        if( $response['http_status_code'] != 200 ) {
+        if( $response->json()['http_status_code'] != 200 ) {
             Log::error("Dashboard API error : " . print_r($response, true));
         }
 
