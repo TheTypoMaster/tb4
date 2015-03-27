@@ -59,20 +59,18 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
         if( $transactions = array_get($data, 'transactions', false) ) {
             foreach($transactions as $transactionId) {
                 //get the transaction
-                $transaction = $this->transactionRepository->find($transactionId);
+                $transaction = $this->transactionRepository->getTransactionWithUsers($transactionId);
 
                 //add the transaction
                 $payload['transactions'][] = array(
-                    "transaction_amount"      => $transaction->amount,
-                    "transaction_type_name"   => $transaction->transasctionType->name,
-                    "transaction_external_id" => $transaction->id,
+                    "transaction_amount"      => array_get($transaction, 'amount', 0),
+                    "transaction_type_name"   => array_get($transaction, 'transaction_type.name', null),
+                    "transaction_external_id" => array_get($transaction, 'id', 0),
                     "transaction_parent_key"  => "RECIPIENT",
                     "transaction_child_key"   => "GIVER",
 
                     //add the giver
-                    "users"                   => array(
-                        $transaction->giver ?: $this->formatUser($transaction->giver)
-                    ),
+                    "users"                   => count($transaction->giver) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array(),
                 );
             }
         }
@@ -81,6 +79,11 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
     }
 
     private function formatUser($user) {
+
+        if( ! count($user) ) {
+            return array();
+        }
+
         //get the users name
         if( array_get($user, 'topbettauser', null) ) {
             $firstName = array_get($user, 'topbettauser.first_name', null);

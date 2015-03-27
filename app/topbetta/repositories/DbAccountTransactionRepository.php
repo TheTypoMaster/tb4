@@ -26,6 +26,15 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
         return $this->model->where('recipient_id', '=', $userId)->sum('amount');
     }
 
+    public function getTransactionWithUsers($transactionId)
+    {
+        return $this
+            ->model
+            ->where('id', $transactionId)
+            ->with(array('transactionType', 'recipient', 'giver'))
+            ->first();
+    }
+
     public function getTotalTransactionsForUserByType($userId, $type)
     {
         return $this
