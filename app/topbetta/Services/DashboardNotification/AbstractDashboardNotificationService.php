@@ -28,8 +28,8 @@ abstract class AbstractDashboardNotificationService {
         $parameters = array(
             "http_method"  => $this->getHttpMethod(),
             "api_endpoint" => Config::get('dashboard.base_api_endpoint') . $this->getEndpoint(),
-            "api_user"     => Config::get('dashboard.api_user'),
-            "api_password" => Config::get('dashboard.api_password'),
+            "api_user"     => Config::get('dashboard.api_user') != "" ? Config::get('dashboard.api_user') : null,
+            "api_password" => Config::get('dashboard.api_password') != "" ? Config::get('dashboard.api_password') : null,
         );
 
         //push job on to the queue
