@@ -32,7 +32,7 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
             ->model
             ->where('id', $transactionId)
             ->with(array('transactionType', 'recipient', 'giver'))
-            ->first();
+            ->first()->toArray();
     }
 
     public function getTotalTransactionsForUserByType($userId, $type)

@@ -13,7 +13,7 @@ use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
-class UserDashboardNotificationService extends AbstractDashboardNotificationService {
+class UserDashboardNotificationService extends AbstractTransactionDashboardNotificationService {
 
     /**
      * @var UserRepositoryInterface
@@ -61,18 +61,14 @@ class UserDashboardNotificationService extends AbstractDashboardNotificationServ
                 //get the transaction
                 $transaction = $this->transactionRepository->getTransactionWithUsers($transactionId);
 
-                //add the transaction
-                $payload['transactions'][] = array(
-                    "transaction_amount"      => array_get($transaction, 'amount', 0),
-                    "transaction_type_name"   => array_get($transaction, 'transaction_type.name', null),
-                    "transaction_external_id" => array_get($transaction, 'id', 0),
-                    "transaction_parent_key"  => "RECIPIENT",
-                    "transaction_child_key"   => "GIVER",
+                $transactionPayload = $this->formatTransaction($transaction);
 
-                    //add the giver
-                    "users"                   => count($transaction->giver) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array(),
-                );
+                $transactionPayload['users'] = count(array_get($transaction, 'giver', array())) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array();
+
+                //add the transaction
+                $payload['transactions'][] = $transactionPayload;
             }
+
         }
 
         return $payload;
