@@ -49,7 +49,7 @@ class DashboardNotificationQueueService {
 
     public function failed($data)
     {
-        Log::error("Added to failed job list : " . $data);
+        Log::error("Added to failed job list : " . print_r($data, true));
     }
 
 }
