@@ -24,13 +24,17 @@ class DashboardNotificationQueueService {
         //create the request
         $client = new Client();
 
-        $request = $client->createRequest($parameters['http_method'], $parameters['api_endpoint'], array(
-            "auth" => array(
+        //build the request payload
+        $requestPayload = array('json' => $payload);
+
+        if(array_get($parameters, 'api_user', false)) {
+            $requestPayload['auth'] = array(
                 $parameters['api_user'],
                 $parameters['api_password'],
-            ),
-            'json' => $payload,
-        ));
+            );
+        }
+
+        $request = $client->createRequest($parameters['http_method'], $parameters['api_endpoint'], $requestPayload);
 
         //send the request
         try {
