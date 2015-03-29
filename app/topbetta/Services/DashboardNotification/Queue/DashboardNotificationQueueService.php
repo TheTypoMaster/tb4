@@ -6,7 +6,7 @@
  * Time: 12:09 PM
  */
 
-namespace TopBetta\Services\DashboardNotification;
+namespace TopBetta\Services\DashboardNotification\Queue;
 
 use Log;
 use GuzzleHttp\Client;
