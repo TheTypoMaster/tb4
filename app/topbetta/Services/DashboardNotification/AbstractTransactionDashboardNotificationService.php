@@ -11,7 +11,7 @@ namespace TopBetta\Services\DashboardNotification;
 
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
 
-abstract class AbstractTransactionDashboardNotificationService extends AbstractDashboardNotificationService
+abstract class AbstractTransactionDashboardNotificationService extends DashboardNotificationQueueService
 {
 
     private $transactionTypeMapping = array(
