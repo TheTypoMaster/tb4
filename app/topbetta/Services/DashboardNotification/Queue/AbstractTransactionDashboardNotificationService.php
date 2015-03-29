@@ -6,7 +6,7 @@
  * Time: 12:23 PM
  */
 
-namespace TopBetta\Services\DashboardNotification;
+namespace TopBetta\Services\DashboardNotification\Queue;
 
 
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
