@@ -39,6 +39,11 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
         return "test-notify";
     }
 
+    public function getTransaction($transactionId)
+    {
+        return $this->accountTransactionRepository->findWithType($transactionId);
+    }
+
     public function formatPayload($data)
     {
         if( ! array_get($data, 'id', false) ) {
@@ -65,15 +70,5 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
         return $payload;
     }
 
-    public function formatTransactions($transactions)
-    {
-        $payload = array();
-
-        foreach($transactions as $transaction) {
-            $payload[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($transaction));
-        }
-
-        return $payload;
-    }
 
 }
