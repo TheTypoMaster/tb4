@@ -8,17 +8,18 @@
 
 namespace TopBetta\Services\DashboardNotification\Queue;
 
+use TopBetta\Repositories\BetRepo;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 
 class BetDashboardNotificationQueueService extends AbstractTransactionDashboardNotificationService {
 
-    const NOTIFICATION_TYPE_BET_PLACEMENT = 'bet_placement';
+    const NOTIFICATION_TYPE_BET_PLACEMENT   = 'bet_placement';
 
-    const NOTIFICATION_TYPE_BET_REFUND = 'bet_refund';
+    const NOTIFICATION_TYPE_BET_REFUND      = 'bet_refund';
 
-    const NOTIFICATION_TYPE_BET_RESULTED = 'bet_resulted';
+    const NOTIFICATION_TYPE_BET_RESULTED    = 'bet_resulted';
 
     /**
      * @var BetRepositoryInterface
@@ -32,19 +33,25 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
      * @var FreeCreditTransactionRepositoryInterface
      */
     private $freeCreditTransactionRepository;
+    /**
+     * @var BetRepo
+     */
+    private $betRepo;
 
     public function __construct(BetRepositoryInterface $betRepository,
                                 AccountTransactionRepositoryInterface $accountTransactionRepository,
-                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository)
+                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository,
+                                BetRepo $betRepo)
     {
         $this->betRepository = $betRepository;
         $this->accountTransactionRepository = $accountTransactionRepository;
         $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
+        $this->betRepo = $betRepo;
     }
 
     public function getEndpoint()
     {
-        return "test-notify";
+        return "bets";
     }
 
     public function getHttpMethod()
@@ -71,8 +78,9 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             "bet_selection_string" => array_get($bet, "selection_string", null),
             "bet_type_name"        => array_get($bet, 'type.name', null),
             "external_id"          => array_get($bet, 'id', 0),
-            "bet_dividend"         => null, //TODO: work out what to actually pass,
-            "type"             => null,
+            //clunky way to get bet dividend. Should be changed
+            "bet_dividend"         => bcdiv($this->betRepo->getBetPayoutAmount(\TopBetta\Bet::find($data['id'])), array_get($bet, 'amount', 1)),
+            "type"                 => null,
             "transactions"         => array(),
         );
 
@@ -86,13 +94,26 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
         //format transactions
         if(array_get($data, 'notification_type', null)) {
-            $payload['transactions'] = $this->formatTransactions($bet, $data['notification_type']);
+            $payload['transactions'] = $this->formatTransactionsByType($bet, $data['notification_type']);
+        } else if (array_get($data, 'transactions', null)) {
+            $payload['transactions'] = $this->formatTransactions($data['transactions']);
         }
 
+        //format bet selections
         if( $betSelection = array_get($bet, 'betselection', null) ) {
             $selections = $this->formatSelections($betSelection);
-
             $payload = array_merge($payload, $selections);
+        }
+
+        return $payload;
+    }
+
+    private function formatTransactions($transactions)
+    {
+        $payload = array();
+        file_put_contents('/tmp/transactions.log', print_r($transactions, true));
+        foreach($transactions as $transaction) {
+            $payload[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($transaction));
         }
 
         return $payload;
@@ -104,23 +125,29 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
      * @param $notificationType
      * @return array
      */
-    private function formatTransactions($bet, $notificationType)
+    private function formatTransactionsByType($bet, $notificationType)
     {
         $transactions = array();
 
+        //get transactions based on notification type
         switch($notificationType)
         {
             case self::NOTIFICATION_TYPE_BET_PLACEMENT:
-                $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['bet_transaction_id']));
+                if(array_get($bet, 'bet_transaction_id', null)) {
+                    $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['bet_transaction_id']));
+                }
                 if($bet['bet_freebet_flag']) {
                     $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['bet_freebet_transaction_id']));
                 }
                 break;
 
             case self::NOTIFICATION_TYPE_BET_REFUND:
-                $transaction[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['refund_transaction_id']));
+
+                if(array_get($bet, 'refund_transaction_id', null)) {
+                    $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['refund_transaction_id']));
+                }
                 if($bet['bet_freebet_flag'] && $bet['refund_freebet_transaction_id']) {
-                    $transaction[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['refund_freebet_transaction_id']));
+                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['refund_freebet_transaction_id']));
                 }
                 break;
 
@@ -133,6 +160,11 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         return $transactions;
     }
 
+    /**
+     * Format selections
+     * @param $betSelections
+     * @return array
+     */
     private function formatSelections($betSelections)
     {
         $selections = array();
@@ -162,7 +194,11 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         );
     }
 
-
+    /**
+     * Format a runner in a race
+     * @param $selection
+     * @return array
+     */
     private function formatRunner($selection)
     {
         $runner = array(
@@ -214,6 +250,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
                     "race_type" => null,
                 );
 
+                //get the race type
                 $raceType = array_get($meeting, 'type_code', null);
                 if( $raceType == "R" ) {
                     $runner['race']['meeting']['race_type'] = array(
@@ -237,6 +274,11 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         return $runner;
     }
 
+    /**
+     * Format a selection for a sports bet
+     * @param $selection
+     * @return array
+     */
     private function formatSelection($selection)
     {
         $selection = array(

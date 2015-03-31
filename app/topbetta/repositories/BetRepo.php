@@ -320,7 +320,7 @@ class BetRepo
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);
 
             //notify bet refund
-            $this->betDashboardNotificationService->notify(array('id' => $bet->id));
+            $this->betDashboardNotificationService->notify(array('id' => $bet->id, 'notification_type' => 'bet_refund'));
 
 			return true;
 		}
@@ -390,7 +390,13 @@ class BetRepo
         $resultTransaction = $bet->payout;
         if ($resultTransaction && $resultTransaction->transactionType->keyword == 'betwin') {
             // increment with a NEGATIVE amount
-            return AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+            $transactionId = AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+
+            if($transactionId) {
+                $this->betDashboardNotificationService->notify(array("id" => $bet->id, "transactions" => array($transactionId)));
+            }
+
+            return $transactionId;
         }
 
         return false;

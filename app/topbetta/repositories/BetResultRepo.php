@@ -165,7 +165,7 @@ class BetResultRepo
 		$resultBet = $this->processBetPayout($bet);
 
 		if($resultBet) {
-            $this->dashboardNotificationService->notify(array("id" => $bet->id));
+            $this->dashboardNotificationService->notify(array("id" => $bet->id, 'notification_type' => 'bet_resulted'));
 			$this->notifications->notifyBetResult($bet);
         }
 
@@ -224,7 +224,7 @@ class BetResultRepo
 		$result = $this->processBetPayout($bet);
 
         if($result) {
-            $this->dashboardNotificationService->notify(array("id" => $bet->id));
+            $this->dashboardNotificationService->notify(array("id" => $bet->id, 'notification_type' => 'bet_resulted'));
         }
 
         return $result;
