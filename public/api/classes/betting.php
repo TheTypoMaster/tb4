@@ -866,9 +866,9 @@ class Api_Betting extends JController
 
             if ($ticket_result['status'] == 200) {
                 if ($iframe) {
-                    return array('status' => 200, 'success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id']);
+                    return array('status' => 200, 'success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id'], 'entry_transaction' => $ticket_result['entry_transaction'], 'buyin_transaction' => $ticket_result['buyin_transaction']);
                 } else {
-                    return OutputHelper::json(200, array('success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id']));
+                    return OutputHelper::json(200, array('success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id'], 'entry_transaction' => $ticket_result['entry_transaction'], 'buyin_transaction' => $ticket_result['buyin_transaction']));
                 }
             } else {
                 if ($iframe) {
@@ -3303,8 +3303,8 @@ class Api_Betting extends JController
             //transfer total cost
             if ($userAccountBalance >= $totalTicketCost) {
                 // remove money from account balance
-                $payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
-                $payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
+                $entryTransactionId = $payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
+                $buyinTransactionId = $payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 
                 //put money in free credit
                 $tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user->id);
@@ -3312,7 +3312,7 @@ class Api_Betting extends JController
             } else {// transfer whats there
                 // remove money from account balance
                 //$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-                $payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
+                $entryTransactionId = $payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
 
                 //put money in free credit
                 //$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
@@ -3354,6 +3354,8 @@ class Api_Betting extends JController
             $ticket_result['message'] = JText::_('Ticket purchase confirmed');
             $ticket_result['status'] = 200;
             $ticket_result['ticket_id'] = $ticket_id;
+            $ticket_result['entry_transaction'] = $entryTransactionId;
+            $ticket_result['buyin_transaction'] = $buyinTransactionId;
             //$type = 'message';
 
             /*
