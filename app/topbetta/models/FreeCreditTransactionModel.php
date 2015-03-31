@@ -28,4 +28,9 @@ class FreeCreditTransactionModel extends Eloquent {
     {
         return $this->belongsTo("TopBetta\\models\\UserModel", "recipient_id");
     }
+
+    public function transactionType()
+    {
+        return $this->belongsTo('TopBetta\models\FreeCreditTransactionModel', 'tournament_transaction_type_id');
+    }
 }
