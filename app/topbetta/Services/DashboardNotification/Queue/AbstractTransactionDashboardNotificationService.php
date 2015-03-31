@@ -36,8 +36,6 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         TransactionType::TYPE_CHILD_FUND_ACCOUNT    => "child_fund_parent_account",
         TransactionType::TYPE_PARENT_ACCOUNT_FUNDED => "parent_account_funded",
         TransactionType::TYPE_DORMANT_CHARGE        => "dormant_charge",
-        "freebetentry"                              => "bet_placement_bonus_credit",
-        "freebetrefund"                             => "bet_refund_bonus_credit",
     );
 
     public function formatTransaction($transaction)
