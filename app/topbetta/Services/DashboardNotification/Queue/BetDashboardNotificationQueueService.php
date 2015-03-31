@@ -62,8 +62,6 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
         $bet = $this->betRepository->getBetWithSelectionsAndEventDetailsByBetId($data['id']);
 
-        file_put_contents('/tmp/bet.log', print_r($data,true));
-
         $payload = array(
             "bet_amount"           => array_get($bet, 'amount', 0),
             "bet_bonus_amount"     => array_get($bet, "bet_freebet_amount", 0),
@@ -152,7 +150,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         if(count($selections)) $payload['selections'] = $selections;
         if(count($runners)) $payload['runners'] = $runners;
 
-        return array("selections" => $selections, "runner" => $runners);
+        return $payload;
     }
 
     private function formatMarketType($marketType)
