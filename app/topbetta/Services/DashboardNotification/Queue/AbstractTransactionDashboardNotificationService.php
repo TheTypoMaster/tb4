@@ -38,21 +38,22 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         TransactionType::TYPE_CHILD_FUND_ACCOUNT    => "child_fund_parent_account",
         TransactionType::TYPE_PARENT_ACCOUNT_FUNDED => "parent_account_funded",
         TransactionType::TYPE_DORMANT_CHARGE        => "dormant_charge",
+        TransactionType::TYPE_TESTING               => "testing",
     );
 
     private $freeCreditTransactionTypeMapping = array(
-        FreeCreditTransactionType::TRANSACTION_TYPE_ENTRY           => 'entry',
-        FreeCreditTransactionType::TRANSACTION_TYPE_BUYIN           => 'buyin',
-        FreeCreditTransactionType::TRANSACTION_TYPE_WIN             => 'win',
-        FreeCreditTransactionType::TRANSACTION_TYPE_REFUND          => 'refund',
-        FreeCreditTransactionType::TRANSACTION_TYPE_PROMO           => 'promo',
-        FreeCreditTransactionType::TRANSACTION_TYPE_TESTING         => 'testing',
-        FreeCreditTransactionType::TRANSACTION_TYPE_ADMIN           => 'admin',
-        FreeCreditTransactionType::TRANSACTION_TYPE_PURCHASE        => 'purchase',
-        FreeCreditTransactionType::TRANSACTION_TYPE_REFERRAL        => 'referral',
-        FreeCreditTransactionType::TRANSACTION_TYPE_NO_QUALIFIERS   => 'noqualifiers',
-        FreeCreditTransactionType::TRANSACTION_TYPE_FREE_BET_ENTRY  => 'freebetentry',
-        FreeCreditTransactionType::TRANSACTION_TYPE_FREE_BET_REFUND => 'freebetrefund',
+        FreeCreditTransactionType::TRANSACTION_TYPE_ENTRY           => 'entry_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_BUYIN           => 'buyin_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_WIN             => 'win_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_REFUND          => 'refund_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_PROMO           => 'promo_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_TESTING         => 'testing_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_ADMIN           => 'admin_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_PURCHASE        => 'purchase_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_REFERRAL        => 'referral_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_NO_QUALIFIERS   => 'noqualifiers_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_FREE_BET_ENTRY  => 'freebetentry_bonus_credit',
+        FreeCreditTransactionType::TRANSACTION_TYPE_FREE_BET_REFUND => 'freebetrefund_bonus_credit',
     );
 
     /**
