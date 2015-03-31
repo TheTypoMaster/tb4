@@ -44,18 +44,10 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
             return array();
         }
 
-        $transactionPayload = array(
+        return array(
             "transaction_amount"    => array_get($transaction, 'amount', 0),
             'transaction_type_name' => array_get($this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', 0), null),
             "external_id"           => array_get($transaction, 'id', 0),
         );
-
-        $transactionPayload['users'] = count(array_get($transaction, 'giver', array())) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array();
-
-        //set the user types
-        $transactionPayload['transaction_parent_key'] = 'recipient';
-        $transactionPayload['transaction_child_key'] = 'giver';
-
-        return $transactionPayload;
     }
 }
