@@ -10,10 +10,12 @@ namespace TopBetta\Services\DashboardNotification\Queue;
 
 
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface as FreeCreditTransactionType;
 
 abstract class AbstractTransactionDashboardNotificationService extends DashboardNotificationQueueService
 {
 
+    //account transaction transforms
     private $transactionTypeMapping = array(
         TransactionType::TYPE_TOURNAMENT_DOLLARS    => "tournament_dollars",
         TransactionType::TYPE_TOURNAMENT_WIN        => "tournament_win",
@@ -38,16 +40,59 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         TransactionType::TYPE_DORMANT_CHARGE        => "dormant_charge",
     );
 
-    public function formatTransaction($transaction)
+    private $freeCreditTransactionTypeMapping = array(
+        FreeCreditTransactionType::TRANSACTION_TYPE_ENTRY           => 'entry',
+        FreeCreditTransactionType::TRANSACTION_TYPE_BUYIN           => 'buyin',
+        FreeCreditTransactionType::TRANSACTION_TYPE_WIN             => 'win',
+        FreeCreditTransactionType::TRANSACTION_TYPE_REFUND          => 'refund',
+        FreeCreditTransactionType::TRANSACTION_TYPE_PROMO           => 'promo',
+        FreeCreditTransactionType::TRANSACTION_TYPE_TESTING         => 'testing',
+        FreeCreditTransactionType::TRANSACTION_TYPE_ADMIN           => 'admin',
+        FreeCreditTransactionType::TRANSACTION_TYPE_PURCHASE        => 'purchase',
+        FreeCreditTransactionType::TRANSACTION_TYPE_REFERRAL        => 'referral',
+        FreeCreditTransactionType::TRANSACTION_TYPE_NO_QUALIFIERS   => 'noqualifiers',
+        FreeCreditTransactionType::TRANSACTION_TYPE_FREE_BET_ENTRY  => 'freebetentry',
+        FreeCreditTransactionType::TRANSACTION_TYPE_FREE_BET_REFUND => 'freebetrefund',
+    );
+
+    /**
+     * @var
+     */
+    private $accountTransactionRepository;
+
+    abstract public function getTransaction($transactionId);
+
+    abstract public function getFreeCreditTransaction($transactionId);
+
+    public function formatTransactions($transactionIds, $freeCredit = false)
+    {
+        $payload = array();
+
+        foreach($transactionIds as $transaction) {
+            $payload[] = $this->formatTransaction($freeCredit ? $this->getFreeCreditTransaction($transaction, $freeCredit) : $this->getTransaction($transaction, $freeCredit));
+        }
+
+        return $payload;
+    }
+
+    public function formatTransaction($transaction, $freeCredit = false)
     {
         if ( ! count($transaction) ) {
             return array();
         }
 
-        return array(
+        $transactionPayload = array(
             "transaction_amount"    => array_get($transaction, 'amount', 0),
-            'transaction_type_name' => array_get($this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', 0), null),
+            'transaction_type_name' => array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', 0), null),
             "external_id"           => array_get($transaction, 'id', 0),
         );
+
+        $transactionPayload['users'] = count(array_get($transaction, 'giver', array())) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array();
+
+        //set the user types
+        $transactionPayload['transaction_parent_key'] = 'recipient';
+        $transactionPayload['transaction_child_key'] = 'giver';
+
+        return $transactionPayload;
     }
 }

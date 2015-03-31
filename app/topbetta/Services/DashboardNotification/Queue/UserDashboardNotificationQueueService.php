@@ -10,6 +10,7 @@ namespace TopBetta\Services\DashboardNotification\Queue;
 
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
@@ -23,11 +24,16 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
      * @var AccountTransactionRepositoryInterface
      */
     private $transactionRepository;
+    /**
+     * @var FreeCreditTransactionRepositoryInterface
+     */
+    private $freeCreditTransactionRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository, AccountTransactionRepositoryInterface $transactionRepository)
+    public function __construct(UserRepositoryInterface $userRepository, AccountTransactionRepositoryInterface $transactionRepository, FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository)
     {
         $this->userRepository = $userRepository;
         $this->transactionRepository = $transactionRepository;
+        $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
     }
 
     public function getEndpoint()
@@ -38,6 +44,16 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
     public function getHttpMethod()
     {
         return "POST";
+    }
+
+    public function getTransaction($transactionId)
+    {
+        return $this->transactionRepository->findWithType($transactionId);
+    }
+
+    public function getFreeCreditTransaction($transactionId)
+    {
+        return $this->freeCreditTransactionRepository->findWithType($transactionId);
     }
 
     public function formatPayload($data)
@@ -58,61 +74,12 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
 
         if( $transactions = array_get($data, 'transactions', false) ) {
             foreach($transactions as $transactionId) {
-                //get the transaction
-                $transaction = $this->transactionRepository->getTransactionWithUsers($transactionId);
-
-                $transactionPayload = $this->formatTransaction($transaction);
-
-                $transactionPayload['users'] = count(array_get($transaction, 'giver', array())) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array();
-
-                //set the user types
-                $transactionPayload['transaction_parent_key'] = 'recipient';
-                $transactionPayload['transaction_child_key'] = 'giver';
-
                 //add the transaction
-                $payload['transactions'][] = $transactionPayload;
+                $payload['transactions'] = $this->formatTransactions($transactionId);
             }
-
         }
 
         return $payload;
     }
 
-    private function formatUser($user) {
-
-        if( ! count($user) ) {
-            return array();
-        }
-
-        //get the users name
-        if( array_get($user, 'topbettauser', null) ) {
-            $firstName = array_get($user, 'topbettauser.first_name', null);
-            $lastName = array_get($user, 'topbettauser.last_name', null);;
-        } else {
-            $names = explode(' ', array_get($user, 'name', null));
-            $firstName = array_get($names, 0, "");
-            $lastName = array_get($names, 1, "");
-        }
-
-        //create payload
-        return array(
-            "user_username"         => array_get($user, 'username', null),
-            "user_first_name"       => $firstName,
-            "user_last_name"        => $lastName,
-            "user_email"            => array_get($user, 'email', null),
-            "user_street"           => array_get($user, 'topbettauser.street', null),
-            "user_city"             => array_get($user, 'topbettauser.city', null),
-            "user_state"            => array_get($user, 'topbettauser.state', null),
-            "user_postcode"         => array_get($user, 'topbettauser.postcode', null),
-            "user_country"          => array_get($user, 'topbettauser.country', null),
-            "user_dob"              => array_get($user, 'topbettauser.dob_year', null) . "-" . array_get($user, 'topbettauser.dob_month', null) . "-" . array_get($user, 'topbettauser.dob_day', null),
-            "user_marketing_opt_in" => (bool) array_get($user, 'topbettauser.marketing_opt_in_flag', null),
-            "user_source"           => array_get($user, 'topbettauser.source', null),
-            "user_is_corporate"     => (bool) array_get($user, 'isCorporate', null),
-            "user_is_topbetta"      => (bool) array_get($user, 'isTopBetta', null),
-            "user_block"            => (bool) array_get($user, 'block', null),
-            "user_activated"        => (bool) array_get($user, 'activated_flag'),
-            "user_btag"             => array_get($user, 'topbettauser.btag', null),
-        );
-    }
 }
