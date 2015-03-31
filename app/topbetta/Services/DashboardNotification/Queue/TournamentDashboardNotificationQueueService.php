@@ -10,6 +10,7 @@ namespace TopBetta\Services\DashboardNotification\Queue;
 
 use Log;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 use TopBetta\Repositories\DbTournamentTicketRepository;
 use TopBetta\Services\DashboardNotification\AbstractDashboardNotificationService;
 
@@ -22,11 +23,18 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
      * @var AccountTransactionRepositoryInterface
      */
     private $accountTransactionRepository;
+    /**
+     * @var FreeCreditTransactionRepositoryInterface
+     */
+    private $freeCreditTransactionRepository;
 
-    public function __construct(DbTournamentTicketRepository $tournamentTicketRepository, AccountTransactionRepositoryInterface $accountTransactionRepository) {
+    public function __construct(DbTournamentTicketRepository $tournamentTicketRepository,
+                                AccountTransactionRepositoryInterface $accountTransactionRepository,
+                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository) {
 
         $this->tournamentTicketRepository = $tournamentTicketRepository;
         $this->accountTransactionRepository = $accountTransactionRepository;
+        $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
     }
 
     public function getHttpMethod()
@@ -42,6 +50,11 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
     public function getTransaction($transactionId)
     {
         return $this->accountTransactionRepository->findWithType($transactionId);
+    }
+
+    public function getFreeCreditTransaction($transactionId)
+    {
+        return $this->freeCreditTransactionRepository->findWithType($transactionId);
     }
 
     public function formatPayload($data)
@@ -61,10 +74,19 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
             "ticket_entry_fee" => array_get($tournamentTicket, "entry_fee_transaction.amount", 0),
             "external_id" => array_get($tournamentTicket, "id", 0),
             "transactions" => array(),
+            "user" => null,
         );
+
+        if( $user = array_get($tournamentTicket, 'user', null) ) {
+            $payload['user'] = $this->formatUser($user);
+        }
 
         if($transactions = array_get($data, 'transactions', null)) {
             $payload['transactions'] = $this->formatTransactions($transactions);
+        }
+
+        if($transactions = array_get($data, 'free-credit-transactions', null)) {
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($transactions, true));
         }
 
         return $payload;
