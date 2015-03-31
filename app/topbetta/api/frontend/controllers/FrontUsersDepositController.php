@@ -5,6 +5,7 @@ use TopBetta;
 use Mail;
 use Auth;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 
 class FrontUsersDepositController extends \BaseController {
 
@@ -12,9 +13,15 @@ class FrontUsersDepositController extends \BaseController {
 		"tokencreditcard" => "Eway",
 	);
 
-	public function __construct() {
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+
+    public function __construct(UserDashboardNotificationService $dashboardNotificationService) {
 		$this -> beforeFilter('auth');
-	}
+        $this->dashboardNotificationService = $dashboardNotificationService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -363,7 +370,8 @@ class FrontUsersDepositController extends \BaseController {
 							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 							if($updateAccountBalance){
-								return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
+                                $this->dashboardNotificationService->notify(array("id" => \Auth::user()->id, "transactions" => array($updateAccountBalance)));
+                                return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 							}else{
 								//TODO: If updating of account balance fails then let someone know!?!?
 								return array("success" => false, "result" => \Lang::get('banking.cc_payment_accbal_update_failed'));
@@ -410,9 +418,10 @@ class FrontUsersDepositController extends \BaseController {
 					
 						// Update users account balance
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
-							
+
 						if($updateAccountBalance){
-							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
+                            $this->dashboardNotificationService->notify(array("id" => \Auth::user()->id, "transactions" => array($updateAccountBalance)));
+                            return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
 							return array("success" => false, "error" => \Lang::get('banking.cc_payment_accbal_update_failed'));
@@ -446,8 +455,9 @@ class FrontUsersDepositController extends \BaseController {
 							
 						// Update users account balance
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
-							
+
 						if($updateAccountBalance){
+                            $this->dashboardNotificationService->notify(array("id" => \Auth::user()->id, "transactions" => array($updateAccountBalance)));
 							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?

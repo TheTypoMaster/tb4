@@ -61,11 +61,11 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
         //check the id exists
         if( ! $data['id'] ) {
             \Log::error("No user id specidfied in UserDashboardNotificationQueueService");
-            return false;
+            return array();
         }
 
         //get the user
-        $user = $this->userRepository->find($data['id']);
+        $user = $this->userRepository->getWithTopBettaUser($data['id'])->toArray();
 
         $payload = $this->formatUser($user);
 
@@ -73,10 +73,8 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
         $payload['transactions'] = array();
 
         if( $transactions = array_get($data, 'transactions', false) ) {
-            foreach($transactions as $transactionId) {
-                //add the transaction
-                $payload['transactions'] = $this->formatTransactions($transactionId);
-            }
+            //add the transaction
+            $payload['transactions'] = $this->formatTransactions($transactions);
         }
 
         return $payload;

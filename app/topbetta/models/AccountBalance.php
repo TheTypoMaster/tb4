@@ -173,9 +173,6 @@ class AccountBalance extends \Eloquent {
     	// return the new transaction ID
      	LogHelper::l("AccountBalance newTransaction: Saved: ID:$transaction->id.");
 
-        $notifier = \App::make('TopBetta\Services\DashboardNotification\Queue\UserDashboardNotificationService');
-        $notifier->notify(array("id" => $transaction->recipient_id, "transactions" => array($transaction->id)));
-
     	return $transaction->id;
     }
     

@@ -102,13 +102,7 @@ class AccountTransactionService {
 
         );
 
-        $transaction = $this->accounttransactions->create($params);
-
-        if( $transaction ) {
-            $this->userDashboardNotificationService->notify(array("id" => $userID, "transactions" => array( $transaction['id'] )));
-        }
-
-        return $transaction;
+        return $this->accounttransactions->create($params);
     }
 
     public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
