@@ -6,20 +6,20 @@
  * Time: 12:09 PM
  */
 
-namespace TopBetta\Services\DashboardNotification;
+namespace TopBetta\Services\DashboardNotification\Queue;
 
 use Log;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
-class DashboardNotificationQueueService {
+abstract class DashboardNotificationQueueService {
 
     public function fire($job, $data)
     {
         //get the payload and parameters
-        $payload = $data['payload'];
+        $payload = $this->formatPayload($data['payload']);
 
-        $parameters = $data['parameters'];
+        $parameters = $this->getParameters();
 
         //create the request
         $client = new Client();
@@ -55,5 +55,22 @@ class DashboardNotificationQueueService {
     {
         Log::error("Added to failed job list : " . print_r($data, true));
     }
+
+    public function getParameters()
+    {
+        //set up the parameters
+        return array(
+            "http_method"  => $this->getHttpMethod(),
+            "api_endpoint" => Config::get('dashboard.base_api_endpoint') . $this->getEndpoint(),
+            "api_user"     => Config::get('dashboard.api_user') != "" ? Config::get('dashboard.api_user') : null,
+            "api_password" => Config::get('dashboard.api_password') != "" ? Config::get('dashboard.api_password') : null,
+        );
+    }
+
+    abstract public function formatPayload($data);
+
+    abstract public function getEndpoint();
+
+    abstract public function getHttpMethod();
 
 }

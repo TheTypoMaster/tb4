@@ -6,12 +6,12 @@
  * Time: 12:23 PM
  */
 
-namespace TopBetta\Services\DashboardNotification;
+namespace TopBetta\Services\DashboardNotification\Queue;
 
 
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
 
-abstract class AbstractTransactionDashboardNotificationService extends AbstractDashboardNotificationService
+abstract class AbstractTransactionDashboardNotificationService extends DashboardNotificationQueueService
 {
 
     private $transactionTypeMapping = array(
@@ -36,6 +36,8 @@ abstract class AbstractTransactionDashboardNotificationService extends AbstractD
         TransactionType::TYPE_CHILD_FUND_ACCOUNT    => "child_fund_parent_account",
         TransactionType::TYPE_PARENT_ACCOUNT_FUNDED => "parent_account_funded",
         TransactionType::TYPE_DORMANT_CHARGE        => "dormant_charge",
+        "freebetentry"                              => "bet_placement_bonus_credit",
+        "freebetrefund"                             => "bet_refund_bonus_credit",
     );
 
     public function formatTransaction($transaction)
@@ -46,7 +48,7 @@ abstract class AbstractTransactionDashboardNotificationService extends AbstractD
 
         return array(
             "transaction_amount"    => array_get($transaction, 'amount', 0),
-            'transaction_type_name' => array_get($this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', null), null),
+            'transaction_type_name' => array_get($this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', 0), null),
             "external_id"           => array_get($transaction, 'id', 0),
         );
     }
