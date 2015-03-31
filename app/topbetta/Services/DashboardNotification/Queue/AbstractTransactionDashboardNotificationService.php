@@ -52,7 +52,7 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         $payload = array();
 
         foreach($tranasctionIds as $transaction) {
-            $payload[] = $this->formatTranasction($this->getTransaction($transaction));
+            $payload[] = $this->formatTransaction($this->getTransaction($transaction));
         }
 
         return $payload;
