@@ -9,6 +9,7 @@
 namespace TopBetta\Services\DashboardNotification\Queue;
 
 use Log;
+use Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 

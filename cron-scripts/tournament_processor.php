@@ -1,6 +1,9 @@
 <?php
 require_once '../common/shell-bootstrap.php';
 
+use Illuminate\Queue\BeanstalkdQueue;
+use Illuminate\Queue\Connectors\BeanstalkdConnector;
+
 class TournamentProcessor extends TopBettaCLI
 {
 	/**
@@ -45,7 +48,13 @@ class TournamentProcessor extends TopBettaCLI
 	 */
 	protected $date;
 
-	/**
+    /**
+     * Beanstalk queue
+     * @var BeanstalkdQueue
+     */
+    protected $queue;
+
+    /**
 	 * Used to initialise all required database models
 	 */
 	final public function initialise(){
@@ -80,6 +89,10 @@ class TournamentProcessor extends TopBettaCLI
 		$this->selection_result 	=& JModel::getInstance('SelectionResult', 'TournamentModel');
 
 		$this->db =& $this->getDBO();
+
+        //initialize queue
+        $queueConnector  = new BeanstalkdConnector();
+        $this->queue = $queueConnector->connect(array("host" => "localhost"));
 	}
 	/**
 	* Main script method
@@ -226,6 +239,8 @@ class TournamentProcessor extends TopBettaCLI
 		if($tournament->private_flag){
 			$this->l("Tournament is marked as private.");
 		}
+
+        file_put_contents('/tmp/qual_list.log', print_r($qualified_list,true));
 	
 		$qualified = count($qualified_list);
 		$this->l("Found {$qualified} qualifier(s) for tournament {$tournament->name} ({$tournament->id})");
@@ -260,6 +275,9 @@ class TournamentProcessor extends TopBettaCLI
 				$cash					= (!empty($prize['cash'])) ? $prize['cash'] : null;
 				$prize['ticket_value'] 	= null;
 
+                $tournamentTicket = $this->tournament_ticket->getTournamentTicketByUserAndTournamentID($qualifier->id, $tournament->id);
+
+
 				if(!is_null($ticket) && $ticket > 0) {
 					if($existing_ticket = $this->tournament_ticket->getTournamentTicketByUserAndTournamentID($qualifier->id, $prize['ticket'])) {
 						$this->l('User already has a ticket to this tournament, paying tournament dollars');
@@ -287,6 +305,7 @@ class TournamentProcessor extends TopBettaCLI
 					if($formula == 'cash') {
 						$display_cash .= ' in cash';
 						$result_id = $this->_awardCash($qualifier, $cash);
+                        $this->_dashboardNotify($tournamentTicket, array($result_id));
 						$payout_final->saveCashPayout();
 					}elseif($formula == 'free'){
 						$display_cash .= ' in free credit';
@@ -301,6 +320,8 @@ class TournamentProcessor extends TopBettaCLI
 							$payout_final->saveTournamentDollarPayout();
 						}
 					}
+
+
 					$prize_display[] = $display_cash;
 				}
 				$prize_display = implode(' + ', $prize_display);
@@ -710,6 +731,11 @@ class TournamentProcessor extends TopBettaCLI
 	private function _isRacing($object){
 		return ($object->racing_flag);
 	}
+
+    private function _dashboardNotify($tournamentTicket, $transactions)
+    {
+        return $this->queue->push('TopBetta\Services\DashboardNotification\Queue\TournamentDashboardNotificationQueueService', array("payload" => array("id" => $tournamentTicket->id, "transactions" => $transactions)), "dashboard-notification");
+    }
 }
 
 $cron = new TournamentProcessor();
