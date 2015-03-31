@@ -38,6 +38,14 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
             ->where('id', $transactionId)
             ->with(array('transactionType', 'recipient', 'giver'))
             ->first()->toArray();
+	}
+	
+    public function getUserTransactionsPaginated($userId) {
+        return $this->model
+            ->where('recipient_id', $userId)
+            ->with('transactionType', 'giver', 'recipient')
+            ->orderBy('created_date', 'DESC')
+            ->paginate();
     }
 
     public function getTotalTransactionsForUserByType($userId, $type)

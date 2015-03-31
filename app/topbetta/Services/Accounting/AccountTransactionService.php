@@ -201,6 +201,10 @@ class AccountTransactionService {
         return $this->accounttransactions->getAccountBalanceByUserId($userId);
     }
 
+    public function getAccountTransactionsForUserPaginated($userId)
+    {
+        return $this->accounttransactions->getUserTransactionsPaginated($userId);
+    }
 
     public function getTotalDepositsForUser($userId)
     {
