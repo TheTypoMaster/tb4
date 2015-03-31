@@ -38,4 +38,14 @@ class AccountTransactionModel extends Eloquent {
         return $this->hasOne('TopBetta\\Models\\BetModel', 'refund_transaction_id');
     }
 
+    public function giver()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'giver_id');
+    }
+
+    public function recipient()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'recipient_id');
+    }
+
 }
