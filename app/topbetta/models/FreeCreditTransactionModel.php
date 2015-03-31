@@ -36,6 +36,6 @@ class FreeCreditTransactionModel extends Eloquent {
 
     public function transactionType()
     {
-        return $this->belongsTo('TopBetta\models\FreeCreditTransactionModel', 'tournament_transaction_type_id');
+        return $this->belongsTo('TopBetta\models\FreeCreditTransactionTypeModel', 'tournament_transaction_type_id');
     }
 }
