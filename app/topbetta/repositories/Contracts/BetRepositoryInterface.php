@@ -8,6 +8,5 @@
  */
  
 interface BetRepositoryInterface {
-
-    public function getWithUserAndTransactions($betId);
+    
 }

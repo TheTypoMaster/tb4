@@ -20,6 +20,12 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
         $this->model = $freeCreditTransaction;
     }
 
+    public function findWithType($id)
+    {
+        return $this->model->with('transactionType')->where('id', $id)->first();
+    }
+
+
     public function getFreeCreditBalanceForUser($userId)
     {
         return $this    -> model
