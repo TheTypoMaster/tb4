@@ -9,6 +9,7 @@
 namespace TopBetta\Services\DashboardNotification\Queue;
 
 
+use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
 
 abstract class AbstractTransactionDashboardNotificationService extends DashboardNotificationQueueService
@@ -39,6 +40,23 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         "freebetentry"                              => "bet_placement_bonus_credit",
         "freebetrefund"                             => "bet_refund_bonus_credit",
     );
+    /**
+     * @var
+     */
+    private $accountTransactionRepository;
+
+    abstract public function getTransaction($transactionId);
+
+    public function formatTransactions($tranasctionIds)
+    {
+        $payload = array();
+
+        foreach($tranasctionIds as $transaction) {
+            $payload[] = $this->formatTranasction($this->getTransaction($transaction));
+        }
+
+        return $payload;
+    }
 
     public function formatTransaction($transaction)
     {
