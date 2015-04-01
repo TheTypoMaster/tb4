@@ -267,7 +267,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 	
 				if ($ticket['status'] == 200) {
 
-                    $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => array($ticket['entry_transaction'], $ticket['buyin_transaction'])));
+                    $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
 
 					$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
 	

@@ -49,12 +49,12 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
 
     public function getTransaction($transactionId)
     {
-        return $this->accountTransactionRepository->findWithType($transactionId);
+        return $transactionId ? $this->accountTransactionRepository->findWithType($transactionId) : array();
     }
 
     public function getFreeCreditTransaction($transactionId)
     {
-        return $this->freeCreditTransactionRepository->findWithType($transactionId);
+        return $transactionId ? $this->freeCreditTransactionRepository->findWithType($transactionId) : array();
     }
 
     public function formatPayload($data)

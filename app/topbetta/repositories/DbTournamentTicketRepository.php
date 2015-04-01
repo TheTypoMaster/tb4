@@ -28,7 +28,7 @@ class DbTournamentTicketRepository extends BaseEloquentRepository {
     {
         return $this->model
             ->where('id', $ticketId)
-            ->with(array('user', 'buyinTransaction', 'entryFeeTransaction', 'resultTransaction'))
+            ->with(array('user', 'user.topbettauser', 'buyinTransaction', 'entryFeeTransaction', 'resultTransaction'))
             ->first()->toArray();
     }
 

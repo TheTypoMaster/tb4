@@ -239,8 +239,6 @@ class TournamentProcessor extends TopBettaCLI
 		if($tournament->private_flag){
 			$this->l("Tournament is marked as private.");
 		}
-
-        file_put_contents('/tmp/qual_list.log', print_r($qualified_list,true));
 	
 		$qualified = count($qualified_list);
 		$this->l("Found {$qualified} qualifier(s) for tournament {$tournament->name} ({$tournament->id})");
@@ -292,7 +290,7 @@ class TournamentProcessor extends TopBettaCLI
 
 					} else {
 						$prize_display[] 				= "Ticket to Tournament {$ticket}";
-						$result_id 						= $this->_awardTicket($qualifier, $ticket);
+						$result_id 						= $this->_awardTicket($qualifier, $ticket, $tournamentTicket->id);
 					}
 					$payout_final->win_amount = (int) $this->_getParentTournamentTicketValue($prize['ticket']);
 					$payout_final->saveTournamentTicketPayout();
@@ -301,7 +299,7 @@ class TournamentProcessor extends TopBettaCLI
 				if(!is_null($cash) && $cash > 0) {
 					$display_cash = '$' . number_format($cash / 100, 2);
 					$payout_final->win_amount = (int) $prize['cash'];
-                    $formula='free';
+
 					if($formula == 'cash') {
 						$display_cash .= ' in cash';
 						$result_id = $this->_awardCash($qualifier, $cash);
@@ -322,7 +320,7 @@ class TournamentProcessor extends TopBettaCLI
 
                     //notfiy dashborad
                     if($result_id) {
-                        $this->_dashboardNotify($tournamentTicket, array($result_id), $formula != 'cash');
+                        $this->_dashboardNotify($tournamentTicket->id, array($result_id), $formula != 'cash');
                     }
 
 					$prize_display[] = $display_cash;
@@ -358,17 +356,22 @@ class TournamentProcessor extends TopBettaCLI
 		$this->tournament_ticket->store((array)$ticket);
 	}
 
-	/**
-	 * Perform the audit-trail filling transactions and create a new ticket for a user
-	 *
-	 * @param object 	$user
-	 * @param integer 	$tournament_id
-	 */
-	private function _awardTicket($user, $tournament_id) {
+    /**
+     * Perform the audit-trail filling transactions and create a new ticket for a user
+     *
+     * @param object $user
+     * @param integer $tournament_id
+     * @param $currentTournamentTicket
+     * @return
+     */
+	private function _awardTicket($user, $tournament_id, $currentTournamentTicket) {
 		$tournament = $this->_getParentTournament($tournament_id);
 		$value 		= $tournament->entry_fee + $tournament->buy_in;
 
 		$increment_id 	= $this->_awardTournamentDollars($user, $value);
+        //notify of Increase in balance!
+        $this->_dashboardNotify($currentTournamentTicket, array($increment_id), true);
+
 		$entry_fee_id 	= $this->_awardTournamentDollars($user, -$tournament->entry_fee, 'entry');
 		$buy_in_fee_id 	= $this->_awardTournamentDollars($user, -$tournament->buy_in, 'buyin');
 
@@ -381,7 +384,11 @@ class TournamentProcessor extends TopBettaCLI
 			'refunded_flag'				=> 0
 		);
 
-		$this->tournament_ticket->store($ticket);
+		$newTicketId = $this->tournament_ticket->store($ticket);
+
+        //notify for tournament dollars
+        $this->_dashboardNotify($newTicketId, array($entry_fee_id, $buy_in_fee_id), true);
+
 		$leaderboard = array(
 			'user_id' 		=> $user->id,
 			'tournament_id' => $tournament->id,
@@ -536,7 +543,7 @@ class TournamentProcessor extends TopBettaCLI
 
                 //notify dashboard!!
                 if($refund_id) {
-                    $this->_dashboardNotify($ticket, array($refund_id));
+                    $this->_dashboardNotify($ticket->id, array($refund_id));
                 }
 
 				$this->l("Removing leaderboard record for ticket {$ticket->id} - user {$ticket->user_id}");
@@ -743,7 +750,7 @@ class TournamentProcessor extends TopBettaCLI
 
     private function _dashboardNotify($tournamentTicket, $transactions, $freeCredit = false)
     {
-        return $this->queue->push('TopBetta\Services\DashboardNotification\Queue\TournamentDashboardNotificationQueueService', array("payload" => array("id" => $tournamentTicket->id, $freeCredit ? "free-credit-transactions" : "transactions" => $transactions)), "dashboard-notification");
+        return $this->queue->push('TopBetta\Services\DashboardNotification\Queue\TournamentDashboardNotificationQueueService', array("payload" => array("id" => $tournamentTicket, $freeCredit ? "free-credit-transactions" : "transactions" => $transactions)), "dashboard-notification");
     }
 }
 
