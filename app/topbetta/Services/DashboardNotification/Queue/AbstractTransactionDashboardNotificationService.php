@@ -76,7 +76,7 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         return $payload;
     }
 
-    public function formatTransaction($transaction, $freeCredit = false)
+    public function formatTransaction($transaction, $freeCredit = false, $suffix="")
     {
         if ( ! count($transaction) ) {
             return array();
@@ -85,15 +85,24 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         $transactionPayload = array(
             'transaction_date'      => array_get($transaction, 'created_date', null),
             "transaction_amount"    => array_get($transaction, 'amount', 0),
-            'transaction_type_name' => array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', 0), null),
             "external_id"           => array_get($transaction, 'id', 0),
+            'transaction_type'      => null,
+            "user"                  => null,
         );
 
-        $transactionPayload['users'] = count(array_get($transaction, 'giver', array())) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array();
+        if( $transactionType = array_get($transaction, 'transaction_type', null) ) {
+            //get transaction type name mapped to dashboard values
+            $transactionTypeName = array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transactionType, 'keyword', 0), null);
 
-        //set the user types
-        $transactionPayload['transaction_parent_key'] = 'recipient';
-        $transactionPayload['transaction_child_key'] = 'giver';
+            //format transaction type
+            $transactionPayload['transaction_type'] = array(
+                "transaction_type_name" =>  $transactionTypeName ? $transactionTypeName. "_" . $suffix : null,
+                "transaction_type_description" => array_get($transactionType, 'description', null),
+                "transaction_type_bonus_credit" => $freeCredit,
+            );
+        }
+
+        $transactionPayload['user'] = count(array_get($transaction, 'giver', array())) ? $this->formatUser(array_get($transaction, 'giver', array())) : array();
 
         return $transactionPayload;
     }
