@@ -86,6 +86,7 @@ abstract class DashboardNotificationQueueService {
 
         //create payload
         return array(
+            "external_id"           => array_get($user, 'id', null),
             "user_username"         => array_get($user, 'username', null),
             "user_first_name"       => $firstName,
             "user_last_name"        => $lastName,
