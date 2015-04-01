@@ -24,7 +24,7 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
 
     public function findWithType($transactionId)
     {
-        return $this->model->with(array('transactionType', 'giver'))->where('id', $transactionId)->first()->toArray();
+        return $this->model->with(array('transactionType', 'giver', 'giver.topbettauser'))->where('id', $transactionId)->first()->toArray();
     }
 
     public function getAccountBalanceByUserId($userId) {
