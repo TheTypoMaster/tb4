@@ -51,7 +51,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
     public function getEndpoint()
     {
-        return "test-notify";
+        return "bets";
     }
 
     public function getHttpMethod()
