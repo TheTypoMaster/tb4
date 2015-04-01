@@ -19,4 +19,9 @@ class DbFreeCreditTransactionTypeRepository extends BaseEloquentRepository imple
     {
         $this->model = $freeCreditTransactionTypeModel;
     }
+
+    public function getIdByName($name)
+    {
+        return $this->model->where('keyword', $name)->first()->id;
+    }
 }

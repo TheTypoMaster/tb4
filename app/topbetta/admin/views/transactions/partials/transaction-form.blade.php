@@ -1,4 +1,4 @@
-{{ Form::open(array("method" => "POST", "route" => array("admin.users.account-transactions.store", $user->id))) }}
+{{ Form::open(array("method" => "POST", "route" => array($storeRoute, $user->id))) }}
 
 <div class="form-group">
     <label for="tranasction_type">Tranasction Type</label>
