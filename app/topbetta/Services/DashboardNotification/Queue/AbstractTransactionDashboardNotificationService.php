@@ -83,6 +83,7 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         }
 
         $transactionPayload = array(
+            'transaction_date'      => array_get($transaction, 'created_date', null),
             "transaction_amount"    => array_get($transaction, 'amount', 0),
             'transaction_type_name' => array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transaction, 'transaction_type.keyword', 0), null),
             "external_id"           => array_get($transaction, 'id', 0),
