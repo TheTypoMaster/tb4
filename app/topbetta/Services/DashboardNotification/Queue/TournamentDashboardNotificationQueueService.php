@@ -44,7 +44,7 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
 
     public function getEndpoint()
     {
-        return "test-notify";
+        return "tickets";
     }
 
     public function getTransaction($transactionId)
