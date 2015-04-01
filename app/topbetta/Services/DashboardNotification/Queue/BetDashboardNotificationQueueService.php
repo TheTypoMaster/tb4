@@ -149,7 +149,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         {
             case self::NOTIFICATION_TYPE_BET_PLACEMENT:
                 //get the suffix to append
-                $betSuffix = array_get($bet, 'betselection', false) ? array_get($bet, 'betselection.0.selection.market.event.competition.0.type_code', false)  ? "racing" : "sport" : "";
+                $betSuffix = array_get($bet, 'betselection', false) ? array_get($bet, 'betselection.0.selection.market.event.competition.0.type_code', false)  ? "racing" : "sports" : "";
                 if(array_get($bet, 'bet_transaction_id', null)) {
                     $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['bet_transaction_id']), false, $betSuffix);
                 }
@@ -308,7 +308,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         );
 
         if( $marketType = array_get($selection, 'market.markettype', null) ) {
-            $runner['market_type'] = $this->formatMarketType($marketType);
+            $selectionPayload['market_type'] = $this->formatMarketType($marketType);
         }
 
         if( $event = array_get($selection, 'market.event', null) ) {
