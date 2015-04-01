@@ -81,7 +81,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         $bet = $this->betRepository->getBetWithSelectionsAndEventDetailsByBetId($data['id']);
 
         $payload = array(
-            "bet_amount"           => array_get($bet, 'amount', 0),
+            "bet_amount"           => array_get($bet, 'bet_amount', 0),
             "bet_bonus_amount"     => array_get($bet, "bet_freebet_amount", 0),
             "bet_username"         => array_get($bet, 'user.username', null),
             "bet_resulted"         => (bool)array_get($bet, "resulted_flag", false),
@@ -120,7 +120,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
         //free credit transactions
         if (array_get($data, 'free-credit-transactions', null) ) {
-            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['free-credit-transactions']));
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['free-credit-transactions'], true));
         }
 
         //format bet selections
@@ -166,9 +166,10 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
                 break;
 
             case self::NOTIFICATION_TYPE_BET_RESULTED:
-                $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['result_transaction_id']));
+                if(array_get($bet, 'result_transaction_id', null)) {
+                    $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['result_transaction_id']));
+                }
                 break;
-
         }
 
         return $transactions;
@@ -222,7 +223,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             "runner_number" => array_get($selection, 'number', null),
             "runner_associate" => array_get($selection, 'associate', null),
             "runner_barrier" => array_get($selection, 'barrier', null),
-            "runner_handicao" => array_get($selection, 'handicap', null),
+            "runner_handicap" => array_get($selection, 'handicap', null),
             "runner_ident" => array_get($selection, 'ident', null),
             "runner_silk" => array_get($selection, 'silk_id', null),
             "runner_weight" => array_get($selection, 'weight', null),
@@ -295,7 +296,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
      */
     private function formatSelection($selection)
     {
-        $selection = array(
+        $selectionPayload = array(
             "external_id" => array_get($selection, 'id', 0),
             "selection_name" => array_get($selection, 'name', null),
             "selection_home_away" => array_get($selection, 'home_away', null),
@@ -308,7 +309,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         }
 
         if( $event = array_get($selection, 'market.event', null) ) {
-            $selection['event'] = array(
+            $selectionPayload['event'] = array(
                 "external_id" => array_get($event, 'id', 0),
                 "event_name" => array_get($event, 'name', null),
                 "event_start_date" => array_get($event, 'start_date', null),
@@ -316,7 +317,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             );
 
             if( $competition = array_get($event, 'competition.0', null) ) {
-                $selection['event']['competition'] = array(
+                $selectionPayload['event']['competition'] = array(
                     "external_id" => array_get($competition, 'id', 0),
                     "competition_name" => array_get($competition, 'name', null),
                     "competition_start_date" => array_get($competition, 'start_date', null),
@@ -325,7 +326,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
                 );
 
                 if( $sport = array_get($competition, 'sport', null) ) {
-                    $selection['event']['competition']['sport'] = array(
+                    $selectionPayload['event']['competition']['sport'] = array(
                         "external_id" => array_get($sport, 'id', 0),
                         "sport_name" => array_get($sport, 'name', null),
                         "sport_description" => array_get($sport, 'description', null),
@@ -334,7 +335,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             }
         }
 
-        return $selection;
+        return $selectionPayload;
     }
 
 
