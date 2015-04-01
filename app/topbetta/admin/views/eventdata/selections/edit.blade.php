@@ -28,13 +28,17 @@
                 {{ Form::label('competition_name', 'Competition Name:') }}
                 {{ Form::text('competition_name', null, array('class' => 'form-control', 'placeholder' => $selection->competition_name, 'disabled')) }}
             </div>
+            <div class="form-group">
+                {{ Form::label('team.first.id', 'Team:') }}
+                {{ Form::select('team.first.id', $teams, null, array('class' => 'form-control select2')) }}
+            </div>
         	<div class="form-group">
         		{{ Form::label('selection_status_id', 'Selection Status:') }}
         		{{ Form::select('selection_status_id', array(
                     '1' => 'Not Scratched',
                     '2' => 'Scratched',
                     '3' => 'Late Scratching',
-                    '4' => 'Suspended'), array('class' => 'form-control', 'placeholder' => $selection->selection_status_id)) }}
+                    '4' => 'Suspended'), null, array('class' => 'form-control', 'placeholder' => $selection->selection_status_id)) }}
         	</div>
         </div>
 

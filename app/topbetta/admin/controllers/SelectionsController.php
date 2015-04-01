@@ -1,6 +1,8 @@
 <?php namespace TopBetta\admin\controllers;
 
 use Request;
+use TopBetta\Repositories\Contracts\PlayersRepositoryInterface;
+use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 use TopBetta\Repositories\DbSelectionRepository;
 use View;
 use BaseController;
@@ -15,11 +17,23 @@ class SelectionsController extends BaseController
 	 * @var \TopBetta\Repositories\DbSelectionsRepository
 	 */
 	private $selectionsrepo;
+    /**
+     * @var TeamRepositoryInterface
+     */
+    private $teamRepository;
+    /**
+     * @var PlayersRepositoryInterface
+     */
+    private $playersRepository;
 
-	public function __construct(DbSelectionRepository $selectionsrepo)
+    public function __construct(DbSelectionRepository $selectionsrepo,
+                                TeamRepositoryInterface $teamRepository,
+                                PlayersRepositoryInterface $playersRepository)
 	{
 		$this->selectionsrepo = $selectionsrepo;
-	}
+        $this->teamRepository = $teamRepository;
+        $this->playersRepository = $playersRepository;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -92,8 +106,26 @@ class SelectionsController extends BaseController
             return Redirect::route('admin.selections.index');
         }
 
-        return View::make('admin::eventdata.selections.edit', compact('selection', 'search'));
+        $teams = $this->formatCollectionForSelect($this->teamRepository->findAll(), true);
+        $players = $this->formatCollectionForSelect($this->teamRepository->findAll(), true);
+
+        return View::make('admin::eventdata.selections.edit', compact('selection', 'search', 'players', 'teams'));
 	}
+
+    private function formatCollectionForSelect($collection, $emptySelection = false)
+    {
+        $select = array();
+
+        if( $emptySelection ) {
+            $select[0] = "";
+        }
+
+        foreach($collection as $model) {
+            $select[$model->id] = $model->name;
+        }
+
+        return $select;
+    }
 
 	/**
 	 * Update the specified resource in storage.

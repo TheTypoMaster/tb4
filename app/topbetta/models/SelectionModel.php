@@ -57,4 +57,9 @@ class SelectionModel extends Eloquent{
         return $this->belongsTo('TopBetta\Models\SportsSelectionStatus', 'selection_status_id', 'id');
     }
 
+    public function team()
+    {
+        return $this->morphedByMany('TopBetta\Models\TeamModel', 'competitor', 'tb_selection_competitor', 'selection_id');
+    }
+
 } 
