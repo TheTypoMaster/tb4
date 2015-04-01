@@ -76,7 +76,7 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         return $payload;
     }
 
-    public function formatTransaction($transaction, $freeCredit = false)
+    public function formatTransaction($transaction, $freeCredit = false, $suffix="")
     {
         if ( ! count($transaction) ) {
             return array();
@@ -90,8 +90,12 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         );
 
         if( $transactionType = array_get($transaction, 'transaction_type', null) ) {
+            //get transaction type name mapped to dashboard values
+            $transactionTypeName = array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transactionType, 'keyword', 0), null);
+
+            //format transaction type
             $transactionPayload['transaction_type'] = array(
-                "transaction_type_name" => array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transactionType, 'keyword', 0), null),
+                "transaction_type_name" =>  $transactionTypeName ? $transactionTypeName. "_" . $suffix : null,
                 "transaction_type_description" => array_get($transactionType, 'description', null),
                 "transaction_type_bonus_credit" => $freeCredit,
             );
