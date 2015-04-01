@@ -48,9 +48,10 @@ class UserAccountTransactionsController extends \BaseController
 	{
 		$user = $this->user->find($userId);
 		$transactions = $this->accountTransactionService->getAccountTransactionsForUserPaginated($user->id);
+        $createRoute = 'admin.users.account-transactions.create';
 
 		return View::make('admin::transactions.user.index')
-						->with(compact('transactions', 'user'))
+						->with(compact('transactions', 'user', 'createRoute'))
 						->with('title', 'Account')
 						->with('active', 'account-transactions');
 	}
@@ -63,6 +64,7 @@ class UserAccountTransactionsController extends \BaseController
 
         return View::make('admin::transactions.create', compact('user', 'transactionTypes'))
             ->with('title', 'Account')
+            ->with('storeRoute', 'admin.users.account-transactions.store')
             ->with('active', 'account-transactions');
     }
 
