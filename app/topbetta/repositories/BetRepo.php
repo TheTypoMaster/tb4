@@ -181,6 +181,8 @@ class BetRepo
 
 		$dividends = $this->getExoticDividendsForEvent($exoticName, $bet->event_id);
 
+        if( ! $dividends ) { return 0; }
+
 		//Should be a function in BetSelectionRepo or BetSelectionService for this.
 		//Gets the selection for a bet and organises them in to an array by position selected
 		$betSelection = array_map( function($value) {
