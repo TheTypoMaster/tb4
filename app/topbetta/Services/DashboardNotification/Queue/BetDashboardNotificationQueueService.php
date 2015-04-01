@@ -51,13 +51,24 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
     public function getEndpoint()
     {
-        return "bets";
+        return "test-notify";
     }
 
     public function getHttpMethod()
     {
         return "POST";
     }
+
+    public function getTransaction($transactionId)
+    {
+        return $transactionId ? $this->accountTransactionRepository->findWithType($transactionId) : null;
+    }
+
+    public function getFreeCreditTransaction($transactionId)
+    {
+        return $transactionId ? $this->freeCreditTransactionRepository->findWithType($transactionId) : null;
+    }
+
 
 
     public function formatPayload($data)
@@ -82,7 +93,12 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             "bet_dividend"         => bcdiv($this->betRepo->getBetPayoutAmount(\TopBetta\Bet::find($data['id'])), array_get($bet, 'amount', 1)),
             "type"                 => null,
             "transactions"         => array(),
+            "user"                 => null,
         );
+
+        if( $user = array_get($bet, 'user', null) ) {
+            $payload['user'] = $this->formatUser($user);
+        }
 
         if($betType = array_get($bet, 'type', null)) {
             $payload['type'] = array(
@@ -95,8 +111,16 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         //format transactions
         if(array_get($data, 'notification_type', null)) {
             $payload['transactions'] = $this->formatTransactionsByType($bet, $data['notification_type']);
-        } else if (array_get($data, 'transactions', null)) {
-            $payload['transactions'] = $this->formatTransactions($data['transactions']);
+        }
+
+
+        if (array_get($data, 'transactions', null)) {
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['transactions']));
+        }
+
+        //free credit transactions
+        if (array_get($data, 'free-credit-transactions', null) ) {
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['free-credit-transactions']));
         }
 
         //format bet selections
@@ -108,16 +132,6 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         return $payload;
     }
 
-    private function formatTransactions($transactions)
-    {
-        $payload = array();
-        file_put_contents('/tmp/transactions.log', print_r($transactions, true));
-        foreach($transactions as $transaction) {
-            $payload[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($transaction));
-        }
-
-        return $payload;
-    }
 
     /**
      * Format all of the transactions depending on the notification type.
@@ -137,7 +151,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
                     $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['bet_transaction_id']));
                 }
                 if($bet['bet_freebet_flag']) {
-                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['bet_freebet_transaction_id']));
+                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['bet_freebet_transaction_id']), true);
                 }
                 break;
 
@@ -147,7 +161,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
                     $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['refund_transaction_id']));
                 }
                 if($bet['bet_freebet_flag'] && $bet['refund_freebet_transaction_id']) {
-                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['refund_freebet_transaction_id']));
+                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['refund_freebet_transaction_id']), true);
                 }
                 break;
 
