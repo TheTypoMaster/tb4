@@ -129,6 +129,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             $payload = array_merge($payload, $selections);
         }
 
+        \Log::info("BET PAYLOAD " . print_r($payload, true));
         return $payload;
     }
 
@@ -147,11 +148,13 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         switch($notificationType)
         {
             case self::NOTIFICATION_TYPE_BET_PLACEMENT:
+                //get the suffix to append
+                $betSuffix = array_get($bet, 'betselection', false) ? array_get($bet, 'betselection.0.selection.market.event.competition.0.type_code', false)  ? "racing" : "sport" : "";
                 if(array_get($bet, 'bet_transaction_id', null)) {
-                    $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['bet_transaction_id']));
+                    $transactions[] = $this->formatTransaction($this->accountTransactionRepository->findWithType($bet['bet_transaction_id']), false, $betSuffix);
                 }
                 if($bet['bet_freebet_flag']) {
-                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['bet_freebet_transaction_id']), true);
+                    $transactions[] = $this->formatTransaction($this->freeCreditTransactionRepository->findWithType($bet['bet_freebet_transaction_id']), true, $betSuffix);
                 }
                 break;
 
