@@ -65,13 +65,14 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
         }
 
         //get tournament ticket
-        $tournamentTicket = $this->tournamentTicketRepository->getWithUserAndTransactions($data['id']);
+        $tournamentTicket = $this->tournamentTicketRepository->getWithUserAndTournament($data['id']);
 
         //create payload
         $payload = array(
             "ticket_username" => array_get($tournamentTicket, "user.username", null),
             "ticket_extra_starting_currency" => array_get($tournamentTicket, 'extra_starting_currency', null),
-            "ticket_entry_fee" => array_get($tournamentTicket, "entry_fee_transaction.amount", 0),
+            "ticket_entry_fee" => array_get($tournamentTicket, "tournament.entry_fee", 0),
+            "ticket_buy_in" => array_get($tournamentTicket, "tournament.buy_in", 0),
             "external_id" => array_get($tournamentTicket, "id", 0),
             "transactions" => array(),
             "user" => null,

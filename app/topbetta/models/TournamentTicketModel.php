@@ -13,22 +13,9 @@ class TournamentTicketModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
     }
 
-    public function buyinTransaction()
+    public function tournament()
     {
-        return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'buy_in_transaction_id')
-            ->with('transactionType');
-    }
-
-    public function entryFeeTransaction()
-    {
-        return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'entry_fee_transaction_id')
-            ->with('transactionType');
-    }
-
-    public function resultTransaction()
-    {
-        return $this->belongsTo('TopBetta\Models\ACcountTransactionModel', 'result_transaction_id')
-            ->with('transactionType');
+        return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');
     }
 
 }
