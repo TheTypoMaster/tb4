@@ -8,8 +8,9 @@
 
 use Carbon\Carbon;
 
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 use Validator;
+
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
