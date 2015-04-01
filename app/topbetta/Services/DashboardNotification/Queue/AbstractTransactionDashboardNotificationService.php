@@ -84,9 +84,10 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
 
         $transactionPayload = array(
             'transaction_date'      => array_get($transaction, 'created_date', null),
-            "transaction_amount"    => array_get($transaction, 'amount', 0),
+            "transaction_amount"    => abs(array_get($transaction, 'amount', 0)),
             "external_id"           => array_get($transaction, 'id', 0),
             'transaction_type'      => null,
+            "user"                  => null,
         );
 
         if( $transactionType = array_get($transaction, 'transaction_type', null) ) {
@@ -95,17 +96,13 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
 
             //format transaction type
             $transactionPayload['transaction_type'] = array(
-                "transaction_type_name" =>  $transactionTypeName ? $transactionTypeName. "_" . $suffix : null,
+                "transaction_type_name" =>  $transactionTypeName ? $suffix ? $transactionTypeName. "_" . $suffix : $transactionTypeName : null,
                 "transaction_type_description" => array_get($transactionType, 'description', null),
                 "transaction_type_bonus_credit" => $freeCredit,
             );
         }
 
-        $transactionPayload['users'] = count(array_get($transaction, 'giver', array())) ? array($this->formatUser(array_get($transaction, 'giver', array()))) : array();
-
-        //set the user types
-        $transactionPayload['transaction_parent_key'] = 'recipient';
-        $transactionPayload['transaction_child_key'] = 'giver';
+        $transactionPayload['user'] = count(array_get($transaction, 'giver', array())) ? $this->formatUser(array_get($transaction, 'giver', array())) : array();
 
         return $transactionPayload;
     }
