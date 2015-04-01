@@ -73,8 +73,13 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
         $payload['transactions'] = array();
 
         if( $transactions = array_get($data, 'transactions', false) ) {
-            //add the transaction
+            //add the transactions
             $payload['transactions'] = $this->formatTransactions($transactions);
+        }
+
+        if( $transactions = array_get($data, 'free-credit-transactions', false) ) {
+            //add the free transaction
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($transactions, true));
         }
 
         return $payload;
