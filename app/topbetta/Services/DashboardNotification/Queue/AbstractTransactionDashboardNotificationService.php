@@ -91,7 +91,6 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
 
         if( $transactionType = array_get($transaction, 'transaction_type', null) ) {
             $transactionPayload['transaction_type'] = array(
-                "external_id" => array_get($transactionType, 'id', 0),
                 "transaction_type_name" => array_get($freeCredit ? $this->freeCreditTransactionTypeMapping : $this->transactionTypeMapping, array_get($transactionType, 'keyword', 0), null),
                 "transaction_type_description" => array_get($transactionType, 'description', null),
                 "transaction_type_bonus_credit" => $freeCredit,
