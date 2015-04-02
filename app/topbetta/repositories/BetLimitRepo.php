@@ -195,7 +195,7 @@ class BetLimitRepo
 		$lowestLimit = false;
 		// 1: check every rule the user has for a match
 		foreach($this->userBetLimits as $limit) {
-            if($limit->limitType->name == self::LIMIT_BET_SPORTS && ( ! $lowestLimit || $limit->amount < $lowestLimit )) {
+            if($limit->limitType->name == self::LIMIT_BET_SPORTS && ( ! $lowestLimit || $limit->amount * 100 < $lowestLimit )) {
                 $lowestLimit = $limit->amount * 100;
             }
         }
