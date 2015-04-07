@@ -19,7 +19,7 @@
         <h4>Edit {{ $modelName }}</h4>
         <div class='col-lg-6'>
             {{ Form::model($model, $formAction) }}
-            @if(count($icons))
+
             <div class="form-group">
                 {{ Form::label('icon_id', 'Icon:') }}
                 <select class="icon-select form-control" name="icon_id">
@@ -27,8 +27,9 @@
                         <option value="{{ $icon->id }}" data-icon-url="{{ $icon->icon_url  }}" >{{ $icon->name }}</option>
                     @endforeach
                 </select>
+                <span>{{ link_to_route(Route::currentRouteName(), "More Icons", Route::current()->parameters() + array("all_icons" => true)) }}</span>
             </div>
-            @endif
+
             <div class="form-group">
                 {{ Form::label('name', 'Name:') }}
                 {{ Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}
@@ -72,13 +73,13 @@
                     @elseif($field['type'] == 'datetime')
                         {{ Form::datetime($field['field'], object_get($model, $field['field'])) }}
                     @elseif($field['type'] == 'select')
-                        <select name="{{ $field['field'] }}" class="form-control">
+                        <select name="{{ $field['field'] }}" class="form-control select2">
                             @foreach($field['data'] as $option)
                                 <option value="{{ $option->id }}" {{object_get($model, $field['field']) == $option->id ? "selected" : ""}}>{{ $option->name }}</option>
                             @endforeach
                         </select>
                     @elseif($field['type'] == 'multi-select')
-                        <select name="{{ $field['field'] }}[]" class="form-control" multiple>
+                        <select name="{{ $field['field'] }}[]" class="form-control select2" multiple>
                             @foreach($field['data'] as $option)
                                 <option value="{{ $option->id }}" {{ in_array($option->id, $model ? $model->$field['field']->lists('id') : array()) ? "selected" : ""}}>{{ $option->name }}</option>
                             @endforeach
@@ -109,7 +110,7 @@
 
 <script type="text/javascript">
     $(".datepicker").datetimepicker({format: 'YYYY-MM-DD HH:mm'});
-    $('select').select2();
+    //$('select').select2();
 </script>
 <!-- /.row -->
 @stop
