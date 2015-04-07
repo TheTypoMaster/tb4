@@ -551,7 +551,7 @@ class RaceDataProcessingService {
 			foreach ($oddsArray as $runnerOdds) {
 
 				if($runnerOdds == '0'){
-					Log::debug($this->logprefix . 'Price for runner '.$runnerCount.' is 0. '.print_r($price, true));
+					//Log::debug($this->logprefix . 'Price for runner '.$runnerCount.' is 0. '.print_r($price, true));
 					continue;
 				}
 
