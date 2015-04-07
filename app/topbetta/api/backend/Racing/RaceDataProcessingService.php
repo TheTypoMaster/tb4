@@ -464,34 +464,35 @@ class RaceDataProcessingService {
 				}
 			}
 
-			// store last starts data
-			foreach($runner['LastStartsLong'] as $lastStartLong){
+			if(isset($runner['LastStartsLong'])){
+				// store last starts data
+				foreach($runner['LastStartsLong'] as $lastStartLong){
 
-				$runnerLastStarts = array();
+					$runnerLastStarts = array();
 
-				$runnerLastStarts['runner_form_id'] = $formId;
-				$runnerLastStarts['race_code'] = $runner['MeetingId'].'_'.$runner['RaceNo'];
-				$runnerLastStarts['horse_code'] = $runnerDetails['external_selection_id'];
-				$runnerLastStarts['runner_code'] = $runnerDetails['external_selection_id'];
-				$runnerLastStarts['mgt_date'] = array_get($lastStartLong, 'Date');
-				$runnerLastStarts['race_distance'] = array_get($lastStartLong, 'Distance');
-				$runnerLastStarts['race_starters'] = array_get($lastStartLong, 'Starters');
-				$runnerLastStarts['finish_position'] = array_get($lastStartLong, 'FinishPositon');
-				$runnerLastStarts['jockey_initials'] = array_get($lastStartLong, 'JockeyInitials');
-				$runnerLastStarts['jockey_surname'] = array_get($lastStartLong, 'JockeySurname');
-				$runnerLastStarts['barrier'] = array_get($lastStartLong, 'Barrier');
-				$runnerLastStarts['abr_venue'] = array_get($lastStartLong, 'AbrVenue');
-				$runnerLastStarts['handicap'] = array_get($lastStartLong, 'Handicap');
-				$runnerLastStarts['starting_win_price'] = array_get($lastStartLong, 'WinStartPrice');
-				$runnerLastStarts['track_condition'] = array_get($lastStartLong, 'TrackCondition');
-				$runnerLastStarts['in_running_400'] = array_get($lastStartLong, 'InRunning400', '');
-				$runnerLastStarts['in_running_800'] = array_get($lastStartLong, 'InRunning800', '');
-				$runnerLastStarts['name_race_form'] = array_get($lastStartLong, 'Class');
-				$runnerLastStarts['other_runner_name'] = array_get($lastStartLong, 'OtherRunnerName');
-				$runnerLastStarts['other_runner_barrier'] = array_get($lastStartLong, 'OtherRunnerBarrier');
-				$runnerLastStarts['other_runner_time'] = array_get($lastStartLong, 'OtherRunnerTime');
-				$runnerLastStarts['margin_decimal'] = array_get($lastStartLong, 'MarginDecimal');
-				$runnerLastStarts['numeric_rating'] = array_get($lastStartLong, 'Rating');
+					$runnerLastStarts['runner_form_id'] = $formId;
+					$runnerLastStarts['race_code'] = $runner['MeetingId'].'_'.$runner['RaceNo'];
+					$runnerLastStarts['horse_code'] = $runnerDetails['external_selection_id'];
+					$runnerLastStarts['runner_code'] = $runnerDetails['external_selection_id'];
+					$runnerLastStarts['mgt_date'] = array_get($lastStartLong, 'Date');
+					$runnerLastStarts['race_distance'] = array_get($lastStartLong, 'Distance');
+					$runnerLastStarts['race_starters'] = array_get($lastStartLong, 'Starters');
+					$runnerLastStarts['finish_position'] = array_get($lastStartLong, 'FinishPositon');
+					$runnerLastStarts['jockey_initials'] = array_get($lastStartLong, 'JockeyInitials');
+					$runnerLastStarts['jockey_surname'] = array_get($lastStartLong, 'JockeySurname');
+					$runnerLastStarts['barrier'] = array_get($lastStartLong, 'Barrier');
+					$runnerLastStarts['abr_venue'] = array_get($lastStartLong, 'AbrVenue');
+					$runnerLastStarts['handicap'] = array_get($lastStartLong, 'Handicap');
+					$runnerLastStarts['starting_win_price'] = array_get($lastStartLong, 'WinStartPrice');
+					$runnerLastStarts['track_condition'] = array_get($lastStartLong, 'TrackCondition');
+					$runnerLastStarts['in_running_400'] = array_get($lastStartLong, 'InRunning400', '');
+					$runnerLastStarts['in_running_800'] = array_get($lastStartLong, 'InRunning800', '');
+					$runnerLastStarts['name_race_form'] = array_get($lastStartLong, 'Class');
+					$runnerLastStarts['other_runner_name'] = array_get($lastStartLong, 'OtherRunnerName');
+					$runnerLastStarts['other_runner_barrier'] = array_get($lastStartLong, 'OtherRunnerBarrier');
+					$runnerLastStarts['other_runner_time'] = array_get($lastStartLong, 'OtherRunnerTime');
+					$runnerLastStarts['margin_decimal'] = array_get($lastStartLong, 'MarginDecimal');
+					$runnerLastStarts['numeric_rating'] = array_get($lastStartLong, 'Rating');
 
 //				$runnerLastStarts['WeightCarried'] = array_get($lastStartLong, 'r_base_ls_weight_carried');
 //				$runnerLastStarts['Comments'] = array_get($lastLong, 'r_base_ls_comments');
@@ -501,18 +502,20 @@ class RaceDataProcessingService {
 //				$runnerLastStarts['Bonus'] = array_get($lastStartLong, 'r_base_ls_bonus');
 
 
-				$existingLastStart = $this->laststarts->getLastStartIdByRaceAndRunnerCode($runner['MeetingId'].'_'.$runner['RaceNo'], $lastStartLong['SelectionId']);
+					$existingLastStart = $this->laststarts->getLastStartIdByRaceAndRunnerCode($runner['MeetingId'].'_'.$runner['RaceNo'], $lastStartLong['SelectionId']);
 
-				if($existingLastStart) {
-					$runnerLastStarts['id'] = $existingLastStart['id'];
-					$this->laststarts->updateOrCreate($runnerLastStarts, 'id');
-				}else{
-					$this->laststarts->create($runnerLastStarts);
+					if($existingLastStart) {
+						$runnerLastStarts['id'] = $existingLastStart['id'];
+						$this->laststarts->updateOrCreate($runnerLastStarts, 'id');
+					}else{
+						$this->laststarts->create($runnerLastStarts);
+					}
+
+					//$this->laststarts->updateOrCreate($runner['MeetingId'].'_'.$runner['RaceNo']);
+
 				}
-
-				//$this->laststarts->updateOrCreate($runner['MeetingId'].'_'.$runner['RaceNo']);
-
 			}
+
 		}
 
 		// refund bets on scratched runners
