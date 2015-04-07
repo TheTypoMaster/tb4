@@ -21,11 +21,15 @@ use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\DataValueRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Repositories\Contracts\LastStartRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 
 
 use TopBetta\Services\Caching\NextToJumpCacheService;
 
+use TopBetta\Repositories\BetRepo;
 use TopBetta\Repositories\BetResultRepo;
+
+
 use TopBetta\Repositories\RisaFormRepository;
 
 
@@ -43,6 +47,7 @@ class RaceDataProcessingService {
 	protected $risaform;
 	protected $laststarts;
 	protected $prices;
+	protected $betproduct;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -51,7 +56,10 @@ class RaceDataProcessingService {
 								DataValueRepositoryInterface $datavalues,
 								TournamentRepositoryInterface $tournaments,
 								NextToJumpCacheService $nexttojump,
-								BetResultRepo $betrepository,
+								BetProductRepositoryInterface $betproduct,
+								BetRepo $betrepository,
+								BetResultRepo $betresultrepository,
+								BetResultRepo $betresultrepository,
 								MarketRepositoryInterface $markets,
 								RisaFormRepository $risaform,
 								LastStartRepositoryInterface $laststarts,
@@ -64,10 +72,12 @@ class RaceDataProcessingService {
         $this->tournaments = $tournaments;
 		$this->nexttojump = $nexttojump;
 		$this->betrepository = $betrepository;
+		$this->betresultrepository = $betresultrepository;
 		$this->markets = $markets;
 		$this->risaform = $risaform;
 		$this->laststarts = $laststarts;
 		$this->prices = $prices;
+		$this->betproduct = $betproduct;
 
 		$this->logprefix = 'RaceDataProcessingService: ';
     }
@@ -305,7 +315,7 @@ class RaceDataProcessingService {
 			}
 
 			// if this event was abandoned - result bets
-			if ($raceDetails['event_status_id'] == 3) $this->betrepository->resultAllBetsForEvent($eventId);
+			if ($raceDetails['event_status_id'] == 3) $this->betresultrepository->resultAllBetsForEvent($eventId);
 
 			// N2J cache object check
 			$this->nexttojump->manageCache($existingRaceDetails, $raceDetails);
@@ -503,7 +513,7 @@ class RaceDataProcessingService {
 				'RaceNo' => 'required|integer',
 				'BetType' => 'required',
 				'PriceType' => 'required',
-				'PoolAmount' => 'required',
+				//'PoolAmount' => 'required',
 				'OddString' => 'required');
 			$validator = Validator::make($price, $rules);
 			if ($validator->fails()) {
@@ -592,7 +602,7 @@ class RaceDataProcessingService {
         $meetingGrade = $meetingTypeCodeResult['meeting_grade'];
 
         // check if product is used
-        $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
+        $productUsed = $this->betproduct->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 
         if (!$productUsed) {
             Log::debug("BackAPI: Racing - Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
