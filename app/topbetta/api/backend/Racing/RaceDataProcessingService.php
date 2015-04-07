@@ -82,6 +82,13 @@ class RaceDataProcessingService {
 		$this->logprefix = 'RaceDataProcessingService: ';
     }
 
+
+	/**
+	 * Pass payload to correct method for processing
+	 *
+	 * @param $data
+	 * @return string|void
+	 */
 	public function processRacingData($data){
 		foreach ($data as $key => $racingData) {
 
@@ -103,6 +110,12 @@ class RaceDataProcessingService {
 		}
 	}
 
+	/**
+	 * Process meeting payload
+	 *
+	 * @param $meetings
+	 * @return string
+	 */
 	private function _processMeetingData($meetings){
 
 		foreach ($meetings as $meeting) {
@@ -116,7 +129,7 @@ class RaceDataProcessingService {
 				'RaceType' => 'required');
 			$validator = Validator::make($meeting, $rules);
 			if ($validator->fails()) {
-				Log::debug($this->logprefix . 'Meeting data incomplete '. print_r($meeting,true));
+				Log::debug($this->logprefix . 'Meeting data incomplete ', $meeting);
 				continue;
 			}
 
@@ -182,6 +195,12 @@ class RaceDataProcessingService {
 		return "Meeting(s) Processed";
 	}
 
+	/**
+	 * Process the racing data payload
+	 *
+	 * @param $races
+	 * @return string
+	 */
 	private function _processRaceData($races){
 
 		$eventList = array();
@@ -195,7 +214,7 @@ class RaceDataProcessingService {
 				'RaceNo' => 'required');
 			$validator = Validator::make($race, $rules);
 			if ($validator->fails()) {
-				Log::debug($this->logprefix . 'Race data incomplete '. print_r($race,true));
+				Log::debug($this->logprefix . 'Race data incomplete ', $race);
 				continue;
 			}
 
@@ -326,6 +345,12 @@ class RaceDataProcessingService {
 
 	}
 
+	/**
+	 * Process runner data
+	 *
+	 * @param $runners
+	 * @return string
+	 */
 	private function _processRunnerData($runners){
 
 		$scratchList = array();
@@ -341,7 +366,7 @@ class RaceDataProcessingService {
 							'RunnerNo' => 'required|integer');
 			$validator = Validator::make($runner, $rules);
 			if ($validator->fails()) {
-				Log::debug($this->logprefix . 'Runner data incomplete '. print_r($runner,true));
+				Log::debug($this->logprefix . 'Runner data incomplete ', $runner);
 				continue;
 			}
 
@@ -488,8 +513,6 @@ class RaceDataProcessingService {
 				//$this->laststarts->updateOrCreate($runner['MeetingId'].'_'.$runner['RaceNo']);
 
 			}
-			//Log::debug($this->logprefix.' Last Starts - '. print_r($runner['LastStartsLong'], true));
-
 		}
 
 		// refund bets on scratched runners
@@ -501,11 +524,15 @@ class RaceDataProcessingService {
 		return "Runenr(s) Processed";
 	}
 
+	/**
+	 * Process price data
+	 *
+	 * @param $prices
+	 * @return string
+	 */
 	private function _processPriceData($prices){
 
 		foreach ($prices as $price) {
-			$selectionExists = $resultExists = 0;
-
 			/*
 			 * validate runner payload
 			 */
@@ -521,19 +548,20 @@ class RaceDataProcessingService {
 				continue;
 			}
 
-			$oddsArray = explode(';', $price['OddString']);
 			$providerName = "igas";
 
+			// explode the odds string
+			$oddsArray = explode(';', $price['OddString']);
 
 			if (!is_array($oddsArray)) {
-				Log::debug($this->logprefix . 'Price data odds incomplete ' . print_r($price, true));
+				Log::debug($this->logprefix . 'Price data odds incomplete ', $price);
 				continue;
 			}
 
 			// see if we use this product
 			$saveThisProduct = $this->_canProductBeProcessed($price, $providerName, $price['RaceNo'], "Odds");
 			if (!$saveThisProduct) {
-				Log::debug($this->logprefix . 'Price data not used ' . print_r($price, true));
+				Log::debug($this->logprefix . 'Price data not used ' , $price);
 				continue;
 			}
 
@@ -544,14 +572,13 @@ class RaceDataProcessingService {
 				continue;
 			}
 
-			$existingMeetingDetails = $this->competitions->getMeetingFromExternalId($price['MeetingId']);
-
 			$runnerCount = 1;
 
+			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {
 
+				// ignore odds of 0
 				if($runnerOdds == '0'){
-					//Log::debug($this->logprefix . 'Price for runner '.$runnerCount.' is 0. '.print_r($price, true));
 					continue;
 				}
 
@@ -559,7 +586,7 @@ class RaceDataProcessingService {
 				$existingSelectionId = $this->selections->getSeletcionIdByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount);
 
 				if(!$existingSelectionId) {
-					Log::debug($this->logprefix . 'Selection for price missing'.print_r($price, true));
+					Log::debug($this->logprefix . 'Selection for price missing', $price);
 					continue;
 
 				}
@@ -574,7 +601,7 @@ class RaceDataProcessingService {
 						$priceDetails['place_odds'] = $runnerOdds / 100;
 						break;
 					default:
-						Log::debug($this->logprefix . 'Price BetType is invalid '.print_r($price, true));
+						Log::debug($this->logprefix . 'Price BetType is invalid ', $price);
 						continue;
 				}
 				$this->prices->updateOrCreate($priceDetails, 'selection_id');
@@ -582,9 +609,19 @@ class RaceDataProcessingService {
 			}
 
 		}
+		return "Price(s) Processed";
 	}
 
 
+	/**
+	 * Check if we want to process this one
+	 *
+	 * @param $dataArray
+	 * @param $providerName
+	 * @param $raceNo
+	 * @param null $type
+	 * @return bool
+	 */
 	private function _canProductBeProcessed($dataArray, $providerName, $raceNo, $type = null)
     {
         $productUsed = false;
@@ -605,10 +642,10 @@ class RaceDataProcessingService {
         $productUsed = $this->betproduct->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 
         if (!$productUsed) {
-            Log::debug("BackAPI: Racing - Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+            Log::debug($this->logprefix ."Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
             return false;
         }
-        Log::info("BackAPI: Racing - Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+        Log::info($this->logprefix ."Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
         return true;
     }
 }
