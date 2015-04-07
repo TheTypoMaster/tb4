@@ -384,7 +384,7 @@ class RaceDataProcessingService {
 			$runnerDetails['barrier'] = array_get($runner, 'BarrierNo');
 			$runnerDetails['associate'] = array_get($runner, 'Jockey');
 			$runnerDetails['weight'] = array_get($runner, 'Weight') / 10;
-			$runnerDetails['trainer'] = array_get($runner, 'Trainer');
+			$runnerDetails['trainer'] = array_get($runner, 'Trainer', '');
 			$runnerDetails['last_starts'] = array_get($runner, 'LastStarts', '');
 			$runnerDetails['silk_id'] = array_get($runner, 'SilkCode', '');
 
