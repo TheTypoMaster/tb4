@@ -517,7 +517,7 @@ class RaceDataProcessingService {
 				'OddString' => 'required');
 			$validator = Validator::make($price, $rules);
 			if ($validator->fails()) {
-				Log::debug($this->logprefix . 'Price data incomplete ' . print_r($price, true));
+				Log::debug($this->logprefix . 'Price data incomplete - ' . $validator->messages());
 				continue;
 			}
 
