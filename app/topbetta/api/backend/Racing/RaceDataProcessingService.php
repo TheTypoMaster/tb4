@@ -15,7 +15,7 @@ use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
-use TopBetta\Repositories\Contracts\SelectionPriceInterface;
+use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\DataValueRepositoryInterface;
@@ -55,7 +55,7 @@ class RaceDataProcessingService {
 								MarketRepositoryInterface $markets,
 								RisaFormRepository $risaform,
 								LastStartRepositoryInterface $laststarts,
-								SelectionPriceInterface $prices){
+								SelectionPriceRepositoryInterface $prices){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
