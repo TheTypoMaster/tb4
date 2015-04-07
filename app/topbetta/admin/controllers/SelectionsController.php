@@ -99,15 +99,15 @@ class SelectionsController extends BaseController
         //Get search string for filtering after redirection
 		$search = Input::get("q", '');
 
-		$selection = $this->selectionsrepo->find($id);
+		$selection = $this->selectionsrepo->find($id)->load(array('team'));
 
         if (is_null($selection)) {
             // TODO: flash message user not found
             return Redirect::route('admin.selections.index');
         }
 
-        $teams = $this->formatCollectionForSelect($this->teamRepository->findAll(), true);
-        $players = $this->formatCollectionForSelect($this->teamRepository->findAll(), true);
+        $teams = array_merge(array(0 => ''), $this->teamRepository->findAll()->lists('name', 'id'));
+        $players = array_merge(array(0 => ''), $this->playersRepository->findAll()->lists('name', 'id'));
 
         return View::make('admin::eventdata.selections.edit', compact('selection', 'search', 'players', 'teams'));
 	}
@@ -138,8 +138,26 @@ class SelectionsController extends BaseController
         //Get search string for filtering after redirection
 		$search = Input::get("q", '');
 
-		$data = Input::only('name', 'selection_status_id');
+        //get the selection
+        $selection = $this->selectionsrepo->find($id);
+
+		$data = Input::only('name', 'selection_status_id', 'team', 'player');
+
+        //ignore 0 values
+        if(array_get($data, 'team', false)) {
+            $data['team'] = array_filter($data['team'], function($value) {
+                return $value != 0;
+            });
+        }
+
+        if(array_get($data, 'player', false)) {
+            $data['player'] = array_filter($data['player'], function($value) {
+                return $value != 0;
+            });
+        }
+
         $this->selectionsrepo->updateWithId($id, $data);
+
 
         return Redirect::route('admin.selections.index', array($id, 'q'=>$search))
             ->with('flash_message', 'Saved!');

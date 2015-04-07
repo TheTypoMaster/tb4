@@ -124,6 +124,41 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return $selections->toArray();
     }
 
+    public function updateWithId($id, $data)
+    {
+        parent::updateWithId($id, array_except($data, array('team', 'player')));
+
+        $selection = $this->model->find($id);
+
+        //assosciate teams
+        if(is_array($team = array_get($data, 'team', false))) {
+            //dd(array_diff($selection->team->lists('id'), $team));
+
+            if (count(array_diff($selection->team->lists('id'), $team))) {
+                $selection->team()->detach(array_diff($selection->team->lists('id'), $team));
+            }
+
+            if (count(array_diff($team, $selection->team->lists('id')))) {
+                $selection->team()->attach(array_diff($team, $selection->team->lists('id')));
+            }
+        }
+
+        //assosciate players
+        if(is_array($player = array_get($data, 'player', false))) {
+
+            if( count(array_diff($selection->player->lists('id'), $player)) ) {
+                $selection->player()->detach(array_diff($selection->player->lists('id'), $player));
+            }
+
+            if( count(array_diff($player, $selection->player->lists('id'))) ) {
+                $selection->player()->attach(array_diff($player, $selection->player->lists('id')));
+            }
+        }
+
+        return $selection;
+    }
+
+
 
 
 } 

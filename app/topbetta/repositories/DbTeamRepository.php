@@ -27,4 +27,6 @@ class DbTeamRepository extends BaseEloquentRepository implements TeamRepositoryI
             ->orWhere('default_name', 'LIKE', "%$searchTerm%")
             ->get();
     }
+
+    //public function getNameA
 }

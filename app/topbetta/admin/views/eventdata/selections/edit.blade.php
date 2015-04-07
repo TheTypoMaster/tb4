@@ -29,8 +29,12 @@
                 {{ Form::text('competition_name', null, array('class' => 'form-control', 'placeholder' => $selection->competition_name, 'disabled')) }}
             </div>
             <div class="form-group">
-                {{ Form::label('team.first.id', 'Team:') }}
-                {{ Form::select('team.first.id', $teams, null, array('class' => 'form-control select2')) }}
+                {{ Form::label('team', 'Team:') }}
+                {{ Form::select('team[]', $teams, object_get($selection->team()->first(), 'id', null), array('class' => 'form-control select2')) }}
+            </div>
+            <div class="form-group">
+                {{ Form::label('player', 'Player:') }}
+                {{ Form::select('player[]', $players, object_get($selection->player()->first(), 'id', null), array('class' => 'form-control select2')) }}
             </div>
         	<div class="form-group">
         		{{ Form::label('selection_status_id', 'Selection Status:') }}
