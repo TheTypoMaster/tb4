@@ -7,8 +7,9 @@
  */
 
 use TopBetta\Models\TournamentModel;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 
-class DbTournamentRepository extends BaseEloquentRepository {
+class DbTournamentRepository extends BaseEloquentRepository implements TournamentRepositoryInterface{
 
     protected $model;
 
@@ -21,4 +22,15 @@ class DbTournamentRepository extends BaseEloquentRepository {
                     ->update(array('betting_closed_date' => $closeDate, 'end_date' => $closeDate));
     }
 
+	public function getTournamentWithEventGroup($eventGroupId){
+		$tournaments = $this->model->where('event_group_id', $eventGroupId)->get();
+		if(!$tournaments) return null;
+		return $tournaments->toArray();
+	}
+
+	public function getTournamentById($tournamentId) {
+		$tournament = $this->model->where('id', $tournamentId);
+		if(!$tournament) return null;
+		return $tournament->toArray();
+	}
 } 

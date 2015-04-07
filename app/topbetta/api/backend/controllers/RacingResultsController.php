@@ -12,7 +12,7 @@ use Response;
 use TopBetta\api\backend\Racing\RaceResulting;
 
 class RacingResultsController extends BaseController {
-    protected $restults;
+    protected $results;
 
     public function __construct(RaceResulting $results){
         $this->results = $results;
