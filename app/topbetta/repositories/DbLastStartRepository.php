@@ -19,7 +19,7 @@ class DbLastStartRepository extends BaseEloquentRepository implements LastStartR
 		$this->model = $model;
 	}
 
-	public function getLastStartIdByRunnerCode($raceCode, $runnerCode) {
+	public function getLastStartIdByRunnerCode($runnerCode) {
 		$laststartid = $this->model->where('runner_code', $runnerCode)
 						//->where('race_code', $raceCode)
 						->pluck('id');
