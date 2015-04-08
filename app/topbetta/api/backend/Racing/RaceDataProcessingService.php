@@ -502,7 +502,7 @@ class RaceDataProcessingService {
 //				$runnerLastStarts['Bonus'] = array_get($lastStartLong, 'r_base_ls_bonus');
 
 
-					$existingLastStart = $this->laststarts->getLastStartIdByRunnerCode($runnerDetails['external_selection_id']);
+					$existingLastStart = $this->laststarts->getLastStartIdByRunnerCode($runner['MeetingId'].'_'.$runner['RaceNo'], $runnerDetails['external_selection_id']);
 
 					if($existingLastStart) {
 						$runnerLastStarts['id'] = $existingLastStart;
@@ -520,7 +520,7 @@ class RaceDataProcessingService {
 
 		// refund bets on scratched runners
 		foreach ($scratchList as $scratchedId) {
-			Log::info($this->logprefix.' Scratching - Refunding bets for runner id: ' . $scratchedId);
+			Log::info($this->logprefix.'Scratching - Refunding bets for runner id: ' . $scratchedId);
 			$this->betrepository->refundBetsForRunnerId($scratchedId);
 		}
 
