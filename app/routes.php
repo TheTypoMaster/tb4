@@ -226,6 +226,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
 
+    Route::resource('icons', 'TopBetta\admin\controllers\IconController');
+
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 });
