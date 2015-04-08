@@ -471,7 +471,7 @@ class RaceDataProcessingService {
 					$runnerLastStarts = array();
 
 					$runnerLastStarts['runner_form_id'] = $formId;
-					$runnerLastStarts['race_code'] = $runner['MeetingId'].'_'.$runner['RaceNo'];
+					$runnerLastStarts['race_code'] = $lastStartLong['AbrVenue'].'_'.$lastStartLong['Date'];
 					$runnerLastStarts['horse_code'] = $runnerDetails['external_selection_id'];
 					$runnerLastStarts['runner_code'] = $runnerDetails['external_selection_id'];
 					$runnerLastStarts['mgt_date'] = array_get($lastStartLong, 'Date');
@@ -502,7 +502,7 @@ class RaceDataProcessingService {
 //				$runnerLastStarts['Bonus'] = array_get($lastStartLong, 'r_base_ls_bonus');
 
 
-					$existingLastStart = $this->laststarts->getLastStartIdByRunnerCode($runner['MeetingId'].'_'.$runner['RaceNo'], $runnerDetails['external_selection_id']);
+					$existingLastStart = $this->laststarts->getLastStartIdByRaceAndHorseCode($runnerLastStarts['race_code'], $runnerLastStarts['horse_code']);
 
 					Log::debug($this->logprefix.' Last Starts for Form ID - '.$runnerLastStarts['runner_form_id'].': '.$existingLastStart. '. '.$runner['MeetingId'].'_'.$runner['RaceNo'].' '.$runnerDetails['external_selection_id']);
 
