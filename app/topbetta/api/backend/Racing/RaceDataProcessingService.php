@@ -505,7 +505,7 @@ class RaceDataProcessingService {
 					$existingLastStart = $this->laststarts->getLastStartIdByRunnerCode($runnerDetails['external_selection_id']);
 
 					if($existingLastStart) {
-						$runnerLastStarts['id'] = $existingLastStart['id'];
+						$runnerLastStarts['id'] = $existingLastStart;
 						$this->laststarts->updateOrCreate($runnerLastStarts, 'id');
 					}else{
 						$this->laststarts->create($runnerLastStarts);
