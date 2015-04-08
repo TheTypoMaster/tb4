@@ -502,7 +502,7 @@ class RaceDataProcessingService {
 //				$runnerLastStarts['Bonus'] = array_get($lastStartLong, 'r_base_ls_bonus');
 
 
-					$existingLastStart = $this->laststarts->getLastStartIdByRaceAndRunnerCode($runnerDetails['external_selection_id']);
+					$existingLastStart = $this->laststarts->getLastStartIdByRunnerCode($runnerDetails['external_selection_id']);
 
 					if($existingLastStart) {
 						$runnerLastStarts['id'] = $existingLastStart['id'];
