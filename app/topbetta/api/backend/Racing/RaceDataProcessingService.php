@@ -504,7 +504,7 @@ class RaceDataProcessingService {
 
 					$existingLastStart = $this->laststarts->getLastStartIdByRunnerCode($runner['MeetingId'].'_'.$runner['RaceNo'], $runnerDetails['external_selection_id']);
 
-					Log::debug($this->logprefix.' Last Starts for Form ID - '.$runnerLastStarts['runner_form_id'].': ',$existingLastStart. '. '.$runner['MeetingId'].'_'.$runner['RaceNo'].' '.$runnerDetails['external_selection_id']);
+					Log::debug($this->logprefix.' Last Starts for Form ID - '.$runnerLastStarts['runner_form_id'].': '.$existingLastStart. '. '.$runner['MeetingId'].'_'.$runner['RaceNo'].' '.$runnerDetails['external_selection_id']);
 
 					if($existingLastStart) {
 						$runnerLastStarts['id'] = $existingLastStart;
