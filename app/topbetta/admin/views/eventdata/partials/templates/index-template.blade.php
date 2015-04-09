@@ -71,7 +71,7 @@
                             <a href="{{ URL::route($editRoute, array($model->id, "q" => $search)) }}" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
 
                             {{Form::open(array("method" => "DELETE", "route"=>array($deleteRoute, $model->id)))}}
-                                <button type="submit" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></button>
+                                <button type="submit" class="btn btn-danger delete-button"><i class="glyphicon glyphicon-remove"></i></button>
                             {{Form::close()}}
                         </td>
                     </tr>

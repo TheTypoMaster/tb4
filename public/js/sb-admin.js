@@ -26,6 +26,15 @@ $(function(){
    $('.select2').select2();
 });
 
+//confirmation for deleting resources
+$(function(){
+    $('.delete-button').click(function(e){
+        var conf = confirm("Are you sure you want to delete?");
+
+        return conf;
+    })
+})
+
 //Sets up icon selection
 $(function() {
 

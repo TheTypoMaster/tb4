@@ -38,7 +38,7 @@
                         <td>
                             {{ Form::open(array("class" => "form form-inline", "method" => "DELETE", "route" => array('admin.icons.destroy', $icon->id, 'q' => $search))) }}
                                 <a href="{{ route('admin.icons.edit', array($icon->id, 'q' => $search)) }}" class="btn btn-warning btn-small"><i class="glyphicon glyphicon-edit"></i></a>
-                                <button type="submit" class="btn btn-danger btn-small"><i class="glyphicon glyphicon-remove"></i></button>
+                                <button type="submit" class="btn btn-danger btn-small delete-button"><i class="glyphicon glyphicon-remove"></i></button>
                             {{ Form::close() }}
                         </td>
                     </tr>
