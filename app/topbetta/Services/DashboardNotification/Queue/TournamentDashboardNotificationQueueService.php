@@ -96,7 +96,6 @@ class TournamentDashboardNotificationQueueService extends AbstractTransactionDas
             $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($transactions, true));
         }
 
-        \Log::info("TOURNAMENT: " . print_r($payload, true));
         return $payload;
     }
 
