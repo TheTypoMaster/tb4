@@ -132,27 +132,12 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
 
         //assosciate teams
         if(is_array($team = array_get($data, 'team', false))) {
-            //dd(array_diff($selection->team->lists('id'), $team));
-
-            if (count(array_diff($selection->team->lists('id'), $team))) {
-                $selection->team()->detach(array_diff($selection->team->lists('id'), $team));
-            }
-
-            if (count(array_diff($team, $selection->team->lists('id')))) {
-                $selection->team()->attach(array_diff($team, $selection->team->lists('id')));
-            }
+            $selection->team()->sync($team);
         }
 
         //assosciate players
         if(is_array($player = array_get($data, 'player', false))) {
-
-            if( count(array_diff($selection->player->lists('id'), $player)) ) {
-                $selection->player()->detach(array_diff($selection->player->lists('id'), $player));
-            }
-
-            if( count(array_diff($player, $selection->player->lists('id'))) ) {
-                $selection->player()->attach(array_diff($player, $selection->player->lists('id')));
-            }
+            $selection->player()->sync($player);
         }
 
         return $selection;
