@@ -8,6 +8,7 @@ use View;
 use Input;
 use Redirect;
 use Config;
+use File;
 
 class IconController extends \BaseController {
 
@@ -35,7 +36,15 @@ class IconController extends \BaseController {
 	 */
 	public function index()
 	{
-		//
+		$search = Input::get('q', '');
+
+        if($search) {
+            $icons = $this->iconRepository->search($search);
+        } else {
+            $icons = $this->iconRepository->findAllPaginated();
+        }
+
+        return View::make('admin::eventdata.icons.index', compact('icons', 'search'));
 	}
 
 
@@ -46,10 +55,11 @@ class IconController extends \BaseController {
 	 */
 	public function create()
 	{
+        $search = Input::get('q', '');
         //get the icon types
         $iconTypes = $this->iconTypeRepository->findAll();
 
-        return View::make('admin::eventdata.icons.create', compact('iconTypes'));
+        return View::make('admin::eventdata.icons.create', compact('iconTypes', 'search'));
 	}
 
 
@@ -77,9 +87,12 @@ class IconController extends \BaseController {
         }
 
         $data = Input::except(array('q', 'icon_file'));
-        $data['icon_url'] = Config::get('images.image_path') . $file->getClientOriginalName();
+        $data['icon_url'] = Config::get('images.image_base_url') . $file->getClientOriginalName();
 
-        return $this->iconRepository->create($data);
+        $this->iconRepository->create($data);
+
+        return Redirect::route("admin.icons.index", array("q" => $search))
+            ->with(array("flash_message" => "Icon Saved!"));
 	}
 
 
@@ -103,7 +116,12 @@ class IconController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+        $search = Input::get('q', '');
+        $icon = $this->iconRepository->find($id);
+
+        $iconTypes = $this->iconTypeRepository->findAll();
+
+        return View::make('admin::eventdata.icons.edit', compact('icon', 'iconTypes', 'search'));
 	}
 
 
@@ -115,7 +133,14 @@ class IconController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+        $search = Input::get('q', '');
+        $data = Input::except('q');
+
+        //update
+        $this->iconRepository->updateWithId($id, $data);
+
+        return Redirect::route('admin.icons.index', array("q" => $search))
+            ->with(array('flash_message' => 'Icon Saved!'));
 	}
 
 
@@ -127,7 +152,19 @@ class IconController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+        $search = Input::get('q', '');
+
+        //get the db record
+        $icon = $this->iconRepository->find($id);
+
+        //delete the image
+        File::delete(Config::get('images.image_path') . basename($icon->icon_url));
+
+        //delete the DB record
+        $icon->delete();
+
+        return Redirect::route('admin.icons.index', array("q" => $search))
+            ->with(array('flash_message' => 'Icon Saved!'));
 	}
 
 

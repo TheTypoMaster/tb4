@@ -24,4 +24,15 @@ class DbIconRepository extends BaseEloquentRepository implements IconRepositoryI
     {
         return $this->model->where('icon_type_id', '=', $iconTypeId)->get();
     }
+
+    public function search($term)
+    {
+        return $this
+            ->model
+            ->where('name', 'LIKE', "%$term%")
+            ->orWhereHas('iconType', function($q) use ($term) {
+                $q->where('name', 'LIKE', "%$term%");
+            })
+            ->get();
+    }
 }

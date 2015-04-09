@@ -8,7 +8,7 @@
             <h1>Icons</h1>
 
             <div class="col-md-6">
-                {{ Form::open(array("route" => "admin.icons.store", "method" => "POST", "files" => true)) }}
+                {{ Form::model($icon, array("route" => array("admin.icons.update", $icon->id, 'q' => $search), "method" => "PUT", "files" => true)) }}
 
                 <div class="form-group">
                     {{ Form::label("name", "Name: ") }}
@@ -17,7 +17,7 @@
 
                 <div class="form-group" >
                     {{ Form::label("icon_file", "Image: ") }}
-                    {{ Form::file('icon_file') }}
+                    <img src="{{ $icon->icon_url }}" style="width:50px; height:50px" />
                 </div>
 
                 <div class="form-group" >

@@ -11,4 +11,9 @@ class IconModel extends Eloquent {
     protected $guarded = array();
 
 	public static $rules = array();
+
+    public function iconType()
+    {
+        return $this->belongsTo('TopBetta\models\IconTypeModel', 'icon_type_id');
+    }
 }
