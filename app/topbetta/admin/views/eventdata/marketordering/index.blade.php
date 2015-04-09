@@ -25,7 +25,7 @@
 
             @if(count($marketTypes))
                 <div class="form-group pull-right">
-                    <select class="market-types">
+                    <select class="market-types select2">
                         @foreach($marketTypes as $marketType)
                             <option value="{{ $marketType->id }}">{{ $marketType->name }}</option>
                         @endforeach
@@ -70,7 +70,6 @@
 
 
     <script type="text/javascript">
-        $(".market-types").select2();
 
         registerClickEvents();
 
