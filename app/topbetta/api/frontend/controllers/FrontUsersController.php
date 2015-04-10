@@ -8,10 +8,7 @@ use View;
 use Auth;
 use Redirect;
 
-
 class FrontUsersController extends \BaseController {
-
-
 
 	public function __construct() {
 
@@ -19,7 +16,6 @@ class FrontUsersController extends \BaseController {
 		$this -> beforeFilter('auth', array('only' => array('index')));
 
 	}
-
 
 	public function login() {
 
