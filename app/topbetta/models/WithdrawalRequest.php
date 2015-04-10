@@ -6,6 +6,7 @@ class WithdrawalRequest extends \Eloquent {
     protected $guarded = array();
     public static $rules = array();
     protected $table = 'tbdb_withdrawal_request';
+    public $timestamps = false;
 
 	public function user() {
 		return $this->belongsTo('User', 'requester_id');

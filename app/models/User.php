@@ -38,6 +38,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function freeCreditTransactions() {
 		return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
 	}
+
+    public function accountBalance()
+    {
+        return $this->accountTransactions()->sum('amount');
+    }
 	
 	/**
 	 * A User can have many tickets for tournaments

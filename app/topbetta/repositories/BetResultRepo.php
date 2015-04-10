@@ -21,6 +21,8 @@ use TopBetta\Services\UserAccount\UserAccountService;
 class BetResultRepo
 {
 
+    const TURNOVER_MIN_AMOUNT = 1.5;
+
 	protected $notifications;
     /**
      * @var UserAccountService
@@ -233,7 +235,7 @@ class BetResultRepo
 			// WINNING BET
 			\Log::info('WINNING BET: id - ' . $bet->id);
             //update user turnover
-            if(\TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) > 1.5) {
+            if(\TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) > self::TURNOVER_MIN_AMOUNT) {
                 $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
             }
 
