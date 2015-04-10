@@ -2,13 +2,20 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 
 class FrontUsersBalancesController extends \BaseController {
 
-	public function __construct()
+    /**
+     * @var UserTopBettaRepositoryInterface
+     */
+    private $userTopBettaRepository;
+
+    public function __construct(UserTopBettaRepositoryInterface $userTopBettaRepository)
 	{
 		$this->beforeFilter('auth');
-	}
+        $this->userTopBettaRepository = $userTopBettaRepository;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -21,8 +28,10 @@ class FrontUsersBalancesController extends \BaseController {
 		
 		$accountBalance = \TopBetta\AccountBalance::getAccountBalance($userId);
 		$freeCreditBalance = \TopBetta\FreeCreditBalance::getFreeCreditBalance($userId);
+
+        $topBettaUser = $this->userTopBettaRepository->getUserDetailsFromUserId($userId);
 		
-		return array("success" => true, "result" => array("account_balance" => $accountBalance, "freecredit_balance" => $freeCreditBalance));
+		return array("success" => true, "result" => array("account_balance" => $accountBalance, "freecredit_balance" => $freeCreditBalance, "balance_to_turnover" => $topBettaUser['balance_to_turnover']));
 	}
 
 	/**

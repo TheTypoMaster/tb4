@@ -10,6 +10,8 @@ use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 use TopBetta\Services\Betting\SelectionService;
+use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Services\UserAccount\UserAccountService;
 
 
 class FrontBetsController extends BaseController {
@@ -20,17 +22,29 @@ class FrontBetsController extends BaseController {
 	 * @var SelectionService
 	 */
 	private $selectionService;
+    /**
+     * @var BetRepositoryInterface
+     */
+    private $betRepository;
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
 
-	public function __construct(BetSourceRepositoryInterface $betsource,
+    public function __construct(BetSourceRepositoryInterface $betsource,
 
 								ExternalSourceBetNotificationService $betnotificationservice,
 
-								SelectionService $selectionService) {
+								SelectionService $selectionService,
+                                BetRepositoryInterface $betRepository,
+                                UserAccountService $userAccountService) {
 		$this->beforeFilter('auth');
 		$this->betsource = $betsource;
 		$this->betnotificationservice = $betnotificationservice;
 		$this->selectionService = $selectionService;
-	}
+        $this->betRepository = $betRepository;
+        $this->userAccountService = $userAccountService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -381,6 +395,9 @@ class FrontBetsController extends BaseController {
 			//bet has been placed by now, deal with messages and errors
 			if ($bet['status'] == 200) {
 
+                //update the users turnover
+                $this->updateUserTurnover($bet['bet_id']);
+
                 $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
                 // if there is an API endpoint notify it of bet placement
@@ -506,6 +523,11 @@ class FrontBetsController extends BaseController {
 						//bet has been placed by now, deal with messages and errors
 						if ($bet['status'] == 200) {
 
+                            if($bet['bet_id']) {
+                                //update the users turnover
+                                $this->updateUserTurnover($bet['bet_id']);
+                            }
+
 							$details[0] = $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
                             // if there is an API endpoint notify it of bet placement
                             if(!is_null($betSourceRecord['api_endpoint'])){
@@ -615,6 +637,11 @@ class FrontBetsController extends BaseController {
 					//bet has been placed by now, deal with messages and errors
 					if ($bet['status'] == 200) {
 
+                        if($bet['bet_id']) {
+                            //update the users turnover
+                            $this->updateUserTurnover($bet['bet_id']);
+                        }
+
                        $messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
                         // if there is an API endpoint notify it of bet placement
@@ -641,6 +668,17 @@ class FrontBetsController extends BaseController {
 		}
 
 	}
+
+    private function updateUserTurnover($betId)
+    {
+        $bet = $this->betRepository->find($betId);
+
+        if( $amount = $bet->bet_amount - $bet->bet_freebet_amount ) {
+            return $this->userAccountService->decreaseBalanceToTurnOver(\Auth::user()->id, $amount);
+        }
+
+        return null;
+    }
 
 	/**
 	 * Display the specified resource.

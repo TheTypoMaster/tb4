@@ -9,6 +9,7 @@ use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\SportsSelectionResults;
 use Carbon;
 
@@ -20,14 +21,24 @@ use Carbon;
 class BetRepo
 {
 
-	/**
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+
+    public function __construct(UserAccountService $userAccountService)
+    {
+        $this->userAccountService = $userAccountService;
+    }
+
+    /**
 	 * Lookup results for the selections made for this bet
 	 * Return the payout amount in cents if a winning bet
 	 * 
 	 * @param Bet $bet
 	 * @return int (cents)
 	 */
-	public function getBetPayoutAmount(Bet $bet)
+	public function getBetPayoutAmount(Bet $bet, $freeBetOnly = false)
 	{
 		$payout = 0;
 		$dividend = 0;
@@ -60,25 +71,25 @@ class BetRepo
 			// EXOTICS
 			case 'quinella':
 				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
+					$payout = $this->getExoticPayoutForBet($bet, 'quinella', $freeBetOnly) * 100;
 				}
 				break;
 
 			case 'exacta':
 				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
+					$payout = $this->getExoticPayoutForBet($bet, 'exacta', $freeBetOnly) * 100;
 				}
 				break;
 
 			case 'trifecta':
 				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
+					$payout = $this->getExoticPayoutForBet($bet, 'trifecta', $freeBetOnly) * 100;
 				}
 				break;
 
 			case 'firstfour':
 				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
+					$payout = $this->getExoticPayoutForBet($bet, 'firstfour', $freeBetOnly) * 100;
 				}
 				break;
 
@@ -89,7 +100,7 @@ class BetRepo
 		// CALC THE RETURN AMOUNT IF IT WAS A WINNING BET
 		if ($dividend > 0) {
 			//$payout = $bet->bet_amount * round($dividend, 2);
-			$payout = bcmul($bet->bet_amount, round($dividend, 2));
+			$payout = bcmul($freeBetOnly ? $bet->bet_freebet_amount : $bet->bet_amount, round($dividend, 2));
 		}
 
 		return (int) $payout;
@@ -175,6 +186,17 @@ class BetRepo
 		return false;
 	}
 
+    public function getExoticPayoutForBet(Bet $bet, $exoticName = false, $freeBetOnly = false) {
+        //get dividend
+        $fullDividend = $this->getExoticDividendForBet($bet, $exoticName);
+
+        //get percentage
+        $percentage = $freeBetOnly ? bcdiv($bet->bet_freebet_amount, $bet->combinations, 2) : $bet->percentage;
+
+        //($percentage/100) * 100 = $percentage!
+        return round(($fullDividend / 100) * ($percentage / 100) * 100, 2);
+    }
+
 	public function getExoticDividendForBet(Bet $bet, $exoticName = false)
 	{
 		if (!$exoticName) {
@@ -182,7 +204,7 @@ class BetRepo
 		}
 
 		$fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
-		return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
+		return $fullDividend;
 	}
 
 	public function getExoticDividendForEvent($exoticName, $eventId)
@@ -246,7 +268,13 @@ class BetRepo
 		// Free credit bets, we keep the original stake
 		if ($bet->bet_freebet_flag == 1) {
 			$amount -= $bet->bet_freebet_amount;
+
+            $this->userAccountService->addBalanceToTurnOver(
+                $bet->user_id,
+                $this->getBetPayoutAmount($bet, true) - $bet->bet_freebet_amount
+            );
 		}
+
 		$bet->result_transaction_id = $this->awardBetWin($bet->user_id, $amount);
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
 		$bet->resulted_flag = 1;
@@ -280,6 +308,7 @@ class BetRepo
 		if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
 			$amount = $bet->bet_freebet_amount;
 			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $amount);
+
 		} else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $bet->bet_amount) {
 			// Free bet amount was less then refund
 			$refundAmount = $bet->bet_amount - $bet->bet_freebet_amount;
@@ -288,10 +317,23 @@ class BetRepo
 			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
 			// Refund balance to account
 			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refundAmount);
+
+            //update user turnover
+            $this->userAccountService->addBalanceToTurnOver(
+                $bet->user_id,
+                $refundAmount
+            );
+
 		} else {
 			// No free credit was used - refund full amount to account
 			$amount = $bet->bet_amount;
 			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
+
+            //update user turnover
+            $this->userAccountService->addBalanceToTurnOver(
+                $bet->user_id,
+                $amount
+            );
 		}
 
         // winning bets we take the return/win amount back as well
@@ -375,7 +417,12 @@ class BetRepo
         $resultTransaction = $bet->payout;
         if ($resultTransaction && $resultTransaction->transactionType->keyword == 'betwin') {
             // increment with a NEGATIVE amount
-            return AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+            $balance = AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+
+            $this->userAccountService->decreaseBalanceToTurnOver(
+                $bet->user_id,
+                $this->getBetPayoutAmount($bet, true) - $bet->bet_freebet_amount
+            );
         }
 
         return false;

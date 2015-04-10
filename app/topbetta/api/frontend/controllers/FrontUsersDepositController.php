@@ -5,16 +5,22 @@ use TopBetta;
 use Mail;
 use Auth;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\UserAccount\UserAccountService;
 
 class FrontUsersDepositController extends \BaseController {
 
 	private $depositTypeMapping = array(
 		"tokencreditcard" => "Eway",
 	);
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
 
-	public function __construct() {
+    public function __construct(UserAccountService $userAccountService) {
 		$this -> beforeFilter('auth');
-	}
+        $this->userAccountService = $userAccountService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -363,6 +369,7 @@ class FrontUsersDepositController extends \BaseController {
 							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 							if($updateAccountBalance){
+                                $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
 								return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 							}else{
 								//TODO: If updating of account balance fails then let someone know!?!?
@@ -412,6 +419,7 @@ class FrontUsersDepositController extends \BaseController {
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 						if($updateAccountBalance){
+                            $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
 							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
@@ -448,6 +456,7 @@ class FrontUsersDepositController extends \BaseController {
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 						if($updateAccountBalance){
+                            $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
 							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
