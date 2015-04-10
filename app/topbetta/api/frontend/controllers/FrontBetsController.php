@@ -395,9 +395,6 @@ class FrontBetsController extends BaseController {
 			//bet has been placed by now, deal with messages and errors
 			if ($bet['status'] == 200) {
 
-                //update the users turnover
-                $this->updateUserTurnover($bet['bet_id']);
-
                 $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
                 // if there is an API endpoint notify it of bet placement
@@ -523,11 +520,6 @@ class FrontBetsController extends BaseController {
 						//bet has been placed by now, deal with messages and errors
 						if ($bet['status'] == 200) {
 
-                            if($bet['bet_id']) {
-                                //update the users turnover
-                                $this->updateUserTurnover($bet['bet_id']);
-                            }
-
 							$details[0] = $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
                             // if there is an API endpoint notify it of bet placement
                             if(!is_null($betSourceRecord['api_endpoint'])){
@@ -637,11 +629,6 @@ class FrontBetsController extends BaseController {
 					//bet has been placed by now, deal with messages and errors
 					if ($bet['status'] == 200) {
 
-                        if($bet['bet_id']) {
-                            //update the users turnover
-                            $this->updateUserTurnover($bet['bet_id']);
-                        }
-
                        $messages[] = array("bets" => $betData['bets'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
 
                         // if there is an API endpoint notify it of bet placement
@@ -669,16 +656,6 @@ class FrontBetsController extends BaseController {
 
 	}
 
-    private function updateUserTurnover($betId)
-    {
-        $bet = $this->betRepository->find($betId);
-
-        if( $amount = $bet->bet_amount - $bet->bet_freebet_amount ) {
-            return $this->userAccountService->decreaseBalanceToTurnOver(\Auth::user()->id, $amount);
-        }
-
-        return null;
-    }
 
 	/**
 	 * Display the specified resource.
