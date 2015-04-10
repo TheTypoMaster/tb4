@@ -8,6 +8,7 @@ use TopBetta\Repositories\AccountTransactionRepo;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
+use TopBetta\Services\UserAccount\UserAccountService;
 use User;
 use View;
 use Input;
@@ -28,15 +29,21 @@ class UserAccountTransactionsController extends \BaseController
      * @var AccountTransactionService
      */
     private $accountTransactionService;
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
 
     public function __construct(AccountTransactionService $accountTransactionService,
                                 AccountTransactionTypeRepositoryInterface $accountTransactionTypeRepository,
-                                User $user)
+                                User $user,
+                                UserAccountService $userAccountService)
 	{
 
 		$this->user = $user;
         $this->accountTransactionTypeRepository = $accountTransactionTypeRepository;
         $this->accountTransactionService = $accountTransactionService;
+        $this->userAccountService = $userAccountService;
     }
 
 	/**
@@ -73,6 +80,10 @@ class UserAccountTransactionsController extends \BaseController
         $data = Input::all();
 
         $this->accountTransactionService->increaseAccountBalance($userId, $data['amount']*100, $data['transaction_type'], \Auth::user()->id, $data['notes']);
+
+        if($this->accountTransactionService->isDepositTransaction($data['transaction_type']) && $data['amount'] > 0) {
+            $this->userAccountService->addBalanceToTurnOver($userId, $data['amount'] * 100);
+        }
 
         return Redirect::route('admin.users.account-transactions.index', array($userId));
     }

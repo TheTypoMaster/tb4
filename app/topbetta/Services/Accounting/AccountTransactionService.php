@@ -200,6 +200,11 @@ class AccountTransactionService {
         return $this->accounttransactions->getUserTransactionsPaginated($userId);
     }
 
+    public function isDepositTransaction($transactionType)
+    {
+        return in_array($transactionType, self::$depositTransactions);
+    }
+
     public function getTotalDepositsForUser($userId)
     {
         //get positive deposit transactions only
