@@ -189,9 +189,15 @@ class AccountTransactionService {
         return $this->accounttransactions->getAccountBalanceByUserId($userId);
     }
 
+
     public function getAvailableWithdrawalBalance($userId)
     {
         return $this->getAccountBalanceForUser($userId) - $this->useraccountservice->getBalanceToTurnOver($userId);
+	}
+	
+    public function getAccountTransactionsForUserPaginated($userId)
+    {
+        return $this->accounttransactions->getUserTransactionsPaginated($userId);
     }
 
     public function getTotalDepositsForUser($userId)
