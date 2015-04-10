@@ -8,7 +8,10 @@ use View;
 use Auth;
 use Redirect;
 
+
 class FrontUsersController extends \BaseController {
+
+
 
 	public function __construct() {
 
@@ -16,6 +19,7 @@ class FrontUsersController extends \BaseController {
 		$this -> beforeFilter('auth', array('only' => array('index')));
 
 	}
+
 
 	public function login() {
 
@@ -311,6 +315,13 @@ class FrontUsersController extends \BaseController {
 				$user = $l -> query('doUserRegisterBasic', $input);
 
 			} elseif ($input['type'] == 'upgrade') {
+
+				// check if user account is upgraded already
+				$alreadyUpgraded = Auth::user()->isTopBetta;
+
+				if($alreadyUpgraded){
+					return array("success" => false, "result" => 'Your account is already upgraded!');
+				}
 
 				$user = $l -> query('doUserUpgradeTopBetta', $input);
 
