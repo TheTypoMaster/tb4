@@ -104,6 +104,7 @@ abstract class DashboardNotificationQueueService {
             "user_block"            => (bool) array_get($user, 'block', null),
             "user_activated"        => (bool) array_get($user, 'activated_flag'),
             "user_btag"             => array_get($user, 'topbettauser.btag', null),
+            "user_register_date"=> array_get($user, 'registerDate', null),
         );
     }
 
