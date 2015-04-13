@@ -29,7 +29,7 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
 	}
 
 	public function getTournamentById($tournamentId) {
-		$tournament = $this->model->where('id', $tournamentId);
+		$tournament = $this->model->where('id', $tournamentId)->get();
 		if(!$tournament) return null;
 		return $tournament->toArray();
 	}
