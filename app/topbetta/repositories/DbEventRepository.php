@@ -119,7 +119,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     /**
      * adds and removes teams for an event based on the teams array
      * @param $eventId
-     * @param array $teams (aray of team ids and position [id => position]
+     * @param array $teams (array of team ids and position [id => position]
      */
     public function addTeams($eventId, array $teams)
     {

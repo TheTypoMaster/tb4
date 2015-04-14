@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\CompetitionRegionRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
+use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentCompetitionRepositoryInterface;
 use TopBetta\Repositories\DbTournamentRepository;
 
@@ -47,6 +48,10 @@ class GameListProcessor extends AbstractFeedProcessor {
      * @var DbTournamentRepository
      */
     private $tournaments;
+    /**
+     * @var TeamRepositoryInterface
+     */
+    private $teamRepository;
 
     public function __construct(EventRepositoryInterface $eventRepository,
                                 CompetitionRepositoryInterface $competitionRepository,
@@ -54,7 +59,8 @@ class GameListProcessor extends AbstractFeedProcessor {
                                 SportRepositoryInterface $sportRepository,
                                 CompetitionRegionRepositoryInterface $regionRepository,
                                 TournamentCompetitionRepositoryInterface $tournamentCompetitionRepository,
-                                DbTournamentRepository $tournaments)
+                                DbTournamentRepository $tournaments,
+                                TeamRepositoryInterface $teamRepository)
     {
         $this->eventRepository = $eventRepository;
         $this->competitionRepository = $competitionRepository;
@@ -63,6 +69,7 @@ class GameListProcessor extends AbstractFeedProcessor {
         $this->regionRepository = $regionRepository;
         $this->tournamentCompetitionRepository = $tournamentCompetitionRepository;
         $this->tournaments = $tournaments;
+        $this->teamRepository = $teamRepository;
     }
 
     public function process($data)
@@ -90,11 +97,13 @@ class GameListProcessor extends AbstractFeedProcessor {
         //process tournament competition and event group
         $competition = null;
         if( $league = array_get($data, 'League', null) ) {
-            $competition = $this->processCompetition($league, array_get($data, 'round', ''), array_get($data, 'EventTime', null), $externalId, array_get($baseCompetition, 'id', null), array_get($sport, 'id', null));
+            $competition = $this->processCompetition($league, array_get($data, 'Round', ''), array_get($data, 'EventTime', null), $externalId, array_get($baseCompetition, 'id', null), array_get($sport, 'id', null));
         }
 
         //process event
         $event = $this->processEvent($externalId, array_get($data, 'EventName', null), array_get($data, 'EventTime'), $competition);
+
+        $this->processTeams(array_get($data, 'Teams', array()), $event['id']);
 
     }
 
@@ -195,5 +204,40 @@ class GameListProcessor extends AbstractFeedProcessor {
 
         return $event;
     }
+
+    private function processTeams($teams, $event)
+    {
+        $teamIds = array();
+
+        //process each team
+        foreach($teams as $team) {
+            $teamIds[] = $this->processTeam($team, $event);
+        }
+
+    }
+
+    private function processTeam($team, $event)
+    {
+        //check team id exists
+        if( ! $teamId = array_get($team, 'team_id', null) ) {
+            return;
+        }
+
+        //team data
+        $data = array(
+            "external_team_id" => $teamId,
+            "name" => array_get($team, 'team_name', null),
+        );
+
+        //create the team
+        $teamModel = $this->teamRepository->updateOrCreate($data, 'external_team_id');
+
+        if( $teamModel ) {
+            return $teamModel['id'];
+        }
+
+        return 0;
+    }
+
 
 }

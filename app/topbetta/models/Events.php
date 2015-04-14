@@ -11,7 +11,7 @@ class Events extends Eloquent {
 	public static $rules = array();
 
     public function competitions(){
-        return $this->belongsToMany('\TopBetta\SportsComps', 'tbdb_event_group_event', 'event_id', 'event_group_id');
+        return $this->belongsToMany('\TopBetta\SportsComps', 'tbdb_event_group_event', 'event_id', 'event_group_id')->withTimestamps();
     }
 
     public function competitionpivot(){
