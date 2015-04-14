@@ -11,7 +11,17 @@ use Eloquent;
  
 class SportModel extends Eloquent {
 
-    protected $table = 'tbdb_tournament_sport';
+    protected $table = 'tb_sports';
     protected $guarded = array();
+
+    public function icon()
+    {
+        return $this->belongsTo('TopBetta\Models\IconModel');
+    }
+
+    public function defaultCompetitionIcon()
+    {
+        return $this->belongsTo('TopBetta\Models\IconModel', 'default_competition_icon_id');
+    }
 
 }

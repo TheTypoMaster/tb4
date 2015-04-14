@@ -22,4 +22,9 @@ class Events extends Eloquent {
         return $this->belongsTo('\TopBetta\SportEventStatus', 'event_status_id', 'id');
     }
 
+    public function teams()
+    {
+        return $this->belongsToMany('\TopBetta\models\TeamModel', 'tb_team_tbdb_event', 'tbdb_event_id', 'tb_team_id')->withPivot('team_position');
+    }
+
 }

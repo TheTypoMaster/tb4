@@ -214,7 +214,19 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
+    Route::resource('marketordering', 'TopBetta\admin\controllers\MarketOrderingController');
+
+    Route::resource('basecompetitions', 'TopBetta\admin\controllers\BaseCompetitionController');
+
+    Route::resource('teams', 'TopBetta\admin\controllers\TeamController');
+
+    Route::resource('players', 'TopBetta\admin\controllers\PlayerController');
+
+    Route::resource('competitionregions', 'TopBetta\admin\controllers\CompetitionRegionController');
+
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
+
+    Route::resource('icons', 'TopBetta\admin\controllers\IconController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');

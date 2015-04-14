@@ -125,6 +125,26 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return $selections->toArray();
     }
 
+    public function updateWithId($id, $data)
+    {
+        parent::updateWithId($id, array_except($data, array('team', 'player')));
+
+        $selection = $this->model->find($id);
+
+        //assosciate teams
+        if(is_array($team = array_get($data, 'team', false))) {
+            $selection->team()->sync($team);
+        }
+
+        //assosciate players
+        if(is_array($player = array_get($data, 'player', false))) {
+            $selection->player()->sync($player);
+        }
+
+        return $selection;
+    }
+
+
 
 
 } 
