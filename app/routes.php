@@ -76,6 +76,10 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
 	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
 	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
+
+    //New sport feed endpoint
+    Route::resource('sports-feed', 'TopBetta\backend\SportsFeedController', array("only" => array('store')));
+
 });
 
 

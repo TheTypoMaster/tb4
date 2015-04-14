@@ -119,7 +119,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     /**
      * adds and removes teams for an event based on the teams array
      * @param $eventId
-     * @param array $teams (aray of team ids and position [[id => id, team_position => home]]
+     * @param array $teams (aray of team ids and position [id => position]
      */
     public function addTeams($eventId, array $teams)
     {
@@ -127,6 +127,17 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         $event = $this->model->find($eventId);
 
         return $event->teams()->sync($teams);
+    }
+
+    public function addToCompetition($eventId, $competitionId)
+    {
+        $event = $this->model->find($eventId);
+
+        if (!$event->competitions()->find($competitionId)) {
+            return $event->competitions()->attach($competitionId);
+        }
+
+        return null;
     }
 
 

@@ -269,6 +269,8 @@ class SportsController extends BaseController {
 								
 								// update competiton with new event close time if it's after the current stored time
 								if ($dataArray['EventTime'] > $compModel->close_time){
+
+                                    TopBetta\LogHelper::l("BackAPI: Sports - TEST RUN", 1);
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
 

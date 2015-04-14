@@ -85,6 +85,15 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competition;
     }
 
+    public function findByName($name)
+    {
+        if($competition = $this->model->where('name', $name)->first()) {
+            return $competition->toArray();
+        }
+
+        return null;
+    }
+
     public function competitionFeed($input){
 
 
