@@ -3,12 +3,19 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\UserAccount\UserAccountService;
 
 class FrontTournamentsTicketsController extends \BaseController {
 
-	public function __construct() {
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+
+    public function __construct(UserAccountService $userAccountService) {
 		$this -> beforeFilter('auth');
-	}
+        $this->userAccountService = $userAccountService;
+    }
 
 	public function nextToJump() {
 
@@ -259,6 +266,14 @@ class FrontTournamentsTicketsController extends \BaseController {
 				$ticket = $l -> query('saveTournamentTicket', $tournDetailsArray);
 	
 				if ($ticket['status'] == 200) {
+                    //get the tournament
+                    $tournament = \TopBetta\Tournament::find($tournamentId);
+
+                    //decrease turnover balance
+                    $this->userAccountService->decreaseBalanceToTurnOver(
+                        \Auth::user()->id,
+                        $tournament->buy_in + $tournament->entry_fee
+                    );
 	
 					$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
 	
