@@ -141,7 +141,22 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             $selection->player()->sync($player);
         }
 
-        return $selection;
+        return $selection->toArray();
+    }
+
+    public function getByExternalIds($externalSelectionId, $externalMarketId, $externalEventId)
+    {
+        $selection = $this->model
+            ->where('external_selection_id', $externalSelectionId)
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first();
+
+        if($selection) {
+            return $selection->toArray();
+        }
+
+        return null;
     }
 
 
