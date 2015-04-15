@@ -2,11 +2,14 @@
 
 namespace TopBetta\admin\controllers;
 
+use TopBetta\Services\Accounting\WithdrawalService;
+use View;
+use Input;
+use Redirect;
 use TopBetta\Repositories\Contracts\ConfigurationRepositoryInterface;
 
 class WithdrawalConfigController extends \BaseController {
 
-    const WITHDRAWAL_EMAIL_CONFIG = 'withdrawal_email';
     /**
      * @var ConfigurationRepositoryInterface
      */
@@ -70,9 +73,11 @@ class WithdrawalConfigController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$config = $this->configurationRepository->getConfigByName(self::WITHDRAWAL_EMAIL_CONFIG);
+		$config = $this->configurationRepository->getConfigByName(WithdrawalService::WITHDRAWAL_EMAIL_CONFIG);
 
-        return View::make('admin::withdrawals.config.edit');
+        $variables = $this->configurationRepository->getConfigByName(WithdrawalService::WITHDRAWAL_EMAIL_VARIABLE_CONFIG, true);
+
+        return View::make('admin::withdrawals.config.edit', compact('config', 'variables'));
 	}
 
 
@@ -84,7 +89,14 @@ class WithdrawalConfigController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$data = Input::except(array('_token', '_method'));
+
+        $this->configurationRepository->updateWithId(
+            $this->configurationRepository->getIdByName(WithdrawalService::WITHDRAWAL_EMAIL_CONFIG),
+            array("values" => json_encode($data))
+        );
+
+        return Redirect::route('admin.withdrawals.index');
 	}
 
 
