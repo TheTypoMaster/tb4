@@ -24,4 +24,12 @@ class DbTournamentTicketRepository extends BaseEloquentRepository {
         return $this->model->where('tournament_id', $tournamentId)->get();
     }
 
+    public function getWithUserAndTournament($ticketId)
+    {
+        return $this->model
+            ->where('id', $ticketId)
+            ->with(array('user', 'user.topbettauser', 'tournament'))
+            ->first()->toArray();
+    }
+
 } 

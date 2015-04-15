@@ -5,6 +5,7 @@ namespace TopBetta\admin\controllers;
 use BaseController;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\FreeCreditTransactionRepo;
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 use Redirect;
 use User;
@@ -32,17 +33,23 @@ class UserFreeCreditTransactionsController extends BaseController
      * @var UserFreeCreditService
      */
     private $freeCreditService;
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $dashboardNotificationService;
 
     public function __construct(FreeCreditTransactionRepo $freeCreditTransactionRepo,
                                 User $user,
                                 FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository,
-                                UserFreeCreditService $freeCreditService)
+                                UserFreeCreditService $freeCreditService,
+                                UserDashboardNotificationService $dashboardNotificationService)
 	{
 
 		$this->freeCreditTransactionRepo = $freeCreditTransactionRepo;
 		$this->user = $user;
         $this->freeCreditTransactionTypeRepository = $freeCreditTransactionTypeRepository;
         $this->freeCreditService = $freeCreditService;
+        $this->dashboardNotificationService = $dashboardNotificationService;
     }
 
 	/**
@@ -81,7 +88,11 @@ class UserFreeCreditTransactionsController extends BaseController
 
         $transactionType = $this->freeCreditTransactionTypeRepository->getIdByName($data['transaction_type']);
 
-        $this->freeCreditService->increaseFreeCreditBalance($userId, \Auth::user()->id, $data['amount']*100, $transactionType, $data['notes']);
+        $transaction = $this->freeCreditService->increaseFreeCreditBalance($userId, \Auth::user()->id, $data['amount']*100, $transactionType, $data['notes']);
+
+        if( $transaction ) {
+            $this->dashboardNotificationService->notify(array("id" => $userId, "free-credit-transactions" => array($transaction['id'])));
+        }
 
         return Redirect::route('admin.users.free-credit-transactions.index', array($userId));
     }

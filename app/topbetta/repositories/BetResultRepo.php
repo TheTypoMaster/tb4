@@ -9,6 +9,7 @@ use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
 use Carbon;
+use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 use TopBetta\Services\UserAccount\UserAccountService;
@@ -23,17 +24,25 @@ class BetResultRepo
 
     const TURNOVER_MIN_AMOUNT = 1.5;
 
+    /**
+     * @var BetDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+
+
 	protected $notifications;
     /**
      * @var UserAccountService
      */
     private $userAccountService;
 
-    function __construct(ExternalSourceBetNotificationService $notifications, UserAccountService $userAccountService)
+    function __construct(ExternalSourceBetNotificationService $notifications, UserAccountService $userAccountService, BetDashboardNotificationService $dashboardNotificationService)
 	{
 		$this->notifications = $notifications;
         $this->userAccountService = $userAccountService;
+		 $this->dashboardNotificationService = $dashboardNotificationService;
     }
+
 
 	/**
 	 * Find and result all events that have pending bets if the
@@ -160,9 +169,15 @@ class BetResultRepo
 			return false;
 		}
 
+
 		$resultBet = $this->processBetPayout($bet);
 
-		return $this->notifications->notifyBetResult($bet);
+		if($resultBet) {
+            $this->dashboardNotificationService->notify(array("id" => $bet->id, 'notification_type' => 'bet_resulted'));
+			$this->notifications->notifyBetResult($bet);
+        }
+
+		return $resultBet;
 
 	}
 
@@ -214,9 +229,15 @@ class BetResultRepo
 			return false;
 		}
 
-		return $this->processBetPayout($bet);
-	}
+		$result = $this->processBetPayout($bet);
 
+        if($result) {
+            $this->dashboardNotificationService->notify(array("id" => $bet->id, 'notification_type' => 'bet_resulted'));
+        }
+
+        return $result;
+	}	
+	
 	private function processBetPayout(Bet $bet) {
 		$payout = \TopBetta\Facades\BetRepo::getBetPayoutAmount($bet);
 		\Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);

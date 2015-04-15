@@ -45,5 +45,4 @@ class AccountTransactionModel extends Eloquent {
     {
         return $this->hasOne('TopBetta\\Models\\BetModel', 'refund_transaction_id');
     }
-
 }
