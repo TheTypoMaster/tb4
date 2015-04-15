@@ -9,5 +9,5 @@ namespace TopBetta\Repositories\Contracts;
 
 interface ConfigurationRepositoryInterface
 {
-    public function getConfigByName($name);
+    public function getConfigByName($name, $asArray=false);
 }

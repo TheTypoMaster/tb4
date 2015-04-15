@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Request;
 use TopBetta\Repositories\WithdrawalsRepo;
 use TopBetta\Services\Accounting\AccountTransactionService;
+use TopBetta\Services\Accounting\WithdrawalService;
 use View;
 
 class WithdrawalsController extends BaseController
@@ -20,11 +21,16 @@ class WithdrawalsController extends BaseController
      * @var AccountTransactionService
      */
     private $accountTransactionService;
+    /**
+     * @var WithdrawalService
+     */
+    private $withdrawalService;
 
-    public function __construct(WithdrawalsRepo $withdrawalRepo, AccountTransactionService $accountTransactionService)
+    public function __construct(WithdrawalsRepo $withdrawalRepo, AccountTransactionService $accountTransactionService, WithdrawalService $withdrawalService)
 	{
 		$this->withdrawalRepo = $withdrawalRepo;
         $this->accountTransactionService = $accountTransactionService;
+        $this->withdrawalService = $withdrawalService;
     }
 	/**
 	 * Display a listing of the resource.
@@ -125,7 +131,10 @@ class WithdrawalsController extends BaseController
 
         //create transaction
         if($withdrawal->approved_flag) {
+            $this->withdrawalService->sendApprovalEmail($id);
             $this->accountTransactionService->decreaseAccountBalance($withdrawal->user->id, $withdrawal->amount, 'withdrawal', \Auth::user()->id, \Input::get('transaction_notes'));
+        } else {
+            $this->withdrawalService->sendDenialEmail($id);
         }
 
         return \Redirect::route('admin.withdrawals.index')
