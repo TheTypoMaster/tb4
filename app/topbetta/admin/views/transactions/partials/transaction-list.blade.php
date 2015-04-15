@@ -1,3 +1,4 @@
+<span class="pull-right">{{ link_to_route($createRoute, 'Create', array($user->id), array("class" => "btn btn-outline btn-success")) }}</span>
 @if ($transactions->count())
 <table class="table table-striped table-bordered table-hover">
 	<thead>

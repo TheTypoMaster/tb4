@@ -21,4 +21,6 @@ interface FreeCreditTransactionTypeRepositoryInterface
     const TRANSACTION_TYPE_NO_QUALIFIERS   = 'noqualifiers';
     const TRANSACTION_TYPE_FREE_BET_ENTRY  = 'freebetentry';
     const TRANSACTION_TYPE_FREE_BET_REFUND = 'freebetrefund';
+
+    public function getIdByName($name);
 }

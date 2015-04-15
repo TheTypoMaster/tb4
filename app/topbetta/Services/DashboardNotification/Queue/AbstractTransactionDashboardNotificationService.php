@@ -9,12 +9,12 @@
 namespace TopBetta\Services\DashboardNotification\Queue;
 
 
-use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface as FreeCreditTransactionType;
 
 abstract class AbstractTransactionDashboardNotificationService extends DashboardNotificationQueueService
 {
+
     //account transaction transforms
     private $transactionTypeMapping = array(
         TransactionType::TYPE_TOURNAMENT_DOLLARS    => "tournament_dollars",
