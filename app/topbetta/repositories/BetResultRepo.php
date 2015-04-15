@@ -12,6 +12,7 @@ use Carbon;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
+use TopBetta\Services\UserAccount\UserAccountService;
 
 /**
  * Description of BetResult
@@ -21,28 +22,35 @@ use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 class BetResultRepo
 {
 
+    const TURNOVER_MIN_AMOUNT = 1.5;
 
     /**
      * @var BetDashboardNotificationService
      */
     private $dashboardNotificationService;
 
-	protected $notifications;
 
-    public function __construct(BetDashboardNotificationService $dashboardNotificationService, ExternalSourceBetNotificationService $notifications)
-    {
-        $this->dashboardNotificationService = $dashboardNotificationService;
+	protected $notifications;
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+
+    function __construct(ExternalSourceBetNotificationService $notifications, UserAccountService $userAccountService, BetDashboardNotificationService $dashboardNotificationService)
+	{
 		$this->notifications = $notifications;
+        $this->userAccountService = $userAccountService;
+		 $this->dashboardNotificationService = $dashboardNotificationService;
     }
 
 
 	/**
-	 * Find and result all events that have pending bets if the 
+	 * Find and result all events that have pending bets if the
 	 * event is marked as paying.
-	 * 
+	 *
 	 * This can be used as a watchdog to make sure all valid
 	 * bets get paid when a race is set to status paid
-	 * 
+	 *
 	 * @return string
 	 */
 	public function resultAllBetsForPayingEvents()
@@ -88,7 +96,7 @@ class BetResultRepo
 
 	/**
 	 * Find and result all unresulted bets for an event
-	 * 
+	 *
 	 * @param int $eventId
 	 * @return array
 	 */
@@ -121,7 +129,7 @@ class BetResultRepo
 
 	/**
 	 * Result an individual bet object
-	 * 
+	 *
 	 * @param Bet $bet
 	 * @return bool
 	 */
@@ -172,10 +180,10 @@ class BetResultRepo
 		return $resultBet;
 
 	}
-	
+
 	/**
 	 * Find all pending bets for a market and result them
-	 * 
+	 *
 	 * @param type $extMarketId
 	 * @return type
 	 */
@@ -185,7 +193,7 @@ class BetResultRepo
 		$bets = Bet::where('bet_result_status_id', 1)
 				->join('tbdb_bet_selection as bs', 'bs.bet_id', '=', 'tbdb_bet.id')
 				->join('tbdb_selection as s', 'bs.selection_id', '=', 's.id')
-				->where('resulted_flag', 0)				
+				->where('resulted_flag', 0)
 				->where('s.external_market_id', $extMarketId)
 				->select('tbdb_bet.*')
 				->get();
@@ -202,7 +210,7 @@ class BetResultRepo
 
 	/**
 	 * Result an individual sport bet object
-	 * 
+	 *
 	 * @param Bet $bet
 	 * @return bool
 	 */
@@ -211,10 +219,10 @@ class BetResultRepo
 		$processBet = false;
 
 		// TODO: do we need to check if event was abandoned or ready to payout
-		
+
 		// TODO: handle refunds
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
-		$bet->resulted_flag = 1;		
+		$bet->resulted_flag = 1;
 		$processBet = true;
 
 		if (!$processBet) {
@@ -247,11 +255,20 @@ class BetResultRepo
         if ($payout) {
 			// WINNING BET
 			\Log::info('WINNING BET: id - ' . $bet->id);
+            //update user turnover
+            if(\TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) > self::TURNOVER_MIN_AMOUNT) {
+                $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
+            }
+
 			return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);
 		}
 
 		// if we get here, the bet was not a winning bet or not refunded
 		if ($bet->save()) {
+
+            //update user turnover
+            $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
+
 			$bet->resultAmount = 0;
 			\Log::info('LOSING BET: ' . $bet->id);
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);

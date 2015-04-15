@@ -35,4 +35,13 @@ class DbUserTopbettaRepository extends BaseEloquentRepository implements UserTop
         return false;
     }
 
+    public function updateBalanceToTurnOver($userId, $amount)
+    {
+        $user = $this->model->where('user_id', $userId)->first();
+
+        $user->balance_to_turnover = max($user->balance_to_turnover + $amount, 0);
+
+        return $user->save();
+    }
+
 }

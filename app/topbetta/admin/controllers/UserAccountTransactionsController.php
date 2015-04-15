@@ -8,6 +8,7 @@ use TopBetta\Repositories\AccountTransactionRepo;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use User;
 use View;
@@ -30,6 +31,10 @@ class UserAccountTransactionsController extends \BaseController
      */
     private $accountTransactionService;
     /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+	/**
      * @var UserDashboardNotificationService
      */
     private $dashboardNotificationService;
@@ -37,12 +42,15 @@ class UserAccountTransactionsController extends \BaseController
     public function __construct(AccountTransactionService $accountTransactionService,
                                 AccountTransactionTypeRepositoryInterface $accountTransactionTypeRepository,
                                 User $user,
-                                UserDashboardNotificationService $dashboardNotificationService)
+								UserDashboardNotificationService $dashboardNotificationService,
+                                UserAccountService $userAccountService)
+
 	{
 
 		$this->user = $user;
         $this->accountTransactionTypeRepository = $accountTransactionTypeRepository;
         $this->accountTransactionService = $accountTransactionService;
+        $this->userAccountService = $userAccountService;
         $this->dashboardNotificationService = $dashboardNotificationService;
     }
 
@@ -82,6 +90,10 @@ class UserAccountTransactionsController extends \BaseController
         $transaction = $this->accountTransactionService->increaseAccountBalance($userId, $data['amount']*100, $data['transaction_type'], \Auth::user()->id, $data['notes']);
 
         $this->dashboardNotificationService->notify(array('id' => $userId, 'transactions' => array($transaction['id'])));
+
+        if($this->accountTransactionService->isDepositTransaction($data['transaction_type']) && $data['amount'] > 0) {
+            $this->userAccountService->addBalanceToTurnOver($userId, $data['amount'] * 100);
+        }
 
         return Redirect::route('admin.users.account-transactions.index', array($userId));
     }

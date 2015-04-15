@@ -9,7 +9,9 @@ use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
+
 use TopBetta\SportsSelectionResults;
 use Carbon;
 
@@ -22,13 +24,18 @@ class BetRepo
 {
 
     /**
-     * @var BetDashboardNotificationService
+     * @var UserAccountService
+     */
+    private $userAccountService;
+	/**
+	 * @var BetDashboardNotificationService
      */
     private $betDashboardNotificationService;
 
-    public function __construct(BetDashboardNotificationService $betDashboardNotificationService)
+    public function __construct(UserAccountService $userAccountService, BetDashboardNotificationService $betDashboardNotificationService)
     {
-        $this->betDashboardNotificationService = $betDashboardNotificationService;
+        $this->userAccountService = $userAccountService;
+		$this->betDashboardNotificationService = $betDashboardNotificationService;
     }
 
 	/**
@@ -38,7 +45,7 @@ class BetRepo
 	 * @param Bet $bet
 	 * @return int (cents)
 	 */
-	public function getBetPayoutAmount(Bet $bet)
+	public function getBetPayoutAmount(Bet $bet, $freeBetOnly = false)
 	{
 		$payout = 0;
 		$dividend = 0;
@@ -70,19 +77,19 @@ class BetRepo
 
 			// EXOTICS
 			case 'quinella':
-				$payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
+				$payout = $this->getExoticPayoutForBet($bet, 'quinella', $freeBetOnly) * 100;
 				break;
 
 			case 'exacta':
-				$payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
+				$payout = $this->getExoticPayoutForBet($bet, 'exacta', $freeBetOnly) * 100;
 				break;
 
 			case 'trifecta':
-				$payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
+				$payout = $this->getExoticPayoutForBet($bet, 'trifecta', $freeBetOnly) * 100;
 				break;
 
 			case 'firstfour':
-				$payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
+				$payout = $this->getExoticPayoutForBet($bet, 'firstfour', $freeBetOnly) * 100;
 				break;
 
 			default:
@@ -92,11 +99,73 @@ class BetRepo
 		// CALC THE RETURN AMOUNT IF IT WAS A WINNING BET
 		if ($dividend > 0) {
 			//$payout = $bet->bet_amount * round($dividend, 2);
-			$payout = bcmul($bet->bet_amount, round($dividend, 2));
+			$payout = bcmul($freeBetOnly ? $bet->bet_freebet_amount : $bet->bet_amount, round($dividend, 2));
 		}
 
 		return (int) $payout;
 	}
+
+    public function getBaseDividendForBet(Bet $bet)
+    {
+        $payout = 0;
+        $dividend = 0;
+
+        switch ($bet->betType->name) {
+            case 'win':
+                if ($bet->bet_origin_id == 2) {
+                    // RACING: simple check - do we have a result record for this selection id and win dividend
+                    $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
+                        ->where('win_dividend', '>', 0)
+                        ->pluck('win_dividend');
+                } elseif ($bet->bet_origin_id == 3) {
+                    // SPORTS: check for a result record
+                    $win = SportsSelectionResults::selectionResultExists($bet->selections[0]->selection_id);
+
+                    // Get fixed odd if it's a win
+                    if ($win) {
+                        $dividend = $this->getFixedOddsForSportsBet($bet);
+                    }
+                }
+                break;
+
+            case 'place':
+                // simple check: do we have a result record for this selection id and place dividend
+                $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
+                    ->where('place_dividend', '>', 0)
+                    ->pluck('place_dividend');
+                break;
+
+            // EXOTICS
+            case 'quinella':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'quinella');
+                }
+                break;
+
+            case 'exacta':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'exacta');
+                }
+                break;
+
+            case 'trifecta':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'trifecta');
+                }
+                break;
+
+            case 'firstfour':
+                if ($this->checkWinningExoticbet($bet)) {
+                    $dividend = $this->getExoticDividendForBet($bet, 'firstfour');
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return $dividend;
+    }
 
 	public function checkWinningExoticbet(Bet $bet)
 	{
@@ -178,6 +247,17 @@ class BetRepo
 		return false;
 	}
 
+    public function getExoticPayoutForBet(Bet $bet, $exoticName = false, $freeBetOnly = false) {
+        //get dividend
+        $fullDividend = $this->getExoticDividendForBet($bet, $exoticName);
+
+        //get percentage
+        $percentage = $freeBetOnly ? bcdiv($bet->bet_freebet_amount, $bet->combinations, 2) : $bet->percentage;
+
+        //($percentage/100) * 100 = $percentage!
+        return round(($fullDividend / 100) * ($percentage / 100) * 100, 2);
+    }
+
 	/**
 	 * Calculates exotic dividend for a given exotic bet.
 	 * @param Bet $bet
@@ -226,7 +306,7 @@ class BetRepo
 			}
 		}
 
-		return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
+		return $fullDividend;
 	}
 
 	public function getExoticDividendForEvent($exoticName, $eventId)
@@ -258,7 +338,7 @@ class BetRepo
 
 	/**
 	 * Pass in selections for a new bet and check against a bet for an exact match
-	 * 
+	 *
 	 * @param array $selections
 	 * @param \TopBetta\Bet $bet
 	 * @return boolean
@@ -268,7 +348,7 @@ class BetRepo
 		// build up an array from the existing bet with the same structure as the selections passed in
 		$positionMap = array('0' => 'first', '1' => 'first', '2' => 'second', '3' => 'third', '4' => 'fourth');
 		$existingSelections = array('first' => array(), 'second' => array(), 'third' => array(), 'fourth' => array());
-		
+
 		foreach ($bet->selections as $selection) {
 			$existingSelections[$positionMap[$selection['position']]][] = $selection->selection_id;
 		}
@@ -293,7 +373,7 @@ class BetRepo
 
 	/**
 	 * Awards user cash for bet win
-	 * 
+	 *
 	 * @param Bet $bet
 	 * @param type $amount
 	 * @return Bet
@@ -304,7 +384,14 @@ class BetRepo
 		// Free credit bets, we keep the original stake
 		if ($bet->bet_freebet_flag == 1) {
 			$amount -= $bet->bet_freebet_amount;
+
+            \Log::info("AMOUNT: " . $this->getBetPayoutAmount($bet, true) . " freebet " . $bet->bet_freebet_amount);
+            $this->userAccountService->addBalanceToTurnOver(
+                $bet->user_id,
+                max($this->getBetPayoutAmount($bet, true) - $bet->bet_freebet_amount, 0)
+            );
 		}
+
 		$bet->result_transaction_id = $this->awardBetWin($bet->user_id, $amount);
 
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
@@ -328,7 +415,7 @@ class BetRepo
 
 	/**
 	 * Refund a bet
-	 * 
+	 *
 	 * @param Bet $bet
      * @param Boolean $cancel
 	 * @return Boolean
@@ -339,6 +426,7 @@ class BetRepo
 		if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
 			$amount = $bet->bet_freebet_amount;
 			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $amount);
+
 		} else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $bet->bet_amount) {
 			// Free bet amount was less then refund
 			$refundAmount = $bet->bet_amount - $bet->bet_freebet_amount;
@@ -347,10 +435,12 @@ class BetRepo
 			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
 			// Refund balance to account
 			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refundAmount);
+
 		} else {
 			// No free credit was used - refund full amount to account
 			$amount = $bet->bet_amount;
 			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
+
 		}
 
         // winning bets we take the return/win amount back as well
