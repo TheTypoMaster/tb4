@@ -8,6 +8,14 @@ class TournamentTicketModel extends Eloquent {
     public static $rules = array();
     protected $table = 'tbdb_tournament_ticket';
 
+    public function user()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
+    }
 
+    public function tournament()
+    {
+        return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');
+    }
 
 }

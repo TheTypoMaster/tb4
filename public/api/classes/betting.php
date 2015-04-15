@@ -866,9 +866,23 @@ class Api_Betting extends JController
 
             if ($ticket_result['status'] == 200) {
                 if ($iframe) {
-                    return array('status' => 200, 'success' => $ticket_result['message']);
+                    return array('status' => 200, 'success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id'], 'transactions' => array(
+                        'entry_transaction' => $ticket_result['entry_transaction'], 'buyin_transaction' => $ticket_result['buyin_transaction']
+                    ), "free-credit-transactions" => array(
+                        'free_credit_entry_increase' => $ticket_result['free_credit_entry_increase'],
+                        'free_credit_buyin_increase' => $ticket_result['free_credit_buyin_increase'],
+                        'entry_free_transaction' => $ticket_result['entry_free_transaction'],
+                        'buyin_free_transaction' => $ticket_result['buyin_free_transaction'],
+                    ));
                 } else {
-                    return OutputHelper::json(200, array('success' => $ticket_result['message']));
+                    return OutputHelper::json(200, array('success' => $ticket_result['message'], 'ticket_id' => $ticket_result['ticket_id'], 'transactions' => array(
+                        'entry_transaction' => $ticket_result['entry_transaction'], 'buyin_transaction' => $ticket_result['buyin_transaction']
+                    ), "free-credit-transactions" => array(
+                        'free_credit_entry_increase' => $ticket_result['free_credit_entry_increase'],
+                        'free_credit_buyin_increase' => $ticket_result['free_credit_buyin_increase'],
+                        'entry_free_transaction' => $ticket_result['entry_free_transaction'],
+                        'buyin_free_transaction' => $ticket_result['buyin_free_transaction'],
+                    )));
                 }
             } else {
                 if ($iframe) {
@@ -3295,6 +3309,12 @@ class Api_Betting extends JController
 
         //file_put_contents('/tmp/igas_tourn_ticket.log', "FreeCreditFlag:$freeCreditFlag\n", FILE_APPEND | LOCK_EX);
 
+        //transaction ids
+        $entryTransactionId = null;
+        $buyinTransactionId = null;
+        $freeCreditEntryIncrease = null;
+        $freeCreditBuyinIncrease = null;
+
         if (!$freeCreditFlag) {
             // grab ticket cost and account balance.
             $totalTicketCost = $tournament->buy_in + $tournament->entry_fee;
@@ -3303,20 +3323,20 @@ class Api_Betting extends JController
             //transfer total cost
             if ($userAccountBalance >= $totalTicketCost) {
                 // remove money from account balance
-                $payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
-                $payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
+                $entryTransactionId = $payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user->id);
+                $buyinTransactionId = $payment_dollars_model->decrement($tournament->buy_in, 'buyin', null, $user->id);
 
                 //put money in free credit
-                $tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user->id);
-                $tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user->id);
+                $freeCreditEntryIncrease = $tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user->id);
+                $freeCreditBuyinIncrease = $tournament_dollars_model->increment($tournament->buy_in, 'purchase', 'Transferred from account balance', $user->id);
             } else {// transfer whats there
                 // remove money from account balance
                 //$payment_dollars_model->decrement($tournament->entry_fee, 'entry', null, $user_id);
-                $payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
+                $entryTransactionId = $payment_dollars_model->decrement($userAccountBalance, 'buyin', null, $user->id);
 
                 //put money in free credit
                 //$tournament_dollars_model->increment($tournament->entry_fee, 'purchase', 'Transferred from account balance', $user_id);
-                $tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user->id);
+                $freeCreditEntryIncrease = $tournament_dollars_model->increment($userAccountBalance, 'purchase', 'Transferred from account balance', $user->id);
             }
         }
 
@@ -3353,6 +3373,13 @@ class Api_Betting extends JController
             //$url = '/tournament/'.$tournament_type.'/game/' . $tournament->id;
             $ticket_result['message'] = JText::_('Ticket purchase confirmed');
             $ticket_result['status'] = 200;
+            $ticket_result['ticket_id'] = $ticket_id;
+            $ticket_result['entry_transaction'] = $entryTransactionId;
+            $ticket_result['buyin_transaction'] = $buyinTransactionId;
+            $ticket_result['free_credit_entry_increase'] = $freeCreditEntryIncrease;
+            $ticket_result['free_credit_buyin_increase'] = $freeCreditBuyinIncrease;
+            $ticket_result['entry_free_transaction'] = $entry_fee_id;
+            $ticket_result['buyin_free_transaction'] = $buy_in_id;
             //$type = 'message';
 
             /*
@@ -3387,6 +3414,7 @@ class Api_Betting extends JController
             //$message = JText::_('Ticket could not be purchased');
             $ticket_result['message'] = JText::_('Ticket could not be purchased');
             $ticket_result['status'] = 500;
+            $ticket_result['ticket_id'] = $ticket_id;
             //$type = 'error';
         }
         //$this->setRedirect($url, $message, $type);
