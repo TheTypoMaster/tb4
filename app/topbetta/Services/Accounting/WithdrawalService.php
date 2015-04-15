@@ -65,9 +65,17 @@ class WithdrawalService {
         //replace variables in email body
         foreach($variables as $key=>$variable) {
             if($value = array_get($variable, 'value', null)) {
-                $emailBody = str_replace('['.$key.']', object_get($withdrawal, $value, ''), $emailBody);
+                if($key == 'amount') {
+                    $emailBody = str_replace('['.$key.']', '$'.number_format(object_get($withdrawal, $value, 0)/100, 2), $emailBody);
+                } else if ($key == 'amount raw') {
+                    $emailBody = str_replace('[' . $key . ']', object_get($withdrawal, $value, 0) / 100, $emailBody);
+                } else {
+                    $emailBody = str_replace('[' . $key . ']', object_get($withdrawal, $value, 0), $emailBody);
+                }
             }
         }
+
+
 
         $emailBody = str_replace('[help email]', $emails->help_email, $emailBody);
 
