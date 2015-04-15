@@ -276,7 +276,7 @@ class RaceDataProcessingService {
 			foreach ($tournamentsOnMeeting as $tournament) {
 				// if it's race 1 store the jump time as tourn start date.
 				$tournamentDetails = $this->tournaments->getTournamentById($tournament['id']);
-				if ($existingMeetingDetails->start_date == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
+				if ($existingMeetingDetails['start_date'] == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
 					$tournamentDetails['start_date'] = $race['JumpTime'];
 				} else {
 					if ($race['JumpTime'] > $tournamentDetails['end_date']) {
