@@ -11,7 +11,9 @@ use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 use TopBetta\Services\Betting\SelectionService;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
+
 
 
 class FrontBetsController extends BaseController {
@@ -23,13 +25,19 @@ class FrontBetsController extends BaseController {
 	 */
 	private $selectionService;
     /**
-     * @var BetDashboardNotificationService
-     */
-    private $dashboardNotificationService;
-    /**
      * @var BetRepositoryInterface
      */
     private $betRepository;
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+	/**
+     * @var BetDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+
+
 
     public function __construct(BetSourceRepositoryInterface $betsource,
 
@@ -38,14 +46,17 @@ class FrontBetsController extends BaseController {
 								SelectionService $selectionService,
 
                                 BetRepositoryInterface $betRepository,
-
+                                UserAccountService $userAccountService,
                                 BetDashboardNotificationService $dashboardNotificationService) {
+
 		$this->beforeFilter('auth');
 		$this->betsource = $betsource;
 		$this->betnotificationservice = $betnotificationservice;
 		$this->selectionService = $selectionService;
-        $this->dashboardNotificationService = $dashboardNotificationService;
         $this->betRepository = $betRepository;
+        $this->userAccountService = $userAccountService;
+        $this->dashboardNotificationService = $dashboardNotificationService;
+
     }
 
 	/**
@@ -668,6 +679,7 @@ class FrontBetsController extends BaseController {
 		}
 
 	}
+
 
 	/**
 	 * Display the specified resource.

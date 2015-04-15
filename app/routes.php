@@ -221,6 +221,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
+
+    Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

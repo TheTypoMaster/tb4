@@ -1,6 +1,7 @@
 <h2 class="page-header">User: {{ $user->topbettaUser->first_name }} {{ $user->topbettaUser->last_name }} ({{ $user->username }}) 
 	<small>Acc: ${{ number_format($user->accountTransactions()->sum('amount') / 100, 2) }}
 		FC: ${{ number_format($user->freeCreditTransactions()->sum('amount') / 100, 2) }}
+        Withdraw: ${{ max(number_format(($user->accountTransactions()->sum('amount') - object_get($user->topbettauser, 'balance_to_turnover', 0))/100, 2), 0) }}
 	</small>
 </h2>
 <ul class="nav nav-tabs">

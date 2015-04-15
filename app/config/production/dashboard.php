@@ -1,7 +1,7 @@
 <?php
 return array(
 
-    'base_api_endpoint' => "dashboard.mugbookie.com/api/v1/",
+    'base_api_endpoint' => "scoreboard.mugbookie.com/api/v1/",
 
     'api_user' => "",
 
