@@ -32,4 +32,6 @@ interface AccountTransactionRepositoryInterface {
     public function getTotalBetTransactionsForUserByTransactionTypeAndOrigin($userId, $transactionType, array $origin);
 
     public function getRecentPositiveTransactionsForUserByTypeIn($userId, $dateAfter, $types);
+
+    public function findWithType($transactionId);
 }

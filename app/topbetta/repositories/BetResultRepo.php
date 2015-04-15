@@ -9,6 +9,7 @@ use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
 use Carbon;
+use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 
@@ -20,12 +21,20 @@ use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 class BetResultRepo
 {
 
+
+    /**
+     * @var BetDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+
 	protected $notifications;
 
-	function __construct(ExternalSourceBetNotificationService $notifications)
-	{
+    public function __construct(BetDashboardNotificationService $dashboardNotificationService, ExternalSourceBetNotificationService $notifications)
+    {
+        $this->dashboardNotificationService = $dashboardNotificationService;
 		$this->notifications = $notifications;
-	}
+    }
+
 
 	/**
 	 * Find and result all events that have pending bets if the 
@@ -152,9 +161,15 @@ class BetResultRepo
 			return false;
 		}
 
+
 		$resultBet = $this->processBetPayout($bet);
 
-		return $this->notifications->notifyBetResult($bet);
+		if($resultBet) {
+            $this->dashboardNotificationService->notify(array("id" => $bet->id, 'notification_type' => 'bet_resulted'));
+			$this->notifications->notifyBetResult($bet);
+        }
+
+		return $resultBet;
 
 	}
 	
@@ -206,7 +221,13 @@ class BetResultRepo
 			return false;
 		}
 
-		return $this->processBetPayout($bet);
+		$result = $this->processBetPayout($bet);
+
+        if($result) {
+            $this->dashboardNotificationService->notify(array("id" => $bet->id, 'notification_type' => 'bet_resulted'));
+        }
+
+        return $result;
 	}	
 	
 	private function processBetPayout(Bet $bet) {

@@ -15,7 +15,7 @@ class UserBasicValidator extends Validator{
      */
 
     public $rules = array(
-        'username' => 'alphadash|min:6|unique:tbdb_users',
+        'username' => 'alphadash|min:6|unique:tbdb_users|regex:(.*[a-zA-Z].*)',
         'name' => 'min:3|max:254',
         'email' => 'email|unique:tbdb_users',
         'password' => 'min:6',

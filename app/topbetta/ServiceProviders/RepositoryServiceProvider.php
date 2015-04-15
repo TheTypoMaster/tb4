@@ -133,5 +133,10 @@ class RepositoryServiceProvider extends ServiceProvider {
 			'TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface',
 			'TopBetta\Repositories\DbSelectionPricesRepository'
 		);
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface',
+            'TopBetta\Repositories\DbFreeCreditTransactionTypeRepository'
+        );
+
     }
 } 

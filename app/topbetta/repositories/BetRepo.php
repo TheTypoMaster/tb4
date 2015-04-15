@@ -9,6 +9,7 @@ use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
+use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 use TopBetta\SportsSelectionResults;
 use Carbon;
 
@@ -19,6 +20,16 @@ use Carbon;
  */
 class BetRepo
 {
+
+    /**
+     * @var BetDashboardNotificationService
+     */
+    private $betDashboardNotificationService;
+
+    public function __construct(BetDashboardNotificationService $betDashboardNotificationService)
+    {
+        $this->betDashboardNotificationService = $betDashboardNotificationService;
+    }
 
 	/**
 	 * Lookup results for the selections made for this bet
@@ -59,27 +70,19 @@ class BetRepo
 
 			// EXOTICS
 			case 'quinella':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'quinella') * 100;
 				break;
 
 			case 'exacta':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'exacta') * 100;
 				break;
 
 			case 'trifecta':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'trifecta') * 100;
 				break;
 
 			case 'firstfour':
-				if ($this->checkWinningExoticbet($bet)) {
-					$payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
-				}
+				$payout = $this->getExoticDividendForBet($bet, 'firstfour') * 100;
 				break;
 
 			default:
@@ -175,13 +178,54 @@ class BetRepo
 		return false;
 	}
 
+	/**
+	 * Calculates exotic dividend for a given exotic bet.
+	 * @param Bet $bet
+	 * @param bool $exoticName
+	 * @return float|int
+	 */
 	public function getExoticDividendForBet(Bet $bet, $exoticName = false)
 	{
-		if (!$exoticName) {
+		if(!$exoticName) {
 			return 0;
 		}
 
-		$fullDividend = $this->getExoticDividendForEvent($exoticName, $bet->event_id);
+		$dividends = $this->getExoticDividendsForEvent($exoticName, $bet->event_id);
+
+        if( ! $dividends ) { return 0; }
+
+		//Should be a function in BetSelectionRepo or BetSelectionService for this.
+		//Gets the selection for a bet and organises them in to an array by position selected
+		$betSelection = array_map( function($value) {
+			return explode(",", $value);
+		}, explode("/", BetSelection::getExoticSelectionsForBetid($bet->id)));
+
+		$fullDividend = 0;
+
+		foreach( $dividends as $placeGetters => $dividend ) {
+			$placeGettersArray = explode("/", $placeGetters);
+
+			//Bet is boxed so only need to make sure the bet has the selections
+			if( $bet->boxed_flag && count(array_intersect($placeGettersArray, $betSelection[0])) == count($placeGettersArray) ) {
+				$fullDividend += $dividend;
+			} else if ( ! $bet->boxed_flag ) {
+				//Bet is not boxed so make sure positions are correct
+				$pays = true;
+				foreach($placeGettersArray as $key => $place) {
+					//does the bet have the selection in this position
+					if( ! in_array($place, $betSelection[$key]) ) {
+						$pays = false;
+						break;
+					}
+				}
+
+				//A selection has been found for each position so the bet is a winner
+				if( $pays ) {
+					$fullDividend += $dividend;
+				}
+			}
+		}
+
 		return round(($fullDividend / 100) * ($bet->percentage / 100) * 100, 2);
 	}
 
@@ -194,6 +238,19 @@ class BetRepo
 			$uDividend = unserialize($exoticDividend);
 			$dividend = array_values($uDividend);
 			return str_replace(',', '', $dividend[0]);
+		}
+
+		return 0;
+	}
+
+	public function getExoticDividendsForEvent($exoticName, $eventId)
+	{
+		$exoticDividend = RaceEvent::where('id', $eventId)
+			->pluck($exoticName . '_dividend');
+
+		if ($exoticDividend) {
+			return unserialize($exoticDividend);
+
 		}
 
 		return 0;
@@ -243,11 +300,13 @@ class BetRepo
 	 */
 	public function payoutBet(Bet $bet, $amount)
 	{
+
 		// Free credit bets, we keep the original stake
 		if ($bet->bet_freebet_flag == 1) {
 			$amount -= $bet->bet_freebet_amount;
 		}
 		$bet->result_transaction_id = $this->awardBetWin($bet->user_id, $amount);
+
 		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PAID);
 		$bet->resulted_flag = 1;
 
@@ -256,7 +315,7 @@ class BetRepo
         // get current micro time
         list($partMsec, $partSec) = explode(" ", microtime());
         $currentTimeMs = $partSec.$partMsec;
-        \File::append('/tmp/'.$date.'-ResultPost-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet));
+        \File::append('/tmp/'.$date.'-ResultPost-B'. $bet->id.'-R'.$bet->result_transaction_id.'-'.$currentTimeMs, print_r($bet, true));
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
@@ -307,6 +366,10 @@ class BetRepo
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+
+            //notify bet refund
+            $this->betDashboardNotificationService->notify(array('id' => $bet->id, 'notification_type' => 'bet_refund'));
+
 			return true;
 		}
 
@@ -375,7 +438,13 @@ class BetRepo
         $resultTransaction = $bet->payout;
         if ($resultTransaction && $resultTransaction->transactionType->keyword == 'betwin') {
             // increment with a NEGATIVE amount
-            return AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+            $transactionId = AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+
+            if($transactionId) {
+                $this->betDashboardNotificationService->notify(array("id" => $bet->id, "transactions" => array($transactionId)));
+            }
+
+            return $transactionId;
         }
 
         return false;
