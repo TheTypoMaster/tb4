@@ -663,8 +663,7 @@ class RacingController extends \BaseController
                         // ALL RUNNERS PROCESSED - REFUND ANY BETS FOR SCRATCHED RUNNERS
                         foreach ($scratchList as $scratchedId) {
                             \Log::info('SCRATCHED: refunding bets for runner id: ' . $scratchedId);
-							$betRepo = new TopBetta\Repositories\BetRepo();
-							$betRepo->refundBetsForRunnerId($scratchedId);
+							\TopBetta\Facades\BetRepo::refundBetsForRunnerId($scratchedId);
                         }						
 						
                         break;

@@ -10,6 +10,8 @@ use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 use TopBetta\Services\Betting\SelectionService;
+use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
 
 class FrontBetsController extends BaseController {
@@ -20,17 +22,31 @@ class FrontBetsController extends BaseController {
 	 * @var SelectionService
 	 */
 	private $selectionService;
+    /**
+     * @var BetDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+    /**
+     * @var BetRepositoryInterface
+     */
+    private $betRepository;
 
-	public function __construct(BetSourceRepositoryInterface $betsource,
+    public function __construct(BetSourceRepositoryInterface $betsource,
 
 								ExternalSourceBetNotificationService $betnotificationservice,
 
-								SelectionService $selectionService) {
+								SelectionService $selectionService,
+
+                                BetRepositoryInterface $betRepository,
+
+                                BetDashboardNotificationService $dashboardNotificationService) {
 		$this->beforeFilter('auth');
 		$this->betsource = $betsource;
 		$this->betnotificationservice = $betnotificationservice;
 		$this->selectionService = $selectionService;
-	}
+        $this->dashboardNotificationService = $dashboardNotificationService;
+        $this->betRepository = $betRepository;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -381,12 +397,15 @@ class FrontBetsController extends BaseController {
 			//bet has been placed by now, deal with messages and errors
 			if ($bet['status'] == 200) {
 
-                $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
+				$this->dashboardNotificationService->notify(array("id" => $bet['bet_id'], 'notification_type' => 'bet_placement'));
 
+                $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
+			
                 // if there is an API endpoint notify it of bet placement
                 if(!is_null($betSourceRecord['api_endpoint'])){
                     $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
                 }
+
 
 			} elseif ($bet['status'] == 401) {
 
@@ -440,6 +459,10 @@ class FrontBetsController extends BaseController {
 							}							
 
 							$bet = $l -> query('saveBet', $betData);
+
+                            if($bet['status'] == 200) {
+                                $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'],'notification_type' => 'bet_placement'));
+                            }
 
 						} elseif ($input['source'] == 'tournamentracing') {
 
@@ -577,6 +600,10 @@ class FrontBetsController extends BaseController {
 							}								
 							
 							$bet = $l -> query('saveSportBet', $betData);
+
+                            if($bet['status'] == 200) {
+                                $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'], 'notification_type' => 'bet_placement'));
+                            }
 
 						} else {
 

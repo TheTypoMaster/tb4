@@ -9,6 +9,7 @@ use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
+use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 use TopBetta\SportsSelectionResults;
 use Carbon;
 
@@ -19,6 +20,16 @@ use Carbon;
  */
 class BetRepo
 {
+
+    /**
+     * @var BetDashboardNotificationService
+     */
+    private $betDashboardNotificationService;
+
+    public function __construct(BetDashboardNotificationService $betDashboardNotificationService)
+    {
+        $this->betDashboardNotificationService = $betDashboardNotificationService;
+    }
 
 	/**
 	 * Lookup results for the selections made for this bet
@@ -307,6 +318,10 @@ class BetRepo
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+
+            //notify bet refund
+            $this->betDashboardNotificationService->notify(array('id' => $bet->id, 'notification_type' => 'bet_refund'));
+
 			return true;
 		}
 
@@ -375,7 +390,13 @@ class BetRepo
         $resultTransaction = $bet->payout;
         if ($resultTransaction && $resultTransaction->transactionType->keyword == 'betwin') {
             // increment with a NEGATIVE amount
-            return AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+            $transactionId = AccountBalance::_increment($bet->user_id, - $resultTransaction->amount, 'betwincancelled');
+
+            if($transactionId) {
+                $this->betDashboardNotificationService->notify(array("id" => $bet->id, "transactions" => array($transactionId)));
+            }
+
+            return $transactionId;
         }
 
         return false;

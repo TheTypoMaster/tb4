@@ -61,4 +61,20 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
 
         return $bets->toArray();
     }
+
+    public function getBetWithSelectionsAndEventDetailsByBetId($betId){
+        $details = $this->model->with(array('type','user', 'user.topbettauser',
+            'betselection.selection',
+            'betselection.selection.price',
+            'betselection.selection.result',
+            'betselection.selection.market.event',
+            'betselection.selection.market.event.competition',
+            'betselection.selection.market.event.competition.sport',
+            'betselection.selection.market.markettype'
+        ))->where('id', $betId)->first();
+
+        if(!$details) return null;
+
+        return $details->toArray();
+    }
 }
