@@ -4,6 +4,7 @@ use BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Input;
 
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Services\Response\ApiResponse;
@@ -12,13 +13,19 @@ class UserRegistrationController extends BaseController {
 
 	protected $accountservice;
 	protected $response;
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $userDashboardNotificationService;
 
-	function __construct(UserAccountService $accountservice,
-						 ApiResponse $response)
+    function __construct(UserAccountService $accountservice,
+						 ApiResponse $response,
+                         UserDashboardNotificationService $userDashboardNotificationService)
 	{
 		$this->accountservice = $accountservice;
 		$this->response = $response;
-	}
+        $this->userDashboardNotificationService = $userDashboardNotificationService;
+    }
 
 
 	/**
@@ -37,6 +44,8 @@ class UserRegistrationController extends BaseController {
 				$this->accountservice->sendWelcomeEmail($accountCreationResponse['id'], Input::get("email_source", null));
 			}
 
+            $this->userDashboardNotificationService->notify($accountCreationResponse);
+
 			return $this->response->success($accountCreationResponse);
 		}catch(ValidationException $e){
 			return $this->response->failed($e->getErrors(), 400, 101, 'User Registration Failed', 'User Registration Failed');
@@ -53,6 +62,8 @@ class UserRegistrationController extends BaseController {
 			if( ! $externalWelcomeEmail && ! Input::json("auto_activate", false) ) {
 				$this->accountservice->sendWelcomeEmail($accountCreationResponse['id'], Input::json("external_source", null));
 			}
+
+            $this->userDashboardNotificationService->notify($accountCreationResponse);
 
 			return $this->response->success($accountCreationResponse);
 		} catch(ValidationException $e) {
@@ -79,6 +90,8 @@ class UserRegistrationController extends BaseController {
 		} catch (\Exception $e) {
 			return $this->response->failed($e->getMessage());
 		}
+
+        $this->userDashboardNotificationService->notify($user);
 
 		return $this->response->success($user);
 	}
