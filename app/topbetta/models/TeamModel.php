@@ -16,4 +16,9 @@ class TeamModel extends Eloquent {
     {
         return $this->belongsTo('TopBetta\Models\IconModel');
     }
+
+    public function players()
+    {
+        return $this->belongsToMany('TopBetta\Models\PlayerModel', 'tb_player_tb_team', 'tb_team_id', 'tb_player_id');
+    }
 }

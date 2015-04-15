@@ -24,8 +24,12 @@ abstract class AbstractFeedProcessor {
      */
     public function processArray($dataArray)
     {
+        $objects = array();
+
         foreach($dataArray as $data) {
-            $this->process($data);
+            $objects[] = $this->process($data);
         }
+
+        return $objects;
     }
 }

@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Feeds;
 
 use TopBetta\Services\Feeds\Processors\GameListProcessor;
+use TopBetta\Services\Feeds\Processors\MarketListProcessor;
 
 class SportsFeedService {
 
@@ -16,10 +17,15 @@ class SportsFeedService {
      * @var GameListProcessor
      */
     private $gameListProcessor;
+    /**
+     * @var MarketListProcessor
+     */
+    private $marketListProcessor;
 
-    public function __construct(GameListProcessor $gameListProcessor)
+    public function __construct(GameListProcessor $gameListProcessor, MarketListProcessor $marketListProcessor)
     {
         $this->gameListProcessor = $gameListProcessor;
+        $this->marketListProcessor = $marketListProcessor;
     }
 
     /**
@@ -29,5 +35,7 @@ class SportsFeedService {
     public function processSportsFeed($data)
     {
         $this->gameListProcessor->processArray(array_get($data, 'GameList', array()));
+
+        $this->marketListProcessor->processArray(array_get($data, 'MarketList', array()));
     }
 }

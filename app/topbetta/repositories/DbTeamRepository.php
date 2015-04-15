@@ -28,5 +28,18 @@ class DbTeamRepository extends BaseEloquentRepository implements TeamRepositoryI
             ->get();
     }
 
-    //public function getNameA
+    public function addPlayers($teamId, $players)
+    {
+        // get the team
+        $team = $this->model->where('id', $teamId)->with('players')->first();
+
+        //only attach players that aren't already attached
+        $toAttach = array_diff($players, $team->players->lists('id'));
+
+        if(count($toAttach)) {
+            return $team->players()->attach($toAttach);
+        }
+
+        return null;
+    }
 }
