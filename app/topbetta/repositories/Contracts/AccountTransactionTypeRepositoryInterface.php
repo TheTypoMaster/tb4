@@ -12,7 +12,7 @@ interface AccountTransactionTypeRepositoryInterface
 
     // VALID TRANSACTION TYPE NAMES
     const TYPE_TOURNAMENT_DOLLARS    = 'tournamentdollars';
-    const TYPE_TOURNAMENT_WIN        = 'tournementwin';
+    const TYPE_TOURNAMENT_WIN        = 'tournamentwin';
     const TYPE_PAYPAL_DEPOSIT        = 'paypaldeposit';
     const TYPE_BET_WIN               = 'betwin';
     const TYPE_BET_ENTRY             = 'betentry';
