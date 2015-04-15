@@ -10,7 +10,7 @@
                 {{ Form::label('amount', 'Amount') }}
                 <div class="input-group">
                     <div class="input-group-addon">$</div>
-                    {{ Form::text('amount', null, array("class" => "form-control", "disabled" => "disabled")) }}
+                    {{ Form::text('amount', number_format($withdrawal->amount/100, 2), array("class" => "form-control", "disabled" => "disabled")) }}
                 </div>
             </div>
 

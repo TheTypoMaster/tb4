@@ -43,7 +43,7 @@
 		@endforeach
 	</tbody>
 </table>
-{{ $withdrawals->appends(array("pending" => $pending))->links()}}
+{{ $withdrawals->appends(array("pending" => isset($pending) ? $pending : ''))->links()}}
 @else
 <p>There are no withdrawal requests to display</p>
 @endif
