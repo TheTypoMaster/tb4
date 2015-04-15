@@ -250,7 +250,7 @@ class FrontUsersController extends \BaseController {
 
 		//\Log::debug(json_encode($input) .". ".$yourbrowser);
 		
-		$rules = array('first_name' => 'required|alpha_num|min:3', 'last_name' => 'required|alpha_num|min:3', 'source' => 'required|alpha_dash', 'type' => 'required|in:basic,upgrade,full');
+		$rules = array('username' => 'regex:(.*[a-zA-Z].*)', 'first_name' => 'required|alpha_num|min:3', 'last_name' => 'required|alpha_num|min:3', 'source' => 'required|alpha_dash', 'type' => 'required|in:basic,upgrade,full');
 
 		//shared between upgrade & full accounts
 		$extRules = array('title' => 'required|in:Mr,Mrs,Ms,Miss,Dr,Prof', 
@@ -264,7 +264,7 @@ class FrontUsersController extends \BaseController {
 			'state' => 'required|max:50', 
 			'country' => 'required|alpha|max:3', 
 			'promo_code' => 'alpha_dash|max:100', 
-			'heard_about' => 'alpha_dash|max:200', 
+			'heard_about' => 'alpha_dash|max:200',
 			'heard_about_info' => 'alpha_dash|max:200');
 
 		if (isset($input['type']) && $input['type'] == 'basic') {
@@ -286,7 +286,7 @@ class FrontUsersController extends \BaseController {
 
 		if (isset($input['type']) && $input['type'] == 'full') {
 
-			$extRules['username'] = 'unique:tbdb_users';
+			$extRules['username'] = 'unique:tbdb_users|regex:(.*[a-zA-Z].*)';
 			// terms wraps up privacy/terms & marketing as 1 options now
 			$rules['terms'] = 'accepted';	
 			$input['optbox'] = 1;
