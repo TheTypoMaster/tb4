@@ -7,7 +7,7 @@
 			<th>Requester Username</th>
 			<th>Requester ID</th>
 			<th>Request Amount</th>
-            <th>Current Balance</th>
+            <th>Account Balance</th>
             <th>Available to Withdraw</th>
 			<th>Withdrawal Type</th>
 			<th>Requested Date</th>
