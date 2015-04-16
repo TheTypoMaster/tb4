@@ -12,7 +12,7 @@ class UpdateTrainerFieldInSelectionTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('tbdb_selection', function(Blueprint $table) {
+		Schema::table('tbdb_selection', function(Blueprint $table) {
 			DB::statement('ALTER TABLE `tbdb_selection` MODIFY `last_starts` VARCHAR(32)');
 			DB::statement('ALTER TABLE `tbdb_selection` MODIFY `trainer` VARCHAR(32)');
 			DB::statement('ALTER TABLE `tbdb_selection` MODIFY `home_away` VARCHAR(32)');
@@ -34,7 +34,7 @@ class UpdateTrainerFieldInSelectionTable extends Migration {
 	{
 		Schema::table('tbdb_selection', function(Blueprint $table)
 		{
-			$table->dropColumn('activated_flag');
+
 		});
 	}
 
