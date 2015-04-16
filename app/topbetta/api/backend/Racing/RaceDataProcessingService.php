@@ -426,7 +426,7 @@ class RaceDataProcessingService {
 			Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 			// form
-			if(array_get($runner, 'Results') != '0(0-0-0)' || array_get($runner, 'Results') != NULL){
+			if(array_get($runner, 'Results') != '0(0-0-0)' && array_get($runner, 'Results') != NULL){
 				$formDetails = array();
 				$formDetails['race_code'] = $existingRaceDetails['external_event_id'];
 				$formDetails['horse_code'] = $runnerDetails['external_selection_id'];
