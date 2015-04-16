@@ -130,6 +130,9 @@ class WithdrawalsController extends BaseController
         $data['fulfilled_date'] = Carbon::now()->toDateTimeString();
         $data['fulfiller_id'] = Auth::user()->id;
 
+		// account balance and time of processing
+		$data['processed_amount'] = $withdrawal->user->accountBalance();
+
         //create transaction
         if($data['approved_flag']) {
 			if($data['email_flag']) $this->withdrawalService->sendApprovalEmail($id);
@@ -140,6 +143,8 @@ class WithdrawalsController extends BaseController
         } else {
 			if($data['email_flag']) $this->withdrawalService->sendDenialEmail($id);
         }
+
+		unset($data['email_flag']);
 
 		$withdrawal->update($data);
 
