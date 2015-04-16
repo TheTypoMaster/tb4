@@ -131,7 +131,7 @@ class WithdrawalsController extends BaseController
         $data['fulfiller_id'] = Auth::user()->id;
 
         //create transaction
-        if($withdrawal->approved_flag) {
+        if($data['approved_flag']) {
             $this->withdrawalService->sendApprovalEmail($id);
             if(!$accountTransaction = $this->accountTransactionService->decreaseAccountBalance($withdrawal->user->id, $withdrawal->amount, 'withdrawal', \Auth::user()->id, \Input::get('transaction_notes'))){
 				return Redirect::route('admin.withdrawals.edit', array($withdrawal->id))->with(array("flash_message" => "Account Tranasction Failed!"));
