@@ -136,7 +136,7 @@ class WithdrawalsController extends BaseController
             if(!$accountTransaction = $this->accountTransactionService->decreaseAccountBalance($withdrawal->user->id, $withdrawal->amount, 'withdrawal', \Auth::user()->id, \Input::get('transaction_notes'))){
 				return Redirect::route('admin.withdrawals.edit', array($withdrawal->id))->with(array("flash_message" => "Account Tranasction Failed!"));
 			}
-			$data['tranasctiion_notes'] = 'Transaction ID: '.$accountTransaction->id. ' - '.$data['tranasctiion_notes'];
+			$data['notes'] = 'Transaction ID: '.$accountTransaction->id. ' - '.$data['notes'];
         } else {
             $this->withdrawalService->sendDenialEmail($id);
         }
