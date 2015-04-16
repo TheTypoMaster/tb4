@@ -426,35 +426,38 @@ class RaceDataProcessingService {
 			Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 			// form
-			$formDetails = array();
+			if(array_get($runner, 'Results') != '0(0-0-0)'){
+				$formDetails = array();
+				$formDetails['race_code'] = $existingRaceDetails['external_event_id'];
+				$formDetails['horse_code'] = $runnerDetails['external_selection_id'];
+				$formDetails['runner_code'] = $runnerDetails['external_selection_id'];
 
-			$formDetails['race_code'] = $existingRaceDetails['external_event_id'];
-			$formDetails['horse_code'] = $runnerDetails['external_selection_id'];
-			$formDetails['runner_code'] = $runnerDetails['external_selection_id'];
+				$formDetails['career_results'] = array_get($runner, 'Results');
+				$formDetails['distance_results'] = array_get($runner, 'ThisDist');
+				$formDetails['track_results'] = array_get($runner, 'ThisTrack');
+				$formDetails['track_distance_results'] = array_get($runner, 'TrackDist');
+				$formDetails['first_up_results'] = array_get($runner, 'FirstUp');
+				$formDetails['second_up_results'] = array_get($runner, 'SecondUp');
+				$formDetails['good_results'] = array_get($runner, 'Good');
+				$formDetails['firm_results'] = array_get($runner, 'Firm');
+				$formDetails['soft_results'] = array_get($runner, 'Soft');
+				$formDetails['synthetic_results'] = array_get($runner, 'Synthetic');
+				$formDetails['wet_results'] = array_get($runner, 'Wet');
+				$formDetails['nonwet_results'] = array_get($runner, 'NonWet');
+				$formDetails['night_results'] = array_get($runner, 'Night');
+				$formDetails['jumps_results'] = array_get($runner, 'Jumps');
+				$formDetails['season_results'] = array_get($runner, 'Season');
+				$formDetails['heavy_results'] = array_get($runner, 'Heavy');
+				//$formDetails['comment'] = array_get($runner, '');
 
-			$formDetails['career_results'] = array_get($runner, 'Results');
-			$formDetails['distance_results'] = array_get($runner, 'ThisDist');
-			$formDetails['track_results'] = array_get($runner, 'ThisTrack');
-			$formDetails['track_distance_results'] = array_get($runner, 'TrackDist');
-			$formDetails['first_up_results'] = array_get($runner, 'FirstUp');
-			$formDetails['second_up_results'] = array_get($runner, 'SecondUp');
-			$formDetails['good_results'] = array_get($runner, 'Good');
-			$formDetails['firm_results'] = array_get($runner, 'Firm');
-			$formDetails['soft_results'] = array_get($runner, 'Soft');
-			$formDetails['synthetic_results'] = array_get($runner, 'Synthetic');
-			$formDetails['wet_results'] = array_get($runner, 'Wet');
-			$formDetails['nonwet_results'] = array_get($runner, 'NonWet');
-			$formDetails['night_results'] = array_get($runner, 'Night');
-			$formDetails['jumps_results'] = array_get($runner, 'Jumps');
-			$formDetails['season_results'] = array_get($runner, 'Season');
-			$formDetails['heavy_results'] = array_get($runner, 'Heavy');
-			//$formDetails['comment'] = array_get($runner, '');
+				$this->risaform->updateOrCreate($formDetails, 'runner_code');
 
-			$this->risaform->updateOrCreate($formDetails, 'runner_code');
+				$formId = $this->risaform->getFormIdByRunnerCode($formDetails['runner_code']);
 
-			$formId = $this->risaform->getFormIdByRunnerCode($formDetails['runner_code']);
+				Log::info($this->logprefix. 'Runner Form Saved - '.$runnerDetails['external_selection_id']);
+			}
 
-			Log::info($this->logprefix. 'Runner Form Saved - '.$runnerDetails['external_selection_id']);
+
 
 
 			// if this runner is scratched add it to the scratching array
@@ -464,7 +467,7 @@ class RaceDataProcessingService {
 				}
 			}
 
-			if(isset($runner['LastStartsLong'])){
+			if(isset($runner['LastStartsLong']) && (isset($formId))){
 				// store last starts data
 				foreach($runner['LastStartsLong'] as $lastStartLong){
 
