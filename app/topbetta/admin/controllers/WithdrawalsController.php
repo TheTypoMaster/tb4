@@ -121,6 +121,9 @@ class WithdrawalsController extends BaseController
 
         $withdrawal = $this->withdrawalRepo->find($id);
 
+		$email_flag = $data['email_flag'];
+		unset($data['email_flag']);
+
         //can the user withdraw this amount?
         if($withdrawal->amount > $withdrawal->user->accountBalance() - $withdrawal->user->topbettauser->balance_to_turnover && $data['approved_flag'] == 1) {
             return Redirect::route('admin.withdrawals.edit', array($withdrawal->id))->with(array("flash_message" => "Amount is greater than available withdrawal balance"));
@@ -133,19 +136,20 @@ class WithdrawalsController extends BaseController
 		// account balance and time of processing
 		$data['processed_amount'] = $withdrawal->user->accountBalance();
 
+		$withdrawal->update($data);
+
         //create transaction
         if($data['approved_flag']) {
-			if($data['email_flag']) $this->withdrawalService->sendApprovalEmail($id);
+			if($email_flag) $this->withdrawalService->sendApprovalEmail($id);
             if(!$accountTransaction = $this->accountTransactionService->decreaseAccountBalance($withdrawal->user->id, $withdrawal->amount, 'withdrawal', \Auth::user()->id, \Input::get('transaction_notes'))){
 				return Redirect::route('admin.withdrawals.edit', array($withdrawal->id))->with(array("flash_message" => "Account Tranasction Failed!"));
 			}
 			$data['notes'] = 'Transaction ID: '.$accountTransaction['id']. ' - '.$data['notes'];
         } else {
-			if($data['email_flag']) $this->withdrawalService->sendDenialEmail($id);
+			if($email_flag) $this->withdrawalService->sendDenialEmail($id);
         }
 
-		unset($data['email_flag']);
-
+		// update notes
 		$withdrawal->update($data);
 
         return \Redirect::route('admin.withdrawals.index')
