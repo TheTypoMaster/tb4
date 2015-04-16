@@ -26,7 +26,7 @@
 			<td>{{ $withdrawal->user->username }}</td>
 			<td>{{ $withdrawal->user->id }}</td>
 			<td>${{ number_format($withdrawal->amount / 100, 2) }}</td>
-            <td>${{ ($withdrawal->processed_amount) ? number_format(processed_amount/100, 2) : number_format($withdrawal->user->accountBalance()/100, 2) }}</td>
+            <td>${{ (isset($withdrawal->processed_amount)) ? number_format(processed_amount/100, 2) : number_format($withdrawal->user->accountBalance()/100, 2) }}</td>
             <td>${{ number_format($withdrawal->user->topbettauser ? ($withdrawal->user->accountBalance() - $withdrawal->user->topbettauser->balance_to_turnover)/100 : 0, 2) }}</td>
 			<td>{{ ($withdrawal->withdrawal_type_id == 2) ? '(paypal) ' . $withdrawal->paypal->paypal_id : $withdrawal->type->name }}</td>
 			<td>{{ $withdrawal->requested_date }}</td>
