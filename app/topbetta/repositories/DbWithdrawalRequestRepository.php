@@ -33,4 +33,12 @@ class DbWithdrawalRequestRepository extends BaseEloquentRepository implements Wi
             ->where('approved_flag', '=', (int) $approved)
             ->sum('amount');
     }
+
+    public function findWithUserAndType($id)
+    {
+        return $this->model
+            ->where('id', $id)
+            ->with(array('user', 'user.topbettauser', 'type', 'paypal'))
+            ->first();
+    }
 }

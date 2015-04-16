@@ -2,12 +2,19 @@
 namespace TopBetta\frontend;
 
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Accounting\AccountTransactionService;
 
 class FrontUsersWithdrawController extends \BaseController {
 
-	public function __construct() {
+    /**
+     * @var AccountTransactionService
+     */
+    private $accountTransactionService;
+
+    public function __construct(AccountTransactionService $accountTransactionService) {
 		$this -> beforeFilter('auth');
-	}
+        $this->accountTransactionService = $accountTransactionService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -63,6 +70,11 @@ class FrontUsersWithdrawController extends \BaseController {
 			return array("success" => false, "error" => $validator -> messages() -> all());
 
 		} else {
+            \Log::info($input);
+            //check available withdrawal funds
+            if($input[$type.'_amount']*100 > $this->accountTransactionService->getAvailableWithdrawalBalance(\Auth::user()->id)) {
+                return array("success" => false, "error" => "Withdrawal amount is greater than your available funds to withdraw");
+            }
 
 			//pass data onto legacy api
 			$l = new \TopBetta\LegacyApiHelper;

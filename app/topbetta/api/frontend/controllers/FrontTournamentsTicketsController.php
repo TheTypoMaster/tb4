@@ -3,18 +3,24 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 
 class FrontTournamentsTicketsController extends \BaseController {
 
     /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+    /**
      * @var TournamentDashboardNotificationService
      */
     private $tournamentDashboardNotificationService;
 
-    public function __construct(TournamentDashboardNotificationService $tournamentDashboardNotificationService) {
+    public function __construct(UserAccountService $userAccountService, TournamentDashboardNotificationService $tournamentDashboardNotificationService) {
 		$this -> beforeFilter('auth');
-        $this->tournamentDashboardNotificationService = $tournamentDashboardNotificationService;
+        $this->userAccountService = $userAccountService;
+		$this->tournamentDashboardNotificationService = $tournamentDashboardNotificationService;
     }
 
 	public function nextToJump() {
@@ -266,6 +272,15 @@ class FrontTournamentsTicketsController extends \BaseController {
 				$ticket = $l -> query('saveTournamentTicket', $tournDetailsArray);
 	
 				if ($ticket['status'] == 200) {
+                    //get the tournament
+                    $tournament = \TopBetta\Tournament::find($tournamentId);
+
+                    //decrease turnover balance
+                    $this->userAccountService->decreaseBalanceToTurnOver(
+                        \Auth::user()->id,
+                        $tournament->buy_in + $tournament->entry_fee
+                    );
+
 
                     $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
 
