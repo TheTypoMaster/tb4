@@ -60,7 +60,7 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
     {
         //check the id exists
 		if(!array_get($data, 'id', false)){
-			Log::error("UserDashboardNotificationQueueService: No user id specified in payload ");
+			Log::error("UserDashboardNotificationQueueService: No user id specified in payload - ", $data);
 			return array();
 		}
 
