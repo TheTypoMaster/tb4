@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta\Services\DashboardNotification\Queue;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -6,8 +6,8 @@
  * Time: 3:00 PM
  */
 
-namespace TopBetta\Services\DashboardNotification\Queue;
 
+use Log;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
@@ -59,10 +59,10 @@ class UserDashboardNotificationQueueService extends AbstractTransactionDashboard
     public function formatPayload($data)
     {
         //check the id exists
-        if( ! $data['id'] ) {
-            \Log::error("No user id specified in UserDashboardNotificationQueueService");
-            return array();
-        }
+		if(!array_get($data, 'id', false)){
+			Log::error("UserDashboardNotificationQueueService: No user id specified in payload ");
+			return array();
+		}
 
         //get the user
         $user = $this->userRepository->getWithTopBettaUser($data['id'])->toArray();
