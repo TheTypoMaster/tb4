@@ -92,6 +92,9 @@ class DashboardPusher extends Command {
 
         while(count($transactions)) {
             foreach ($transactions as $transaction) {
+
+                if(! $transaction->recipient ) continue;
+
                 try {
                     switch ($transaction->transactionType->keyword) {
                         case TransactionType::TYPE_BET_ENTRY:
@@ -141,14 +144,22 @@ class DashboardPusher extends Command {
                             break;
 
                         case TransactionType::TYPE_TOURNAMENT_WIN:
-                            $ticket = \TopBetta\Models\TournamentTicketModel::where('result_transaction_id', $transaction->id)->first();
+                            $ticket = \TopBetta\Models\TournamentTicketModel::join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
+                                ->where('result_transaction_id', $transaction->id)
+                                ->where('free_credit_flag', 0)
+                                ->select('tbdb_tournament_ticket.id AS id')
+                                ->first();
 
                             $this->tournamentNotificationService->notify(array("id" => $ticket->id, "transactions" => array($transaction->id)));
 
                             break;
 
                         case TransactionType::TYPE_TOURNAMENT_REFUND:
-                            $ticket = \TopBetta\Models\TournamentTicketModel::where('result_transaction_id', $transaction->id)->first();
+                            $ticket = \TopBetta\Models\TournamentTicketModel::join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
+                                ->where('result_transaction_id', $transaction->id)
+                                ->where('free_credit_flag', 0)
+                                ->select('tbdb_tournament_ticket.id AS id')
+                                ->first();
 
                             $this->tournamentNotificationService->notify(array("id" => $ticket->id, "transactions" => array($transaction->id)));
 
@@ -158,7 +169,7 @@ class DashboardPusher extends Command {
                             $this->userNotificationService->notify(array("id" => $transaction->recipient_id, "transactions" => array($transaction->id)));
                     }
                 } catch (\Exception $e) {
-                    \Log::error("ERROR DASHBOARD PUSHER : " . $e->getMessage());
+                    \Log::error("ERROR DASHBOARD PUSHER TRANSACTION : " . $transaction->id . " MESSAGE : " . $e->getMessage());
                 }
             }
 
@@ -170,6 +181,9 @@ class DashboardPusher extends Command {
 
         while(count($transactions)) {
             foreach ($transactions as $transaction) {
+
+                if(! $transaction->recipient ) continue;
+
                 try {
                     switch ($transaction->transactionType->keyword) {
                         case FreeTransactionType::TRANSACTION_TYPE_FREE_BET_ENTRY:
@@ -197,14 +211,22 @@ class DashboardPusher extends Command {
                             break;
 
                         case FreeTransactionType::TRANSACTION_TYPE_WIN:
-                            $ticket = \TopBetta\Models\TournamentTicketModel::where('result_transaction_id', $transaction->id)->first();
+                            $ticket = \TopBetta\Models\TournamentTicketModel::join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
+                                ->where('result_transaction_id', $transaction->id)
+                                ->where('free_credit_flag', 1)
+                                ->select('tbdb_tournament_ticket.id AS id')
+                                ->first();
 
                             $this->tournamentNotificationService->notify(array("id" => $ticket->id, "transactions" => array($transaction->id)));
 
                             break;
 
                         case FreeTransactionType::TRANSACTION_TYPE_REFUND:
-                            $ticket = \TopBetta\Models\TournamentTicketModel::where('result_transaction_id', $transaction->id)->first();
+                            $ticket = \TopBetta\Models\TournamentTicketModel::join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
+                                ->where('result_transaction_id', $transaction->id)
+                                ->where('free_credit_flag', 1)
+                                ->select('tbdb_tournament_ticket.id AS id')
+                                ->first();
 
                             $this->tournamentNotificationService->notify(array("id" => $ticket->id, "transactions" => array($transaction->id)));
 
@@ -230,7 +252,7 @@ class DashboardPusher extends Command {
                             $this->userNotificationService->notify(array("id" => $transaction->recipient_id, "transactions" => array($transaction->id)));
                     }
                 } catch (\Exception $e) {
-                    \Log::error("ERROR DASHBOARD PUSHER : " . $e->getMessage());
+                    \Log::error("ERROR DASHBOARD PUSHER TRANSACTION : " . $transaction->id . " MESSAGE : " . $e->getMessage());
                 }
             }
 
