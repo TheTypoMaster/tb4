@@ -22,6 +22,11 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
         $this->model = $model;
     }
 
+    public function findAllWithTypePaged($page, $count)
+    {
+        return $this->model->forPage($page, $count)->with('transactionType')->get();
+    }
+
     public function findWithType($transactionId)
     {
         return $this->model->with(array('transactionType', 'giver', 'giver.topbettauser'))->where('id', $transactionId)->first()->toArray();

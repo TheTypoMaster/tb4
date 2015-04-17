@@ -46,4 +46,9 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
         ));
     }
 
+    public function findAllPaged($page, $count)
+    {
+        return $this->model->forPage($page, $count)->get();
+    }
+
 }
