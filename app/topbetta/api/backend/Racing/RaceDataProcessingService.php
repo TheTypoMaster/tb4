@@ -283,6 +283,8 @@ class RaceDataProcessingService {
 					}
 				}
 				Log::debug('RaceDataProcessingService: Tournament Update - ', $tournament);
+				unset($tournament['created_at'], $tournament['updated_at']);
+
 				$this->tournaments->updateOrCreate($tournament, 'id');
 			}
 
