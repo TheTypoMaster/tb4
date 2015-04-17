@@ -282,6 +282,7 @@ class RaceDataProcessingService {
 						$tournament['end_date'] = $race['JumpTime'];
 					}
 				}
+				Log::debug('RaceDataProcessingService: Tournament Update - ', $tournament);
 				$this->tournaments->updateOrCreate($tournament, 'id');
 			}
 
