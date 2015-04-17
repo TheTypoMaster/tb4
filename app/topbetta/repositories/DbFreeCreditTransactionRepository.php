@@ -55,7 +55,7 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
         }
 
         if($endDate) {
-            $model->where('end_date', '<=', $endDate);
+            $model->where('created_date', '<=', $endDate);
         }
 
         return $model->get();
