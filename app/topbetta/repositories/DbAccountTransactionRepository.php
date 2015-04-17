@@ -22,9 +22,19 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
         $this->model = $model;
     }
 
-    public function findAllWithTypePaged($page, $count)
+    public function findAllWithTypePaged($page, $count, $startDate = null, $endDate = null)
     {
-        return $this->model->forPage($page, $count)->with('transactionType')->get();
+        $model = $this->model->orderBy('created_date', 'DESC')->with('transactionType');
+
+        if($startDate) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if($endDate) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->forPage($page, $count)->get();
     }
 
     public function findWithType($transactionId)

@@ -87,12 +87,15 @@ class DashboardPusher extends Command {
 	 */
 	public function fire()
 	{
+        $start = $this->option('start');
+        $end = $this->option('end');
+
         \Log::info("ACCOUNT TRANSACTIONS");
-		$transactions = $this->accountTransactionRepository->findAllWithTypePaged($page=0, $count=500);
+		$transactions = $this->accountTransactionRepository->findAllWithTypePaged($page=1, $count=500, $start, $end);
 
         while(count($transactions)) {
             foreach ($transactions as $transaction) {
-
+                \Log::info("TRANSACTION DATE : " . $transaction->created_date);
                 if(! $transaction->recipient ) continue;
 
                 try {
@@ -173,15 +176,16 @@ class DashboardPusher extends Command {
                 }
             }
 
-            $transactions = $this->accountTransactionRepository->findAllWithTypePaged(++$page, $count);
+            $transactions = $this->accountTransactionRepository->findAllWithTypePaged(++$page, $count, $start, $end);
+
         }
 
         \Log::info("FREE CREDIT TRANSACTIONS");
-        $transactions = $this->freeCreditTransactionRepository->findAllPaged($page=0, $count=500);
+        $transactions = $this->freeCreditTransactionRepository->findAllPaged($page=1, $count=500, $start, $end);
 
         while(count($transactions)) {
             foreach ($transactions as $transaction) {
-
+                \Log::info("TRANSACTION DATE : " . $transaction->created_date);
                 if(! $transaction->recipient ) continue;
 
                 try {
@@ -256,7 +260,7 @@ class DashboardPusher extends Command {
                 }
             }
 
-            $transactions = $this->freeCreditTransactionRepository->findAllPaged(++$page, $count);
+            $transactions = $this->freeCreditTransactionRepository->findAllPaged(++$page, $count, $start, $end);
         }
 	}
 
@@ -280,7 +284,8 @@ class DashboardPusher extends Command {
 	protected function getOptions()
 	{
 		return array(
-
+            array('start', null, InputOption::VALUE_OPTIONAL, null, null),
+            array('end', null, InputOption::VALUE_OPTIONAL, null, null),
 		);
 	}
 

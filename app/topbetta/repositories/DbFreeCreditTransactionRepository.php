@@ -46,9 +46,19 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
         ));
     }
 
-    public function findAllPaged($page, $count)
+    public function findAllPaged($page, $count, $startDate = null, $endDate = null)
     {
-        return $this->model->forPage($page, $count)->get();
+        $model = $this->model->forPage($page, $count)->orderBy('created_date', 'DESC');
+
+        if($startDate) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if($endDate) {
+            $model->where('end_date', '<=', $endDate);
+        }
+
+        return $model->get();
     }
 
 }
