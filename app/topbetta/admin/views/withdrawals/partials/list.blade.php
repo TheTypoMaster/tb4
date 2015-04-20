@@ -30,7 +30,7 @@
             <td>${{ number_format($withdrawal->user->topbettauser ? ($withdrawal->user->accountBalance() - $withdrawal->user->topbettauser->balance_to_turnover)/100 : 0, 2) }}</td>
 			<td>{{ ($withdrawal->withdrawal_type_id == 2) ? '(paypal) ' . $withdrawal->paypal->paypal_id : $withdrawal->type->name }}</td>
 			<td>{{ $withdrawal->requested_date }}</td>
-			<td>{{ $withdrawal->fulfilled }}</td>
+			<td>{{ $withdrawal->fulfilled_date }}</td>
 			<td>{{ (isset($withdrawal->approved_flag)) ? ($withdrawal->approved_flag == 1) ? 'Y' : 'N' : 'Pending' }}</td>
 			<td>{{{ $withdrawal->notes }}}</td>
             <td>
