@@ -39,6 +39,7 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         TransactionType::TYPE_PARENT_ACCOUNT_FUNDED => "parent_account_funded",
         TransactionType::TYPE_DORMANT_CHARGE        => "dormant_charge",
         TransactionType::TYPE_TESTING               => "testing",
+        TransactionType::TYPE_ADMIN                 => "admin",
     );
 
     private $freeCreditTransactionTypeMapping = array(
