@@ -115,12 +115,12 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
 
         if (array_get($data, 'transactions', null)) {
-            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['transactions']));
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatBetTransactions($bet, $data['transactions']));
         }
 
         //free credit transactions
         if (array_get($data, 'free-credit-transactions', null) ) {
-            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['free-credit-transactions'], true));
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatBetTransactions($bet, $data['free-credit-transactions'], true));
         }
 
         //format bet selections
@@ -130,6 +130,24 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         }
 
         \Log::info("BET PAYLOAD " . print_r($payload, true));
+        return $payload;
+    }
+
+    public function formatBetTransactions($bet, $transactionIds, $freeCredit = false)
+    {
+        $payload = array();
+
+        foreach($transactionIds as $transaction) {
+            $transactionModel = $freeCredit ? $this->getFreeCreditTransaction($transaction) : $this->getTransaction($transaction);
+
+            $betSuffix = '';
+            if(array_get($transactionModel, 'transaction_type.keyword', null) == 'betentry' || array_get($transactionModel, 'transaction_type.keyword', null) == 'freebetentry') {
+                $betSuffix = array_get($bet, 'betselection', false) ? array_get($bet, 'betselection.0.selection.market.event.competition.0.type_code', false)  ? "racing" : "sports" : "";
+            }
+
+            $payload[] = $this->formatTransaction($transactionModel, $freeCredit, $betSuffix);
+        }
+
         return $payload;
     }
 

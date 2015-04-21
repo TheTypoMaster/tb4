@@ -37,6 +37,18 @@
             </div>
 
             <div class="form-group">
+                {{ Form::label('email', "Send Email: ") }}
+                <div class="form-group">
+                    <label class="radio-inline">
+                        {{ Form::radio('email_flag', 1, true) }} Yes
+                    </label>
+                    <label class="radio-inline">
+                        {{ Form::radio('email_flag', 0, false) }}  No
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
                 {{ Form::label('notes', "Notes: ") }}
                 {{ Form::textarea('notes', null, array("class"=>"form-control")) }}
             </div>
