@@ -8,7 +8,7 @@
 
 namespace TopBetta\Services\Feeds\Processors;
 
-
+use Log;
 use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 
 class TeamProcessor extends AbstractFeedProcessor {
@@ -32,9 +32,11 @@ class TeamProcessor extends AbstractFeedProcessor {
     {
         //check team id exists
         if( ! $teamId = array_get($team, 'team_id', null) ) {
+            Log::error("BackAPI sports no team_id specified");
             return 0;
         }
 
+        Log::info("BackAPI sports processing team " . $teamId);
         //team data
         $data = array(
             "external_team_id" => $teamId,
@@ -51,6 +53,7 @@ class TeamProcessor extends AbstractFeedProcessor {
             return $teamModel['id'];
         }
 
+        Log::error("BackAPI sports error processing team " . $teamId);
         return 0;
     }
 

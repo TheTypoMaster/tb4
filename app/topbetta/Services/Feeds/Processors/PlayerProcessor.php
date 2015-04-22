@@ -8,7 +8,7 @@
 
 namespace TopBetta\Services\Feeds\Processors;
 
-
+use Log;
 use TopBetta\Repositories\Contracts\PlayersRepositoryInterface;
 
 class PlayerProcessor extends AbstractFeedProcessor {
@@ -26,8 +26,11 @@ class PlayerProcessor extends AbstractFeedProcessor {
     public function process($data)
     {
         if( ! $externalId = array_get($data, 'Id', false) ) {
+            Log::error("BackAPI Sports no player id specified");
             return 0;
         }
+
+        Log::info("BackAPI sports, processing player " . $externalId);
         
         $data = array(
             "external_player_id" => $externalId,
@@ -41,6 +44,7 @@ class PlayerProcessor extends AbstractFeedProcessor {
             return $player['id'];
         }
 
+        Log::error("BackAPI sports error creating/updating player " . $externalId);
         return 0;
     }
 

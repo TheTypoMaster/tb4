@@ -76,6 +76,7 @@ class GameListProcessor extends AbstractFeedProcessor {
     {
         //need to have external id to identify event
         if( ! $externalId = array_get($data, 'GameId', false)) {
+            Log::error("BackAPI sports no GameId specified");
             return 0;
         }
 

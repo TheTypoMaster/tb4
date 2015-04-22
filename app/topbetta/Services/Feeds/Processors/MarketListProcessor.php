@@ -41,12 +41,14 @@ class MarketListProcessor extends AbstractFeedProcessor {
     {
         //make sure game and market ids exists
         if( ! ($eventId = array_get($data, 'GameId', false)) || ! ($marketId = array_get($data, 'MarketId', false)) ||  ! ($marketTypeId = array_get($data, 'BetType', false)) ) {
+            Log::error("BackAPI sports no GameId or MarketId specified");
             return 0;
         }
 
         $eventId = array_get($data, 'GameId', false);
         //get the event
         if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
+            Log::error("BackAPI sports event not found, external id: " . $eventId);
             return 0;
         }
 

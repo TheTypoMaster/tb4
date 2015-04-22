@@ -27,6 +27,10 @@ class SportsFeedController extends \BaseController {
     {
         $data = Input::json()->all();
 
+        //log the payload
+        \File::append('/tmp/backAPIsportsJSON-' . date('YmdHis'), json_encode($data));
+
+        //process sports data
         $this->sportsFeedService->processSportsFeed($data);
 
         //TODO: Is Serena expecting a particular format?
