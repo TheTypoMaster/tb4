@@ -16,7 +16,7 @@ use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentCompetitionRepositoryInterface;
-use TopBetta\Repositories\DbTournamentRepository;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 
 class GameListProcessor extends AbstractFeedProcessor {
 
@@ -45,7 +45,7 @@ class GameListProcessor extends AbstractFeedProcessor {
      */
     private $tournamentCompetitionRepository;
     /**
-     * @var DbTournamentRepository
+     * @var TournamentRepositoryInterface
      */
     private $tournaments;
     /**
@@ -59,7 +59,7 @@ class GameListProcessor extends AbstractFeedProcessor {
                                 SportRepositoryInterface $sportRepository,
                                 CompetitionRegionRepositoryInterface $regionRepository,
                                 TournamentCompetitionRepositoryInterface $tournamentCompetitionRepository,
-                                DbTournamentRepository $tournaments,
+                                TournamentRepositoryInterface $tournaments,
                                 TeamProcessor $teamProcessor)
     {
         $this->eventRepository = $eventRepository;
@@ -172,9 +172,13 @@ class GameListProcessor extends AbstractFeedProcessor {
         }
 
         //update start and close times
-        if( $competition = $this->competitionRepository->find($competitionName) ) {
+        $currentCloseTime = null;
+        if( $competition = $this->competitionRepository->findByName($competitionName) ) {
             if( $eventDate && $competition['start_date'] > $eventDate ) { $compData['start_date'] = $eventDate; }
-            if( $eventDate && $competition['close_time'] < $eventDate ) { $compData['close_time'] = $eventDate; }
+            if( $eventDate && $competition['close_time'] < $eventDate ) {
+                $currentCloseTime = $competition['close_time'];
+                $compData['close_time'] = $eventDate;
+            }
         } else {
             $compData['start_date'] = $eventDate;
             $compData['close_time'] = $eventDate;
@@ -184,7 +188,10 @@ class GameListProcessor extends AbstractFeedProcessor {
         //create/update the competition
         $competition = $this->competitionRepository->updateOrCreate($compData, "name");
 
-        //TODO: Is it necessary to update tournaments?
+        //update tournaments
+        if( $currentCloseTime && $eventDate && $currentCloseTime < $eventDate ) {
+            $this->tournaments->updateTournamentByEventGroupId($competition['id'], $competition['close_time']);
+        }
 
         return $competition;
     }
