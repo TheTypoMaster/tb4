@@ -77,7 +77,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
         }
 
         //process market status
-        $this->processMarketStatus($marketStatus, $market->id);
+        $this->processMarketStatus($marketStatus, $market['id']);
 
         //process result
         return $this->processResults($data, $marketStatus, $eventId, $marketId);
@@ -127,10 +127,10 @@ class ResultListProcessor extends AbstractFeedProcessor {
         }
 
         //get selection
-        $selection = $this->selectionRepository->getByExternalIdsAndName($eventId, $marketId, $name);
+        $selection = $this->selectionRepository->getByExternalIdsAndName($marketId, $eventId, $name);
 
         if( ! $selection ) {
-            Log::error("Back API Sports selection for event $eventId, market $marketId, name $name ");
+            Log::error("Back API Sports no selection for event $eventId, market $marketId, name $name ");
             return 0;
         }
 
