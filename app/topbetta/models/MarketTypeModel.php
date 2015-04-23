@@ -20,4 +20,9 @@ class MarketTypeModel extends Eloquent {
     {
         return $this->hasMany('TopBetta\Models\Market', 'id', 'market_type_id');
     }
+
+    public function icon()
+    {
+        return $this->belongsTo('TopBetta\Models\IconModel');
+    }
 }
