@@ -11,9 +11,9 @@ use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 
 class DbAccountTransactionRepository extends BaseEloquentRepository implements AccountTransactionRepositoryInterface{
 
-    const BET_TRANSACTION_BET    = 'bet';
-    const BET_TRANSACTION_REFUND = 'betRefund';
-    const BET_TRANSACTION_WIN    = 'betWin';
+    const BET_TRANSACTION_BET    = 'tbdb_bet.bet_transaction_id';
+    const BET_TRANSACTION_REFUND = 'tbdb_bet.refund_transaction_id';
+    const BET_TRANSACTION_WIN    = 'tbdb_bet.result_transaction_id';
 
     protected $model;
 
@@ -106,11 +106,13 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
     {
         return $this
             ->model
-            ->where('recipient_id', '=', $userId)
-            ->whereHas($transactionType, function($q) use ($origin) {
-                $q->whereIn('bet_origin_id', $origin);
+            ->join('tbdb_bet', function($join) use ($transactionType, $userId) {
+                $join->on('tbdb_account_transaction.id', '=', $transactionType);
+                $join->on('tbdb_bet.user_id', '=', \DB::raw($userId));
             })
-            ->sum('amount');
+            ->where('recipient_id', '=', $userId)
+            ->whereIn('bet_origin_id', $origin)
+            ->sum('tbdb_account_transaction.amount');
     }
 
     public function getRecentPositiveTransactionsForUserByTypeIn($userId, $dateAfter, $types)

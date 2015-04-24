@@ -76,6 +76,10 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
 	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
 	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
+
+    //New sport feed endpoint
+    Route::resource('sports-feed', 'TopBetta\backend\SportsFeedController', array("only" => array('store')));
+
 });
 
 
@@ -214,7 +218,19 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
+    Route::resource('marketordering', 'TopBetta\admin\controllers\MarketOrderingController');
+
+    Route::resource('basecompetitions', 'TopBetta\admin\controllers\BaseCompetitionController');
+
+    Route::resource('teams', 'TopBetta\admin\controllers\TeamController');
+
+    Route::resource('players', 'TopBetta\admin\controllers\PlayerController');
+
+    Route::resource('competitionregions', 'TopBetta\admin\controllers\CompetitionRegionController');
+
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
+
+    Route::resource('icons', 'TopBetta\admin\controllers\IconController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
@@ -238,7 +254,6 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 
 	// Token request and login
 	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
-	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 	// Funds management/transfer
 	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
@@ -265,6 +280,9 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
 
 	// normal logout
 	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+	// token login
+	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 });
 

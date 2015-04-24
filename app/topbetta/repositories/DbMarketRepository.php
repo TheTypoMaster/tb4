@@ -12,13 +12,19 @@ use TopBetta\SportsMarket;
 use TopBetta\SportsSelection;
 use TopBetta\SportsSelectionResults;
 
+use TopBetta\Repositories\BetResultRepo;
+
 
 class DbMarketsRepository extends BaseEloquentRepository implements MarketRepositoryInterface {
 
     protected $model;
 
-    public function __construct(RaceMarket $model){
+	protected $betresults;
+
+    public function __construct(RaceMarket $model,
+								BetResultRepo $betresults){
         $this->model = $model;
+		$this->betresults = $betresults;
     }
 
     /**
@@ -120,8 +126,8 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
                 $extMarket = SportsMarket::find($marketId);
                 if ($extMarket) {
                     \Log::info('Resulting bets for ext market id: ' . $extMarket->external_market_id);
-                    $betResultRepo = new BetResultRepo();
-                    $betResultRepo->resultAllSportBetsForMarket($extMarket->external_market_id);
+                    //$betResultRepo = new BetResultRepo();
+					$this->betresults->resultAllSportBetsForMarket($extMarket->external_market_id);
                 } else {
                     \Log::info('Couldnt find market id: ' . $marketId);
                 }
@@ -146,5 +152,13 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
         if(!$markets) return null;
 
         return $markets->toArray();
+    }
+
+    public function getMarketByExternalIds($externalMarketId, $externalEventId)
+    {
+        return $this->model
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first()->toArray();
     }
 }

@@ -10,6 +10,8 @@ use TopBetta\RaceResult;
 
 use Carbon;
 
+use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
+
 /**
  * Description of BetResult
  *
@@ -17,6 +19,13 @@ use Carbon;
  */
 class BetResultRepo
 {
+
+	protected $notifications;
+
+	function __construct(ExternalSourceBetNotificationService $notifications)
+	{
+		$this->notifications = $notifications;
+	}
 
 	/**
 	 * Find and result all events that have pending bets if the 
@@ -143,7 +152,10 @@ class BetResultRepo
 			return false;
 		}
 
-		return $this->processBetPayout($bet);
+		$resultBet = $this->processBetPayout($bet);
+
+		return $this->notifications->notifyBetResult($bet);
+
 	}
 	
 	/**

@@ -117,12 +117,63 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         $selections = $this->model->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
                                     ->where('tbdb_selection.market_id', $id)
                                     ->where('tbdb_selection_price.win_odds', '>', '1')
-                                    ->select('tbdb_selection.name as selection_name', 'tbdb_selection_price.win_odds as selection_odds')
+                                    ->where('tbdb_selection.selection_status_id', '=', '1')
+                                    ->select('tbdb_selection.name as selection_name', 'tbdb_selection_price.win_odds as selection_odds', 'tbdb_selection_price.line as selection_handicap')
                         ->get();
         if(!$selections) return null;
 
         return $selections->toArray();
     }
+
+    public function updateWithId($id, $data)
+    {
+        parent::updateWithId($id, array_except($data, array('team', 'player')));
+
+        $selection = $this->model->find($id);
+
+        //assosciate teams
+        if(is_array($team = array_get($data, 'team', false))) {
+            $selection->team()->sync($team);
+        }
+
+        //assosciate players
+        if(is_array($player = array_get($data, 'player', false))) {
+            $selection->player()->sync($player);
+        }
+
+        return $selection->toArray();
+    }
+
+    public function getByExternalIds($externalSelectionId, $externalMarketId, $externalEventId)
+    {
+        $selection = $this->model
+            ->where('external_selection_id', $externalSelectionId)
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first();
+
+        if($selection) {
+            return $selection->toArray();
+        }
+
+        return null;
+    }
+
+    public function getByExternalIdsAndName($externalMarketId, $externalEventId, $name)
+    {
+        $selection = $this->model
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->where('name', $name)
+            ->first();
+
+        if($selection) {
+            return $selection->toArray();
+        }
+
+        return null;
+    }
+
 
 
 

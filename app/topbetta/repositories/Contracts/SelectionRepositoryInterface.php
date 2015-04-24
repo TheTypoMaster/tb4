@@ -8,4 +8,5 @@
 
 interface SelectionRepositoryInterface {
 
-} 
+    public function getByExternalIds($externalSelectionId, $externalMarketId, $externalEventId);
+}

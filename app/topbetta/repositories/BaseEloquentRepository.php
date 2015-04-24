@@ -14,6 +14,8 @@ class BaseEloquentRepository {
 
     protected $model;
 
+    protected $order;
+
 	/**
 	 * Find the model given an ID
 	 * @param $id
@@ -30,6 +32,26 @@ class BaseEloquentRepository {
 	public function findAll() {
 		return $this->model->all();
 	}
+
+    /**
+     * @param array $relations Relation to eager load
+     * @param int $paginate
+     * @return mixed
+     */
+    public function findAllPaginated($relations = array(), $paginate = 15)
+    {
+        $model = $this->model;
+        if($this->order != null) {
+            $model = $model->orderBy($this->order[0], $this->order[1]);
+        }
+
+        //eager load relations
+        foreach($relations as $relation) {
+            $model->with($relation);
+        }
+
+        return $model->paginate($paginate);
+    }
 
 	/**
 	 * Update record with the given id and data
@@ -76,7 +98,6 @@ class BaseEloquentRepository {
         return $resource->toArray();
     }
 
-
 	public function validate($input) {
 		return $this->validator ? $this->validator->validateForCreation($input) : true;
 	}
@@ -84,5 +105,6 @@ class BaseEloquentRepository {
 	public function validateUpdate($input) {
 		return $this->validator ? $this->validator->validateForUpdate($input) : true;
 	}
+
 
 } 

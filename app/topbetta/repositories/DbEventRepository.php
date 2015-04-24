@@ -87,13 +87,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $eventDetails;
     }
 
-    public function getEventsforCompetitionId($id, $from, $to){
-        $events = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
-                                ->where('tbdb_event_group_event.event_group_id', $id)
-                                ->where('tbdb_event.start_date', '>', $from)
-                                ->where('tbdb_event.start_date', '<', $to)
-                                ->select(array('id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
-                                ->get();
+    public function getEventsforCompetitionId($id, $from = null, $to = null){
+        $query = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                                ->where('tbdb_event_group_event.event_group_id', $id);
+
+        if($from) $query = $query->where('tbdb_event.start_date', '>', $from);
+        if($to) $query = $query->where('tbdb_event.start_date', '<', $to);
+
+        $events = $query->select(array('id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
+                        ->get();
 
         if(!$events) return null;
 
@@ -113,5 +115,30 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
         return $events->toArray();
     }
+
+    /**
+     * adds and removes teams for an event based on the teams array
+     * @param $eventId
+     * @param array $teams (array of team ids and position [id => position]
+     */
+    public function addTeams($eventId, array $teams)
+    {
+        //get the event
+        $event = $this->model->find($eventId);
+
+        return $event->teams()->sync($teams);
+    }
+
+    public function addToCompetition($eventId, $competitionId)
+    {
+        $event = $this->model->find($eventId);
+
+        if (!$event->competitions()->find($competitionId)) {
+            return $event->competitions()->attach($competitionId);
+        }
+
+        return null;
+    }
+
 
 }

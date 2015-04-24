@@ -1,5 +1,6 @@
 <?php namespace TopBetta\admin\Controllers;
 
+use TopBetta\Repositories\Contracts\IconTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 
 use View;
@@ -7,123 +8,66 @@ use Request;
 use Input;
 use Redirect;
 
-class MarketTypeController extends \BaseController {
+class MarketTypeController extends CrudResourceController {
 
-	/**
-	 * @var MarketTypeRepositoryInterface
-	 */
-	private $marketTypeRepository;
+    protected $repositoryName = 'TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface';
 
-	public function __construct(MarketTypeRepositoryInterface $marketTypeRepository)
-	{
-		$this->marketTypeRepository = $marketTypeRepository;
-	}
+    protected $iconType = IconTypeRepositoryInterface::TYPE_MARKET_TYPE;
 
+    protected $modelName = 'Market Types';
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		$search = Request::get('q', '');
-		if ($search) {
-			$marketTypes = $this->marketTypeRepository->searchMarketTypes($search);
-		} else {
-			$marketTypes = $this->marketTypeRepository->allMarketTypes();
-		}
+    protected $indexRoute = 'admin.markettypes.index';
 
-		return View::make('admin::eventdata.markettypes.index', compact('marketTypes', 'search'));
-	}
+    protected $editRoute = 'admin.markettypes.edit';
 
+    protected $createRoute = 'admin.markettypes.create';
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+    protected $storeRoute  = 'admin.markettypes.store';
 
+    protected $updateRoute = 'admin.markettypes.update';
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
+    protected $deleteRoute = 'admin.markettypes.destroy';
 
+    protected $indexView = 'admin::eventdata.markettypes.index';
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
+    protected $createView = 'admin::eventdata.markettypes.create';
 
+    protected $editView = 'admin::eventdata.markettypes.edit';
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//Get search string for filtering after redirect
-		$search = Input::get("q", '');
+    public function index($relations = array(), $extraData = array())
+    {
+        $extraData = array(
+            "Market Rules" => array(
+                "field" => "market_rules",
+                "type" => "text"
+            )
+        );
 
-		$marketType = $this->marketTypeRepository->getMarketTypeById($id);
+        return parent::index($relations, $extraData);
+    }
 
-		if(is_null($marketType)) {
-			return Redirect::route("admin.markettypes.index");
-		}
+    public function create($extraData = array())
+    {
+        $extraData = array(
+            "Market Rules" => array(
+                "field" => "market_rules",
+                "type" => "text"
+            )
+        );
 
-		return View::make("admin::eventdata.markettypes.edit")->with(compact('marketType', 'search'));
-	}
+        return parent::create($extraData);
+    }
 
+    public function edit($id, $extraData = array())
+    {
+        $extraData = array(
+            "Market Rules" => array(
+                "field" => "market_rules",
+                "type" => "text"
+            )
+        );
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//Get search string for filtering after redirect
-		$search = Input::get("q", '');
-
-		$data = Input::only('name', 'description', 'ordering');
-
-		$data['ordering'] = $data['ordering'] == '' ? null : $data['ordering'];
-		$this->marketTypeRepository->updateWithId($id, $data);
-
-		return Redirect::route('admin.markettypes.index', array($id, "q"=>$search))
-			->with('flash_message', 'Saved!');
-	}
-
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
-
+        return parent::edit($id, $extraData);
+    }
 
 }
