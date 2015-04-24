@@ -3,11 +3,12 @@
 namespace TopBetta\admin\controllers;
 
 use Request;
+use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\DbTournamentCompetiitonRepository;
 use View;
 use Input;
 use TopBetta\Repositories\TournamentsRepo;
 use TopBetta\Repositories\DbSportsRepository;
-use TopBetta\Tournaments\TournamentCreation;
 
 class TournamentsController extends \BaseController
 {
@@ -18,16 +19,27 @@ class TournamentsController extends \BaseController
 	protected $tournamentRepo;
     protected $sportsrepo;
     protected $tournamentcreation;
+    /**
+     * @var DbTournamentCompetiitonRepository
+     */
+    private $tournamentCompetiitonRepository;
+    /**
+     * @var CompetitionRepositoryInterface
+     */
+    private $competitionRepository;
 
-	public function __construct(TournamentsRepo $tournamentRepo,
+    public function __construct(TournamentsRepo $tournamentRepo,
                                 DbSportsRepository $sportsrepo,
-                                TournamentCreation $tournamentcreation)
+                                DbTournamentCompetiitonRepository $tournamentCompetiitonRepository,
+                                CompetitionRepositoryInterface $competitionRepository)
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
         $this->sportsrepo = $sportsrepo;
-        $this->tournamentcreation = $tournamentcreation;
-	}
+
+        $this->tournamentCompetiitonRepository = $tournamentCompetiitonRepository;
+        $this->competitionRepository = $competitionRepository;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -53,7 +65,8 @@ class TournamentsController extends \BaseController
 	 */
 	public function create()
 	{
-        $sports = $this->sportsrepo->selectList();
+        $sports = array("Select Sport") + $this->sportsrepo->selectList();
+
         return View::make('admin::tournaments.create', compact('sports'));
 	}
 
@@ -64,7 +77,7 @@ class TournamentsController extends \BaseController
 	 */
 	public function store()
 	{
-        $this->tournamentcreation->createFutureTournament(Input::All());
+        //$this->tournamentcreation->createFutureTournament(Input::All());
         $sports = $this->sportsrepo->selectList();
         return View::make('admin::tournaments.create', compact('sports'));
 	}
@@ -112,5 +125,33 @@ class TournamentsController extends \BaseController
 	{
 		//
 	}
+
+    /**
+     * Ajax route for getting competitions by sport id
+     * @param $sportId
+     * @return array
+     */
+    public function getCompetitions($sportId)
+    {
+        $competitions = $this->tournamentCompetiitonRepository->getBySport($sportId);
+
+        if( ! $competitions ) {
+            return array("Select Competition");
+        }
+
+        return array("Select Competition") + $competitions->lists('name', 'id');
+
+    }
+
+    public function getEventGroups($competitionId)
+    {
+        $eventGroups = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
+
+        if( ! $eventGroups ) {
+            return array("Select Event Group");
+        }
+
+        return array("Select Event Group") + $eventGroups->lists('name', 'id');
+    }
 
 }

@@ -221,6 +221,10 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 
     Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
+
+    Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
+
+    Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

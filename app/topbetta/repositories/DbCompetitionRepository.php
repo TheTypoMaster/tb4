@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
@@ -97,5 +98,14 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         if(!$competitions) return null;
 
         return $competitions->toArray();
+    }
+
+    public function getFutureEventGroupsByTournamentCompetition($tournamentCompetitionId)
+    {
+        return $this->model
+            ->where('tournament_competition_id', $tournamentCompetitionId)
+            ->where('start_date', '>=', Carbon::now()->toDateTimeString())
+            ->where('display_flag', 1)
+            ->get();
     }
 } 
