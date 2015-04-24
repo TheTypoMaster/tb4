@@ -180,6 +180,28 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 
 });
 
+// --- NEW RESOURCE ROUTES ---
+Route::group(array('prefix' => 'api/v2', 'before' => 'not.excluded'), function() {
+
+    Route::resource('sports', 'TopBetta\Frontend\Controllers\SportsController');
+
+    Route::resource('competitions', 'TopBetta\Frontend\Controllers\CompetitionsController');
+
+    Route::resource('base-competitions', 'TopBetta\Frontend\Controllers\BaseCompetitionController');
+
+    Route::resource('events', 'TopBetta\Frontend\Controllers\EventsController');
+
+    Route::resource('markets', 'TopBetta\Frontend\Controllers\MarketsController');
+
+    Route::resource('market-types', 'TopBetta\Frontend\Controllers\MarketTypesController');
+
+    Route::resource('selections', 'TopBetta\Frontend\Controllers\SelectionsController');
+
+    Route::resource('teams', 'TopBetta\Frontend\Controllers\TeamsController');
+
+    Route::resource('players', 'TopBetta\Frontend\Controllers\PlayersController');
+});
+
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
 	Route::get('/', array('as' => 'home', 'uses' => 'TopBetta\admin\controllers\SessionController@create'));
 
