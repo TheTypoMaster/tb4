@@ -108,4 +108,21 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->where('display_flag', 1)
             ->get();
     }
+
+    public function getFirstEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'ASC')
+            ->first();
+    }
+
+    public function getLastEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'DESC')
+            ->first();
+    }
+
 } 
