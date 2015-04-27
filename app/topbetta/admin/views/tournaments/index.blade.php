@@ -5,7 +5,7 @@
 	<div class="col-lg-12">
 		<div class="row page-header">
 			<h2 class="col-lg-4">Tournaments <small>{{ number_format($tournaments->getTotal()) }}</small>
-                <a href="#" class="btn btn-info">Create</a>
+                {{ link_to_route('admin.tournaments.create', 'Create', array(), array('class' => 'btn btn-info')) }}
             </h2>
 
 			{{ Form::open(array('method' => 'GET')) }}
