@@ -22,8 +22,8 @@ class RebuyFieldsForTbdbTournament extends Migration {
             $table->dateTime('rebuy_end')->nullable()->after('rebuy_currency');
 
             // --- Addon Info ---
-            $table->tinyInteger('topup_flag')->after('rebuy_end');
-            $table->integer('topup_entry')->after('topup_flag');
+            $table->integer('topups')->after('rebuy_end');
+            $table->integer('topup_entry')->after('topups');
             $table->integer('topup_buyin')->after('topup_entry');
             $table->integer('topup_currency')->after('topup_buyin');
             $table->dateTime('topup_start_date')->nullable()->after('topup_currency');
@@ -48,10 +48,10 @@ class RebuyFieldsForTbdbTournament extends Migration {
             $table->dropColumn('rebuy_end');
 
             // --- Addon Info ---
-            $table->dropColumn('topup_flag');
+            $table->dropColumn('topups');
             $table->dropColumn('topup_entry');
             $table->dropColumn('topup_buyin');
-            $table->dropColumn('toupup_currency');
+            $table->dropColumn('topup_currency');
             $table->dropColumn('topup_start_date');
             $table->dropColumn('topup_end_date');
             
