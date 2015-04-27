@@ -11,6 +11,7 @@ use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCompetiitonRepository;
 use TopBetta\Repositories\DbTournamentRepository;
+use TopBetta\Services\Tournaments\TournamentService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use View;
 use Input;
@@ -51,7 +52,22 @@ class TournamentsController extends \BaseController
      * @var TournamentPrizeFormatRepositoryInterface
      */
     private $prizeFormatRepository;
+    /**
+     * @var TournamentService
+     */
+    private $tournamentService;
 
+    /**
+     * @param DbTournamentRepository $tournamentRepo
+     * @param DbSportsRepository $sportsrepo
+     * @param DbTournamentCompetiitonRepository $tournamentCompetiitonRepository
+     * @param CompetitionRepositoryInterface $competitionRepository
+     * @param TournamentBuyInRepositoryInterface $buyInRepository
+     * @param TODRepositoryInterface $TODRepository
+     * @param TournamentLabelsRepositoryInterface $labelsRepository
+     * @param TournamentPrizeFormatRepositoryInterface $prizeFormatRepository
+     * @param TournamentService $tournamentService
+     */
     public function __construct(DbTournamentRepository $tournamentRepo,
                                 DbSportsRepository $sportsrepo,
                                 DbTournamentCompetiitonRepository $tournamentCompetiitonRepository,
@@ -59,7 +75,8 @@ class TournamentsController extends \BaseController
                                 TournamentBuyInRepositoryInterface $buyInRepository,
                                 TODRepositoryInterface $TODRepository,
                                 TournamentLabelsRepositoryInterface $labelsRepository,
-                                TournamentPrizeFormatRepositoryInterface $prizeFormatRepository)
+                                TournamentPrizeFormatRepositoryInterface $prizeFormatRepository,
+                                TournamentService $tournamentService)
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -71,6 +88,7 @@ class TournamentsController extends \BaseController
         $this->TODRepository = $TODRepository;
         $this->labelsRepository = $labelsRepository;
         $this->prizeFormatRepository = $prizeFormatRepository;
+        $this->tournamentService = $tournamentService;
     }
 
 	/**
@@ -109,7 +127,7 @@ class TournamentsController extends \BaseController
             }
         }
 
-        //get event roups
+        //get event groups
         $eventGroups = array("Select Event Group");
         if($competitionId = Input::old('competition_id')) {
             $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
@@ -118,8 +136,6 @@ class TournamentsController extends \BaseController
                 $eventGroups += $eventGroupsCollection->lists('name', 'id');
             }
         }
-
-        $events = array();
 
         //get the buyins
         $buyins = array("Select Ticket Value");
@@ -137,7 +153,7 @@ class TournamentsController extends \BaseController
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
 
-        return View::make('admin::tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'events'));
+        return View::make('admin::tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
 
 	/**
@@ -147,163 +163,46 @@ class TournamentsController extends \BaseController
 	 */
 	public function store()
 	{
-        $tournamentData = array();
-        //tournament data
-        $tournamentData["tournament_sport_id"] = Input::get("tournament_sport_id");
-        $tournamentData["event_group_id"] = Input::get("event_group_id");
-        $tournamentData["jackpot_flag"] = Input::get("jackpot_flag");
-        $tournamentData["start_currency"] = Input::get("start_currency");
-        $tournamentData["tod_flag"] = Input::get("tod_flag") ?: '';
-        $tournamentData["status_flag"] = Input::get("status_flag");
-        $tournamentData["minimum_prize_pool"] = Input::get("minimum_prize_pool");
-        $tournamentData["free_credit_flag"] = Input::get("free_credit_flag");
-        $tournamentData["tournament_prize_format"] = Input::get("tournament_prize_format");
-        $tournamentData["closed_betting_on_first_match_flag"] = Input::get("closed_betting_on_first_match_flag", false);
-        $tournamentData["reinvest_winnings_flag"] = Input::get("reinvest_winnings_flag", false);
-        $tournamentData["bet_limit_flag"] = Input::get("bet_limit_flag", false);
-        $tournamentData["bet_limit_per_event"] = Input::get("bet_limit_per_event") ? Input::get("bet_limit_per_event")*100 : null;
-        $tournamentData["entries_close"] = Input::get("entries_close");
-        $tournamentData["tournament_sponsor_name"] = Input::get("tournament_sponsor_name");
-        $tournamentData["tournament_sponsor_logo"] = Input::get("tournament_sponsor_logo");
-        $tournamentData["tournament_sponsor_logo_link"] = Input::get("tournament_sponsor_logo_link");
-        $tournamentData["parent_tournament_id"] = Input::get("parent_tournament_id");
-        $tournamentData['created_date'] = Carbon::now()->toDateTimeString();
-        $tournamentData['updated_date'] = Carbon::now()->toDateTimeString();
+        $tournamentData = array_except(Input::all(), array(
+            '_method',
+            '_token',
+            'competition_id',
+            'rebuy_end_after',
+            'topup_start_after',
+            'topup_end_after',
+        ));
 
-        //get buyin info
-        if( ! $buyin = Input::get('tournament_buyin_id') ) {
-            return Redirect::to('admin.tournaments.create')->with(array('flash_message' => "Please specify buyin amount"))->withInput();
+        //rebuy data
+        if( ! Input::get('rebuys') ) {
+            $tournamentData = array_except($tournamentData, array(
+                'rebuys',
+                'rebuy_currency',
+                'rebuy_end',
+                'tournament_rebuy_buyin_id',
+            ));
         }
 
-        $buyin = $this->buyInRepository->find($buyin);
-        $tournamentData['buy_in'] = $buyin->buy_in * 100;
-        $tournamentData['entry_fee'] = $buyin->entry_fee * 100;
-
-        //get tournament name and desc
-        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
-        $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
-
-        //convert from cents
-        $tournamentData['start_currency'] *= 100;
-        $tournamentData['minimum_prize_pool'] *= 100;
-
-        //get start and end dates
-        if( ! $eventGroup = Input::get('event_group_id') ) {
-            return Redirect::route('admin.tournaments.create')->with(array('flash_message' => "Please specify event group"))->withInput();
+        //topup data
+        if ( ! Input::get('topup_flag') ) {
+            $tournamentData = array_except($tournamentData, array(
+                'topup_flag',
+                'topup_currency',
+                'topup_end_date',
+                'topup_start_date',
+                'tournament_topup_buyin_id',
+            ));
         }
 
-        if($event = $this->competitionRepository->getFirstEventForCompetition($eventGroup) ) {
-            $tournamentData['start_date'] = $event->start_date;
-            $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroup)->start_date;
-        } else {
-            $tournamentData['start_date'] = $this->competitionRepository->find($eventGroup)->start_date;
-            $tournamentData['end_date'] = $this->competitionRepository->find($eventGroup)->start_date;
-        }
-        if( Input::get('close_betting_on_first_match_flag') ) {
-            $tournamentData['betting_closed_date'] = $tournamentData['start_date'];
-        } else {
-            $tournamentData['betting_closed_date'] = $tournamentData['end_date'];
-        }
-
-        //tournament of the day
-        $tod = Input::get('tod_flag');
-        if ( $tod && $this->tournamentRepo->tournamentOfTheDay($tod, Carbon::createFromFormat('Y-m-d H:i:s', $tournamentData['start_date'])->toDateString()) ) {
-            return Redirect::route('admin.tournaments.create')->with(array('flash_message' => 'Tournament of the day already exists'))->withInput();
-        }
-
-        //rebuyInfo
-        if( Input::get('rebuys') ) {
-            try {
-                $rebuys = $this->processRebuys();
-            } catch (\Exception $e) {
-                return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getMessage()))->withInput();
-            }
-
-            $tournamentData = array_merge($tournamentData, $rebuys);
-        }
-
-        //rebuyInfo
-        if( Input::get('topup_flag') ) {
-            try {
-                $topups = $this->processTopUps();
-            } catch (\Exception $e) {
-                return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getMessage()))->withInput();
-            }
-            $tournamentData = array_merge($tournamentData, $topups);
-        }
-
-        //create the tournament
         try {
-            $tournament = $this->tournamentRepo->create($tournamentData);
+            $tournament = $this->tournamentService->createTournament($tournamentData);
         } catch (ValidationException $e) {
-            return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getErrors()));
+            return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getErrors()))->withInput();
+        } catch (\Exception $e) {
+            return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getMessage()))->withInput();
         }
 
-        $tournament = $this->tournamentRepo->find($tournament['id']);
-
-        //add labels
-        if( $labels = Input::get('tournament_labels') ) {
-            $tournament->tournamentlabels()->sync($labels);
-        }
-
-        return Redirect::route('admin.tournaments.index');
+        return Redirect::route('admin.tournaments.index')->with(array('flash_message' => 'success'));
 	}
-
-    private function processRebuys()
-    {
-        $buyinData = array();
-
-        $buyinData['rebuys'] = Input::get('rebuys');
-        $buyinData['rebuy_currency'] = Input::get('rebuy_currency');
-
-        //rebuy end date
-        if ( ! Input::get('rebuy_end') ) {
-            throw new \Exception("Please specify rebuy end date");
-        }
-
-        $buyinData['rebuy_end'] = Input::get('rebuy_end');
-
-        //get buyin info
-        if( ! $buyin = Input::get('tournament_rebuy_buyin') ) {
-            throw new \Exception("Please specify rebuy buyin amount");
-        }
-
-        $buyin = $this->buyInRepository->find($buyin);
-        $buyinData['rebuy_buyin'] = $buyin->buy_in * 100;
-        $buyinData['rebuy_entry'] = $buyin->entry_fee * 100;
-
-        return $buyinData;
-    }
-    
-    private function processTopUps()
-    {
-        $topupData = array();
-        $topupData['topup_flag'] = Input::get('topup_flag');
-        $topupData['topup_currency'] = Input::get('topup_currency');
-
-        //topup start date
-        if ( ! Input::get('topup_start_date') ) {
-            throw new \Exception("Please specify topup start date");
-        }
-        $topupData['topup_start_date'] = Input::get('topup_start_date');
-
-        //topup end date
-        if ( ! Input::get('topup_end_date') ) {
-            throw new \Exception("Please specify topup end date");
-        }
-        $topupData['topup_end_date'] = Input::get('topup_end_date');
-
-        //get topup info
-        if( ! $topup = Input::get('tournament_topup_buyin') ) {
-            throw new \Exception("Please specify topup buyin amount");
-        }
-
-        $topup = $this->buyInRepository->find($topup);
-        $topupData['topup_buyin'] = $topup->buy_in * 100;
-        $topupData['topup_entry'] = $topup->entry_fee * 100;
-
-        return $topupData;
-    }
 
 	/**
 	 * Display the specified resource.
@@ -414,115 +313,6 @@ class TournamentsController extends \BaseController
         }, array_keys($array), $array);
     }
 
-    /**
-     * Borrowed from legacy administrator
-     * @param $field
-     * @return string
-     */
-    private function generateTournamentAutomatedText($field, $tournamentData)
-    {
-        $jackpot_flag			= array_get($tournamentData, 'jackpot_flag', 0);
-        $parent_tournament_id	= array_get($tournamentData, 'parent_tournament_id', null);
-        $minimum_prize_pool		= array_get($tournamentData, 'minimum_prize_pool', 0);
 
-
-        $reinvest_winnings_flag = array_get($tournamentData, 'reinvest_winnings_flag', 0);
-        $closed_betting_on_first_match_flag = array_get($tournamentData, 'closed_betting_on_first_match_flag', 0);
-        $tournament_sponsor_name = array_get($tournamentData, 'tournament_sponsor_name', null);
-
-
-        $buyin_amount				= number_format(array_get($tournamentData, 'buy_in', 0)/100, 2);
-        $minimum_prize_pool_amount	= number_format($minimum_prize_pool, 2);
-        $free_credit_flag 			= (int)array_get($tournamentData, 'free_credit_flag', 0);
-
-        $automated_text = '';
-        $tournamntType = '';
-
-        switch ($field) {
-            case 'name':
-                $meeting_id				= array_get($tournamentData, 'event_group_id', -1);
-                $event_id				= array_get($tournamentData, 'event_id', -1);
-                $future_meeting_venue	= array_get($tournamentData, 'future_meeting_venue', -1);
-
-                if (!empty($meeting_id) && $meeting_id != -1) {
-                    $meeting	= $this->competitionRepository->find($meeting_id);
-                    $automated_text	.= $meeting->name ;
-                } else if (!empty($future_meeting_venue) && $future_meeting_venue != -1) {
-                    $automated_text .= $future_meeting_venue;
-                }
-                // $automated_text .= ($buyin->buy_in > 0 ? ' $' . $buyin_amount : ' FREE');
-
-                //	if (!$jackpot_flag) {
-                //		$automated_text .= '/' . $minimum_prize_pool_amount;
-                //	}
-
-                break;
-            case 'description':
-                if ($jackpot_flag) {
-                    $tournamntType = 'jackpot';
-                } elseif ($free_credit_flag){
-                    $tournamntType = 'free credit';
-                }else {
-                    $tournamntType = 'cash';
-                }
-                $automated_text  = 'This is a ' . $tournamntType . ' tournament.';
-                $automated_text .= ' The cost of entry is ';
-
-                if ($buyin_amount > 0) {
-                    $automated_text .= '$' . $buyin_amount . ' + $' . number_format(array_get($tournamentData, 'entry_fee',0)/100, 2) . '.';
-                } else {
-                    $automated_text .= 'Free.';
-
-                }
-
-                if ($closed_betting_on_first_match_flag == 1){
-                    $automated_text .= ' You can not bet after the 1st event in this tournament starts.';
-                }
-
-                if ($reinvest_winnings_flag == 0 && $closed_betting_on_first_match_flag != 1){
-                    $automated_text .= ' You can not re-invest your winnings in this tournament.';
-                }
-
-                $automated_text .= ' Winners will receive';
-
-                if (empty($jackpot_flag) || -1 == $parent_tournament_id) {
-                    $automated_text .= ' a share of a guaranteed $' . $minimum_prize_pool_amount;
-                    if($free_credit_flag){
-                        $automated_text .= ' in free credit.';
-                    } else {
-                        $automated_text .= '.';
-                    }
-
-                    if ($buyin_amount > 0) {
-                        $automated_text .= ' Once the minimum is reached, the prize pool will continue to grow by $' . $buyin_amount . ' per entrant.';
-                    }
-                } else {
-                    $parent_tournament	= $this->tournamentRepo->find($parent_tournament_id);
-                    $start_date_time	= strtotime($parent_tournament->start_date);
-
-                    $automated_text .= ' a ticket into the ' . $parent_tournament->name;
-                    $automated_text .= ' tournament on ' . date('D', $start_date_time) . ' ' . date('jS F', $start_date_time) . '.';
-
-                    if ($buyin_amount == 0) {
-
-                        $ticket_count	= floor($minimum_prize_pool * 100 / ($parent_tournament->entry_fee + $parent_tournament->buy_in));
-
-                        if($ticket_count > 1) {
-                            $automated_text .= ' There are ' . $ticket_count . ' tickets to be won.';
-                        } else {
-                            $automated_text .= ' There is ' . $ticket_count . ' ticket to be won.';
-                        }
-                    } else {
-                        $automated_text .= ' The Number of tickets awarded will depend on the number of entrants.';
-                    }
-                }
-
-                $automated_text .= "\n\nGood luck and good punting!";
-
-                break;
-        }
-
-        return $automated_text;
-    }
 
 }

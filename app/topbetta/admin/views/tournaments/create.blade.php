@@ -153,8 +153,8 @@
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('tournament_rebuy_buyin', "Buyin Value") }}
-                        {{ Form::select('tournament_rebuy_buyin', $buyins, null, array("class" => "form-control")) }}
+                        {{ Form::label('tournament_rebuy_buyin_id', "Buyin Value") }}
+                        {{ Form::select('tournament_rebuy_buyin_id', $buyins, null, array("class" => "form-control")) }}
                     </div>
 
                     <div class="form-group">
@@ -169,7 +169,7 @@
                         {{ Form::label('rebuy_end_after', "Rebuys end after") }}
                         <div class="form-group">
                             <div class="col-lg-6">
-                                {{ Form::select('rebuy_end_after', $events, null, array("class"=>"form-control events-selector")) }}
+                                {{ Form::select('rebuy_end_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
                             </div>
                             <div class="col-lg-6">
                                 {{ Form::datetime('rebuy_end', null, array("class"=>"event-date")) }}
@@ -186,8 +186,8 @@
 
                     <div class="form-group">
                         <div class="form-group">
-                            {{ Form::label('tournament_topup_buyin', "Top Up Value") }}
-                            {{ Form::select('tournament_topup_buyin', $buyins, null, array("class" => "form-control")) }}
+                            {{ Form::label('tournament_topup_buyin_id', "Top Up Value") }}
+                            {{ Form::select('tournament_topup_buyin_id', $buyins, null, array("class" => "form-control")) }}
                         </div>
                     </div>
 
@@ -203,7 +203,7 @@
                         {{ Form::label('topup_end_after', "Topups start after") }}
                         <div class="form-group">
                             <div class="col-lg-6">
-                                {{ Form::select('topup_start_after', $events, null, array("class"=>"form-control events-selector")) }}
+                                {{ Form::select('topup_start_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
                             </div>
                             <div class="col-lg-6">
                                 {{ Form::datetime('topup_start_date', null, array("class"=>"event-date")) }}
@@ -215,7 +215,7 @@
                         {{ Form::label('topup_end_after', "Topups end after") }}
                         <div class="form-group">
                             <div class="col-lg-6">
-                                {{ Form::select('topup_end_after', $events, null, array("class"=>"form-control events-selector")) }}
+                                {{ Form::select('topup_end_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
                             </div>
                             <div class="col-lg-6">
                                 {{ Form::datetime('topup_end_date', null, array("class" => "event-date")) }}
@@ -293,6 +293,7 @@
                     })
         });
 
+
         $('.events-selector').change(function(){
             var needle = $(this).val();
             var startDate;
@@ -322,6 +323,13 @@
             } else {
                 $parentTourn.hide();
                 $parentTourn.attr('disabled', 'disabled');
+            }
+        });
+
+        $(document).ready(function(){
+            var $eventGroupId = $('#event_group_id');
+            if($eventGroupId.val() != 0) {
+                $eventGroupId.change();
             }
         })
     </script>
