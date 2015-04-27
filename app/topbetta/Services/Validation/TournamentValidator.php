@@ -30,12 +30,12 @@ class TournamentValidator extends Validator {
         "rebuy_end" => "required_with:rebuys",
 
         //topup info
-        "topup_flag" => "min:0",
-        "topup_currency" => "numeric|required_with:topup_flag",
-        "topup_entry" => "numeric|required_with:topup_flag",
-        "topup_buyin" => "numeric|required_with:topup_flag",
-        "topup_start_date" => "required_with:topup_flag",
-        "topup_end_date" => "required_with:topup_flag",
+        "topups" => "min:0",
+        "topup_currency" => "numeric|required_with:topups",
+        "topup_entry" => "numeric|required_with:topups",
+        "topup_buyin" => "numeric|required_with:topups",
+        "topup_start_date" => "required_with:topups",
+        "topup_end_date" => "required_with:topups",
     );
 
     protected $createRules = array();

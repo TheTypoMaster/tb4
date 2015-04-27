@@ -96,7 +96,7 @@ class TournamentService {
         }
 
         //topup data
-        if ( array_get($tournamentData, 'topup_flag', null)) {
+        if ( array_get($tournamentData, 'topups', null)) {
             $buyin = $this->buyInRepository->find(array_get($tournamentData, 'tournament_topup_buyin_id'));
 
             if( $buyin ) {

@@ -183,9 +183,9 @@ class TournamentsController extends \BaseController
         }
 
         //topup data
-        if ( ! Input::get('topup_flag') ) {
+        if ( ! Input::get('topups') ) {
             $tournamentData = array_except($tournamentData, array(
-                'topup_flag',
+                'topups',
                 'topup_currency',
                 'topup_end_date',
                 'topup_start_date',

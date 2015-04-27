@@ -180,8 +180,8 @@
 
                 <div class="col-lg-6">
                     <div class="form-group">
-                        {{ Form::label('topup_flag', 'No. Topups') }}
-                        {{ Form::number('topup_flag', 0, array("class" =>"form-control")) }}
+                        {{ Form::label('topups', 'No. Topups') }}
+                        {{ Form::number('topups', 0, array("class" =>"form-control")) }}
                     </div>
 
                     <div class="form-group">
