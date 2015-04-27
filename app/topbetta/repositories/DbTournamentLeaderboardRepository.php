@@ -67,4 +67,40 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
         }
         return false;
     }
+
+    public function getLeaderBoardPositionForUser($userId, $tournamentId, $qualified = true)
+    {
+        if( $qualified ) {
+            //make sure user has qualified
+
+            $leaderboardRecord = $this->model
+                ->where('user_id', $userId)
+                ->where('tournament_id', $tournamentId)
+                ->whereHas('tournament', function($q) {
+                    $q->where('turned_over', '>=', DB::raw('start_currency'));
+                })
+                ->first();
+
+            if( !  $leaderboardRecord ) {
+                return 0;
+            }
+        }
+
+        //get the position
+        $position = $this->model
+            ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_leaderboard.tournament_id')
+            ->where('tournament_id', $tournamentId)
+            ->where('currency', '>', function($q) use ($userId, $tournamentId) {
+                $q->from('tbdb_tournament_leaderboard')
+                    ->where('user_id', $userId)
+                    ->where('tournament_id', $tournamentId)
+                    ->select('currency');
+            });
+
+        if( $position ) {
+            $position->where('turned_over', '>=', 'start_currency');
+        }
+
+        return $position->count() + 1;
+    }
 }
