@@ -4,6 +4,7 @@ namespace TopBetta\admin\controllers;
 
 use Request;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCompetiitonRepository;
 use View;
 use Input;
@@ -27,11 +28,16 @@ class TournamentsController extends \BaseController
      * @var CompetitionRepositoryInterface
      */
     private $competitionRepository;
+    /**
+     * @var TournamentBuyInRepositoryInterface
+     */
+    private $buyInRepository;
 
     public function __construct(TournamentsRepo $tournamentRepo,
                                 DbSportsRepository $sportsrepo,
                                 DbTournamentCompetiitonRepository $tournamentCompetiitonRepository,
-                                CompetitionRepositoryInterface $competitionRepository)
+                                CompetitionRepositoryInterface $competitionRepository,
+                                TournamentBuyInRepositoryInterface $buyInRepository)
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -39,6 +45,7 @@ class TournamentsController extends \BaseController
 
         $this->tournamentCompetiitonRepository = $tournamentCompetiitonRepository;
         $this->competitionRepository = $competitionRepository;
+        $this->buyInRepository = $buyInRepository;
     }
 
 	/**
@@ -67,7 +74,14 @@ class TournamentsController extends \BaseController
 	{
         $sports = array("Select Sport") + $this->sportsrepo->selectList();
 
-        return View::make('admin::tournaments.create', compact('sports'));
+        //get the buyins
+        $buyins = array("Select Ticket Value");
+
+        foreach($this->buyInRepository->findAll() as $buyin) {
+            $buyins[$buyin->id] = $buyin->buy_in . ' + ' . $buyin->entry_fee;
+        }
+
+        return View::make('admin::tournaments.create', compact('sports', 'buyins'));
 	}
 
 	/**
@@ -139,7 +153,7 @@ class TournamentsController extends \BaseController
             return array("Select Competition");
         }
 
-        return array("Select Competition") + $competitions->lists('name', 'id');
+        return $this->formatForReponse(array("Select Competition") + $competitions->lists('name', 'id'));
 
     }
 
@@ -151,7 +165,14 @@ class TournamentsController extends \BaseController
             return array("Select Event Group");
         }
 
-        return array("Select Event Group") + $eventGroups->lists('name', 'id');
+        return $this->formatForReponse(array("Select Event Group") + $eventGroups->lists('name', 'id'));
+    }
+
+    private function formatForReponse(array $array)
+    {
+        return array_map(function($key, $value) {
+            return array("id" => $key, "name" => $value);
+        }, array_keys($array), $array);
     }
 
 }

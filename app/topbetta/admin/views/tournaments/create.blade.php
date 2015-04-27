@@ -23,6 +23,22 @@
                     {{ Form::label('event_group_id', 'Event Group') }}
                     {{ Form::select('event_group_id', array("Select Event Group"), null, array("class" => "form-control")) }}
                 </div>
+
+                <div class="form-group">
+                    {{ Form::label('tournament_buyin_id', "Ticket Value") }}
+                    {{ Form::select('tournament_buyin_id', $buyins, null, array("class" => "form-control")) }}
+                </div>
+
+                <div class="form-group">
+                    {{ Form::label('jackpot', "Jackpot") }}
+
+                    <label class="radio-inline"> No
+                        {{ Form::radio('jackpot_flag', 0, true) }}
+                    </label>
+                    <label class="radio-inline"> Yes
+                        {{ Form::radio('jackpot_flag', 1) }}
+                    </label>
+                </div>
             </div>
 
 
@@ -35,7 +51,7 @@
             var html = $();
 
             $.each(json, function(index, value){
-                html = html.add($('<option></option>').text(value).val(index));
+                html = html.add($('<option></option>').text(value.name).val(value.id));
             });
 
             return html;
