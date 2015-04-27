@@ -5,7 +5,7 @@
 	<div class="col-lg-12">
 		@include('admin::users.partials.header')
 		<h4 class="page-header">Tournaments</h4>
-		@include('admin::tournaments.partials.tournament-list')
+		@include('admin::tournaments.user.tournament-list')
 	</div>
 	<!-- /.col-lg-12 -->
 </div>
