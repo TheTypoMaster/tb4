@@ -1,4 +1,4 @@
-@if (count($tournaments))
+@if (count($tournamentInfo))
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
@@ -17,27 +17,33 @@
 			<th>Entry-fee</th>
 			<th>Ent.</th>
 			<th>Status</th>
+            <th>Position</th>
+            <th>Cash Prize</th>
+            <th>Bonus Credit Prize</th>
 		</tr>
 	</thead>
 
 	<tbody>
-		@foreach($tournaments as $tournament)
+		@foreach($tournamentInfo as $tournament)
 		<tr>
-			<td>{{ $tournament->id }}</td>
-			<td>{{ $tournament->name }}</td>
-			<td>{{ ($tournament->tod_flag) ? 'Y' : 'N' }}</td>
-			<td>{{ (isset($tournament->parentTournament)) ? $tournament->parentTournament->name : '-' }}</td>
-			<td>{{ ($tournament->eventGroup) ? $tournament->eventGroup->name : 'n/a' }}</td>
-			<td>{{ $tournament->sport->name }}</td>
-			<td>{{ $tournament->start_date }}</td>
-			<td>{{ $tournament->end_date }}</td>
-			<td>{{ (!empty($tournament->jackpot_flag) && $tournament->parent_tournament_id > 0) ? 'Ticket' : 'Cash' }} (${{ number_format($tournament->calculateTournamentPrizePool($tournament->id) / 100, 2) }})</td>
-			<td>{{ ($tournament->free_credit_flag) ? 'Y' : 'N' }}</td>
-			<td>{{ ($tournament->jackpot_flag) ? 'Jackpot' : 'Single' }}</td>
-			<td>{{ ($tournament->buy_in == '0') ? 'free' : '$' . number_format($tournament->buy_in / 100, 2) }}</td>
-			<td>{{ ($tournament->entry_fee == '0') ? 'free' : '$' . number_format($tournament->entry_fee / 100, 2) }}</td>
-			<td>{{ TopBetta\TournamentTicket::countTournamentEntrants($tournament->id) }}</td>
-			<td>{{ ($tournament->status_flag) ? 'Active' : 'Inactive' }}</td>
+			<td>{{ $tournament['tournament']->id }}</td>
+			<td>{{ $tournament['tournament']->name }}</td>
+			<td>{{ ($tournament['tournament']->tod_flag) ? 'Y' : 'N' }}</td>
+			<td>{{ (isset($tournament['tournament']->parentTournament)) ? $tournament['tournament']->parentTournament->name : '-' }}</td>
+			<td>{{ ($tournament['tournament']->eventGroup) ? $tournament['tournament']->eventGroup->name : 'n/a' }}</td>
+			<td>{{ $tournament['tournament']->sport->name }}</td>
+			<td>{{ $tournament['tournament']->start_date }}</td>
+			<td>{{ $tournament['tournament']->end_date }}</td>
+			<td>{{ (!empty($tournament['tournament']->jackpot_flag) && $tournament['tournament']->parent_tournament_id > 0) ? 'Ticket' : 'Cash' }} (${{ number_format($tournament['tournament']->calculateTournamentPrizePool($tournament['tournament']->id) / 100, 2) }})</td>
+			<td>{{ ($tournament['tournament']->free_credit_flag) ? 'Y' : 'N' }}</td>
+			<td>{{ ($tournament['tournament']->jackpot_flag) ? 'Jackpot' : 'Single' }}</td>
+			<td>{{ ($tournament['tournament']->buy_in == '0') ? 'free' : '$' . number_format($tournament['tournament']->buy_in / 100, 2) }}</td>
+			<td>{{ ($tournament['tournament']->entry_fee == '0') ? 'free' : '$' . number_format($tournament['tournament']->entry_fee / 100, 2) }}</td>
+			<td>{{ TopBetta\TournamentTicket::countTournamentEntrants($tournament['tournament']->id) }}</td>
+			<td>{{ ($tournament['tournament']->status_flag) ? 'Active' : 'Inactive' }}</td>
+            <td>{{ $tournament['position'] ? : "N/A" }}</td>
+            <td>${{ number_format($tournament['prize']/100, 2) }}</td>
+            <td>${{ number_format($tournament['free_credit_prize']/100, 2) }}</td>
 		</tr>
 
 		@endforeach
