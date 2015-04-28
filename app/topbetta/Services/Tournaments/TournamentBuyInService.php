@@ -34,14 +34,6 @@ class TournamentBuyInService
      */
     private $buyInHistoryRepository;
     /**
-     * @var AccountTransactionService
-     */
-    private $accountTransactionService;
-    /**
-     * @var FreeCreditTransactionService
-     */
-    private $freeCreditTransactionService;
-    /**
      * @var TournamentRepositoryInterface
      */
     private $tournamentRepository;
@@ -49,22 +41,35 @@ class TournamentBuyInService
      * @var TournamentTicketRepositoryInterface
      */
     private $ticketRepository;
+    /**
+     * @var DbTournamentLeaderboardRepository
+     */
+    private $leaderboardRepository;
+    /**
+     * @var TournamentTransactionService
+     */
+    private $tournamentTransactionService;
+    /**
+     * @var TournamentLeaderboardService
+     */
+    private $leaderboardService;
 
     public function __construct(TournamentBuyInTypeRepositoryInterface $buyInTypeRepository,
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
-                                AccountTransactionService $accountTransactionService,
-                                FreeCreditTransactionService $freeCreditTransactionService,
+                                TournamentTransactionService $tournamentTransactionService,
                                 TournamentRepositoryInterface $tournamentRepository,
                                 TournamentTicketRepositoryInterface $ticketRepository,
-                                DbTournamentLeaderboardRepository $leaderboardRepository)
+                                DbTournamentLeaderboardRepository $leaderboardRepository,
+                                TournamentLeaderboardService $leaderboardService)
     {
 
         $this->buyInTypeRepository          = $buyInTypeRepository;
         $this->buyInHistoryRepository       = $buyInHistoryRepository;
-        $this->accountTransactionService    = $accountTransactionService;
-        $this->freeCreditTransactionService = $freeCreditTransactionService;
         $this->tournamentRepository = $tournamentRepository;
         $this->ticketRepository = $ticketRepository;
+        $this->leaderboardRepository = $leaderboardRepository;
+        $this->tournamentTransactionService = $tournamentTransactionService;
+        $this->leaderboardService = $leaderboardService;
     }
 
     public function getTotalRebuysForTicket($ticketId)
@@ -81,24 +86,33 @@ class TournamentBuyInService
         return $this->buyInHistoryRepository->getTotalByTicketAndType($ticketId, $typeId);
     }
 
-    public function createEntryHistoryRecord($ticketId)
+    public function createTournamentEntryHistoryRecord($ticketId, $buyinTransaction = 0, $entryTransaction = 0)
     {
         $typeId = $this->buyInTypeRepository->getIdByKeyword(TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_BUYIN);
 
-        return $this->createBuyInHistoryRecord($ticketId, $typeId);
+        return $this->createBuyInHistoryRecord($ticketId, $typeId, $buyinTransaction, $entryTransaction);
     }
 
-    public function createRebuyHistoryRecord($ticketId)
+    public function createRebuyHistoryRecord($ticketId, $buyinTransaction = 0, $entryTransaction = 0)
     {
         $typeId = $this->buyInTypeRepository->getIdByKeyword(TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_REBUY);
 
-        return $this->createBuyInHistoryRecord($ticketId, $typeId);
+        return $this->createBuyInHistoryRecord($ticketId, $typeId, $buyinTransaction, $entryTransaction);
     }
 
-    private function createBuyInHistoryRecord($ticketId, $typeId) {
+    public function createTopupHistoryRecord($ticketId, $buyinTransaction = 0, $entryTransaction = 0)
+    {
+        $typeId = $this->buyInTypeRepository->getIdByKeyword(TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_TOPUP);
+
+        return $this->createBuyInHistoryRecord($ticketId, $typeId, $buyinTransaction, $entryTransaction);
+    }
+
+    private function createBuyInHistoryRecord($ticketId, $typeId, $buyinTransaction = 0, $entryTransaction = 0) {
         return $this->buyInHistoryRepository->create(array(
             "tournament_ticket_id"     => $ticketId,
             "tournament_buyin_type_id" => $typeId,
+            "buyin_transaction_id"     => $buyinTransaction,
+            "entry_transaction_id"     => $entryTransaction,
         ));
     }
 
@@ -110,40 +124,84 @@ class TournamentBuyInService
             throw new \Exception("Tournament Ticket not found");
         }
         
-        $tournament = $ticket['tournament'];
-        $leaderboard = $this->getLeaderboardRecordForUserInTournament($ticket['user']['id'], $tournament['id']);
+        $tournament = $ticket->tournament;
+        $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($ticket->user->id, $tournament->id);
         $rebuys = $this->getTotalRebuysForTicket($ticketId);
         $topups = $this->getTotalTopupsForTicket($ticketId);
 
         //check we haven't exceeded max rebuys        
-        if($tournament['rebuys'] <= $rebuys) {
-            throw new TournamentBuyInException("Cannot buyin more than : " . $tournament['rebuys'] . " times.");
+        if($tournament->rebuys <= $rebuys) {
+            throw new TournamentBuyInException("Cannot buyin more than : " . $tournament->rebuys . " times.");
         }
 
         //check rebuy period has not ended
-        if($tournament['rebuy_end'] < Carbon::now()) {
+        if($tournament->rebuy_end < Carbon::now()) {
             throw new TournamentBuyInException("Rebuy period has ended");
         }
 
         //check we've turned over enough
-        if($this->getTotalToTurnOverForTournament($tournament, $rebuys, $topups) > $leaderboard['turned_over']) {
+        if($this->getTotalToTurnOverForTournament($tournament, $rebuys, $topups) > $leaderboard->turned_over) {
             throw new TournamentBuyInException("Must turn over all current BettaBucks before rebuying");
         }
 
         //TODO: check this is correct
         //check currency is less then starting
-        if($leaderboard['currency'] >= $tournament['start_currency']) {
-            throw new TournamentBuyInException("Total BettaBucks must be less than " . $tournament['start_currency'] . " to rebuy");
+        if($leaderboard['currency'] >= $tournament->start_currency) {
+            throw new TournamentBuyInException("Total BettaBucks must be less than " . $tournament->start_currency . " to rebuy");
         }
 
         //create transactions
-        $transactions = $this->createTournamentBuyInTransactions($ticket['user']['id'], $tournament['rebuy_buyin'], $tournament['rebuy_entry'], TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_REBUY);
+        $transactions = $this->tournamentTransactionService->createTournamentBuyInTransactions($ticket->user->id, $tournament->rebuy_buyin, $tournament->rebuy_entry, TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_REBUY);
+
+        if ( ! $transactions ) {
+            throw new TournamentBuyInException("Error creating transaction");
+        }
 
         //create history record
-        return $this->createRebuyHistoryRecord($ticketId);
+        $this->createRebuyHistoryRecord($ticketId, $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        //add funds to leaderboard currency
+        return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->rebuy_currency);
     }
 
-    private function getTotalToTurnOverForTournament(array $tournament, $rebuys = 0, $topups = 0 )
+    public function topupTournament($ticketId)
+    {
+        $ticket = $this->ticketRepository->find($ticketId);
+
+        if( ! $ticket ) {
+            throw new \Exception("Tournament Ticket not found");
+        }
+
+        $tournament = $ticket->tournament;
+        $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($ticket->user->id, $tournament->id);
+        $rebuys = $this->getTotalRebuysForTicket($ticketId);
+        $topups = $this->getTotalTopupsForTicket($ticketId);
+
+        //check we haven't exceed max topups
+        if( $tournament->topups <= $topups ) {
+            throw new TournamentBuyInException("Cannot top up more than " . $tournament->topups . " times.");
+        }
+
+        //check topup dates
+        if( $tournament->topup_start_date > Carbon::now() || $tournament->topup_end_date < Carbon::now()) {
+            throw new TournamentBuyInException("Cannot Top up at the moment. Top up period is between " . $tournament->topup_start_date . " and "  . $tournament->topup_end_date);
+        }
+
+        //create transactions
+        $transactions = $this->tournamentTransactionService->createTournamentBuyInTransactions($ticket->user->id, $tournament->rebuy_buyin, $tournament->rebuy_entry, TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_TOPUP);
+
+        if ( ! $transactions ) {
+            throw new TournamentBuyInException("Error creating transaction");
+        }
+
+        //create history record
+        $this->createTopupHistoryRecord($ticketId, $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        //add funds to leaderboard currency
+        return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->topup_currency);
+    }
+
+    private function getTotalToTurnOverForTournament($tournament, $rebuys = 0, $topups = 0 )
     {
         return $tournament['start_currency'] + $tournament['rebuy_currency'] * $rebuys + $tournament['topup_currency'] * $topups;
     }

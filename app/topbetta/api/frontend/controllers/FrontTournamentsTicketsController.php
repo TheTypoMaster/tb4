@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Tournaments\TournamentBuyInService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
+use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
 class FrontTournamentsTicketsController extends \BaseController {
 
@@ -343,7 +344,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                     );
 
                     //store buyin history record
-                    $this->tournamentService->createEntryHistoryRecord($ticket['ticket_id']);
+                    $this->tournamentService->createTournamentEntryHistoryRecord($ticket['ticket_id'], $ticket['transactions']['buyin_transaction'], $ticket['transactions']['entry_transaction']);
 
                     $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
 
@@ -449,5 +450,31 @@ class FrontTournamentsTicketsController extends \BaseController {
 			}			
 		}
 	}
+
+    public function rebuy($ticketId)
+    {
+        try{
+            $this->tournamentService->rebuyIntoTournament($ticketId);
+        } catch (TournamentBuyInException $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        } catch (\Exception $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        }
+
+        return array('success' => 'true', 'result' => 'Rebuy successful');
+    }
+
+    public function topup($ticketId)
+    {
+        try{
+            $this->tournamentService->topupTournament($ticketId);
+        } catch (TournamentBuyInException $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        } catch (\Exception $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        }
+
+        return array('success' => 'true', 'result' => 'Topup successful');
+    }
 
 }

@@ -25,7 +25,7 @@ class TournamentTransactionService {
         $this->accountTransactionService = $accountTransactionService;
     }
 
-    public function createTournamentTicketTransaction($userId, $buyinAmount, $entryAmount, $type = 'buyin')
+    public function createTournamentBuyInTransactions($userId, $buyinAmount, $entryAmount, $type = 'buyin')
     {
         //create transactions
         $buyin = $this->accountTransactionService->decreaseAccountBalance($userId, $buyinAmount, $this->getBuyInTransactionType($type), $userId);

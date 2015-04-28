@@ -11,7 +11,7 @@ class RiskManagerAPI
     {
         // we only want to send to risk manager for production
          if (app()->environment() != Config::get('riskmanager.productionHost')) {
-            return false;
+            //return false;
         }
 
         $bet = array(
