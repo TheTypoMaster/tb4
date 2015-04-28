@@ -16,6 +16,10 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
     protected $guarded = array();
     protected $hidden = array('password', 'remember_token');
 
+	/*
+	 * Relationships
+	 */
+
     public function topbettauser() {
         return $this->hasOne('TopBetta\Models\TopBettaUserModel', 'user_id');
     }
@@ -24,6 +28,25 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
         return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id');
     }
 
+	public function affiliate()
+	{
+		return $this->belongsTo('TopBetta\Models\AffiliatesModel', 'user_affiliate_id', 'affiliate_id');
+	}
+
+	public function campaigns()
+	{
+		return $this->belongsToMany('TopBetta\Models\CampaignModel', 'tb_campaign_users', 'campaign_id', 'user_id');
+	}
+
+	public function promotions()
+	{
+		return $this->belongsToMany('TopBetta\Models\PromotionsModel', 'tb_promotios_users', 'user_id', 'promotion_id');
+	}
+
+	public function accountBalance()
+	{
+		return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
+	}
 
     /**
      * Get the unique identifier for the user.
@@ -75,11 +98,11 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
         return str_replace("\\", "", urldecode($value));
     }
 
-    public function accountBalance()
-    {
-        return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
-    }
-
+	/**
+	 * @param $relationship
+	 * @param $closure
+	 * @return mixed
+	 */
     public function whereNotInRelationship($relationship, $closure)
     {
         $relationship = $this->$relationship();
