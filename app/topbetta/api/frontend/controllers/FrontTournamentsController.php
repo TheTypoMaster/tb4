@@ -190,8 +190,8 @@ class FrontTournamentsController extends \BaseController {
 		}
 
 		// >>>>>>>>>>>>>>>>>> START TEMP ATP
-		$affiliateId = 'G01';
-		$campaignId = 'ATP2';
+//		$affiliateId = 'G01';
+//		$campaignId = 'ATP2';
 		
 		/*
 		$atpTournaments = array(
@@ -219,12 +219,12 @@ class FrontTournamentsController extends \BaseController {
 		echo serialize($atpTournaments);exit;
 		/*/
 
-		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
-		if ($atpTournaments) {
-			$atpTournaments = unserialize($atpTournaments);
-		} else {
-			$atpTournaments = array();
-		}	
+//		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+//		if ($atpTournaments) {
+//			$atpTournaments = unserialize($atpTournaments);
+//		} else {
+//			$atpTournaments = array();
+//		}
 		// <<<<<<<<<<<<<<<<< END TEMP ATP
 
 		$meetingId = NULL;
@@ -257,9 +257,7 @@ class FrontTournamentsController extends \BaseController {
 				$meetingId = $tournament -> event_group_id;
 				
 				$nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-                $nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-                ($nextEventStartTime) ? $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TimeHelper::isoDate($tournament->start_date);
-                // $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime);
+         		($nextEventStartTime) ? $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TimeHelper::isoDate($tournament->start_date);
 
 				$tourns = array();
 
@@ -300,9 +298,9 @@ class FrontTournamentsController extends \BaseController {
 
 						// TEMP FOR ATP
 						$labels = array();
-						if (array_key_exists($tourn -> id, $atpTournaments)) {
-							$labels = $atpTournaments[$tourn -> id];
-						}
+//						if (array_key_exists($tourn -> id, $atpTournaments)) {
+//							$labels = $atpTournaments[$tourn -> id];
+//						}
 
                         // TEMP for tournament landing page until proper tournament group/labels are implimented
                         ($tourn->featured == "Featured") ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
