@@ -314,7 +314,22 @@ class FrontTournamentsController extends \BaseController {
                             $startDatetime = \TimeHelper::isoDate($tourn->entries_close);
                         }
 
-						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn->name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag, 'tournament_sponsor_name' => $tourn->tournament_sponsor_name, 'tournament_sponsor_logo' => $tourn->tournament_sponsor_logo, 'tournament_sponsor_logo_link' => $tourn->tournament_sponsor_logo_link, 'reinvest_winnings_flag' => $tourn->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tourn->closed_betting_on_first_match_flag);
+						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn->name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag, 'tournament_sponsor_name' => $tourn->tournament_sponsor_name, 'tournament_sponsor_logo' => $tourn->tournament_sponsor_logo, 'tournament_sponsor_logo_link' => $tourn->tournament_sponsor_logo_link, 'reinvest_winnings_flag' => $tourn->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tourn->closed_betting_on_first_match_flag,
+                            //rebuy info
+                              'rebuys' => $tourn->rebuys,
+                              'rebuy_currency' => $tourn->rebuy_currency,
+                              'rebuy_entry' => $tourn->rebuy_entry,
+                              'rebuy_buyin' => $tourn->rebuy_buyin,
+                              'rebuy_end' => $tourn->rebuy_end,
+
+                            //topup info
+                              'topups' => $tourn->topups,
+                              'topup_currency' => $tourn->topup_currency,
+                              'topup_entry' => $tourn->topup_entry,
+                              'topup_buyin' => $tourn->topup_buyin,
+                              'topup_end_date' => $tourn->topup_end_date,
+                              'topup_start_date' => $tourn->topup_start_date,
+                        );
 					}
 
 					//handle sub_type for racing
