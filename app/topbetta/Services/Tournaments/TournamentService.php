@@ -48,13 +48,17 @@ class TournamentService {
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
 
+        //dates
+        $tournamentData['created_date'] = Carbon::now()->toDateTimeString();
+        $tournamentData['updated_date'] = Carbon::now()->toDateTimeString();
+
         //tournament buy in
         if( $buyinId = array_get($tournamentData, 'tournament_buyin_id') ) {
             $buyin = $this->buyInRepository->find($buyinId);
 
             if( $buyin ) {
-                $tournamentData['buy_in'] = $buyin->buy_in;
-                $tournamentData['entry_fee'] = $buyin->entry_fee;
+                $tournamentData['buy_in'] = $buyin->buy_in * 100;
+                $tournamentData['entry_fee'] = $buyin->entry_fee * 100;
             }
         }
 

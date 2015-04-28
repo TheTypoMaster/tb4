@@ -170,6 +170,7 @@ class TournamentsController extends \BaseController
             'rebuy_end_after',
             'topup_start_after',
             'topup_end_after',
+            'entries_close_after',
         ));
 
         //rebuy data

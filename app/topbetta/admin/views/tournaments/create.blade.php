@@ -137,8 +137,15 @@
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('entries_close', 'Entries Close ') }}
-                        {{ Form::datetime('entries_close', null) }}
+                        {{ Form::label('entries_close', 'Entries Close After') }}
+                        <div class="form-group">
+                            <div class="col-lg-6">
+                                {{ Form::select('entries_close_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
+                            </div>
+                            <div class="col-lg-6">
+                                {{ Form::datetime('entries_close', null, array("class"=>"event-date")) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -245,7 +252,12 @@
             </fieldset>
 
             <div class="form-group">
-                {{ Form::submit('Save', array('class' => 'btn btn-primary form-control')) }}
+                <div class="col-md-6">
+                    {{ Form::submit('Save', array('class' => 'btn btn-primary form-control')) }}
+                </div>
+                <div class="col-md-6">
+                    {{ link_to_route('admin.tournaments.index', "Cancel", array(), array('class'=>'btn btn-danger form-control')) }}
+                </div>
             </div>
 
         </div>
