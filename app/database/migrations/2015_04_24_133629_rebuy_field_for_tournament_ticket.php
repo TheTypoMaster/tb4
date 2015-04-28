@@ -15,6 +15,7 @@ class RebuyFieldForTournamentTicket extends Migration {
 		Schema::table('tbdb_tournament_ticket', function(Blueprint $table)
 		{
 			$table->integer('rebuys')->default(0)->after('extra_starting_currency');
+            $table->integer('topups')->default(0)->after('rebuys');
 		});
 	}
 
@@ -28,6 +29,7 @@ class RebuyFieldForTournamentTicket extends Migration {
 		Schema::table('tbdb_tournament_ticket', function(Blueprint $table)
 		{
 			$table->dropColumn('rebuys');
+            $table->dropColumn('topups');
 		});
 	}
 
