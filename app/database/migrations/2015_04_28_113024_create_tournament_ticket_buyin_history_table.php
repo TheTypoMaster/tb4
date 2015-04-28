@@ -17,6 +17,8 @@ class CreateTournamentTicketBuyinHistoryTable extends Migration {
 			$table->increments('id');
             $table->integer('tournament_ticket_id');
             $table->integer('tournament_buyin_type_id');
+            $table->integer('buyin_transaction_id');
+            $table->integer('entry_transaction_id');
 			$table->timestamps();
 		});
 	}
