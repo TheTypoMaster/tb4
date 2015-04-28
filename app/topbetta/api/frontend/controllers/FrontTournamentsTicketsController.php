@@ -342,6 +342,8 @@ class FrontTournamentsTicketsController extends \BaseController {
                         $tournament->buy_in + $tournament->entry_fee
                     );
 
+                    //store buyin history record
+                    $this->tournamentService->createEntryHistoryRecord($ticket['ticket_id']);
 
                     $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
 
