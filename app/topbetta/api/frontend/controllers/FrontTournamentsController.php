@@ -562,7 +562,22 @@ class FrontTournamentsController extends \BaseController {
                 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag,
                 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
                 'start_date' => \TimeHelper::isoDate($tournament -> start_date),
-                'end_date' => \TimeHelper::isoDate($tournament -> end_date)
+                'end_date' => \TimeHelper::isoDate($tournament -> end_date),
+                
+                //rebuy info
+                'rebuys' => $tournament->rebuys,
+                'rebuy_currency' => $tournament->rebuy_currency,
+                'rebuy_entry' => $tournament->rebuy_entry,
+                'rebuy_buyin' => $tournament->rebuy_buyin,
+                'rebuy_end' => $tournament->rebuy_end,
+                
+                //topup info
+                'topups' => $tournament->topups,
+                'topup_currency' => $tournament->topup_currency,
+                'topup_entry' => $tournament->topup_entry,
+                'topup_buyin' => $tournament->topup_buyin,
+                'topup_end_date' => $tournament->topup_end_date,
+                'topup_start_date' => $tournament->topup_start_date,
             );
 
 
@@ -587,14 +602,44 @@ class FrontTournamentsController extends \BaseController {
         if ($isRacingTournament) {
 
             // ::: racing related data :::
-            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name));
+            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
+                //rebuy info
+                'rebuys' => $tournament->rebuys,
+                'rebuy_currency' => $tournament->rebuy_currency,
+                'rebuy_entry' => $tournament->rebuy_entry,
+                'rebuy_buyin' => $tournament->rebuy_buyin,
+                'rebuy_end' => $tournament->rebuy_end,
+
+                //topup info
+                'topups' => $tournament->topups,
+                'topup_currency' => $tournament->topup_currency,
+                'topup_entry' => $tournament->topup_entry,
+                'topup_buyin' => $tournament->topup_buyin,
+                'topup_end_date' => $tournament->topup_end_date,
+                'topup_start_date' => $tournament->topup_start_date,
+            ));
 
 
 
         } else {
 
             // ::: sports related data :::
-            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name));
+            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
+                //rebuy info
+                'rebuys' => $tournament->rebuys,
+                'rebuy_currency' => $tournament->rebuy_currency,
+                'rebuy_entry' => $tournament->rebuy_entry,
+                'rebuy_buyin' => $tournament->rebuy_buyin,
+                'rebuy_end' => $tournament->rebuy_end,
+
+                //topup info
+                'topups' => $tournament->topups,
+                'topup_currency' => $tournament->topup_currency,
+                'topup_entry' => $tournament->topup_entry,
+                'topup_buyin' => $tournament->topup_buyin,
+                'topup_end_date' => $tournament->topup_end_date,
+                'topup_start_date' => $tournament->topup_start_date,
+            ));
 
         }
 

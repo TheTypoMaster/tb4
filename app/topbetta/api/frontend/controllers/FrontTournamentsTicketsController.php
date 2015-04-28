@@ -154,7 +154,23 @@ class FrontTournamentsTicketsController extends \BaseController {
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
 				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false,
-				'unregister_allowed' => $unregisterAllowed)
+				'unregister_allowed' => $unregisterAllowed),
+
+                //rebuy info
+                'rebuys' => $tournament->rebuys,
+                'rebuy_currency' => $tournament->rebuy_currency,
+                'rebuy_entry' => $tournament->rebuy_entry,
+                'rebuy_buyin' => $tournament->rebuy_buyin,
+                'rebuy_end' => $tournament->rebuy_end,
+
+                //topup info
+                'topups' => $tournament->topups,
+                'topup_currency' => $tournament->topup_currency,
+                'topup_entry' => $tournament->topup_entry,
+                'topup_buyin' => $tournament->topup_buyin,
+                'topup_end_date' => $tournament->topup_end_date,
+                'topup_start_date' => $tournament->topup_start_date,
+
 			);
 
 		}
