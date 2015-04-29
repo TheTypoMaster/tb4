@@ -561,6 +561,20 @@ class TournamentModelTournamentTicket extends JModel
 		return $total->current - $total->unresulted + $total->extra_starting_currency;
 	}
 
+    public function getBuyinsByType($ticketId, $type)
+    {
+        $db =& $this->getDBO();
+        $query = '
+            SELECT COUNT(*) as buyins FROM tbdb_tournament_ticket_buyin_history tbh
+            INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND keyword = ' . $db->quote($type) . '
+            WHERE tbh.tournament_ticket_id = ' . $db->quote($ticketId);
+
+        $db->setQuery($query);
+        $buyins = $db->loadObject();
+
+        return $buyins->buyins;
+    }
+
 	/**
 	 * Calculate how much currency a user has for leaderboard display by taking the starting value from tournament,
 	 * subtracting resulted bet amounts and adding resulted bet winnings plus their extra starting currency.
@@ -607,7 +621,13 @@ class TournamentModelTournamentTicket extends JModel
 
 		$data = $db->loadObject();
         echo "#### Tournament ID: $tournament_id, UserId:$user_id, Start Currency:{$tournament->start_currency}, Extra:{$ticket->extra_starting_currency}, Bet Amount:{$data->bet_amount}, Win Amount:{$data->win_amount}\n";
-		return $tournament->start_currency + $ticket->extra_starting_currency - $data->bet_amount + $data->win_amount;
+
+        return $tournament->start_currency +
+            $ticket->extra_starting_currency +
+            $tournament->rebuy_currency * $this->getBuyinsByType($ticket->id, 'rebuy') +
+            $tournament->topup_currency * $this->getBuyinsByType($ticket->id, 'topup') -
+            $data->bet_amount +
+            $data->win_amount;
 	}
 
 	/**

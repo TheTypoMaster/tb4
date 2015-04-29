@@ -24,32 +24,40 @@ class TournamentModelTournamentLeaderboard extends JModel
 				u.email,
 				l1.currency,
 				l1.turned_over,
-				count(l2.currency) as rank,
 				1 as qualified
 			FROM
 				' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
 			INNER JOIN
-				' . $db->nameQuote('#__tournament_leaderboard') . ' as l2 ON l1.currency < l2.currency
-			OR
-				(l1.currency = l2.currency AND l1.user_id = l2.user_id)
-			INNER JOIN
 				' . $db->nameQuote('#__users') . ' AS u
 			ON
 				l1.user_id = u.id
+            INNER JOIN
+                '. $db->nameQuote('#__tournament') .' AS t
+            ON
+                t.id = l1.tournament_id
+            INNER JOIN
+               '. $db->nameQuote('#__tournament_ticket') . ' AS tt
+            ON
+                tt.user_id = u.id AND tt.tournament_id = '. $db->quote($tournament->id) .'
+            LEFT JOIN (
+                SELECT COUNT(*) as rebuys, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
+                INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("rebuy") .'
+                GROUP BY tournament_ticket_id
+            ) AS r ON r.tournament_ticket_id = tt.id
+            LEFT JOIN (
+                SELECT COUNT(*) as topups, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
+                INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("topup") .'
+                GROUP BY tournament_ticket_id
+            ) AS tpup ON tpup.tournament_ticket_id = tt.id
 			WHERE
-				l2.tournament_id = ' . $db->quote($tournament->id) . '
-			AND
 				l1.tournament_id = ' . $db->quote($tournament->id) . '
 			AND
-				l1.turned_over >= ' . $db->quote($tournament->start_currency) . '
-			AND
-				l2.turned_over >= ' . $db->quote($tournament->start_currency);
+				 l1.turned_over >= t.start_currency + r.rebuys * t.rebuy_currency + tpup.topups * t.topup_currency
+        ';
 
 		$query .= '
 			AND
-				l1.currency > 0
-			GROUP BY
-				l1.user_id, l1.currency ';
+				l1.currency > 0';
 
 		if(!$only_qualifiers) {
 			$query .=
@@ -74,6 +82,24 @@ class TournamentModelTournamentLeaderboard extends JModel
 					' . $db->nameQuote('#__users') . ' AS u
 				ON
 					l1.user_id = u.id
+                INNER JOIN
+                '. $db->nameQuote('#__tournament') .' AS t
+                ON
+                    t.id = l1.tournament_id AND t.id = l2.tournament_id
+                INNER JOIN
+                   '. $db->nameQuote('#__tournament_ticket') . ' AS tt
+                ON
+                    tt.user_id = u.id AND tt.tournament_id = '. $db->quote($tournament->id) .'
+                LEFT JOIN (
+                    SELECT COUNT(*) as rebuys, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
+                    INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("rebuy") .'
+                    GROUP BY tournament_ticket_id
+                ) AS r ON r.tournament_ticket_id = tt.id
+                LEFT JOIN (
+                    SELECT COUNT(*) as topups, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
+                    INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("topup") .'
+                    GROUP BY tournament_ticket_id
+                ) AS tpup ON r.tournament_ticket_id = tt.id
 				WHERE
 					l2.tournament_id = ' . $db->quote($tournament->id) . '
 				AND
@@ -83,9 +109,9 @@ class TournamentModelTournamentLeaderboard extends JModel
 						l1.currency = 0
 					OR
 						(
-							l1.turned_over < ' . $db->quote($tournament->start_currency) . '
+							l1.turned_over < t.start_currency + r.rebuys * t.rebuy_currency + tpup.topups * t.topup_currency
 						AND
-							l2.turned_over < ' . $db->quote($tournament->start_currency) . '
+							l2.turned_over < t.start_currency + r.rebuys * t.rebuy_currency + tpup.topups * t.topup_currency
 						)
 					)
 				GROUP BY

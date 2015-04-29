@@ -160,6 +160,14 @@ class TournamentModelTournament extends SuperModel
             'name' 		=> 'Bet Limit Per Event',
             'type' 		=> self::TYPE_INTEGER
         ),
+        'rebuy_currency' => array(
+            'name'      => 'Rebuy Currency',
+            'type'      => self::TYPE_INTEGER,
+        ),
+        'topup_currency' => array(
+            'name'      => 'Topup Currency',
+            'type'      => self::TYPE_INTEGER,
+        ),
 	);
 
 	/**
