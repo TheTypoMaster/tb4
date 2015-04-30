@@ -20,6 +20,7 @@ use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use TopBetta\Repositories\DbTournamentTicketRepository;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\FreeCreditTransactionService;
+use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
 class TournamentBuyInService
@@ -53,6 +54,10 @@ class TournamentBuyInService
      * @var TournamentLeaderboardService
      */
     private $leaderboardService;
+    /**
+     * @var TournamentDashboardNotificationService
+     */
+    private $dashboardNotificationService;
 
     public function __construct(TournamentBuyInTypeRepositoryInterface $buyInTypeRepository,
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
@@ -60,7 +65,8 @@ class TournamentBuyInService
                                 TournamentRepositoryInterface $tournamentRepository,
                                 TournamentTicketRepositoryInterface $ticketRepository,
                                 DbTournamentLeaderboardRepository $leaderboardRepository,
-                                TournamentLeaderboardService $leaderboardService)
+                                TournamentLeaderboardService $leaderboardService,
+                                TournamentDashboardNotificationService $dashboardNotificationService)
     {
 
         $this->buyInTypeRepository          = $buyInTypeRepository;
@@ -70,6 +76,18 @@ class TournamentBuyInService
         $this->leaderboardRepository = $leaderboardRepository;
         $this->tournamentTransactionService = $tournamentTransactionService;
         $this->leaderboardService = $leaderboardService;
+        $this->dashboardNotificationService = $dashboardNotificationService;
+    }
+
+    public function ticketBelongsToUser($ticketId, $userId)
+    {
+        $ticket = $this->ticketRepository->find($ticketId);
+
+        if ( ! $ticket ) {
+            throw new \Exception("Tournament Ticket not found");
+        }
+
+        return $ticket->user_id == $userId;
     }
 
     public function getTotalRebuysForTicket($ticketId)
@@ -157,6 +175,9 @@ class TournamentBuyInService
             throw new TournamentBuyInException("Error creating transaction");
         }
 
+        //notify dashboard
+        $this->dashboardNotificationService->notify(array("id" => $ticket->id, "tranasctions" => array($transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id'])));
+
         //create history record
         $this->createRebuyHistoryRecord($ticketId, $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
 
@@ -193,6 +214,9 @@ class TournamentBuyInService
         if ( ! $transactions ) {
             throw new TournamentBuyInException("Error creating transaction");
         }
+
+        //notify dashboard
+        $this->dashboardNotificationService->notify(array("id" => $ticket->id, "tranasctions" => array($transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id'])));
 
         //create history record
         $this->createTopupHistoryRecord($ticketId, $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
