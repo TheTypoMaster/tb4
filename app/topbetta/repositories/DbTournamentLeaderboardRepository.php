@@ -28,19 +28,19 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
      * @param bool $qualified
      * @return mixed
      */
-    public function getTournamentLeaderboard($tournamentID, $limit = 50, $startCurrency, $qualified = false){
+    public function getTournamentLeaderboard($tournamentID, $rebuyId = 0, $topupId = 0, $limit = 50, $qualified = false){
         $query = $this->model->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_tournament_leaderboard.user_id')
             ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_leaderboard.tournament_id')
             ->join('tbdb_tournament_ticket', function($q) use ($tournamentID) {
                 $q->on('tbdb_tournament_ticket.user_id', '=', 'tbdb_users.id')->on('tbdb_tournament_ticket.tournament_id', '=', DB::raw($tournamentID));
             })
             //get rebuys
-            ->leftJoin('tbdb_tournament_ticket_buyin_history as tbh_rebuys', function($q) {
-                $q->on('tbdb_tournament_ticket.id', '=', 'tbh_rebuys.tournament_ticket_id')->on('tbh_rebuys.tournament_buyin_type_id', '=', DB::raw(2));
+            ->leftJoin('tbdb_tournament_ticket_buyin_history as tbh_rebuys', function($q) use ($rebuyId) {
+                $q->on('tbdb_tournament_ticket.id', '=', 'tbh_rebuys.tournament_ticket_id')->on('tbh_rebuys.tournament_buyin_type_id', '=', DB::raw($rebuyId));
             })
             //get topups
-            ->leftJoin('tbdb_tournament_ticket_buyin_history as tbh_topups', function($q) {
-                $q->on('tbdb_tournament_ticket.id', '=', 'tbh_topups.tournament_ticket_id')->on('tbh_topups.tournament_buyin_type_id', '=', DB::raw(3));
+            ->leftJoin('tbdb_tournament_ticket_buyin_history as tbh_topups', function($q) use ($topupId) {
+                $q->on('tbdb_tournament_ticket.id', '=', 'tbh_topups.tournament_ticket_id')->on('tbh_topups.tournament_buyin_type_id', '=', DB::raw($topupId));
             })
             ->where('tbdb_tournament_leaderboard.tournament_id', $tournamentID)
             ->groupBy('tbdb_tournament_leaderboard.id');

@@ -24,6 +24,9 @@ class TournamentModelTournamentLeaderboard extends JModel
 				u.email,
 				l1.currency,
 				l1.turned_over,
+				t.topup_currency,
+				t.rebuy_currency,
+				t.start_currency,
 				1 as qualified
 			FROM
 				' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
@@ -40,84 +43,65 @@ class TournamentModelTournamentLeaderboard extends JModel
             ON
                 tt.user_id = u.id AND tt.tournament_id = '. $db->quote($tournament->id) .'
             LEFT JOIN (
-                SELECT COUNT(*) as rebuys, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
-                INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("rebuy") .'
-                GROUP BY tournament_ticket_id
-            ) AS r ON r.tournament_ticket_id = tt.id
+                tbdb_tournament_ticket_buyin_history tbh_rebuy
+                INNER JOIN tbdb_tournament_buyin_type tbt_rebuy ON tbh_rebuy.tournament_buyin_type_id = tbt_rebuy.id AND tbt_rebuy.keyword=' . $db->quote("rebuy") . '
+              ) ON tbh_rebuy.tournament_ticket_id = tt.id
             LEFT JOIN (
-                SELECT COUNT(*) as topups, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
-                INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("topup") .'
-                GROUP BY tournament_ticket_id
-            ) AS tpup ON tpup.tournament_ticket_id = tt.id
+                tbdb_tournament_ticket_buyin_history tbh_topup
+                INNER JOIN tbdb_tournament_buyin_type tbt_topup ON tbh_topup.tournament_buyin_type_id = tbt_topup.id AND tbt_topup.keyword=' . $db->quote("topup") . '
+              ) ON tbh_topup.tournament_ticket_id = tt.id
 			WHERE
 				l1.tournament_id = ' . $db->quote($tournament->id) . '
-			AND
-				 l1.turned_over >= t.start_currency + r.rebuys * t.rebuy_currency + tpup.topups * t.topup_currency
+            AND
+                l1.currency > 0
+            GROUP BY
+                l1.id
+			HAVING
+				 l1.turned_over >= t.start_currency + IFNULL(COUNT(tbh_rebuy.id), 0) * t.rebuy_currency + IFNULL(COUNT(tbh_topup.id), 0) * t.topup_currency
         ';
-
-		$query .= '
-			AND
-				l1.currency > 0';
 
 		if(!$only_qualifiers) {
 			$query .=
-				'UNION SELECT
-					u.id,
-					u.name,
-					u.username,
-					u.email,
-					l1.currency,
-					l1.turned_over,
-					"-" as rank,
-					0 as qualified
-				FROM
-					' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
-				INNER JOIN
-					' . $db->nameQuote('#__tournament_leaderboard') . ' as l2
-				ON
-					l1.currency < l2.currency
-				OR
-					(l1.currency = l2.currency AND l1.user_id = l2.user_id)
-				INNER JOIN
-					' . $db->nameQuote('#__users') . ' AS u
-				ON
-					l1.user_id = u.id
+				'UNION
+				SELECT
+				u.id,
+				u.name,
+				u.username,
+				u.email,
+				l1.currency,
+				l1.turned_over,
+				t.topup_currency,
+				t.rebuy_currency,
+				t.start_currency,
+				0 as qualified
+                FROM
+                    ' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
                 INNER JOIN
-                '. $db->nameQuote('#__tournament') .' AS t
+                    ' . $db->nameQuote('#__users') . ' AS u
                 ON
-                    t.id = l1.tournament_id AND t.id = l2.tournament_id
+                    l1.user_id = u.id
+                INNER JOIN
+                    '. $db->nameQuote('#__tournament') .' AS t
+                ON
+                    t.id = l1.tournament_id
                 INNER JOIN
                    '. $db->nameQuote('#__tournament_ticket') . ' AS tt
                 ON
                     tt.user_id = u.id AND tt.tournament_id = '. $db->quote($tournament->id) .'
                 LEFT JOIN (
-                    SELECT COUNT(*) as rebuys, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
-                    INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("rebuy") .'
-                    GROUP BY tournament_ticket_id
-                ) AS r ON r.tournament_ticket_id = tt.id
+                    tbdb_tournament_ticket_buyin_history tbh_rebuy
+                    INNER JOIN tbdb_tournament_buyin_type tbt_rebuy ON tbh_rebuy.tournament_buyin_type_id = tbt_rebuy.id AND tbt_rebuy.keyword=' . $db->quote("rebuy") . '
+                  ) ON tbh_rebuy.tournament_ticket_id = tt.id
                 LEFT JOIN (
-                    SELECT COUNT(*) as topups, tbh.tournament_ticket_id FROM tbdb_tournament_ticket_buyin_history tbh
-                    INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND tbt.keyword = '. $db->quote("topup") .'
-                    GROUP BY tournament_ticket_id
-                ) AS tpup ON r.tournament_ticket_id = tt.id
-				WHERE
-					l2.tournament_id = ' . $db->quote($tournament->id) . '
-				AND
-					l1.tournament_id = ' . $db->quote($tournament->id) . '
-				AND
-					(
-						l1.currency = 0
-					OR
-						(
-							l1.turned_over < t.start_currency + r.rebuys * t.rebuy_currency + tpup.topups * t.topup_currency
-						AND
-							l2.turned_over < t.start_currency + r.rebuys * t.rebuy_currency + tpup.topups * t.topup_currency
-						)
-					)
-				GROUP BY
-					qualified,
-					l1.user_id,
-					l1.currency';
+                    tbdb_tournament_ticket_buyin_history tbh_topup
+                    INNER JOIN tbdb_tournament_buyin_type tbt_topup ON tbh_topup.tournament_buyin_type_id = tbt_topup.id AND tbt_topup.keyword=' . $db->quote("topup") . '
+                  ) ON tbh_topup.tournament_ticket_id = tt.id
+                WHERE
+                    l1.tournament_id = ' . $db->quote($tournament->id) . '
+                GROUP BY
+                    l1.id
+                HAVING
+                     l1.currency = 0 OR l1.turned_over < t.start_currency + IFNULL(COUNT(tbh_rebuy.id), 0) * t.rebuy_currency + IFNULL(COUNT(tbh_topup.id), 0) * t.topup_currency';
 		}
 
 		$query .= '
@@ -130,7 +114,29 @@ class TournamentModelTournamentLeaderboard extends JModel
 		}
 
 		$db->setQuery($query);
-		return $db->loadObjectList();
+		$leaderboard = $db->loadObjectList();
+
+        //get the ranks for the leaderboard
+        $position = 1;
+        $amount = 0;
+        $count = 0;
+        foreach($leaderboard as &$record)
+        {
+            if($record->qualified) {
+                if($record->currency < $amount) {
+                    $position += $count;
+                    $count = 0;
+                }
+
+                $amount = $record->currency;
+                $record->rank = $position;
+                $count++;
+            } else {
+                $record->rank = '-';
+            }
+        }
+
+        return $leaderboard;
 	}
 
 	/**
