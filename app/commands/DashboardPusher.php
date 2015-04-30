@@ -95,7 +95,7 @@ class DashboardPusher extends Command {
 
         while(count($transactions)) {
             foreach ($transactions as $transaction) {
-                \Log::info("TRANSACTION DATE : " . $transaction->created_date);
+                \Log::info("TRANSACTION DATE : " . $transaction->created_date . " ID : " . $transaction->id);
                 if(! $transaction->recipient ) continue;
 
                 try {
@@ -185,7 +185,7 @@ class DashboardPusher extends Command {
 
         while(count($transactions)) {
             foreach ($transactions as $transaction) {
-                \Log::info("TRANSACTION DATE : " . $transaction->created_date);
+                \Log::info("TRANSACTION DATE : " . $transaction->created_date . " ID : " . $transaction->id);
                 if(! $transaction->recipient ) continue;
 
                 try {
