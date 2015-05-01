@@ -172,7 +172,7 @@ class SportsController extends BaseController {
 								 * Add/Update League/Competition
 								*/
 								
-								if(isset($dataArray['League']) && isset($dataArray['competition_id'])){
+								if(isset($dataArray['League']) && isset($dataArray['CompetitionId'])){
 									//add round to competition name if is provided in the data
 									if($dataArray['Round'] != ""){
 										$competition = $dataArray['League']." ".$dataArray['Round'];
@@ -180,36 +180,37 @@ class SportsController extends BaseController {
 										$competition = $dataArray['League'];
 									}
 
-                                    $externalCompId = 'C_' . array_get($dataArray, 'competition_id');
+                                    $externalCompId = 'C_' . array_get($dataArray, 'CompetitionId');
 
-                                    if($seasonId = array_get($dataArray, 'season_id', null)) {
+                                    if($seasonId = array_get($dataArray, 'SeasonId', null)) {
                                         $externalCompId .= '_S_' . $seasonId;
                                     }
 
-                                    if($roundId = array_get($dataArray, 'round_id', null)) {
+                                    if($roundId = array_get($dataArray, 'RoundId', null)) {
                                         $externalCompId .= '_R_' . $roundId;
                                     }
 
-                                    if(array_get($dataArray, 'type', null) == 'update') {
+                                    $compExists = null;
+                                    if(array_get($dataArray, 'Type', null) == 'update') {
                                         //check for id first
                                         $compExists = $this->competitionRepository->getCompetitionByExternalId($externalCompId);
 
-                                        if( ! $compExists ) {
+                                        if (!$compExists) {
                                             // Check if comp/league exists in DB
                                             $compExists = TopBetta\SportsComps::compExists($competition);
                                         } else {
                                             $compExists = $compExists->id;
                                         }
+                                    }
+                                    // if comp/league exists update that record
+                                    if($compExists){
+                                        $compModel = TopBetta\SportsComps::find($compExists);
+                                        // update the start finish times
+                                        if($compModel->start_date > $dataArray['EventTime']) $compModel->start_date = $dataArray['EventTime'];
+                                        if($compModel->close_time < $dataArray['EventTime']) $compModel->close_time = $dataArray['EventTime'];
 
-                                        // if comp/league exists update that record
-                                        if($compExists){
-                                            $compModel = TopBetta\SportsComps::find($compExists);
-                                            // update the start finish times
-                                            if($compModel->start_date > $dataArray['EventTime']) $compModel->start_date = $dataArray['EventTime'];
-                                            if($compModel->close_time < $dataArray['EventTime']) $compModel->close_time = $dataArray['EventTime'];
+                                        TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
 
-                                            TopBetta\LogHelper::l("BackAPI: Sports - Processing Competition:$competition, Already In DB: $compExists", 1);
-                                        }
                                     } else {
 										$compModel = new TopBetta\SportsComps;
 										
