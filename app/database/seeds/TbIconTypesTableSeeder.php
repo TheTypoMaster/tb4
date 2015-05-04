@@ -54,6 +54,18 @@ class TbIconTypesTableSeeder extends Seeder {
 				'created_at' => '2015-03-19 16:19:45',
 				'updated_at' => '2015-03-19 16:19:47',
 			),
+            6 => array (
+                'id' => '7',
+                'name' => 'player',
+                'created_at' => '2015-03-19 16:19:45',
+                'updated_at' => '2015-03-19 16:19:47',
+            ),
+            7 => array (
+                'id' => '8',
+                'name' => 'region',
+                'created_at' => '2015-03-19 16:19:45',
+                'updated_at' => '2015-03-19 16:19:47',
+            ),
 		));
 	}
 
