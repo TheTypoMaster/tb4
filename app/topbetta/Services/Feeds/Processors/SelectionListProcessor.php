@@ -54,13 +54,13 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
         //get the event
         if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
-            Log::eror("BackAPI: Sports - event $eventId does not exist");
+            Log::error("BackAPI: Sports - event $eventId does not exist");
             return 0;
         }
 
         //get the market
         if ( ! $market = $this->marketRepository->getMarketByExternalIds($marketId, $eventId) ) {
-            Log::eror("BackAPI: Sports - market $marketId does not exist");
+            Log::error("BackAPI: Sports - market $marketId does not exist");
             return 0;
         }
 
