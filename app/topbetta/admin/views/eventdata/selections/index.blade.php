@@ -48,7 +48,7 @@
                     <td>{{ $selection->competition_name }}</td>
                     <td>{{ $selection->win_odds }}</td>
                     <td>{{ $selection->place_odds }}</td>
-                    <td>{{ $selection->override_odds }}</td>
+                    <td>{{ $selection->override_type == 'percentage' ? $selection->override_odds * 100 . '%' : $selection->override_odds }}</td>
                     <td>{{ $selection->override_type }}</td>
                     <td>{{ $selection->status_name }}</td>
         			<td>{{ ($selection->display_flag) ? 'Yes' : 'No' }}</td>
