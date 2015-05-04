@@ -1,7 +1,11 @@
 <?php
 namespace TopBetta;
 
+use TopBetta\Models\Traits\OddsFilter;
+
 class SportsEvents extends \Eloquent {
+
+    use OddsFilter;
 
 	protected $table = 'tbdb_event_group_event';
 
@@ -39,7 +43,7 @@ class SportsEvents extends \Eloquent {
 		$dateQuery = $this -> mkDateQuery($date, 'e.start_date');
 
 		//get events/matches
-		$query = ' SELECT e.id AS id, e.start_date AS event_start_time ';
+		$query = ' SELECT e.id AS id, e.start_date AS event_start_time, sp.win_odds, sp.override_odds, sp.override_type ';
 		$query .= ', e.name AS event_name, e.event_id AS ext_event_id ';
 		//$query.= ', ege.event_group_id AS compID, AS compName ';
 		$query .= ' FROM tbdb_event AS e ';
@@ -62,7 +66,7 @@ class SportsEvents extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		return $result;
+		return $result->filter(array($this, 'filterOdds'));
 	}
 
 	private function mkDateQuery($date = NULL, $time_field) {
@@ -83,7 +87,7 @@ class SportsEvents extends \Eloquent {
 
 	public static function getNextEventsToJump($limit = 25, $sportId = false) {
 
-		$query = "select ege.event_group_id AS comp_id, eg.name AS comp_name, e.*, ts.name AS sport_name
+		$query = "select ege.event_group_id AS comp_id, eg.name AS comp_name, e.*, ts.name AS sport_name, sp.win_odds, sp.override_odds, sp.override_type
 		FROM tbdb_event AS e
 		INNER JOIN tbdb_event_group_event AS ege ON e.id = ege.event_id
 		INNER JOIN tbdb_event_group AS eg ON ege.event_group_id = eg.id
@@ -108,7 +112,7 @@ class SportsEvents extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		return $result;
+		return $result->filter(array(new SportsEvents, 'filterOdds'));
 
 	}
 
