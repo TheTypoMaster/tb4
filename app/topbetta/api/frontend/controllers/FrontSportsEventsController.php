@@ -45,6 +45,7 @@ class FrontSportsEventsController extends \BaseController {
 		$date = Input::get('date', null);
 		$limit = Input::get('limit', null);
 
+        \Cache::forget('sportsEvents-' . $compId . $date . $limit . $tournamentFlag);
 		// store sports events in cache for 10 min at a time
 		return \Cache::remember('sportsEvents-' . $compId . $date . $limit . $tournamentFlag, 10, function() use (&$compId, &$date, &$limit, $tournamentFlag) {
 			$sportsEvents = new TopBetta\SportsEvents;

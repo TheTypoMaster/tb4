@@ -43,4 +43,27 @@ class SelectionService {
         return false;
     }
 
+    public function calculatePrice($selectionPrice, $overrideOdds, $overrideType)
+    {
+        if($overrideType == 'percentage') {
+            return bcmul($overrideOdds, $selectionPrice, 2);
+        } else if ($overrideType == 'price') {
+            return $overrideOdds;
+        }
+
+        return $selectionPrice;
+    }
+
+    public function calculatePriceForSelection($selectionId)
+    {
+        $selection = $this->selectionRepository->find($selectionId);
+
+        return $this->calculatePrice($selection->price->win_odds, $selection->price->override_odds, $selection->price->override_type);
+    }
+
+    public function oddsChanged($selectionId, $price)
+    {
+        return $this->calculatePriceForSelection($selectionId) != $price;
+    }
+
 }

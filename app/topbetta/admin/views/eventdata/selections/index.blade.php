@@ -9,6 +9,7 @@
 
         			{{ Form::open(array('method' => 'GET')) }}
         			<div class="input-group custom-search-form col-lg-4 pull-right">
+                        {{ Form::hidden('market', $market) }}
         				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
         				<span class="input-group-btn">
         					<button class="btn btn-default" type="button">
@@ -28,6 +29,8 @@
                     <th>Competition</th>
                     <th>Win Odds</th>
                     <th>Place Odds</th>
+                    <th>Override Odds</th>
+                    <th>Override Type</th>
         			<th>Selection Status</th>
         			<th>Display</th>
         			<th>Created</th>
@@ -45,11 +48,16 @@
                     <td>{{ $selection->competition_name }}</td>
                     <td>{{ $selection->win_odds }}</td>
                     <td>{{ $selection->place_odds }}</td>
+                    <td>{{ $selection->override_odds }}</td>
+                    <td>{{ $selection->override_type }}</td>
                     <td>{{ $selection->status_name }}</td>
         			<td>{{ ($selection->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $selection->created_at }}</td>
         			<td>{{ $selection->updated_at }}</td>
-        			<td>{{ link_to_route('admin.selections.edit', 'Edit', array($selection->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
+        			<td>
+                        {{ link_to_route('admin.selections.edit', 'Edit', array($selection->id, "q" => $search), array('class' => 'btn btn-info')) }}
+                        {{ link_to_route('admin.selectionprices.edit', 'Edit Price', array($selection->selection_price_id, 'q' => $search, 'market' => $market), array('class' => 'btn btn-warning')) }}
+                    </td>
 
         		</tr>
         		@endforeach

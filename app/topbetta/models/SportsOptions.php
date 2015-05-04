@@ -1,11 +1,7 @@
 <?php
 namespace TopBetta;
 
-use TopBetta\Models\Traits\OddsFilter;
-
 class SportsOptions extends \Eloquent {
-
-    use OddsFilter;
 
     protected $guarded = array();
 
@@ -23,7 +19,9 @@ class SportsOptions extends \Eloquent {
             ->where('sp.win_odds', '>', '1')
             ->select('m.market_status AS market_status','s.order AS order', 's.image_url AS image_url', 's.name AS bet_selection', 'sp.win_odds AS win_odds', 's.bet_place_ref', 's.bet_type_ref', 's.external_selection_id', 's.id AS selection_id', 'sp.line as line', 'm.id as type_id', 'm.event_id as event_id', 'sp.override_odds as override_odds', 'sp.override_type as override_type')->get();
 
-        return $result->filter(array($this, 'filterOdds'));
+        return array_filter($result, function($value) {
+            return \App::make('TopBetta\Services\Betting\SelectionService')->calculatePrice($value->win_odds, $value->override_odds, $value->override_type) > 1;
+        });
     }
 	
 	public function getOptionsForMarketType($allEvents, $marketTypeId) {
@@ -37,6 +35,8 @@ class SportsOptions extends \Eloquent {
             ->where('sp.win_odds', '>', '1')
             ->select('m.market_status AS market_status', 's.order AS order', 's.image_url AS image_url', 's.name AS bet_selection', 'sp.win_odds AS win_odds', 's.bet_place_ref', 's.bet_type_ref', 's.external_selection_id', 's.id AS selection_id', 'sp.line as line', 'm.id as type_id', 'm.event_id as event_id', 'sp.override_odds as override_odds', 'sp.override_type as override_type')->get();
 
-        return $result->filter(array($this, 'filterOdds'));
+        return array_filter($result, function($value) {
+            return \App::make('TopBetta\Services\Betting\Selectionservice')->calculatePrice($value->win_odds, $value->override_odds, $value->override_type) > 1;
+        });
 	}
 }

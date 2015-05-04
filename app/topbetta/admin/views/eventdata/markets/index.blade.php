@@ -5,7 +5,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row page-header">
-        			<h2 class="col-lg-4">Markets <small>({{ number_format($markets->getTotal()) }})</small></h2>
+        			<h2 class="col-lg-4">Markets <small>({{ count($markets) ? number_format($markets->getTotal()) : 0 }})</small></h2>
 
         			{{ Form::open(array('method' => 'GET')) }}
         			<div class="input-group custom-search-form col-lg-4 pull-right">
@@ -43,7 +43,10 @@
         			<td>{{ ($market->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $market->created_at }}</td>
         			<td>{{ $market->updated_at }}</td>
-        			<td>{{ link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
+        			<td>
+                        {{ link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) }}
+                        {{ link_to_route('admin.selections.index', 'Selections', array('market' => $market->id), array('class' => 'btn btn-primary')) }}
+                    </td>
 
         		</tr>
         		@endforeach

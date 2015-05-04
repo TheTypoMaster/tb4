@@ -27,20 +27,24 @@ class SelectionsController extends BaseController
 	 * @return Response
 	 */
 	public function index()
-	{
+    {
 
         $page = Input::get('page', 1);
+        $market = Input::get('market', null);
+
 
         $data = $this->selectionsrepo->allSelections($page, 50);
 
-		$search = Request::get('q', '');
-		if ($search) {
-			$selections = $this->selectionsrepo->search($search);
-		} else {
+        $search = Request::get('q', '');
+        if ($search) {
+            $selections = $this->selectionsrepo->search($search, $market);
+        } else if ($market) {
+            $selections = $this->selectionsrepo->getAllSelectionsForMarket($market);
+        }else {
             $selections = Paginator::make($data->items, $data->totalItems, 50);
 		}
 
-		return View::make('admin::eventdata.selections.index', compact('selections', 'search'));
+		return View::make('admin::eventdata.selections.index', compact('selections', 'search', 'market'));
 	}
 
 	/**

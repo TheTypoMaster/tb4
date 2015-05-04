@@ -4,10 +4,21 @@ namespace TopBetta\frontend;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
+use TopBetta\Services\Betting\SelectionService;
 
 class FrontSportsOptionsController extends \BaseController {
 
-	/**
+    /**
+     * @var SelectionService
+     */
+    private $selectionsService;
+
+    public function __construct(SelectionService $selectionsService)
+    {
+        $this->selectionsService = $selectionsService;
+    }
+
+    /**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
@@ -49,7 +60,8 @@ class FrontSportsOptionsController extends \BaseController {
 
 				//we need to type cast the strings to int
 				foreach ($options as $option) {
-					$eachOption[] = array('order' => $option->order, 'image_url' => $option->image_url, 'market_status' => $option->market_status, 'bet_selection' => $option -> bet_selection, 'odds' => (float)$option -> odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'external_selection_id' => (int)$option -> external_selection_id, 'id' => (int)$option -> selection_id, 'line' => $option -> line, 'bet_limit' => $betLimitValue, 'type_id' => (int)$option->type_id, 'event_id' => (int)$option->event_id);
+                    $odds = $this->selectionsService->calculatePrice($option->win_odds, $option->override_odds, $option->override_type);
+					$eachOption[] = array('order' => $option->order, 'image_url' => $option->image_url, 'market_status' => $option->market_status, 'bet_selection' => $option -> bet_selection, 'odds' => (float) $odds, 'bet_place_ref' => (int)$option -> bet_place_ref, 'external_selection_id' => (int)$option -> external_selection_id, 'id' => (int)$option -> selection_id, 'line' => $option -> line, 'bet_limit' => $betLimitValue, 'type_id' => (int)$option->type_id, 'event_id' => (int)$option->event_id);
 				}
 
 				return array('success' => true, 'result' => $eachOption);

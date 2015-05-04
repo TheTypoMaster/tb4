@@ -1,11 +1,7 @@
 <?php
 namespace TopBetta;
 
-use TopBetta\Models\Traits\OddsFilter;
-
 class SportsEvents extends \Eloquent {
-
-    use OddsFilter;
 
 	protected $table = 'tbdb_event_group_event';
 
@@ -57,7 +53,7 @@ class SportsEvents extends \Eloquent {
 		$query .= " WHERE e.display_flag = '1' ";
 		$query .= $tournamentFlag ? "" : $dateQuery;
 		$query .= " AND m.market_status NOT IN ('D', 'S') ";
-		$query .= " AND sp.win_odds > 1";
+		$query .= " AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))";
 		$query .= " AND s.selection_status_id = '1'";
 		$query .= $compQuery;
 		$query .= ' GROUP BY id';
@@ -66,7 +62,7 @@ class SportsEvents extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		return $result->filter(array($this, 'filterOdds'));
+        return $result;
 	}
 
 	private function mkDateQuery($date = NULL, $time_field) {
@@ -99,7 +95,7 @@ class SportsEvents extends \Eloquent {
 		AND eg.type_code IS NULL
 		AND e.display_flag = '1'
 		AND m.market_status NOT IN ('D', 'S')
-	 	AND sp.win_odds > 1
+	 	AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))
 		AND s.selection_status_id = '1' ";
 		
 		if ($sportId) {
@@ -112,7 +108,9 @@ class SportsEvents extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		return $result->filter(array(new SportsEvents, 'filterOdds'));
+        return array_filter($result, function($value) {
+            return \App::make('TopBetta\Services\Betting\SelectionService')->calculatePrice($value->win_odds, $value->override_odds, $value->override_type) > 1;
+        });
 
 	}
 
