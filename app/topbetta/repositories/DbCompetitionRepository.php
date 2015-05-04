@@ -13,28 +13,20 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
     protected $competitions;
 
-    protected $order = array('start_date', 'DESC');
-
     function __construct(CompetitionModel $competitions) {
         $this->model = $competitions;
     }
 
     /**
      * @param $search
-     * @param array $relations
      * @return mixed
      */
-    public function search($search, $relations = array())
+    public function search($search)
     {
-       $model = $this->model
+        return $this->model
             ->orderBy('start_date', 'DESC')
-            ->where('name', 'LIKE', "%$search%");
-
-       foreach($relations as $relation) {
-           $model->with($relation);
-       }
-
-        return $model->paginate();
+            ->where('name', 'LIKE', "%$search%")
+            ->paginate();
     }
 
     /**
@@ -85,14 +77,16 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competition;
     }
 
+    public function getCompetitionByExternalId($externalId)
+    {
+        return $this->model->where('external_event_group_id', $externalId)->first();
+    }
+
     public function findByName($name)
     {
-        if($competition = $this->model->where('name', $name)->first()) {
-            return $competition->toArray();
-        }
-
-        return null;
+        return $this->model->where('name', $name)->first();
     }
+
 
     public function competitionFeed($input){
 
