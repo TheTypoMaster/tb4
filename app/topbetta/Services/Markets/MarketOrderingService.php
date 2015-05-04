@@ -31,19 +31,13 @@ class MarketOrderingService {
 
     public function getDefaultMarketTypes($competitionId = 0)
     {
-        $marketOrderingModel = $this->marketOrderingRepository->getMarketOrdering($competitionId);
+        $types = $this->getMarketTypes($competitionId);
 
-        if( ! $marketOrderingModel ) {
-            return array();
+        if( empty($types) ) {
+            return $this->getMarketTypes();
         }
 
-        $marketTypes = json_decode($marketOrderingModel->market_types);
-
-        if(empty($marketTypes)) {
-            return array();
-        }
-
-        return $this->marketTypeRepository->getMarketTypesIn($marketTypes);
+        return $types;
     }
 
     public function createOrUpdateForCompetition($marketTypes, $competitionId = 0)
@@ -60,5 +54,48 @@ class MarketOrderingService {
         return $this->marketOrderingRepository->updateWithId($marketOrdering->id, array(
             "market_types" => json_encode($marketTypes)
         ));
+    }
+
+    public function getMarketTypesForUser($userId ,$competitionId)
+    {
+       $types = $this->getMarketTypes($competitionId, $userId);
+
+        if( empty($types) ) {
+            return $this->getDefaultMarketTypes($competitionId);
+        }
+
+        return $types;
+    }
+
+    public function getMarketsForEvent($eventId, $userId = 0)
+    {
+        //get competition id
+
+        //get market type ids
+
+        //get markets for event with market types in
+    }
+
+    /**
+     * Gets the market types to display for competition and user
+     * @param int $competitionId
+     * @param int $userId
+     * @return array
+     */
+    private function getMarketTypes($competitionId = 0, $userId = 0)
+    {
+        $marketOrderingModel = $this->marketOrderingRepository->getMarketOrdering($competitionId, $userId);
+
+        if( ! $marketOrderingModel ) {
+            return array();
+        }
+
+        $marketTypes = json_decode($marketOrderingModel->market_types);
+
+        if(empty($marketTypes)) {
+            return array();
+        }
+
+        return $this->marketTypeRepository->getMarketTypesIn($marketTypes);
     }
 }
