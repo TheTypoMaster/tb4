@@ -10,6 +10,7 @@ namespace TopBetta\backend;
 
 use Input;
 use TopBetta\Services\Feeds\SportsFeedService;
+use TopBetta\Services\Response\ApiResponse;
 
 class SportsFeedController extends \BaseController {
 
@@ -17,10 +18,15 @@ class SportsFeedController extends \BaseController {
      * @var SportsFeedService
      */
     private $sportsFeedService;
+    /**
+     * @var ApiResponse
+     */
+    private $apiResponse;
 
-    public function __construct(SportsFeedService $sportsFeedService)
+    public function __construct(SportsFeedService $sportsFeedService, ApiResponse $apiResponse)
     {
         $this->sportsFeedService = $sportsFeedService;
+        $this->apiResponse = $apiResponse;
     }
 
     public function store()
@@ -33,7 +39,6 @@ class SportsFeedController extends \BaseController {
         //process sports data
         $this->sportsFeedService->processSportsFeed($data);
 
-        //TODO: Is Serena expecting a particular format?
-        return "true";
+        return $this->apiResponse->success(array('Processed' => 'OK', 200));
     }
 }
