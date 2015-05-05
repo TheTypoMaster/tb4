@@ -612,7 +612,7 @@ class FrontBetsController extends BaseController {
 							}
 
                             if( $this->selectionService->oddsChanged(key($input['bets']), $input['dividend'])) {
-                                $messages[] = array("id" => key($input['bets']), "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
+                                $messages[] = array("id" => key($input['bets']), "error_code" => "SB01", "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
                                 $errors++;
                                 return false;
                             }
@@ -643,7 +643,7 @@ class FrontBetsController extends BaseController {
 						if (count($legacyData) > 0) {
 
                             if( $this->selectionService->oddsChanged(key($input['bets']), $input['dividend'])) {
-                                $messages[] = array("id" => key($input['bets']), "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
+                                $messages[] = array("id" => key($input['bets']), "error_code" => "SB01", "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
                                 $errors++;
                                 return false;
                             }
