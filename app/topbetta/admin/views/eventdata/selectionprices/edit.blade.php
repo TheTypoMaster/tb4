@@ -40,7 +40,7 @@
 
             <div class="form-group">
                 {{ Form::label('override_type', 'Override Type:') }}
-                {{ Form::select('override_type', array(null => '', 'percentage' => "Percentage", 'price' => "Price"), null, array('class' => 'form-control')) }}
+                {{ Form::select('override_type', array(null => 'No Override', 'percentage' => "Percentage", 'price' => "Price", 'promo' => "Promo"), null, array('class' => 'form-control')) }}
             </div>
 
             <div class="form-group">

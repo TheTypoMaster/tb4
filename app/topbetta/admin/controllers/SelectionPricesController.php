@@ -115,8 +115,7 @@ class SelectionPricesController extends BaseController
         if($data['override_type'] == 'percentage') {
             $data['override_odds'] /= 100;
         } else if (is_null($data['override_type'])) {
-            return Redirect::route('admin.selectionprices.edit', array($id, 'q' => $search, 'market' => $market))
-                ->with(array('flash_message' => "Select Type"));
+            $data = array_except($data, 'override_odds');
         }
 
         $this->selectionpricesrepo->updateWithId($id, $data);
