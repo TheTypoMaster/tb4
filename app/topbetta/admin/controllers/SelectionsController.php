@@ -31,7 +31,7 @@ class SelectionsController extends BaseController
 
         $page = Input::get('page', 1);
         $market = Input::get('market', null);
-
+        $event = Input::get('event', null);
 
         $data = $this->selectionsrepo->allSelections($page, 50);
 
@@ -44,7 +44,7 @@ class SelectionsController extends BaseController
             $selections = Paginator::make($data->items, $data->totalItems, 50);
 		}
 
-		return View::make('admin::eventdata.selections.index', compact('selections', 'search', 'market'));
+		return View::make('admin::eventdata.selections.index', compact('selections', 'search', 'market', 'event'));
 	}
 
 	/**

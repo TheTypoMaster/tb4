@@ -18,6 +18,13 @@
         			</div>
         			{{ Form::close() }}
         		</div>
+        </div>
+        <div class="pull-right">
+            <div class="pull-right">
+                {{ link_to_route('admin.events.index', "Back to Events", array(), array("class" => "btn btn-outline btn-warning")) }}
+            </div>
+        </div>
+
 		@if (count($markets))
         <table class="table table-striped table-bordered table-hover">
         	<thead>
@@ -37,7 +44,7 @@
         		@foreach($markets as $market)
         		<tr>
         			<td>{{ $market->id }}</td>
-        			<td>{{ $market->market_type_name }}</td>
+        			<td>{{ $market->market_type_name . ($market->line ? ' (+/-' . $market->line . ')' : ''); }}</td>
         			<td>{{ $market->event_name }}</td>
                     <td>{{ $market->market_status }}</td>
         			<td>{{ ($market->display_flag) ? 'Yes' : 'No' }}</td>
@@ -45,7 +52,7 @@
         			<td>{{ $market->updated_at }}</td>
         			<td>
                         {{ link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) }}
-                        {{ link_to_route('admin.selections.index', 'Selections', array('market' => $market->id), array('class' => 'btn btn-primary')) }}
+                        {{ link_to_route('admin.selections.index', 'Selections', array('market' => $market->id, 'event' => $event), array('class' => 'btn btn-primary')) }}
                     </td>
 
         		</tr>

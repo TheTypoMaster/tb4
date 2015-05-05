@@ -7,7 +7,7 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route('admin.selectionprices.index', 'Back to Selection Prices', array("q" => $search, 'market' => $market), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{{ link_to_route('admin.selections.index', 'Back to Selection Prices', array("q" => $search, 'market' => $market, 'event' => $event), array('class' => 'btn btn-outline btn-warning')) }}</span>
         </ul>
 		<h4>Edit Price</h4>
 		<div class='col-lg-6'>

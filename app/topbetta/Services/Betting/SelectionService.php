@@ -46,7 +46,7 @@ class SelectionService {
     public function calculatePrice($selectionPrice, $overrideOdds, $overrideType)
     {
         if($overrideType == 'percentage') {
-            return bcmul($overrideOdds, $selectionPrice, 2);
+            return bcmul(2 - $overrideOdds, $selectionPrice, 2);
         } else if ($overrideType == 'price') {
             return $overrideOdds;
         }

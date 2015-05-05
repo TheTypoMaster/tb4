@@ -84,6 +84,7 @@ class SelectionPricesController extends BaseController
         //Get search string for filtering after redirection
 		$search = Input::get("q", '');
         $market = Input::get('market', null);
+        $event = Input::get('event', null);
 
 		$selectionprice = $this->selectionpricesrepo->findWithSelection($id);
 
@@ -94,7 +95,7 @@ class SelectionPricesController extends BaseController
 
         if($selectionprice->override_type == 'percentage') { $selectionprice->override_odds *= 100; }
 
-        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice', 'search', 'market'));
+        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice', 'search', 'market', 'event'));
 	}
 
 	/**
