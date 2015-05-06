@@ -363,10 +363,17 @@ class FrontBetsController extends BaseController {
 			foreach($input['selections'] as $selections) {
 				foreach($selections as $selection) {
 					if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
-						$messages = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+						$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
 						$errors++;
 						return false;
 					}
+
+                    //checks selection is racing
+                    if ( ! $this->selectionService->isSelectionRacing($selection) ) {
+                        $messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                        $errors++;
+                        return false;
+                    }
 				}
 			}
 
@@ -440,7 +447,7 @@ class FrontBetsController extends BaseController {
 				foreach ($input['selections'] as $selection) {
 
 					if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
-						$messages = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+						$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
 						$errors++;
 						return false;
 					}
@@ -449,6 +456,13 @@ class FrontBetsController extends BaseController {
 					$legacyData = $betModel -> getLegacyBetData($selection);
 
 					if (count($legacyData) > 0) {
+
+                        //check selection is racing selection
+                        if ( ! $this->selectionService->isSelectionRacing($selection) ) {
+                            $messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                            $errors++;
+                            return false;
+                        }
 
 						if ($input['source'] == 'racing') {
 
@@ -587,6 +601,13 @@ class FrontBetsController extends BaseController {
 
 						if (count($legacyData) > 0) {
 
+                            //make sure selection is valid sports selection
+                            if ( ! $this->selectionService->isSelectionSports(key($input['bets'])) ) {
+                                $messages[] = array("id" => key($input['bets']), 'bets'=>$input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                                $errors++;
+                                return false;
+                            }
+
 							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'dividend' => $input['dividend'], 'bet_source_id' => $input['bet_source_id']);
 
 							// add the line to the betData object if it exists
@@ -634,6 +655,13 @@ class FrontBetsController extends BaseController {
 						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
 
 						if (count($legacyData) > 0) {
+
+                            //make sure selection is valid sports selection
+                            if ( ! $this->selectionService->isSelectionSports(key($input['bets'])) ) {
+                                $messages[] = array("id" => key($input['bets']), 'bets'=>$input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                                $errors++;
+                                return false;
+                            }
 
 							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'bet_source_id' => $input['bet_source_id']);
 							$bet = $l -> query('saveTournamentSportsBet', $betData);
