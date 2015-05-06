@@ -154,12 +154,4 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
         return $markets->toArray();
     }
 
-    public function getMarketForSelection($selectionId)
-    {
-        return $this->model
-            ->join('tbdb_selection', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
-            ->where('tbdb_selection.id', $selectionId)
-            ->select('tbdb_market.*')
-            ->first();
-    }
 }

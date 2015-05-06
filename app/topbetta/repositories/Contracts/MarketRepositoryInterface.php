@@ -8,5 +8,4 @@
 
 interface MarketRepositoryInterface  {
 
-    public function getMarketForSelection($selectionId);
 }
