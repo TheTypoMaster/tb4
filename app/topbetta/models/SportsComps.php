@@ -49,6 +49,8 @@ class SportsComps extends \Eloquent {
         $query.= $eventDateQuery;
     	$query .= " AND eg.display_flag = '1'";
         $query .= " AND ev.display_flag = '1' ";
+        $query .= " AND m.display_flag = '1' ";
+        $query .= " AND sel.display_flag = '1' ";
 	   	$query .= " AND m.market_status NOT IN ('D', 'S') ";
 	    $query .= " AND sp.win_odds > 1";
 	    $query .= " AND sel.selection_status_id = '1'";
@@ -88,6 +90,8 @@ class SportsComps extends \Eloquent {
             $query.= $eventDateQuery;
 			$query .= " AND c.display_flag = '1' ";
             $query .= " AND ev.display_flag = '1' ";
+            $query .= " AND m.display_flag = '1' ";
+            $query .= " AND sel.display_flag = '1' ";
 			$query .= " AND m.market_status NOT IN ('D', 'S') ";
 			$query .= " AND sp.win_odds > 1";
 			$query .= " AND sel.selection_status_id = '1'";

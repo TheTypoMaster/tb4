@@ -106,7 +106,7 @@ class SelectionsController extends BaseController
         //Get search string for filtering after redirection
 		$search = Input::get("q", '');
 
-		$data = Input::only('name', 'selection_status_id');
+		$data = Input::only('name', 'selection_status_id', 'display_flag');
         $this->selectionsrepo->updateWithId($id, $data);
 
         return Redirect::route('admin.selections.index', array($id, 'q'=>$search))
