@@ -9,6 +9,7 @@ use TopBetta\BetSelection;
 use TopBetta\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
+use TopBetta\Services\Betting\SelectionService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
@@ -31,11 +32,16 @@ class BetRepo
 	 * @var BetDashboardNotificationService
      */
     private $betDashboardNotificationService;
+    /**
+     * @var SelectionService
+     */
+    private $selectionService;
 
-    public function __construct(UserAccountService $userAccountService, BetDashboardNotificationService $betDashboardNotificationService)
+    public function __construct(UserAccountService $userAccountService, BetDashboardNotificationService $betDashboardNotificationService, SelectionService $selectionService)
     {
         $this->userAccountService = $userAccountService;
 		$this->betDashboardNotificationService = $betDashboardNotificationService;
+        $this->selectionService = $selectionService;
     }
 
 	/**
@@ -52,12 +58,12 @@ class BetRepo
 
 		switch ($bet->betType->name) {
 			case 'win':
-				if ($bet->bet_origin_id == 2) {
+				if ($bet->bet_origin_id == 2 && $this->selectionService->isSelectionRacing($bet->selections[0]->selection_id)) {
 					// RACING: simple check - do we have a result record for this selection id and win dividend
 					$dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
 							->where('win_dividend', '>', 0)
 							->pluck('win_dividend');
-				} elseif ($bet->bet_origin_id == 3) {
+				} else if ($bet->bet_origin_id == 3 && $this->selectionService->isSelectionSports($bet->selections[0]->selection_id)) {
 					// SPORTS: check for a result record
 					$win = SportsSelectionResults::selectionResultExists($bet->selections[0]->selection_id);
 
@@ -65,7 +71,9 @@ class BetRepo
 					if ($win) {
 						$dividend = $this->getFixedOddsForSportsBet($bet);
 					}
-				}
+				} else {
+                    \Log::error("BET RESULT: " . $bet->id . " invalid origin or origin mismatch, origin: " . $bet->bet_origin_id . " selection: " . $bet->selections[0]->selection_id);
+                }
 				break;
 
 			case 'place':

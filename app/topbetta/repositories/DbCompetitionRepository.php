@@ -127,4 +127,15 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->first();
     }
 
+	public function getCompetitionBySelection($selectionId)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->join('tbdb_market', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_selection', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+            ->where('tbdb_selection.id', $selectionId)
+            ->firstOrFail();
+    }
+
 } 

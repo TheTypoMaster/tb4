@@ -436,10 +436,13 @@ class TournamentModelTournamentTicket extends JModel
 	 */
 	public function getTicketCost($ticket_id)
 	{
-		$db =& $this->getDBO();
+        $rebuys = $this->getBuyinsByType($ticket_id, 'rebuy') ?: 0;
+        $topups = $this->getBuyinsByType($ticket_id, 'topup') ?: 0;
+
+        $db =& $this->getDBO();
 		$query =
 			'SELECT
-				t.entry_fee + t.buy_in
+				t.entry_fee, t.buy_in, t.rebuy_buyin, t.rebuy_entry, t.topup_buyin, t.topup_entry
 			FROM
 				' . $db->nameQuote('#__tournament') . ' AS t
 			INNER JOIN
@@ -450,7 +453,11 @@ class TournamentModelTournamentTicket extends JModel
 				tt.id = ' . $db->quote($ticket_id);
 
 		$db->setQuery($query);
-		return $db->loadResult();
+		$tournament = $db->loadObject();
+
+        return $tournament->entry_fee + $tournament->buy_in +
+            $rebuys * ($tournament->rebuy_buyin + $tournament->rebuy_entry) +
+            $topups * ($tournament->topup_buyin + $tournament->topup_entry);
 	}
 
 	/**
@@ -461,10 +468,13 @@ class TournamentModelTournamentTicket extends JModel
 	 */
 	public function getTicketBuyIn($ticket_id)
 	{
-		$db =& $this->getDBO();
+        $rebuys = $this->getBuyinsByType($ticket_id, 'rebuy') ?: 0;
+        $topups = $this->getBuyinsByType($ticket_id, 'topup') ?: 0;
+
+        $db =& $this->getDBO();
 		$query =
 			'SELECT
-				t.buy_in
+				t.buy_in as buy_in, t.rebuy_buyin as rebuy_buyin, t.topup_buyin as topup_buyin
 			FROM
 				' . $db->nameQuote('#__tournament') . ' AS t
 			INNER JOIN
@@ -475,7 +485,11 @@ class TournamentModelTournamentTicket extends JModel
 				tt.id = ' . $db->quote($ticket_id);
 
 		$db->setQuery($query);
-		return $db->loadResult();
+        $tournament = $db->loadObject();
+
+        return $tournament->buy_in +
+            $rebuys * ($tournament->rebuy_buyin) +
+            $topups * ($tournament->topup_buyin);
 	}
 
 	/**
@@ -561,6 +575,20 @@ class TournamentModelTournamentTicket extends JModel
 		return $total->current - $total->unresulted + $total->extra_starting_currency;
 	}
 
+    public function getBuyinsByType($ticketId, $type)
+    {
+        $db =& $this->getDBO();
+        $query = '
+            SELECT COUNT(*) as buyins FROM tbdb_tournament_ticket_buyin_history tbh
+            INNER JOIN tbdb_tournament_buyin_type tbt ON tbt.id = tbh.tournament_buyin_type_id AND keyword = ' . $db->quote($type) . '
+            WHERE tbh.tournament_ticket_id = ' . $db->quote($ticketId);
+
+        $db->setQuery($query);
+        $buyins = $db->loadObject();
+
+        return $buyins->buyins;
+    }
+
 	/**
 	 * Calculate how much currency a user has for leaderboard display by taking the starting value from tournament,
 	 * subtracting resulted bet amounts and adding resulted bet winnings plus their extra starting currency.
@@ -606,8 +634,18 @@ class TournamentModelTournamentTicket extends JModel
 		$db->setQuery($query);
 
 		$data = $db->loadObject();
-        echo "#### Tournament ID: $tournament_id, UserId:$user_id, Start Currency:{$tournament->start_currency}, Extra:{$ticket->extra_starting_currency}, Bet Amount:{$data->bet_amount}, Win Amount:{$data->win_amount}\n";
-		return $tournament->start_currency + $ticket->extra_starting_currency - $data->bet_amount + $data->win_amount;
+
+        $rebuys = $this->getBuyinsByType($ticket->id, 'rebuy');
+        $topups = $this->getBuyinsByType($ticket->id, 'topup');
+        echo "#### Tournament ID: $tournament_id, UserId:$user_id, Start Currency:{$tournament->start_currency}, Extra:{$ticket->extra_starting_currency}, Rebuys: {$rebuys}, Rebuy Currency:{$tournament->rebuy_currency}, Topups: {$topups}, Topup Currency: {$tournament->topup_currency}, Bet Amount:{$data->bet_amount}, Win Amount:{$data->win_amount}\n";
+
+
+        return $tournament->start_currency +
+            $ticket->extra_starting_currency +
+            $tournament->rebuy_currency * $rebuys+
+            $tournament->topup_currency * $topups -
+            $data->bet_amount +
+            $data->win_amount;
 	}
 
 	/**

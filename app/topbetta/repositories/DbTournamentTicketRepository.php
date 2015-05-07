@@ -7,8 +7,10 @@
  */
 
 use TopBetta\Models\TournamentTicketModel;
+use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 
-class DbTournamentTicketRepository extends BaseEloquentRepository {
+class DbTournamentTicketRepository extends BaseEloquentRepository implements TournamentTicketRepositoryInterface
+{
 
     protected $model;
 
