@@ -31,7 +31,6 @@ class TournamentTicketService {
             'tournament_id' => $tournament->id,
             'user_id' => $user->id,
             'created_date' => Carbon::now()->toDateTimeString(),
-            'updated_date' => Carbon::now()->toDateTimeString(),
         ));
 
         if ( ! $ticket ) {

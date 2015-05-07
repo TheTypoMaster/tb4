@@ -91,6 +91,23 @@ class TournamentService {
         return $transactions;
     }
 
+    public function isTournamentOpen($tournament)
+    {
+        if( $tournament->closed_betting_on_first_match_flag && $tournament->start_date < Carbon::now()) {
+            return false;
+        }
+
+        if( $tournament->end_date < Carbon::now() ) {
+            return false;
+        }
+
+        if( $tournament->entries_close != 0 && $tournament->entries_close < Carbon::now() ) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function createTournament($tournamentData)
     {
         //get tournament name and desc

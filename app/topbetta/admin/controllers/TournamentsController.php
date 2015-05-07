@@ -11,6 +11,7 @@ use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCompetiitonRepository;
 use TopBetta\Repositories\DbTournamentRepository;
+use TopBetta\Services\Tournaments\TournamentAdminService;
 use TopBetta\Services\Tournaments\TournamentService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use View;
@@ -56,6 +57,10 @@ class TournamentsController extends \BaseController
      * @var TournamentService
      */
     private $tournamentService;
+    /**
+     * @var TournamentAdminService
+     */
+    private $tournamentAdminService;
 
     /**
      * @param DbTournamentRepository $tournamentRepo
@@ -76,7 +81,8 @@ class TournamentsController extends \BaseController
                                 TODRepositoryInterface $TODRepository,
                                 TournamentLabelsRepositoryInterface $labelsRepository,
                                 TournamentPrizeFormatRepositoryInterface $prizeFormatRepository,
-                                TournamentService $tournamentService)
+                                TournamentService $tournamentService,
+                                TournamentAdminService $tournamentAdminService )
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -89,6 +95,7 @@ class TournamentsController extends \BaseController
         $this->labelsRepository = $labelsRepository;
         $this->prizeFormatRepository = $prizeFormatRepository;
         $this->tournamentService = $tournamentService;
+        $this->tournamentAdminService = $tournamentAdminService;
     }
 
 	/**
@@ -257,7 +264,26 @@ class TournamentsController extends \BaseController
     }
 
     public function addUsers($tournamentId)
-    {}
+    {
+        $users = Input::get('users');
+
+        $result = array();
+        if($users) {
+
+            //get each username
+            $users = explode(PHP_EOL, $users);
+
+            //get rid of whitespace
+            array_walk($users, 'trim');
+
+            //enter the users
+            $result = $this->tournamentAdminService->addUsersToTournamentByUsername($tournamentId, $users);
+        }
+
+        $tournament = $this->tournamentRepo->find($tournamentId);
+
+        return View::make('admin::tournaments.add-users', compact('tournament', 'result'));
+    }
 
     /**
      * Ajax route for getting competitions by sport id
