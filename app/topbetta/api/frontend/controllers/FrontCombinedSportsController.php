@@ -1,6 +1,7 @@
 <?php
 namespace TopBetta\frontend;
 
+use App;
 use TopBetta\TournamentSport;
 use TopBetta\SportsEvents;
 
