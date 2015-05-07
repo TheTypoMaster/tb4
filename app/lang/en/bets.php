@@ -25,5 +25,9 @@ email: help@topbetta.com",
 email: help@topbetta.com",
 
 	'bet_type_not_valid_international' => "Exotic bet types are not available on international race meetings",
+
+    "market_closed" => "Betting is closed on this market",
+
+    'odds_changed' => "Odds for a selection have changed",
 	
 );

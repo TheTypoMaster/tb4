@@ -36,6 +36,10 @@
                     '3' => 'Late Scratching',
                     '4' => 'Suspended'), array('class' => 'form-control', 'placeholder' => $selection->selection_status_id)) }}
         	</div>
+            <div class="form-group">
+                {{ Form::label('display_flag', "Betting Open on TopBetta: ") }}
+                {{ Form::select('display_flag', array(0 => "No", 1 => "Yes"), null, array("class" => "form-control")) }}
+            </div>
         </div>
 
         <div class="col-lg-12">

@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
@@ -99,7 +100,34 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competitions->toArray();
     }
 
-    public function getCompetitionBySelection($selectionId)
+    public function getFutureEventGroupsByTournamentCompetition($tournamentCompetitionId)
+    {
+        return $this->model
+            ->where('tournament_competition_id', $tournamentCompetitionId)
+            ->whereHas('events', function($q){
+                $q->where('start_date', '>=', Carbon::now()->toDateTimeString());
+            })
+            ->where('display_flag', 1)
+            ->get();
+    }
+
+    public function getFirstEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'ASC')
+            ->first();
+    }
+
+    public function getLastEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'DESC')
+            ->first();
+    }
+
+	public function getCompetitionBySelection($selectionId)
     {
         return $this->model
             ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
@@ -109,4 +137,5 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->where('tbdb_selection.id', $selectionId)
             ->firstOrFail();
     }
+
 } 
