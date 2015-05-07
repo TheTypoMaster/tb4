@@ -8,5 +8,4 @@
 
 interface MarketRepositoryInterface  {
 
-
 }

@@ -32,11 +32,28 @@ class SelectionService {
         $this->selectionStatusRepository = $selectionStatusRepository;
     }
 
-    public function isSelectionAvailableForBetting($selectionId)
+    /**
+     * Gets the selection model by id
+     * @param $selectionId
+     * @return mixed
+     */
+    public function getSelection($selectionId)
     {
-        $selection = $this->selectionRepository->find($selectionId);
+        return $this->selectionRepository->find($selectionId);
+    }
 
-        if( $selection->selection_status_id == $this->selectionStatusRepository->getSelectionStatusIdByName(self::SELECTION_NOT_SCRATCHED) ) {
+    /**
+     * Checks if selection is open and not scratched
+     * @param $selection
+     * @return bool
+     */
+    public function isSelectionAvailableForBetting($selection)
+    {
+        if( is_int($selection ) ) {
+            $selection = $this->getSelection($selection);
+        }
+
+        if( $selection->selection_status_id == $this->selectionStatusRepository->getSelectionStatusIdByName(self::SELECTION_NOT_SCRATCHED) && $selection->display_flag ) {
             return true;
         }
 
