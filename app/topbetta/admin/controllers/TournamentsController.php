@@ -102,7 +102,7 @@ class TournamentsController extends \BaseController
 		if ($search) {
 			$tournaments = $this->tournamentRepo->search($search);
 		} else {
-			$tournaments = $this->tournamentRepo->findAllPaginated();
+			$tournaments = $this->tournamentRepo->findAllPaged();
 		}
 
 		return View::make('admin::tournaments.index', compact('tournaments', 'search'));
@@ -249,10 +249,15 @@ class TournamentsController extends \BaseController
 		//
 	}
 
-//    public function addUsersForm($tournamentId)
-//    {
-//        $tournament = $this->to
-//    }
+    public function addUsersForm($tournamentId)
+    {
+        $tournament = $this->tournamentRepo->find($tournamentId);
+
+        return View::make('admin::tournaments.add-users', compact('tournament'));
+    }
+
+    public function addUsers($tournamentId)
+    {}
 
     /**
      * Ajax route for getting competitions by sport id

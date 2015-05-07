@@ -13,8 +13,6 @@ interface TournamentRepositoryInterface
 
     public function search($search);
 
-    public function findAllPaginated();
-
     public function tournamentOfTheDay($todVenue, $day = null);
 
     public function findCurrentTournamentsByType($type, $excludedTournaments = null);

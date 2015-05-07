@@ -9,8 +9,10 @@
 namespace TopBetta\Services\Tournaments;
 
 
+use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
+use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 
 class TournamentLeaderboardService {
 
@@ -27,6 +29,23 @@ class TournamentLeaderboardService {
     {
         $this->leaderboardRepository = $leaderboardRepository;
         $this->buyInTypeRepository = $buyInTypeRepository;
+    }
+
+    public function createLeaderboardRecordForUser($tournament, $user)
+    {
+        $leaderboard = $this->leaderboardRepository->create(array(
+            'tournament_id' => $tournament->id,
+            'user_id' => $user->id,
+            'currency' => $tournament->start_currency,
+            'turned_over' => 0,
+            'updated_date' => Carbon::now()->toDateTimeString(),
+        ));
+
+        if ( ! $leaderboard ) {
+            throw new TournamentEntryException("Error creating leaderboard");
+        }
+
+        return $leaderboard;
     }
 
     public function increaseCurrency($leaderboardId, $amount)

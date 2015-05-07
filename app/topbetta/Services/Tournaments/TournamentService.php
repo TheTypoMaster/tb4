@@ -38,18 +38,57 @@ class TournamentService {
      * @var TournamentBuyInTypeRepositoryInterface
      */
     private $buyinTypeRepository;
+    /**
+     * @var TournamentBuyInService
+     */
+    private $buyInService;
+    /**
+     * @var TournamentLeaderboardService
+     */
+    private $leaderboardService;
+    /**
+     * @var TournamentTicketService
+     */
+    private $ticketService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
                                 CompetitionRepositoryInterface $competitionRepository,
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
-                                TournamentBuyInTypeRepositoryInterface $buyinTypeRepository)
+                                TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
+                                TournamentBuyInService $buyInService,
+                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
         $this->competitionRepository = $competitionRepository;
         $this->buyInHistoryRepository = $buyInHistoryRepository;
         $this->buyinTypeRepository = $buyinTypeRepository;
+        $this->buyInService = $buyInService;
+        $this->leaderboardService = $leaderboardService;
+        $this->ticketService = $ticketService;
+    }
+
+    /**
+     * @param \TopBetta\Models\UserModel $user
+     * @param \TopBetta\Models\TournamentModel $tournament
+     * @return array
+     */
+    public function enterUserInTournament($user, $tournament)
+    {
+        //buyin to tournament
+        $transactions = $this->buyInService->buyin($tournament, $user);
+
+        //create ticket
+        $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+
+        //create leaderboard record
+        $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+
+        //create history record
+        $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        return $transactions;
     }
 
     public function createTournament($tournamentData)
