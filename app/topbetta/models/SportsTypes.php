@@ -43,7 +43,7 @@ class SportsTypes extends \Eloquent {
 					INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id
 					INNER JOIN tbdb_selection s ON s.market_id = m.id
 					INNER JOIN tbdb_selection_price sp ON s.id = sp.selection_id
-					WHERE eg.id = '$compId' AND e.id = '$eventId' and m.display_flag = '1'AND s.display_flag '1'
+					WHERE eg.id = '$compId' AND e.id = '$eventId' and m.display_flag = '1' AND s.display_flag = '1'
 					AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))
 					AND s.selection_status_id = '1'
 					AND m.market_status != 'D'
