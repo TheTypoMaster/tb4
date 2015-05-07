@@ -249,6 +249,11 @@ class TournamentsController extends \BaseController
 		//
 	}
 
+//    public function addUsersForm($tournamentId)
+//    {
+//        $tournament = $this->to
+//    }
+
     /**
      * Ajax route for getting competitions by sport id
      * @param $sportId
