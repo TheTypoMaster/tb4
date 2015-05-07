@@ -1,6 +1,8 @@
 <?php
 namespace TopBetta;
 
+use TopBetta\Services\Betting\SelectionService;
+
 class SportsComps extends \Eloquent {
 
 	protected $table = 'tbdb_event_group';
@@ -33,7 +35,7 @@ class SportsComps extends \Eloquent {
     	//select sports if ids set
     	$sportQuery = ($sid) ? ' AND s.id IN ('.$sid.') ' : '';
     	
-    	$query = ' SELECT eg.name AS name, eg.created_date, eg.id AS eventGroupId, eg.start_date, eg.close_time';
+    	$query = ' SELECT eg.name AS name, eg.created_date, eg.id AS eventGroupId, eg.start_date, eg.close_time, sp.win_odds, sp.override_odds, sp.override_type';
     	$query .= ' FROM tbdb_event_group as eg';
 	    $query .= ' INNER JOIN tbdb_event_group_event AS ege ON ege.event_group_id = eg.id';
         $query.= ' INNER JOIN tbdb_event AS ev ON ege.event_id = ev.id ';
@@ -52,7 +54,7 @@ class SportsComps extends \Eloquent {
         $query .= " AND m.display_flag = '1' ";
         $query .= " AND sel.display_flag = '1' ";
 	   	$query .= " AND m.market_status NOT IN ('D', 'S') ";
-	    $query .= " AND sp.win_odds > 1";
+	    $query .= " AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))";
 	    $query .= " AND sel.selection_status_id = '1'";
 	   	$query .= ' GROUP BY eventGroupId';
     	$query.= ' ORDER BY -doo.order_number DESC, eg.name ASC ';
@@ -60,7 +62,9 @@ class SportsComps extends \Eloquent {
     	$result = \DB::select($query);
 
 
-    	return $result;
+       return array_filter($result, function($value) {
+           return \App::make('TopBetta\Services\Betting\SelectionService')->calculatePrice($value->win_odds, $value->override_odds, $value->override_type) > 1;
+       });
      }
 
 	public function getSportAndComps($date = NULL, $sid = NULL) {
@@ -76,7 +80,7 @@ class SportsComps extends \Eloquent {
 			$sportQuery = ($sid) ? ' AND s.id IN ('.$sid.') ' : '';
 
 			//get sports and competitions
-			$query = ' SELECT s.id AS sportID, s.name AS sportName, c.name AS name, c.created_date, c.id AS eventGroupId ';
+			$query = ' SELECT s.id AS sportID, s.name AS sportName, c.name AS name, c.created_date, c.id AS eventGroupId, sp.win_odds, sp.override_odds, sp.override_type ';
 			$query.= ' , c.start_date, c.close_time ';
 			$query.= ' FROM tbdb_tournament_sport AS s ';
 			$query.= ' INNER JOIN tbdb_event_group AS c ON c.sport_id = s.id ';
@@ -93,7 +97,7 @@ class SportsComps extends \Eloquent {
             $query .= " AND m.display_flag = '1' ";
             $query .= " AND sel.display_flag = '1' ";
 			$query .= " AND m.market_status NOT IN ('D', 'S') ";
-			$query .= " AND sp.win_odds > 1";
+			$query .= " AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))";
 			$query .= " AND sel.selection_status_id = '1'";
 			$query.= " GROUP BY sportId, eventGroupId";
 			$query.= ' ORDER BY sportName, name ASC ';
@@ -101,7 +105,9 @@ class SportsComps extends \Eloquent {
 			//dd($query);
 			$result = \DB::select($query);
 
-			return $result;
+        return array_filter($result, function($value) {
+            return \App::make('TopBetta\Services\Betting\SelectionService')->calculatePrice($value->win_odds, $value->override_odds, $value->override_type) > 1;
+        });
 	}
 
 	public function getCompWithSport($compId) {

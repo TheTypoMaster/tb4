@@ -81,9 +81,6 @@
                     <li>
                         <a href="{{ route('admin.selections.index') }}">Selections</a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.selectionprices.index') }}">Prices</a>
-                    </li>
                 </ul>
             </li>
 
