@@ -14,6 +14,8 @@ class BaseEloquentRepository {
 
     protected $model;
 
+    protected $order = null;
+
 	/**
 	 * Find the model given an ID
 	 * @param $id

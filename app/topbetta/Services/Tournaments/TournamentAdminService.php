@@ -55,6 +55,13 @@ class TournamentAdminService {
         $this->tournamentService = $tournamentService;
     }
 
+    /**
+     * Adds the usernames to the tournament
+     * @param $tournament
+     * @param array $usernames array of usernames
+     * @return array
+     * @throws TournamentEntryException
+     */
     public function addUsersToTournamentByUsername($tournament, $usernames)
     {
         $userIds = array();
@@ -77,6 +84,13 @@ class TournamentAdminService {
         return $result;
     }
 
+    /**
+     * Adds the users to the tournament
+     * @param $userIds
+     * @param $tournamentId
+     * @return array
+     * @throws TournamentEntryException
+     */
     public function addUsersToTournament($userIds, $tournamentId)
     {
         $tournament = $this->tournamentRepository->find($tournamentId);
@@ -109,6 +123,13 @@ class TournamentAdminService {
         return $result;
     }
 
+    /**
+     * Adds a user to the given tournament
+     * @param $tournament
+     * @param $user
+     * @return array
+     * @throws TournamentEntryException
+     */
     public function addUserToTournament($tournament, $user)
     {
         //check user doesn't have a ticket already
@@ -116,15 +137,18 @@ class TournamentAdminService {
             throw new TournamentEntryException("Tournament Ticket Already Exists");
         }
 
+        //create the promo transaction
         $transaction = $this->accountTransactionService->increaseAccountBalance($user->id, $tournament->buy_in + $tournament->entry_fee, AccountTransactionTypeRepositoryInterface::TYPE_PROMO, Auth::user()->id);
 
         if( ! $transaction ) {
             throw new TournamentEntryException("Error creating promo transaction");
         }
 
+        //add the user to the tournament
         try {
             $ticket = $this->tournamentService->enterUserInTournament($user, $tournament);
         } catch (TournamentBuyInException $e) {
+            //remove promo balance if there is a failure buying in
             $this->accountTransactionService->decreaseAccountBalance($user->id, $transaction['amount'], AccountTransactionTypeRepositoryInterface::TYPE_ADMIN, Auth::user()->id);
             throw new TournamentEntryException("Error creating buyin/entry transaction");
         }

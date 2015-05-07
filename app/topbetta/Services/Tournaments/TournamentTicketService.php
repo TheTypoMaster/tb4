@@ -25,6 +25,13 @@ class TournamentTicketService {
         $this->tournamentTicketRepository = $tournamentTicketRepository;
     }
 
+    /**
+     * Creates a tournament ticket for the user
+     * @param $tournament
+     * @param $user
+     * @return mixed
+     * @throws TournamentEntryException
+     */
     public function createTournamentTicketForUser($tournament, $user)
     {
         $ticket =  $this->tournamentTicketRepository->create(array(

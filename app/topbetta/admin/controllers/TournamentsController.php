@@ -11,6 +11,7 @@ use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCompetiitonRepository;
 use TopBetta\Repositories\DbTournamentRepository;
+use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Tournaments\TournamentAdminService;
 use TopBetta\Services\Tournaments\TournamentService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -256,6 +257,11 @@ class TournamentsController extends \BaseController
 		//
 	}
 
+    /**
+     * Form for adding user to tournament
+     * @param $tournamentId
+     * @return mixed
+     */
     public function addUsersForm($tournamentId)
     {
         $tournament = $this->tournamentRepo->find($tournamentId);
@@ -263,6 +269,11 @@ class TournamentsController extends \BaseController
         return View::make('admin::tournaments.add-users', compact('tournament'));
     }
 
+    /**
+     * Add users to tournament
+     * @param $tournamentId
+     * @return mixed
+     */
     public function addUsers($tournamentId)
     {
         $users = Input::get('users');
@@ -277,7 +288,12 @@ class TournamentsController extends \BaseController
             $users  = array_map('trim', $users);
 
             //enter the users
-            $result = $this->tournamentAdminService->addUsersToTournamentByUsername($tournamentId, $users);
+            try {
+                $result = $this->tournamentAdminService->addUsersToTournamentByUsername($tournamentId, $users);
+            } catch (TournamentEntryException $e) {
+                return Redirect::to('/admin/tournaments/add-users', array($tournamentId))
+                    ->with(array('flash_message' => $e->getMessage()));
+            }
         }
 
         $tournament = $this->tournamentRepo->find($tournamentId);

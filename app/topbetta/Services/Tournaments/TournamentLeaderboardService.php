@@ -31,6 +31,13 @@ class TournamentLeaderboardService {
         $this->buyInTypeRepository = $buyInTypeRepository;
     }
 
+    /**
+     * Creates a leaderboard record for the user
+     * @param $tournament
+     * @param $user
+     * @return mixed
+     * @throws TournamentEntryException
+     */
     public function createLeaderboardRecordForUser($tournament, $user)
     {
         $leaderboard = $this->leaderboardRepository->create(array(
