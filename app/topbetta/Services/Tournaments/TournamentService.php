@@ -11,6 +11,8 @@ namespace TopBetta\Services\Tournaments;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
 use TopBetta\Repositories\DbTournamentRepository;
 use Carbon\Carbon;
 
@@ -28,14 +30,26 @@ class TournamentService {
      * @var CompetitionRepositoryInterface
      */
     private $competitionRepository;
+    /**
+     * @var TournamentTicketBuyInHistoryRepositoryInterface
+     */
+    private $buyInHistoryRepository;
+    /**
+     * @var TournamentBuyInTypeRepositoryInterface
+     */
+    private $buyinTypeRepository;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
-                                CompetitionRepositoryInterface $competitionRepository)
+                                CompetitionRepositoryInterface $competitionRepository,
+                                TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
+                                TournamentBuyInTypeRepositoryInterface $buyinTypeRepository)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
         $this->competitionRepository = $competitionRepository;
+        $this->buyInHistoryRepository = $buyInHistoryRepository;
+        $this->buyinTypeRepository = $buyinTypeRepository;
     }
 
     public function createTournament($tournamentData)
