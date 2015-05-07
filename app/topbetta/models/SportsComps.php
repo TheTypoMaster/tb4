@@ -51,6 +51,8 @@ class SportsComps extends \Eloquent {
         $query.= $eventDateQuery;
     	$query .= " AND eg.display_flag = '1'";
         $query .= " AND ev.display_flag = '1' ";
+        $query .= " AND m.display_flag = '1' ";
+        $query .= " AND sel.display_flag = '1' ";
 	   	$query .= " AND m.market_status NOT IN ('D', 'S') ";
 	    $query .= " AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))";
 	    $query .= " AND sel.selection_status_id = '1'";
@@ -92,6 +94,8 @@ class SportsComps extends \Eloquent {
             $query.= $eventDateQuery;
 			$query .= " AND c.display_flag = '1' ";
             $query .= " AND ev.display_flag = '1' ";
+            $query .= " AND m.display_flag = '1' ";
+            $query .= " AND sel.display_flag = '1' ";
 			$query .= " AND m.market_status NOT IN ('D', 'S') ";
 			$query .= " AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))";
 			$query .= " AND sel.selection_status_id = '1'";

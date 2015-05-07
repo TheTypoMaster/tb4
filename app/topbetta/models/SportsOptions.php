@@ -16,6 +16,7 @@ class SportsOptions extends \Eloquent {
             ->where('m.event_id', '=', $eventId)
             ->where('m.id', '=', $typeId)
             ->where('s.selection_status_id', '=', '1')
+            ->where('s.display_flag', '=', '1')
             ->where('sp.win_odds', '>', '1')
             ->select('m.market_status AS market_status','s.order AS order', 's.image_url AS image_url', 's.name AS bet_selection', 'sp.win_odds AS win_odds', 's.bet_place_ref', 's.bet_type_ref', 's.external_selection_id', 's.id AS selection_id', 'sp.line as line', 'm.id as type_id', 'm.event_id as event_id', 'sp.override_odds as override_odds', 'sp.override_type as override_type')->get();
 
@@ -32,6 +33,7 @@ class SportsOptions extends \Eloquent {
             ->whereIn('m.event_id', $allEvents)
             ->where('mt.id', '=', $marketTypeId)
             ->where('s.selection_status_id', '=', '1')
+            ->where('s.display_flag', '=', '1')
             ->where('sp.win_odds', '>', '1')
             ->select('m.market_status AS market_status', 's.order AS order', 's.image_url AS image_url', 's.name AS bet_selection', 'sp.win_odds AS win_odds', 's.bet_place_ref', 's.bet_type_ref', 's.external_selection_id', 's.id AS selection_id', 'sp.line as line', 'm.id as type_id', 'm.event_id as event_id', 'sp.override_odds as override_odds', 'sp.override_type as override_type')->get();
 
