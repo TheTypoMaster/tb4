@@ -8,9 +8,11 @@
 
 use Carbon\Carbon;
 use TopBetta\Models\TournamentModel;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Validation\TournamentValidator;
 
-class DbTournamentRepository extends BaseEloquentRepository {
+class DbTournamentRepository extends BaseEloquentRepository implements TournamentRepositoryInterface
+{
 
     protected $model;
 

@@ -9,6 +9,8 @@
 namespace TopBetta\Services\Betting;
 
 
+use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionStatusRepositoryInterface;
 
@@ -25,11 +27,16 @@ class SelectionService {
      * @var SelectionStatusRepositoryInterface
      */
     private $selectionStatusRepository;
+    /**
+     * @var CompetitionRepositoryInterface
+     */
+    private $competitionRepository;
 
-    public function __construct(SelectionRepositoryInterface $selectionRepository, SelectionStatusRepositoryInterface $selectionStatusRepository)
+    public function __construct(SelectionRepositoryInterface $selectionRepository, SelectionStatusRepositoryInterface $selectionStatusRepository, CompetitionRepositoryInterface $competitionRepository)
     {
         $this->selectionRepository = $selectionRepository;
         $this->selectionStatusRepository = $selectionStatusRepository;
+        $this->competitionRepository = $competitionRepository;
     }
 
     /**
@@ -60,6 +67,20 @@ class SelectionService {
         return false;
     }
 
+    public function isSelectionRacing($selectionId)
+    {
+        $event = $this->competitionRepository->getCompetitionBySelection($selectionId);
+
+        return $event->sport_id == 0;
+    }
+
+    public function isSelectionSports($selectionId)
+    {
+        $event = $this->competitionRepository->getCompetitionBySelection($selectionId);
+
+        return $event->sport_id > 0;
+	}
+	
     public function calculatePrice($selectionPrice, $overrideOdds, $overrideType)
     {
         if ($overrideType == 'percentage') {

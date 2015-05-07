@@ -9,7 +9,7 @@
 use Eloquent;
 
 
-class TopbettaUserModel extends Eloquent {
+class TopBettaUserModel extends Eloquent {
 
     protected $table = 'tbdb_topbetta_user';
     protected $guarded = array();
