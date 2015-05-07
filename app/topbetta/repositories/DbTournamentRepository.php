@@ -36,11 +36,6 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
             ->paginate();
     }
 
-    public function findAllPaged()
-    {
-        return $this->model->paginate();
-    }
-
     public function tournamentOfTheDay($todVenue, $day = null)
     {
         if( ! $day ) {

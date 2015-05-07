@@ -109,7 +109,7 @@ class TournamentsController extends \BaseController
 		if ($search) {
 			$tournaments = $this->tournamentRepo->search($search);
 		} else {
-			$tournaments = $this->tournamentRepo->findAllPaged();
+			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
 
 		return View::make('admin::tournaments.index', compact('tournaments', 'search'));
@@ -274,7 +274,7 @@ class TournamentsController extends \BaseController
             $users = explode(PHP_EOL, $users);
 
             //get rid of whitespace
-            array_walk($users, 'trim');
+            $users  = array_map('trim', $users);
 
             //enter the users
             $result = $this->tournamentAdminService->addUsersToTournamentByUsername($tournamentId, $users);
