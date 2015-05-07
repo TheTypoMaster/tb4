@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
@@ -80,31 +81,61 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     public function competitionFeed($input){
 
 
-        $competitions = $this->model
-                                    ->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id')
-//                                    ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_group_id', '=', 'tbdb_event_group.id')
-//                                    ->join('tbdb_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
-//                                    ->join('tbdb_market', 'tbdb_market.event_id', '=', 'tbdb_event.id')
-//                                    ->join('tbdb_market_type', 'tbdb_market_type.id', '=', 'tbdb_market.market_type_id')
-//                                    ->join('tbdb_selection', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
-//                                    ->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
+        $query = $this->model->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id');
 
+        if(isset($input['sport'])){
+            $query = $query->where('tbdb_tournament_sport.name', $input['sport']);
+        }else{
+            $query = $query->where('tbdb_event_group.sport_id', '!=', 0);
+        }
 
-                                    ->where('tbdb_event_group.sport_id', '!=', 0)
-                                    ->where('tbdb_event_group.display_flag', 1)
-                                  //  ->where('tbdb_event_group.start_date', '>', $input['from'])
-                                  //  ->where('tbdb_event_group.start_date', '<', $input['to'])
-                                    ->where('tbdb_tournament_sport.status_flag', 1)
-
-                                   ->select(array('tbdb_event_group.id as competition_id',  'tbdb_tournament_sport.name as competition_sport', 'tbdb_event_group.name as competition_name', 'start_date as competition_start_date'))
-
-                                    ->get();
-
-      //  dd($input);
+        $competitions = $query->where('tbdb_event_group.display_flag', 1)
+                                ->where('tbdb_tournament_sport.status_flag', 1)
+                                ->select(array('tbdb_event_group.id as competition_id',  'tbdb_tournament_sport.name as competition_sport',
+                                    'tbdb_event_group.name as competition_name', 'start_date as competition_start_date'))
+                                ->get();
 
         if(!$competitions) return null;
 
         return $competitions->toArray();
-
     }
+
+    public function getFutureEventGroupsByTournamentCompetition($tournamentCompetitionId)
+    {
+        return $this->model
+            ->where('tournament_competition_id', $tournamentCompetitionId)
+            ->whereHas('events', function($q){
+                $q->where('start_date', '>=', Carbon::now()->toDateTimeString());
+            })
+            ->where('display_flag', 1)
+            ->get();
+    }
+
+    public function getFirstEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'ASC')
+            ->first();
+    }
+
+    public function getLastEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'DESC')
+            ->first();
+    }
+
+	public function getCompetitionBySelection($selectionId)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->join('tbdb_market', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_selection', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+            ->where('tbdb_selection.id', $selectionId)
+            ->firstOrFail();
+    }
+
 } 

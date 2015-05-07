@@ -21,23 +21,25 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     }
 
     public function getBetWithSelectionsByBetId($betId){
-        $details = $this->model->with(array('status', 'type', 'source', 'user', 'result',
-                                          //  'selection'
+        $details = $this->model->with(array('status', 'type', 'source', 'user', 'refund',
+                                            'betselection.selection.price',
+                                            'betselection.selection.result',
                                             'betselection.selection.market.event.competition.sport',
                                             'betselection.selection.market.markettype'
-//                                            'betselection.selection.prices',
-//                                            'betselection.selection.result'
                                             ))->where('id', $betId)->first();
 
-//        $details = $this->model->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
-//                                ->join('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_bet_selection.selection_id')
-//                                ->join('tbdb_market', 'tbdb_merket.id', '=', 'tbdb_selection.market_id')
-//                                ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
-//                                ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
-//                                ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-//                                ->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id')->get
-//
+        if(!$details) return null;
 
+        return $details->toArray();
+    }
+
+    public function getBetDetailsWhenResulted($betId){
+        $details = $this->model->with(array('status', 'type', 'source', 'result', 'refund',
+            'betselection.selection.price',
+            'betselection.selection.result',
+            'betselection.selection.market.event.competition.sport',
+            'betselection.selection.market.markettype'
+        ))->where('id', $betId)->first();
 
         if(!$details) return null;
 
@@ -58,5 +60,21 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         if(!$bets) return null;
 
         return $bets->toArray();
+    }
+
+    public function getBetWithSelectionsAndEventDetailsByBetId($betId){
+        $details = $this->model->with(array('type','user', 'user.topbettauser',
+            'betselection.selection',
+            'betselection.selection.price',
+            'betselection.selection.result',
+            'betselection.selection.market.event',
+            'betselection.selection.market.event.competition',
+            'betselection.selection.market.event.competition.sport',
+            'betselection.selection.market.markettype'
+        ))->where('id', $betId)->first();
+
+        if(!$details) return null;
+
+        return $details->toArray();
     }
 }

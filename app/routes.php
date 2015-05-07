@@ -76,6 +76,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
 	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
 	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
+
 });
 
 
@@ -218,6 +219,13 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
+
+    Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
+
+    Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
+    Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
+    Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
+    Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {
@@ -238,7 +246,6 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 
 	// Token request and login
 	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
-	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 	// Funds management/transfer
 	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
@@ -267,6 +274,9 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
 
 	// normal logout
 	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+	// token login
+	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 });
 

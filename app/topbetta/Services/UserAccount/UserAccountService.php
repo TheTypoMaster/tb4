@@ -55,6 +55,7 @@ class UserAccountService {
     /**
      * Create a FULL topbetta user
      * - adds records on both the users and topbetta users table
+     * - adds aro records
      * @param $input
      * @return array
      */
@@ -66,9 +67,12 @@ class UserAccountService {
         // get the user id of the new account
         $input['user_id'] = $basic['id'];
 
-        // unset fields not required for basic
-        unset($input['username'], $input['email'], $input['password']);
+        // unset fields not required for full account
+        unset($input['username'], $input['email'], $input['password'], $input['auto_activate']);
         if(isset($input['parent_user_id'])) unset($input['parent_user_id']);
+
+        // create aro records
+        $this->basicUser->createAroRecordsForJoomla(array('user_id' => $basic['id'], 'name' => $basic['name']));
 
         // create the full account record
         $full = $this->createFullAccount($input);
@@ -94,6 +98,7 @@ class UserAccountService {
         $basicData['name'] = $input['first_name'].' '.$input['last_name'];
         $basicData['usertype'] = 'Registered';
         $basicData['gid'] = '18';
+        $basicData['isTopBetta'] = '1';
         $basicData['registerDate'] = Carbon::now();
         $basicData['lastVisitDate'] = Carbon::now();
 
@@ -296,6 +301,36 @@ class UserAccountService {
 
     }
 
+    /**
+     * Adds the amount to the users balance to turn over
+     * @param $userId
+     * @param $amount
+     * @return bool
+     */
+    public function addBalanceToTurnOver($userId, $amount)
+    {
+        if( $amount ) {
+            return $this->fullUser->updateBalanceToTurnOver($userId, $amount);
+        }
+
+        return true;
+    }
+
+    public function decreaseBalanceToTurnOver($userId, $amount)
+    {
+        return $this->addBalanceToTurnOver($userId, -$amount);
+    }
+
+    public function getBalanceToTurnOver($userId)
+    {
+        $user = $this->fullUser->getUserDetailsFromUserId($userId);
+
+        if($user) {
+            return $user['balance_to_turnover'];
+        }
+
+        return 0;
+    }
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
     {
         $checkForName = $this->basicUser->getUserDetailsFromUsername($username);

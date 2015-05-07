@@ -141,6 +141,18 @@ Form::macro('selectYear', function ($name, $selected = null, $options = array())
 });
 
 /**
+ * Date time macro
+ */
+Form::macro('datetime', function($name, $value, $options = array()) {
+    $class = array_get($options, 'class');
+    return "<div class='input-group datepicker'>
+                    <input type='text' class='form-control $class' name='$name' id='$name' readonly value='$value'/>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
+                    </span>
+                </div>";
+});
+
+/**
  * This event is fired when a queued job fails.
  *
  * If we define a method on the job class called 'failed' it will be called at this time.

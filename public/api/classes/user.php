@@ -493,6 +493,11 @@ class Api_User extends JController {
 					$password	= urldecode(JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW));
                     $password2	= urldecode(JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW));
 					$mobile		= JRequest::getString('mobile', null, 'post');
+
+                    $phoneNumber = JRequest::getString('phone_number', null, 'post');
+                    $dob        = JRequest::getString('dob', null, 'post');
+                    $postcode   = JRequest::getString('postcode', null, 'post');
+
 					$source		= $token['source'];
 					$slug 		= JRequest::getString('slug', null, 'post');
 					$btag 		= JRequest::getString('btag', null, 'post');
@@ -614,6 +619,9 @@ class Api_User extends JController {
 					// get the userid
 					$user_id = $user->get('id');
 
+                    //date of birth array
+                    $dobArray = $dob ? explode("/", $dob) : array(0,0,0);
+
 					// Create User Extension table record for new user.
 					$params = array(
 						  'user_id'					=> $user_id,
@@ -624,6 +632,11 @@ class Api_User extends JController {
 						  'source'					=> $source,
 						  'btag'					=> $btag,
 						  'marketing_opt_in_flag'	=> $optbox ? 1 : 0,
+                          'phone_number'            => $phoneNumber,
+                          'postcode'                => $postcode,
+                          'dob_year'                => isset($dobArray[0]) ? $dobArray[0] : 0,
+                          'dob_month'               => isset($dobArray[1]) ? $dobArray[1] : 0,
+                          'dob_day'                 => isset($dobArray[2]) ? $dobArray[2] : 0,
 					);
 
 					if (!$model->store($params)) {
@@ -1791,7 +1804,9 @@ class Api_User extends JController {
 			$err['username'] = 'Please enter a username';
 		} else if (!preg_match('/^[a-zA-Z0-9]+$/i', $username)) {
 			$err['username'] = 'Username only accepts letters and numbers';
-		} else if ($usernameLength < 4) {
+		} else if (!preg_match('/^.*[a-zA-Z].*/i', $username)) {
+            $err['username'] = 'Username must contain at least one non numeric character';
+        } else if ($usernameLength < 4) {
 			$err['username'] = 'Username must contain at least 4 characters';
 		} else if ($usernameLength > 30) {
 			$err['username'] = 'Maximum length of username is 30';

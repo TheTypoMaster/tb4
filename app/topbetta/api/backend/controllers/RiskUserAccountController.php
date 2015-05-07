@@ -17,7 +17,8 @@ use TopBetta\Services\UserAccount\UserFreeCreditService;
 
 class RiskUserAccountController extends \BaseController {
 
-    const RECENT_DEPOSIT_HISTORY_COUNT = 3;
+    const RECENT_DEPOSIT_HISTORY_DAYS = 30;
+
     /**
      * @var AccountTransactionService
      */
@@ -72,9 +73,9 @@ class RiskUserAccountController extends \BaseController {
             $accountData['total_deposits'] = $this->accountTransactionService->getTotalDepositsForUser($id);
 
             //get the last 3 deposits for the user
-            $accountData['recent_deposits'] = $this->accountTransactionService->getLastNDepositsForUser(
+            $accountData['recent_deposits'] = $this->accountTransactionService->getRecentDepositsForUser(
                 $id,
-                self::RECENT_DEPOSIT_HISTORY_COUNT
+                self::RECENT_DEPOSIT_HISTORY_DAYS
             )->toArray();
 
             //get the total withdrawals

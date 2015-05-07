@@ -13,7 +13,7 @@ class FrontUsersTournamentsController extends \BaseController {
 	private $userTicketsRepository;
 
 	public function __construct(TopBetta\Repositories\UserTicketsRepository $userTicketsRepository) {
-//		$this -> beforeFilter('auth');
+		$this -> beforeFilter('auth');
 		$this->userTicketsRepository = $userTicketsRepository;
 	}
 

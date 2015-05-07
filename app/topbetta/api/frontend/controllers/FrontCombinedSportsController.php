@@ -133,7 +133,7 @@ class FrontCombinedSportsController extends \BaseController {
         // Did they pass in a market type id? 
         // - this means they want all options for all events for this market type
         if ($marketTypeId = \Input::get('market_type_id')) {
-        	$optionsController = new FrontSportsOptionsController();
+        	$optionsController = App::make('TopBetta\frontend\FrontSportsOptionsController');
         	$options = $optionsController->getAllOptionsForMarketTypeId($allEvents, $marketTypeId);
 
         	$typeId = $marketTypeId;

@@ -27,7 +27,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
             ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
             ->join('tbdb_event_status', 'tbdb_event_status.id', '=', 'tbdb_event.event_status_id')
             ->select('tbdb_event.*', 'tbdb_event_group.name as competition_name', 'tbdb_event_status.name as event_status_name')
-            ->orderBy('start_date', 'DESC')
+            ->orderBy('tbdb_event.start_date', 'DESC')
             ->where('tbdb_event.name', 'LIKE', "%$search%")
             ->orWhere('tbdb_event_group.name', 'LIKE', "%$search%")
             ->paginate();
@@ -42,7 +42,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
             ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
             ->join('tbdb_event_status', 'tbdb_event_status.id', '=', 'tbdb_event.event_status_id')
             ->select('tbdb_event.*', 'tbdb_event_group.name as competition_name', 'tbdb_event_status.name as event_status_name')
-            ->orderBy('start_date', 'DESC')
+            ->orderBy('tbdb_event.start_date', 'DESC')
             ->paginate();
     }
 
@@ -87,13 +87,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $eventDetails;
     }
 
-    public function getEventsforCompetitionId($id, $from, $to){
-        $events = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
-                                ->where('tbdb_event_group_event.event_group_id', $id)
-                                ->where('tbdb_event.start_date', '>', $from)
-                                ->where('tbdb_event.start_date', '<', $to)
-                                ->select(array('id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
-                                ->get();
+    public function getEventsforCompetitionId($id, $from = null, $to = null){
+        $query = $this->model->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+                                ->where('tbdb_event_group_event.event_group_id', $id);
+
+        if($from) $query = $query->where('tbdb_event.start_date', '>', $from);
+        if($to) $query = $query->where('tbdb_event.start_date', '<', $to);
+
+        $events = $query->select(array('id as event_id', 'tbdb_event.name as event_name', 'tbdb_event.start_date as event_start_time'))
+                        ->get();
 
         if(!$events) return null;
 
