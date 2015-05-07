@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\Models\TopbettaUserModel;
+use TopBetta\Models\TopBettaUserModel;
 use TopBetta\Services\Validation\UserFullValidator;
 
 use TopBetta\Repositories\Contracts\UserTopbettaRepositoryInterface;

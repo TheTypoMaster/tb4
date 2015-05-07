@@ -215,6 +215,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
+    Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
+
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
