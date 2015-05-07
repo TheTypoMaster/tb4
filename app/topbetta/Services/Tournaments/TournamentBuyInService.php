@@ -147,6 +147,11 @@ class TournamentBuyInService
         $rebuys = $this->getTotalRebuysForTicket($ticketId);
         $topups = $this->getTotalTopupsForTicket($ticketId);
 
+        //check account balance
+        if($ticket->user->accountBalance() < $tournament->rebuy_buyin + $tournament->rebuy_entry) {
+            throw new TournamentBuyInException("Insufficient Funds");
+        }
+
         //check we haven't exceeded max rebuys        
         if($tournament->rebuys <= $rebuys) {
             throw new TournamentBuyInException("Cannot buyin more than : " . $tournament->rebuys . " times.");
@@ -197,6 +202,11 @@ class TournamentBuyInService
         $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($ticket->user->id, $tournament->id);
         $rebuys = $this->getTotalRebuysForTicket($ticketId);
         $topups = $this->getTotalTopupsForTicket($ticketId);
+
+        //check account balance
+        if($ticket->user->accountBalance() < $tournament->topup_buyin + $tournament->topup_entry) {
+            throw new TournamentBuyInException("Insufficient Funds");
+        }
 
         //check we haven't exceed max topups
         if( $tournament->topups <= $topups ) {
