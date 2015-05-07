@@ -107,6 +107,7 @@ class FrontBetsController extends BaseController {
 
 			if ($activeBet -> fixed_odds > 0) {
 				$dividend = $activeBet -> fixed_odds;
+                $odds = $activeBet -> fixed_odds;
 			}
 
 			// temp add line to selection name
@@ -608,7 +609,13 @@ class FrontBetsController extends BaseController {
 								$errors++;
 
 								return false;
-							}								
+							}
+
+                            if( $this->selectionService->oddsChanged(key($input['bets']), $input['dividend'])) {
+                                $messages[] = array("id" => key($input['bets']), "error_code" => "SB01", "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
+                                $errors++;
+                                return false;
+                            }
 							
 							$bet = $l -> query('saveSportBet', $betData);
 
@@ -634,6 +641,12 @@ class FrontBetsController extends BaseController {
 						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
 
 						if (count($legacyData) > 0) {
+
+                            if( $this->selectionService->oddsChanged(key($input['bets']), $input['dividend'])) {
+                                $messages[] = array("id" => key($input['bets']), "error_code" => "SB01", "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
+                                $errors++;
+                                return false;
+                            }
 
 							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'bet_source_id' => $input['bet_source_id']);
 							$bet = $l -> query('saveTournamentSportsBet', $betData);
