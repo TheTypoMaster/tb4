@@ -121,7 +121,8 @@ class AccountBalance extends \Eloquent {
 				$where[] = ' tt.keyword IN ("tournamentdollars", "tournamentwin", "entry", "buyin")';
 				break;
 		}
-		
+
+        $where[] = "t.amount != '0'";
 		$where[] = 't.recipient_id = "' . $userId . '"';
 		$where[] = '(tourn.parent_tournament_id IS NULL OR tourn.parent_tournament_id = -1)';
 		$where[] = '(br.bet_result_status_id NOT IN (6,7) OR br.bet_result_status_id IS NULL)';
