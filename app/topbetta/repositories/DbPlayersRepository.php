@@ -72,4 +72,11 @@ class DbPlayersRepository extends BaseEloquentRepository implements PlayersRepos
             ->get();
     }
 
+    public function findByExternalId($externalId)
+    {
+        return $this->model
+            ->where('external_player_id', $externalId)
+            ->first();
+    }
+
 }

@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Repositories\DbSelectionPricesRepository;
+use TopBetta\Services\Events\CompetitorService;
 
 class SelectionListProcessor extends AbstractFeedProcessor {
 
@@ -33,16 +34,22 @@ class SelectionListProcessor extends AbstractFeedProcessor {
      * @var DbSelectionPricesRepository
      */
     private $selectionPricesRepository;
+    /**
+     * @var CompetitorService
+     */
+    private $competitorService;
 
     public function __construct(MarketRepositoryInterface $marketRepository,
                                 SelectionRepositoryInterface $selectionRepository,
                                 EventRepositoryInterface $eventRepository,
-                                DbSelectionPricesRepository $selectionPricesRepository)
+                                DbSelectionPricesRepository $selectionPricesRepository,
+                                CompetitorService $competitorService)
     {
         $this->marketRepository = $marketRepository;
         $this->selectionRepository = $selectionRepository;
         $this->eventRepository = $eventRepository;
         $this->selectionPricesRepository = $selectionPricesRepository;
+        $this->competitorService = $competitorService;
     }
 
     public function process($data)
@@ -109,10 +116,17 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
         //check if selection already exists
         if ($selection = $this->selectionRepository->getByExternalIds($data['SelectionNo'], $data['MarketId'], $data['GameId']) ) {
-            return $this->selectionRepository->updateWithId($selection['id'], $selectionData);
+            $this->selectionRepository->updateWithId($selection['id'], $selectionData);
+        } else {
+            //create it otherwise
+            $selection = $this->selectionRepository->create($selectionData);
         }
 
-        return $this->selectionRepository->create($selectionData);
+        if( $competitorId = array_get($data, 'CompetitorId', null) ) {
+            $this->competitorService->addCompetitorToSelection($selection['id'], $competitorId);
+        }
+
+        return $selection;
     }
 
     private function processSelectionPrice($selection, $data)
