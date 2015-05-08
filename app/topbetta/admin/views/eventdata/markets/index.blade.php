@@ -59,7 +59,7 @@
         		@endforeach
         	</tbody>
         </table>
-        {{ $markets->appends(array('q' => $search))->links() }}
+        {{ $markets->appends(array('q' => $search, 'event' => $event))->links() }}
         @else
         <p>There are no markets to display</p>
         @endif
