@@ -34,6 +34,7 @@ class RiskManagerAPI
 
         $response = json_decode($responseJSON);
 
+
         if (!$response) {
             return false;
         }

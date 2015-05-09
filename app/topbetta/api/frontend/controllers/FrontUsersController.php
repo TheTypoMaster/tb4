@@ -2,6 +2,7 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
 use View;
@@ -10,12 +11,17 @@ use Redirect;
 
 class FrontUsersController extends \BaseController {
 
-	public function __construct() {
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $userDashboardNotificationService;
 
+    public function __construct(UserDashboardNotificationService $userDashboardNotificationService) {
 		//we are only protecting certain routes in this controller
 		$this -> beforeFilter('auth', array('only' => array('index')));
 
-	}
+        $this->userDashboardNotificationService = $userDashboardNotificationService;
+    }
 
 	public function login() {
 
@@ -41,20 +47,22 @@ class FrontUsersController extends \BaseController {
 
 				if (\Auth::check()) {
 
-					if (!$login['userInfo']['full_account']) {
+					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id) -> first();
 
+					if (!$login['userInfo']['full_account']) {
 						$parts = explode(" ", \Auth::user()->name);
 						$lastname = array_pop($parts);
 						$firstname = implode(" ", $parts);
-
-					} else {
+					} else if ( $tbUser ) {
+						//redundant but don't want to break anything
+						$lastname = $tbUser->last_name;
+						$firstname = $tbUser->first_name;
+					} else  {
 
 						$lastname = $login['userInfo']['last_name'];
 						$firstname = $login['userInfo']['first_name'];
 
 					}
-
-					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id) -> first();
 
 					$mobile = NULL;
 					$verified = false;
@@ -248,7 +256,7 @@ class FrontUsersController extends \BaseController {
 
 		//\Log::debug(json_encode($input) .". ".$yourbrowser);
 		
-		$rules = array('first_name' => 'required|alpha_num|min:3', 'last_name' => 'required|alpha_num|min:3', 'source' => 'required|alpha_dash', 'type' => 'required|in:basic,upgrade,full');
+		$rules = array('username' => 'regex:(.*[a-zA-Z].*)', 'first_name' => 'required|alpha_num|min:3', 'last_name' => 'required|alpha_num|min:3', 'source' => 'required|alpha_dash', 'type' => 'required|in:basic,upgrade,full');
 
 		//shared between upgrade & full accounts
 		$extRules = array('title' => 'required|in:Mr,Mrs,Ms,Miss,Dr,Prof', 
@@ -262,7 +270,7 @@ class FrontUsersController extends \BaseController {
 			'state' => 'required|max:50', 
 			'country' => 'required|alpha|max:3', 
 			'promo_code' => 'alpha_dash|max:100', 
-			'heard_about' => 'alpha_dash|max:200', 
+			'heard_about' => 'alpha_dash|max:200',
 			'heard_about_info' => 'alpha_dash|max:200');
 
 		if (isset($input['type']) && $input['type'] == 'basic') {
@@ -284,7 +292,7 @@ class FrontUsersController extends \BaseController {
 
 		if (isset($input['type']) && $input['type'] == 'full') {
 
-			$extRules['username'] = 'unique:tbdb_users';
+			$extRules['username'] = 'unique:tbdb_users|regex:(.*[a-zA-Z].*)';
 			// terms wraps up privacy/terms & marketing as 1 options now
 			$rules['terms'] = 'accepted';	
 			$input['optbox'] = 1;
@@ -310,6 +318,13 @@ class FrontUsersController extends \BaseController {
 
 			} elseif ($input['type'] == 'upgrade') {
 
+				// check if user account is upgraded already
+				$alreadyUpgraded = Auth::user()->isTopBetta;
+
+				if($alreadyUpgraded){
+					return array("success" => false, "result" => 'Your account is already upgraded!');
+				}
+
 				$user = $l -> query('doUserUpgradeTopBetta', $input);
 
 			} elseif ($input['type'] == 'full') {
@@ -319,6 +334,8 @@ class FrontUsersController extends \BaseController {
 			}
 
 			if ($user['status'] == 200) {
+
+                $this->userDashboardNotificationService->notify(array('id' => array_get($user, 'id', null)));
 
 				if ($input['type'] != 'upgrade') {
 

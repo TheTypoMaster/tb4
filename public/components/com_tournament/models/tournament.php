@@ -156,6 +156,18 @@ class TournamentModelTournament extends SuperModel
 			'name' 		=> 'Entries Close Date',
 			'type' 		=> self::TYPE_DATETIME
 		),
+        'bet_limit_per_event' => array(
+            'name' 		=> 'Bet Limit Per Event',
+            'type' 		=> self::TYPE_INTEGER
+        ),
+        'rebuy_currency' => array(
+            'name'      => 'Rebuy Currency',
+            'type'      => self::TYPE_INTEGER,
+        ),
+        'topup_currency' => array(
+            'name'      => 'Topup Currency',
+            'type'      => self::TYPE_INTEGER,
+        ),
 	);
 
 	/**
@@ -702,6 +714,7 @@ class TournamentModelTournament extends SuperModel
 				t.created_date,
 				t.updated_date,
 				t.private_flag,
+				t.bet_limit_per_event,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,
@@ -842,6 +855,7 @@ class TournamentModelTournament extends SuperModel
 				t.created_date,
 				t.updated_date,
 				t.private_flag,
+				t.bet_limit_per_event,
 				s.name AS sport_name,
 				s.description AS sport_description,
 				eg.id AS event_group_id,

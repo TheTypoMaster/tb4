@@ -54,4 +54,19 @@ class BetModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'result_transaction_id');
     }
 
+    public function betTransaction()
+    {
+        return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'bet_transaction_id');
+    }
+
+    public function refundTransaction()
+	{
+        return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'refund_transaction_id');
+    }
+    
+    public function refund()
+    {
+        return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'refund_transaction_id');
+    }
+
 }

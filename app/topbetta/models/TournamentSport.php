@@ -17,4 +17,9 @@ class TournamentSport extends \Eloquent
                         ->get();
     }
 
+    public function competitions()
+    {
+        return $this->hasMany('TopBetta\TournamentCompetition', 'tournament_sport_id');
+    }
+
 }

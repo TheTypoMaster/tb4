@@ -141,6 +141,18 @@ Form::macro('selectYear', function ($name, $selected = null, $options = array())
 });
 
 /**
+ * Date time macro
+ */
+Form::macro('datetime', function($name, $value, $options = array()) {
+    $class = array_get($options, 'class');
+    return "<div class='input-group datepicker'>
+                    <input type='text' class='form-control $class' name='$name' id='$name' readonly value='$value'/>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
+                    </span>
+                </div>";
+});
+
+/**
  * This event is fired when a queued job fails.
  *
  * If we define a method on the job class called 'failed' it will be called at this time.
@@ -156,4 +168,33 @@ Queue::failing(function($connection, $job, $data)
 			$appClass->failed($data['data']);
 		}
 	}
+
+
+});
+
+Response::macro('xml', function($vars, $status = 200, array $header = array(), $rootElement = 'response', $xml = null)
+{
+
+    if (is_object($vars) && $vars instanceof Illuminate\Support\Contracts\ArrayableInterface) {
+        $vars = $vars->toArray();
+    }
+
+    if (is_null($xml)) {
+        $xml = new TopBetta\Helpers\LibSimpleXMLElement('<' . $rootElement . '/>');
+    }
+    foreach ($vars as $key => $value) {
+        if (is_array($value)) {
+            if (is_numeric($key)) {
+                Response::xml($value, $status, $header, $rootElement, $xml->addChild(str_singular($xml->getName())));
+            } else {
+                Response::xml($value, $status, $header, $rootElement, $xml->addChild($key));
+            }
+        } else {
+            $xml->addChild($key, $value);
+        }
+    }
+    if (empty($header)) {
+        $header['Content-Type'] = 'application/xml';
+    }
+    return Response::make($xml->asXML(), $status, $header);
 });

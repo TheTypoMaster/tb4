@@ -78,8 +78,84 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbAccountTransactionTypeRepository'
         );
         $this->app->bind(
+            'TopBetta\Repositories\Contracts\PoliTransactionRepositoryInterface',
+            'TopBetta\Repositories\DbPoliTransactionRepository'
+        );
+        $this->app->bind(
             'TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface',
             'TopBetta\Repositories\DbMarketTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\MarketRepositoryInterface',
+            'TopBetta\Repositories\DbMarketsRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SelectionStatusRepositoryInterface',
+            'TopBetta\Repositories\DbSelectionStatusRepository'
+		);
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface',
+            'TopBetta\Repositories\DbFreeCreditTransactionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',
+            'TopBetta\Repositories\DbProcessParamsRepository'
+		);
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\EventModelRepositoryInterface',
+            'TopBetta\Repositories\DbEventModelRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\WithdrawalRequestRepositoryInterface',
+            'TopBetta\Repositories\DbWithdrawalRequestRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\PromotionRepositoryInterface',
+            'TopBetta\Repositories\DbPromotionRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SportRepositoryInterface',
+            'TopBetta\Repositories\DbSportsRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface',
+            'TopBetta\Repositories\DbFreeCreditTransactionTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ConfigurationRepositoryInterface',
+            'TopBetta\Repositories\DbConfigurationRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentBuyInRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TODRepositoryInterface',
+            'TopBetta\Repositories\DbTODRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentLabelsRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentPrizeFormatRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentTicketBuyInHistoryRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentBuyInTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentTicketRepository'
         );
     }
 } 

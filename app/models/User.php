@@ -38,6 +38,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function freeCreditTransactions() {
 		return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
 	}
+
+    public function accountBalance()
+    {
+        return $this->accountTransactions()->sum('amount');
+    }
+
+    public function depositLimit()
+    {
+        return $this->hasOne('TopBetta\Models\UserDepositLimitModel', 'user_id');
+    }
 	
 	/**
 	 * A User can have many tickets for tournaments
@@ -91,5 +101,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     {
         return 'remember_token';
     }
+
+	// --- Accessors for urlencoded ' in user's names ---
+	public function getNameAttribute($value) {
+		return str_replace("\\", "", urldecode($value));
+	}
 
 }

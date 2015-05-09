@@ -2,13 +2,38 @@
 namespace TopBetta\frontend;
 
 use TopBetta;
+use Mail;
+use Auth;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\UserAccount\UserAccountService;
+use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
+use TopBetta\Services\Accounting\AccountTransactionService;
 
 class FrontUsersDepositController extends \BaseController {
 
-	public function __construct() {
+	private $depositTypeMapping = array(
+		"tokencreditcard" => "Eway",
+	);
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+
+    /**
+     * @var UserDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+    /**
+     * @var AccountTransactionService
+     */
+    private $accountTransactionService;
+
+    public function __construct(UserAccountService $userAccountService, UserDashboardNotificationService $dashboardNotificationService, AccountTransactionService $accountTransactionService) {
 		$this -> beforeFilter('auth');
-	}
+        $this->userAccountService = $userAccountService;
+        $this->dashboardNotificationService = $dashboardNotificationService;
+        $this->accountTransactionService = $accountTransactionService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -47,8 +72,9 @@ class FrontUsersDepositController extends \BaseController {
 				break;
 			
 			case 'query_eway_customer':
+
 				$ccTokenDetailsArray = array();
-			
+
 				// grab all the managedCustomerId's for the users stored CC's out of the database
 				$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
 			
@@ -159,16 +185,66 @@ class FrontUsersDepositController extends \BaseController {
 				if (!$action) {
 					return array("success" => false, "error" => \Lang::get('banking.missing_action'));
 				}
+
+                $user = Auth::user();
+                if($user->depositLimit && $user->depositLimit->amount*100 < \Input::json('amount') + $this->accountTransactionService->getTotalDailyDepositsForUser($user->id)) {
+                    return array("success" => false, "error" => "Deposit exceeds daily deposit limit");
+                }
 				
-				return $this->ewayTokenCreditCard($action);
+				$result = $this->ewayTokenCreditCard($action);
+
 				break;
 
 			default :
 				return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
 				break;
 		}
+
+		//Send email to help@topbetta.com if a promo code is present
+		if($result['success'] && $promoCode = \Input::json("promo_code", false)) {
+			try {
+
+				$this->sendPromoCodeEmail($promoCode, \Input::json("amount"), $type);
+
+				//success so update result
+				$result['result'] .= \Lang::get("banking.promo_code_deposit");
+
+			} catch (\Exception $e) {
+				//error sending email
+				\Log::error("Error sending promo code information with message " . $e->getMessage() . ", User " . \Auth::user()->id . " Promo code " . $promoCode . " Deposit Amount " . \Input::json("amount"));
+
+				$result['result'] .= \Lang::get("banking.promo_code_deposit_error");
+			}
+		}
+
+		return $result;
 	}
 
+	/**
+	 * Send promo code email
+	 * @param $promoCode
+	 * @param $amount
+	 * @param $method
+	 */
+	public function sendPromoCodeEmail($promoCode, $amount, $method)
+	{
+		$user = \Auth::user();
+
+		Mail::send(
+			'emails.promo_code',
+			array(
+				"user"          => $user,
+				"amount"        => $amount,
+				"paymentMethod" => $this->depositTypeMapping[$method],
+				"promoCode"     => $promoCode
+			),
+			function($message) use ($user) {
+				$message
+					->to(\Config::get('mail.promo_code_to.address'), \Config::get('mail.promo_code_to.name'))
+					->subject("Promo Code for User " . $user->id);
+			}
+		);
+	}
 	/**
 	 * Credit card deposit via legacy api
 	 *
@@ -250,8 +326,31 @@ class FrontUsersDepositController extends \BaseController {
 				// Validate the data required to make a new customer and initial deposit is correct
 				$rules = array('CCNumber' => 'required|max:20', 'CCName' => 'max:50',
 							'CCExpiryMonth' => 'required|size:2', 'CCExpiryYear' => 'required|size:2', 'amount' => 'required|Integer|Min:1000' );
+
+				$validationMessages = array(
+					"CCNumber"      => array(
+						"required" => "The card number is required",
+						"max"      => "Card number cannot be more than 20 characters",
+					),
+					"CCName"        => array(
+						"required" => "The card name is required",
+						"max"      => "Card name cannot be more than 50 characters",
+					),
+					"CCExpiryMonth" => array(
+						"required" => "The card expiry month is required",
+						"size"     => "Card expiry month must be 2 characters"
+					),
+					"CCExpiryYear"  => array(
+						"required" => "The card expiry year is required",
+						"size"     => "Card expiry year must be 2 characters"
+					),
+					"Amount"        => array(
+						"required" => "Amount is required",
+						"min"      => "The deposit amount must be at least $10"
+					)
+				);
 				
-				$validator = \Validator::make($input, $rules);
+				$validator = \Validator::make($input, $rules, $validationMessages);
 				if ($validator -> fails()) {				
 					return array("success" => false, "error" => $validator -> messages() -> all());
 				} else {
@@ -288,7 +387,9 @@ class FrontUsersDepositController extends \BaseController {
 							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 							if($updateAccountBalance){
-								return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
+                                $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
+                                $this->dashboardNotificationService->notify(array("id" => \Auth::user()->id, "transactions" => array($updateAccountBalance)));
+                                return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 							}else{
 								//TODO: If updating of account balance fails then let someone know!?!?
 								return array("success" => false, "result" => \Lang::get('banking.cc_payment_accbal_update_failed'));
@@ -335,9 +436,11 @@ class FrontUsersDepositController extends \BaseController {
 					
 						// Update users account balance
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
-							
+
 						if($updateAccountBalance){
-							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
+                            $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
+                            $this->dashboardNotificationService->notify(array("id" => \Auth::user()->id, "transactions" => array($updateAccountBalance)));
+                            return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
 							return array("success" => false, "error" => \Lang::get('banking.cc_payment_accbal_update_failed'));
@@ -371,8 +474,10 @@ class FrontUsersDepositController extends \BaseController {
 							
 						// Update users account balance
 						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
-							
+
 						if($updateAccountBalance){
+                            $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
+                            $this->dashboardNotificationService->notify(array("id" => \Auth::user()->id, "transactions" => array($updateAccountBalance)));
 							return array("success" => true, "result" => \Lang::get('banking.cc_payment_success'));
 						}else{
 							//TODO: If updating of account balance fails then let someone know!?!?
@@ -436,10 +541,10 @@ class FrontUsersDepositController extends \BaseController {
 			\Log::info('EWAY SOAP RESPONSE:'.$soapClient->__getLastResponse());
 		} catch (\SoapFault $fault) {
 			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
-			return array("success" => false, "error" => $fault->faultcode." À ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." ï¿½ ".$fault->faultstring);
 		} catch(\Exception $fault){
 			\Log::error('EWAY SOAP ERROR - Code:'. $fault->faultcode. ', Message:'.$fault->faultstring);
-			return array("success" => false, "error" => $fault->faultcode." À ".$fault->faultstring);
+			return array("success" => false, "error" => $fault->faultcode." ï¿½ ".$fault->faultstring);
 		}
 	
 		// return response from soap request
@@ -483,8 +588,37 @@ class FrontUsersDepositController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id) {
-		//
+	public function destroy($id, $managedCustomerId) {
+
+		$type = Input::get("type", null);
+
+		//make sure a deposit type is specified
+		if ( ! $type ) {
+
+			return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
+
+		}
+
+		//check we are deleting credit cards
+		if($type == "query_eway_customer") {
+
+			//check the specified credit card token exists
+			if (TopBetta\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $managedCustomerId)) {
+				//delete the token
+				$paymentToken = TopBetta\PaymentEwayTokens::where("cc_token", "=", $managedCustomerId)->first();
+				//dd($paymentToken->cc_token);
+				$paymentToken->delete();
+
+				return array('success' => true, 'result' => array());
+			} else {
+				return array('success' => false, 'error' => "Token not found");
+			}
+
+		} else {
+
+			return array("success" => false, "error" => \Lang::get('banking.invalid_type'));
+		}
+
 	}
 
 }

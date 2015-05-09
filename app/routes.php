@@ -14,6 +14,8 @@
 // apc_clear_cache("user");
 
 
+
+
 Route::get('/', function() {
 
 	return \Redirect::to('https://www.topbetta.com.au');
@@ -66,6 +68,15 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
+	//Risk endpoint to get user account details
+	Route::resource('risk-user-account', 'RiskUserAccount', array('only' => array('show')));
+
+	Route::put('risk-show-event/{event}', "RiskEvents@showEvent");
+	Route::put('risk-hide-event/{event}', "RiskEvents@hideEvent");
+
+	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
+	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
+
 });
 
 
@@ -77,6 +88,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	// 2 custom routes for users auth
 	Route::post('users/login', 'FrontUsers@login');
 	Route::get('users/logout', 'FrontUsers@logout');
+
 
 	// custom route for refer a friend
 	Route::resource('users/refer', 'FrontUsersRefer');
@@ -90,6 +102,7 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::resource('users.betting', 'FrontUsersBetting');
 	Route::resource('users.betting-limit', 'FrontUsersBettingLimit');
 	Route::resource('users.tournaments', 'FrontUsersTournaments');
+	Route::resource('users.poli-deposit', 'FrontUsersPoliDeposit');
 
 	// Password Resets
 	// The actual reset password method
@@ -152,11 +165,23 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('/tournaments/tickets/next-to-jump', 'FrontTournamentsTickets@nextToJump');
 	Route::resource('tournaments.tickets', 'FrontTournamentsTickets');
 
+    //tournament rebuys and topups
+    Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
+    Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
+
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
 	Route::get('combined/racingNew', 'FrontCombinedRacing@indexNew');
 	Route::get('combined/sports', 'FrontCombinedSports@index');
+
+    // Temporary feed routes for sports - another branch has a better implimentation
+    Route::get('feed/sports.{ext}', 'TopBetta\Controllers\FeedController@index');
+    //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
+   // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+
+
+
 });
 
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
@@ -193,6 +218,23 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
+
+    Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
+
+	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
+
+	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
+	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
+
+    Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
+
+    //custom tournament routes
+    Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
+    Route::post('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsers');
+    Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
+    Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
+    Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
+    Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {
@@ -213,7 +255,6 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 
 	// Token request and login
 	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
-	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 	// Funds management/transfer
 	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
@@ -221,6 +262,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 	// Full user account registration routes
 	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
 	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
+
+	//create basic user
+	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
+
+	//activation routes
+	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
+
+	Route::get('registration/resend-welcome-email/{userId}', 'TopBetta\Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
 
 });
 
@@ -232,6 +281,9 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
 
 	// normal logout
 	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+	// token login
+	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 });
 

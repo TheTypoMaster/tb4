@@ -3,12 +3,35 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Tournaments\TournamentBuyInService;
+use TopBetta\Services\UserAccount\UserAccountService;
+use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
+use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
 class FrontTournamentsTicketsController extends \BaseController {
 
-	public function __construct() {
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+    /**
+     * @var TournamentDashboardNotificationService
+     */
+    private $tournamentDashboardNotificationService;
+    /**
+     * @var TournamentService
+     */
+    private $tournamentService;
+
+    public function __construct(UserAccountService $userAccountService,
+                                TournamentDashboardNotificationService $tournamentDashboardNotificationService,
+                                TournamentBuyInService $tournamentService)
+    {
 		$this -> beforeFilter('auth');
-	}
+        $this->userAccountService = $userAccountService;
+		$this->tournamentDashboardNotificationService = $tournamentDashboardNotificationService;
+        $this->tournamentService = $tournamentService;
+    }
 
 	public function nextToJump() {
 
@@ -141,8 +164,26 @@ class FrontTournamentsTicketsController extends \BaseController {
 				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
 				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
 				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false,
-				'unregister_allowed' => $unregisterAllowed)
-			);
+				'unregister_allowed' => $unregisterAllowed,
+
+                //rebuy info
+                'rebuys' => $tournament->rebuys,
+                'rebuy_currency' => $tournament->rebuy_currency,
+                'rebuy_entry' => $tournament->rebuy_entry,
+                'rebuy_buyin' => $tournament->rebuy_buyin,
+                'rebuy_end' => $tournament->rebuy_end,
+                'ticket_rebuys' => $this->tournamentService->getTotalRebuysForTicket($myTicketID[0]->id),
+
+                //topup info
+                'tournament_topups' => $tournament->topups,
+                'topup_currency' => $tournament->topup_currency,
+                'topup_entry' => $tournament->topup_entry,
+                'topup_buyin' => $tournament->topup_buyin,
+                'topup_end_date' => $tournament->topup_end_date,
+                'topup_start_date' => $tournament->topup_start_date,
+                'ticket_topups' => $this->tournamentService->getTotalTopupsForTicket($myTicketID[0]->id),
+
+			));
 
 		}
 
@@ -171,7 +212,24 @@ class FrontTournamentsTicketsController extends \BaseController {
 			$unregisterAllowed = $ticketModel->unregisterAllowed($activeTicket -> tournament_id, $activeTicket -> id);
 			$unregisterAllowed = $unregisterAllowed->allowed;
 
-			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => $unregisterAllowed);
+			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => $unregisterAllowed,
+                //rebuy info
+                 'rebuys' => $tournament->rebuys,
+                 'rebuy_currency' => $tournament->rebuy_currency,
+                 'rebuy_entry' => $tournament->rebuy_entry,
+                 'rebuy_buyin' => $tournament->rebuy_buyin,
+                 'rebuy_end' => $tournament->rebuy_end,
+                 'ticket_rebuys' => $this->tournamentService->getTotalRebuysForTicket($activeTicket->id),
+
+                //topup info
+                 'topups' => $tournament->topups,
+                 'topup_currency' => $tournament->topup_currency,
+                 'topup_entry' => $tournament->topup_entry,
+                 'topup_buyin' => $tournament->topup_buyin,
+                 'topup_end_date' => $tournament->topup_end_date,
+                 'topup_start_date' => $tournament->topup_start_date,
+                 'ticket_topups' => $this->tournamentService->getTotalTopupsForTicket($activeTicket->id),
+            );
 
 		}
 
@@ -210,7 +268,24 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
-			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => false);
+			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => false,
+                //rebuy info
+                 'rebuys' => $tournament->rebuys,
+                 'rebuy_currency' => $tournament->rebuy_currency,
+                 'rebuy_entry' => $tournament->rebuy_entry,
+                 'rebuy_buyin' => $tournament->rebuy_buyin,
+                 'rebuy_end' => $tournament->rebuy_end,
+                 'ticket_rebuys' => $this->tournamentService->getTotalRebuysForTicket($recentTicket->id),
+
+                //topup info
+                 'topups' => $tournament->topups,
+                 'topup_currency' => $tournament->topup_currency,
+                 'topup_entry' => $tournament->topup_entry,
+                 'topup_buyin' => $tournament->topup_buyin,
+                 'topup_end_date' => $tournament->topup_end_date,
+                 'topup_start_date' => $tournament->topup_start_date,
+                 'ticket_topups' => $this->tournamentService->getTotalTopupsForTicket($recentTicket->id),
+            );
 
 		}
 
@@ -259,7 +334,20 @@ class FrontTournamentsTicketsController extends \BaseController {
 				$ticket = $l -> query('saveTournamentTicket', $tournDetailsArray);
 	
 				if ($ticket['status'] == 200) {
-	
+                    //get the tournament
+                    $tournament = \TopBetta\Tournament::find($tournamentId);
+
+                    //decrease turnover balance
+                    $this->userAccountService->decreaseBalanceToTurnOver(
+                        \Auth::user()->id,
+                        $tournament->buy_in + $tournament->entry_fee
+                    );
+
+                    //store buyin history record
+                    $this->tournamentService->createTournamentEntryHistoryRecord($ticket['ticket_id'], $ticket['transactions']['buyin_transaction'], $ticket['transactions']['entry_transaction']);
+
+                    $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
+
 					$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
 	
 				} elseif ($ticket['status'] == 401) {
@@ -362,5 +450,31 @@ class FrontTournamentsTicketsController extends \BaseController {
 			}			
 		}
 	}
+
+    public function rebuy($ticketId)
+    {
+        try{
+            $this->tournamentService->rebuyIntoTournament($ticketId);
+        } catch (TournamentBuyInException $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        } catch (\Exception $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        }
+
+        return array('success' => 'true', 'result' => 'Rebuy successful');
+    }
+
+    public function topup($ticketId)
+    {
+        try{
+            $this->tournamentService->topupTournament($ticketId);
+        } catch (TournamentBuyInException $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        } catch (\Exception $e) {
+            return array('success' => false, 'error' => $e->getMessage());
+        }
+
+        return array('success' => 'true', 'result' => 'Topup successful');
+    }
 
 }

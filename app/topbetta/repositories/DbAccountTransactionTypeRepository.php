@@ -11,6 +11,8 @@ use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 
 class DbAccountTransactionTypeRepository extends BaseEloquentRepository implements AccountTransactionTypeRepositoryInterface{
 
+
+
     protected $model;
 
     public function __construct(AccountTransactionTypeModel $model)

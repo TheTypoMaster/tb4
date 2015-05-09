@@ -25,7 +25,8 @@ class RaceMeeting extends Eloquent {
 		return RaceMeeting::where('external_event_group_id', '=', $meetingId)
 		->whereIn('type_code', $racingCodes)->get()->toArray();
 	}
-	
+
+
 	/**
 	 * Check if a meeting exists.
 	 *
@@ -45,14 +46,22 @@ class RaceMeeting extends Eloquent {
 		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
 		return ($type_code == 'NULL' ? false : true);
 	}
+
+	static public function isInternational($meetingId) {
+		$countryCode = RaceMeeting::where('id', '=', $meetingId)->pluck('country');
+		return $countryCode !== 'AU' && $countryCode !== 'NZ';
+	}
+
 	
-	static public function getRacesForMeetingId($meetingId) {
+	static public function getRacesForMeetingId($meetingId, $displayOnly = true) {
 		$races = RaceMeeting::find($meetingId) -> raceevents;
 
 		$result = array();
 
 		foreach ($races as $race) {
-				
+
+			if($displayOnly && $race->display_flag == 0) continue;
+
 			$resultsModel = new \TopBetta\RaceResult; 	
 			$results = $resultsModel -> getResultsForRaceId($race -> id);	
 			
@@ -73,7 +82,7 @@ class RaceMeeting extends Eloquent {
 				
 			}			
 
-			$result[] = array('id' => $race -> id, 'external_race_id' => $race->external_event_id.'_'.$race -> number, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
+			$result[] = array('id' => $race -> id, 'display' => $race->display_flag, 'external_race_id' => $race->external_event_id, 'race_number' => $race -> number, 'to_go' => $toGo, 'name' => $race -> name, 'distance' => $race -> distance, 'class' => $race->class, 'start_datetime' => $startDatetime, 'updated_at' => $updatedAt, 'results' => $results, 'status' => $race -> status);
 
 		}	
 		
