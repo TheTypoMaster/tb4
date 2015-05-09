@@ -42,4 +42,11 @@ class DbTeamRepository extends BaseEloquentRepository implements TeamRepositoryI
 
         return null;
     }
+
+    public function findByExternalId($externalId)
+    {
+        return $this->model
+            ->where('external_team_id', $externalId)
+            ->first();
+    }
 }

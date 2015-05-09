@@ -16,4 +16,9 @@ class PlayerModel extends Eloquent {
     {
         return $this->belongsToMany('TopBetta\Models\TeamModel', 'tb_player_tb_team', 'tb_player_id', 'tb_team_id');
     }
+
+    public function selections()
+    {
+        return $this->morphToMany('TopBetta\Models\SelectionModel', 'competitor', 'tb_selection_competitor', 'competitor_id', 'selection_id');
+    }
 }

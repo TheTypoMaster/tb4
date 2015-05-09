@@ -59,17 +59,16 @@ class TeamProcessor extends AbstractFeedProcessor {
 
     public function processTeamPlayers($playerData, $teamId)
     {
-        foreach($playerData as $players)
-        {
-            $playerIds = $this->playerProcessor->processArray(array_get($players, 'Player', array()));
 
-            //add the players to the team
-            if($teamId) {
-                //filter out 0's
-                $ids = array_filter($playerIds, function ($value) { return $value > 0; });
+        $playerIds = $this->playerProcessor->processArray($playerData);
 
-                $this->teamRepository->addPlayers($teamId, $ids);
-            }
+        //add the players to the team
+        if($teamId) {
+            //filter out 0's
+            $ids = array_filter($playerIds, function ($value) { return $value > 0; });
+
+            $this->teamRepository->addPlayers($teamId, $ids);
         }
     }
+
 }
