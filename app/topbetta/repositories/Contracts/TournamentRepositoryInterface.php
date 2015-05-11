@@ -7,6 +7,14 @@
  * Project: tb4
  */
  
-interface TournamentRepositoryInterface {
+interface TournamentRepositoryInterface
+{
+    public function updateTournamentByEventGroupId($eventGroupId, $closeDate);
+
+    public function search($search);
+
+    public function tournamentOfTheDay($todVenue, $day = null);
+
+    public function findCurrentTournamentsByType($type, $excludedTournaments = null);
 
 }

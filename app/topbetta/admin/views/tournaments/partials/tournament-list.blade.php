@@ -17,6 +17,7 @@
 			<th>Entry-fee</th>
 			<th>Ent.</th>
 			<th>Status</th>
+            <th>Action</th>
 		</tr>
 	</thead>
 
@@ -38,6 +39,11 @@
 			<td>{{ ($tournament->entry_fee == '0') ? 'free' : '$' . number_format($tournament->entry_fee / 100, 2) }}</td>
 			<td>{{ TopBetta\TournamentTicket::countTournamentEntrants($tournament->id) }}</td>
 			<td>{{ ($tournament->status_flag) ? 'Active' : 'Inactive' }}</td>
+            <td>
+                @if($tournament->end_date > Carbon\Carbon::now())
+                    {{ link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) }}
+                @endif
+            </td>
 		</tr>
 
 		@endforeach

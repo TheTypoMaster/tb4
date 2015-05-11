@@ -167,6 +167,10 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('/tournaments/tickets/next-to-jump', 'FrontTournamentsTickets@nextToJump');
 	Route::resource('tournaments.tickets', 'FrontTournamentsTickets');
 
+    //tournament rebuys and topups
+    Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
+    Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
+
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
@@ -217,12 +221,22 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
+    Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
+
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 
     Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
+
+    //custom tournament routes
+    Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
+    Route::post('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsers');
+    Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
+    Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
+    Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
+    Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

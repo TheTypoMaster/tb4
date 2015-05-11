@@ -80,7 +80,21 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
         $bet = $this->betRepository->getBetWithSelectionsAndEventDetailsByBetId($data['id']);
 
-        $payload = array(
+		switch ($bet['bet_origin_id']){
+			case "1":
+				$betType = 'tournament';
+				break;
+			case '2':
+				$betType = 'racing';
+				break;
+			case '3':
+				$betType = 'sports';
+				break;
+			default:
+				$betType = '';
+		}
+
+		$payload = array(
             "bet_amount"           => array_get($bet, 'bet_amount', 0),
             "bet_bonus_amount"     => array_get($bet, "bet_freebet_amount", 0),
             "bet_username"         => array_get($bet, 'user.username', null),
@@ -88,6 +102,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             "bet_bonus_bet"        => (bool)array_get($bet, 'bet_freebet_flag', false),
             "bet_selection_string" => array_get($bet, "selection_string", null),
             "bet_type_name"        => array_get($bet, 'type.name', null),
+			"bet_type"			   => $betType,
             "external_id"          => array_get($bet, 'id', 0),
             //clunky way to get bet dividend. Should be changed
             "bet_dividend"         => bcdiv($this->betRepo->getBetPayoutAmount(\TopBetta\Bet::find($data['id'])), array_get($bet, 'percentage', 0) != 0 ? array_get($bet, 'percentage', 0)  : array_get($bet, 'bet_amount', 1), 2),
@@ -115,12 +130,12 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
 
         if (array_get($data, 'transactions', null)) {
-            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['transactions']));
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatBetTransactions($bet, $data['transactions']));
         }
 
         //free credit transactions
         if (array_get($data, 'free-credit-transactions', null) ) {
-            $payload['transactions'] = array_merge($payload['transactions'], $this->formatTransactions($data['free-credit-transactions'], true));
+            $payload['transactions'] = array_merge($payload['transactions'], $this->formatBetTransactions($bet, $data['free-credit-transactions'], true));
         }
 
         //format bet selections
@@ -130,6 +145,24 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         }
 
         \Log::info("BET PAYLOAD " . print_r($payload, true));
+        return $payload;
+    }
+
+    public function formatBetTransactions($bet, $transactionIds, $freeCredit = false)
+    {
+        $payload = array();
+
+        foreach($transactionIds as $transaction) {
+            $transactionModel = $freeCredit ? $this->getFreeCreditTransaction($transaction) : $this->getTransaction($transaction);
+
+            $betSuffix = '';
+            if(array_get($transactionModel, 'transaction_type.keyword', null) == 'betentry' || array_get($transactionModel, 'transaction_type.keyword', null) == 'freebetentry') {
+                $betSuffix = array_get($bet, 'betselection', false) ? array_get($bet, 'betselection.0.selection.market.event.competition.0.type_code', false)  ? "racing" : "sports" : "";
+            }
+
+            $payload[] = $this->formatTransaction($transactionModel, $freeCredit, $betSuffix);
+        }
+
         return $payload;
     }
 

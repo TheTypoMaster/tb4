@@ -20,6 +20,11 @@ abstract class DashboardNotificationQueueService {
         //get the payload and parameters
         $payload = $this->formatPayload($data['payload']);
 
+        if( empty($payload) ) {
+            Log::error("Dashboard Notification Error: Empty payload");
+            return false;
+        }
+
         $parameters = $this->getParameters();
 
         //create the request

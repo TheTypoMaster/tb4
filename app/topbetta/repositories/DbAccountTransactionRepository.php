@@ -22,6 +22,21 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
         $this->model = $model;
     }
 
+    public function findAllWithTypePaged($page, $count, $startDate = null, $endDate = null)
+    {
+        $model = $this->model->orderBy('created_date', 'DESC')->with('transactionType');
+
+        if($startDate) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if($endDate) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->forPage($page, $count)->get();
+    }
+
     public function findWithType($transactionId)
     {
         return $this->model->with(array('transactionType', 'giver', 'giver.topbettauser'))->where('id', $transactionId)->first()->toArray();
@@ -72,14 +87,23 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
      * @param $types
      * @return mixed
      */
-    public function getTotalOnlyPositiveTransactionsForUserByTypeIn($userId, $types)
+    public function getTotalOnlyPositiveTransactionsForUserByTypeIn($userId, $types, $startDate = null, $endDate = null)
     {
-        return $this
+        $model = $this
             ->model
             ->where('recipient_id', '=', $userId)
             ->where('amount', '>', 0)
-            ->whereIn('account_transaction_type_id', $types)
-            ->sum('amount');
+            ->whereIn('account_transaction_type_id', $types);
+
+        if( $startDate ) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if( $endDate ) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->sum('amount');
     }
 
 

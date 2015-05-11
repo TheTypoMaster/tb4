@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
@@ -105,7 +106,6 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competitions->toArray();
     }
 
-
 	public function getMeetingFromExternalId($meetingId) {
 		$meeting = $this->model->where('external_event_group_id', $meetingId)
 						->first();
@@ -121,4 +121,43 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
 		return $meeting->toArray();
 	}
+
+    public function getFutureEventGroupsByTournamentCompetition($tournamentCompetitionId)
+    {
+        return $this->model
+            ->where('tournament_competition_id', $tournamentCompetitionId)
+            ->whereHas('events', function($q){
+                $q->where('start_date', '>=', Carbon::now()->toDateTimeString());
+            })
+            ->where('display_flag', 1)
+            ->get();
+    }
+
+    public function getFirstEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'ASC')
+            ->first();
+    }
+
+    public function getLastEventForCompetition($competitionId)
+    {
+        return $this->model->find($competitionId)
+            ->events()
+            ->orderBy('start_date', 'DESC')
+            ->first();
+    }
+
+	public function getCompetitionBySelection($selectionId)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->join('tbdb_market', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_selection', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+            ->where('tbdb_selection.id', $selectionId)
+            ->firstOrFail();
+    }
+
 } 

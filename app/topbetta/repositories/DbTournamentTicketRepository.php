@@ -7,8 +7,10 @@
  */
 
 use TopBetta\Models\TournamentTicketModel;
+use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 
-class DbTournamentTicketRepository extends BaseEloquentRepository {
+class DbTournamentTicketRepository extends BaseEloquentRepository implements TournamentTicketRepositoryInterface
+{
 
     protected $model;
 
@@ -30,6 +32,16 @@ class DbTournamentTicketRepository extends BaseEloquentRepository {
             ->where('id', $ticketId)
             ->with(array('user', 'user.topbettauser', 'tournament'))
             ->first()->toArray();
+    }
+
+    public function getTicketByUserAndTournament($userId, $tournamentId)
+    {
+        return $this
+            ->model
+            ->where('user_id', $userId)
+            ->where('tournament_id', $tournamentId)
+            ->with('tournament')
+            ->first();
     }
 
 } 
