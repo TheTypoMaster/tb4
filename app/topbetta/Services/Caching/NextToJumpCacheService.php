@@ -19,6 +19,8 @@ class NextToJumpCacheService {
      */
     public function __construct(DbNextToJumpRepository $nexttojump){
         $this->nexttojump = $nexttojump;
+		$this->logprefix = 'NextToJumpCacheService: ';
+
     }
 
     /**
@@ -36,16 +38,16 @@ class NextToJumpCacheService {
      */
     private function _newRace($raceUpdate, $raceExisting){
 
-        Log::debug('NextToJump: Procesing New Race');
+        Log::debug($this->logprefix.'Procesing New Race');
         // check if the status of this race is selling
-        if(!$raceUpdate->event_status_id == 1) return false;
+        if(!$raceUpdate['event_status_id'] == 1) return false;
 
         // get the current next to jump object
         $nextToJumpCacheObject = $this->getNextToJumpCacheObject();
 
         // if no next to jump cache object
         if(!$nextToJumpCacheObject || count($nextToJumpCacheObject) < 10){
-            Log::debug('NextToJump: Procesing New Race: No cache oject found');
+            Log::debug($this->logprefix.' Procesing New Race: No cache oject found');
             // run query to get the latest next to jump
             $nextToJumpArray = $this->nexttojump->getNextToJump(10);
 
@@ -65,11 +67,11 @@ class NextToJumpCacheService {
         $lastRaceUnix = strtotime($lastRaceArray['start_date']);
 
         // current update timestamp
-        $currentRaceUnix = strtotime($raceUpdate->start_date);
+        $currentRaceUnix = strtotime($raceUpdate['start_date']);
 
         // if it's between the current races then we need to update the cache object
         if(!$currentRaceUnix >=  $firstRaceUnix && !$currentRaceUnix <= $lastRaceUnix){
-            Log::debug('NextToJump: Procesing New Race: Race start time not in nextToJump');
+            Log::debug($this->logprefix.' Procesing New Race: Race start time not in nextToJump');
             return false;
         }
 
@@ -84,15 +86,13 @@ class NextToJumpCacheService {
      */
     private function _oldRace($raceUpdate, $raceExisting){
 
-        Log::debug('NextToJump: Procesing Old Race');
-        Log::debug('NextToJump: Procesing Old Race: Update status - '.$raceUpdate->event_status_id.', start time - '.$raceUpdate->start_date.', Existing Status - '.$raceExisting['EventStatusId']);
-
+        Log::debug($this->logprefix.' Procesing Existing Race');
 
         // if race is selling and start time hase not been updated then we don't update the cache
-        if($raceUpdate->event_status_id == 1 && $raceUpdate->start_date == $raceExisting['StartDate']) return false;
+        if($raceUpdate['event_status_id'] == 1 && $raceUpdate['start_date'] == $raceExisting['start_date']) return false;
 
         // if race status is not changing from selling to closed we don't update the cache
-        if($raceUpdate->event_status_id == 5 && $raceExisting['EventStatusId'] == 1) {
+        if($raceUpdate['event_status_id'] == 5 && $raceExisting['event_status_id'] == 1) {
             // add the current DB to cache object
             return $this->_addDatabaseNextToJumpToCache();
         }
@@ -107,7 +107,7 @@ class NextToJumpCacheService {
      * @return mixed
      */
     private function _updateNextToJumpCacheObject($nextToJumpArray){
-        Log::debug('NextToJump: Adding cache object - '.print_r($nextToJumpArray,true));
+        Log::debug($this->logprefix.'Adding cache object - '.print_r($nextToJumpArray,true));
         return Cache::tags('topbetta-nexttojump')->forever('topbetta-nexttojump', $nextToJumpArray);
     }
 
@@ -115,7 +115,7 @@ class NextToJumpCacheService {
      * @return mixed
      */
     public function getNextToJumpCacheObject(){
-        Log::debug('NextToJump: Getting cache object');
+        Log::debug($this->logprefix.' Getting cache object');
         $nextToJump = Cache::tags('topbetta-nexttojump')->get('topbetta-nexttojump');
     }
 
@@ -127,7 +127,7 @@ class NextToJumpCacheService {
      * @return bool|mixed
      */
     private function _addDatabaseNextToJumpToCache(){
-        Log::debug('NextToJump: Add database data to cache');
+        Log::debug($this->logprefix.' Add database data to cache');
         // run query to get the latest next to jump
         $nextToJumpArray = $this->nexttojump->getNextToJump(10);
 

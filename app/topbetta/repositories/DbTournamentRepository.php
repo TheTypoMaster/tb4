@@ -26,6 +26,19 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
                     ->update(array('betting_closed_date' => $closeDate, 'end_date' => $closeDate));
     }
 
+
+	public function getTournamentWithEventGroup($eventGroupId){
+		$tournaments = $this->model->where('event_group_id', $eventGroupId)->get();
+		if(!$tournaments) return null;
+		return $tournaments->toArray();
+	}
+
+	public function getTournamentById($tournamentId) {
+		$tournament = $this->model->where('id', $tournamentId)->get();
+		if(!$tournament) return null;
+		return $tournament->toArray();
+	}
+
     public function search($search)
     {
         return $this->model
