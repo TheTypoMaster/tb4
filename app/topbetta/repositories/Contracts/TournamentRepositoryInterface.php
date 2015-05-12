@@ -1,21 +1,20 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Thomas Muir
- * Date: 28/04/2015
- * Time: 2:06 PM
- */
-namespace TopBetta\Repositories\Contracts;
+<?php namespace TopBetta\Repositories\Contracts; 
 
+/**
+ * Coded by Oliver Shanahan
+ * File creation date: 3/04/15
+ * File creation time: 22:41
+ * Project: tb4
+ */
+ 
 interface TournamentRepositoryInterface
 {
     public function updateTournamentByEventGroupId($eventGroupId, $closeDate);
 
     public function search($search);
 
-    public function findAllPaginated();
-
     public function tournamentOfTheDay($todVenue, $day = null);
 
     public function findCurrentTournamentsByType($type, $excludedTournaments = null);
+
 }

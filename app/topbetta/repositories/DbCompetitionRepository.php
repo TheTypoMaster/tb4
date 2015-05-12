@@ -17,6 +17,13 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     function __construct(CompetitionModel $competitions) {
         $this->model = $competitions;
     }
+	/*
+		 * Relationships
+		 */
+	public function events()
+	{
+		return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
+	}
 
     /**
      * @param $search
@@ -80,7 +87,6 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
     public function competitionFeed($input){
 
-
         $query = $this->model->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id');
 
         if(isset($input['sport'])){
@@ -99,6 +105,22 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
         return $competitions->toArray();
     }
+
+	public function getMeetingFromExternalId($meetingId) {
+		$meeting = $this->model->where('external_event_group_id', $meetingId)
+						->first();
+		if(!$meeting) return null;
+
+		return $meeting->toArray();
+	}
+
+	public function getMeetingFromCode($meetingCode) {
+		$meeting = $this->model->where('meeting_code', '=', $meetingCode)
+					->first();
+		if(!$meeting) return null;
+
+		return $meeting->toArray();
+	}
 
     public function getFutureEventGroupsByTournamentCompetition($tournamentCompetitionId)
     {

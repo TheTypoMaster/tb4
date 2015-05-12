@@ -8,9 +8,9 @@
 
 
 use TopBetta\Models\SelectionPricesModel;
+use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
 
-class DbSelectionPricesRepository extends BaseEloquentRepository
-{
+class DbSelectionPricesRepository extends BaseEloquentRepository implements SelectionPriceRepositoryInterface {
 
     protected $selectionprices;
 

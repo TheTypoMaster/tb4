@@ -201,6 +201,23 @@ class TournamentBuyInService
         return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->topup_currency);
     }
 
+    /**
+     * @param \TopBetta\Models\TournamentModel $tournament
+     * @param \TopBetta\Models\UserModel $user
+     * @return array
+     * @throws TournamentBuyInException
+     */
+    public function buyin($tournament, $user)
+    {
+        if( $tournament->buy_in + $tournament->entry_fee > $user->accountBalance() ) {
+            throw new TournamentBuyInException("Insufficient Funds");
+        }
+
+        $transactions = $this->tournamentTransactionService->createTournamentBuyInTransactions($user->id, $tournament->buy_in, $tournament->entry_fee);
+
+        return $transactions;
+    }
+
     private function getTotalToTurnOverForTournament($tournament, $rebuys = 0, $topups = 0 )
     {
         return $tournament['start_currency'] + $tournament['rebuy_currency'] * $rebuys + $tournament['topup_currency'] * $topups;

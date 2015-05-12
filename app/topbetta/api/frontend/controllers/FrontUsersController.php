@@ -335,7 +335,7 @@ class FrontUsersController extends \BaseController {
 
 			if ($user['status'] == 200) {
 
-                $this->userDashboardNotificationService->notify($user);
+                $this->userDashboardNotificationService->notify(array('id' => array_get($user, 'id', null)));
 
 				if ($input['type'] != 'upgrade') {
 

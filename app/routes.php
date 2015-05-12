@@ -56,6 +56,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('betresults', 'BackBets');
     //incoming race result data
     Route::resource('raceresults', 'RaceResulting');
+	//incoming race data
+	Route::resource('racedata', 'RacingData');
 	// special case where Risk Manager can push race results to TopBetta
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
@@ -228,6 +230,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
 
+    //custom tournament routes
+    Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
+    Route::post('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsers');
     Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
     Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
     Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
