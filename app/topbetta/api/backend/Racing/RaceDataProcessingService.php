@@ -158,14 +158,9 @@ class RaceDataProcessingService {
 				continue;
 			}
 
-			// international races are not displayed by default
+			// international races are now displayed by default
 			if (isset($meeting['Country'])) {
 				$meetingDetails['country'] = $meeting['Country'];
-				if ($meeting['Country'] == 'INT') {
-					if ($existingMeeting) {
-						if($existingMeeting['display_flag'] != 1) $meetingDetails['display_flag'] = 0;
-					}
-				}
 			}
 
 			if (isset($meeting['EventCount'])) $meetingDetails['events'] = $meeting['EventCount'];
