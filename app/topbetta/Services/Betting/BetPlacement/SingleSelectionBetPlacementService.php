@@ -12,23 +12,28 @@ namespace TopBetta\Services\Betting\BetPlacement;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
+use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 
 abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
     {
-        parent::__construct($betSelectionService, $betRepository, $betTypeRepository);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository);
     }
 
-    public function placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
+    protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
         $bets = array();
 
         foreach($selections as $selection) {
-            $bets[] = $this->_placeBet($user, $amount, $type, $origin, $selection, $freeCreditFlag);
+            $bets[] = parent::_placeBet($user, $amount, $type, $origin, $selection, $freeCreditFlag);
         }
 
         return $bets;
     }
 
+    public function getTotalAmountForBet($amount, $selections)
+    {
+        return $amount * count($selections);
+    }
 }

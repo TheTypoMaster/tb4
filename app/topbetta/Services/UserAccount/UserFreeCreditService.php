@@ -10,6 +10,7 @@ namespace TopBetta\Services\UserAccount;
 
 
 use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use Log;
 
@@ -26,13 +27,19 @@ class UserFreeCreditService {
      * @var FreeCreditTransactionRepository
      */
     private $freeCreditTransactionRepository;
+    /**
+     * @var FreeCreditTransactionTypeRepositoryInterface
+     */
+    private $freeCreditTransactionTypeRepository;
 
 
     public function __construct(UserRepositoryInterface $userRepository,
-                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository)
+                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository,
+                                FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository)
     {
         $this->userRepository = $userRepository;
         $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
+        $this->freeCreditTransactionTypeRepository = $freeCreditTransactionTypeRepository;
     }
 
     public function getFreeCreditBalanceForUser($userId)
@@ -71,7 +78,7 @@ class UserFreeCreditService {
 
     }
 
-    public function increaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes)
+    public function increaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes = null)
     {
         return $this->freeCreditTransactionRepository->createTransaction($userId, $giverId, $amount, $transactionType, $notes);
     }

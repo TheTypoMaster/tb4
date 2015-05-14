@@ -9,6 +9,7 @@
 namespace TopBetta\Repositories;
 
 
+use TopBetta\Models\BetSelectionModel;
 use TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface;
 
 class DbBetSelectionRepository extends BaseEloquentRepository implements BetSelectionRepositoryInterface

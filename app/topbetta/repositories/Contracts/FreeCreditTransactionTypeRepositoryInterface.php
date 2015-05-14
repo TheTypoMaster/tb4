@@ -27,4 +27,6 @@ interface FreeCreditTransactionTypeRepositoryInterface
     const TRANSACTION_TYPE_TOPUP_ENTRY     = 'topupentry';
 
     public function getIdByName($name);
+
+    public function getByName($name);
 }

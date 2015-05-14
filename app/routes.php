@@ -115,6 +115,8 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	// ::: BETS :::
 	Route::resource('bets', 'FrontBets');
 
+    Route::resource('bet-placement', 'TopBetta\Frontend\BetPlacementController');
+
 	// ::: RACING :::
 	//Racing Meetings
 	Route::resource('racing/meetings', 'FrontMeetings');

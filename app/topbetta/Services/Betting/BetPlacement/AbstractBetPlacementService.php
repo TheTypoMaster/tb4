@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
+use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 
 abstract class AbstractBetPlacementService {
 
@@ -24,14 +25,21 @@ abstract class AbstractBetPlacementService {
      * @var BetTypeRepositoryInterface
      */
     protected $betTypeRepository;
-
+    /**
+     * @var AbstractBetSelectionService
+     */
     protected $betSelectionService;
+    /**
+     * @var BetTransactionService
+     */
+    private $betTransactionService;
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
     {
         $this->betRepository = $betRepository;
         $this->betTypeRepository = $betTypeRepository;
         $this->betSelectionService = $betSelectionService;
+        $this->betTransactionService = $betTransactionService;
     }
 
     /**
@@ -58,12 +66,29 @@ abstract class AbstractBetPlacementService {
         return false;
     }
 
+    public function placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
+    {
+        if( ! $this->checkSufficientFunds($user, $this->getTotalAmountForBet($amount, $selections), $freeCreditFlag) ) {
+            throw new \Exception;
+        }
 
+        $selectionModels = $this->betSelectionService->getAndValidateSelections($selections);
+
+        if ( ! $this->betSelectionService->checkBetLimit($user, $amount, $this->betTypeRepository->getBetTypeByName($type)->id, $selectionModels) ) {
+            throw new \Exception;
+        }
+
+        return $this->_placeBet($user, $amount, $type, $origin, $selectionModels, $freeCreditFlag);
+    }
 
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
         //create transaction
         $transactions = $this->betTransactionService->createBetPlacementTransaction($user, $amount, $freeCreditFlag);
+
+        if(empty($transactions)) {
+            throw new \Exception;
+        }
 
         $bet = $this->createBet($user, $transactions, $type, $origin);
 
@@ -76,7 +101,7 @@ abstract class AbstractBetPlacementService {
     {
         $data = array(
             'user_id' => $user->id,
-            'bet_amount' => array_get($transactions, 'account.amount', 0) + array_get($transactions, 'free_credit.amount', 0),
+            'bet_amount' => abs(array_get($transactions, 'account.amount', 0)) + abs(array_get($transactions, 'free_credit.amount', 0)),
             'bet_type_id' => $this->betTypeRepository->getBetTypeByName($type)->id,
             'bet_result_status_id' => 1,
 
@@ -89,7 +114,7 @@ abstract class AbstractBetPlacementService {
             'created_date' => Carbon::now(),
             'updated_date' => Carbon::now(),
             'bet_freebet_flag' => isset($transactions['free_credit']),
-            'bet_freebet_amount' => array_get($transactions, 'free_credit.amount', 0),
+            'bet_freebet_amount' => abs(array_get($transactions, 'free_credit.amount', 0)),
 
             //bet source?
         );
@@ -101,6 +126,6 @@ abstract class AbstractBetPlacementService {
         return $bet;
     }
 
-    abstract public function placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false);
+    abstract public function getTotalAmountForBet($amount, $selections);
 
 }

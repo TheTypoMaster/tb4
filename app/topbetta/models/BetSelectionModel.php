@@ -13,6 +13,7 @@ class BetSelectionModel extends Eloquent {
 
     protected $table = 'tbdb_bet_selection';
     protected $guarded = array();
+    public $timestamps = false;
 
     public function selection() {
         return $this->belongsTo('TopBetta\Models\SelectionModel', 'selection_id', 'id');

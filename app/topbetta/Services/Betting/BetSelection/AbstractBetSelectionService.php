@@ -8,9 +8,8 @@
 
 namespace TopBetta\Services\Betting\BetSelection;
 
-
+use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface;
-use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Betting\MarketService;
@@ -21,26 +20,31 @@ abstract class AbstractBetSelectionService {
     /**
      * @var SelectionService
      */
-    private $selectionService;
+    protected $selectionService;
     /**
      * @var MarketService
      */
-    private $marketService;
+    protected $marketService;
     /**
      * @var EventService
      */
-    private $eventService;
+    protected $eventService;
     /**
      * @var BetSelectionRepositoryInterface
      */
-    private $betSelectionRepository;
+    protected $betSelectionRepository;
+    /**
+     * @var BetLimitRepo
+     */
+    protected $betLimitRepo;
 
-    public function __construct(SelectionService $selectionService, MarketService $marketService, EventService $eventService, BetSelectionRepositoryInterface $betSelectionRepository)
+    public function __construct(SelectionService $selectionService, MarketService $marketService, EventService $eventService, BetSelectionRepositoryInterface $betSelectionRepository, BetLimitRepo $betLimitRepo)
     {
         $this->selectionService = $selectionService;
         $this->marketService = $marketService;
         $this->eventService = $eventService;
         $this->betSelectionRepository = $betSelectionRepository;
+        $this->betLimitRepo = $betLimitRepo;
     }
 
     public function createSelections($bet, $selections)
@@ -50,7 +54,7 @@ abstract class AbstractBetSelectionService {
         }
 
         $betSelections = array();
-        foreach($selections as $selection) {
+        foreach ($selections as $selection) {
             $betSelections[] = $this->createSelection($bet, $selection);
         }
 
@@ -79,10 +83,13 @@ abstract class AbstractBetSelectionService {
             throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
         }
 
+        //TODO: DIFFERENT MESSAGE
         if( ! $this->eventService->isSelectionEventAvailableForBetting($selection) ) {
             throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
         }
     }
 
-    abstract public function validateSelections($user, $amount, $selections);
+    abstract public function getAndValidateSelections($selections);
+
+    abstract public function checkBetLimit($user, $amount, $betType, $selections);
 }

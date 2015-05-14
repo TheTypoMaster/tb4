@@ -9,5 +9,8 @@ namespace TopBetta\Repositories\Contracts;
 
 interface BetTypeRepositoryInterface
 {
+    const TYPE_WIN = 'win';
+    const TYPE_PLACE = 'place';
+
     public function getBetTypeByName($name);
 }
