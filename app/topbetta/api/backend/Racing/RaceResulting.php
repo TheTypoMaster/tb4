@@ -249,7 +249,7 @@ class RaceResulting {
             File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
             //$this->betresults->resultAllBetsForEvent($eventModel->id);
-            Queue::push('TopBetta\Service\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id), Config::get('betresulting.queue'));
+            Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id), Config::get('betresulting.queue'));
         }
 
         return array('error' => false,
