@@ -54,6 +54,12 @@
                             {{ Form::number('start_currency', 1000, array("class" => "form-control")) }}
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        {{ Form::label('email_flag', "Send Email: ") }}
+                        {{ Form::select('email_flag', array('No', 'Yes'), 1, array("class" => "form-control")) }}
+                    </div>
+
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
