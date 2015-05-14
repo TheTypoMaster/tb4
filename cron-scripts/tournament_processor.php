@@ -327,7 +327,11 @@ class TournamentProcessor extends TopBettaCLI
 				}
 				$prize_display = implode(' + ', $prize_display);
 				$this->l("{$rank}. {$qualifier->username}: {$prize_display}");
-				$this->_sendWinnerEmail($qualifier, $tournament, $prize);
+
+                if( $tournament->email_flag ) {
+                    $this->_sendWinnerEmail($qualifier, $tournament, $prize);
+                }
+
 				$this->_resultTicket($qualifier, $tournament->id, $result_id);
 			}
 		}

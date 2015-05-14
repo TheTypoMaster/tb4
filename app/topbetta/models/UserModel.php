@@ -48,6 +48,10 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
 	}
 
+    public function depositLimit() {
+        return $this->hasOne('TopBetta\Models\UserDepositLimitModel', 'user_id');
+    }
+
     /**
      * Get the unique identifier for the user.
      *
@@ -98,6 +102,16 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
         return str_replace("\\", "", urldecode($value));
     }
 
+    public function accountBalance()
+    {
+        return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
+    }
+
+    public function freeCreditTransactions()
+    {
+        return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
+    }
+    
 	/**
 	 * @param $relationship
 	 * @param $closure

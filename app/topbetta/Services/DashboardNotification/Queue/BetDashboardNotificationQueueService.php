@@ -80,7 +80,21 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
         $bet = $this->betRepository->getBetWithSelectionsAndEventDetailsByBetId($data['id']);
 
-        $payload = array(
+		switch ($bet['bet_origin_id']){
+			case "1":
+				$betType = 'tournament';
+				break;
+			case '2':
+				$betType = 'racing';
+				break;
+			case '3':
+				$betType = 'sports';
+				break;
+			default:
+				$betType = '';
+		}
+
+		$payload = array(
             "bet_amount"           => array_get($bet, 'bet_amount', 0),
             "bet_bonus_amount"     => array_get($bet, "bet_freebet_amount", 0),
             "bet_username"         => array_get($bet, 'user.username', null),
@@ -88,6 +102,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
             "bet_bonus_bet"        => (bool)array_get($bet, 'bet_freebet_flag', false),
             "bet_selection_string" => array_get($bet, "selection_string", null),
             "bet_type_name"        => array_get($bet, 'type.name', null),
+			"bet_type"			   => $betType,
             "external_id"          => array_get($bet, 'id', 0),
             //clunky way to get bet dividend. Should be changed
             "bet_dividend"         => bcdiv($this->betRepo->getBetPayoutAmount(\TopBetta\Bet::find($data['id'])), array_get($bet, 'percentage', 0) != 0 ? array_get($bet, 'percentage', 0)  : array_get($bet, 'bet_amount', 1), 2),

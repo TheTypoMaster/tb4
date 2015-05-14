@@ -12,5 +12,6 @@ class TournamentCompetition extends \Eloquent {
     	return TournamentCompetition::where('name', '=', $name)->where('tournament_sport_id', '=', $sportID) 
     										-> pluck('id');
     }
+
     
 }

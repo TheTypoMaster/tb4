@@ -26,7 +26,7 @@
         	</div>
 
         	<div class="form-group">
-        		{{ Form::label('display_flag', 'Display on Topbetta:') }}
+        		{{ Form::label('display_flag', 'Betting Open on Topbetta:') }}
         		{{ Form::select('display_flag', array(
                                                     '1' => 'Yes',
                                                     '0' => 'No'), $market->display_flag, array('class' => 'form-control selected', 'placeholder' => $market->display_flag)) }}

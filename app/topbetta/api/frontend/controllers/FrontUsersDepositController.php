@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
+use TopBetta\Services\Accounting\AccountTransactionService;
 
 class FrontUsersDepositController extends \BaseController {
 
@@ -22,11 +23,16 @@ class FrontUsersDepositController extends \BaseController {
      * @var UserDashboardNotificationService
      */
     private $dashboardNotificationService;
+    /**
+     * @var AccountTransactionService
+     */
+    private $accountTransactionService;
 
-    public function __construct(UserAccountService $userAccountService, UserDashboardNotificationService $dashboardNotificationService) {
+    public function __construct(UserAccountService $userAccountService, UserDashboardNotificationService $dashboardNotificationService, AccountTransactionService $accountTransactionService) {
 		$this -> beforeFilter('auth');
         $this->userAccountService = $userAccountService;
         $this->dashboardNotificationService = $dashboardNotificationService;
+        $this->accountTransactionService = $accountTransactionService;
     }
 
 	/**
@@ -179,6 +185,11 @@ class FrontUsersDepositController extends \BaseController {
 				if (!$action) {
 					return array("success" => false, "error" => \Lang::get('banking.missing_action'));
 				}
+
+                $user = Auth::user();
+                if($user->depositLimit && $user->depositLimit->amount*100 < \Input::json('amount') + $this->accountTransactionService->getTotalDailyDepositsForUser($user->id)) {
+                    return array("success" => false, "error" => "Deposit exceeds daily deposit limit");
+                }
 				
 				$result = $this->ewayTokenCreditCard($action);
 

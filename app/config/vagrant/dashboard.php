@@ -8,4 +8,8 @@ return array(
     'api_password' => "p@ssw0rd!",
 
     'queue' => "dashboard-notification",
+
+    'error_email_to' => array('address' => "alerts@topbetta.com", 'name' => 'alerts'),
+
+    'error_email_from' => array('address' => "alerts@topbetta.com", 'name' => 'alerts'),
 );

@@ -22,21 +22,28 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
      * @param $search
      * @return mixed
      */
-    public function search($search)
+    public function search($search, $market = null)
     {
-        return $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+        $model = $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
             ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
             ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
             ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
             ->join('tbdb_selection_status', 'tbdb_selection_status.id', '=', 'tbdb_selection.selection_status_id')
             ->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
             ->leftjoin('tbdb_selection_result', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
-            ->where('tbdb_selection.name', 'LIKE', "%$search%")
-            ->orWhere('tbdb_event.name', 'LIKE', "%$search%")
-            ->orWhere('tbdb_event_group.name', 'LIKE', "%$search%")
-            ->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name',
-                'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name',
-                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds')
+            ->where(function($q) use ($search) {
+                $q->where('tbdb_selection.name', 'LIKE', "%$search%")
+                    ->orWhere('tbdb_event.name', 'LIKE', "%$search%")
+                    ->orWhere('tbdb_event_group.name', 'LIKE', "%$search%");
+            });
+
+            if( $market ) {
+                $model->where('market_id', $market);
+            }
+
+            return $model->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name', 'tbdb_event.id as event_id',
+                'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
+                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
 
             ->paginate();
     }
@@ -64,8 +71,8 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->leftjoin('tbdb_selection_result', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
 
             ->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name',
-                'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name',
-                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds')
+                'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
+                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
 
             ->skip($limit * ($page - 1))->take($limit)->get();
 
@@ -125,6 +132,30 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return $selections->toArray();
     }
 
+
+	public function getSeletcionIdByExternalId($externalId){
+		$selection = $this->model->where('external_selection_id', $externalId)
+								->pluck('id');
+		if(!$selection) return null;
+		return $selection;
+	}
+
+    public function getAllSelectionsForMarket($marketId)
+    {
+        return $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_selection_status', 'tbdb_selection_status.id', '=', 'tbdb_selection.selection_status_id')
+            ->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
+            ->leftjoin('tbdb_selection_result', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
+            ->where('tbdb_selection.market_id', $marketId)
+            ->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name',
+                'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
+                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
+
+            ->paginate();
+    }
 
 
 } 

@@ -83,6 +83,8 @@ class SelectionPricesController extends BaseController
 	{
         //Get search string for filtering after redirection
 		$search = Input::get("q", '');
+        $market = Input::get('market', null);
+        $event = Input::get('event', null);
 
 		$selectionprice = $this->selectionpricesrepo->findWithSelection($id);
 
@@ -91,7 +93,9 @@ class SelectionPricesController extends BaseController
             return Redirect::route('admin.selectionprices.index');
         }
 
-        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice', 'search'));
+        if($selectionprice->override_type == 'percentage') { $selectionprice->override_odds *= 100; }
+
+        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice', 'search', 'market', 'event'));
 	}
 
 	/**
@@ -104,11 +108,19 @@ class SelectionPricesController extends BaseController
 	{
         //Get search string for filtering after redirection
 		$search = Input::get("q", '');
+        $market = Input::get('market', null);
 
-		$data = Input::only('win_odds', 'place_odds');
+		$data = Input::only('override_odds', 'override_type');
+
+        if($data['override_type'] == 'percentage') {
+            $data['override_odds'] /= 100;
+        } else if (is_null($data['override_type'])) {
+            $data = array_except($data, 'override_odds');
+        }
+
         $this->selectionpricesrepo->updateWithId($id, $data);
 
-        return Redirect::route('admin.selectionprices.index', array($id, 'q' => $search))
+        return Redirect::route('admin.selections.index', array($id, 'q' => $search, 'market' => $market))
             ->with('flash_message', 'Saved!');
 	}
 

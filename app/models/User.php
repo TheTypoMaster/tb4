@@ -43,6 +43,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     {
         return $this->accountTransactions()->sum('amount');
     }
+
+    public function depositLimit()
+    {
+        return $this->hasOne('TopBetta\Models\UserDepositLimitModel', 'user_id');
+    }
 	
 	/**
 	 * A User can have many tickets for tournaments
