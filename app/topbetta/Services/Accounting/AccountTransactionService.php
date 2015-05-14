@@ -212,7 +212,7 @@ class AccountTransactionService {
         }
 
         // return username and cents
-        return $returnArray = array($details);
+        return $returnArray = $details;
 
     }
 
