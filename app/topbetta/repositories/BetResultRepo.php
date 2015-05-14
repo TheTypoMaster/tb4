@@ -9,6 +9,7 @@ use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 
 use Carbon;
+use Log;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
@@ -120,7 +121,7 @@ class BetResultRepo
             \File::append('/tmp/'.$date.'-ResultPost-E'. $eventId. '-B'.$bet->id.'-'.$currentTimeMs, print_r($bet,true));
 
 
-			\Log::info('RESULTING BET: ' . $bet->id);
+			Log::info('RESULTING BET: ' . $bet->id);
 			$result[$bet->id] = $this->resultBet($bet);
 		}
 
@@ -141,7 +142,7 @@ class BetResultRepo
 
 		// RACE ABANDONED - REFUND BET
 		if ($eventStatus == 3) {
-			\Log::info('ABANDONED: refunding bet: ' . $bet->id);
+			Log::info('ABANDONED: refunding bet: ' . $bet->id);
 			return \TopBetta\Facades\BetRepo::refundBet($bet);
 		}
 
@@ -150,7 +151,7 @@ class BetResultRepo
 
 		// Sanity check - Make sure we at least have a win_dividend
 		if (!isset($raceResults['positions'][1]['win_dividend'])) {
-			\Log::info('NO WIN DIVIDEND: EventID - ' . $bet->event_id);
+			Log::info('NO WIN DIVIDEND: EventID - ' . $bet->event_id);
 			return false;
 		}
 
@@ -166,6 +167,7 @@ class BetResultRepo
 		}
 
 		if (!$processBet) {
+			Log::info('NOT Processing Bet: ' . $bet->id.', Event Status: '.$eventStatus);
 			return false;
 		}
 
@@ -201,7 +203,7 @@ class BetResultRepo
 		$result = array();
 
 		foreach ($bets as $bet) {
-			\Log::info('RESULTING SPORT BET: ' . $bet->id);
+			Log::info('RESULTING SPORT BET: ' . $bet->id);
 			$result[$bet->id] = $this->resultSportBet($bet);
 		}
 
@@ -240,7 +242,7 @@ class BetResultRepo
 	
 	private function processBetPayout(Bet $bet) {
 		$payout = \TopBetta\Facades\BetRepo::getBetPayoutAmount($bet);
-		\Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);
+		Log::info('PAYOUT FOR BET: id ' . $bet->id . ' : ' . $payout);
 
 
         $date = substr(Carbon\Carbon::now(), 0, 10);
@@ -254,7 +256,7 @@ class BetResultRepo
 
         if ($payout) {
 			// WINNING BET
-			\Log::info('WINNING BET: id - ' . $bet->id);
+			Log::info('WINNING BET: id - ' . $bet->id);
             //update user turnover
             if(\TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) > self::TURNOVER_MIN_AMOUNT) {
                 $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
@@ -270,7 +272,7 @@ class BetResultRepo
             $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
 
 			$bet->resultAmount = 0;
-			\Log::info('LOSING BET: ' . $bet->id);
+			Log::info('LOSING BET: ' . $bet->id);
 			\TopBetta\RiskManagerAPI::sendBetResult($bet);
 			return true;
 		}	
