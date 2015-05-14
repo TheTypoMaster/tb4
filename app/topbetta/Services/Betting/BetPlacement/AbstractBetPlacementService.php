@@ -9,43 +9,29 @@
 namespace TopBetta\Services\Betting\BetPlacement;
 
 
+use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
-use TopBetta\Services\Betting\EventService;
-use TopBetta\Services\Betting\Exceptions\BetSelectionException;
-use TopBetta\Services\Betting\MarketService;
-use TopBetta\Services\Betting\SelectionService;
+use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 
 abstract class AbstractBetPlacementService {
 
     /**
-     * @var SelectionService
-     */
-    private $selectionService;
-    /**
-     * @var MarketService
-     */
-    private $marketService;
-    /**
-     * @var EventService
-     */
-    private $eventService;
-    /**
      * @var BetRepositoryInterface
      */
-    private $betRepository;
+    protected $betRepository;
     /**
      * @var BetTypeRepositoryInterface
      */
-    private $betTypeRepository;
+    protected $betTypeRepository;
 
-    public function __construct(SelectionService $selectionService, MarketService $marketService, EventService $eventService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
+    protected $betSelectionService;
+
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
     {
-        $this->selectionService = $selectionService;
-        $this->marketService = $marketService;
-        $this->eventService = $eventService;
         $this->betRepository = $betRepository;
         $this->betTypeRepository = $betTypeRepository;
+        $this->betSelectionService = $betSelectionService;
     }
 
     /**
@@ -72,20 +58,7 @@ abstract class AbstractBetPlacementService {
         return false;
     }
 
-    public function validateSelection($selection)
-    {
-        if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
-            throw new BetSelectionException($selection, Lang::get("bets.selection_scratched"));
-        }
 
-        if ( ! $this->marketService->isSelectionMarketAvailableForBetting($selection) ) {
-            throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
-        }
-
-        if( ! $this->eventService->isSelectionEventAvailableForBetting($selection) ) {
-            throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
-        }
-    }
 
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
@@ -94,7 +67,7 @@ abstract class AbstractBetPlacementService {
 
         $bet = $this->createBet($user, $transactions, $type, $origin);
 
-        $betSelections = $this->createSelections($bet, $selections);
+        $betSelections = $this->betSelectionService->createSelections($bet, $selections);
 
         return $bet;
     }
@@ -103,15 +76,30 @@ abstract class AbstractBetPlacementService {
     {
         $data = array(
             'user_id' => $user->id,
-            'bet_amount' => array_get($transactions, 'account.amount', 0) + array_get($transaction, 'free_credit.amount', 0),
-            'bet_type_id' =>
+            'bet_amount' => array_get($transactions, 'account.amount', 0) + array_get($transactions, 'free_credit.amount', 0),
+            'bet_type_id' => $this->betTypeRepository->getBetTypeByName($type)->id,
+            'bet_result_status_id' => 1,
+
+            //what to do here?
+            'bet_origin_id' => $origin,
+            'bet_product_id' => $origin,
+
+            'bet_transaction_id' => array_get($transactions, 'account.id', 0),
+            'bet_freebet_transaction_id' => array_get($transactions, 'free_credit.id', 0),
+            'created_date' => Carbon::now(),
+            'updated_date' => Carbon::now(),
+            'bet_freebet_flag' => isset($transactions['free_credit']),
+            'bet_freebet_amount' => array_get($transactions, 'free_credit.amount', 0),
+
+            //bet source?
         );
-        return array();
+
+        $data = array_merge($extraData, $data);
+
+        $bet = $this->betRepository->create($data);
+
+        return $bet;
     }
-
-    abstract public function getSportOrRacing();
-
-    abstract public function validateSelections($amount, $selections);
 
     abstract public function placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false);
 
