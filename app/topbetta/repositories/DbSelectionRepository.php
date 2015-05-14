@@ -132,6 +132,14 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return $selections->toArray();
     }
 
+
+	public function getSeletcionIdByExternalId($externalId){
+		$selection = $this->model->where('external_selection_id', $externalId)
+								->pluck('id');
+		if(!$selection) return null;
+		return $selection;
+	}
+
     public function getAllSelectionsForMarket($marketId)
     {
         return $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
@@ -148,7 +156,6 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
 
             ->paginate();
     }
-
 
 
 } 

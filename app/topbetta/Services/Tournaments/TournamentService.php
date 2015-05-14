@@ -11,6 +11,8 @@ namespace TopBetta\Services\Tournaments;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
 use TopBetta\Repositories\DbTournamentRepository;
 use Carbon\Carbon;
 
@@ -28,14 +30,82 @@ class TournamentService {
      * @var CompetitionRepositoryInterface
      */
     private $competitionRepository;
+    /**
+     * @var TournamentTicketBuyInHistoryRepositoryInterface
+     */
+    private $buyInHistoryRepository;
+    /**
+     * @var TournamentBuyInTypeRepositoryInterface
+     */
+    private $buyinTypeRepository;
+    /**
+     * @var TournamentBuyInService
+     */
+    private $buyInService;
+    /**
+     * @var TournamentLeaderboardService
+     */
+    private $leaderboardService;
+    /**
+     * @var TournamentTicketService
+     */
+    private $ticketService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
-                                CompetitionRepositoryInterface $competitionRepository)
+                                CompetitionRepositoryInterface $competitionRepository,
+                                TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
+                                TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
+                                TournamentBuyInService $buyInService,
+                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
         $this->competitionRepository = $competitionRepository;
+        $this->buyInHistoryRepository = $buyInHistoryRepository;
+        $this->buyinTypeRepository = $buyinTypeRepository;
+        $this->buyInService = $buyInService;
+        $this->leaderboardService = $leaderboardService;
+        $this->ticketService = $ticketService;
+    }
+
+    /**
+     * @param \TopBetta\Models\UserModel $user
+     * @param \TopBetta\Models\TournamentModel $tournament
+     * @return array
+     */
+    public function enterUserInTournament($user, $tournament)
+    {
+        //buyin to tournament
+        $transactions = $this->buyInService->buyin($tournament, $user);
+
+        //create ticket
+        $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+
+        //create leaderboard record
+        $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+
+        //create history record
+        $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        return $transactions;
+    }
+
+    public function isTournamentOpen($tournament)
+    {
+        if( $tournament->closed_betting_on_first_match_flag && $tournament->start_date < Carbon::now()) {
+            return false;
+        }
+
+        if( $tournament->end_date < Carbon::now() ) {
+            return false;
+        }
+
+        if( $tournament->entries_close != 0 && $tournament->entries_close < Carbon::now() ) {
+            return false;
+        }
+
+        return true;
     }
 
     public function createTournament($tournamentData)

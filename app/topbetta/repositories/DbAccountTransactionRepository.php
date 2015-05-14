@@ -87,14 +87,23 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
      * @param $types
      * @return mixed
      */
-    public function getTotalOnlyPositiveTransactionsForUserByTypeIn($userId, $types)
+    public function getTotalOnlyPositiveTransactionsForUserByTypeIn($userId, $types, $startDate = null, $endDate = null)
     {
-        return $this
+        $model = $this
             ->model
             ->where('recipient_id', '=', $userId)
             ->where('amount', '>', 0)
-            ->whereIn('account_transaction_type_id', $types)
-            ->sum('amount');
+            ->whereIn('account_transaction_type_id', $types);
+
+        if( $startDate ) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if( $endDate ) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->sum('amount');
     }
 
 

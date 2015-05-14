@@ -8,9 +8,11 @@
 
 use Carbon\Carbon;
 use TopBetta\Models\TournamentModel;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Validation\TournamentValidator;
 
-class DbTournamentRepository extends BaseEloquentRepository {
+class DbTournamentRepository extends BaseEloquentRepository implements TournamentRepositoryInterface
+{
 
     protected $model;
 
@@ -23,6 +25,19 @@ class DbTournamentRepository extends BaseEloquentRepository {
         return $this->model->where('event_group_id', $eventGroupId)
                     ->update(array('betting_closed_date' => $closeDate, 'end_date' => $closeDate));
     }
+
+
+	public function getTournamentWithEventGroup($eventGroupId){
+		$tournaments = $this->model->where('event_group_id', $eventGroupId)->get();
+		if(!$tournaments) return null;
+		return $tournaments->toArray();
+	}
+
+	public function getTournamentById($tournamentId) {
+		$tournament = $this->model->where('id', $tournamentId)->get();
+		if(!$tournament) return null;
+		return $tournament->toArray();
+	}
 
     public function search($search)
     {

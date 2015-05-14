@@ -278,6 +278,19 @@ class AccountTransactionService {
         );
     }
 
+    public function getTotalDailyDepositsForUser($userId)
+    {
+        $start = Carbon::now()->startOfDay();
+        $end = Carbon::now()->addDay()->startOfDay();
+
+        return $this->accounttransactions->getTotalOnlyPositiveTransactionsForUserByTypeIn(
+            $userId,
+            $this->getTransactionTypeIds(self::$depositTransactions),
+            $start,
+            $end
+        );
+    }
+
     /**
      * Gets all deposits for user in the last $daysPrevious
      * @param $userId

@@ -70,7 +70,7 @@
         		@endforeach
         	</tbody>
         </table>
-        {{ $selections->appends(array('q' => $search))->links() }}
+        {{ $selections->appends(array('q' => $search, 'market' => $market, 'event' => $event))->links() }}
         @else
         <p>There are no selections to display</p>
         @endif
