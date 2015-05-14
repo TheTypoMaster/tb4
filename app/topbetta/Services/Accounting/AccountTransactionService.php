@@ -193,23 +193,22 @@ class AccountTransactionService {
         //dd(count($childUserAccounts));
         // remove funds fom child accounts
         // $returnArray = array();
+		$details = array();
         foreach($childUserAccounts as $childAccount){
 
             // get current account balance of child account
             $childAccountBalance = $this->accounttransactions->getAccountBalanceByUserId($childAccount['id']);
 
             // remove funds from child account
-            if($childAccountBalance > 0) $removedFunds = $this->decreaseAccountBalance($childAccount['id'], $childAccountBalance, 'childfundaccount');
-
-            if(isset($removedFunds)){
-                $details = array();
-                $details['user_name'] = $childAccount['username'];
-                $details['amount'] = $childAccountBalance;
-
-                // add funds to parent account
-                $addFunds = $this->increaseAccountBalance($parentUserDetails['id'], $childAccountBalance, 'parentaccountfunded');
-               // if (!$addFunds) throw new ValidationException("Validation Failed", 'Failed to increase child betting account');
-            }
+            if($childAccountBalance > 0) {
+				$removedFunds = $this->decreaseAccountBalance($childAccount['id'], $childAccountBalance, 'childfundaccount');
+				if(isset($removedFunds)){
+					// add funds to parent account
+					$addFunds = $this->increaseAccountBalance($parentUserDetails['id'], $childAccountBalance, 'parentaccountfunded');
+					// if (!$addFunds) throw new ValidationException("Validation Failed", 'Failed to increase child betting account');
+				}
+				$details[] = array('user_name' => $childAccount['username'], 'amount' => $childAccountBalance);
+			}
         }
 
         // return username and cents
