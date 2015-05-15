@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
- * Date: 14/05/2015
- * Time: 3:12 PM
+ * Date: 15/05/2015
+ * Time: 1:21 PM
  */
 
 namespace TopBetta\Services\Betting\BetPlacement;
@@ -12,12 +12,12 @@ namespace TopBetta\Services\Betting\BetPlacement;
 use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
-use TopBetta\Services\Betting\BetSelection\RacingBetSelectionService;
+use TopBetta\Services\Betting\BetSelection\SportBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 
-class RacingWinPlaceBetPlacementService extends SingleSelectionBetPlacementService {
+class SportBetPlacementService extends SingleSelectionBetPlacementService {
 
-    public function __construct(RacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
     {
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
     }
@@ -30,7 +30,7 @@ class RacingWinPlaceBetPlacementService extends SingleSelectionBetPlacementServi
                 'selection'   => $selection->id,
                 'bet_type_id' => $this->betTypeRepository->getBetTypeByName($betType)->id,
                 'value'       => $amount,
-            ), 'racing');
+            ), 'sport');
 
             if( $exceedLimit['result'] ) {
                 return false;

@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Betting\BetPlacement;
 
 
+use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
@@ -16,9 +17,9 @@ use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 
 abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
     }
 
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
@@ -35,5 +36,14 @@ abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementSe
     public function getTotalAmountForBet($amount, $selections)
     {
         return $amount * count($selections);
+    }
+
+    protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
+    {
+        $data = array(
+            'event_id' => $selections->market->event->id,
+        );
+
+        return parent::createBet($user, $transactions, $type, $origin, $selections, array_merge($extraData, $data));
     }
 }

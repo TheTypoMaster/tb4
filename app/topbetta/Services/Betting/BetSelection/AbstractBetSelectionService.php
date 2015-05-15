@@ -8,7 +8,6 @@
 
 namespace TopBetta\Services\Betting\BetSelection;
 
-use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
@@ -33,18 +32,13 @@ abstract class AbstractBetSelectionService {
      * @var BetSelectionRepositoryInterface
      */
     protected $betSelectionRepository;
-    /**
-     * @var BetLimitRepo
-     */
-    protected $betLimitRepo;
 
-    public function __construct(SelectionService $selectionService, MarketService $marketService, EventService $eventService, BetSelectionRepositoryInterface $betSelectionRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(SelectionService $selectionService, MarketService $marketService, EventService $eventService, BetSelectionRepositoryInterface $betSelectionRepository)
     {
         $this->selectionService = $selectionService;
         $this->marketService = $marketService;
         $this->eventService = $eventService;
         $this->betSelectionRepository = $betSelectionRepository;
-        $this->betLimitRepo = $betLimitRepo;
     }
 
     public function createSelections($bet, $selections)
@@ -73,7 +67,7 @@ abstract class AbstractBetSelectionService {
         return $this->betSelectionRepository->create($data);
     }
 
-    public function validateSelection($selection)
+    public function validateSelection($selection, $dividend = 0)
     {
         if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
             throw new BetSelectionException($selection, Lang::get("bets.selection_scratched"));
@@ -89,7 +83,19 @@ abstract class AbstractBetSelectionService {
         }
     }
 
-    abstract public function getAndValidateSelections($selections);
+    public function getAndValidateSelections($selections)
+    {
+        $selectionModels = array();
 
-    abstract public function checkBetLimit($user, $amount, $betType, $selections);
+        foreach($selections as $selection) {
+
+            $selectionModel = $this->selectionService->getSelection($selection['id']);
+
+            $this->validateSelection($selectionModel, array_get($selection, 'dividend', 0));
+
+            $selectionModels[] = $selectionModel;
+        }
+
+        return $selectionModels;
+    }
 }

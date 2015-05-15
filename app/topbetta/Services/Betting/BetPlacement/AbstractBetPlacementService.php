@@ -10,6 +10,7 @@ namespace TopBetta\Services\Betting\BetPlacement;
 
 
 use Carbon\Carbon;
+use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
@@ -32,14 +33,19 @@ abstract class AbstractBetPlacementService {
     /**
      * @var BetTransactionService
      */
-    private $betTransactionService;
+    protected $betTransactionService;
+    /**
+     * @var BetLimitRepo
+     */
+    protected $betLimitRepo;
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
     {
         $this->betRepository = $betRepository;
         $this->betTypeRepository = $betTypeRepository;
         $this->betSelectionService = $betSelectionService;
         $this->betTransactionService = $betTransactionService;
+        $this->betLimitRepo = $betLimitRepo;
     }
 
     /**
@@ -74,7 +80,7 @@ abstract class AbstractBetPlacementService {
 
         $selectionModels = $this->betSelectionService->getAndValidateSelections($selections);
 
-        if ( ! $this->betSelectionService->checkBetLimit($user, $amount, $this->betTypeRepository->getBetTypeByName($type)->id, $selectionModels) ) {
+        if ( ! $this->isBetValid($user, $amount, $type, $selectionModels) ) {
             throw new \Exception;
         }
 
@@ -90,14 +96,14 @@ abstract class AbstractBetPlacementService {
             throw new \Exception;
         }
 
-        $bet = $this->createBet($user, $transactions, $type, $origin);
+        $bet = $this->createBet($user, $transactions, $type, $origin, $selections);
 
         $betSelections = $this->betSelectionService->createSelections($bet, $selections);
 
         return $bet;
     }
 
-    protected function createBet($user, $transactions, $type, $origin, $extraData = array())
+    protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {
         $data = array(
             'user_id' => $user->id,
@@ -126,6 +132,13 @@ abstract class AbstractBetPlacementService {
         return $bet;
     }
 
+    public function isBetValid($user, $amount, $type, $selections)
+    {
+        return $this->checkBetLimit($user, $amount, $type, $selections);
+    }
+
     abstract public function getTotalAmountForBet($amount, $selections);
+
+    abstract public function checkBetLimit($user, $amount, $betType, $selections);
 
 }

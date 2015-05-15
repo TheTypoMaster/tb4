@@ -58,7 +58,7 @@ abstract class ExoticBet
 	 * 
 	 * @return boolean
 	 */
-	protected function isBoxed()
+	public function isBoxed()
 	{
 		$boxTest = $this->selections;
 		unset($boxTest['first']);
@@ -79,5 +79,7 @@ abstract class ExoticBet
 		}
 		return (int) $count;
 	}
+
+    abstract function getCombinationCount();
 
 }
