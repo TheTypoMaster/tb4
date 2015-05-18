@@ -57,19 +57,45 @@ abstract class AbstractBetPlacementService {
         $this->riskBetService = $riskBetService;
     }
 
+    /**
+     * Places the bet
+     * @param $user
+     * @param $amount
+     * @param $type
+     * @param $origin
+     * @param $selections
+     * @param bool $freeCreditFlag
+     * @return mixed
+     * @throws BetPlacementException
+     * @throws BetSelectionException
+     */
     public function placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
         if( ! UserAccountBalanceService::hasSufficientFunds($user, $this->getTotalAmountForBet($amount, $selections), $freeCreditFlag) ) {
             throw new BetPlacementException("Insufficient funds");
         }
 
+        //get the selection models and validate
         $selectionModels = $this->betSelectionService->getAndValidateSelections($selections);
 
+        //validate the bet data
         $this->validateBet($user, $amount, $type, $selectionModels);
 
+        //create the bet and selection records
         return $this->_placeBet($user, $amount, $type, $origin, $selectionModels, $freeCreditFlag);
     }
 
+    /**
+     * Creates the bet, transaction and selection records
+     * @param $user
+     * @param $amount
+     * @param $type
+     * @param $origin
+     * @param $selections
+     * @param bool $freeCreditFlag
+     * @return mixed
+     * @throws BetPlacementException
+     */
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
         //create transaction
@@ -79,6 +105,7 @@ abstract class AbstractBetPlacementService {
             throw new BetPlacementException("Error creating transactions");
         }
 
+        //create the bet
         try {
             $bet = $this->createBet($user, $transactions, $type, $origin, $selections);
         } catch (\Exception $e) {
@@ -87,6 +114,7 @@ abstract class AbstractBetPlacementService {
             throw new BetPlacementException("Error storing bet");
         }
 
+        //create selections
         try {
             $betSelections = $this->betSelectionService->createSelections($bet, $selections);
         } catch (\Exception $e) {
@@ -95,11 +123,22 @@ abstract class AbstractBetPlacementService {
             throw new BetPlacementException("Error storing bet selections");
         }
 
+        //send bet to risk
         $this->riskBetService->sendBet($bet['id']);
 
         return $bet;
     }
 
+    /**
+     * Creates the bet record
+     * @param $user
+     * @param $transactions
+     * @param $type
+     * @param $origin
+     * @param $selections
+     * @param array $extraData
+     * @return mixed
+     */
     protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {
         $data = array(
@@ -122,6 +161,7 @@ abstract class AbstractBetPlacementService {
             //bet source?
         );
 
+        //merge any extra data from parent classes
         $data = array_merge($extraData, $data);
 
         $bet = $this->betRepository->create($data);
@@ -129,13 +169,34 @@ abstract class AbstractBetPlacementService {
         return $bet;
     }
 
+    /**
+     * Checks the bet data is valid (should be overridden in inheritors)
+     * @param $user
+     * @param $amount
+     * @param $type
+     * @param $selections
+     */
     public function validateBet($user, $amount, $type, $selections)
     {
         $this->checkBetLimit($user, $amount, $type, $selections);
     }
 
+    /**
+     * Calculate the total amount based on the type of bet
+     * @param $amount
+     * @param $selections
+     * @return mixed
+     */
     abstract public function getTotalAmountForBet($amount, $selections);
 
+    /**
+     * Check the user and system bet limits
+     * @param $user
+     * @param $amount
+     * @param $betType
+     * @param $selections
+     * @return mixed
+     */
     abstract public function checkBetLimit($user, $amount, $betType, $selections);
 
 }

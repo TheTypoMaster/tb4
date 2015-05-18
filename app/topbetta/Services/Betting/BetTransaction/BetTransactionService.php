@@ -36,19 +36,29 @@ class BetTransactionService {
         $this->betRepository = $betRepository;
     }
 
+    /**
+     * create bet placement transaction
+     * @param $user
+     * @param $amount
+     * @param bool $freeCreditFlag
+     * @return array ('free_credit' => free credit transaction, 'account' => account transaction)
+     */
     public function createBetPlacementTransaction($user, $amount, $freeCreditFlag = false)
     {
         $transactions = array();
         $accountAmount = $amount;
 
+        //free credit flag so calculate amount of free credit to use and amout of account balance
         if ( $freeCreditFlag ) {
             $accountAmount -= min($user->freeCreditBalance(), $amount);
         }
 
+        //create the account transaction
         if( $accountAmount > 0 ) {
             $transactions['account'] = $this->accountTransactionService->decreaseAccountBalance($user->id, $accountAmount, 'betentry', $user->id);
         }
 
+        //create the free credit transaction
         if( $amount - $accountAmount > 0 ) {
             $transactions['free_credit'] = $this->freeCreditTransactionService->decreaseFreeCreditBalance($user->id, $user->id, $amount - $accountAmount, 'freebetentry');
         }
@@ -56,14 +66,23 @@ class BetTransactionService {
         return $transactions;
     }
 
+    /**
+     * Create bet refund
+     * @param $user
+     * @param $amount
+     * @param $freeCreditAmount
+     * @return array ('free_credit' => free credit transaction, 'account' => account transaction)
+     */
     public function refund($user, $amount, $freeCreditAmount)
     {
         $transactions = array();
 
+        //refund account
         if( $amount > 0 ) {
             $transactions['account'] = $this->accountTransactionService->increaseAccountBalance($user->id, $amount, 'betrefund', $user->id);
         }
 
+        //refund free credit
         if( $freeCreditAmount > 0 ) {
             $transactions['free_credit'] = $this->freeCreditTransactionService->increaseFreeCreditBalance($user->id, $user->id, $freeCreditAmount, 'freebetrefund');
         }
@@ -71,12 +90,21 @@ class BetTransactionService {
         return $transactions;
     }
 
+    /**
+     * Refunds a bet
+     * Refund bet
+     * @param $betId int
+     * @return array ('free_credit' => free credit transaction, 'account' => account transaction)
+     */
     public function refundBet($betId)
     {
+        //get the bet
         $bet = $this->betRepository->find($betId);
 
+        //refund the bet
         $transactions = $this->refund($bet->user, $bet->bet_amount - $bet->bet_freebet_amount, $bet->bet_freebet_amount);
 
+        //add transaction ids to bet record
         $this->betRepository->updateWithId($bet['id'], array(
             'refund_transaction_id' => array_get($transactions, 'account.id', 0),
             'refund_freebet_transaction_id' => array_get($transactions, 'free_credit.id', 0),

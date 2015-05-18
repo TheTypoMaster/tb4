@@ -25,17 +25,26 @@ class MultiBetPlacementService extends AbstractBetPlacementService {
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getTotalAmountForBet($amount, $selections)
     {
         return $amount;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
         //TODO: MULTI BET LIMITS
         return true;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function validateBet($user, $amount, $type, $selections)
     {
         //TODO: REAL MULTI BET RULES
@@ -47,19 +56,22 @@ class MultiBetPlacementService extends AbstractBetPlacementService {
             throw new BetPlacementException("Must have at least 100%");
         }
 
-        if(count($selections) != count(array_unique($selections))) {
+        if(count(array_fetch($selections, 'selection')) != count(array_unique(array_fetch($selections, 'selection')))) {
             throw new BetPlacementException("Duplicate Selections");
         }
 
         parent::validateBet($user, $amount, $type, $selections);
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {
+        //add the percentage and combinations
         $data = array(
             //TODO: flexi flag?
-
+            "flexi_flag" => true,
             "percentage" => bcdiv(abs(array_get($transactions, 'account.amount', 0)) + abs(array_get($transactions, 'free_credit.amount', 0)), MultiBetService::calculateCombinations($type, $selections), 2),
             "combinations" => MultiBetService::calculateCombinations($type, $selections),
         );

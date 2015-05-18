@@ -15,6 +15,7 @@ use TopBetta\Services\Betting\BetPlacement\AbstractBetPlacementService;
 class BetPlacementFactory {
 
     /**
+     * Create the bet placement service based on bet type
      * @param $type
      * @return AbstractBetPlacementService
      * @throws \Exception

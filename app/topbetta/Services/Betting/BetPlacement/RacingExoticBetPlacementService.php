@@ -27,22 +27,28 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getTotalAmountForBet($amount, $selections)
     {
         return $amount;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
         //format selections for old bet limit stuff
         $selectionsArray = array();
         foreach($selections as $position => $positionSelections) {
-            $selectionsArray[$position] = array_map(function($v) { return $v->id; }, $positionSelections);
+            $selectionsArray[$position] = array_map(function($v) { return $v['selection']->id; }, $positionSelections);
         }
 
         $result = $this->betLimitRepo->checkExceedBetLimitForBetData(array(
-            'id' => $selections['first'][0]->market->event->id,
-            'race_id' => $selections['first'][0]->market->event->id,
+            'id' => $selections['first'][0]['selection']->market->event->id,
+            'race_id' => $selections['first'][0]['selection']->market->event->id,
             'value' => $amount,
             'selection' => $selectionsArray,
             'bet_type_id' => $this->betTypeRepository->getBetTypeByName($betType)->id,
@@ -53,31 +59,39 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function validateBet($user, $amount, $type, $selections)
     {
+        //check valid combinations
         if ( ! ExoticBetLibraryFactory::make($type, $amount, $selections)->getCombinationCount() ) {
             throw new BetPlacementException("Invalid selections for " . $type);
         }
 
-        if( EventService::isEventInternational($selections['first'][0]->market->event) ) {
+        //no extoics on internation events
+        if( EventService::isEventInternational($selections['first'][0]['selection']->market->event) ) {
             throw new BetPlacementException(Lang::get('bets.bet_type_not_valid_international'));
         }
 
         parent::validateBet($user, $amount, $type, $selections);
     }
 
-
+    /**
+     * @inheritdoc
+     */
     protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {
         $library = ExoticBetLibraryFactory::make($type, abs(array_get($transactions, 'account.amount', 0)) + abs(array_get($transactions, 'free_credit.amount', 0)), $selections);
 
+        //add the combinations etc.
         $data = array(
             'boxed_flag' => $library->isBoxed(),
             'combinations' => $library->getCombinationCount(),
             'percentage' => $library->getFlexiPercentage(),
             'selection_string' => $this->betSelectionService->getSelectionString($selections),
             'flexi_flag' => true,
-            'event_id' => $selections['first'][0]->market->event->id
+            'event_id' => $selections['first'][0]['selection']->market->event->id
         );
 
         return parent::createBet($user, $transactions, $type, $origin, $selections, $data);

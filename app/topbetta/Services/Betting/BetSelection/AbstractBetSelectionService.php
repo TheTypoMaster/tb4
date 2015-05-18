@@ -42,12 +42,15 @@ abstract class AbstractBetSelectionService {
         $this->betSelectionRepository = $betSelectionRepository;
     }
 
+    /**
+     * Create the selection records
+     * @param $bet
+     * @param $selections
+     * @return array
+     */
     public function createSelections($bet, $selections)
     {
-        if( ! is_array($selections) ) {
-            return $this->createSelection($bet, $selections);
-        }
-
+        //create selections
         $betSelections = array();
         foreach ($selections as $selection) {
             $betSelections[] = $this->createSelection($bet, $selection);
@@ -56,6 +59,13 @@ abstract class AbstractBetSelectionService {
         return $betSelections;
     }
 
+    /**
+     * Create a selection record
+     * @param $bet
+     * @param $selection
+     * @param array $extraData
+     * @return mixed
+     */
     public function createSelection($bet, $selection, $extraData = array())
     {
         $data = array(
@@ -64,26 +74,44 @@ abstract class AbstractBetSelectionService {
             'position' => 0,
         );
 
-        $data = array_merge($extraData, $data);
+        $data = array_merge($data, $extraData);
 
         return $this->betSelectionRepository->create($data);
     }
 
+    /**
+     * validates the selection
+     * @param $selection
+     * @param int $dividend
+     * @throws BetSelectionException
+     */
     public function validateSelection($selection, $dividend = 0)
     {
+        //selection is in correct status
         if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
             throw new BetSelectionException($selection, Lang::get("bets.selection_scratched"));
         }
 
+        //market is available
         if( ! $this->marketService->isSelectionMarketAvailableForBetting($selection) ) {
             throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
         }
 
+        //event is available
         if( ! $this->eventService->isSelectionEventAvailableForBetting($selection) ) {
             throw new BetSelectionException($selection, Lang::get("bets.event_closed"));
         }
+
+        //TODO: check competition ?
     }
 
+    /**
+     * Gets the selection models and validates
+     * each selection is stored in array with key 'selection' and any extra data
+     * @param $selections
+     * @return array
+     * @throws BetSelectionException
+     */
     public function getAndValidateSelections($selections)
     {
         $selectionModels = array();

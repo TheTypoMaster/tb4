@@ -13,12 +13,14 @@ use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 
 class RacingBetSelectionService extends AbstractBetSelectionService {
 
-
+    /**
+     * @inheritdoc
+     */
     public function validateSelection($selection, $dividend = 0)
     {
-        //TODO: MESSAGE!
+        //check selection is valid racing selection
         if( ! $this->selectionService->isSelectionRacing($selection->id) ) {
-            throw new BetSelectionException($selection, "");
+            throw new BetSelectionException($selection, "Invalid selction");
         }
 
         parent::validateSelection($selection);

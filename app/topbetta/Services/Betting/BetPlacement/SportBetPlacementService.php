@@ -24,12 +24,15 @@ class SportBetPlacementService extends SingleSelectionBetPlacementService {
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
         foreach($selections as $selection) {
             $exceedLimit = $this->betLimitRepo->checkExceedBetLimitForBetData(array(
-                'id'          => $selection->market->event->id,
-                'selection'   => $selection->id,
+                'id'          => $selection['selection']->market->event->id,
+                'selection'   => $selection['selection']->id,
                 'bet_type_id' => $this->betTypeRepository->getBetTypeByName($betType)->id,
                 'value'       => $amount,
             ), 'sport');

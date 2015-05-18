@@ -13,6 +13,10 @@ use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 
 class ExoticRacingBetSelectionService extends RacingBetSelectionService {
 
+    /**
+     * Overridden to cater for different structure for exotics
+     * @inheritdoc payload
+     */
     public function getAndValidateSelections($selections)
     {
         $selectionModels = array();
@@ -22,28 +26,34 @@ class ExoticRacingBetSelectionService extends RacingBetSelectionService {
 
             $selectionModels[$position] = array();
 
+            //check no duplicate positions
             if( count(array_unique(array_fetch($positionSelections, 'id'))) != count(array_fetch($positionSelections, 'id'))) {
                 throw new BetSelectionException(null, "Duplicate selections for position " . $position);
             }
 
             foreach ($positionSelections as $selection) {
 
+                //if we've already retrieved the selection don't retrieve it again
                 if( ! $selectionModel = array_get($uniqueSelections, $selection['id'], null) ) {
+                    //get the selection
                     $selectionModel = $this->selectionService->getSelection($selection['id']);
 
                     if( ! $selectionModel ) {
                         throw new BetSelectionException(null, "Selection not found");
                     }
 
+                    //validate
                     $this->validateSelection($selectionModel);
 
+                    //store
                     $uniqueSelections[$selection['id']] = $selectionModel;
                 }
 
-                $selectionModels[$position][] = $selectionModel;
+                $selectionModels[$position][] = array("selection" => $selectionModel);
             }
         }
 
+        //make sure selections all belong to the same event
         if( ! $this->selectionService->selectionsBelongToSameEvent($uniqueSelections) ) {
             throw new BetSelectionException(null, "Selection not found in event");
         }
@@ -51,7 +61,10 @@ class ExoticRacingBetSelectionService extends RacingBetSelectionService {
         return $selectionModels;
     }
 
-
+    /**
+     * Overridden to cater for different payload structure for exotics
+     * @inheritdoc
+     */
     public function createSelections($bet, $selections)
     {
         $positionNo = count($selections) > 1 ? 1 : 0;
@@ -68,11 +81,16 @@ class ExoticRacingBetSelectionService extends RacingBetSelectionService {
         return $betSelections;
     }
 
+    /**
+     * Creates the selection string
+     * @param $selections
+     * @return string
+     */
     public function getSelectionString($selections)
     {
         return implode(' / ', array_map( function($v) {
             return implode(', ', array_map(function($selection) {
-                return $selection->number;
+                return $selection['selection']->number;
             }, $v));
         }, $selections));
     }

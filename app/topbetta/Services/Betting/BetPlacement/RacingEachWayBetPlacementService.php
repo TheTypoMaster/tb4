@@ -25,11 +25,17 @@ class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementServic
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getTotalAmountForBet($amount, $selections)
     {
         return $amount * count($selections) * 2;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
         $bets = array();
@@ -45,13 +51,17 @@ class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementServic
         return $bets;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
         foreach($selections as $selection) {
+            //check limits for both win and place
             foreach(array(BetTypeRepositoryInterface::TYPE_WIN, BetTypeRepositoryInterface::TYPE_PLACE) as $type) {
                 $exceedLimit = $this->betLimitRepo->checkExceedBetLimitForBetData(array(
-                    'id'          => $selection->market->event->id,
-                    'selection'   => $selection->id,
+                    'id'          => $selection['selection']->market->event->id,
+                    'selection'   => $selection['selection']->id,
                     'bet_type_id' => $this->betTypeRepository->getBetTypeByName($type)->id,
                     'value'       => $amount,
                 ), 'racing');

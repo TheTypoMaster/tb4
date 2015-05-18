@@ -17,6 +17,12 @@ use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Risk\AbstractRiskBetService;
 use TopBetta\Services\Risk\RiskRacingWinPlaceBetService;
 
+/**
+ * Base class for single sports and racing bets
+ * Multiple selections means multiple bets
+ * Class SingleSelectionBetPlacementService
+ * @package TopBetta\Services\Betting\BetPlacement
+ */
 abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementService {
 
     public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, AbstractRiskBetService $riskBetService)
@@ -24,6 +30,9 @@ abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementSe
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
         $bets = array();
@@ -35,17 +44,23 @@ abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementSe
         return $bets;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getTotalAmountForBet($amount, $selections)
     {
         return $amount * count($selections);
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {
         $data = array(
             'event_id' => $selections[0]['selection']->market->event->id,
         );
 
-        return parent::createBet($user, $transactions, $type, $origin, $selections, array_merge($extraData, $data));
+        return parent::createBet($user, $transactions, $type, $origin, $selections, array_merge($data, $extraData));
     }
 }

@@ -20,6 +20,7 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 class ExoticBetLibraryFactory {
 
     /**
+     * Creates the exotic bet library based on type
      * @param $type
      * @param int $amount
      * @param array $selections
