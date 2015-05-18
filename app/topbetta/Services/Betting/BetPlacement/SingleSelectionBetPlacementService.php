@@ -29,7 +29,7 @@ abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementSe
         $bets = array();
 
         foreach($selections as $selection) {
-            $bets[] = parent::_placeBet($user, $amount, $type, $origin, $selection, $freeCreditFlag);
+            $bets[] = parent::_placeBet($user, $amount, $type, $origin, array($selection), $freeCreditFlag);
         }
 
         return $bets;
@@ -43,7 +43,7 @@ abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementSe
     protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {
         $data = array(
-            'event_id' => $selections->market->event->id,
+            'event_id' => $selections[0]['selection']->market->event->id,
         );
 
         return parent::createBet($user, $transactions, $type, $origin, $selections, array_merge($extraData, $data));

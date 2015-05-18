@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\SportBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 use TopBetta\Services\Risk\RiskSportsBetService;
 
 class SportBetPlacementService extends SingleSelectionBetPlacementService {
@@ -34,10 +35,8 @@ class SportBetPlacementService extends SingleSelectionBetPlacementService {
             ), 'sport');
 
             if( $exceedLimit['result'] ) {
-                return false;
+                throw new BetLimitExceededException($exceedLimit);
             }
         }
-
-        return true;
     }
 }

@@ -8,12 +8,15 @@
 
 namespace TopBetta\Services\Betting\BetPlacement;
 
-
+use Lang;
 use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Betting\EventService;
+use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
+use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Factories\ExoticBetLibraryFactory;
 use TopBetta\Services\Risk\RiskExoticBetService;
 
@@ -45,17 +48,24 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
             'bet_type_id' => $this->betTypeRepository->getBetTypeByName($betType)->id,
         ), 'racing');
 
-        return ! $result['result'];
+        if( $result['result'] ) {
+            throw new BetLimitExceededException($result);
+        }
     }
 
-    public function isBetValid($user, $amount, $type, $selections)
+    public function validateBet($user, $amount, $type, $selections)
     {
         if ( ! ExoticBetLibraryFactory::make($type, $amount, $selections)->getCombinationCount() ) {
-            return false;
+            throw new BetPlacementException("Invalid selections for " . $type);
         }
 
-        return parent::isBetValidse($user, $amount, $type, $selections);
+        if( EventService::isEventInternational($selections['first'][0]->market->event) ) {
+            throw new BetPlacementException(Lang::get('bets.bet_type_not_valid_international'));
+        }
+
+        parent::validateBet($user, $amount, $type, $selections);
     }
+
 
     protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {

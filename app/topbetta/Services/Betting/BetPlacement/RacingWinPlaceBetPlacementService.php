@@ -14,12 +14,14 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\RacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
+use TopBetta\Services\Risk\RiskRacingWinPlaceBetService;
 
 class RacingWinPlaceBetPlacementService extends SingleSelectionBetPlacementService {
 
-    public function __construct(RacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(RacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskRacingWinPlaceBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
     public function checkBetLimit($user, $amount, $betType, $selections)
@@ -33,10 +35,9 @@ class RacingWinPlaceBetPlacementService extends SingleSelectionBetPlacementServi
             ), 'racing');
 
             if( $exceedLimit['result'] ) {
-                return false;
+                throw new BetLimitExceededException($exceedLimit);
             }
         }
 
-        return true;
     }
 }

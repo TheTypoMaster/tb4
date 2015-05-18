@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\SportBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\MultiBetService;
 use TopBetta\Services\Risk\RiskSportsBetService;
 
@@ -35,23 +36,24 @@ class MultiBetPlacementService extends AbstractBetPlacementService {
         return true;
     }
 
-    public function isBetValid($user, $amount, $type, $selections)
+    public function validateBet($user, $amount, $type, $selections)
     {
         //TODO: REAL MULTI BET RULES
         if( count($selections) < MultiBetService::neededWinners($type) ) {
-            return false;
+            throw new BetPlacementException("Not enough selections");
         }
 
         if( $amount < MultiBetService::calculateCombinations($type, $selections) ) {
-            return false;
+            throw new BetPlacementException("Must have at least 100%");
         }
 
         if(count($selections) != count(array_unique($selections))) {
-            return false;
+            throw new BetPlacementException("Duplicate Selections");
         }
 
-        return parent::isBetValid($user, $amount, $type, $selections);
+        parent::validateBet($user, $amount, $type, $selections);
     }
+
 
     public function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
     {

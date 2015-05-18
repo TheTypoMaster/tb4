@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Betting\BetSelection;
 
+use Lang;
 use TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
@@ -59,7 +60,8 @@ abstract class AbstractBetSelectionService {
     {
         $data = array(
             'bet_id' => $bet['id'],
-            'selection_id' => $selection->id,
+            'selection_id' => $selection['selection']->id,
+            'position' => 0,
         );
 
         $data = array_merge($extraData, $data);
@@ -77,9 +79,8 @@ abstract class AbstractBetSelectionService {
             throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
         }
 
-        //TODO: DIFFERENT MESSAGE
         if( ! $this->eventService->isSelectionEventAvailableForBetting($selection) ) {
-            throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
+            throw new BetSelectionException($selection, Lang::get("bets.event_closed"));
         }
     }
 
@@ -91,9 +92,13 @@ abstract class AbstractBetSelectionService {
 
             $selectionModel = $this->selectionService->getSelection($selection['id']);
 
+            if( ! $selectionModel ) {
+                throw new BetSelectionException(null, "Selection not found");
+            }
+
             $this->validateSelection($selectionModel, array_get($selection, 'dividend', 0));
 
-            $selectionModels[] = $selectionModel;
+            $selectionModels[] = array("selection" => $selectionModel, 'dividend' => array_get($selection, 'dividend', 0));
         }
 
         return $selectionModels;

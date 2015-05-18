@@ -30,7 +30,6 @@ class RiskSportsBetService extends AbstractRiskBetService {
         $bet = $this->betRepository->find($bet);
 
         $riskBet = array(
-
             'result_status' => '',
             'dividend' => 0, // TODO: what to do for multis?
             'bet_amount' => $bet->bet_amount,
@@ -40,10 +39,7 @@ class RiskSportsBetService extends AbstractRiskBetService {
             'client_id' => $bet->user->id,
             'client_username' => $bet->user->username,
             'client_btag' => $bet->user->topbettauser->btag,
-
-            'sport_bet_selections' => array(
-
-            ),
+            'sport_bet_selections' => array(),
         );
 
         foreach($bet->betselection as $selection) {

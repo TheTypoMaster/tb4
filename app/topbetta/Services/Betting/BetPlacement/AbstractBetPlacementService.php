@@ -8,13 +8,16 @@
 
 namespace TopBetta\Services\Betting\BetPlacement;
 
-
+use Log;
 use Carbon\Carbon;
 use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
+use TopBetta\Services\Accounting\UserAccountBalanceService;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Betting\Exceptions\BetPlacementException;
+use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Risk\AbstractRiskBetService;
 
 abstract class AbstractBetPlacementService {
@@ -54,41 +57,15 @@ abstract class AbstractBetPlacementService {
         $this->riskBetService = $riskBetService;
     }
 
-    /**
-     * TODO: Abstract somewhere else
-     * @param $user
-     * @param $amount
-     * @param bool $freeCreditFlag
-     * @return bool
-     */
-    public function checkSufficientFunds($user, $amount, $freeCreditFlag = false)
-    {
-        if ( $freeCreditFlag ) {
-            //free credit so check user has enough free credit or account balance to cover
-            $freeCreditBalance = $user->freeCreditBalance();
-
-            if( $freeCreditBalance >= $amount ) { return true; }
-            else if ($freeCreditBalance + $user->accountBalance() >= $amount ) { return true; }
-
-        } else {
-            //not free credit so just check account balance
-            if( $user->accountBalance() > $amount ) { return true; }
-        }
-
-        return false;
-    }
-
     public function placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)
     {
-        if( ! $this->checkSufficientFunds($user, $this->getTotalAmountForBet($amount, $selections), $freeCreditFlag) ) {
-            throw new \Exception;
+        if( ! UserAccountBalanceService::hasSufficientFunds($user, $this->getTotalAmountForBet($amount, $selections), $freeCreditFlag) ) {
+            throw new BetPlacementException("Insufficient funds");
         }
 
         $selectionModels = $this->betSelectionService->getAndValidateSelections($selections);
 
-        if ( ! $this->isBetValid($user, $amount, $type, $selectionModels) ) {
-            throw new \Exception;
-        }
+        $this->validateBet($user, $amount, $type, $selectionModels);
 
         return $this->_placeBet($user, $amount, $type, $origin, $selectionModels, $freeCreditFlag);
     }
@@ -99,12 +76,24 @@ abstract class AbstractBetPlacementService {
         $transactions = $this->betTransactionService->createBetPlacementTransaction($user, $amount, $freeCreditFlag);
 
         if(empty($transactions)) {
-            throw new \Exception;
+            throw new BetPlacementException("Error creating transactions");
         }
 
-        $bet = $this->createBet($user, $transactions, $type, $origin, $selections);
+        try {
+            $bet = $this->createBet($user, $transactions, $type, $origin, $selections);
+        } catch (\Exception $e) {
+            Log::error("BET PLACEMENT ERROR : " . $e->getMessage() );
+            $this->betTransactionService->refund($user, array_get($transactions, 'account.amount', 0), array_get($user, array_get($transactions,'free_credit.amount', 0)));
+            throw new BetPlacementException("Error storing bet");
+        }
 
-        $betSelections = $this->betSelectionService->createSelections($bet, $selections);
+        try {
+            $betSelections = $this->betSelectionService->createSelections($bet, $selections);
+        } catch (\Exception $e) {
+            Log::error("BET SELECTION ERROR : " . $e->getMessage() );
+            $this->betTransactionService->refundBet($bet['id']);
+            throw new BetPlacementException("Error storing bet selections");
+        }
 
         $this->riskBetService->sendBet($bet['id']);
 
@@ -140,9 +129,9 @@ abstract class AbstractBetPlacementService {
         return $bet;
     }
 
-    public function isBetValid($user, $amount, $type, $selections)
+    public function validateBet($user, $amount, $type, $selections)
     {
-        return $this->checkBetLimit($user, $amount, $type, $selections);
+        $this->checkBetLimit($user, $amount, $type, $selections);
     }
 
     abstract public function getTotalAmountForBet($amount, $selections);

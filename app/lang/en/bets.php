@@ -28,6 +28,8 @@ email: help@topbetta.com",
 
     "market_closed" => "Betting is closed on this market",
 
+    "event_closed" => "Betting is closed on this event",
+
     'odds_changed' => "Odds for a selection have changed",
 	
 );

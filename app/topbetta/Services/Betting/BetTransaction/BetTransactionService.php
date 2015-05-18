@@ -9,6 +9,8 @@
 namespace TopBetta\Services\Betting\BetTransaction;
 
 
+use TopBetta\Repositories\BetRepo;
+use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\FreeCreditTransactionService;
 
@@ -22,11 +24,16 @@ class BetTransactionService {
      * @var FreeCreditTransactionService
      */
     private $freeCreditTransactionService;
+    /**
+     * @var BetRepositoryInterface
+     */
+    private $betRepository;
 
-    public function __construct(AccountTransactionService $accountTransactionService, FreeCreditTransactionService $freeCreditTransactionService)
+    public function __construct(AccountTransactionService $accountTransactionService, FreeCreditTransactionService $freeCreditTransactionService, BetRepositoryInterface $betRepository)
     {
         $this->accountTransactionService = $accountTransactionService;
         $this->freeCreditTransactionService = $freeCreditTransactionService;
+        $this->betRepository = $betRepository;
     }
 
     public function createBetPlacementTransaction($user, $amount, $freeCreditFlag = false)
@@ -45,6 +52,35 @@ class BetTransactionService {
         if( $amount - $accountAmount > 0 ) {
             $transactions['free_credit'] = $this->freeCreditTransactionService->decreaseFreeCreditBalance($user->id, $user->id, $amount - $accountAmount, 'freebetentry');
         }
+
+        return $transactions;
+    }
+
+    public function refund($user, $amount, $freeCreditAmount)
+    {
+        $transactions = array();
+
+        if( $amount > 0 ) {
+            $transactions['account'] = $this->accountTransactionService->increaseAccountBalance($user->id, $amount, 'betrefund', $user->id);
+        }
+
+        if( $freeCreditAmount > 0 ) {
+            $transactions['free_credit'] = $this->freeCreditTransactionService->increaseFreeCreditBalance($user->id, $user->id, $freeCreditAmount, 'freebetrefund');
+        }
+
+        return $transactions;
+    }
+
+    public function refundBet($betId)
+    {
+        $bet = $this->betRepository->find($betId);
+
+        $transactions = $this->refund($bet->user, $bet->bet_amount - $bet->bet_freebet_amount, $bet->bet_freebet_amount);
+
+        $this->betRepository->updateWithId($bet['id'], array(
+            'refund_transaction_id' => array_get($transactions, 'account.id', 0),
+            'refund_freebet_transaction_id' => array_get($transactions, 'free_credit.id', 0),
+        ));
 
         return $transactions;
     }

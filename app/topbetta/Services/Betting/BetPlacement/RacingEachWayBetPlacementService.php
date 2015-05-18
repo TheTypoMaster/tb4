@@ -14,9 +14,11 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\RacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
+use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Risk\RiskRacingWinPlaceBetService;
 
-class RacingEachWayBetPlacementService extends AbstractBetPlacementService {
+class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementService {
 
     public function __construct(RacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskRacingWinPlaceBetService $riskBetService)
     {
@@ -34,10 +36,10 @@ class RacingEachWayBetPlacementService extends AbstractBetPlacementService {
 
         foreach($selections as $selection) {
             //win bet
-            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_WIN, $origin, $selection, $freeCreditFlag);
+            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_WIN, $origin, array($selection), $freeCreditFlag);
 
             //place bet
-            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_PLACE, $origin, $selection, $freeCreditFlag);
+            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_PLACE, $origin, array($selection), $freeCreditFlag);
         }
 
         return $bets;
@@ -55,11 +57,9 @@ class RacingEachWayBetPlacementService extends AbstractBetPlacementService {
                 ), 'racing');
 
                 if ($exceedLimit['result']) {
-                    return false;
+                    throw new BetLimitExceededException($exceedLimit, $selection);
                 }
             }
         }
-
-        return true;
     }
 }

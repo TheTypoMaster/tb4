@@ -8,4 +8,5 @@
 
 interface EventStatusRepositoryInterface {
 
+    const STATUS_SELLING = 'selling';
 } 

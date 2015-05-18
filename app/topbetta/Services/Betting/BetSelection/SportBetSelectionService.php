@@ -33,7 +33,7 @@ class SportBetSelectionService extends AbstractBetSelectionService {
     public function createSelection($bet, $selection, $extraData = array())
     {
         $data = array(
-            'fixed_odds' => $selection->price->win_odds
+            'fixed_odds' => $selection['dividend']
         );
 
         return parent::createSelection($bet, $selection, $data);
