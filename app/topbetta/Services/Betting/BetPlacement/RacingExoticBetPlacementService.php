@@ -15,12 +15,13 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\Factories\ExoticBetLibraryFactory;
+use TopBetta\Services\Risk\RiskExoticBetService;
 
 class RacingExoticBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskExoticBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
     public function getTotalAmountForBet($amount, $selections)
@@ -53,7 +54,7 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
             return false;
         }
 
-        return parent::isBetValid($user, $amount, $type, $selections);
+        return parent::isBetValidse($user, $amount, $type, $selections);
     }
 
     protected function createBet($user, $transactions, $type, $origin, $selections, $extraData = array())
@@ -64,7 +65,7 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
             'boxed_flag' => $library->isBoxed(),
             'combinations' => $library->getCombinationCount(),
             'percentage' => $library->getFlexiPercentage(),
-            'selection_string' => $this->getSelectionString($selections),
+            'selection_string' => $this->betSelectionService->getSelectionString($selections),
             'flexi_flag' => true,
             'event_id' => $selections['first'][0]->market->event->id
         );
@@ -72,12 +73,5 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
         return parent::createBet($user, $transactions, $type, $origin, $selections, $data);
     }
 
-    public function getSelectionString($selections)
-    {
-        return implode(' / ', array_map( function($v) {
-            return implode(', ', array_map(function($selection) {
-                return $selection->number;
-            }, $v));
-        }, $selections));
-    }
+
 }

@@ -46,4 +46,37 @@ class RiskManagerAPI
         }
     }
 
+    public static function sendRacingBet($betData)
+    {
+        return self::sendBet($betData, 'bets');
+    }
+
+    public static function sendSportsBet($betData)
+    {
+        return self::sendBet($betData, 'sportbets');
+    }
+
+    public static function sendBet($betData, $endPoint)
+    {
+        // we only want to send to risk manager for production
+        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+            return false;
+        }
+
+        // send bet to risk manager
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.riskManagerAPI'), $endPoint, 'POST', json_encode($betData));
+
+        $response = json_decode($responseJSON);
+
+        if (!$response) {
+            return false;
+        }
+
+        if ($response->status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

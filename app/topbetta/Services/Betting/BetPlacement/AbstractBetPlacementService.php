@@ -15,6 +15,7 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Risk\AbstractRiskBetService;
 
 abstract class AbstractBetPlacementService {
 
@@ -38,14 +39,19 @@ abstract class AbstractBetPlacementService {
      * @var BetLimitRepo
      */
     protected $betLimitRepo;
+    /**
+     * @var AbstractRiskBetService
+     */
+    protected $riskBetService;
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, AbstractRiskBetService $riskBetService)
     {
         $this->betRepository = $betRepository;
         $this->betTypeRepository = $betTypeRepository;
         $this->betSelectionService = $betSelectionService;
         $this->betTransactionService = $betTransactionService;
         $this->betLimitRepo = $betLimitRepo;
+        $this->riskBetService = $riskBetService;
     }
 
     /**
@@ -99,6 +105,8 @@ abstract class AbstractBetPlacementService {
         $bet = $this->createBet($user, $transactions, $type, $origin, $selections);
 
         $betSelections = $this->betSelectionService->createSelections($bet, $selections);
+
+        $this->riskBetService->sendBet($bet['id']);
 
         return $bet;
     }

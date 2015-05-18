@@ -73,7 +73,7 @@ abstract class AbstractBetSelectionService {
             throw new BetSelectionException($selection, Lang::get("bets.selection_scratched"));
         }
 
-        if ( ! $this->marketService->isSelectionMarketAvailableForBetting($selection) ) {
+        if( ! $this->marketService->isSelectionMarketAvailableForBetting($selection) ) {
             throw new BetSelectionException($selection, Lang::get("bets.market_closed"));
         }
 

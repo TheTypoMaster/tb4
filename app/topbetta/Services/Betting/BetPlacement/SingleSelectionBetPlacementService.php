@@ -14,12 +14,14 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Risk\AbstractRiskBetService;
+use TopBetta\Services\Risk\RiskRacingWinPlaceBetService;
 
 abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, AbstractRiskBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
     protected function _placeBet($user, $amount, $type, $origin, $selections, $freeCreditFlag = false)

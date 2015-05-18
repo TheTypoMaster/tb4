@@ -15,12 +15,13 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\SportBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\MultiBetService;
+use TopBetta\Services\Risk\RiskSportsBetService;
 
 class MultiBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskSportsBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
     public function getTotalAmountForBet($amount, $selections)
@@ -37,7 +38,7 @@ class MultiBetPlacementService extends AbstractBetPlacementService {
     public function isBetValid($user, $amount, $type, $selections)
     {
         //TODO: REAL MULTI BET RULES
-        if ( count($selections) < MultiBetService::neededWinners($type) ) {
+        if( count($selections) < MultiBetService::neededWinners($type) ) {
             return false;
         }
 

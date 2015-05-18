@@ -14,12 +14,13 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\RacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Risk\RiskRacingWinPlaceBetService;
 
 class RacingEachWayBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(RacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(RacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskRacingWinPlaceBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
     public function getTotalAmountForBet($amount, $selections)
@@ -32,7 +33,10 @@ class RacingEachWayBetPlacementService extends AbstractBetPlacementService {
         $bets = array();
 
         foreach($selections as $selection) {
+            //win bet
             $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_WIN, $origin, $selection, $freeCreditFlag);
+
+            //place bet
             $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_PLACE, $origin, $selection, $freeCreditFlag);
         }
 

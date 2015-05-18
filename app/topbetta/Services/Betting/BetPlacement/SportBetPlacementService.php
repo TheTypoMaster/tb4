@@ -14,12 +14,13 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetSelection\SportBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
+use TopBetta\Services\Risk\RiskSportsBetService;
 
 class SportBetPlacementService extends SingleSelectionBetPlacementService {
 
-    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo)
+    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskSportsBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
     }
 
     public function checkBetLimit($user, $amount, $betType, $selections)

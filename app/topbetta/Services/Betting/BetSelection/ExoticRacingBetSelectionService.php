@@ -58,4 +58,13 @@ class ExoticRacingBetSelectionService extends RacingBetSelectionService {
 
         return $betSelections;
     }
+
+    public function getSelectionString($selections)
+    {
+        return implode(' / ', array_map( function($v) {
+            return implode(', ', array_map(function($selection) {
+                return $selection->number;
+            }, $v));
+        }, $selections));
+    }
 }
