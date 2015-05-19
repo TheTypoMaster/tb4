@@ -182,7 +182,7 @@ class RaceDataProcessingService {
 				if ($defaultTrack) $meetingDetails['track'] = $defaultTrack;
 			}
 
-			$this->competitions->updateOrCreate($meetingDetails, 'external_event_group_id');
+			$this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
 
 			Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
 		}
