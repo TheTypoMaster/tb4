@@ -188,7 +188,7 @@ class AccountTransactionService {
 
         // get the child accounts
         $childUserAccounts = $this->user->getChildUserAccounts($parentUserDetails['id']);
-        if(!$childUserAccounts) throw new ValidationException("Validation Failed", 'No child acccounts found');
+        //if(!$childUserAccounts) throw new ValidationException("Validation Failed", 'No child acccounts found');
 
         //dd(count($childUserAccounts));
         // remove funds fom child accounts
