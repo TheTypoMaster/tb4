@@ -5,12 +5,10 @@
 
     RewriteEngine On
 
-    RewriteCond %{REQUEST_FILENAME} !-d
-
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
 
-    #Joomla stuff
+    # Legacy stuff
     RewriteCond %{QUERY_STRING} !^method=(.*)$
     RewriteCond %{REQUEST_URI} !^\/administrator
     RewriteCond %{REQUEST_URI} !^\/__admin_tools
@@ -18,6 +16,7 @@
     RewriteCond %{REQUEST_URI} !^\/silks
 
     # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
