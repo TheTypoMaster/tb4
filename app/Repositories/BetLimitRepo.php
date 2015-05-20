@@ -2,12 +2,12 @@
 
 namespace TopBetta\Repositories;
 
-use BetLimitType;
-use BetLimitUser;
-use TopBetta\Bet;
-use TopBetta\BetTypes;
+use TopBetta\Models\BetLimitType;
+use TopBetta\Models\BetLimitUser;
+use TopBetta\Models\BetModel;
+use TopBetta\Models\BetTypes;
 use TopBetta\Facades\BetRepo;
-use TopBetta\RaceMeeting;
+use TopBetta\Models\RaceMeeting;
 
 /**
  * Description of BetLimitRepo

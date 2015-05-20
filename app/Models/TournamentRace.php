@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class TournamentRace extends \Eloquent {
 	protected $table = 'tbdb_event';

@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta\Models;
 
 class BetLimitType extends \Eloquent
 {

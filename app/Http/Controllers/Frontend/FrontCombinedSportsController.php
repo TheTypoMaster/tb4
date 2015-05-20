@@ -1,9 +1,9 @@
 <?php
-namespace TopBetta\frontend;
+namespace TopBetta\Http\Frontend\Controllers;
 
 use App;
-use TopBetta\TournamentSport;
-use TopBetta\SportsEvents;
+use TopBetta\Models\TournamentSport;
+use TopBetta\Models\SportsEvents;
 
 class FrontCombinedSportsController extends \BaseController {
 
@@ -26,7 +26,7 @@ class FrontCombinedSportsController extends \BaseController {
                   return array("success" => false, "error" => "No Next To Jump Sports Event");			
                 } 
                 $compId = $nextSport[0]->comp_id;
-                $eventId = \TopBetta\RaceEvent::where('external_event_id',$nextSport[0]->external_event_id)->pluck('id');
+                $eventId = \TopBetta\Models\RaceEvent::where('external_event_id',$nextSport[0]->external_event_id)->pluck('id');
         }
 
         $compId = \Input::get('comp', $compId);
@@ -38,7 +38,7 @@ class FrontCombinedSportsController extends \BaseController {
                 return array("success" => false, "error" => "No Next To Jump Sports Event");			
             } 
             $compId = $nextToJump[0]->comp_id;
-            $eventId = \TopBetta\RaceEvent::where('external_event_id',$nextToJump[0]->external_event_id)->pluck('id');
+            $eventId = \TopBetta\Models\RaceEvent::where('external_event_id',$nextToJump[0]->external_event_id)->pluck('id');
         }
 
         // SPORTS & COMP
@@ -134,7 +134,7 @@ class FrontCombinedSportsController extends \BaseController {
         // Did they pass in a market type id? 
         // - this means they want all options for all events for this market type
         if ($marketTypeId = \Input::get('market_type_id')) {
-        	$optionsController = App::make('TopBetta\frontend\FrontSportsOptionsController');
+        	$optionsController = App::make('TopBetta\Http\Frontend\Controllers\FrontSportsOptionsController');
         	$options = $optionsController->getAllOptionsForMarketTypeId($allEvents, $marketTypeId);
 
         	$typeId = $marketTypeId;

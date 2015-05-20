@@ -1,21 +1,22 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
+
+use TopBetta\Http\Controllers\Controller;
 
 use Request;
-use TopBetta\Repositories\DbMarketsRepository;
+use TopBetta\Repositories\DbMarketRepository;
 use View;
-use BaseController;
 use Redirect;
 use Input;
 
-class MarketsController extends BaseController
+class MarketsController extends Controller
 {
 
 	/**
-	 * @var \TopBetta\Repositories\DbMarketsRepository
+	 * @var DbMarketRepository
 	 */
 	private $marketsrepo;
 
-	public function __construct(DbMarketsRepository $marketsrepo)
+	public function __construct(DbMarketRepository $marketsrepo)
 	{
 		$this->marketsrepo = $marketsrepo;
 	}
@@ -38,7 +39,7 @@ class MarketsController extends BaseController
 			$markets = $this->marketsrepo->allMarkets();
 		}
 
-        return View::make('admin::eventdata.markets.index', compact('markets', 'search', 'event'));
+        return View::make('admin.eventdata.markets.index', compact('markets', 'search', 'event'));
 	}
 
 	/**
@@ -90,7 +91,7 @@ class MarketsController extends BaseController
             return Redirect::route('admin.markets.index');
         }
 
-        return View::make('admin::eventdata.markets.edit', compact('market', 'search'));
+        return View::make('admin.eventdata.markets.edit', compact('market', 'search'));
 	}
 
 	/**

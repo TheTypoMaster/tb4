@@ -1,11 +1,13 @@
 <?php
 
-namespace TopBetta\admin\controllers;
+namespace TopBetta\Http\Controllers\Admin;
+
+use TopBetta\Http\Controllers\Controller;
 
 use BetLimitType as BetLimit;
 use View;
 
-class BetLimitsController extends \BaseController {
+class BetLimitsController extends Controller {
 
     /**
      * Betlimit Repository
@@ -28,7 +30,7 @@ class BetLimitsController extends \BaseController {
     {
         $betlimits = $this->betlimit->all();
 
-        return View::make('admin::betlimits.types.index', compact('betlimits'));
+        return View::make('admin.betlimits.types.index', compact('betlimits'));
     }
 
     /**

@@ -1,19 +1,17 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\FreeCreditTransactionRepo;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 use Redirect;
-use User;
+use TopBetta\Models\UserModel;
 use View;
 use Input;
 use Auth;
 
-class UserFreeCreditTransactionsController extends BaseController
+class UserFreeCreditTransactionsController extends Controller
 {
 
 	/**
@@ -39,7 +37,7 @@ class UserFreeCreditTransactionsController extends BaseController
     private $dashboardNotificationService;
 
     public function __construct(FreeCreditTransactionRepo $freeCreditTransactionRepo,
-                                User $user,
+                                UserModel $user,
                                 FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository,
                                 UserFreeCreditService $freeCreditService,
                                 UserDashboardNotificationService $dashboardNotificationService)
@@ -63,7 +61,7 @@ class UserFreeCreditTransactionsController extends BaseController
 		$transactions = $this->freeCreditTransactionRepo->userTransactions($user->id);
         $createRoute = 'admin.users.free-credit-transactions.create';
 
-		return View::make('admin::transactions.user.index')
+		return View::make('admin.transactions.user.index')
 						->with(compact('transactions', 'user', 'createRoute'))
 						->with('title', 'Free Credit')
 						->with('active', 'free-credit-transactions');
@@ -75,7 +73,7 @@ class UserFreeCreditTransactionsController extends BaseController
 
         $transactionTypes = $this->freeCreditTransactionTypeRepository->findAll();
 
-        return View::make('admin::transactions.create', compact('user', 'transactionTypes'))
+        return View::make('admin.transactions.create', compact('user', 'transactionTypes'))
             ->with('title', 'Free Credit')
             ->with('storeRoute', 'admin.users.free-credit-transactions.store')
             ->with('active', 'free-credit-transactions');

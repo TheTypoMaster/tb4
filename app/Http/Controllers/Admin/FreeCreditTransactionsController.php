@@ -1,12 +1,12 @@
 <?php
 
-namespace TopBetta\admin\controllers;
+namespace TopBetta\Http\Controllers\Admin;
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\FreeCreditTransactionRepo;
 use View;
 
-class FreeCreditTransactionsController extends BaseController
+class FreeCreditTransactionsController extends Controller
 {
 
 	/**
@@ -29,7 +29,7 @@ class FreeCreditTransactionsController extends BaseController
 	{
 		$transactions = $this->freeCreditTransactionRepo->allTransactions();
 
-		return View::make('admin::transactions.index')
+		return View::make('admin.transactions.index')
 						->with(compact('transactions'))
 						->with('title', 'Free Credit');
 	}

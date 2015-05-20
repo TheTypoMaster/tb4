@@ -1,5 +1,5 @@
 @if(isset($createRoute))
-<span class="pull-right">{{ link_to_route($createRoute, 'Create', array($user->id), array("class" => "btn btn-outline btn-success")) }}</span>
+<span class="pull-right">{!! link_to_route($createRoute, 'Create', array($user->id), array("class" => "btn btn-outline btn-success")) !!}</span>
 @endif
 
 @if ($transactions->count())
@@ -40,7 +40,7 @@
 		@endforeach
 	</tbody>
 </table>
-{{ $transactions->links() }}
+{!! $transactions->render() !!}
 @else
 <p>There are no transactions to display</p>
 @endif

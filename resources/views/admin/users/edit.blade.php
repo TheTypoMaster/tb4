@@ -1,11 +1,11 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 <div class="row">
 	<div class="col-lg-12">
-		@include('admin::users.partials.header')
+		@include('admin.users.partials.header')
 		<h4>Edit Profile</h4>
-		@include('admin::users.partials.profile')
+		@include('admin.users.partials.profile')
 		<div class="tab-content">
 			<div class="tab-pane fade" id="tournaments-tab">
 				<h4>Tournaments</h4>

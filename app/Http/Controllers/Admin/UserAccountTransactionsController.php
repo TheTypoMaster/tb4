@@ -1,7 +1,6 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use BaseController;
 use Carbon\Carbon;
 use TopBetta\Repositories\AccountTransactionRepo;
@@ -10,12 +9,12 @@ use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
-use User;
+use TopBetta\Models\UserModel;
 use View;
 use Input;
 use Redirect;
 
-class UserAccountTransactionsController extends \BaseController
+class UserAccountTransactionsController extends Controller
 {
 
 	/**
@@ -41,7 +40,7 @@ class UserAccountTransactionsController extends \BaseController
 
     public function __construct(AccountTransactionService $accountTransactionService,
                                 AccountTransactionTypeRepositoryInterface $accountTransactionTypeRepository,
-                                User $user,
+                                UserModel $user,
 								UserDashboardNotificationService $dashboardNotificationService,
                                 UserAccountService $userAccountService)
 
@@ -65,7 +64,7 @@ class UserAccountTransactionsController extends \BaseController
 		$transactions = $this->accountTransactionService->getAccountTransactionsForUserPaginated($user->id);
         $createRoute = 'admin.users.account-transactions.create';
 
-		return View::make('admin::transactions.user.index')
+		return View::make('admin.transactions.user.index')
 						->with(compact('transactions', 'user', 'createRoute'))
 						->with('title', 'Account')
 						->with('active', 'account-transactions');
@@ -77,7 +76,7 @@ class UserAccountTransactionsController extends \BaseController
 
         $transactionTypes = $this->accountTransactionTypeRepository->findAll();
 
-        return View::make('admin::transactions.create', compact('user', 'transactionTypes'))
+        return View::make('admin.transactions.create', compact('user', 'transactionTypes'))
             ->with('title', 'Account')
             ->with('storeRoute', 'admin.users.account-transactions.store')
             ->with('active', 'account-transactions');

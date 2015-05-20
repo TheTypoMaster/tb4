@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use Auth;
 use TopBetta;
@@ -41,7 +40,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			//this runs a very heavy query - cache for 1 minute
 			return \Cache::remember('usersTournamentTransactions-' . Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports, $page) {
 
-				$transactionModel = new \TopBetta\FreeCreditBalance;
+				$transactionModel = new \TopBetta\Models\FreeCreditBalance;
 
 				$transactionList = $transactionModel -> listTransactions(Auth::user() -> id, $type, $limit, $offset);
 
@@ -127,7 +126,7 @@ class FrontUsersTournamentsController extends \BaseController {
 			//cache for 30 seconds (.5 min)
 			return \Cache::remember('usersTournamentHistory-' . $userId . '-' . $type . $limit . $page, .5, function() use (&$userId, &$type, &$limit, &$offset, &$excludeSports, $page, $racingMap) {
 				
-				$ticket_model = new \TopBetta\TournamentTicket;	
+				$ticket_model = new \TopBetta\Models\TournamentTicket;
 
                 // just grab the completed tournaments - this API needs to be re-addressed at some stage.
                 $paid = 1;
@@ -157,10 +156,10 @@ class FrontUsersTournamentsController extends \BaseController {
 					$parent_tournament				= null;
 					if ($tournament->result_transaction_id) {
 						if ($tournament->jackpot_flag && !empty($tournament->parent_tournament_id) && -1 != $tournament->parent_tournament_id) {
-							$transaction_record = \TopBetta\FreeCreditBalance::find($tournament->result_transaction_id);
+							$transaction_record = \TopBetta\Models\FreeCreditBalance::find($tournament->result_transaction_id);
 							$parent_tournament = \TopBetta\Tournament::find($tournament->parent_tournament_id);
 						} else {
-							$transaction_record = \TopBetta\AccountBalance::find($tournament->result_transaction_id);
+							$transaction_record = \TopBetta\Models\AccountBalance::find($tournament->result_transaction_id);
 						}
 					}
 					if ($transaction_record && $transaction_record->amount > 0) {
@@ -222,7 +221,7 @@ class FrontUsersTournamentsController extends \BaseController {
 		$user = Auth::user();
 
 		// ticket model. models don't use static methods :(
-		$ticketModel = new TopBetta\TournamentTicket();
+		$ticketModel = new TopBetta\Models\TournamentTicket();
 
 		// Set the user to the currently logged in user
 		$this->userTicketsRepository->setUser($user);

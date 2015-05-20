@@ -9,10 +9,10 @@
 return array(
 
 
-    "default_source" => "topbetta",
+    "default_source" =>  env('ACTIVATION_SOURCE', 'topbetta'),
 
 
-    "activation_url" => "https://services.topbetta.com.au/api/v1/",
+    "activation_url" => env('ACTIVATION_URL', 'https://services.dev/api/v1/'),
 
 
     /*

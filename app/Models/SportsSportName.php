@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class SportsSportName extends \Eloquent {
     

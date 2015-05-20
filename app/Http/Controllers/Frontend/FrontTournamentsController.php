@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
@@ -295,7 +294,7 @@ class FrontTournamentsController extends \BaseController {
 						$prizePool = $tournamentModel -> calculateTournamentPrizePool($tourn -> id);
 
 						//fetch num entries
-						$numEntries = \TopBetta\TournamentTicket::countTournamentEntrants($tourn -> id);
+						$numEntries = \TopBetta\Models\TournamentTicket::countTournamentEntrants($tourn -> id);
 
 						//fetch places paid
 						$placesPaid = $tournamentModel -> calculateTournamentPlacesPaid($tourn, $numEntries, $prizePool);
@@ -416,7 +415,7 @@ class FrontTournamentsController extends \BaseController {
 			//get the comp_id and events list
 			$eventGroup = \TopBetta\SportsComps::find($meetingId);
 
-			$eventList = \TopBetta\SportsEvents::where('event_group_id', '=', $meetingId) -> get();
+			$eventList = \TopBetta\Models\SportsEvents::where('event_group_id', '=', $meetingId) -> get();
 
 			$events = array();
 
@@ -429,7 +428,7 @@ class FrontTournamentsController extends \BaseController {
 		}
 
 		//get entries/player list
-		$ticketModel = new \TopBetta\TournamentTicket;
+		$ticketModel = new \TopBetta\Models\TournamentTicket;
 
 		$playerList = \Cache::remember("tournament-$tournamentId-userlist", 5, function() use ($ticketModel, $tournamentId) {
 			return $ticketModel -> getTournamentEntrantList($tournamentId);
@@ -560,7 +559,7 @@ class FrontTournamentsController extends \BaseController {
             );
 
 
-            $tournamentParent = \TopBetta\RaceMeeting::find($meetingId);
+            $tournamentParent = \TopBetta\Models\RaceMeeting::find($meetingId);
 
             //($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent->name;
 

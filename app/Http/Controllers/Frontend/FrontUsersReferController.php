@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 class FrontUsersReferController extends \BaseController {
 

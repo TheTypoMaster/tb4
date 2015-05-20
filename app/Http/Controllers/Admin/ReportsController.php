@@ -1,12 +1,11 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\ReportRepo;
 use Request;
 use View;
 
-class ReportsController extends \BaseController
+class ReportsController extends Controller
 {
 
 	/**
@@ -28,7 +27,7 @@ class ReportsController extends \BaseController
 	public function index()
 	{
 
-		return View::make('admin::reports.index');
+		return View::make('admin.reports.index');
 	}
 
 	/**
@@ -64,7 +63,7 @@ class ReportsController extends \BaseController
 			return $data;
 		}
 
-		return View::make('admin::reports.show')
+		return View::make('admin.reports.show')
 						->with(compact('data', 'month', 'year', 'report', 'params'));
 	}
 

@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\TournamentCompetition;
+use TopBetta\Models\TournamentCompetition;
 
 class DbTournamentCompetiitonRepository extends BaseEloquentRepository {
     protected $model;

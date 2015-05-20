@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class TournamentTicket extends \Eloquent {
 	protected $table = 'tbdb_tournament_ticket';
@@ -521,7 +521,7 @@ class TournamentTicket extends \Eloquent {
 		$cost         = $this->$cost_method($ticket->id);
 
 		if(!empty($cost)) {
-			$refundId = \TopBetta\FreeCreditBalance::_increment(\Auth::user()->id, $cost, 'refund');
+			$refundId = \TopBetta\Models\FreeCreditBalance::_increment(\Auth::user()->id, $cost, 'refund');
 
 			if (!$refundId) {
 				return false;

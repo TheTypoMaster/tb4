@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 7/01/15

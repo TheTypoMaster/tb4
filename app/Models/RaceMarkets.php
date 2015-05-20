@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class RaceMarket extends \Eloquent {
 
@@ -17,7 +17,7 @@ class RaceMarket extends \Eloquent {
      * @return mixed
      */
     public function markettype(){
-        return $this->hasOne('TopBetta\RaceMarketType', 'id', 'market_type_id');
+        return $this->hasOne('TopBetta\Models\RaceMarkettType', 'id', 'market_type_id');
     }
 
 	

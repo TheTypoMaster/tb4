@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class DataTypes extends \Eloquent {
 	protected $table = 'tbdb_data_types';

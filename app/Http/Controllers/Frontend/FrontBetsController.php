@@ -1,11 +1,14 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Lang;
 use BaseController;
 use Exception;
 use Illuminate\Support\Facades\Input;
+use Auth;
+use Log;
+use Regulus\ActivityLog\Activity;
+
 use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
@@ -99,7 +102,7 @@ class FrontBetsController extends BaseController {
 			} elseif ($activeBet -> bet_type > 3) {
 
 				$exoticSelections = true;
-				$exoticBetTransaction = \TopBetta\AccountBalance::find($activeBet -> bet_transaction_id);
+				$exoticBetTransaction = \TopBetta\Models\AccountBalance::find($activeBet -> bet_transaction_id);
 
 				if ($exoticBetTransaction) {
 					$exoticAmount = abs($exoticBetTransaction -> amount);
@@ -149,7 +152,7 @@ class FrontBetsController extends BaseController {
 			} elseif ($recentBet -> bet_type > 3) {
 
 				$exoticSelections = true;
-				$exoticBetTransaction = \TopBetta\AccountBalance::find($recentBet -> bet_transaction_id);
+				$exoticBetTransaction = \TopBetta\Models\AccountBalance::find($recentBet -> bet_transaction_id);
 
 				$exoticAmount = 0;
 				if($exoticBetTransaction) {
@@ -262,7 +265,7 @@ class FrontBetsController extends BaseController {
                         $legacyData = $betModel -> getLegacyBetData($input['selections'][0]);
 
                         // get tournament ticket for user
-                        $ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
+                        $ticket = \TopBetta\Models\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
                         if (!$ticket) {
                             return array("success" => false, "error" => "Account not registered in tournament");
                         } else {
@@ -393,7 +396,7 @@ class FrontBetsController extends BaseController {
 			}
 
 			//No Exotic bets on international races
-			if(TopBetta\RaceMeeting::isInternational($betData['id'])){
+			if(TopBetta\Models\RaceMeeting::isInternational($betData['id'])){
 				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.bet_type_not_valid_international'));
 				$errors++;
 
@@ -439,6 +442,18 @@ class FrontBetsController extends BaseController {
                     $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
                 }
 
+
+				if (Auth::check()) {
+					// record the logout to the activity table
+					Activity::log([
+						'contentId'   => $bet['bet_id'],
+						'contentType' => 'Bet',
+						'action'      => 'User Placed Bet',
+						'description' => 'User placed racing exotic bet',
+						'details'     => 'Bet Details - Meeting ID: '. $legacyData[0]->meeting_id. ', Race Id: '. $legacyData[0]->race_id. ', Amount: '.$input['amount']
+						//'updated'     => $id ? true : false,
+					]);
+				}
 
 			} elseif ($bet['status'] == 401) {
 
@@ -510,6 +525,19 @@ class FrontBetsController extends BaseController {
 							$bet = $l -> query('saveBet', $betData);
 
                             if($bet['status'] == 200) {
+
+								if (Auth::check()) {
+									// record the logout to the activity table
+									Activity::log([
+										'contentId'   => $bet['bet_id'],
+										'contentType' => 'Bet',
+										'action'      => 'User Placed Bet',
+										'description' => 'User placed racing bet',
+										'details'     => 'Bet Details - Meeting ID: '. $legacyData[0]->meeting_id. ', Race Id: '. $legacyData[0]->race_id. ', Amount: '.$input['amount']
+										//'updated'     => $id ? true : false,
+									]);
+								}
+
                                 $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'],'notification_type' => 'bet_placement'));
                             }
 
@@ -527,7 +555,7 @@ class FrontBetsController extends BaseController {
                             if($betLimitEnabled){
 
                                 // get tournament ticket for user
-                                $ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
+                                $ticket = \TopBetta\Models\TournamentTicket::where('tournament_id', '=', $input['tournament_id']) -> where('user_id', '=', \Auth::user() -> id) -> first();
                                 if (!$ticket) {
                                     $messages[] = array("id" => $selection, "success" => false, "error" => \Lang::get('tournaments.ticket_not_found'));
                                     $errors++;
@@ -679,6 +707,19 @@ class FrontBetsController extends BaseController {
 							$bet = $l -> query('saveSportBet', $betData);
 
                             if($bet['status'] == 200) {
+
+								if (Auth::check()) {
+									// record the logout to the activity table
+									Activity::log([
+										'contentId'   => $bet['bet_id'],
+										'contentType' => 'Bet',
+										'action'      => 'User Placed Bet',
+										'description' => 'User placed sport bet',
+										'details'     => 'Bet Details - Selection: '.$selectionModel->name .', Amount: '.$input['amount']
+										//'updated'     => $id ? true : false,
+									]);
+								}
+
                                 $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'], 'notification_type' => 'bet_placement'));
                             }
 

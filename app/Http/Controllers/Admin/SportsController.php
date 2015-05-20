@@ -1,13 +1,13 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
+use TopBetta\Http\Controllers\Controller;
 use Request;
 use TopBetta\Repositories\DbSportsRepository;
 use View;
-use BaseController;
 use Redirect;
 use Input;
 
-class SportsController extends BaseController
+class SportsController extends Controller
 {
 
 	/**
@@ -34,7 +34,7 @@ class SportsController extends BaseController
 			$sports = $this->sportsrepo->allSports();
 		}
 
-		return View::make('admin::eventdata.sports.index', compact('sports', 'search'));
+		return View::make('admin.eventdata.sports.index', compact('sports', 'search'));
 	}
 
 	/**
@@ -44,7 +44,7 @@ class SportsController extends BaseController
 	 */
 	public function create()
 	{
-        return View::make('admin::eventdata.sports.create');
+        return View::make('admin.eventdata.sports.create');
 	}
 
 	/**
@@ -89,7 +89,7 @@ class SportsController extends BaseController
             return Redirect::route('admin.sports.index', array("q" => $search));
         }
 
-        return View::make('admin::eventdata.sports.edit', compact('sport', 'search'));
+        return View::make('admin.eventdata.sports.edit', compact('sport', 'search'));
 	}
 
 	/**

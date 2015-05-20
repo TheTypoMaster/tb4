@@ -53,14 +53,14 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
      * @param int $limit
      * @return mixed
      */
-    public function allSelections($page = 1, $limit = 10)
+    public function allSelections($limit = 10)
     {
 
-        $results =  new \stdClass();
-        $results->page = $page;
-        $results->limit = $limit;
-        $results->totalItems = 0;
-        $results->items = array();
+       // $results =  new \stdClass();
+        //$results->page = $page;
+       // $results->limit = $limit;
+       // $results->totalItems = 0;
+       // $results->items = array();
 
         $selections =  $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
             ->leftjoin('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
@@ -74,12 +74,12 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
                 'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
                 'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
 
-            ->skip($limit * ($page - 1))->take($limit)->get();
+            ->paginate($limit);
 
-        $results->totalItems = $this->model->count();
-        $results->items = $selections->all();
+       // $results->totalItems = $this->model->count();
+       // $results->items = $selections->all();
 
-        return $results;
+        return $selections;
     }
 
     /**

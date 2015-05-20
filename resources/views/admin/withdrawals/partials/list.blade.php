@@ -35,7 +35,7 @@
 			<td>{{{ $withdrawal->notes }}}</td>
             <td>
                 @if(is_null($withdrawal->approved_flag))
-                    {{ link_to_route("admin.withdrawals.edit", "Process", array($withdrawal->id), array("class" => "btn btn-primary")) }}
+                    {!! link_to_route("admin.withdrawals.edit", "Process", array($withdrawal->id), array("class" => "btn btn-primary")) !!}
                 @endif
             </td>
 		</tr>
@@ -43,7 +43,7 @@
 		@endforeach
 	</tbody>
 </table>
-{{ $withdrawals->appends(array("pending" => isset($pending) ? $pending : ''))->links()}}
+{!! $withdrawals->appends(array("pending" => isset($pending) ? $pending : ''))->render() !!}
 @else
 <p>There are no withdrawal requests to display</p>
 @endif

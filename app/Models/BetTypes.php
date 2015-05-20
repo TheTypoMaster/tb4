@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class BetTypes extends \Eloquent
 {

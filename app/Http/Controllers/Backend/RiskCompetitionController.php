@@ -1,6 +1,4 @@
-<?php
-
-namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Risk\RiskCompetitionService;

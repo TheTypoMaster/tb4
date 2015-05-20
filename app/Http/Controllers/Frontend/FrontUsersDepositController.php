@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Mail;
@@ -384,7 +383,7 @@ class FrontUsersDepositController extends \BaseController {
 						if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus == 'True'){
 
 							// Update users account balance
-							$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
+							$updateAccountBalance = TopBetta\Models\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 							
 							if($updateAccountBalance){
                                 $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
@@ -435,7 +434,7 @@ class FrontUsersDepositController extends \BaseController {
 					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus == 'True'){
 					
 						// Update users account balance
-						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
+						$updateAccountBalance = TopBetta\Models\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 
 						if($updateAccountBalance){
                             $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);
@@ -473,7 +472,7 @@ class FrontUsersDepositController extends \BaseController {
 					if($soapResponse['success'] && $soapResponse['result']->ewayResponse->ewayTrxnStatus = 'True'){
 							
 						// Update users account balance
-						$updateAccountBalance = TopBetta\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
+						$updateAccountBalance = TopBetta\Models\AccountBalance::_increment(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount, 'ewaydeposit', 'EWAY transaction id:'.$soapResponse['result']->ewayResponse->ewayTrxnNumber.' - Bank authorisation number:'.$soapResponse['result']->ewayResponse->ewayAuthCode);
 
 						if($updateAccountBalance){
                             $this->userAccountService->addBalanceToTurnOver(\Auth::user()->id, $soapResponse['result']->ewayResponse->ewayReturnAmount);

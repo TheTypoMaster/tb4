@@ -39,7 +39,7 @@ return [
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'Australia/Sydney',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -145,6 +145,21 @@ return [
 		'TopBetta\Providers\EventServiceProvider',
 		'TopBetta\Providers\RouteServiceProvider',
 
+		/*
+		 * 3rd Party Service Providers
+		 */
+		'Collective\Html\HtmlServiceProvider',
+		'Barryvdh\Cors\CorsServiceProvider',
+
+		/*
+		 * TopBetta Service Providers
+		 */
+		'TopBetta\Providers\BetResultRepoServiceProvider',
+		'TopBetta\Providers\BetRepoServiceProvider',
+		'TopBetta\Providers\BetLimitRepoServiceProvider',
+		'TopBetta\Providers\RepositoryServiceProvider',
+		'TopBetta\Services\Html\HtmlServiceProvider',
+
 	],
 
 	/*
@@ -192,6 +207,64 @@ return [
 		'URL'       => 'Illuminate\Support\Facades\URL',
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
+
+		/*
+		 * 3rd Party Aliases
+		 */
+		'Form' => 'Collective\Html\FormFacade',
+		'Html' => 'Collective\Html\HtmlFacade',
+
+		/*
+		 * TopBetta Aliases
+		 */
+		'FrontUsers'			=> 'TopBetta\frontend\FrontUsersController',
+		'FrontUsersProfile'	=> 'TopBetta\frontend\FrontUsersProfileController',
+		'FrontUsersRefer'	=> 'TopBetta\frontend\FrontUsersReferController',
+		'FrontUsersBanking'	=> 'TopBetta\frontend\FrontUsersBankingController',
+		'FrontUsersDeposit'	=> 'TopBetta\frontend\FrontUsersDepositController',
+		'FrontUsersPoliDeposit'	=> 'TopBetta\frontend\FrontUsersPoliDepositController',
+		'FrontUsersWithdraw'	=> 'TopBetta\frontend\FrontUsersWithdrawController',
+		'FrontUsersBalances'	=> 'TopBetta\frontend\FrontUsersBalancesController',
+		'FrontUsersBetting'	=> 'TopBetta\frontend\FrontUsersBettingController',
+		'FrontUsersBettingLimit'	=> 'TopBetta\frontend\FrontUsersBettingLimitsController',
+		'FrontUsersTournaments'	=> 'TopBetta\frontend\FrontUsersTournamentsController',
+		'FrontBets'		=> 'TopBetta\frontend\FrontBetsController',
+		'FrontMeetings'	=> 'TopBetta\frontend\FrontMeetingsController',
+		'FrontRaces'	=> 'TopBetta\frontend\FrontRacesController',
+		'FrontRunners'	=> 'TopBetta\frontend\FrontRunnersController',
+		'FrontSports'	=> 'TopBetta\frontend\FrontSportsController',
+		'FrontSportsEvents'	=> 'TopBetta\frontend\FrontSportsEventsController',
+		'FrontSportsTypes'	=> 'TopBetta\frontend\FrontSportsTypesController',
+		'FrontSportsOptions'	=> 'TopBetta\frontend\FrontSportsOptionsController',
+		'FrontSportsResults'	=> 'TopBetta\frontend\FrontSportsResultsController',
+		'FrontTournaments'	=> 'TopBetta\frontend\FrontTournamentsController',
+		'FrontTournamentsComments'	=> 'TopBetta\frontend\FrontTournamentsCommentsController',
+		'FrontTournamentsBets'	=> 'TopBetta\frontend\FrontTournamentsBetsController',
+		'FrontTournamentsDetails'	=> 'TopBetta\frontend\FrontTournamentsDetailsController',
+		'FrontTournamentsTickets'	=> 'TopBetta\frontend\FrontTournamentsTicketsController',
+		'FrontCombinedRacing'	=> 'TopBetta\frontend\FrontCombinedRacingController',
+		'FrontCombinedSports'	=> 'TopBetta\frontend\FrontCombinedSportsController',
+		'FrontCombinedTournaments'	=> 'TopBetta\frontend\FrontCombinedTournamentsController',
+		'FrontPasswordResetsController' => 'TopBetta\frontend\FrontPasswordResetsController',
+		'BackRacing'	=> 'TopBetta\backend\RacingController',
+		'BackSports'	=> 'TopBetta\backend\SportsController',
+		'BackBets'		=> 'TopBetta\backend\BetResultsController',
+		'RaceResulting' => 'TopBetta\backend\RacingResultsController',
+		'RacingData' => 'TopBetta\backend\RacingDataController',
+		'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
+		'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
+		'RiskSportBets'		=> 'TopBetta\backend\RiskSportBetsController',
+		'RiskBets'		=> 'TopBetta\backend\RiskBetsController',
+		'RiskResultSportMarket'		=> 'TopBetta\backend\RiskResultSportMarketController',
+		'RiskEvents' => 'TopBetta\backend\RiskEventsController',
+		'RiskCompetition' => 'TopBetta\backend\RiskCompetitionController',
+		'RiskUserAccount' => 'TopBetta\backend\RiskUserAccountController',
+		'testJSON' => 'TopBetta\backend\TestJSONController',
+		'AdminDataImporter' => 'TopBetta\admin\DataImporter',
+		'HeartBeat' => 'TopBetta\admin\HeartBeatController',
+		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
+		'BetRepo' => 'TopBetta\Facades\BetRepo',
+		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
 
 	],
 

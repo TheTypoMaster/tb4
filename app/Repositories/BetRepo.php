@@ -2,11 +2,11 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\AccountBalance;
+use TopBetta\Models\AccountBalance;
 use TopBetta\Bet;
 use TopBetta\BetResultStatus;
 use TopBetta\BetSelection;
-use TopBetta\FreeCreditBalance;
+use TopBetta\Models\FreeCreditBalance;
 use TopBetta\RaceEvent;
 use TopBetta\RaceResult;
 use TopBetta\Services\Betting\SelectionService;

@@ -1,6 +1,6 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Request;
 use View;
@@ -13,7 +13,7 @@ use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\WithdrawalService;
 
 
-class WithdrawalsController extends BaseController
+class WithdrawalsController extends Controller
 {
 
 	/**
@@ -57,7 +57,7 @@ class WithdrawalsController extends BaseController
             }
 		}
 
-		return View::make('admin::withdrawals.index', compact('withdrawals', 'search', 'pending'));
+		return View::make('admin.withdrawals.index', compact('withdrawals', 'search', 'pending'));
 	}
 
 	/**
@@ -106,7 +106,7 @@ class WithdrawalsController extends BaseController
                 ->with(array('flash_message' => "Withdrawal already processed"));
         }
 
-        return View::make('admin::withdrawals.edit', compact('withdrawal'));
+        return View::make('admin.withdrawals.edit', compact('withdrawal'));
 	}
 
 	/**

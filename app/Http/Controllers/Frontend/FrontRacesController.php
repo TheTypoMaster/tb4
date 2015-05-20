@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -61,7 +60,7 @@ class FrontRacesController extends \BaseController {
 		// just cache for 10sec, we need it as close to real time as we can
 		return \Cache::remember('nextToJumpEventIds-' . $limit, 0.16, function() use ($limit) {
 			// we only get events that are status selling
-			$nextToJump = TopBetta\RaceEvent::nextToJumpEventIds($limit);
+			$nextToJump = TopBetta\Models\RaceEvent::nextToJumpEventIds($limit);
 			
 			$ret = array();
 			$ret['success'] = true;
@@ -86,7 +85,7 @@ class FrontRacesController extends \BaseController {
 		return \Cache::remember('fastBetEvents-' . $limit, 1, function() use ($limit) {
 
 			// we only get events that are status selling
-			$nextToJump = TopBetta\RaceEvent::nextToJump($limit);
+			$nextToJump = TopBetta\Models\RaceEvent::nextToJump($limit);
 
 			$ret = array();
 			$ret['success'] = true;
@@ -128,7 +127,7 @@ class FrontRacesController extends \BaseController {
 		// store sports types & options in cache for 10 min at a time
 		return \Cache::remember('racesForMeeting-' . $meetingId, 1, function() use (&$meetingId) {
 				
-			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($meetingId);
+			$races = \TopBetta\Models\RaceMeeting::getRacesForMeetingId($meetingId);
 
 			return array('success' => true, 'result' => $races);
 		});
@@ -160,7 +159,7 @@ class FrontRacesController extends \BaseController {
 	 */
 	public function show($meetingId, $id) {
 				
-		$race = TopBetta\RaceEvent::find($id);
+		$race = TopBetta\Models\RaceEvent::find($id);
 		if ($race) {
 			//convert the date to ISO 8601 format
 			$startDatetime = new \DateTime($race -> start_date);

@@ -1,16 +1,15 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use BetLimitUser;
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Models\BetLimitUser;
 use Redirect;
 use TopBetta\Repositories\BetLimitRepo;
 use Input;
-use User;
+use TopBetta\Models\UserModel;
 use Validator;
 use View;
 
-class UserBetLimitsController extends \BaseController
+class UserBetLimitsController extends Controller
 {
 
 	/**
@@ -24,7 +23,7 @@ class UserBetLimitsController extends \BaseController
 	protected $betLimitRepo;
 	protected $user;
 
-	public function __construct(User $user, BetLimitRepo $betLimitRepo, BetLimitUser $betLimitUser)
+	public function __construct(UserModel $user, BetLimitRepo $betLimitRepo, BetLimitUser $betLimitUser)
 	{
 		$this->user = $user;
 		$this->betLimitRepo = $betLimitRepo;
@@ -48,7 +47,7 @@ class UserBetLimitsController extends \BaseController
 		$betLimits = $this->betLimitRepo->getBetLimitsForUser($user->id, TRUE);
 		$betLimitTypes = $this->betLimitRepo->getAllLimitTypesNicknames();
 
-		return View::make('admin::betlimits.user.index', compact('user', 'betLimits', 'betLimitTypes'))
+		return View::make('admin.betlimits.user.index', compact('user', 'betLimits', 'betLimitTypes'))
 						->with('active', 'bet-limits');
 	}
 
@@ -67,7 +66,7 @@ class UserBetLimitsController extends \BaseController
 							->with('flash_message', 'User not found!');
 		}
 
-		return View::make('admin::betlimits.user.create', compact('user', 'betLimitTypes'))
+		return View::make('admin.betlimits.user.create', compact('user', 'betLimitTypes'))
 						->with('active', 'bet-limits');
 	}
 
@@ -131,7 +130,7 @@ class UserBetLimitsController extends \BaseController
 							->with('flash_message', 'User not found!');
 		}
 
-		return View::make('admin::betlimits.user.edit', compact('user', 'betLimit', 'betLimitTypes'))
+		return View::make('admin.betlimits.user.edit', compact('user', 'betLimit', 'betLimitTypes'))
 						->with('active', 'bet-limits');
 	}
 

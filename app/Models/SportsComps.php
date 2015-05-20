@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 use TopBetta\Services\Betting\SelectionService;
 
@@ -12,7 +12,7 @@ class SportsComps extends \Eloquent {
     public static $rules = array();
 
     public function sports(){
-        return $this->belongsTo('\TopBetta\TournamentSport', 'sport_id', 'id');
+        return $this->belongsTo('\TopBetta\Models\TournamentSport', 'sport_id', 'id');
     }
 
     /**

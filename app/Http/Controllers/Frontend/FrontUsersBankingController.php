@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -34,7 +33,7 @@ class FrontUsersBankingController extends \BaseController {
 			//this runs a very heavy query - cache for 1 minute
 			return \Cache::remember('usersBankingTransactions-' . \Auth::user() -> id . '-' . $type . $limit . $page, 1, function() use (&$type, &$limit, &$offset, &$excludeSports, $page) {
 
-				$accountModel = new \TopBetta\AccountBalance;
+				$accountModel = new \TopBetta\Models\AccountBalance;
 				$transactionList = $accountModel -> listTransactions(\Auth::user() -> id, $type, $limit, $offset);
 
 				$transactions = array();

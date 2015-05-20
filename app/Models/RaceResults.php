@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 class RaceResult extends \Eloquent {
 
 	protected $table = 'tbdb_selection_result';

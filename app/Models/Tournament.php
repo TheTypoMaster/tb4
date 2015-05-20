@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class Tournament extends \Eloquent {
 
@@ -15,19 +15,19 @@ class Tournament extends \Eloquent {
 
 	// model relationships
     public function tournamentlabels(){
-        return $this->belongsToMany('TopBetta\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
+        return $this->belongsToMany('TopBetta\Models\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
     }
 	
 	public function parentTournament() {
-		return $this->belongsTo('TopBetta\Tournament', 'parent_tournament_id');
+		return $this->belongsTo('TopBetta\Models\Tournament', 'parent_tournament_id');
 	}
 	
 	public function eventGroup() {
-		return $this->belongsTo('TopBetta\RaceMeeting', 'event_group_id');
+		return $this->belongsTo('TopBetta\Models\RaceMeeting', 'event_group_id');
 	}
 	
 	public function sport() {
-		return $this->belongsTo('TopBetta\SportsSportName', 'tournament_sport_id');
+		return $this->belongsTo('TopBetta\Models\SportsSportName', 'tournament_sport_id');
 	}
 
 	static public function getTournamentWithEventGroup($eventGroupId){
@@ -301,7 +301,7 @@ class Tournament extends \Eloquent {
 	 */
 	public function calculateTournamentPlacesPaid($tournament, $entrant_count, $prize_pool)
 	{
-		$payout_model = new \TopBetta\TournamentPlacesPaid;
+		$payout_model = new \TopBetta\Models\TournamentPlacesPaid;
 		$final = $this->isFinished($tournament);
 
 		if($final) {
@@ -366,6 +366,6 @@ class Tournament extends \Eloquent {
 	}
 
 	public function leaderboards() {
-		return $this->hasMany('\TopBetta\TournamentLeaderboard', 'tournament_id');
+		return $this->hasMany('\TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
 }

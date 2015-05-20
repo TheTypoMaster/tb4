@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class AccountTransactionTypes extends \Eloquent {
 	protected $table = 'tbdb_account_transaction_type';

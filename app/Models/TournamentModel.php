@@ -24,23 +24,23 @@ class TournamentModel extends Eloquent {
 	 */
 
     public function tournamentlabels(){
-        return $this->belongsToMany('TopBetta\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
+        return $this->belongsToMany('TopBetta\Models\TournamentLabels', 'tb_tournament_label_tournament', 'tournament_id', 'tournament_label_id');
     }
 	
 	public function parentTournament() {
-		return $this->belongsTo('TopBetta\Tournament', 'parent_tournament_id');
+		return $this->belongsTo('TopBetta\Models\Tournament', 'parent_tournament_id');
 	}
 	
 	public function eventGroup() {
-		return $this->belongsTo('TopBetta\RaceMeeting', 'event_group_id');
+		return $this->belongsTo('TopBetta\Models\RaceMeeting', 'event_group_id');
 	}
 	
 	public function sport() {
-		return $this->belongsTo('TopBetta\SportsSportName', 'tournament_sport_id');
+		return $this->belongsTo('TopBetta\Models\SportsSportName', 'tournament_sport_id');
 	}
 
   	public function leaderboards() {
-		return $this->hasMany('\TopBetta\TournamentLeaderboard', 'tournament_id');
+		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
 
     public function calculateTournamentPrizePool($tournamentId) {

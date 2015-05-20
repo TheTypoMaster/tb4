@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 // use TopBetta;
 
@@ -85,7 +84,7 @@ class FrontTournamentsCommentsController extends \BaseController {
 
 		} else {					
 
-			$ticket = \TopBetta\TournamentTicket::getTicketForUserId(\Auth::user()->id, $tournamentId);
+			$ticket = \TopBetta\Models\TournamentTicket::getTicketForUserId(\Auth::user()->id, $tournamentId);
 
 			if (count($ticket) == 0) {
 				return array("success" => false, "error" => \Lang::get('tournaments.ticket_not_found'));

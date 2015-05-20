@@ -2,7 +2,7 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\AccountBalance;
+use TopBetta\Models\AccountBalance;
 
 /**
  * Description of AccountTransactionRepo

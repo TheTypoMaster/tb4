@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Accounting\AccountTransactionService;

@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -12,7 +11,7 @@ class FrontSportsEventsController extends \BaseController {
 		// store next to jump in cache for 1 min at a time
 		return \Cache::remember('nextToJump-sports-' . $limit, 1, function() use (&$limit) {
 
-			$nextToJump = TopBetta\SportsEvents::getNextEventsToJump($limit);
+			$nextToJump = TopBetta\Models\SportsEvents::getNextEventsToJump($limit);
 
 			$result = array();
 
@@ -47,7 +46,7 @@ class FrontSportsEventsController extends \BaseController {
 
 		// store sports events in cache for 10 min at a time
 		return \Cache::remember('sportsEvents-' . $compId . $date . $limit . $tournamentFlag, 10, function() use (&$compId, &$date, &$limit, $tournamentFlag) {
-			$sportsEvents = new TopBetta\SportsEvents;
+			$sportsEvents = new TopBetta\Models\SportsEvents;
 			$events = $sportsEvents -> getEvents($limit, (int)$compId, $date, $tournamentFlag);
 
 			//var_dump(\DB::getQueryLog());

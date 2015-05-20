@@ -7,7 +7,7 @@
  */
 
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
-use TopBetta\TournamentSport;
+use TopBetta\Models\TournamentSport;
 
 class DbSportsRepository extends BaseEloquentRepository implements SportRepositoryInterface{
 

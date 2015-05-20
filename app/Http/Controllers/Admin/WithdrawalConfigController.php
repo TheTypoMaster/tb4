@@ -1,14 +1,13 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Services\Accounting\WithdrawalService;
 use View;
 use Input;
 use Redirect;
 use TopBetta\Repositories\Contracts\ConfigurationRepositoryInterface;
 
-class WithdrawalConfigController extends \BaseController {
+class WithdrawalConfigController extends Controller {
 
     /**
      * @var ConfigurationRepositoryInterface
@@ -77,7 +76,7 @@ class WithdrawalConfigController extends \BaseController {
 
         $variables = $this->configurationRepository->getConfigByName(WithdrawalService::WITHDRAWAL_EMAIL_VARIABLE_CONFIG, true);
 
-        return View::make('admin::withdrawals.config.edit', compact('config', 'variables'));
+        return View::make('admin.withdrawals.config.edit', compact('config', 'variables'));
 	}
 
 

@@ -18,7 +18,7 @@ class AccountTransactionModel extends Eloquent {
     */
 
     public function transactionType() {
-        return $this->belongsTo('TopBetta\AccountTransactionTypes', 'account_transaction_type_id');
+        return $this->belongsTo('TopBetta\Models\AccountTransactionTypes', 'account_transaction_type_id');
     }
 
     public function giver() {

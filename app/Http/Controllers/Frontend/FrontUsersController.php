@@ -1,8 +1,9 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
+use Regulus\ActivityLog\Activity;
+
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
 use View;
@@ -45,12 +46,12 @@ class FrontUsersController extends \BaseController {
 				// we do a standard laravel auth with the joomla user id in the DB
 				\Auth::loginUsingId($login['userInfo']['id']);
 
-				if (\Auth::check()) {
+				if (Auth::check()) {
 
-					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user()->id) -> first();
+					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', Auth::user()->id) -> first();
 
 					if (!$login['userInfo']['full_account']) {
-						$parts = explode(" ", \Auth::user()->name);
+						$parts = explode(" ", Auth::user()->name);
 						$lastname = array_pop($parts);
 						$firstname = implode(" ", $parts);
 					} else if ( $tbUser ) {
@@ -72,6 +73,16 @@ class FrontUsersController extends \BaseController {
 						$verified = ($tbUser -> identity_verified_flag) ? true : false;
 					}
 
+					// record the login to the activity table
+					Activity::log([
+						'contentId'   => Auth::user()->id,
+						'contentType' => 'User',
+						'action'      => 'Legacy Log In',
+						'description' => 'User logged in to TopBetta',
+						'details'     => 'Username: '.Auth::user()->username,
+						//'updated'     => $id ? true : false,
+					]);
+
 					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "email" => \Auth::user()->email, "mobile" => $mobile, "full_account" => $login['userInfo']['full_account'], "verified" => $verified, "register_date" => \TimeHelper::isoDate(\Auth::user()->registerDate)));
 
 				} else {
@@ -92,10 +103,22 @@ class FrontUsersController extends \BaseController {
 
 	public function logout() {
 
-		//logout of laravel only
-		\Auth::logout();
+		if (Auth::check()) {
+			// record the logout to the activity table
+			Activity::log([
+				'contentId'   => Auth::user()->id,
+				'contentType' => 'User',
+				'action'      => 'Legacy Log Out',
+				'description' => 'User logged out of TopBetta',
+				'details'     => 'Username: '.Auth::user()->username,
+				//'updated'     => $id ? true : false,
+			]);
+		}
 
-		if (\Auth::check()) {
+		//logout of laravel only
+		Auth::logout();
+
+		if (Auth::check()) {
 
 			return array("success" => false, "error" => Lang::get('users.logout_problem'));
 
@@ -103,6 +126,8 @@ class FrontUsersController extends \BaseController {
 
 			//kill our laravel session which joomla is relying on
 			\Session::regenerate();
+
+
 
 			return array("success" => true, "result" => Lang::get('users.logout_success'));
 

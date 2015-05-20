@@ -1,4 +1,4 @@
-<?php namespace TopBetta\ServiceProviders;
+<?php namespace TopBetta\Providers;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 2/12/14
@@ -87,7 +87,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\MarketRepositoryInterface',
-            'TopBetta\Repositories\DbMarketsRepository'
+            'TopBetta\Repositories\DbMarketRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\SelectionStatusRepositoryInterface',
@@ -131,7 +131,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
 		$this->app->bind(
 			'TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface',
-			'TopBetta\Repositories\DbSelectionPricesRepository'
+			'TopBetta\Repositories\DbSelectionPriceRepository'
 		);
         $this->app->bind(
             'TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface',

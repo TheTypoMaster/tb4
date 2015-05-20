@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class TournamentGroups extends \Eloquent {
     protected $guarded = array();

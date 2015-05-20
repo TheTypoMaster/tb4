@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class DataProviderMatch extends \Eloquent {
 	protected $table = 'tbdb_data_provider_match';

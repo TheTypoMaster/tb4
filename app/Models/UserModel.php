@@ -7,10 +7,16 @@
  */
 
 use Eloquent;
-use Illuminate\Auth\UserInterface;
-use Illuminate\Auth\Reminders\RemindableInterface;
 
-class UserModel extends Eloquent implements UserInterface, RemindableInterface {
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+
+
+class UserModel extends Eloquent implements AuthenticatableContract, CanResetPasswordContract{
+
+	use Authenticatable, CanResetPassword;
 
     protected $table = 'tbdb_users';
     protected $guarded = array();
@@ -28,6 +34,13 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
         return $this->hasOne('TopBetta\Models\UserDepositLimitModel', 'user_id');
     }
 
+	/**
+	 * A User can have many tickets for tournaments
+	 * @return mixed
+	 */
+	public function tournamentTickets() {
+		return $this->hasMany('\TopBetta\Models\TournamentTicket', 'user_id');
+	}
 
     /**
      * Get the unique identifier for the user.
@@ -86,7 +99,7 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
 
     public function freeCreditTransactions()
     {
-        return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
+        return $this->hasMany('TopBetta\Models\FreeCreditBalance', 'recipient_id');
     }
 
     public function whereNotInRelationship($relationship, $closure)

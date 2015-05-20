@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class TournamentPlacesPaid extends \Eloquent {
     protected $guarded = array();
@@ -239,7 +239,7 @@ class TournamentPlacesPaid extends \Eloquent {
 	 * @return array
 	 */
 	private function _getFinalPayoutList($tournament, $qualified_list) {
-		$ticket_model = new \TopBetta\TournamentTicket;
+		$ticket_model = new \TopBetta\Models\TournamentTicket;
 		$count = $ticket_model->countTournamentEntrants($tournament->id);
 
 		$place_list 		= $this->getCashPayoutList($count);
@@ -257,9 +257,9 @@ class TournamentPlacesPaid extends \Eloquent {
 
 
         if($this->isPrivate($tournament)){
-			//$prize_format_model = new \TopBetta\TournamentPrizeFormat;
+			//$prize_format_model = new \TopBetta\Models\TournamentPrizeFormat;
 			//$prize_format = $prize_format_model->getTournamentPrizeFormat($tournament->prize_format_id);
-			$prize_format = \TopBetta\TournamentPrizeFormat::find($tournament->prize_format_id);
+			$prize_format = \TopBetta\Models\TournamentPrizeFormat::find($tournament->prize_format_id);
 
 			if($prize_format->keyword != self::PRIZE_FORMAT_MULTIPLE){
 				$place_count = $this->_getPrivateTournamentPaidPlaceCount($prize_format->keyword);

@@ -1,6 +1,4 @@
-<?php
-
-namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 use Illuminate\Support\Facades\Input;
 
@@ -42,13 +40,13 @@ class RiskRaceStatusController extends \BaseController
 
     private static function updateOverrideStart($raceId, $enabled = false)
     {
-        return \TopBetta\RaceEvent::where('id', $raceId)->update(array('override_start' => $enabled));
+        return \TopBetta\Models\RaceEvent::where('id', $raceId)->update(array('override_start' => $enabled));
     }
 
     public static function updateRaceStatus($status, $raceId)
     {
         $eventStatus = \RaceEventStatus::where('keyword', $status)->pluck('id');
-        $event = \TopBetta\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::find($raceId);
         if ($eventStatus && $event) {
             $event->event_status_id = $eventStatus;
             $event->save();

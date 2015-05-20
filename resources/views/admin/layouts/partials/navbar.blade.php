@@ -36,5 +36,5 @@
 	</ul>
 	<!-- /.navbar-top-links -->
 
-	@include('admin::layouts.partials.sidebar')
+	@include('admin.layouts.partials.sidebar')
 </nav>

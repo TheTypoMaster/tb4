@@ -1,14 +1,12 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Redirect;
 use TopBetta\Repositories\WithdrawalsRepo;
-use User;
+use TopBetta\Models\UserModel;
 use View;
 
-class UserWithdrawalsController extends BaseController
+class UserWithdrawalsController extends Controller
 {
 
 	/**
@@ -17,7 +15,7 @@ class UserWithdrawalsController extends BaseController
 	private $withdrawalsRepo;
 	protected $user;
 
-	public function __construct(User $user, WithdrawalsRepo $withdrawalsRepo)
+	public function __construct(UserModel $user, WithdrawalsRepo $withdrawalsRepo)
 	{
 		$this->user = $user;
 		$this->withdrawalsRepo = $withdrawalsRepo;
@@ -39,7 +37,7 @@ class UserWithdrawalsController extends BaseController
 
 		$withdrawals = $this->withdrawalsRepo->getUserWithdrawals($user->id);
 
-		return View::make('admin::withdrawals.user.index', compact('user', 'withdrawals'))
+		return View::make('admin.withdrawals.user.index', compact('user', 'withdrawals'))
 						->with('active', 'withdrawals');
 	}
 

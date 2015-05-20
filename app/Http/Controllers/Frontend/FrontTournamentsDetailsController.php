@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -35,7 +34,7 @@ class FrontTournamentsDetailsController extends \BaseController {
 		$meetingId = $tournament -> event_group_id;
 
 		//get entries/player list
-		$ticketModel = new \TopBetta\TournamentTicket;
+		$ticketModel = new \TopBetta\Models\TournamentTicket;
 		$playerList = \Cache::remember("tournament-$tournamentId-userlist", 1, function() use ($ticketModel, $tournamentId) {
 			return $ticketModel -> getTournamentEntrantList($tournamentId);
 		});

@@ -1,12 +1,11 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
+use TopBetta\Http\Controllers\Controller;
 
-use BaseController;
 use TopBetta\Repositories\AccountTransactionRepo;
 use View;
 
-class AccountTransactionsController extends BaseController {
+class AccountTransactionsController extends Controller {
 
 	/**
 	 * @var AccountTransactionRepo
@@ -28,7 +27,7 @@ class AccountTransactionsController extends BaseController {
 	{
 		$transactions = $this->accountTransactionRepo->allTransactions();
 		
-		return View::make('admin::transactions.index')
+		return View::make('admin.transactions.index')
 				->with(compact('transactions'))
 				->with('title', 'Account');
 	}

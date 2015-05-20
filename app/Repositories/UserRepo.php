@@ -2,10 +2,10 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\BetSelection;
-use TopBetta\Tournament;
-use TopBetta\TournamentTicket;
-use User;
+use TopBetta\Models\BetSelection;
+use TopBetta\Models\Tournament;
+use TopBetta\Models\TournamentTicket;
+use TopBetta\Models\UserModel;
 
 /**
  * Description of UserRepo
@@ -35,7 +35,7 @@ class UserRepo
 	 */
 	private $user;
 
-	public function __construct(User $user, Tournament $tournament, TournamentTicket $tournamentTicket, BetSelection $betSelection)
+	public function __construct(UserModel $user, Tournament $tournament, TournamentTicket $tournamentTicket, BetSelection $betSelection)
 	{
 		$this->user = $user;
 		$this->tournamentTicket = $tournamentTicket;

@@ -1,14 +1,15 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
+
+use TopBetta\Http\Controllers\Controller;
 
 use Request;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use View;
-use BaseController;
 use Redirect;
 use Input;
 
-class EventsController extends BaseController
+class EventsController extends Controller
 {
 
 	/**
@@ -38,7 +39,7 @@ class EventsController extends BaseController
 			$events = $this->eventsrepo->allEvents();
 		}
 
-		return View::make('admin::eventdata.events.index', compact('events', 'search'));
+		return View::make('admin.eventdata.events.index', compact('events', 'search'));
 	}
 
 	/**
@@ -91,7 +92,7 @@ class EventsController extends BaseController
 
 		$event_status = $this->eventstatusrepo->getEventStatusList();
 
-        return View::make('admin::eventdata.events.edit', compact('event', 'event_status', 'search'));
+        return View::make('admin.eventdata.events.edit', compact('event', 'event_status', 'search'));
 	}
 
 	/**

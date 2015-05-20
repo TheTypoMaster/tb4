@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
@@ -26,8 +25,8 @@ class FrontUsersBalancesController extends \BaseController {
 	{			
 		$userId = \Auth::user() -> id;
 		
-		$accountBalance = \TopBetta\AccountBalance::getAccountBalance($userId);
-		$freeCreditBalance = \TopBetta\FreeCreditBalance::getFreeCreditBalance($userId);
+		$accountBalance = \TopBetta\Models\AccountBalance::getAccountBalance($userId);
+		$freeCreditBalance = \TopBetta\Models\FreeCreditBalance::getFreeCreditBalance($userId);
 
         $topBettaUser = $this->userTopBettaRepository->getUserDetailsFromUserId($userId);
 		

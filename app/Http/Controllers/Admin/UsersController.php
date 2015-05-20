@@ -1,16 +1,15 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use Redirect;
-use TopBetta\Bet;
+use TopBetta\Models\BetModel;
 use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\UserRepo;
-use User;
+use TopBetta\Models\UserModel;
 use Request;
 use View;
 
-class UsersController extends \BaseController
+class UsersController extends Controller
 {
 
 	/**
@@ -20,7 +19,7 @@ class UsersController extends \BaseController
 	protected $user;
 	private $bet;
 
-	public function __construct(User $user, UserRepo $userRepo, Bet $bet)
+	public function __construct(UserModel $user, UserRepo $userRepo, BetModel $bet)
 	{
 		$this->user = $user;
 		$this->bet = $bet;
@@ -41,7 +40,7 @@ class UsersController extends \BaseController
 			$users = $this->userRepo->allUsers();
 		}
 
-		return View::make('admin::users.index')
+		return View::make('admin.users.index')
 						->with(compact('users','search'));
 	}
 
@@ -91,7 +90,7 @@ class UsersController extends \BaseController
 			return Redirect::route('admin.users.index');
 		}
 
-		return View::make('admin::users.edit', compact('user'))
+		return View::make('admin.users.edit', compact('user'))
 						->with('active', 'profile');
 	}
 

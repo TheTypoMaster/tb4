@@ -1,24 +1,24 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row page-header">
-			<h2 class="col-lg-4">TopBetta Users <small>{{ number_format($users->getTotal()) }}</small></h2>
+			<h2 class="col-lg-4">TopBetta Users <small>{{ number_format($users->total()) }}</small></h2>
 
-			{{ Form::open(array('method' => 'GET')) }}
+			{!! Form::open(array('method' => 'GET')) !!}
 			<div class="input-group custom-search-form col-lg-4 pull-right">
-				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
+				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
 				<span class="input-group-btn">
 					<button class="btn btn-default" type="button">
 						<i class="fa fa-search"></i>
 					</button>
 				</span>
 			</div>		
-			{{ Form::close() }}
+			{!! Form::close() !!}
 		</div>
 
-		{{-- <p>{{ link_to_route('admin.users.create', 'Add new user') }}</p> --}}
+		{{-- <p>{!! link_to_route('admin.users.create', 'Add new user') }}</p> --}}
 
 		@if ($users->count())
 		<table class="table table-striped table-bordered table-hover">
@@ -55,12 +55,8 @@
 					<td>{{ $user->topbettaUser->phone_number }}</td>
 					<td>{{ (!$user->isTopBetta) ? 'Yes' : 'No' }}</td>
 					<td>{{ ($user->block) ? 'Blocked' : 'Active' }}</td>
-                    <td>{{ link_to_route('admin.users.edit', 'Edit', array($user->id), array('class' => 'btn btn-info')) }}</td>
-                    {{--<td>
-                        {{ Form::open(array('method' => 'DELETE', 'route' => array('admin.users.destroy', $user->id))) }}
-					{{ Form::submit('Delete', array('class' => 'btn btn-danger')) }}
-					{{ Form::close() }}
-                    </td>--}}
+                    <td>{!! link_to_route('admin.users.edit', 'Edit', array($user->id), array('class' => 'btn btn-info')) !!}</td>
+
                 </tr>
 				@else
 				<tr>
@@ -77,16 +73,16 @@
 					<td>{{ ($user->block) ? 'Blocked' : 'Active' }}</td>
                     <td>n/a</td>
                     {{--<td>
-                        {{ Form::open(array('method' => 'DELETE', 'route' => array('admin.users.destroy', $user->id))) }}
-					{{ Form::submit('Delete', array('class' => 'btn btn-danger')) }}
-					{{ Form::close() }}
+                        {!! Form::open(array('method' => 'DELETE', 'route' => array('admin.users.destroy', $user->id))) }}
+					{!! Form::submit('Delete', array('class' => 'btn btn-danger')) }}
+					{!! Form::close() !!}
                     </td>--}}
                 </tr>				
 				@endif
 				@endforeach
 			</tbody>
 		</table>
-		{{ $users->appends(array('q' => $search))->links() }}
+		{{ $users->appends(array('q' => $search))->render() }}
 		@else
 		There are no users
 		@endif

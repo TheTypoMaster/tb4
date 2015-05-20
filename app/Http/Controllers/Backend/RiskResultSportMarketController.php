@@ -1,19 +1,17 @@
-<?php
-
-namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 use Illuminate\Support\Facades\Input;
 use TopBetta\Models\Events;
-use TopBetta\Repositories\DbMarketsRepository;
+use TopBetta\Repositories\TopBetta\Models\RaceMarket;
 
 class RiskResultSportMarketController extends \BaseController
 {
     /**
-     * @var DbMarketsRepository
+     * @var TopBetta\Models\RaceMarket
      */
     private $markets;
 
-    function __construct(DbMarketsRepository $markets)
+    function __construct(TopBetta\Models\RaceMarket $markets)
     {
         $this->markets = $markets;
     }

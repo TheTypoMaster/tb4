@@ -6,16 +6,16 @@
  * Project: tb4
  */
 
-use TopBetta\RaceMarket;
+use TopBetta\Models\RaceMarkett;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
-use TopBetta\SportsMarket;
-use TopBetta\SportsSelection;
-use TopBetta\SportsSelectionResults;
+use TopBetta\Models\SportsMarket;
+use TopBetta\Models\SportsSelection;
+use TopBetta\Models\SportsSelectionResults;
 
 use TopBetta\Repositories\BetResultRepo;
 
 
-class DbMarketsRepository extends BaseEloquentRepository implements MarketRepositoryInterface {
+class DbMarketRepository extends BaseEloquentRepository implements MarketRepositoryInterface {
 
     protected $model;
 
@@ -80,7 +80,7 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
     }
 
     public function getMarketEventStartTime($marketId){
-        return RaceMarket::find($marketId)->event()->pluck('start_date');
+        return $this->model->find($marketId)->event()->pluck('start_date');
     }
 
     /**

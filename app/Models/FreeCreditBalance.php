@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class FreeCreditBalance extends \Eloquent {
 
@@ -11,15 +11,15 @@ class FreeCreditBalance extends \Eloquent {
 	
     // table relationships
     public function transactionType() {
-		return $this->belongsTo('TopBetta\FreeCreditTransactionTypes', 'tournament_transaction_type_id');
+		return $this->belongsTo('TopBetta\Models\FreeCreditTransactionTypes', 'tournament_transaction_type_id');
 	}
 	
 	public function giver() {
-		return $this->belongsTo('User', 'giver_id');
+		return $this->belongsTo('TopBetta\Models\UserModel', 'giver_id');
 	}
 	
 	public function recipient() {
-		return $this->belongsTo('User', 'recipient_id');
+		return $this->belongsTo('TopBetta\Models\UserModel', 'recipient_id');
 	}	
 
 	/**

@@ -1,27 +1,27 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row page-header">
-        			<h2 class="col-lg-4">Markets <small>({{ count($markets) ? number_format($markets->getTotal()) : 0 }})</small></h2>
+        			<h2 class="col-lg-4">Markets <small>({{ count($markets) ? number_format($markets->total()) : 0 }})</small></h2>
 
-        			{{ Form::open(array('method' => 'GET')) }}
+        			{!! Form::open(array('method' => 'GET')) !!}
         			<div class="input-group custom-search-form col-lg-4 pull-right">
-        				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
+        				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
         				<span class="input-group-btn">
         					<button class="btn btn-default" type="button">
         						<i class="fa fa-search"></i>
         					</button>
         				</span>
         			</div>
-        			{{ Form::close() }}
+        			{!! Form::close() !!}
         		</div>
         </div>
         <div class="pull-right">
             <div class="pull-right">
-                {{ link_to_route('admin.events.index', "Back to Events", array(), array("class" => "btn btn-outline btn-warning")) }}
+                {!! link_to_route('admin.events.index', "Back to Events", array(), array("class" => "btn btn-outline btn-warning")) !!}
             </div>
         </div>
 
@@ -51,15 +51,15 @@
         			<td>{{ $market->created_at }}</td>
         			<td>{{ $market->updated_at }}</td>
         			<td>
-                        {{ link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) }}
-                        {{ link_to_route('admin.selections.index', 'Selections', array('market' => $market->id, 'event' => $event), array('class' => 'btn btn-primary')) }}
+                        {!! link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) !!}
+                        {!! link_to_route('admin.selections.index', 'Selections', array('market' => $market->id, 'event' => $event), array('class' => 'btn btn-primary')) !!}
                     </td>
 
         		</tr>
         		@endforeach
         	</tbody>
         </table>
-        {{ $markets->appends(array('q' => $search, 'event' => $event))->links() }}
+        {!! $markets->appends(array('q' => $search, 'event' => $event))->render() !!}
         @else
         <p>There are no markets to display</p>
         @endif

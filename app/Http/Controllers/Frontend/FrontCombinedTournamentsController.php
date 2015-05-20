@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta\frontend;
+namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 
@@ -23,7 +23,7 @@ class FrontCombinedTournamentsController extends \BaseController {
         }
 
         //$tournamentController = new FrontTournamentsController();
-        $tournamentController = \App::make('\TopBetta\frontend\FrontTournamentsController');
+        $tournamentController = \App::make('\TopBetta\Http\Frontend\Controllers\FrontTournamentsController');
 
         $tournamentGrouped =  $tournamentController->show($tournId, true);
 
@@ -97,7 +97,7 @@ class FrontCombinedTournamentsController extends \BaseController {
                 $nextEvent = (int)$raceId;
             }
 
-            $racingController = \App::make('\TopBetta\frontend\FrontCombinedRacingController');
+            $racingController = \App::make('\TopBetta\Http\Frontend\Controllers\FrontCombinedRacingController');
             $racing =  $racingController->index('r', $nextEvent, $meetingId);
 
             if ($racing['success']) {

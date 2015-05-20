@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 <div class="row">
@@ -9,11 +9,11 @@
 					<a href="{{ route('admin.reports.show', array($report)) }}?{{ http_build_query($params) }}&download=true" class=""><span class="glyphicon glyphicon-download-alt"></span></a>
 				</small>
 			</h2>
-			<span class='pull-right'>{{ link_to_route('admin.reports.index', 'Back to Reports', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+			<span class='pull-right'>{!! link_to_route('admin.reports.index', 'Back to Reports', array(), array('class' => 'btn btn-outline btn-warning')) !!}</span>
 		</div>
 		@if(count($data))
-		@include('admin::reports.partials.table')
-		{{ $data->appends(array('month' => $month, 'year' => $year))->links() }}
+		@include('admin.reports.partials.table')
+		{!! $data->appends(array('month' => $month, 'year' => $year))->render() !!}
 		@else
 		<p>No data.</p>
 		@endif

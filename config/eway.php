@@ -13,7 +13,7 @@ return array(
 | E-Way Customer ID.
 |
 */
-'eWAYCustomerID' => '87654321',
+'eWAYCustomerID' => env('EWAY_CUSTOMERID', '87654321'),
 		
 /*
 |------------------------------
@@ -23,7 +23,7 @@ return array(
 | E-Way username.
 |
 */		
-'Username' => 'test@eway.com.au',
+'Username' => env('EWAY_USERNAME', 'test@eway.com.au'),
 		
 /*
 |------------------------------
@@ -33,7 +33,7 @@ return array(
 | E-Way Password
 |
 */		
-'Password' => 'test123',
+'Password' =>  env('EWAY_PASSWORD', 'test123'),
 		
 /*
 |------------------------------
@@ -43,6 +43,6 @@ return array(
 | E-Way SOAP endpoint.
 |
 */		
-'soapEndPoint' => 'https://www.eway.com.au/gateway/ManagedPaymentService/test/managedCreditCardPayment.asmx?WSDL',
+'soapEndPoint' => env('EWAY_ENDPOINT', 'https://www.eway.com.au/gateway/ManagedPaymentService/test/managedCreditCardPayment.asmx?WSDL'),
 		
 );

@@ -1,16 +1,25 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
+use TopBetta\Http\Controllers\Controller;
 
 use Auth;
 use Input;
 use Redirect;
 use Validator;
-use User;
 use View;
 
-class SessionController extends \BaseController
+use TopBetta\Models\UserModel;
+use TopBetta\Services\Authentication\UserAuthenticationService;
+
+
+
+class SessionController extends Controller
 {
+	protected $authentication;
+
+	public function __construct(UserAuthenticationService $authentication){
+		$this->authentication = $authentication;
+	}
 
 	/**
 	 * Show the form for creating a new resource.
@@ -24,7 +33,7 @@ class SessionController extends \BaseController
 			return Redirect::to('/admin/dashboard');
 		}
 
-		return View::make('sessions.create');
+		return View::make('admin.sessions.create');
 	}
 
 	/**
@@ -45,24 +54,27 @@ class SessionController extends \BaseController
 		if ($validation->passes()) {
 
 			// make sure they are a joomla admin user (gid == 25) before attempting login
-			if (User::where('username', $input['username'])->pluck('gid') == 25) {
-				// legacy login
-				$l = new \TopBetta\LegacyApiHelper;
-				$login = $l->query('doUserLogin', $input);
+			if (UserModel::where('username', $input['username'])->pluck('gid') == 25) {
+//				// legacy login
+//				$l = new \TopBetta\LegacyApiHelper;
+//				$login = $l->query('doUserLogin', $input);
 
-				//dd('admin user found, login:'. print_r($login,true));
-				if ($login['status'] == 200) {
 
-					$attempt = Auth::loginUsingId($login['userInfo']['id']);
-
-					if ($attempt) {
-						return Redirect::intended('/admin/dashboard')->with('flash_message', 'You are now logged in!');
-					}
+				try{
+					$login = $this->authentication->checkMD5PasswordUser($input['username'], $input['password']);
+				}catch(ValidationException $e){
+					return Redirect::back()->with('flash_message', 'Invalid credentials OR your account is disabled')->withInput();
 				}
+
+				$attempt = Auth::loginUsingId($login['id']);
+
+				if ($attempt) {
+					return Redirect::intended('/admin/dashboard')->with('flash_message', 'You are now logged in!');
+				}
+
+				return Redirect::back()->with('flash_message', 'Invalid credentials OR your account is disabled')->withInput();
 			}
 		}
-
-		return Redirect::back()->with('flash_message', 'Invalid credentials OR your account is disabled')->withInput();
 	}
 
 	/**

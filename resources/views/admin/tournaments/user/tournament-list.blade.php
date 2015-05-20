@@ -39,7 +39,7 @@
 			<td>{{ ($tournament['tournament']->jackpot_flag) ? 'Jackpot' : 'Single' }}</td>
 			<td>{{ ($tournament['tournament']->buy_in == '0') ? 'free' : '$' . number_format($tournament['tournament']->buy_in / 100, 2) }}</td>
 			<td>{{ ($tournament['tournament']->entry_fee == '0') ? 'free' : '$' . number_format($tournament['tournament']->entry_fee / 100, 2) }}</td>
-			<td>{{ TopBetta\TournamentTicket::countTournamentEntrants($tournament['tournament']->id) }}</td>
+			<td>{{ TopBetta\Models\TournamentTicket::countTournamentEntrants($tournament['tournament']->id) }}</td>
 			<td>{{ ($tournament['tournament']->status_flag) ? 'Active' : 'Inactive' }}</td>
             <td>{{ $tournament['position'] ? : "N/A" }}</td>
             <td>${{ number_format($tournament['prize']/100, 2) }}</td>
@@ -49,7 +49,7 @@
 		@endforeach
 	</tbody>
 </table>
-{{ $tournaments->links() }}
+{!! $tournaments->render() !!}
 @else
 <p>There are no tournaments to display</p>
 @endif

@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta\frontend;
+namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Password;

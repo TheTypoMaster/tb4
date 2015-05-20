@@ -1,9 +1,9 @@
-<?php namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 use BaseController;
 use Carbon\Carbon;
 use TopBetta;
-use TopBetta\Repositories\DbMarketsRepository;
+use TopBetta\Repositories\TopBetta\Models\RaceMarket;
 use TopBetta\Repositories\DbTournamentRepository;
 
 use TopBetta\Repositories\BetResultRepo;
@@ -57,7 +57,7 @@ class SportsController extends BaseController {
     protected $tournaments;
     protected $betresults;
 
-	public function __construct(DbMarketsRepository $markets,
+	public function __construct(TopBetta\Models\RaceMarket $markets,
                                 DbTournamentRepository $tournaments,
 								BetResultRepo $betresults)
 	{
@@ -210,13 +210,13 @@ class SportsController extends BaseController {
 									*/
 									
 									// Check if the record exists already
-									$tournamentCompetitonExists = TopBetta\TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
+									$tournamentCompetitonExists = TopBetta\Models\TournamentCompetition::tournamentCompetitionExists($competition, $sportExists);
 									
 									if($tournamentCompetitonExists){
-										$tournamentCompetitionModel = TopBetta\TournamentCompetition::find($tournamentCompetitonExists);
+										$tournamentCompetitionModel = TopBetta\Models\TournamentCompetition::find($tournamentCompetitonExists);
 									}else{	
 										// add the new record
-										$tournamentCompetitionModel = new TopBetta\TournamentCompetition;
+										$tournamentCompetitionModel = new TopBetta\Models\TournamentCompetition;
 										$tournamentCompetitionModel->tournament_sport_id = $sportExists;
 										$tournamentCompetitionModel->name = $competition;
 										

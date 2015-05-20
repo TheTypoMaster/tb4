@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class UserAudit extends \Eloquent {
 	protected $table = 'tbdb_user_audit';

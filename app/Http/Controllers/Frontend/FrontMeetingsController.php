@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta\frontend;
+namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -117,7 +117,7 @@ class FrontMeetingsController extends \BaseController {
 
 	public static function getMeetingsAndRaces($meetDate, $typeCode = 'r', $displayOnly = true) {
 
-		$query = TopBetta\RaceMeeting::select('tbdb_event_group.*')
+		$query = TopBetta\Models\RaceMeeting::select('tbdb_event_group.*')
 			->join('tbdb_event_group_event AS ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
 			->join('tbdb_event AS e', 'ege.event_id', '=', 'e.id')
 			->where('e.start_date', 'like', $meetDate . '%')
@@ -143,7 +143,7 @@ class FrontMeetingsController extends \BaseController {
 
 		foreach ($events as $event) {
 
-			$races = \TopBetta\RaceMeeting::getRacesForMeetingId($event -> id, $displayOnly);
+			$races = \TopBetta\Models\RaceMeeting::getRacesForMeetingId($event -> id, $displayOnly);
 
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {
@@ -193,7 +193,7 @@ class FrontMeetingsController extends \BaseController {
 	public function show($id, $showRaces = false) {
 		// cache meeting query
 		$meetingDetails = \Cache::remember("meeting-$id", 5, function() use ($id) {
-			return \TopBetta\RaceMeeting::find($id);
+			return \TopBetta\Models\RaceMeeting::find($id);
 		});
 
 		if ($meetingDetails) {
@@ -203,7 +203,7 @@ class FrontMeetingsController extends \BaseController {
 			$startDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $meetingDetails->start_date);
 			$startDateISO8601 = $startDate->toISO8601String();
 			
-			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'type_code' => $meetingDetails->type_code, 'country' => $meetingDetails->country, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'start_date' => $startDateISO8601, 'races' => ($races) ? \TopBetta\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
+			$meeting = array('id' => (int)$meetingDetails -> id, 'name' => $meetingDetails -> name, 'meeting_grade' => $meetingDetails -> meeting_grade, 'type_code' => $meetingDetails->type_code, 'country' => $meetingDetails->country, 'state' => $meetingDetails -> state, 'weather' => $meetingDetails -> weather, 'track' => $meetingDetails -> track, 'start_date' => $startDateISO8601, 'races' => ($races) ? \TopBetta\Models\RaceMeeting::getRacesForMeetingId($meetingDetails -> id) : false);
 
 			return array('success' => true, 'result' => $meeting);
 

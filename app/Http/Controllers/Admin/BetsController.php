@@ -1,11 +1,13 @@
 <?php
 
-namespace TopBetta\admin\controllers;
+namespace TopBetta\Http\Controllers\Admin;
 
-use TopBetta\Bet;
+use TopBetta\Http\Controllers\Controller;
+
+use TopBetta\Models\BetModel;
 use View;
 
-class BetsController extends \BaseController
+class BetsController extends Controller
 {
 
 	/**
@@ -15,7 +17,7 @@ class BetsController extends \BaseController
 	 */
 	protected $bet;
 
-	public function __construct(Bet $bet)
+	public function __construct(BetModel $bet)
 	{
 		$this->bet = $bet;
 	}
@@ -29,16 +31,16 @@ class BetsController extends \BaseController
 	{
 		$bets = $this->bet
 				->with(array(
-					'selections.selection',
+					'betselection.selection',
 					'status',
-					'payout',
+					'result',
 					'user',
-					'betType'
+					'type'
 				))
 				->orderBy('created_date', 'desc')
 				->paginate();
 
-		return View::make('bets.index', compact('bets'));
+		return View::make('admin.bets.index', compact('bets'));
 	}
 
 	/**
@@ -48,7 +50,7 @@ class BetsController extends \BaseController
 	 */
 	public function create()
 	{
-		return View::make('bets.create');
+		return View::make('admin.bets.create');
 	}
 
 	/**
@@ -64,7 +66,7 @@ class BetsController extends \BaseController
 		if ($validation->passes()) {
 			$this->bet->create($input);
 
-			return Redirect::route('bets.index');
+			return Redirect::route('admin.bets.index');
 		}
 
 		return Redirect::route('bets.create')
@@ -83,7 +85,7 @@ class BetsController extends \BaseController
 	{
 		$bet = $this->bet->findOrFail($id);
 
-		return View::make('bets.show', compact('bet'));
+		return View::make('admin.bets.show', compact('bet'));
 	}
 
 	/**
@@ -97,7 +99,7 @@ class BetsController extends \BaseController
 		$bet = $this->bet->find($id);
 
 		if (is_null($bet)) {
-			return Redirect::route('bets.index');
+			return Redirect::route('admin.bets.index');
 		}
 
 		return View::make('bets.edit', compact('bet'));
@@ -118,10 +120,10 @@ class BetsController extends \BaseController
 			$bet = $this->bet->find($id);
 			$bet->update($input);
 
-			return Redirect::route('bets.show', $id);
+			return Redirect::route('admin.bets.show', $id);
 		}
 
-		return Redirect::route('bets.edit', $id)
+		return Redirect::route('admin.bets.edit', $id)
 						->withInput()
 						->withErrors($validation)
 						->with('message', 'There were validation errors.');
@@ -137,7 +139,7 @@ class BetsController extends \BaseController
 	{
 		$this->bet->find($id)->delete();
 
-		return Redirect::route('bets.index');
+		return Redirect::route('admin.bets.index');
 	}
 
 }

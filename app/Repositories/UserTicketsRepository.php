@@ -10,7 +10,7 @@ namespace TopBetta\Repositories;
 
 
 use Carbon\Carbon;
-use TopBetta\TournamentTicket;
+use TopBetta\Models\TournamentTicket;
 use User;
 use Whoops\Example\Exception;
 
@@ -22,7 +22,7 @@ class UserTicketsRepository {
 	private $user;
 
 	/**
-	 * @var \TopBetta\TournamentTicket
+	 * @var \TopBetta\Models\TournamentTicket
 	 */
 	private $ticket;
 
@@ -65,7 +65,7 @@ class UserTicketsRepository {
 	}
 
 	/**
-	 * @return \TopBetta\TournamentTicket
+	 * @return \TopBetta\Models\TournamentTicket
 	 */
 	public function getTicket()
 	{
@@ -73,7 +73,7 @@ class UserTicketsRepository {
 	}
 
 	/**
-	 * @param \TopBetta\TournamentTicket $ticket
+	 * @param \TopBetta\Models\TournamentTicket $ticket
 	 */
 	public function setTicket($ticket)
 	{

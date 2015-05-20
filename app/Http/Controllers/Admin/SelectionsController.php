@@ -1,14 +1,14 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-use Request;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\DbSelectionRepository;
+use Request;
 use View;
-use BaseController;
 use Redirect;
 use Input;
 use Paginator;
 
-class SelectionsController extends BaseController
+class SelectionsController extends Controller
 {
 
 	/**
@@ -29,11 +29,11 @@ class SelectionsController extends BaseController
 	public function index()
     {
 
-        $page = Input::get('page', 1);
+      //  $page = Input::get('page', 1);
         $market = Input::get('market', null);
         $event = Input::get('event', null);
 
-        $data = $this->selectionsrepo->allSelections($page, 50);
+//        $data = $this->selectionsrepo->allSelections($page, 50);
 
         $search = Request::get('q', '');
         if ($search) {
@@ -41,10 +41,10 @@ class SelectionsController extends BaseController
         } else if ($market) {
             $selections = $this->selectionsrepo->getAllSelectionsForMarket($market);
         }else {
-            $selections = Paginator::make($data->items, $data->totalItems, 50);
+			$selections = $this->selectionsrepo->allSelections(50);
 		}
 
-		return View::make('admin::eventdata.selections.index', compact('selections', 'search', 'market', 'event'));
+		return View::make('admin.eventdata.selections.index', compact('selections', 'search', 'market', 'event'));
 	}
 
 	/**
@@ -96,7 +96,7 @@ class SelectionsController extends BaseController
             return Redirect::route('admin.selections.index');
         }
 
-        return View::make('admin::eventdata.selections.edit', compact('selection', 'search'));
+        return View::make('admin.eventdata.selections.edit', compact('selection', 'search'));
 	}
 
 	/**

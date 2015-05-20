@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class RisaForm extends \Eloquent {
     protected $guarded = array();

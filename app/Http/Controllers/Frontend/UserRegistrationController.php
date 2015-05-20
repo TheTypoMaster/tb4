@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Frontend\Controllers;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use BaseController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

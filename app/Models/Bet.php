@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class Bet extends \Eloquent {
 
@@ -31,7 +31,7 @@ class Bet extends \Eloquent {
      * @return mixed
      */
     public function payout() {
-		return $this->belongsTo('TopBetta\AccountBalance', 'result_transaction_id');
+		return $this->belongsTo('TopBetta\Models\AccountBalance', 'result_transaction_id');
 	}
 
 	/**

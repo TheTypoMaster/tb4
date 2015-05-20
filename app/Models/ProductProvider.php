@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class ProductProvider extends Eloquent {
 	protected $table = 'tb_product_provider';

@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class HeartbeatStatus extends \Eloquent {
 	protected $table = 'tb_heartbeat_status';

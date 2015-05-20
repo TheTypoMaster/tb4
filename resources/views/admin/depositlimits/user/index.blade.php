@@ -1,10 +1,10 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
     <div class="row">
         <div class="col-lg-12">
-            @include('admin::users.partials.header')
-            <h4 class="page-header">Deposit Limit {{ link_to_route('admin.users.deposit-limit.edit', "Edit", array($user->id, 'get'), array("class" => "btn btn-warning")) }}</h4>
+            @include('admin.users.partials.header')
+            <h4 class="page-header">Deposit Limit {!! link_to_route('admin.users.deposit-limit.edit', "Edit", array($user->id, 'get'), array("class" => "btn btn-warning")) }}</h4>
 
             @if( ! $depositLimit )
                 <h4>No Deposit Limit</h4>

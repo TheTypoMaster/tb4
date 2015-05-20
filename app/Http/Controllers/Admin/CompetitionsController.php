@@ -1,4 +1,6 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
+
+use TopBetta\Http\Controllers\Controller;
 
 use Request;
 use View;
@@ -10,7 +12,7 @@ use TopBetta\Repositories\DbCompetitionRepository;
 use TopBetta\Repositories\DbSportsRepository;
 use TopBetta\Services\DataManagement\CompetitionService;
 
-class CompetitionsController extends BaseController
+class CompetitionsController extends Controller
 {
 
 	/**
@@ -42,7 +44,7 @@ class CompetitionsController extends BaseController
 			$competitions = $this->competitionsrepo->allCompetitions();
 		}
 
-		return View::make('admin::eventdata.competitions.index', compact('competitions', 'search'));
+		return View::make('admin.eventdata.competitions.index', compact('competitions', 'search'));
 	}
 
 	/**
@@ -53,7 +55,7 @@ class CompetitionsController extends BaseController
 	public function create()
 	{
         $sports = $this->sportsrepo->selectList();
-        return View::make('admin::eventdata.competitions.create', compact('sports'));
+        return View::make('admin.eventdata.competitions.create', compact('sports'));
 	}
 
 	/**
@@ -67,7 +69,7 @@ class CompetitionsController extends BaseController
         $competitions = $this->competitionsrepo->allCompetitions();
 
         $search = Request::get('q', '');
-        return View::make('admin::eventdata.competitions.index', compact('competitions', 'search'));
+        return View::make('admin.eventdata.competitions.index', compact('competitions', 'search'));
 
 	}
 
@@ -98,7 +100,7 @@ class CompetitionsController extends BaseController
             return Redirect::route('admin.competitions.index');
         }
 
-        return View::make('admin::eventdata.competitions.edit', compact('competition', 'search'));
+        return View::make('admin.eventdata.competitions.edit', compact('competition', 'search'));
 	}
 
 	/**

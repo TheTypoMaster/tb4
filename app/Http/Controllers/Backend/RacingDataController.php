@@ -1,4 +1,4 @@
-<?php namespace TopBetta\backend; 
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 /**
  * Coded by Oliver Shanahan
@@ -18,7 +18,7 @@ use TopBetta\Services\Response\ApiResponse;
 
 /**
  * Class RacingDataController
- * @package TopBetta\backend
+ * @package TopBetta\Http\Backend\Controllers
  */
 class RacingDataController extends BaseController {
 

@@ -1,12 +1,13 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
+use TopBetta\Http\Controllers\Controller;
 
 use View;
 use Redirect;
 use TopBetta\Processes\RemoveFreeCreditsFromDormantUsersProcess;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 
-class FreeCreditManagementController extends \BaseController {
+class FreeCreditManagementController extends Controller {
 
 	const REMOVE_CREDITS_DEFAULT_DAYS = 60;
 
@@ -28,7 +29,7 @@ class FreeCreditManagementController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make("admin::freecredit.index")->with(array("defaultDays" => self::REMOVE_CREDITS_DEFAULT_DAYS));
+		return View::make("admin.freecredit.index")->with(array("defaultDays" => self::REMOVE_CREDITS_DEFAULT_DAYS));
 	}
 
 

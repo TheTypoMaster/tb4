@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories;
 
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
-use TopBetta\TournamentPrizeFormat;
+use TopBetta\Models\TournamentPrizeFormat;
 
 class DbTournamentPrizeFormatRepository extends BaseEloquentRepository implements TournamentPrizeFormatRepositoryInterface
 {

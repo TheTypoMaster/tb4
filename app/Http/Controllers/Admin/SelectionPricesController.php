@@ -1,21 +1,22 @@
-<?php namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
+
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Repositories\DbSelectionPriceRepository;
 
 use Request;
-use TopBetta\Repositories\DbSelectionPricesRepository;
 use View;
-use BaseController;
 use Redirect;
 use Input;
 use Paginator;
 
-class SelectionPricesController extends BaseController
+class SelectionPricesController extends Controller
 {
 	/**
-	 * @var \TopBetta\Repositories\DbSelectionPriceRepository
+	 * @var \TopBetta\Repositories\SelectionPriceRepositoryInterface
 	 */
 	private $selectionpricesrepo;
 
-	public function __construct(DbSelectionPricesRepository $selectionpricesrepo)
+	public function __construct(DbSelectionPriceRepository $selectionpricesrepo)
 	{
 		$this->selectionpricesrepo = $selectionpricesrepo;
 	}
@@ -28,18 +29,18 @@ class SelectionPricesController extends BaseController
 	public function index()
 	{
 
-        $page = Input::get('page', 1);
+       // $page = Input::get('page', 1);
 
-        $data = $this->selectionpricesrepo->allSelectionPrices($page, 50);
+       // $data = $this->selectionpricesrepo->allSelectionPrices($page, 50);
 
 		$search = Request::get('q', '');
 		if ($search) {
 			$selectionprices = $this->selectionpricesrepo->search($search);
 		} else {
-            $selectionprices = Paginator::make($data->items, $data->totalItems, 50);
+            $selectionprices = $this->selectionpricesrepo->allSelectionPrices(50);
 		}
 
-		return View::make('admin::eventdata.selectionprices.index', compact('selectionprices', 'search'));
+		return View::make('admin.eventdata.selectionprices.index', compact('selectionprices', 'search'));
 	}
 
 	/**
@@ -95,7 +96,7 @@ class SelectionPricesController extends BaseController
 
         if($selectionprice->override_type == 'percentage') { $selectionprice->override_odds *= 100; }
 
-        return View::make('admin::eventdata.selectionprices.edit', compact('selectionprice', 'search', 'market', 'event'));
+        return View::make('admin.eventdata.selectionprices.edit', compact('selectionprice', 'search', 'market', 'event'));
 	}
 
 	/**

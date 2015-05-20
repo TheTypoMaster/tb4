@@ -21,17 +21,17 @@
 			<td>{{ $bet->user->username }}</td>
 			<td>{{{ $bet->created_date }}}</td>
 			<td>{{ ($bet->bet_type_id < 4) ? (isset($bet->selections[0]->selection->name)) ? $bet->selections[0]->selection->name : 'n/a' : $bet->selection_string }}</td>
-			<td>{{ $bet->betType->name }}</td>
+			<td>{{ $bet->type->name }}</td>
 			<td>${{ number_format($bet->bet_amount / 100, 2) }}</td>
 			<td>-</td>
-			<td>${{ ($bet->payout) ? number_format($bet->payout->amount / 100, 2) : 0}}</td>
+			<td>${{ ($bet->result) ? number_format($bet->result->amount / 100, 2) : 0}}</td>
 			<td>{{ $bet->status->name }}</td>
 		</tr>
 
 		@endforeach
 	</tbody>
 </table>
-{{ $bets->links() }}
+{!! $bets->render() !!}
 @else
 <p>There are no bets to display</p>
 @endif

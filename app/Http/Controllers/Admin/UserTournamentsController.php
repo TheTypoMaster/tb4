@@ -1,16 +1,15 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use TopBetta\Repositories\DbTournamentTicketRepository;
 use TopBetta\Repositories\UserRepo;
 use View;
-use User;
+use TopBetta\Models\UserModel;
 
-class UserTournamentsController extends \BaseController
+class UserTournamentsController extends Controller
 {
 
 	/**
@@ -39,7 +38,7 @@ class UserTournamentsController extends \BaseController
      */
     private $accountTransactionRepository;
 
-    public function __construct(User $user, UserRepo $userRepo,
+    public function __construct(UserModel $user, UserRepo $userRepo,
                                 DbTournamentLeaderboardRepository $leaderboardRepository,
                                 DbTournamentTicketRepository $ticketRepository,
                                 FreeCreditTransactionRepositoryInterface $creditTransactionRepository,
@@ -90,7 +89,7 @@ class UserTournamentsController extends \BaseController
             $tournamentInfo[] = $tourn;
         }
 
-		return View::make('admin::tournaments.user.index')
+		return View::make('admin.tournaments.user.index')
 						->with(compact('user', 'tournamentInfo', 'tournaments'))
 						->with('active', 'tournaments');
 	}

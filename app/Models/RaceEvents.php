@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class RaceEvent extends \Eloquent {
 
@@ -7,7 +7,7 @@ class RaceEvent extends \Eloquent {
 	
 	
 	public function racemeetings(){
-		return $this->belongsToMany('TopBetta\RaceMeeting', 'tbdb_event_group_event', 'event_id', 'event_group_id');
+		return $this->belongsToMany('TopBetta\Models\RaceMeeting', 'tbdb_event_group_event', 'event_id', 'event_group_id');
 	}
 	
 	static public function nextToJump($limit = 10) {

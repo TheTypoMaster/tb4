@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories;
 
 use TopBetta\Repositories\Contracts\WithdrawalRequestRepositoryInterface;
-use TopBetta\WithdrawalRequest;
+use TopBetta\Models\WithdrawalRequest;
 
 class DbWithdrawalRequestRepository extends BaseEloquentRepository implements WithdrawalRequestRepositoryInterface
 {

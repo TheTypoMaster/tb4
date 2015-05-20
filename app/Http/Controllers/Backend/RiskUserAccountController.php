@@ -1,13 +1,10 @@
-<?php
+<?php namespace TopBetta\Http\Backend\Controllers;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
  * Date: 24/02/2015
  * Time: 2:13 PM
  */
-
-namespace TopBetta\backend;
-
 
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\WithdrawalService;

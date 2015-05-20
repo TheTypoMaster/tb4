@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Frontend\Controllers; 
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 /**
  * Coded by Oliver Shanahan
@@ -11,6 +11,7 @@ use BaseController;
 use Input;
 use Validator;
 use Auth;
+use Regulus\ActivityLog\Activity;
 
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Services\Response\ApiResponse;
@@ -52,11 +53,36 @@ class UserSessionController extends BaseController {
 
         $user = Auth::loginUsingId($userDetails['id']);
 
+		if (Auth::check()) {
+			// record the logout to the activity table
+			Activity::log([
+				'contentId'   => Auth::user()->id,
+				'contentType' => 'User',
+				'action'      => 'Log In',
+				'description' => 'User logged into TopBetta',
+				'details'     => 'Username: '.Auth::user()->username,
+				//'updated'     => $id ? true : false,
+			]);
+		}
+
         return $this->response->success($user->load('topbettaUser'));
 
     }
 
     public function logout(){
+
+		if (Auth::check()) {
+			// record the logout to the activity table
+			Activity::log([
+				'contentId'   => Auth::user()->id,
+				'contentType' => 'User',
+				'action'      => 'User Logged Out',
+				'description' => 'User logged out of TopBetta',
+				'details'     => 'Username: '.Auth::user()->username,
+				//'updated'     => $id ? true : false,
+			]);
+		}
+
         Auth::Logout();
 
         if (Auth::check()) {

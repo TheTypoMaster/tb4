@@ -1,7 +1,6 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Request;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -21,7 +20,7 @@ use Redirect;
 use TopBetta\Repositories\TournamentsRepo;
 use TopBetta\Repositories\DbSportsRepository;
 
-class TournamentsController extends \BaseController
+class TournamentsController extends Controller
 {
 
 	/**
@@ -113,7 +112,7 @@ class TournamentsController extends \BaseController
 			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
 
-		return View::make('admin::tournaments.index', compact('tournaments', 'search'));
+		return View::make('admin.tournaments.index', compact('tournaments', 'search'));
 	}
 
 	/**
@@ -161,7 +160,7 @@ class TournamentsController extends \BaseController
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
 
-        return View::make('admin::tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
+        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
 
 	/**
@@ -266,7 +265,7 @@ class TournamentsController extends \BaseController
     {
         $tournament = $this->tournamentRepo->find($tournamentId);
 
-        return View::make('admin::tournaments.add-users', compact('tournament'));
+        return View::make('admin.tournaments.add-users', compact('tournament'));
     }
 
     /**
@@ -298,7 +297,7 @@ class TournamentsController extends \BaseController
 
         $tournament = $this->tournamentRepo->find($tournamentId);
 
-        return View::make('admin::tournaments.add-users', compact('tournament', 'result'));
+        return View::make('admin.tournaments.add-users', compact('tournament', 'result'));
     }
 
     /**

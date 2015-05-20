@@ -1,49 +1,8 @@
 <?php
 
-/*
-  |--------------------------------------------------------------------------
-  | Application Routes
-  |--------------------------------------------------------------------------
-  |
-  | Here is where you can register all of the routes for an application.
-  | It's a breeze. Simply tell Laravel the URIs it should respond to
-  | and give it the Closure to execute when that URI is requested.
-  |
- */
-
-// apc_clear_cache("user");
-
-
-
 
 Route::get('/', function() {
-
 	return \Redirect::to('https://www.topbetta.com.au');
-
-	//return  TopBetta\RisaForm::with('lastStarts')->where('runner_code', $runnerCode)->get();
-	// return all events for meeting with id of 1
-	//$events = RaceMeeting::find(1)->raceevents;
-	//return $events;
-	// return the meeting for event with id of 1
-	//$meetings = RaceEvent::find(1)->racemeetings;
-	//return $meetings;
-	//$api = WageringApi::getInstance(WageringApi::API_IGAS);
-	//$api_con=$api->checkConnection();
-	//return (string)$api_con;
-	//$it = Hash::make('igast3st1ng');
-	//return $it;
-	//return FreeTransactions::all();
-	// return FreeCreditBalance::getFreeCreditBalance(6996);
-});
-
-//Route group for admin stuff
-Route::group(array('prefix' => '/api/admin/v1', 'before' => 'basic.once'), function() {
-	// Data importer calls
-	Route::resource('dataimporter', 'AdminDataImporter');
-	Route::resource('heartbeat', 'HeartBeat');
-
-	// RISA form importer
-	Route::get('risaformimporter', 'TopBetta\admin\RisaFormImporter@formImporter');
 });
 
 // Route group for backend API. Uses basic stateless auth filter
@@ -54,20 +13,20 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('sports', 'BackSports');
 	// incoming results for bet's placed
 	Route::resource('betresults', 'BackBets');
-    //incoming race result data
-    Route::resource('raceresults', 'RaceResulting');
+	//incoming race result data
+	Route::resource('raceresults', 'RaceResulting');
 	//incoming race data
 	Route::resource('racedata', 'RacingData');
 	// special case where Risk Manager can push race results to TopBetta
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
 	Route::resource('risk-race-status', 'RiskRaceStatus', array('only' => array('store')));
-    // Risk can send query sport bets
-    Route::resource('risk-sport-bets', 'RiskSportBets');
-    // Risk can send query racing bets
-    Route::resource('risk-bets', 'RiskBets');
-    // special case where Risk Manager can push sport market results to TopBetta
-    Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
+	// Risk can send query sport bets
+	Route::resource('risk-sport-bets', 'RiskSportBets');
+	// Risk can send query racing bets
+	Route::resource('risk-bets', 'RiskBets');
+	// special case where Risk Manager can push sport market results to TopBetta
+	Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
 	// test JSON API
 	Route::resource('testjson', 'testJSON');
 	//Risk endpoint to get user account details
@@ -167,9 +126,9 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('/tournaments/tickets/next-to-jump', 'FrontTournamentsTickets@nextToJump');
 	Route::resource('tournaments.tickets', 'FrontTournamentsTickets');
 
-    //tournament rebuys and topups
-    Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
-    Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
+	//tournament rebuys and topups
+	Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
+	Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
 
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
@@ -177,101 +136,86 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('combined/racingNew', 'FrontCombinedRacing@indexNew');
 	Route::get('combined/sports', 'FrontCombinedSports@index');
 
-    // Temporary feed routes for sports - another branch has a better implimentation
-    Route::get('feed/sports.{ext}', 'TopBetta\Controllers\FeedController@index');
-    //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
-   // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+	// Temporary feed routes for sports - another branch has a better implimentation
+	Route::get('feed/sports.{ext}', 'TopBetta\Controllers\FeedController@index');
+	//Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
+	// Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
 
 
 
 });
 
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {
-	Route::get('/', array('as' => 'home', 'uses' => 'TopBetta\admin\controllers\SessionController@create'));
+	Route::get('/', array('as' => 'home', 'uses' => 'Admin\SessionController@create'));
 
-	Route::get('login', 'TopBetta\admin\controllers\SessionController@create');
-	Route::get('logout', 'TopBetta\admin\controllers\SessionController@destroy');
+	Route::get('login', 'Admin\SessionController@create');
+	Route::get('logout', 'Admin\SessionController@destroy');
 
-	Route::resource('session', 'TopBetta\admin\controllers\SessionController', array('only' => array('create', 'store', 'destroy')));
+	Route::resource('session', 'Admin\SessionController', array('only' => array('create', 'store', 'destroy')));
 });
 
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
-	
-	Route::resource('dashboard', 'TopBetta\admin\controllers\DashboardController');
-	Route::resource('users', 'TopBetta\admin\controllers\UsersController');
-	Route::resource('users.bet-limits', 'TopBetta\admin\controllers\UserBetLimitsController');
-	Route::resource('users.bets', 'TopBetta\admin\controllers\UserBetsController', array('only' => array('index')));
-	Route::resource('users.tournaments', 'TopBetta\admin\controllers\UserTournamentsController');
-	Route::resource('users.account-transactions', 'TopBetta\admin\controllers\UserAccountTransactionsController');
-	Route::resource('users.free-credit-transactions', 'TopBetta\admin\controllers\UserFreeCreditTransactionsController');
-	Route::resource('users.withdrawals', 'TopBetta\admin\controllers\UserWithdrawalsController');
-	Route::resource('bet-limits', 'TopBetta\admin\controllers\BetlimitsController');
-	Route::resource('bets', 'TopBetta\admin\controllers\BetsController');
-	Route::resource('withdrawals', 'TopBetta\admin\controllers\WithdrawalsController');
-	Route::resource('account-transactions', 'TopBetta\admin\controllers\AccountTransactionsController');
-	Route::resource('free-credit-transactions', 'TopBetta\admin\controllers\FreeCreditTransactionsController');
-	Route::resource('tournaments', 'TopBetta\admin\controllers\TournamentsController');
-	Route::resource('reports', 'TopBetta\admin\controllers\ReportsController', array('only' => array('index', 'show')));
-	Route::resource('settings', 'TopBetta\admin\controllers\SettingsController');
-	Route::resource('sports', 'TopBetta\admin\controllers\SportsController');
-	Route::resource('competitions', 'TopBetta\admin\controllers\CompetitionsController');
-	Route::resource('markets', 'TopBetta\admin\controllers\MarketsController');
-	Route::resource('markettypes', 'TopBetta\admin\controllers\MarketTypeController');
-	Route::resource('events', 'TopBetta\admin\controllers\EventsController');
-	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
-	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
-    Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
+	Route::resource('account-transactions', 'Admin\AccountTransactionsController');
+	Route::resource('bet-limits', 'Admin\BetlimitsController');
+	Route::resource('bets', 'Admin\BetsController');
+	Route::resource('competitions', 'Admin\CompetitionsController');
+	Route::resource('dashboard', 'Admin\DashboardController');
+	Route::resource('events', 'Admin\EventsController');
+	Route::resource('free-credit-management', 'Admin\FreeCreditManagementController');
+	Route::resource('free-credit-transactions', 'Admin\FreeCreditTransactionsController');
+	Route::resource('markets', 'Admin\MarketsController');
+	Route::resource('markettypes', 'Admin\MarketTypeController');
+	Route::resource('promotions', 'Admin\PromotionController');
+	Route::resource('reports', 'Admin\ReportsController', array('only' => array('index', 'show')));
+	Route::resource('selectionprices', 'Admin\SelectionPricesController');
+	Route::resource('selections', 'Admin\SelectionsController');
+	Route::resource('settings', 'Admin\SettingsController');
+	Route::resource('sports', 'Admin\SportsController');
+	Route::resource('tournaments', 'Admin\TournamentsController');
+	Route::resource('users', 'Admin\UsersController');
+	Route::resource('users.account-transactions', 'Admin\UserAccountTransactionsController');
+	Route::resource('users.bet-limits', 'Admin\UserBetLimitsController');
+	Route::resource('users.bets', 'Admin\UserBetsController', array('only' => array('index')));
+	Route::resource('users.deposit-limit', 'Admin\UserDepositLimitsController');
+	Route::resource('users.free-credit-transactions', 'Admin\UserFreeCreditTransactionsController');
+	Route::resource('users.tournaments', 'Admin\UserTournamentsController');
+	Route::resource('users.withdrawals', 'Admin\UserWithdrawalsController');
+	Route::resource('withdrawal-config', 'Admin\WithdrawalConfigController');
+	Route::resource('withdrawals', 'Admin\WithdrawalsController');
 
-	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
+	// custom tournament routes
+	Route::get('removeFreeCredits', 'Admin\FreeCreditManagementController@removeDormantCredits');
+	Route::get('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsersForm');
+	Route::get('tournaments/get-competitions/{sportId}', 'Admin\TournamentsController@getCompetitions');
+	Route::get('tournaments/get-event-groups/{competitionId}', 'Admin\TournamentsController@getEventGroups');
+	Route::get('tournaments/get-events/{eventGroupId}', 'Admin\TournamentsController@getEvents');
+	Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
+	Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
 
-	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
-	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
-
-    Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
-
-    //custom tournament routes
-    Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
-    Route::post('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsers');
-    Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
-    Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
-    Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
-    Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
 });
 
-Route::group(array('prefix' => 'api/backend/test'), function() {
-
-	Route::resource('url', 'UrlController');
-});
-
-
-Route::group(array('after' => 'topbetta_secure_links'), function() {
-    Route::get('login', array('as' => 'login', 'uses' => 'TopBetta\frontend\FrontUsersController@tempLogin'));
-    Route::post('/login', array('as' => 'login', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogin'));
-    Route::get('/profile', array('as' => 'profile', 'uses' => 'TopBetta\frontend\FrontUsersController@handleProfile'));
-    Route::get('/logout', array('as' => 'logout', 'uses' => 'TopBetta\frontend\FrontUsersController@handleLogout'));
-});
 
 // used for Punters Club application related things atm (Token Creation / Logins / Child Betting account creation and funding)
 Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
 
 	// Token request and login
-	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
+	Route::post('authentication/token/request', 'Frontend\Controllers\UserTokenController@tokenRequest');
 
 	// Funds management/transfer
-	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
+	Route::post('accounting/transfer', 'Frontend\FrontAccountingController@transferFunds');
 
 	// Full user account registration routes
-	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
-	Route::post('registration/createclone', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
+	Route::post('registration/createfull', 'Frontend\Controllers\UserRegistrationController@createFull');
+	Route::post('registration/createclone', 'Frontend\Controllers\UserRegistrationController@createFullChildFromClone');
 
 	//create basic user
-	Route::post("registration/createbasic", 'TopBetta\Frontend\Controllers\UserRegistrationController@createBasic');
+	Route::post("registration/createbasic", 'Frontend\Controllers\UserRegistrationController@createBasic');
 
 	//activation routes
-	Route::get('registration/activate/{activationHash}', 'TopBetta\Frontend\Controllers\UserRegistrationController@activate');
+	Route::get('registration/activate/{activationHash}', 'Frontend\Controllers\UserRegistrationController@activate');
 
-	Route::get('registration/resend-welcome-email/{userId}', 'TopBetta\Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
+	Route::get('registration/resend-welcome-email/{userId}', 'Frontend\Controllers\UserRegistrationController@resendWelcomeEmail');
 
 });
 
@@ -279,15 +223,12 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
 
 	// normal login
-	Route::post('authentication/login', 'TopBetta\Frontend\Controllers\UserSessionController@login');
+	Route::post('authentication/login', 'Frontend\Controllers\UserSessionController@login');
 
 	// normal logout
-	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+	Route::get('authentication/logout', 'Frontend\Controllers\UserSessionController@logout');
 
 	// token login
-	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
+	Route::get('authentication/token/login', 'Frontend\Controllers\UserTokenController@tokenLogin');
 
 });
-
-
-

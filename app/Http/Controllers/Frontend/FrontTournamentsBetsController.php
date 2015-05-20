@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -30,7 +29,7 @@ class FrontTournamentsBetsController extends \BaseController {
 
 		$eventId = $tournament -> event_group_id;
 
-		$ticket = \TopBetta\TournamentTicket::where('tournament_id', '=', $tournamentId) -> where('user_id', '=', \Auth::user() -> id) -> get();
+		$ticket = \TopBetta\Models\TournamentTicket::where('tournament_id', '=', $tournamentId) -> where('user_id', '=', \Auth::user() -> id) -> get();
 
 		if (count($ticket) == 0) {
 

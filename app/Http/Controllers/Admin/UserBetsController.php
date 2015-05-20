@@ -1,13 +1,12 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use TopBetta\Bet;
-use User;
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Models\BetModel;
+use TopBetta\Models\UserModel;
 use Redirect;
 use View;
 
-class UserBetsController extends \BaseController
+class UserBetsController extends Controller
 {
 
 	/**
@@ -16,7 +15,7 @@ class UserBetsController extends \BaseController
 	private $bet;
 	protected $user;
 
-	public function __construct(User $user, Bet $bet)
+	public function __construct(UserModel $user, BetModel $bet)
 	{
 		$this->user = $user;
 		$this->bet = $bet;
@@ -41,7 +40,7 @@ class UserBetsController extends \BaseController
 				->orderBy('created_date', 'desc')
 				->paginate();
 
-		return View::make('admin::bets.user.index', compact('user', 'bets'))
+		return View::make('admin.bets.user.index', compact('user', 'bets'))
 						->with('active', 'bets');
 	}
 

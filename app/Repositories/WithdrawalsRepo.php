@@ -2,7 +2,7 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\WithdrawalRequest;
+use TopBetta\Models\WithdrawalRequest;
 
 /**
  * Description of WithdrawalsRepo

@@ -1,6 +1,4 @@
-<?php
-
-namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 use Illuminate\Support\Facades\Input;
 
@@ -19,7 +17,7 @@ class RiskResultsController extends \BaseController
             $input = Input::json()->all();
         }
 
-        if (!isset($input['race_id']) || !\TopBetta\RaceEvent::find($input['race_id'])) {
+        if (!isset($input['race_id']) || !\TopBetta\Models\RaceEvent::find($input['race_id'])) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
         }
 
@@ -57,7 +55,7 @@ class RiskResultsController extends \BaseController
                     break;
 
                 case 'race_status':
-                    if (!\TopBetta\backend\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
+                    if (!\TopBetta\Http\Backend\Controllers\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
                         $errors[] = "Problem updating race status";
                     }
 
@@ -73,7 +71,7 @@ class RiskResultsController extends \BaseController
 
     private static function saveExoticResults($raceResult, $raceId)
     {
-        $event = \TopBetta\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::find($raceId);
 
         if (!$event) {
             return false;

@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Models;
 
 class ProductDefaults extends \Eloquent {
 	protected $table = 'tb_product_default';

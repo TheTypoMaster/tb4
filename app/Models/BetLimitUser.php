@@ -1,6 +1,8 @@
-<?php
+<?php namespace TopBetta\Models;
 
-class BetLimitUser extends \Eloquent
+use Eloquent;
+
+class BetLimitUser extends Eloquent
 {
 
 	protected $table = 'tbdb_bet_limit_users';

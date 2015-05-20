@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\frontend;
+<?php namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -37,7 +36,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 		$userId = \Auth::user() -> id;
 
-		$ticketModel = new \TopBetta\TournamentTicket;
+		$ticketModel = new \TopBetta\Models\TournamentTicket;
 		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
 
 		// active tourn tickets
@@ -58,10 +57,10 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 				$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;
 
-				$numEntries = \TopBetta\TournamentTicket::countTournamentEntrants($activeTicket -> tournament_id);
+				$numEntries = \TopBetta\Models\TournamentTicket::countTournamentEntrants($activeTicket -> tournament_id);
 
 				// get next event for this event group
-				$nextData = \TopBetta\TournamentTicket::nextEventForEventGroup($tournament -> event_group_id);
+				$nextData = \TopBetta\Models\TournamentTicket::nextEventForEventGroup($tournament -> event_group_id);
 
 				$next = (count($nextData) > 0) ? $nextData[0] : false;
 
@@ -110,7 +109,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			}
 
-			$ticketModel = new \TopBetta\TournamentTicket;
+			$ticketModel = new \TopBetta\Models\TournamentTicket;
 
 			// Check if we have a ticket in the tournament before going any further
 			$myTicketID = $ticketModel->getTournamentTicketByUserAndTournamentID(\Auth::user()->id, $tournamentId);
@@ -130,11 +129,11 @@ class FrontTournamentsTicketsController extends \BaseController {
 			if (!$tournament -> cancelled_flag && $tournament -> result_transaction_id) {
 				if ($recentTicket -> jackpot_flag) {
 
-					$transactionRecord = \TopBetta\FreeCreditBalance::find($tournament -> result_transaction_id);
+					$transactionRecord = \TopBetta\Models\FreeCreditBalance::find($tournament -> result_transaction_id);
 
 				} else {
 
-					$transactionRecord = \TopBetta\AccountBalance::find($tournament -> result_transaction_id);
+					$transactionRecord = \TopBetta\Models\AccountBalance::find($tournament -> result_transaction_id);
 				}
 
 				if ($transactionRecord && $transactionRecord -> amount > 0) {
@@ -190,7 +189,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 		$userId = \Auth::user() -> id;
 
-		$ticketModel = new \TopBetta\TournamentTicket;
+		$ticketModel = new \TopBetta\Models\TournamentTicket;
 
 		// active tourn tickets
 		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID($userId);
@@ -253,11 +252,11 @@ class FrontTournamentsTicketsController extends \BaseController {
 			if (!$recentTicket -> cancelled_flag && $recentTicket -> result_transaction_id) {
 				if ($recentTicket -> jackpot_flag) {
 
-					$transactionRecord = \TopBetta\FreeCreditBalance::find($recentTicket -> result_transaction_id);
+					$transactionRecord = \TopBetta\Models\FreeCreditBalance::find($recentTicket -> result_transaction_id);
 
 				} else {
 
-					$transactionRecord = \TopBetta\AccountBalance::find($recentTicket -> result_transaction_id);
+					$transactionRecord = \TopBetta\Models\AccountBalance::find($recentTicket -> result_transaction_id);
 				}
 
 				if ($transactionRecord && $transactionRecord -> amount > 0) {
@@ -419,14 +418,14 @@ class FrontTournamentsTicketsController extends \BaseController {
 		} else {
 
 			// DO THEY HAVE A TICKET FOR THIS TOURNAMENT
-			$ticket = \TopBetta\TournamentTicket::where('id', '=', $ticketId)
+			$ticket = \TopBetta\Models\TournamentTicket::where('id', '=', $ticketId)
 				->where('user_id', '=', \Auth::user() -> id)
 				->where('refunded_flag', 0)
 				->get();
 
 			if(count($ticket) > 0) {
 
-				$ticketModel = new \TopBetta\TournamentTicket;
+				$ticketModel = new \TopBetta\Models\TournamentTicket;
 				$unregisterAllowed = $ticketModel->unregisterAllowed($tournamentId, $ticketId);
 				if($unregisterAllowed->allowed) {
 					// REFUND TICKET

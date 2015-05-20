@@ -1,6 +1,6 @@
-<?php namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
-use TopBetta\Bet;
+use TopBetta\Models\BetModel;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Facades\BetRepo;
 

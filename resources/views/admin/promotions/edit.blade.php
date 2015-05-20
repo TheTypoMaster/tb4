@@ -1,64 +1,64 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 
-    {{ Form::macro('datetime', function($name, $value) {
+    {!! Form::macro('datetime', function($name, $value) {
         return "<div class='input-group datepicker'>
                     <input type='text' class='form-control' name='$name' id='$name' value='$value' readonly/>
                     <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
                     </span>
                 </div>";
-    }); }}
+    }); !!}
 
     <div class="row">
         <div class="col-lg-12">
             <h2 class="page-header">Promotion: Edit</h2>
             <ul class="nav nav-tabs">
-                <span class='pull-right'>{{ link_to_route('admin.promotions.index', 'Back to Promotions', array(), array('class' => 'btn btn-outline btn-warning')) }}</span>
+                <span class='pull-right'>{!! link_to_route('admin.promotions.index', 'Back to Promotions', array(), array('class' => 'btn btn-outline btn-warning')) !!}</span>
             </ul>
             <h4>Create Promotion</h4>
-            {{ Form::model($promotion, array('method' => 'PATCH', 'route' => array('admin.promotions.update', $promotion->pro_id, "q"=>$search))) }}
+            {!! Form::model($promotion, array('method' => 'PATCH', 'route' => array('admin.promotions.update', $promotion->pro_id, "q"=>$search))) !!}
             <div class='col-lg-6'>
 
                 <div class="form-group">
-                    {{ Form::label('pro_code', 'Code:') }}
-                    {{ Form::text('pro_code', null, array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Code')) }}
+                    {!! Form::label('pro_code', 'Code:') !!}
+                    {!! Form::text('pro_code', null, array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Code')) !!}
                 </div>
                 <div class="form-group">
-                    {{ Form::label('Pro_description', 'Description:') }}
-                    {{ Form::text('Pro_description', null, array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Description')) }}
+                    {!! Form::label('Pro_description', 'Description:') !!}
+                    {!! Form::text('Pro_description', null, array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Description')) !!}
                 </div>
 
                 <div class="form-group">
-                    {{ Form::label('pro_value', 'Value:') }}
+                    {!! Form::label('pro_value', 'Value:') !!}
                     <div class="input-group">
                         <span class="input-group-addon">$</span>
-                        {{ Form::text('pro_value', number_format($promotion->pro_value, 2), array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Value')) }}
+                        {!! Form::text('pro_value', number_format($promotion->pro_value, 2), array('class' => 'form-control input-sm', 'placeholder' => 'Promotion Value')) !!}
                     </div>
                 </div>
 
                 <div class="form-group">
-                    {{ Form::label('pro_use_once_flag', 'Use Once:') }}
-                    {{ Form::select('pro_use_once_flag', array("No", "Yes"), 1, array('class' => 'form-control')) }}
+                    {!! Form::label('pro_use_once_flag', 'Use Once:') !!}
+                    {!! Form::select('pro_use_once_flag', array("No", "Yes"), 1, array('class' => 'form-control')) !!}
                 </div>
 
                 <div class="form-group">
-                    {{ Form::label('pro_status', 'Status:') }}
-                    {{ Form::select('pro_status', array(0, 1), 1, array('class' => 'form-control')) }}
+                    {!! Form::label('pro_status', 'Status:') !!}
+                    {!! Form::select('pro_status', array(0, 1), 1, array('class' => 'form-control')) !!}
                 </div>
 
                 <div class="form-group">
-                    {{ Form::label('pro_start_date', 'Start Date') }}
-                    {{ Form::datetime('pro_start_date', null, array('class' => 'form-control input-sm datepicker','placeholder' => 'Start Date', 'readonly'))}}
+                    {!! Form::label('pro_start_date', 'Start Date') !!}
+                    {!! Form::datetime('pro_start_date', null, array('class' => 'form-control input-sm datepicker','placeholder' => 'Start Date', 'readonly')) !!}
                 </div>
 
                 <div class="form-group">
-                    {{ Form::label('pro_end_date', 'End Date') }}
-                    {{ Form::datetime('pro_end_date', null, array('class' => 'form-control input-sm datepicker','placeholder' => 'End Date', 'readonly'))}}
+                    {!! Form::label('pro_end_date', 'End Date') !!}
+                    {!! Form::datetime('pro_end_date', null, array('class' => 'form-control input-sm datepicker','placeholder' => 'End Date', 'readonly')) !!}
                 </div>
 
                 <div class="form-group">
-                    {{ Form::submit('Save', array('class' => 'btn btn-info')) }}
+                    {!! Form::submit('Save', array('class' => 'btn btn-info')) !!}
                 </div>
 
             </div>
@@ -71,7 +71,7 @@
                 @endif
             </div>
 
-            {{ Form::close() }}
+            {!! Form::close() !!}
 
 
 

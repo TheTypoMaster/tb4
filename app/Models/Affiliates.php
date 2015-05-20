@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class Affiliates extends \Eloquent {
     protected $table = 'tb_affiliates';

@@ -1,4 +1,6 @@
-<?php namespace TopBetta\admin\Controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 
@@ -7,7 +9,7 @@ use Request;
 use Input;
 use Redirect;
 
-class MarketTypeController extends \BaseController {
+class MarketTypeController extends Controller {
 
 	/**
 	 * @var MarketTypeRepositoryInterface
@@ -34,7 +36,7 @@ class MarketTypeController extends \BaseController {
 			$marketTypes = $this->marketTypeRepository->allMarketTypes();
 		}
 
-		return View::make('admin::eventdata.markettypes.index', compact('marketTypes', 'search'));
+		return View::make('admin.eventdata.markettypes.index', compact('marketTypes', 'search'));
 	}
 
 
@@ -89,7 +91,7 @@ class MarketTypeController extends \BaseController {
 			return Redirect::route("admin.markettypes.index");
 		}
 
-		return View::make("admin::eventdata.markettypes.edit")->with(compact('marketType', 'search'));
+		return View::make("admin.eventdata.markettypes.edit")->with(compact('marketType', 'search'));
 	}
 
 

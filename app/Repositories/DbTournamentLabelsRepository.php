@@ -10,7 +10,7 @@ namespace TopBetta\Repositories;
 
 
 use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
-use TopBetta\TournamentLabels;
+use TopBetta\Models\TournamentLabels;
 
 class DbTournamentLabelsRepository extends BaseEloquentRepository implements TournamentLabelsRepositoryInterface
 {

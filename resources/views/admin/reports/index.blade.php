@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 <div class="row">
@@ -10,11 +10,11 @@
 					<h4>Monthly Tournament Report</h4>
 				</div>
 				<div class="panel-body">
-					{{ Form::open(array('method' => 'GET', 'route' => array('admin.reports.show', 'tournaments'))) }}
-					{{ Form::selectMonth('month', date('m'), array('class' => 'form-control')) }}
-					{{ Form::selectYear('year', date('Y'), array('class' => 'form-control')) }}
-					{{ Form::submit('View', array('class' => 'btn btn-info')) }}
-					{{ Form::close() }}
+					{!! Form::open(array('method' => 'GET', 'route' => array('admin.reports.show', 'tournaments'))) !!}
+					{!! Form::selectMonth('month', date('m'), array('class' => 'form-control')) !!}
+					{!! Form::selectYear('year', date('Y'), array('class' => 'form-control')) !!}
+					{!! Form::submit('View', array('class' => 'btn btn-info')) !!}
+					{!! Form::close() !!}
 				</div>
 			</div>
 		</div>
@@ -25,11 +25,11 @@
 					<h4>Monthly Bets Report</h4>
 				</div>
 				<div class="panel-body">
-					{{ Form::open(array('method' => 'GET', 'route' => array('admin.reports.show', 'bets'))) }}
-					{{ Form::selectMonth('month', date('m'), array('class' => 'form-control')) }}
-					{{ Form::selectYear('year', date('Y'), array('class' => 'form-control')) }}
-					{{ Form::submit('View', array('class' => 'btn btn-info')) }}
-					{{ Form::close() }}
+					{!! Form::open(array('method' => 'GET', 'route' => array('admin.reports.show', 'bets'))) !!}
+					{!! Form::selectMonth('month', date('m'), array('class' => 'form-control')) !!}
+					{!! Form::selectYear('year', date('Y'), array('class' => 'form-control')) !!}
+					{!! Form::submit('View', array('class' => 'btn btn-info')) !!}
+					{!! Form::close() !!}
 				</div>
 			</div>
 		</div>

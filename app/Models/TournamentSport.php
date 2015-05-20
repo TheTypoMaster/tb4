@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class TournamentSport extends \Eloquent
 {
@@ -19,7 +19,7 @@ class TournamentSport extends \Eloquent
 
     public function competitions()
     {
-        return $this->hasMany('TopBetta\TournamentCompetition', 'tournament_sport_id');
+        return $this->hasMany('TopBetta\Models\TournamentCompetition', 'tournament_sport_id');
     }
 
 }

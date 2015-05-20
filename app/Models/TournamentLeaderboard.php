@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta;
+namespace TopBetta\Models;
 
 class TournamentLeaderboard extends \Eloquent {
     protected $guarded = array();

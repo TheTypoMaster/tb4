@@ -1,5 +1,5 @@
 <?php
-namespace TopBetta\frontend;
+namespace TopBetta\Http\Frontend\Controllers;
 
 use TopBetta\BetTypes;
 use TopBetta\Repositories\RisaFormRepository;
@@ -27,7 +27,7 @@ class FrontCombinedRacingController extends \BaseController {
 
 		// work out meeting id based off race id only
 		if (!$meetingId && $raceId) {
-			$meetingId = \TopBetta\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+			$meetingId = \TopBetta\Models\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
 		}
 
 		$meetingsController = new FrontMeetingsController();
@@ -135,7 +135,7 @@ class FrontCombinedRacingController extends \BaseController {
 
         // work out meeting id based off race id only
         if (!$meetingId && $raceId) {
-            $meetingId = \TopBetta\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+            $meetingId = \TopBetta\Models\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
         }
 
         $meetingsController = new FrontMeetingsController();

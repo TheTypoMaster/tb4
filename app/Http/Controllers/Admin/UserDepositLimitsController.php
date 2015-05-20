@@ -1,14 +1,13 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\UserDepositLimitModel;
 use View;
 use Input;
 use Redirect;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 
-class UserDepositLimitsController extends \BaseController {
+class UserDepositLimitsController extends Controller {
 
     /**
      * @var UserRepositoryInterface
@@ -31,7 +30,7 @@ class UserDepositLimitsController extends \BaseController {
 
         $depositLimit = $user->depositLimit;
 
-        return View::make('admin::depositlimits.user.index', compact('user', 'depositLimit'))
+        return View::make('admin.depositlimits.user.index', compact('user', 'depositLimit'))
             ->with('active', 'deposit-limit');
 	}
 
@@ -82,7 +81,7 @@ class UserDepositLimitsController extends \BaseController {
 
         $depositLimit = $user->depositLimit;
 
-        return View::make("admin::depositlimits.user.edit", compact('user', 'depositLimit'))
+        return View::make("admin.depositlimits.user.edit", compact('user', 'depositLimit'))
             ->with('active', 'deposit-limit');
 	}
 

@@ -68,7 +68,7 @@ class LogHelper {
 		}
 	
 		if(self::LOG_TIME_SHOWN){
-			$time = $this->_formatLogTime($time_format);
+			$time = SELF::_formatLogTime($time_format);
 		}else{
 			$time = '';
 		}

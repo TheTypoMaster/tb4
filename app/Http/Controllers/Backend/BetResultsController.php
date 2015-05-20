@@ -1,4 +1,4 @@
-<?php namespace TopBetta\backend;
+<?php namespace TopBetta\Http\Backend\Controllers;
 
 use TopBetta;
 
@@ -530,23 +530,23 @@ class BetResultsController extends \BaseController {
 		 */
 		private function awardCash($user_id, $amount, $keyword) {
 			//$this->account_balance->setUserId($user_id);
-			return TopBetta\AccountBalance::_increment($user_id, $amount, $keyword);
+			return TopBetta\Models\AccountBalance::_increment($user_id, $amount, $keyword);
 		}
 	
 		private function awardBetWin($user_id, $amount)
 		{
-			return $this->awardCash($user_id, $amount, TopBetta\AccountBalance::TYPE_BETWIN);
+			return $this->awardCash($user_id, $amount, TopBetta\Models\AccountBalance::TYPE_BETWIN);
 		}
 	
 		private function awardBetRefund($user_id, $amount)
 		{
-			return $this->awardCash($user_id, $amount, TopBetta\AccountBalance::TYPE_BETREFUND);
+			return $this->awardCash($user_id, $amount, TopBetta\Models\AccountBalance::TYPE_BETREFUND);
 		}
 	
 		private function awardFreeBetRefund($user_id, $amount)
 		{
 			//$this->tournament_balance->setUserId($user_id);
-			return TopBetta\FreeCreditBalance::_increment($user_id, $amount, TopBetta\FreeCreditBalance::TYPE_FREEBETREFUND);
+			return TopBetta\Models\FreeCreditBalance::_increment($user_id, $amount, TopBetta\Models\FreeCreditBalance::TYPE_FREEBETREFUND);
 		}
 		
 		private function _canTransactionBeProcessed($transaction,$status_process_list)

@@ -2,7 +2,7 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\FreeCreditBalance;
+use TopBetta\Models\FreeCreditBalance;
 
 /**
  * Description of FreeCreditTransactionRepo

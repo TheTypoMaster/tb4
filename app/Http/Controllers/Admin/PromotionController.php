@@ -1,6 +1,6 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\Services\Accounting\PromotionService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -8,7 +8,7 @@ use View;
 use Input;
 use Redirect;
 
-class PromotionController extends \BaseController {
+class PromotionController extends Controller {
 
 	/**
 	 * @var PromotionService
@@ -28,7 +28,7 @@ class PromotionController extends \BaseController {
 	public function index()
 	{
 		$search = Input::get("q", null);
-		return View::make("admin::promotions.index", array(
+		return View::make("admin.promotions.index", array(
 			"promotions" => $this->promotionService->getPromotions($search),
 			"search" => $search
 		));
@@ -42,7 +42,7 @@ class PromotionController extends \BaseController {
 	 */
 	public function create()
 	{
-		return View::make("admin::promotions.create");
+		return View::make("admin.promotions.create");
 	}
 
 
@@ -83,7 +83,7 @@ class PromotionController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		return View::make("admin::promotions.edit", array(
+		return View::make("admin.promotions.edit", array(
 			"promotion" => $this->promotionService->find($id),
 			"search" => Input::get("q", "")
 		));

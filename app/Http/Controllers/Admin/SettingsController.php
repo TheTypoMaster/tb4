@@ -1,14 +1,12 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use BaseController;
-use BetLimitType;
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Models\BetLimitType;
 use Input;
 use Redirect;
 use View;
 
-class SettingsController extends BaseController
+class SettingsController extends Controller
 {
 
 	/**
@@ -33,7 +31,7 @@ class SettingsController extends BaseController
 		$flexiLimit = $this->betLimitType->find(2);
 		$sportsBetLimit = $this->betLimitType->find(13);
 		
-		return View::make('admin::settings.index')
+		return View::make('admin.settings.index')
 						->with(compact('betLimit', 'flexiLimit', 'sportsBetLimit'));
 	}
 

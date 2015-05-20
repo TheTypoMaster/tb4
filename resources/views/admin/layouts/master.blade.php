@@ -34,7 +34,7 @@
     <div id="wrapper">
 
 		{{--  navbar has sidebar nested --}}
-		@include('admin::layouts.partials.navbar')
+		@include('admin.layouts.partials.navbar')
 
         <div id="page-wrapper">
 			@if (Session::has('flash_message'))

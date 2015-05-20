@@ -1,23 +1,23 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row page-header">
-        			<h2 class="col-lg-4">Competitions <small>({{ number_format($competitions->getTotal()) }})</small>
-        			    {{ link_to_route('admin.competitions.create', 'New', null, array('class' => 'btn btn-info')) }}
+        			<h2 class="col-lg-4">Competitions <small>({{ number_format($competitions->total()) }})</small>
+        			    {!! link_to_route('admin.competitions.create', 'New', null, array('class' => 'btn btn-info')) !!}
         			</h2>
 
-        			{{ Form::open(array('method' => 'GET')) }}
+        			{!! Form::open(array('method' => 'GET')) !!}
         			<div class="input-group custom-search-form col-lg-4 pull-right">
-        				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
+        				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
         				<span class="input-group-btn">
         					<button class="btn btn-default" type="button">
         						<i class="fa fa-search"></i>
         					</button>
         				</span>
         			</div>
-        			{{ Form::close() }}
+        			{!! Form::close() !!}
         		</div>
 		@if (count($competitions))
         <table class="table table-striped table-bordered table-hover">
@@ -58,13 +58,13 @@
         			<td>{{ ($competition->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $competition->created_at }}</td>
         			<td>{{ $competition->updated_at }}</td>
-        			<td>{{ link_to_route('admin.competitions.edit', 'Edit', array($competition->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
+        			<td>{!! link_to_route('admin.competitions.edit', 'Edit', array($competition->id, "q" => $search), array('class' => 'btn btn-info')) !!}</td>
 
         		</tr>
         		@endforeach
         	</tbody>
         </table>
-        {{ $competitions->appends(array('q' => $search))->links() }}
+        {!! $competitions->appends(array('q' => $search))->render() !!}
         @else
         <p>There are no competitions to display</p>
         @endif
