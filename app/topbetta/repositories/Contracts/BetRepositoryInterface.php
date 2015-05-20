@@ -8,5 +8,5 @@
  */
  
 interface BetRepositoryInterface {
-    
+
 }

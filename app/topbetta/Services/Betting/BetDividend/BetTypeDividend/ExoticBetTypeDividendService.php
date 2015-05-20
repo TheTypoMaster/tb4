@@ -6,12 +6,11 @@
  * Time: 12:45 PM
  */
 
-namespace TopBetta\Services\Betting\BetType\BetTypeDividend;
-
+namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 use TopBetta\Services\Betting\EventService;
 
-abstract class ExoticBetDividendService {
+class ExoticBetTypeDividendService extends AbstractBetTypeDividendService {
 
     /**
      * @var EventService
@@ -23,17 +22,21 @@ abstract class ExoticBetDividendService {
         $this->eventService = $eventService;
     }
 
-    public function getResultedBetDividend($bet)
+    public function getResultedDividendForBet($bet)
     {
         $totalDividend = 0;
-        $dividends = $this->eventService->getExoticDividendsForEventByType($bet->event_id, $bet->type->name);
+        $dividends = $this->eventService->getExoticDividendsForEventByType($bet->selection->first()->market->event, $bet->type->name);
+
+        if ( ! $dividends ) {
+            return 0;
+        }
 
         //check each dividend
         foreach($dividends as $positionString => $dividend) {
             $result = explode('/', $positionString);
 
             //boxed so just check selections contained in $result
-            if( $bet->boxed_flag && count(array_intersect($bet->selection->lists('number'), $result)) == count($bet->selections->lists('number'))) {
+            if( $bet->boxed_flag && count(array_intersect($bet->selection->lists('number'), $result)) == count($bet->selection->lists('number'))) {
                 $totalDividend += $dividend;
             } else {
                 $hasSelections = true;
@@ -41,7 +44,7 @@ abstract class ExoticBetDividendService {
                 foreach($result as $position => $number) {
                     //get selection in position
                     $betSelection = $bet->betselection->filter(function ($v) use ($position, $number) {
-                        return $v->position == $position+1 && $v->selection->number == number;
+                        return $v->position == $position+1 && $v->selection->number == $number;
                     });
 
                     //does selection exists
@@ -51,6 +54,7 @@ abstract class ExoticBetDividendService {
 
                 }
 
+                //exotic is winning so add dividend
                 if( $hasSelections ) {
                     $totalDividend += $dividend;
                 }

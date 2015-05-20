@@ -11,7 +11,7 @@ namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 use TopBetta\Services\Betting\SelectionService;
 
-class WinBetDividendService extends AbstractBetDividendService {
+class WinBetTypeDividendService extends AbstractBetTypeDividendService {
 
     /**
      * @var SelectionService
@@ -25,12 +25,12 @@ class WinBetDividendService extends AbstractBetDividendService {
 
     public function getResultedDividendForBet($bet)
     {
-        if( $bet->selection->result && $bet->selection->result->position == 1 ) {
-            if( $bet->betselection->first()->fixed_odds && $this->selectionService->isSelectionSports($bet->selection) ) {
+        if( $bet->selection->first()->result && $bet->selection->first()->result->position == 1 ) {
+            if( $bet->betselection->first()->fixed_odds && $this->selectionService->isSelectionSports($bet->selection->first()->id) ) {
                 return $bet->betselection->first()->fixed_odds;
             }
 
-            return $bet->selection->result->win_odds;
+            return $bet->selection->first()->result->win_dividend;
         }
 
         return 0;

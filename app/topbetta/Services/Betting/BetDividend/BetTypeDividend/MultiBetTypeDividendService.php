@@ -11,13 +11,14 @@ namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 use TopBetta\Services\Betting\MultiBetService;
 
-class MultiBetDividendService {
+class MultiBetTypeDividendService extends AbstractBetTypeDividendService {
 
     public function getResultedDividendForBet($bet)
     {
-        $winningSelections = $bet->selection->filter(function ($v) {
-            return ! is_null( $v->result );
-        });
+        //get the winning selections and reset the keys
+        $winningSelections = $bet->betselection->filter(function ($v) {
+            return ! is_null( $v->selection->result );
+        })->values();
 
         if ( $winningSelections->count() < MultiBetService::neededWinners($bet->type->name) ) {
             return 0;
@@ -33,10 +34,10 @@ class MultiBetDividendService {
         for( $i = $index; $i <= $betSelections->count() - ($neededWinners - $winners); $i++ ) {
             $selection = $betSelections->get($i);
 
-            if( $neededWinners > $winners ) {
-                $totalDividend += $this->calculateDividend($betSelections, $neededWinners, $winners + 1, $partialDividend * $selection->fixed->odds, $index + 1);
+            if( $neededWinners > $winners + 1) {
+                $totalDividend += $this->calculateDividend($betSelections, $neededWinners, $winners + 1, $partialDividend * $selection->fixed_odds, $i + 1);
             } else {
-                return $partialDividend * $selection->fixed_odds;
+                $totalDividend += $partialDividend * $selection->fixed_odds;
             }
         }
 

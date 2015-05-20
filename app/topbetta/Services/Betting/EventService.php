@@ -52,4 +52,14 @@ class EventService {
     {
         return unserialize($event->{$type . '_dividend'});
     }
+
+    public function isEventPaying($event)
+    {
+        return $event->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING || $event->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID;
+    }
+
+    public function isEventInterim($event)
+    {
+        return $event->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM;
+    }
 }

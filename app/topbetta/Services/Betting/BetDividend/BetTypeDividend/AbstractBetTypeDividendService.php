@@ -9,7 +9,7 @@
 namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 
-abstract class AbstractBetDividendService {
+abstract class AbstractBetTypeDividendService {
 
     abstract public function getResultedDividendForBet($bet);
 }

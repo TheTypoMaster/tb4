@@ -78,13 +78,27 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         return $details->toArray();
     }
 
-    public function getUnresultedBetsForMarket($marketId)
+    public function getBetsForMarketByStatus($marketId, $status, $type = null)
     {
         return $this->model
             ->join('tbdb_bet_selection', 'tbdb_bet.id', '=', 'tbdb_bet_selection.bet_id')
             ->join('tbdb_selection', 'tbdb_bet_selection.selection_id', '=', 'tbdb_selection.id')
             ->where('tbdb_selection.market_id', $marketId)
+            ->where('bet_result_status_id', $status)
             ->groupBy('tbdb_bet.id')
-            ->get('tbdb_bet.*');
+            ->get(array('tbdb_bet.*'));
+    }
+
+    public function getBetsForEventByStatus($event, $status, $type = null)
+    {
+        $model =  $this->model
+            ->where('event_id', $event)
+            ->where('bet_result_status_id', $status);
+
+        if( $type ) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get();
     }
 }
