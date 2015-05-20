@@ -11,6 +11,9 @@ namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 class PlaceBetTypeDividendService extends AbstractBetTypeDividendService {
 
+    /**
+     * @inheritdoc
+     */
     public function getResultedDividendForBet($bet)
     {
         if( $bet->selection->first()->result && $bet->selection->first()->result->position <= 3 ) {

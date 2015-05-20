@@ -88,6 +88,12 @@ class BetResultService {
         $this->betResultStatusRepository = $betResultStatusRepository;
     }
 
+    /**
+     * Results all unresulted bets for market
+     * @param $market
+     * @return bool
+     * @throws \Exception
+     */
     public function resultBetsForMarket($market)
     {
         if( ! $this->marketService->isMarketPaying($market) ) {
@@ -102,6 +108,12 @@ class BetResultService {
        return $this->resultBets($bets);
     }
 
+    /**
+     * results all unresulted bets for event
+     * @param $event
+     * @return bool
+     * @throws \Exception
+     */
     public function resultBetsForEvent($event)
     {
         //get bets to result
@@ -124,6 +136,11 @@ class BetResultService {
 
     }
 
+    /**
+     * Results a collection of bets
+     * @param $bets
+     * @return bool
+     */
     public function resultBets($bets)
     {
         //result each bet
@@ -137,6 +154,11 @@ class BetResultService {
         return true;
     }
 
+    /**
+     * Results a bet
+     * @param BetModel $bet
+     * @return BetModel
+     */
     public function resultBet(BetModel $bet)
     {
 
@@ -174,6 +196,12 @@ class BetResultService {
         return $bet;
     }
 
+    /**
+     * Calculates the total bet win
+     * @param $bet
+     * @param $dividend
+     * @return mixed
+     */
     public function calculateBetWin($bet, $dividend)
     {
         if( $bet->flexi_flag ) {
@@ -188,6 +216,12 @@ class BetResultService {
         return max($amount - $bet->bet_freebet_amount, 0);
     }
 
+    /**
+     * Calculates the total free bet win
+     * @param $bet
+     * @param $dividend
+     * @return mixed
+     */
     public function calculateFreeBetWin($bet, $dividend)
     {
         if( $bet->flexi_flag ) {
@@ -203,6 +237,11 @@ class BetResultService {
         return max($amount - $bet->bet_freebet_amount, 0);
     }
 
+    /**
+     * Updates bet status and result flag
+     * @param $bet
+     * @return mixed
+     */
     public function setBetResulted($bet)
     {
         //set resulted flag and update status
@@ -212,6 +251,11 @@ class BetResultService {
         ));
     }
 
+    /**
+     * Updates users turn over balance based on bet result and dividend
+     * @param $bet
+     * @param null $dividend
+     */
     public function updateUserTurnOverBalance($bet, $dividend = null)
     {
         //TODO: ORDER FOR TURNOVER??

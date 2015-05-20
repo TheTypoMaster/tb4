@@ -14,8 +14,17 @@ use TopBetta\Services\Betting\Factories\BetTypeDividendServiceFactory;
 
 class BetDividendService {
 
+    /**
+     * Store the dividend services in memory so we don't need to keep making them
+     * @var array
+     */
     private $betTypeDividendServices = array();
 
+    /**
+     * Gets the dividend for a resulted bet
+     * @param $bet
+     * @return float
+     */
     public function getResultedDividendForBet($bet)
     {
         $betTypeDividendService = $this->getBetTypeDividendService($bet->type->name);
@@ -24,7 +33,7 @@ class BetDividendService {
     }
 
     /**
-     *
+     * Gets the dividend service to use
      * @param $betType
      * @return AbstractBetTypeDividendService
      */

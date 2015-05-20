@@ -22,6 +22,9 @@ class ExoticBetTypeDividendService extends AbstractBetTypeDividendService {
         $this->eventService = $eventService;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getResultedDividendForBet($bet)
     {
         $totalDividend = 0;

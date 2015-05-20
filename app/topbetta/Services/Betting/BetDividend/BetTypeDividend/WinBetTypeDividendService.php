@@ -23,6 +23,9 @@ class WinBetTypeDividendService extends AbstractBetTypeDividendService {
         $this->selectionService = $selectionService;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getResultedDividendForBet($bet)
     {
         if( $bet->selection->first()->result && $bet->selection->first()->result->position == 1 ) {

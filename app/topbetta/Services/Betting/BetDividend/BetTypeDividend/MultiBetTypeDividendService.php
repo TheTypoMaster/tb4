@@ -13,6 +13,9 @@ use TopBetta\Services\Betting\MultiBetService;
 
 class MultiBetTypeDividendService extends AbstractBetTypeDividendService {
 
+    /**
+     * @inheritdoc
+     */
     public function getResultedDividendForBet($bet)
     {
         //get the winning selections and reset the keys
@@ -27,6 +30,15 @@ class MultiBetTypeDividendService extends AbstractBetTypeDividendService {
         return $this->calculateDividend($winningSelections, MultiBetService::neededWinners($bet->type->name));
     }
 
+    /**
+     * Recursive DFS style algorithm to calculate and sum dividends for all combination in multi bet
+     * @param $betSelections
+     * @param $neededWinners
+     * @param int $winners
+     * @param int $partialDividend
+     * @param int $index
+     * @return int
+     */
     public function calculateDividend($betSelections, $neededWinners, $winners = 0, $partialDividend = 1, $index = 0)
     {
         $totalDividend = 0;

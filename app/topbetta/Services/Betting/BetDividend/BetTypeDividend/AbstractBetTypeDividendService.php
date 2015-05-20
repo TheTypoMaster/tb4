@@ -11,5 +11,10 @@ namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 abstract class AbstractBetTypeDividendService {
 
+    /**
+     * Gets the dividend for a resulted bet
+     * @param $bet
+     * @return float
+     */
     abstract public function getResultedDividendForBet($bet);
 }

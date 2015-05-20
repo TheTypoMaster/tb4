@@ -113,6 +113,12 @@ class BetTransactionService {
         return $transactions;
     }
 
+    /**
+     * Creates a win transaction for a bet and updates the bet record
+     * @param $bet
+     * @param $amount
+     * @return bool
+     */
     public function createBetWinTransaction($bet, $amount)
     {
         $transaction = $this->accountTransactionService->increaseAccountBalance($bet->user_id, $amount, 'betwin');
