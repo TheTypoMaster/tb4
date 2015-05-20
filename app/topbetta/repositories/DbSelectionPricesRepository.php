@@ -8,9 +8,9 @@
 
 
 use TopBetta\Models\SelectionPricesModel;
+use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
 
-class DbSelectionPricesRepository extends BaseEloquentRepository
-{
+class DbSelectionPricesRepository extends BaseEloquentRepository implements SelectionPriceRepositoryInterface {
 
     protected $selectionprices;
 
@@ -93,7 +93,7 @@ class DbSelectionPricesRepository extends BaseEloquentRepository
 
             ->select('tbdb_selection.name as selection_name', 'tbdb_selection_status.name as status_name',
                 'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.id as id',
-                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds')
+                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type')
 
             ->where('tbdb_selection_price.id', $id)
             ->first();

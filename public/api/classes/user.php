@@ -328,11 +328,11 @@ class Api_User extends JController {
                     // Everything went fine, set relevant message depending upon user activation state and display message
 					if ($useractivation == 1) {
 
-						return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created. Please check your email to activate your account.') ));
+						return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created. Please check your email to activate your account.'), 'id' => $user_id  ));
 
 					} else {
 
-						return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created.<br>You can now login with <br>username: <b>'.$username.'</b>.' ), 'username' => $username ));
+						return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created.<br>You can now login with <br>username: <b>'.$username.'</b>.' ), 'username' => $username, 'id' => $user_id ));
 					}
 
 
@@ -653,9 +653,9 @@ class Api_User extends JController {
 
 					} else {
 						if ($iframe) {
-							return array('status' => 200, 'success' => JText::_( 'Your account has been created.' ), 'username' => $username );
+							return array('status' => 200, 'success' => JText::_( 'Your account has been created.' ), 'username' => $username, 'id' => $user_id  );
 						} else {
-							return OutputHelper::json(200, array('success' => JText::_( 'Your account has been created.' ), 'username' => $username ));
+							return OutputHelper::json(200, array('success' => JText::_( 'Your account has been created.' ), 'username' => $username, 'id' => $user_id  ));
 						}
 					}
 
@@ -977,11 +977,11 @@ class Api_User extends JController {
 					// Everything went fine, set relevant message depending upon user activation state and display message
 					if ($useractivation == 1) {
 
-						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE_ACTIVATE') ));
+						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE_ACTIVATE'), 'id' => $user_id  ));
 
 					} else {
 
-						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE' ), 'username' => $username ));
+						return OutputHelper::json(200, array('sucess' => JText::_( 'REG_COMPLETE' ), 'username' => $username, 'id' => $user_id  ));
 					}
 
 
@@ -1234,7 +1234,7 @@ class Api_User extends JController {
 
 					// Everything went fine, set relevant message depending upon user activation state and display message
 
-					return OutputHelper::json(200, array('sucess' => "Account upgraded successfully" ));
+					return OutputHelper::json(200, array('sucess' => "Account upgraded successfully", 'id' => $user_id  ));
 
 
 
@@ -1804,7 +1804,9 @@ class Api_User extends JController {
 			$err['username'] = 'Please enter a username';
 		} else if (!preg_match('/^[a-zA-Z0-9]+$/i', $username)) {
 			$err['username'] = 'Username only accepts letters and numbers';
-		} else if ($usernameLength < 4) {
+		} else if (!preg_match('/^.*[a-zA-Z].*/i', $username)) {
+            $err['username'] = 'Username must contain at least one non numeric character';
+        } else if ($usernameLength < 4) {
 			$err['username'] = 'Username must contain at least 4 characters';
 		} else if ($usernameLength > 30) {
 			$err['username'] = 'Maximum length of username is 30';

@@ -15,4 +15,9 @@ class TournamentLeaderboardModel extends Eloquent{
     public static $rules = array();
     public $timestamps = false;
 
+    public function tournament()
+    {
+        return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');
+    }
+
 } 

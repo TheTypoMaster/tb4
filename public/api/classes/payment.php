@@ -459,7 +459,7 @@ class Api_Payment extends JController {
 		}
 
 		//update user's bet limit
-		if (!$user_model->update($field_to_update, $bet_limit)) {
+		if (!$user_model->update($field_to_update, $bet_limit, $user->user_id)) {
 			return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update your bet limit! Please contact us.")));
 		}
 

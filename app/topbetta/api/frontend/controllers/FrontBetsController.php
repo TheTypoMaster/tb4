@@ -10,6 +10,10 @@ use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Services\Betting\ExternalSourceBetNotificationService;
 use TopBetta\Services\Betting\SelectionService;
+use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Services\UserAccount\UserAccountService;
+use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
+use TopBetta\Services\Betting\MarketService;
 
 
 class FrontBetsController extends BaseController {
@@ -20,17 +24,44 @@ class FrontBetsController extends BaseController {
 	 * @var SelectionService
 	 */
 	private $selectionService;
+    /**
+     * @var BetRepositoryInterface
+     */
+    private $betRepository;
+    /**
+     * @var UserAccountService
+     */
+    private $userAccountService;
+	/**
+     * @var BetDashboardNotificationService
+     */
+    private $dashboardNotificationService;
+    /**
+     * @var MarketService
+     */
+    private $marketService;
 
-	public function __construct(BetSourceRepositoryInterface $betsource,
+
+    public function __construct(BetSourceRepositoryInterface $betsource,
 
 								ExternalSourceBetNotificationService $betnotificationservice,
 
-								SelectionService $selectionService) {
+								SelectionService $selectionService,
+                                MarketService $marketService,
+                                BetRepositoryInterface $betRepository,
+                                UserAccountService $userAccountService,
+                                BetDashboardNotificationService $dashboardNotificationService) {
+
 		$this->beforeFilter('auth');
 		$this->betsource = $betsource;
 		$this->betnotificationservice = $betnotificationservice;
 		$this->selectionService = $selectionService;
-	}
+        $this->betRepository = $betRepository;
+        $this->userAccountService = $userAccountService;
+        $this->dashboardNotificationService = $dashboardNotificationService;
+
+        $this->marketService = $marketService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -80,6 +111,7 @@ class FrontBetsController extends BaseController {
 
 			if ($activeBet -> fixed_odds > 0) {
 				$dividend = $activeBet -> fixed_odds;
+                $odds = $activeBet -> fixed_odds;
 			}
 
 			// temp add line to selection name
@@ -335,11 +367,28 @@ class FrontBetsController extends BaseController {
 			//check selections are not scratched.
 			foreach($input['selections'] as $selections) {
 				foreach($selections as $selection) {
-					if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
-						$messages = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+
+                    $selectionModel = $this->selectionService->getSelection($selection);
+
+                    //check the selection and market is avialble
+					if( ! $this->selectionService->isSelectionAvailableForBetting($selectionModel) ) {
+						$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
 						$errors++;
 						return false;
 					}
+
+                    if ( ! $this->marketService->isSelectionMarketAvailableForBetting($selectionModel) ) {
+                        $messages[] = array("id" => $selectionModel->market->id, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.market_closed"));
+                        $errors++;
+                        return false;
+                    }
+
+					//checks selection is racing
+                    if ( ! $this->selectionService->isSelectionRacing($selection) ) {
+                        $messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                        $errors++;
+                        return false;
+                    }
 				}
 			}
 
@@ -381,12 +430,15 @@ class FrontBetsController extends BaseController {
 			//bet has been placed by now, deal with messages and errors
 			if ($bet['status'] == 200) {
 
-                $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
+				$this->dashboardNotificationService->notify(array("id" => $bet['bet_id'], 'notification_type' => 'bet_placement'));
 
+                $messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], 'bet_id' => $bet['bet_id'], "success" => true, "result" => $bet['success']);
+			
                 // if there is an API endpoint notify it of bet placement
                 if(!is_null($betSourceRecord['api_endpoint'])){
                     $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
                 }
+
 
 			} elseif ($bet['status'] == 401) {
 
@@ -409,16 +461,32 @@ class FrontBetsController extends BaseController {
 
 				foreach ($input['selections'] as $selection) {
 
-					if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
-						$messages = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+                    $selectionModel = $this->selectionService->getSelection($selection);
+
+                    //check the selection and market is available
+					if( ! $this->selectionService->isSelectionAvailableForBetting($selectionModel) ) {
+						$messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
 						$errors++;
 						return false;
 					}
+
+                    if ( ! $this->marketService->isSelectionMarketAvailableForBetting($selectionModel) ) {
+                        $messages[] = array("id" => $selection->market->id, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.market_closed"));
+                        $errors++;
+                        return false;
+                    }
 
 					// assemble bet data such as meeting_id, race_id etc
 					$legacyData = $betModel -> getLegacyBetData($selection);
 
 					if (count($legacyData) > 0) {
+
+                        //check selection is racing selection
+                        if ( ! $this->selectionService->isSelectionRacing($selection) ) {
+                            $messages[] = array("id" => $selection, "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                            $errors++;
+                            return false;
+                        }
 
 						if ($input['source'] == 'racing') {
 
@@ -440,6 +508,10 @@ class FrontBetsController extends BaseController {
 							}							
 
 							$bet = $l -> query('saveBet', $betData);
+
+                            if($bet['status'] == 200) {
+                                $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'],'notification_type' => 'bet_placement'));
+                            }
 
 						} elseif ($input['source'] == 'tournamentracing') {
 
@@ -553,6 +625,28 @@ class FrontBetsController extends BaseController {
 
 						if (count($legacyData) > 0) {
 
+                            //check selection is available
+                            $selectionModel = $this->selectionService->getSelection(key($input['bets']));
+
+                            if( ! $this->selectionService->isSelectionAvailableForBetting($selectionModel) ) {
+                                $messages[] = array("id" => $selectionModel->id, "bets" => $input['bets'],  "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+                                $errors++;
+                                return false;
+                            }
+
+                            if ( ! $this->marketService->isSelectionMarketAvailableForBetting($selectionModel) ) {
+                                $messages[] = array("id" => $selectionModel->market->id, "bets" => $input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.market_closed"));
+                                $errors++;
+                                return false;
+                            }
+
+							//make sure selection is valid sports selection
+                            if ( ! $this->selectionService->isSelectionSports(key($input['bets'])) ) {
+                                $messages[] = array("id" => key($input['bets']), 'bets'=>$input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                                $errors++;
+                                return false;
+                            }
+
 							$betData = array('match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'dividend' => $input['dividend'], 'bet_source_id' => $input['bet_source_id']);
 
 							// add the line to the betData object if it exists
@@ -574,9 +668,19 @@ class FrontBetsController extends BaseController {
 								$errors++;
 
 								return false;
-							}								
+							}
+
+                            if( $this->selectionService->oddsChanged(key($input['bets']), $input['dividend'])) {
+                                $messages[] = array("id" => key($input['bets']), "error_code" => "SB01", "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));
+                                $errors++;
+                                return false;
+                            }
 							
 							$bet = $l -> query('saveSportBet', $betData);
+
+                            if($bet['status'] == 200) {
+                                $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'], 'notification_type' => 'bet_placement'));
+                            }
 
 						} else {
 
@@ -597,6 +701,28 @@ class FrontBetsController extends BaseController {
 
 						if (count($legacyData) > 0) {
 
+                            //check selection is available
+                            $selectionModel = $this->selectionService->getSelection(key($input['bets']));
+
+                            if( ! $this->selectionService->isSelectionAvailableForBetting($selectionModel) ) {
+                                $messages[] = array("id" => $selectionModel->id, "bets" => $input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.selection_scratched"));
+                                $errors++;
+                                return false;
+                            }
+
+                            if ( ! $this->marketService->isSelectionMarketAvailableForBetting($selectionModel) ) {
+                                $messages[] = array("id" => $selectionModel->market->id, "bets" => $input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.market_closed"));
+                                $errors++;
+                                return false;
+                            }
+
+							//make sure selection is valid sports selection
+                            if ( ! $this->selectionService->isSelectionSports(key($input['bets'])) ) {
+                                $messages[] = array("id" => key($input['bets']), 'bets'=>$input['bets'], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get("bets.invalid_selection"));
+                                $errors++;
+                                return false;
+                            }
+
 							$betData = array('id' => $input['tournament_id'], 'match_id' => $legacyData[0] -> event_id, 'market_id' => $legacyData[0] -> market_id, 'bets' => $input['bets'], 'bet_source_id' => $input['bet_source_id']);
 							$bet = $l -> query('saveTournamentSportsBet', $betData);
 
@@ -608,8 +734,7 @@ class FrontBetsController extends BaseController {
 						}
 
 					}
-
-					// tournament bets don't have this set... quick fix
+// tournament bets don't have this set... quick fix
 					if (!isset($bet['bet_id'])) $bet['bet_id'] = '';
 
 					//bet has been placed by now, deal with messages and errors
@@ -641,6 +766,7 @@ class FrontBetsController extends BaseController {
 		}
 
 	}
+
 
 	/**
 	 * Display the specified resource.

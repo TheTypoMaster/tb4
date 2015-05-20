@@ -7,9 +7,10 @@
  */
 
 use Carbon\Carbon;
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
-use TopBetta\Repositories\DbAccountTransactionTypeRepository;
+
 use Validator;
+
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
@@ -45,6 +46,7 @@ class AccountTransactionService {
      * @var array
      */
     protected $betOrigins = array();
+
 
     public function __construct(AccountTransactionRepositoryInterface $accounttransactions,
                                 AccountTransactionTypeRepositoryInterface $accounttransactiontypes,
@@ -184,11 +186,31 @@ class AccountTransactionService {
         }
     }
 
+    public function getTransaction($transactionId)
+    {
+        return $this->accounttransactions->find($transactionId);
+    }
+
     public function getAccountBalanceForUser($userId)
     {
         return $this->accounttransactions->getAccountBalanceByUserId($userId);
     }
 
+
+    public function getAvailableWithdrawalBalance($userId)
+    {
+        return $this->getAccountBalanceForUser($userId) - $this->useraccountservice->getBalanceToTurnOver($userId);
+	}
+	
+    public function getAccountTransactionsForUserPaginated($userId)
+    {
+        return $this->accounttransactions->getUserTransactionsPaginated($userId);
+    }
+
+    public function isDepositTransaction($transactionType)
+    {
+        return in_array($transactionType, self::$depositTransactions);
+    }
 
     public function getTotalDepositsForUser($userId)
     {
@@ -196,6 +218,19 @@ class AccountTransactionService {
         return $this->accounttransactions->getTotalOnlyPositiveTransactionsForUserByTypeIn(
             $userId,
             $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+
+    public function getTotalDailyDepositsForUser($userId)
+    {
+        $start = Carbon::now()->startOfDay();
+        $end = Carbon::now()->addDay()->startOfDay();
+
+        return $this->accounttransactions->getTotalOnlyPositiveTransactionsForUserByTypeIn(
+            $userId,
+            $this->getTransactionTypeIds(self::$depositTransactions),
+            $start,
+            $end
         );
     }
 

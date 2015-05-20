@@ -11,22 +11,25 @@ namespace TopBetta\Repositories;
 use Illuminate\Support\Facades\Log;
 use TopBetta\RisaForm;
 
-class RisaFormRepository {
+class RisaFormRepository extends BaseEloquentRepository {
 
 	/**
 	 * @var \TopBetta\RisaForm
 	 */
-	private $risaForm;
 
-	function __construct(RisaForm $risaForm) {
-		$this->risaForm = $risaForm;
+
+
+	protected $model;
+
+	function __construct(RisaForm $model) {
+		$this->model = $model;
 	}
 
 	public function getFormForRunnerAndRaceId($runner, $raceId) {
 
 		$data = array();
 
-		$runnersForm = $this->risaForm->with('lastStarts')->where('runner_code', $runner['runner_code'])->first();
+		$runnersForm = $this->model->with('lastStarts')->where('runner_code', $runner['runner_code'])->first();
 
 		$code = $runner['runner_code'];
 
@@ -64,6 +67,14 @@ class RisaFormRepository {
             }
 			return $data;
 		}
+	}
+
+	public function getFormIdByRunnerCode($runnerCode){
+		$formId = $this->model->where('runner_code', $runnerCode)
+							->pluck('id');
+		if(!$formId) return null;
+		return $formId;
+
 	}
 
 } 

@@ -61,4 +61,44 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
 
         return $bets->toArray();
     }
+
+    public function getBetWithSelectionsAndEventDetailsByBetId($betId){
+        $details = $this->model->with(array('type','user', 'user.topbettauser',
+            'betselection.selection',
+            'betselection.selection.price',
+            'betselection.selection.result',
+            'betselection.selection.market.event',
+            'betselection.selection.market.event.competition',
+            'betselection.selection.market.event.competition.sport',
+            'betselection.selection.market.markettype'
+        ))->where('id', $betId)->first();
+
+        if(!$details) return null;
+
+        return $details->toArray();
+    }
+
+    public function getBetsForMarketByStatus($marketId, $status, $type = null)
+    {
+        return $this->model
+            ->join('tbdb_bet_selection', 'tbdb_bet.id', '=', 'tbdb_bet_selection.bet_id')
+            ->join('tbdb_selection', 'tbdb_bet_selection.selection_id', '=', 'tbdb_selection.id')
+            ->where('tbdb_selection.market_id', $marketId)
+            ->where('bet_result_status_id', $status)
+            ->groupBy('tbdb_bet.id')
+            ->get(array('tbdb_bet.*'));
+    }
+
+    public function getBetsForEventByStatus($event, $status, $type = null)
+    {
+        $model =  $this->model
+            ->where('event_id', $event)
+            ->where('bet_result_status_id', $status);
+
+        if( $type ) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get();
+    }
 }

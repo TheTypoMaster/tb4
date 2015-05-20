@@ -24,74 +24,84 @@ class TournamentModelTournamentLeaderboard extends JModel
 				u.email,
 				l1.currency,
 				l1.turned_over,
-				count(l2.currency) as rank,
+				t.topup_currency,
+				t.rebuy_currency,
+				t.start_currency,
 				1 as qualified
 			FROM
 				' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
 			INNER JOIN
-				' . $db->nameQuote('#__tournament_leaderboard') . ' as l2 ON l1.currency < l2.currency
-			OR
-				(l1.currency = l2.currency AND l1.user_id = l2.user_id)
-			INNER JOIN
 				' . $db->nameQuote('#__users') . ' AS u
 			ON
 				l1.user_id = u.id
+            INNER JOIN
+                '. $db->nameQuote('#__tournament') .' AS t
+            ON
+                t.id = l1.tournament_id
+            INNER JOIN
+               '. $db->nameQuote('#__tournament_ticket') . ' AS tt
+            ON
+                tt.user_id = u.id AND tt.tournament_id = '. $db->quote($tournament->id) .'
+            LEFT JOIN (
+                tbdb_tournament_ticket_buyin_history tbh_rebuy
+                INNER JOIN tbdb_tournament_buyin_type tbt_rebuy ON tbh_rebuy.tournament_buyin_type_id = tbt_rebuy.id AND tbt_rebuy.keyword=' . $db->quote("rebuy") . '
+              ) ON tbh_rebuy.tournament_ticket_id = tt.id
+            LEFT JOIN (
+                tbdb_tournament_ticket_buyin_history tbh_topup
+                INNER JOIN tbdb_tournament_buyin_type tbt_topup ON tbh_topup.tournament_buyin_type_id = tbt_topup.id AND tbt_topup.keyword=' . $db->quote("topup") . '
+              ) ON tbh_topup.tournament_ticket_id = tt.id
 			WHERE
-				l2.tournament_id = ' . $db->quote($tournament->id) . '
-			AND
 				l1.tournament_id = ' . $db->quote($tournament->id) . '
-			AND
-				l1.turned_over >= ' . $db->quote($tournament->start_currency) . '
-			AND
-				l2.turned_over >= ' . $db->quote($tournament->start_currency);
-
-		$query .= '
-			AND
-				l1.currency > 0
-			GROUP BY
-				l1.user_id, l1.currency ';
+            AND
+                l1.currency > 0
+            GROUP BY
+                l1.id
+			HAVING
+				 l1.turned_over >= t.start_currency + IFNULL(COUNT(tbh_rebuy.id), 0) * t.rebuy_currency + IFNULL(COUNT(tbh_topup.id), 0) * t.topup_currency
+        ';
 
 		if(!$only_qualifiers) {
 			$query .=
-				'UNION SELECT
-					u.id,
-					u.name,
-					u.username,
-					u.email,
-					l1.currency,
-					l1.turned_over,
-					"-" as rank,
-					0 as qualified
-				FROM
-					' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
-				INNER JOIN
-					' . $db->nameQuote('#__tournament_leaderboard') . ' as l2
-				ON
-					l1.currency < l2.currency
-				OR
-					(l1.currency = l2.currency AND l1.user_id = l2.user_id)
-				INNER JOIN
-					' . $db->nameQuote('#__users') . ' AS u
-				ON
-					l1.user_id = u.id
-				WHERE
-					l2.tournament_id = ' . $db->quote($tournament->id) . '
-				AND
-					l1.tournament_id = ' . $db->quote($tournament->id) . '
-				AND
-					(
-						l1.currency = 0
-					OR
-						(
-							l1.turned_over < ' . $db->quote($tournament->start_currency) . '
-						AND
-							l2.turned_over < ' . $db->quote($tournament->start_currency) . '
-						)
-					)
-				GROUP BY
-					qualified,
-					l1.user_id,
-					l1.currency';
+				'UNION
+				SELECT
+				u.id,
+				u.name,
+				u.username,
+				u.email,
+				l1.currency,
+				l1.turned_over,
+				t.topup_currency,
+				t.rebuy_currency,
+				t.start_currency,
+				0 as qualified
+                FROM
+                    ' . $db->nameQuote('#__tournament_leaderboard') . ' as l1
+                INNER JOIN
+                    ' . $db->nameQuote('#__users') . ' AS u
+                ON
+                    l1.user_id = u.id
+                INNER JOIN
+                    '. $db->nameQuote('#__tournament') .' AS t
+                ON
+                    t.id = l1.tournament_id
+                INNER JOIN
+                   '. $db->nameQuote('#__tournament_ticket') . ' AS tt
+                ON
+                    tt.user_id = u.id AND tt.tournament_id = '. $db->quote($tournament->id) .'
+                LEFT JOIN (
+                    tbdb_tournament_ticket_buyin_history tbh_rebuy
+                    INNER JOIN tbdb_tournament_buyin_type tbt_rebuy ON tbh_rebuy.tournament_buyin_type_id = tbt_rebuy.id AND tbt_rebuy.keyword=' . $db->quote("rebuy") . '
+                  ) ON tbh_rebuy.tournament_ticket_id = tt.id
+                LEFT JOIN (
+                    tbdb_tournament_ticket_buyin_history tbh_topup
+                    INNER JOIN tbdb_tournament_buyin_type tbt_topup ON tbh_topup.tournament_buyin_type_id = tbt_topup.id AND tbt_topup.keyword=' . $db->quote("topup") . '
+                  ) ON tbh_topup.tournament_ticket_id = tt.id
+                WHERE
+                    l1.tournament_id = ' . $db->quote($tournament->id) . '
+                GROUP BY
+                    l1.id
+                HAVING
+                     l1.currency = 0 OR l1.turned_over < t.start_currency + IFNULL(COUNT(tbh_rebuy.id), 0) * t.rebuy_currency + IFNULL(COUNT(tbh_topup.id), 0) * t.topup_currency';
 		}
 
 		$query .= '
@@ -104,7 +114,29 @@ class TournamentModelTournamentLeaderboard extends JModel
 		}
 
 		$db->setQuery($query);
-		return $db->loadObjectList();
+		$leaderboard = $db->loadObjectList();
+
+        //get the ranks for the leaderboard
+        $position = 1;
+        $amount = 0;
+        $count = 0;
+        foreach($leaderboard as &$record)
+        {
+            if($record->qualified) {
+                if($record->currency < $amount) {
+                    $position += $count;
+                    $count = 0;
+                }
+
+                $amount = $record->currency;
+                $record->rank = $position;
+                $count++;
+            } else {
+                $record->rank = '-';
+            }
+        }
+
+        return $leaderboard;
 	}
 
 	/**

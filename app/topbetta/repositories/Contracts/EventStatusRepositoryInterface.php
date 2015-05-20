@@ -8,4 +8,8 @@
 
 interface EventStatusRepositoryInterface {
 
+    const STATUS_SELLING = 'selling';
+    const STATUS_PAYING = 'paying';
+    const STATUS_PAID = 'paid';
+    const STATUS_INTERIM = 'interim';
 } 

@@ -28,13 +28,17 @@ class MarketsController extends BaseController
 	public function index()
 	{
 		$search = Request::get('q', '');
+        $event = Request::get('event', null);
+
 		if ($search) {
 			$markets = $this->marketsrepo->search($search);
-		} else {
+		} else if ( $event ) {
+            $markets = $this->marketsrepo->getAllMarketsForEvent($event);
+        } else {
 			$markets = $this->marketsrepo->allMarkets();
 		}
 
-        return View::make('admin::eventdata.markets.index', compact('markets', 'search'));
+        return View::make('admin::eventdata.markets.index', compact('markets', 'search', 'event'));
 	}
 
 	/**

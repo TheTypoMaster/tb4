@@ -291,6 +291,36 @@ class UserAccountService {
 
     }
 
+    /**
+     * Adds the amount to the users balance to turn over
+     * @param $userId
+     * @param $amount
+     * @return bool
+     */
+    public function addBalanceToTurnOver($userId, $amount)
+    {
+        if( $amount ) {
+            return $this->fullUser->updateBalanceToTurnOver($userId, $amount);
+        }
+
+        return true;
+    }
+
+    public function decreaseBalanceToTurnOver($userId, $amount)
+    {
+        return $this->addBalanceToTurnOver($userId, -$amount);
+    }
+
+    public function getBalanceToTurnOver($userId)
+    {
+        $user = $this->fullUser->getUserDetailsFromUserId($userId);
+
+        if($user) {
+            return $user['balance_to_turnover'];
+        }
+
+        return 0;
+    }
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
     {
         $checkForName = $this->basicUser->getUserDetailsFromUsername($username);
