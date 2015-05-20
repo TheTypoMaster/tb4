@@ -168,6 +168,10 @@ class TournamentModelTournament extends SuperModel
             'name'      => 'Topup Currency',
             'type'      => self::TYPE_INTEGER,
         ),
+        'email_flag'    => array(
+            'name'      => 'Emai Flag',
+            'type'      => self::TYPE_INTEGER,
+        ),
 	);
 
 	/**
