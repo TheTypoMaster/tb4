@@ -158,14 +158,9 @@ class RaceDataProcessingService {
 				continue;
 			}
 
-			// international races are not displayed by default
+			// international races are now displayed by default
 			if (isset($meeting['Country'])) {
 				$meetingDetails['country'] = $meeting['Country'];
-				if ($meeting['Country'] == 'INT') {
-					if ($existingMeeting) {
-						if($existingMeeting['display_flag'] != 1) $meetingDetails['display_flag'] = 0;
-					}
-				}
 			}
 
 			if (isset($meeting['EventCount'])) $meetingDetails['events'] = $meeting['EventCount'];
@@ -187,7 +182,7 @@ class RaceDataProcessingService {
 				if ($defaultTrack) $meetingDetails['track'] = $defaultTrack;
 			}
 
-			$this->competitions->updateOrCreate($meetingDetails, 'external_event_group_id');
+			$this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
 
 			Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
 		}
