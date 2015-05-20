@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\Models\TopbettaUserModel;
+use TopBetta\Models\TopBettaUserModel;
 use TopBetta\Services\Validation\UserFullValidator;
 
 use TopBetta\Repositories\Contracts\UserTopbettaRepositoryInterface;
@@ -33,6 +33,15 @@ class DbUserTopbettaRepository extends BaseEloquentRepository implements UserTop
         if ($userDetails) return $userDetails->toArray();
 
         return false;
+    }
+
+    public function updateBalanceToTurnOver($userId, $amount)
+    {
+        $user = $this->model->where('user_id', $userId)->first();
+
+        $user->balance_to_turnover = max($user->balance_to_turnover + $amount, 0);
+
+        return $user->save();
     }
 
 }

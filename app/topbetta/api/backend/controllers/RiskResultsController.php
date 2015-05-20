@@ -3,9 +3,25 @@
 namespace TopBetta\backend;
 
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Betting\BetResults\BetResultService;
+use TopBetta\backend\RiskRaceStatusController;
 
 class RiskResultsController extends \BaseController
 {
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
+    /**
+     * @var RiskRaceStatusController
+     */
+    private $riskRaceStatusController;
+
+    public function __construct(BetResultService $betResultService, RiskRaceStatusController $riskRaceStatusController )
+    {
+        $this->betResultService = $betResultService;
+        $this->riskRaceStatusController = $riskRaceStatusController;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -23,7 +39,7 @@ class RiskResultsController extends \BaseController
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
         }
 
-        $errors = static::updateRaceResults($input, $input['race_id']);
+        $errors = $this->updateRaceResults($input, $input['race_id']);
 
         if (count($errors)) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id'], "messages" => $errors);
@@ -31,7 +47,7 @@ class RiskResultsController extends \BaseController
         return array("success" => true, "result" => "Results updated for race " . $input['race_id']);
     }
 
-    private static function updateRaceResults(array $raceResults, $raceId)
+    private function updateRaceResults(array $raceResults, $raceId)
     {
         // delete all results records for this event
         \TopBetta\RaceResult::deleteResultsForRaceId($raceId);       
@@ -57,7 +73,7 @@ class RiskResultsController extends \BaseController
                     break;
 
                 case 'race_status':
-                    if (!\TopBetta\backend\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
+                    if (!$this->riskRaceStatusController->updateRaceStatus($raceResult, $raceId)) {
                         $errors[] = "Problem updating race status";
                     }
 

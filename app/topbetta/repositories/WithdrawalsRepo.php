@@ -23,6 +23,18 @@ class WithdrawalsRepo
 		$this->withdrawalRequest = $withdrawalRequest;
 	}
 
+    public function find($id)
+    {
+        return $this->withdrawalRequest->find($id);
+    }
+
+    public function updateWithId($id, $data)
+    {
+        $withdrawal = $this->find($id);
+
+        return $withdrawal->update($data);
+    }
+
 	public function search($search)
 	{
 		return $this->withdrawalRequest
@@ -39,6 +51,14 @@ class WithdrawalsRepo
 						->with('user', 'type', 'paypal', 'moneybookers')
 						->paginate();
 	}
+
+    public function allPendingWithdrawals()
+    {
+        return $this->withdrawalRequest->whereNull('approved_flag')
+            ->orderBy('requested_date', 'desc')
+            ->with('user', 'type', 'paypal', 'moneybookers')
+            ->paginate();
+    }
 
 	public function getUserWithdrawals($userId)
 	{

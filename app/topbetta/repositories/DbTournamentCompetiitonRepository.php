@@ -17,4 +17,9 @@ class DbTournamentCompetiitonRepository extends BaseEloquentRepository implement
         $this->model = $tournamentcompetition;
     }
 
+    public function getBySport($sportId)
+    {
+        return $this->model->where('tournament_sport_id', $sportId)->orderBy('name', 'ASC')->get();
+    }
+
 } 

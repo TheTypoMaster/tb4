@@ -213,6 +213,7 @@ return array(
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
         'RaceResulting' => 'TopBetta\backend\RacingResultsController',
+        'RacingData' => 'TopBetta\backend\RacingDataController',
 		'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
 		'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
 		'RiskSportBets'		=> 'TopBetta\backend\RiskSportBetsController',
