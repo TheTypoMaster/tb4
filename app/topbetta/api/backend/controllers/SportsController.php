@@ -5,7 +5,7 @@ use Carbon\Carbon;
 use TopBetta;
 use TopBetta\Repositories\DbMarketsRepository;
 use TopBetta\Repositories\DbTournamentRepository;
-
+use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Repositories\BetResultRepo;
 
 class SportsController extends BaseController {
@@ -56,16 +56,22 @@ class SportsController extends BaseController {
     protected $markets;
     protected $tournaments;
     protected $betresults;
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
 
-	public function __construct(DbMarketsRepository $markets,
+    public function __construct(DbMarketsRepository $markets,
                                 DbTournamentRepository $tournaments,
-								BetResultRepo $betresults)
+								BetResultRepo $betresults,
+                                BetResultService $betResultService)
 	{
         $this->markets = $markets;
         $this->tournaments = $tournaments;
         $this->betresults = $betresults;
 		//$this->beforeFilter('apiauth');
-	}
+        $this->betResultService = $betResultService;
+    }
 	
 	
 	/**
@@ -573,7 +579,9 @@ class SportsController extends BaseController {
 											// result any sport bet for this market
 											\Log::info('RESULTING: all sport bets for market id: ' . $marketId);
 											// $betResultRepo = new TopBetta\Repositories\BetResultRepo();
-											$this->betresults->resultAllSportBetsForMarket($marketId);
+                                            if( isset($marketModel) ) {
+                                                $this->betResultService->resultBetsForMarket($marketModel);
+                                            }
 
 											// TAKEN OUT TILL WE GO FULL AUTO
 // 											// update the event status to paying
