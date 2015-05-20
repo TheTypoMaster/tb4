@@ -35,22 +35,43 @@ sed -i "s/disable_functions = .*/disable_functions = /" /etc/php5/cli/php.ini
 sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
 sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/my.cnf
 
+
+
+# add supervisor config for laravel beatstalk queue
+SUPER=$(cat <<EOF
+[program:bet-notification]
+command=php artisan queue:work --daemon --queue=bet-notification --tries=1 --env=vagrant
+directory=/vagrant
+stdout_logfile=/vagrant/app/storage/logs/bet-notification_supervisord.log
+redirect_stderr=true
+autostart=true
+autorestart=true
+EOF
+)
+echo "${SUPER}" > /etc/supervisor/conf.d/bet-notification.conf
+
+# restart services
 sudo service mysql restart
 sudo service apache2 restart
 sudo service beantstalkd start
 sudo service supervisor start
 sudo service memcached start
 
+# install composer
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 
+# set php timezone
 echo "Australia/Sydney" | sudo tee /etc/timezone
 
+# auto change to project directory on login
 echo "cd /vagrant" >> /home/vagrant/.bashrc
 
+# install composer packages for project
 cd /vagrant
 composer install
 
+# add project hosts to hosts file
 echo "192.168.33.10 services.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.11 topbetta.dev" | sudo tee -a /etc/hosts
 echo "192.168.33.12 serena.dev" | sudo tee -a /etc/hosts
@@ -61,6 +82,7 @@ echo "192.168.33.16 toptippa.dev" | sudo tee -a /etc/hosts
 
 SCRIPT
 
+# default website setup
 $vhost_setup = <<SCRIPT
 VHOST=$(cat <<EOF
 <VirtualHost *:80>

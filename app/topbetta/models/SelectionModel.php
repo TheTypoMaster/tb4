@@ -25,12 +25,12 @@ class SelectionModel extends Eloquent{
 
     public function price()
     {
-        return $this->hasOne('TopBetta\Models\SelectionPricesModel', 'selecion_id', 'id');
+        return $this->hasOne('TopBetta\Models\SelectionPricesModel', 'selection_id', 'id');
     }
 
     public function result()
     {
-        return $this->hasOne('TopBetta\Models\SelectionResultModel', 'selecion_id', 'id');
+        return $this->hasOne('TopBetta\Models\SelectionResultModel', 'selection_id', 'id');
     }
 
 
@@ -55,6 +55,16 @@ class SelectionModel extends Eloquent{
     public function selectionstatus()
     {
         return $this->belongsTo('TopBetta\Models\SportsSelectionStatus', 'selection_status_id', 'id');
+    }
+
+    public function team()
+    {
+        return $this->morphedByMany('TopBetta\Models\TeamModel', 'competitor', 'tb_selection_competitor', 'selection_id');
+    }
+
+    public function player()
+    {
+        return $this->morphedByMany('TopBetta\Models\PlayerModel', 'competitor', 'tb_selection_competitor', 'selection_id');
     }
 
 } 

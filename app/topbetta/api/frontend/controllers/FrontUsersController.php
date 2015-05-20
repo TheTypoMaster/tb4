@@ -312,6 +312,13 @@ class FrontUsersController extends \BaseController {
 
 			} elseif ($input['type'] == 'upgrade') {
 
+				// check if user account is upgraded already
+				$alreadyUpgraded = Auth::user()->isTopBetta;
+
+				if($alreadyUpgraded){
+					return array("success" => false, "result" => 'Your account is already upgraded!');
+				}
+
 				$user = $l -> query('doUserUpgradeTopBetta', $input);
 
 			} elseif ($input['type'] == 'full') {

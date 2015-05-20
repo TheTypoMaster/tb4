@@ -6,14 +6,16 @@
  * Project: tb4
  */
 
+use TopBetta\Models\SportModel;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
-use TopBetta\TournamentSport;
 
 class DbSportsRepository extends BaseEloquentRepository implements SportRepositoryInterface{
 
     protected $sports;
 
-    function __construct(TournamentSport $sports) {
+    protected $order = array('name', 'ASC');
+
+    function __construct(SportModel $sports) {
         $this->model = $sports;
     }
 
@@ -27,6 +29,7 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
             ->orderBy('name', 'ASC')
             ->where('name', 'LIKE', "%$search%")
             ->orWhere('description', 'LIKE', "%$search%")
+            ->orWhere('short_name', 'LIKE', "%$search%")
             ->paginate();
     }
 
@@ -45,8 +48,8 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
     }
 
     public function sportsFeed(){
-        $sports =  $this->model->where('status_flag', '1')
-            ->where('racing_flag', '0')
+        $sports =  $this->model->where('display_flag', '1')
+            ->whereIn('id', array(1,2,3))
             ->select(array('id as sport_id','name as sport_name'))
             ->get();
         if(!$sports) return null;

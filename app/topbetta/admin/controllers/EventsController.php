@@ -3,6 +3,7 @@
 use Request;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
+use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 use View;
 use BaseController;
 use Redirect;
@@ -16,13 +17,16 @@ class EventsController extends BaseController
 	 */
 	private $eventsrepo;
 	private $eventstatusrepo;
+    private $teamRepository;
 
-	public function __construct(EventRepositoryInterface $eventsrepo,
-								EventStatusRepositoryInterface $eventstatusrepo)
+    public function __construct(EventRepositoryInterface $eventsrepo,
+								EventStatusRepositoryInterface $eventstatusrepo,
+                                TeamRepositoryInterface $teamRepository)
 	{
 		$this->eventsrepo = $eventsrepo;
 		$this->eventstatusrepo = $eventstatusrepo;
-	}
+        $this->teamRepository = $teamRepository;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -91,7 +95,9 @@ class EventsController extends BaseController
 
 		$event_status = $this->eventstatusrepo->getEventStatusList();
 
-        return View::make('admin::eventdata.events.edit', compact('event', 'event_status', 'search'));
+        $teams = $this->teamRepository->findAll();
+
+        return View::make('admin::eventdata.events.edit', compact('event', 'event_status', 'teams', 'search'));
 	}
 
 	/**
@@ -104,12 +110,20 @@ class EventsController extends BaseController
 	{
         //Get the query string for use when redirecting
 		$search = Input::get("q", '');
-		$data = Input::except(array("q"));
+		$data = Input::except(array("q", 'teams', 'team_position'));
 
 		// deal with mysql setting '' on an integer field!!!!
 		if($data['number'] == '') $data['number'] = NULL;
 
         $this->eventsrepo->updateWithId($id, $data);
+
+        //get team info
+        $teams = Input::get('teams', array());
+        $teamPositions = Input::get('team_position', array());
+
+        $teams = array_combine($teams, array_map( function($value) { return array("team_position" => $value); }, $teamPositions));
+
+        $this->eventsrepo->addTeams($id, array_except($teams, 0));
 
         return Redirect::route('admin.events.index', array($id, "q" => $search))
             ->with('flash_message', 'Saved!');
