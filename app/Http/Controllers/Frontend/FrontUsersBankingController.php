@@ -1,9 +1,11 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class FrontUsersBankingController extends \BaseController {
+class FrontUsersBankingController extends Controller {
 
 	public function __construct() {
 		$this -> beforeFilter('auth');

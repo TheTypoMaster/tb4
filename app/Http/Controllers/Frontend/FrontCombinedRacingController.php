@@ -1,10 +1,11 @@
-<?php
-namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\BetTypes;
 use TopBetta\Repositories\RisaFormRepository;
 
-class FrontCombinedRacingController extends \BaseController {
+class FrontCombinedRacingController extends Controller {
 
 	/**
 	 * @var \TopBetta\Repositories\RisaFormRepository

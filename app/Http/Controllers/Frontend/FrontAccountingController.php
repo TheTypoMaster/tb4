@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 7/01/15
@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 
 use Input;
 
@@ -14,7 +14,7 @@ use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 
-class FrontAccountingController extends BaseController{
+class FrontAccountingController extends Controller {
 
     protected $accountservice;
     protected $response;

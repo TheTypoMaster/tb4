@@ -1,6 +1,6 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Input;
 
@@ -9,7 +9,7 @@ use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Services\Response\ApiResponse;
 
-class UserRegistrationController extends BaseController {
+class UserRegistrationController extends Controller {
 
 	protected $accountservice;
 	protected $response;

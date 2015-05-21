@@ -1,8 +1,10 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 // use TopBetta;
 
-class FrontTournamentsCommentsController extends \BaseController {
+class FrontTournamentsCommentsController extends Controller {
 
 	public function __construct() {
 

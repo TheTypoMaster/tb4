@@ -1,8 +1,10 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 
-class FrontSportsResultsController extends \BaseController {
+class FrontSportsResultsController extends Controller {
 
 	/**
 	 * Display a listing of the resource.

@@ -3,6 +3,7 @@
 use Auth;
 use Route;
 use Redirect;
+use Config;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -56,7 +57,7 @@ class RouteServiceProvider extends ServiceProvider {
 		{
 
 			Config::set('auth.table', 'tb_api_users');
-			Config::set('auth.model', 'APIUser');
+			Config::set('auth.model', 'TopBetta\Models\APIUserModel');
 
 			// Test against the presence of Basic Auth credentials
 			$creds = array(
@@ -80,7 +81,7 @@ class RouteServiceProvider extends ServiceProvider {
 		Route::filter('basic.once', function()
 		{
 			Config::set('auth.table', 'tb_api_users');
-			Config::set('auth.model', 'APIUser');
+			Config::set('auth.model', 'TopBetta\Models\APIUserModel');
 			return Auth::onceBasic('username');
 		});
 

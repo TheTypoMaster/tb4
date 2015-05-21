@@ -1,11 +1,12 @@
-<?php
-namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use App;
 use TopBetta\Models\TournamentSport;
 use TopBetta\Models\SportsEvents;
 
-class FrontCombinedSportsController extends \BaseController {
+class FrontCombinedSportsController extends Controller {
 
     /**
      * Display a listing of the resource.
@@ -134,7 +135,7 @@ class FrontCombinedSportsController extends \BaseController {
         // Did they pass in a market type id? 
         // - this means they want all options for all events for this market type
         if ($marketTypeId = \Input::get('market_type_id')) {
-        	$optionsController = App::make('TopBetta\Http\Frontend\Controllers\FrontSportsOptionsController');
+        	$optionsController = App::make('TopBetta\Http\Controllers\Frontend\FrontSportsOptionsController');
         	$options = $optionsController->getAllOptionsForMarketTypeId($allEvents, $marketTypeId);
 
         	$typeId = $marketTypeId;

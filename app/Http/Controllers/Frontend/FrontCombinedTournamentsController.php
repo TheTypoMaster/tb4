@@ -1,9 +1,10 @@
-<?php
-namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 
-class FrontCombinedTournamentsController extends \BaseController {
+class FrontCombinedTournamentsController extends Controller {
 
     /**
      * Display a listing of the resource.
@@ -23,7 +24,7 @@ class FrontCombinedTournamentsController extends \BaseController {
         }
 
         //$tournamentController = new FrontTournamentsController();
-        $tournamentController = \App::make('\TopBetta\Http\Frontend\Controllers\FrontTournamentsController');
+        $tournamentController = \App::make('\TopBetta\Http\Controllers\Frontend\FrontTournamentsController');
 
         $tournamentGrouped =  $tournamentController->show($tournId, true);
 
@@ -97,7 +98,7 @@ class FrontCombinedTournamentsController extends \BaseController {
                 $nextEvent = (int)$raceId;
             }
 
-            $racingController = \App::make('\TopBetta\Http\Frontend\Controllers\FrontCombinedRacingController');
+            $racingController = \App::make('\TopBetta\Http\Controllers\Frontend\FrontCombinedRacingController');
             $racing =  $racingController->index('r', $nextEvent, $meetingId);
 
             if ($racing['success']) {

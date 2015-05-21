@@ -1,10 +1,12 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Caching\NextToJumpCacheService;
 
-class FrontRacesController extends \BaseController {
+class FrontRacesController extends ontroller {
 
     protected $nexttojumpcache;
 

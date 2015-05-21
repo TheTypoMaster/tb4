@@ -1,9 +1,11 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class FrontSportsTypesController extends \BaseController {
+class FrontSportsTypesController extends Controller {
 
 	/**
 	 * Display a listing of the resource.

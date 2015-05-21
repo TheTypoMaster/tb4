@@ -1,10 +1,12 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use Auth;
 use TopBetta;
 use \Carbon\Carbon;
 
-class FrontUsersTournamentsController extends \BaseController {
+class FrontUsersTournamentsController extends Controller {
 
 	/**
 	 * @var \TopBetta\Repositories\UserTicketsRepository

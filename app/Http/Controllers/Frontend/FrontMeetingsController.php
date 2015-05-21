@@ -1,11 +1,12 @@
-<?php
-namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use Log;
 
-class FrontMeetingsController extends \BaseController {
+class FrontMeetingsController extends Controller {
 
 	/**
 	 * Display a listing of the resource.

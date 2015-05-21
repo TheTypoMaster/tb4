@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 23/12/14
@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Exception;
 use Input;
 
@@ -18,7 +18,7 @@ use TopBetta\Services\Response\ApiResponse;
  * Class UserTokenController
  * @package TopBetta\Frontend\Controllers
  */
-class UserTokenController extends BaseController {
+class UserTokenController extends Controller {
 
     /**
      * @var TokenAuthenticationService

@@ -1,9 +1,11 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
-class FrontUsersWithdrawController extends \BaseController {
+class FrontUsersWithdrawController extends Controller {
 
     /**
      * @var AccountTransactionService

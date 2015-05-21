@@ -1,8 +1,8 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 use TopBetta;
 use Lang;
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Support\Facades\Input;
 use Auth;
@@ -19,7 +19,7 @@ use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 use TopBetta\Services\Betting\MarketService;
 
 
-class FrontBetsController extends BaseController {
+class FrontBetsController extends Controller {
 
 	protected $betsource;
 	protected $betnotificationservice;

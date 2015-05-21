@@ -6,8 +6,8 @@ use TopBetta\Models\BetLimitType;
 use TopBetta\Models\BetLimitUser;
 use TopBetta\Models\BetModel;
 use TopBetta\Models\BetTypes;
-use TopBetta\Facades\BetRepo;
 use TopBetta\Models\RaceMeeting;
+use TopBetta\Facades\BetRepo;
 
 /**
  * Description of BetLimitRepo
@@ -26,12 +26,20 @@ class BetLimitRepo
 	private $betLimitType;
 	private $betLimitUser;
 	private $userBetLimits;
+	private $raceMeeting;
+	private $betTypes;
 
-	public function __construct(BetLimitType $betLimitType, BetLimitUser $betLimitUser, UserRepo $userRepo)
+	public function __construct(BetLimitType $betLimitType,
+								BetLimitUser $betLimitUser,
+								UserRepo $userRepo,
+								RaceMeeting $raceMeeting,
+								BetTypes $betTypes)
 	{
 		$this->betLimitType = $betLimitType;
 		$this->betLimitUser = $betLimitUser;
 		$this->userRepo = $userRepo;
+		$this->raceMeeting = $raceMeeting;
+		$this->betTypes = $betTypes;
 	}
 
 	/**
@@ -64,7 +72,7 @@ class BetLimitRepo
 	 */
 	private function checkExceedRacingLimits($betData)
 	{
-		$meeting = RaceMeeting::find($betData['id']);
+		$meeting = $this->raceMeeting->find($betData['id']);
 
 		$lowestLimit = false;
 		$lowestFlexiLimit = false;
@@ -124,9 +132,9 @@ class BetLimitRepo
 		}
 
 		// 3: do our checks now
-		if (BetTypes::find($betData['bet_type_id'])->isExotic()) {
+		if ($this->betTypes->find($betData['bet_type_id'])->isExotic()) {
 			// exotic bet
-			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst(BetTypes::where('id', $betData['bet_type_id'])->pluck('name'));
+			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst($this->betTypes->where('id', $betData['bet_type_id'])->pluck('name'));
 			$exotic = new $exoticClass;
 			$exotic->selections = $betData['selection'];
 			$exotic->betAmount = $betData['value'];

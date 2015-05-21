@@ -1,4 +1,6 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use Input;
 use Auth;
@@ -10,7 +12,7 @@ use TopBetta\Services\Accounting\PoliTransactionService;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 
-class FrontUsersPoliDepositController extends \BaseController {
+class FrontUsersPoliDepositController extends Controller {
 
 	/**
 	 * @var PoliService

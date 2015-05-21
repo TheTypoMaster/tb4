@@ -1,9 +1,11 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 
-class FrontUsersBalancesController extends \BaseController {
+class FrontUsersBalancesController extends Controller {
 
     /**
      * @var UserTopBettaRepositoryInterface

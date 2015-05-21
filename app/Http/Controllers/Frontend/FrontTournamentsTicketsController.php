@@ -1,4 +1,6 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -7,7 +9,7 @@ use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
-class FrontTournamentsTicketsController extends \BaseController {
+class FrontTournamentsTicketsController extends Controller {
 
     /**
      * @var UserAccountService

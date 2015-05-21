@@ -1,4 +1,6 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
@@ -10,7 +12,7 @@ use View;
 use Auth;
 use Redirect;
 
-class FrontUsersController extends \BaseController {
+class FrontUsersController extends Controller {
 
     /**
      * @var UserDashboardNotificationService

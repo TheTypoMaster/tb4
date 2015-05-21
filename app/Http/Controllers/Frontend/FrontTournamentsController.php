@@ -1,4 +1,6 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
@@ -6,7 +8,7 @@ use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Tournaments\TournamentLeaderboardService;
 
 
-class FrontTournamentsController extends \BaseController {
+class FrontTournamentsController extends Controller {
 
     protected $tournamentleaderboard;
     /**

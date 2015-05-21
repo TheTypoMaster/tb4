@@ -1,4 +1,6 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Mail;
@@ -8,7 +10,7 @@ use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 use TopBetta\Services\Accounting\AccountTransactionService;
 
-class FrontUsersDepositController extends \BaseController {
+class FrontUsersDepositController extends Controller {
 
 	private $depositTypeMapping = array(
 		"tokencreditcard" => "Eway",

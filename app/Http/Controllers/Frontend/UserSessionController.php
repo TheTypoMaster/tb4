@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 /**
  * Coded by Oliver Shanahan
@@ -7,18 +7,18 @@
  * Project: tb4
  */
 
-use BaseController;
+use Regulus\ActivityLog\Models\Activity;
+use TopBetta\Http\Controllers\Controller;
 use Input;
 use Validator;
 use Auth;
-use Regulus\ActivityLog\Activity;
 
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Authentication\UserAuthenticationService;
 
 
-class UserSessionController extends BaseController {
+class UserSessionController extends Controller {
 
     protected $response;
     protected $userservice;

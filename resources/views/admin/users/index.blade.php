@@ -18,7 +18,7 @@
 			{!! Form::close() !!}
 		</div>
 
-		{{-- <p>{!! link_to_route('admin.users.create', 'Add new user') }}</p> --}}
+		{{-- <p>{!! link_to_route('admin.users.create', 'Add new user') !!}</p> --}}
 
 		@if ($users->count())
 		<table class="table table-striped table-bordered table-hover">
@@ -73,8 +73,8 @@
 					<td>{{ ($user->block) ? 'Blocked' : 'Active' }}</td>
                     <td>n/a</td>
                     {{--<td>
-                        {!! Form::open(array('method' => 'DELETE', 'route' => array('admin.users.destroy', $user->id))) }}
-					{!! Form::submit('Delete', array('class' => 'btn btn-danger')) }}
+                        {!! Form::open(array('method' => 'DELETE', 'route' => array('admin.users.destroy', $user->id))) !!}
+					{!! Form::submit('Delete', array('class' => 'btn btn-danger')) !!}
 					{!! Form::close() !!}
                     </td>--}}
                 </tr>				
@@ -82,7 +82,7 @@
 				@endforeach
 			</tbody>
 		</table>
-		{{ $users->appends(array('q' => $search))->render() }}
+		{!! $users->appends(array('q' => $search))->render() !!}
 		@else
 		There are no users
 		@endif

@@ -4,7 +4,7 @@ namespace TopBetta\Http\Controllers\Admin;
 
 use TopBetta\Http\Controllers\Controller;
 
-use BetLimitType as BetLimit;
+use TopBetta\Models\BetLimitType as BetLimit;
 use View;
 
 class BetLimitsController extends Controller {

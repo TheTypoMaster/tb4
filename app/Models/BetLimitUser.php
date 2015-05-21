@@ -19,7 +19,7 @@ class BetLimitUser extends Eloquent
 	 */
 	public function limitType()
 	{
-		return $this->belongsTo('BetLimitType', 'bet_limit_type_id');
+		return $this->belongsTo('TopBetta\Models\BetLimitType', 'bet_limit_type_id');
 	}
 	
 	/**

@@ -1,11 +1,13 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
 use TopBetta\Services\Betting\SelectionService;
 
-class FrontSportsOptionsController extends \BaseController {
+class FrontSportsOptionsController extends Controller {
 
     /**
      * @var SelectionService

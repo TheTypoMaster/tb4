@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Controllers; 
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 /**
  * Coded by Oliver Shanahan
@@ -7,7 +7,7 @@
  * Project: tb4
  */
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Input;
 use TopBetta\Services\Response\ApiResponse;
@@ -24,7 +24,7 @@ use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
 
-class FeedController extends BaseController {
+class FeedController extends Controller {
 
     protected $response;
     protected $sport;

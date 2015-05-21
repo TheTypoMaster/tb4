@@ -1,6 +1,6 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
-namespace TopBetta\Http\Frontend\Controllers;
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Password;
@@ -10,7 +10,7 @@ use User;
 use Lang;
 use View;
 
-class FrontPasswordResetsController extends \BaseController
+class FrontPasswordResetsController extends Controller
 {
 
     /**

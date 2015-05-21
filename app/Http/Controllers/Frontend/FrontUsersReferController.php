@@ -1,6 +1,8 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
-class FrontUsersReferController extends \BaseController {
+use TopBetta\Http\Controllers\Controller;
+
+class FrontUsersReferController extends Controller {
 
 	public function __construct() {
 		$this -> beforeFilter('auth');

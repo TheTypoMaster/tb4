@@ -1,8 +1,8 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 use TopBetta;
 
-class FrontUsersBettingController extends \BaseController {
+class FrontUsersBettingController extends Controller {
 
 	public function __construct() {
 		$this -> beforeFilter('auth');

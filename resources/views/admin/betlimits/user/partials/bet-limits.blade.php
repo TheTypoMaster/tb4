@@ -15,11 +15,11 @@
 			<td>{{ $betLimitTypes[$betLimit->bet_limit_type_id] }}</td>
 			<td>{{ ($betLimit->limitType->name != 'bet_flexi') ? '$' . number_format($betLimit->amount, 2) : $betLimit->amount . '%' }}</td>
 			<td>{{ $betLimit->notes }}</td>
-			<td>{!! link_to_route('admin.users.bet-limits.edit', 'Edit', array($user->id, $betLimit->id), array('class' => 'btn btn-info')) }}</td>
+			<td>{!! link_to_route('admin.users.bet-limits.edit', 'Edit', array($user->id, $betLimit->id), array('class' => 'btn btn-info')) !!}</td>
 			<td>
-				{!! Form::open(array('method' => 'DELETE', 'route' => array('admin.users.bet-limits.destroy', $user->id, $betLimit->id))) }}
-				{!! Form::submit('Delete', array('class' => 'btn btn-danger')) }}
-				{!! Form::close() }}
+				{!! Form::open(array('method' => 'DELETE', 'route' => array('admin.users.bet-limits.destroy', $user->id, $betLimit->id))) !!}
+				{!! Form::submit('Delete', array('class' => 'btn btn-danger')) !!}
+				{!! Form::close() !!}
 			</td>			
 		</tr>
 		@endforeach
