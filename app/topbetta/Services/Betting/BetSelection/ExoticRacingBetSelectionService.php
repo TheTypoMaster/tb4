@@ -14,43 +14,34 @@ use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 class ExoticRacingBetSelectionService extends RacingBetSelectionService {
 
     /**
-     * Overridden to cater for different structure for exotics
-     * @inheritdoc payload
+     * Overridden to cater for different payload structure for exotics
+     * @inheritdoc
      */
     public function getAndValidateSelections($selections)
     {
         $selectionModels = array();
         $uniqueSelections = array();
 
-        foreach($selections as $position => $positionSelections) {
+        foreach($selections as $selection) {
 
-            $selectionModels[$position] = array();
+            //if we've already retrieved the selection don't retrieve it again
+            if( ! $selectionModel = array_get($uniqueSelections, $selection['id'], null) ) {
+                //get the selection
+                $selectionModel = $this->selectionService->getSelection($selection['id']);
 
-            //check no duplicate positions
-            if( count(array_unique(array_fetch($positionSelections, 'id'))) != count(array_fetch($positionSelections, 'id'))) {
-                throw new BetSelectionException(null, "Duplicate selections for position " . $position);
-            }
-
-            foreach ($positionSelections as $selection) {
-
-                //if we've already retrieved the selection don't retrieve it again
-                if( ! $selectionModel = array_get($uniqueSelections, $selection['id'], null) ) {
-                    //get the selection
-                    $selectionModel = $this->selectionService->getSelection($selection['id']);
-
-                    if( ! $selectionModel ) {
-                        throw new BetSelectionException(null, "Selection not found");
-                    }
-
-                    //validate
-                    $this->validateSelection($selectionModel);
-
-                    //store
-                    $uniqueSelections[$selection['id']] = $selectionModel;
+                if( ! $selectionModel ) {
+                    throw new BetSelectionException(null, "Selection not found");
                 }
 
-                $selectionModels[$position][] = array("selection" => $selectionModel);
+                //validate
+                $this->validateSelection($selectionModel);
+
+                //store
+                $uniqueSelections[$selection['id']] = $selectionModel;
             }
+
+            $selectionModels[] = array("selection" => $selectionModel, "position" => array_get($selection, "position", 0));
+
         }
 
         //make sure selections all belong to the same event
@@ -62,23 +53,42 @@ class ExoticRacingBetSelectionService extends RacingBetSelectionService {
     }
 
     /**
-     * Overridden to cater for different payload structure for exotics
      * @inheritdoc
      */
-    public function createSelections($bet, $selections)
+    public function createSelection($bet, $selection, $extraData = array())
     {
-        $positionNo = count($selections) > 1 ? 1 : 0;
-        $betSelections = array();
+        return parent::createSelection($bet, $selection, array("position" => array_get($extraData, "position", 0)));
+    }
 
-        foreach($selections as $position => $positionSelections) {
-            foreach($positionSelections as $selection) {
-               $betSelections[] = $this->createSelection($bet, $selection, array('position' => $positionNo));
-            }
+    /**
+     * Formats bet selections into format that exotic bet libraries expect
+     * @param $selections
+     * @return array
+     * @throws BetSelectionException
+     */
+    public function formatSelectionsForExoticLibrary($selections)
+    {
+        //array maps
+        $positionMap = array(1 => 'first', 2 => 'second', 3 => 'third', 4 => 'fourth');
+        $selectionsArray = array('first' => array(), 'second' => array(), 'third' => array(), 'fourth' => array());
 
-            $positionNo++;
+        //if exotic bet is boxed only store first selections
+        if( array_get($selections[0], 'position', 0) == 0 ) {
+            $positionMap = array(0 => 'first');
+            $selectionsArray = array('first' => array());
         }
 
-        return $betSelections;
+        foreach($selections as $selection) {
+            //invalid position
+            if( ! $index = array_get($positionMap, array_get($selection, 'position', 0), null) ) {
+                throw new BetSelectionException($selection['selection'], "Invalid position");
+            }
+
+            //store selection id
+            $selectionsArray[$index][] = $selection['selection']->id;
+        }
+
+        return $selectionsArray;
     }
 
     /**
@@ -88,10 +98,26 @@ class ExoticRacingBetSelectionService extends RacingBetSelectionService {
      */
     public function getSelectionString($selections)
     {
-        return implode(' / ', array_map( function($v) {
-            return implode(', ', array_map(function($selection) {
-                return $selection['selection']->number;
-            }, $v));
-        }, $selections));
+        $positions = array();
+
+        //create position array
+        foreach($selections as $selection) {
+            if( ! isset($positions[array_get($selection, 'position', 0)]) ) {
+                $positions[array_get($selection, 'position', 0)] = array();
+            }
+
+            //store the selection number
+            $positions[array_get($selection, 'position', 0)][] = $selection['selection']->number;
+        }
+
+        //boxed selection
+        if( count(array_get($positions, 0, null)) ) {
+            return implode(', ', $positions[0]) . ' (BOXED)';
+        }
+
+        //create the selection string
+        return implode(' / ', array_map(function ($v) {
+            return implode(', ', $v);
+        }, $positions));
     }
 }
