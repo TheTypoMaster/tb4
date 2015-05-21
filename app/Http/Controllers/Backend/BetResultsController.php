@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 
 use TopBetta;
 

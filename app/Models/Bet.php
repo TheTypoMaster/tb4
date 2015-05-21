@@ -536,11 +536,11 @@ class Bet extends \Eloquent {
 
 	public static function getExoticDividendForType($exoticType, $eventId) {
 
-		$betTypes = \TopBetta\BetTypes::find($exoticType);
+		$betTypes = \TopBetta\Models\BetTypes::find($exoticType);
 
 		$exoticName = $betTypes -> name . '_dividend';
 
-		$event = \TopBetta\RaceEvent::find($eventId) -> toArray();
+		$event = \TopBetta\Models\RaceEvent::find($eventId) -> toArray();
 
 		$exoticDividends = unserialize($event[$exoticName]);
 

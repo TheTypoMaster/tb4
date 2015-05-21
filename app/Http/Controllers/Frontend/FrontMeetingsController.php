@@ -144,7 +144,7 @@ class FrontMeetingsController extends Controller {
 
 		foreach ($events as $event) {
 
-			$races = \TopBetta\Models\RaceMeeting::getRacesForMeetingId($event -> id, $displayOnly);
+			$races = TopBetta\Models\RaceMeeting::getRacesForMeetingId($event -> id, $displayOnly);
 
 			$updatedAt = $event -> updated_at;
 			if ($updatedAt -> year > 0) {

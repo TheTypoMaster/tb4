@@ -1,10 +1,11 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
  * Date: 24/02/2015
  * Time: 2:13 PM
  */
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\WithdrawalService;
@@ -12,7 +13,7 @@ use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\UserAccount\UserFreeCreditService;
 
-class RiskUserAccountController extends \BaseController {
+class RiskUserAccountController extends Controller {
 
     const RECENT_DEPOSIT_HISTORY_DAYS = 30;
 

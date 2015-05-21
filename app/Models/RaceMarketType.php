@@ -1,6 +1,8 @@
 <?php namespace TopBetta\Models;
 
-class RaceMarketType extends \Eloquent {
+use Eloquent;
+
+class RaceMarketType extends Eloquent {
 
 	protected $table = 'tbdb_market_type';
 

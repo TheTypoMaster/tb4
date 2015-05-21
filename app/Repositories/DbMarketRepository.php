@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\Models\RaceMarkett;
+use TopBetta\Models\RaceMarket;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Models\SportsMarket;
 use TopBetta\Models\SportsSelection;

@@ -27,8 +27,8 @@ class RaceMarket extends \Eloquent {
 	 * @return Integer
 	 * - The record ID if a record is found
 	 */
-	static public function marketExists($eventID, $marketTypeID){
-		return RaceMarket::where('event_id', '=', $eventID)
+	 public function marketExists($eventID, $marketTypeID){
+		return $this->where('event_id', '=', $eventID)
 							->where('market_type_id', '=', $marketTypeID)->pluck('id');
 	}
 }

@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories;
 
 use Illuminate\Support\Facades\Log;
-use TopBetta\RisaForm;
+use TopBetta\Models\RisaForm;
 
 class RisaFormRepository extends BaseEloquentRepository {
 

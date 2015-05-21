@@ -1,8 +1,9 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 
+use TopBetta\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
 
-class RiskResultsController extends \BaseController
+class RiskResultsController extends Controller
 {
 
     /**

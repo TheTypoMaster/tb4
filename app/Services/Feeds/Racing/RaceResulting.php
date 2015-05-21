@@ -1,4 +1,4 @@
-<?php namespace TopBetta\api\backend\Racing;
+<?php namespace TopBetta\Services\Feeds\Racing;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 1/12/14

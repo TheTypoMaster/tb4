@@ -1,14 +1,14 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use TopBetta;
-use TopBetta\Repositories\TopBetta\Models\RaceMarket;
+use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\DbTournamentRepository;
 
 use TopBetta\Repositories\BetResultRepo;
 
-class SportsController extends BaseController {
+class SportsController extends Controller {
 
 	/**
 	 * Default log message type
@@ -57,7 +57,7 @@ class SportsController extends BaseController {
     protected $tournaments;
     protected $betresults;
 
-	public function __construct(TopBetta\Models\RaceMarket $markets,
+	public function __construct(MarketRepositoryInterface $markets,
                                 DbTournamentRepository $tournaments,
 								BetResultRepo $betresults)
 	{

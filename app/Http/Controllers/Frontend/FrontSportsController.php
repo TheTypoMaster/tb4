@@ -5,7 +5,7 @@ use TopBetta\Http\Controllers\Controller;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 
-class FrontSportsController extends ontroller {
+class FrontSportsController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -19,7 +19,7 @@ class FrontSportsController extends ontroller {
 
 		// store sports and comps in cache for 10 min at a time
 		return \Cache::remember('sportsComps-', 10, function() use (&$date, &$sid) {
-			$sportsComps = new TopBetta\SportsComps;
+			$sportsComps = new TopBetta\Models\SportsComps;
 			$sports = $sportsComps -> getSportAndComps($date, $sid);
 
 			//var_dump(\DB::getQueryLog());

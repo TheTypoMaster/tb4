@@ -1,4 +1,4 @@
-<?php namespace TopBetta\api\backend\Racing;
+<?php namespace TopBetta\Services\Feeds\Racing;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 03/04/15
@@ -25,13 +25,9 @@ use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 
 
 use TopBetta\Services\Caching\NextToJumpCacheService;
-
 use TopBetta\Repositories\BetRepo;
 use TopBetta\Repositories\BetResultRepo;
-
-
 use TopBetta\Repositories\RisaFormRepository;
-
 
 class RaceDataProcessingService {
 
@@ -51,6 +47,7 @@ class RaceDataProcessingService {
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
+								SelectionPriceRepositoryInterface $prices,
                                 SelectionResultRepositoryInterface $results,
                                 CompetitionRepositoryInterface $competitions,
 								DataValueRepositoryInterface $datavalues,
@@ -62,8 +59,7 @@ class RaceDataProcessingService {
 								BetResultRepo $betresultrepository,
 								MarketRepositoryInterface $markets,
 								RisaFormRepository $risaform,
-								LastStartRepositoryInterface $laststarts,
-								SelectionPriceRepositoryInterface $prices){
+								LastStartRepositoryInterface $laststarts){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -90,6 +86,8 @@ class RaceDataProcessingService {
 	 * @return string|void
 	 */
 	public function processRacingData($data){
+
+		Log::debug('Processing Payload');
 		foreach ($data as $key => $racingData) {
 
 			switch ($key) {
@@ -238,6 +236,7 @@ class RaceDataProcessingService {
 				$raceDetails['event_status_id'] = $existingRaceDetails['event_status_id'];
 			} else {
 				$currentRaceStatus = 0;
+				$raceDetails['event_status_id'] = '1';
 				if($existingMeetingDetails['display_flag'] == '0') $raceDetails['display_flag'] = 0;
 			}
 
@@ -330,16 +329,15 @@ class RaceDataProcessingService {
 				$competitionModel->events()->attach($eventId);
 			}
 
+
 			// if this event was abandoned - result bets
 			if ($raceDetails['event_status_id'] == 3) $this->betresultrepository->resultAllBetsForEvent($eventId);
 
 			// N2J cache object check
 			$this->nexttojump->manageCache($existingRaceDetails, $raceDetails);
-
 		}
 
 		return "Race(s) Processed";
-
 	}
 
 	/**

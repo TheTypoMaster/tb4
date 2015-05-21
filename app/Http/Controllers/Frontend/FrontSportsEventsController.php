@@ -19,7 +19,7 @@ class FrontSportsEventsController extends Controller {
 
 			foreach ($nextToJump as $next) {
 
-				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+				$toGo = \TopBetta\Helpers\TimeHelper::nicetime(strtotime($next -> start_date), 2);
 
 				//convert the date to ISO 8601 format
 				$startDatetime = new \DateTime($next -> start_date);

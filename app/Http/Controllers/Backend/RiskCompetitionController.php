@@ -1,9 +1,11 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Risk\RiskCompetitionService;
 
-class RiskCompetitionController extends \BaseController {
+class RiskCompetitionController extends Controller {
 
     /**
      * @var RiskCompetitionService

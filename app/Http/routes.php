@@ -8,35 +8,33 @@ Route::get('/', function() {
 // Route group for backend API. Uses basic stateless auth filter
 Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
 	// incoming race data and results
-	Route::resource('racing', 'BackRacing');
+	Route::resource('racing', 'Backend\RacingController');
 	// incoming sports data and results
-	Route::resource('sports', 'BackSports');
+	Route::resource('sports', 'Backend\SportsController');
 	// incoming results for bet's placed
-	Route::resource('betresults', 'BackBets');
+	Route::resource('betresults', 'Backend\BetResultsController');
 	//incoming race result data
-	Route::resource('raceresults', 'RaceResulting');
+	Route::resource('raceresults', 'Backend\RacingResultsController');
 	//incoming race data
-	Route::resource('racedata', 'RacingData');
+	Route::resource('racedata', 'Backend\RacingDataController');
 	// special case where Risk Manager can push race results to TopBetta
-	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
+	Route::resource('risk-results', 'Backend\RiskResultsController', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
-	Route::resource('risk-race-status', 'RiskRaceStatus', array('only' => array('store')));
+	Route::resource('risk-race-status', 'Backend\RiskRaceStatusController', array('only' => array('store')));
 	// Risk can send query sport bets
-	Route::resource('risk-sport-bets', 'RiskSportBets');
+	Route::resource('risk-sport-bets', 'Backend\RiskSportBetsController');
 	// Risk can send query racing bets
-	Route::resource('risk-bets', 'RiskBets');
+	Route::resource('risk-bets', 'Backend\RiskBetsController');
 	// special case where Risk Manager can push sport market results to TopBetta
-	Route::resource('risk-result-sport-market', 'RiskResultSportMarket');
-	// test JSON API
-	Route::resource('testjson', 'testJSON');
+	Route::resource('risk-result-sport-market', 'Backend\RiskResultSportMarketController');
 	//Risk endpoint to get user account details
-	Route::resource('risk-user-account', 'RiskUserAccount', array('only' => array('show')));
+	Route::resource('risk-user-account', 'Backend\RiskUserAccountController', array('only' => array('show')));
 
-	Route::put('risk-show-event/{event}', "RiskEvents@showEvent");
-	Route::put('risk-hide-event/{event}', "RiskEvents@hideEvent");
+	Route::put('risk-show-event/{event}', "Backend\RiskEventsController@showEvent");
+	Route::put('risk-hide-event/{event}', "Backend\RiskEventsController@hideEvent");
 
-	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
-	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
+	Route::put('risk-show-competition/{competition}', "Backend\RiskCompetitionController@showCompetition");
+	Route::put('risk-hide-competition/{competition}', "Backend\RiskCompetitionController@hideCompetition");
 
 });
 

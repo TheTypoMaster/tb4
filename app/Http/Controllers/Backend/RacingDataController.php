@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 
 /**
  * Coded by Oliver Shanahan
@@ -7,12 +7,11 @@
  * Project: tb4
  */
 
-use BaseController;
 use Log;
 use Input;
-
+use TopBetta\Http\Controllers\Controller;
 use Exception;
-use TopBetta\api\backend\Racing\RaceDataProcessingService;
+use TopBetta\Services\Feeds\Racing\RaceDataProcessingService;
 use TopBetta\Services\Response\ApiResponse;
 
 
@@ -20,7 +19,7 @@ use TopBetta\Services\Response\ApiResponse;
  * Class RacingDataController
  * @package TopBetta\Http\Backend\Controllers
  */
-class RacingDataController extends BaseController {
+class RacingDataController extends Controller {
 
 	private $dataprocessing;
 

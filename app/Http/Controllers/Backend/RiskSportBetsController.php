@@ -1,10 +1,11 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\BetModel;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Facades\BetRepo;
 
-class RiskSportBetsController extends \BaseController {
+class RiskSportBetsController extends Controller {
 
 	/**
 	 * Display a listing of the resource.

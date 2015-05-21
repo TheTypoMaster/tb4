@@ -2,11 +2,11 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\Bet;
-use TopBetta\BetResultStatus;
-use TopBetta\BetSelection;
-use TopBetta\RaceEvent;
-use TopBetta\RaceResult;
+use TopBetta\Models\Bet;
+use TopBetta\Models\BetResultStatus;
+use TopBetta\Models\BetSelection;
+use TopBetta\Models\RaceEvent;
+use TopBetta\Models\RaceResult;
 
 use Carbon;
 use Log;

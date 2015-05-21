@@ -1,9 +1,11 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
+
+use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Risk\RiskEventService;
 
-class RiskEventsController extends \BaseController {
+class RiskEventsController extends Controller {
 
 	/**
 	 * @var RiskEventService

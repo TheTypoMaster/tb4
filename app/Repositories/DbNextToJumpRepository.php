@@ -6,7 +6,7 @@
  * Project: tb4
  */
 
-use TopBetta\RaceEvent;
+use TopBetta\Models\RaceEvent;
 
 class DbNextToJumpRepository {
 

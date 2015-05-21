@@ -1,6 +1,8 @@
-<?php
-namespace TopBetta\Models;
-class RaceResult extends \Eloquent {
+<?php namespace TopBetta\Models;
+
+use Eloquent;
+
+class RaceResult extends Eloquent {
 
 	protected $table = 'tbdb_selection_result';
         protected $fillable = array('selection_id', 'position', 'win_dividend', 'place_dividend');
@@ -36,7 +38,7 @@ class RaceResult extends \Eloquent {
 			}				
 			
 			if (!empty($result_list)) {
-				$runner_list		= \TopBetta\RaceSelection::getRunnersForRaceId($raceId, false);
+				$runner_list		= RaceSelection::getRunnersForRaceId($raceId, false);
 				$runner_list_by_id	= array();
 				
 				foreach($runner_list as $runner) {
@@ -189,7 +191,7 @@ class RaceResult extends \Eloquent {
     
     static public function deleteExoticResultsForRaceId($raceId)
     {
-        $event = \TopBetta\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::find($raceId);
 
         if (!$event) {
             return false;

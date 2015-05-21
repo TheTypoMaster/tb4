@@ -7,7 +7,7 @@ class RaceMeeting extends Eloquent {
 	protected $table = 'tbdb_event_group';
 
 	public function raceevents() {
-		return $this -> belongsToMany('TopBetta\RaceEvent', 'tbdb_event_group_event', 'event_group_id', 'event_id')
+		return $this -> belongsToMany('TopBetta\Models\RaceEvent', 'tbdb_event_group_event', 'event_group_id', 'event_id')
 		 -> join('tbdb_event_status', 'tbdb_event.event_status_id', '=', 'tbdb_event_status.id')
 		 -> where('tbdb_event.event_status_id', '!=', '7')
 		 -> select(array('tbdb_event.*', 'tbdb_event_status.name AS status'));
@@ -34,7 +34,7 @@ class RaceMeeting extends Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function meetingExists($meetingId) {
-		return RaceMeeting::where('external_event_group_id', '=', $meetingId) 
+		return RaceMeeting::where('external_event_group_id', '=', $meetingId)
 							->where('sport_id', '0')-> pluck('id');
 	}
 	
@@ -62,10 +62,10 @@ class RaceMeeting extends Eloquent {
 
 			if($displayOnly && $race->display_flag == 0) continue;
 
-			$resultsModel = new \TopBetta\RaceResult; 	
+			$resultsModel = new RaceResult;
 			$results = $resultsModel -> getResultsForRaceId($race -> id);	
 			
-			$toGo = \TimeHelper::nicetime(strtotime($race -> start_date), 2);
+			$toGo = \TopBetta\Helpers\TimeHelper::nicetime(strtotime($race -> start_date), 2);
 
 			//convert the date to ISO 8601 format
 			$startDatetime = new \DateTime($race -> start_date);

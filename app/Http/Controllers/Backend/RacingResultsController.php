@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Backend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Backend;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 1/12/14
@@ -6,12 +6,12 @@
  * Project: tb4
  */
 
-use BaseController;
+use TopBetta\Http\Controllers\Controller;
 use Input;
 use Response;
 use TopBetta\api\backend\Racing\RaceResulting;
 
-class RacingResultsController extends BaseController {
+class RacingResultsController extends Controller {
     protected $results;
 
     public function __construct(RaceResulting $results){

@@ -128,7 +128,7 @@ class FrontTournamentsController extends Controller {
 
 		}
 
-		$tournamentModel = new \TopBetta\Tournament;
+		$tournamentModel = new \TopBetta\Models\Tournament;
 
 		$list_params = array('jackpot' => false, 'private' => 0, 'type' => $type, 'sub_type' => $sub_type);
 
@@ -138,7 +138,7 @@ class FrontTournamentsController extends Controller {
 
 		// filter for affiliate only tournaments
 		if ($affiliateId && $campaignId && !$entered) {
-			$filter = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+			$filter = \TopBetta\Models\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
 			if ($filter) {
 				$filter = unserialize($filter);
 
@@ -226,13 +226,13 @@ class FrontTournamentsController extends Controller {
 		echo serialize($atpTournaments);exit;
 		/*/
 
-		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
-		if ($atpTournaments) {
-			$atpTournaments = unserialize($atpTournaments);
-		} else {
-			$atpTournaments = array();
-		}	
-		// <<<<<<<<<<<<<<<<< END TEMP ATP
+		//$atpTournaments = \TopBetta\Models\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+//		if ($atpTournaments) {
+//			$atpTournaments = unserialize($atpTournaments);
+//		} else {
+//			$atpTournaments = array();
+//		}
+//		// <<<<<<<<<<<<<<<<< END TEMP ATP
 
 		$meetingId = NULL;
 		$eachMeeting = array();

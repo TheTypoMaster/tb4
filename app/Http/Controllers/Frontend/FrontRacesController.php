@@ -6,7 +6,7 @@ use TopBetta;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Caching\NextToJumpCacheService;
 
-class FrontRacesController extends ontroller {
+class FrontRacesController extends Controller {
 
     protected $nexttojumpcache;
 
@@ -30,7 +30,7 @@ class FrontRacesController extends ontroller {
 
         foreach ($data as $next) {
 
-            $toGo = \TimeHelper::nicetime(strtotime($next['start_date']), 2);
+            $toGo = \TopBetta\Helpers\TimeHelper::nicetime(strtotime($next['start_date']), 2);
 
             //convert the date to ISO 8601 format
             $startDatetime = new \DateTime($next['start_date']);
@@ -102,7 +102,7 @@ class FrontRacesController extends ontroller {
 				$startDatetime = new \DateTime($next -> start_date);
 				$startDatetime = $startDatetime -> format('c');
                                 
-                                $runners = \TopBetta\RaceSelection::getRunnersForRaceId($next->id);
+                                $runners = \TopBetta\Models\RaceSelection::getRunnersForRaceId($next->id);
                                 $silk_base_url = "https://www.topbetta.com.au/silks/";
 
 				$result[] = array('id' => (int)$next -> id, 'type' => $next -> type, 'meeting_id' => (int)$next -> meeting_id, 'meeting_name' => $next -> meeting_name, 'meeting_long_name' => $next->name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'to_go' => $toGo, 'status' => 'Selling', 'start_datetime' => $startDatetime, 'distance' => $next -> distance, 'silk_base_url' => $silk_base_url, 'runners' => $runners);

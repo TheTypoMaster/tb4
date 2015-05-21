@@ -3,12 +3,12 @@
 namespace TopBetta\Repositories;
 
 use TopBetta\Models\AccountBalance;
-use TopBetta\Bet;
-use TopBetta\BetResultStatus;
-use TopBetta\BetSelection;
+use TopBetta\Models\Bet;
+use TopBetta\Models\BetResultStatus;
+use TopBetta\Models\BetSelection;
 use TopBetta\Models\FreeCreditBalance;
-use TopBetta\RaceEvent;
-use TopBetta\RaceResult;
+use TopBetta\Models\RaceEvent;
+use TopBetta\Models\RaceResult;
 use TopBetta\Services\Betting\SelectionService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
