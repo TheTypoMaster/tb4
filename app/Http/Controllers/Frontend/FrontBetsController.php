@@ -7,7 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\Input;
 use Auth;
 use Log;
-use Regulus\ActivityLog\Activity;
+use Regulus\ActivityLog\Models\Activity;
 
 use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;

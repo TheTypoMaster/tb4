@@ -4,7 +4,7 @@ use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
-use Regulus\ActivityLog\Activity;
+use Regulus\ActivityLog\Models\Activity;
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
