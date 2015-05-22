@@ -321,6 +321,28 @@ class UserAccountService {
 
         return 0;
     }
+
+    public function findUserByNameAndDob($firstName, $lastName, $dob)
+    {
+        //format the date
+        try {
+            $dob = Carbon::createFromFormat('d-M-y', trim($dob));
+        } catch (\Exception $e) {
+            try {
+                $dob = Carbon::createFromFormat('j/m/Y', trim($dob));
+            } catch (\Exception $e) {
+                throw new \Exception("Invalid date format " . $dob);
+            }
+        }
+
+        //get the user
+        if ($dob) {
+            return $this->fullUser->getUserByNameAndDob($firstName, $lastName, $dob->day, $dob->month, $dob->year);
+        }
+
+        return $this->fullUser->getUserByNameAndDob($firstName, $lastName);
+    }
+
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
     {
         $checkForName = $this->basicUser->getUserDetailsFromUsername($username);
