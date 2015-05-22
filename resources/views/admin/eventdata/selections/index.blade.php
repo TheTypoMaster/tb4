@@ -40,6 +40,8 @@
                     <th>Override Type</th>
         			<th>Selection Status</th>
         			<th>Display</th>
+                    <th>Team</th>
+                    <th>Player</th>
         			<th>Created</th>
         			<th>Updated</th>
         			<th colspan="1">Action</th>
@@ -60,6 +62,8 @@
                     <td>{{ $selection->override_type }}</td>
                     <td>{{ $selection->status_name }}</td>
         			<td>{{ ($selection->display_flag) ? 'Yes' : 'No' }}</td>
+                    <td>{{ object_get($selection->team->first(), 'name', '') }}</td>
+                    <td>{{ object_get($selection->player->first(), 'name', '') }}</td>
         			<td>{{ $selection->created_at }}</td>
         			<td>{{ $selection->updated_at }}</td>
         			<td>

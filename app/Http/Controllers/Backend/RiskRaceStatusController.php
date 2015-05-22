@@ -2,9 +2,20 @@
 
 use TopBetta\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Betting\BetResults\BetResultService;
 
 class RiskRaceStatusController extends Controller
 {
+
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
+
+    public function __construct(BetResultService $betResultService)
+    {
+        $this->betResultService = $betResultService;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -25,7 +36,7 @@ class RiskRaceStatusController extends Controller
                 break;
 
             case 'status_change':
-                $success = self::updateRaceStatus($input['status'], $input['race_id']);
+                $success = $this->updateRaceStatus($input['status'], $input['race_id']);
                 break;
 
             default:
@@ -44,7 +55,7 @@ class RiskRaceStatusController extends Controller
         return \TopBetta\Models\RaceEvent::where('id', $raceId)->update(array('override_start' => $enabled));
     }
 
-    public static function updateRaceStatus($status, $raceId)
+    public function updateRaceStatus($status, $raceId)
     {
         $eventStatus = \RaceEventStatus::where('keyword', $status)->pluck('id');
         $event = \TopBetta\Models\RaceEvent::find($raceId);
@@ -54,7 +65,7 @@ class RiskRaceStatusController extends Controller
 
             if ($eventStatus == 6 || $eventStatus == 2 || $eventStatus == 3) {
                 // result bets for race status of interim, paying or abandoned
-                \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
+                $this->betResultService->resultBetsForEvent($event);
             }			
 
             return true;

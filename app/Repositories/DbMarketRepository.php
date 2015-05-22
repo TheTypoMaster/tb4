@@ -155,6 +155,15 @@ class DbMarketRepository extends BaseEloquentRepository implements MarketReposit
     }
 
 
+    public function getMarketByExternalIds($externalMarketId, $externalEventId)
+    {
+        return $this->model
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first()->toArray();
+    }
+
+
 	public function getMarketDetailByEventIdAndMarket($eventId, $martketTypeId){
 		$market = $this->model->where('event_id', $eventId)
 								->where('market_type_id', $martketTypeId)
@@ -175,5 +184,6 @@ class DbMarketRepository extends BaseEloquentRepository implements MarketReposit
             ->orderBy('tbdb_market.id', 'DESC')
             ->paginate();
     }
+
 
 }

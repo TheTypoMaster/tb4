@@ -3,6 +3,9 @@
 use TopBetta\Http\Controllers\Controller;
 
 use Request;
+use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\IconTypeRepositoryInterface;
+use TopBetta\Services\Icons\IconService;
 use View;
 use BaseController;
 use Redirect;
@@ -12,126 +15,124 @@ use TopBetta\Repositories\DbCompetitionRepository;
 use TopBetta\Repositories\DbSportsRepository;
 use TopBetta\Services\DataManagement\CompetitionService;
 
-class CompetitionsController extends Controller
+class CompetitionsController extends CrudResourceController
 {
 
-	/**
-	 * @var \TopBetta\Repositories\DbCompetitionsRepository
-	 */
-	protected $competitionsrepo;
-    protected $competitionservice;
+    protected $repositoryName = 'TopBetta\Repositories\Contracts\CompetitionRepositoryInterface';
 
-	public function __construct(DbCompetitionRepository $competitionsrepo,
-                                CompetitionService $competitionservice,
-                                DbSportsRepository $sportsrepo)
+    protected $iconType = IconTypeRepositoryInterface::TYPE_EVENT_GROUP;
+
+    protected $modelName = 'Competitions';
+
+    protected $indexRoute = 'admin.competitions.index';
+
+    protected $editRoute = 'admin.competitions.edit';
+
+    protected $createRoute = 'admin.competitions.create';
+
+    protected $storeRoute  = 'admin.competitions.store';
+
+    protected $updateRoute = 'admin.competitions.update';
+
+    protected $deleteRoute = 'admin.competitions.destroy';
+
+    protected $indexView = 'admin::eventdata.competitions.index';
+
+    protected $createView = 'admin::eventdata.competitions.create';
+
+    protected $editView = 'admin::eventdata.competitions.edit';
+
+    private $baseCompetitionRepository;
+
+
+    public function __construct(BaseCompetitionRepositoryInterface $baseCompetitionRepository, IconService $iconService)
+    {
+        $this->baseCompetitionRepository = $baseCompetitionRepository;
+        parent::__construct($iconService);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @param array $relations
+     * @param array $extraData
+     * @return Response
+     */
+	public function index($relations = array(), $extraData = array())
 	{
-		$this->competitionsrepo = $competitionsrepo;
-		$this->competitionservice = $competitionservice;
-        $this->sportsrepo = $sportsrepo;
+		$extraData = array(
+            "Base Competition" => array(
+                'field' => 'baseCompetition.name',
+                'type' => 'text'
+            ),
+            "Default Event Icon" => array(
+                'field' => 'defaultEventIcon.icon_url',
+                'type'  => 'image'
+            ),
+            "Start Date" => array(
+                "field" => 'start_date',
+                'type'  => 'datetime'
+            ),
+            "Close Date" => array(
+                "field" => 'close_time',
+                'type'  => 'datetime'
+            ),
+        );
+
+        $relations = array(
+            'defaultEventIcon',
+            'baseCompetition'
+        );
+
+        return parent::index($relations, $extraData);
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @param array $extraData
+     * @return Response
+     */
+	public function create($extraData = array())
 	{
-		$search = Request::get('q', '');
-		if ($search) {
-			$competitions = $this->competitionsrepo->search($search);
-		} else {
-			$competitions = $this->competitionsrepo->allCompetitions();
-		}
+        $extraData = $this->getExtraData();
 
-		return View::make('admin.eventdata.competitions.index', compact('competitions', 'search'));
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-        $sports = $this->sportsrepo->selectList();
-        return View::make('admin.eventdata.competitions.create', compact('sports'));
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-        $this->competitionservice->createCompetition(Input::All());
-        $competitions = $this->competitionsrepo->allCompetitions();
-
-        $search = Request::get('q', '');
-        return View::make('admin.eventdata.competitions.index', compact('competitions', 'search'));
+        return parent::create($extraData);
 
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
+    public function edit($id, $extraData = array())
+    {
+        $extraData = $this->getExtraData();
 
-	}
+        return parent::edit($id, $extraData);
+    }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-        $search = Input::get('q', '');
-		$competition = $this->competitionsrepo->find($id);
+    private function getExtraData()
+    {
+        $eventIcons = $this->iconService->getIcons(IconTypeRepositoryInterface::TYPE_BASE_COMPETITION);
 
-        if (is_null($competition)) {
-            // TODO: flash message user not found
-            return Redirect::route('admin.competitions.index');
-        }
+        return array(
+            "Base Competition" => array(
+                'field' => 'base_competition_id',
+                'type' => 'select',
+                'data'  => $this->baseCompetitionRepository->findAll()
+            ),
+            "Default Event Icon" => array(
+                'field' => 'default_event_icon_id',
+                'type'  => 'icon-select',
+                'icons' => $eventIcons
+            ),
+            "Start Date" => array(
+                "field" => 'start_date',
+                'type'  => 'datetime'
+            ),
+            "Close Date" => array(
+                "field" => 'close_time',
+                'type'  => 'datetime'
+            ),
+        );
+    }
 
-        return View::make('admin.eventdata.competitions.edit', compact('competition', 'search'));
-	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-        $search = Input::get("q", '');
-        //$data = Input::only('name', 'description');
-        $data = Input::except('q');
-		if($data['state'] == '') $data['state'] = NULL;
-		if($data['type_code'] == '') $data['type_code'] = NULL;
-
-        $this->competitionsrepo->updateWithId($id, $data);
-
-        return Redirect::route('admin.competitions.index', array($id, "q" => $search))
-            ->with('flash_message', 'Saved!');
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
 
 }

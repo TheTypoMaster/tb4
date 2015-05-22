@@ -64,13 +64,25 @@
                 <a href="#"><i class="fa fa-list fa-fw"></i> Event Management<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>
+                        <a href="{{ route('admin.competitionregions.index') }}">Regions</a>
+                    </li>
+                    <li>
                         <a href="{{ route('admin.sports.index') }}">Sports</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.basecompetitions.index') }}">Base Competitions</a>
                     </li>
                     <li>
                         <a href="{{ route('admin.competitions.index') }}">Competitions</a>
                     </li>
                     <li>
                         <a href="{{ route('admin.events.index') }}">Events</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.teams.index') }}">Teams</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.players.index') }}">Players</a>
                     </li>
                     <li>
                         <a href="{{ route('admin.markets.index') }}">Markets</a>
@@ -80,6 +92,12 @@
 					</li>
                     <li>
                         <a href="{{ route('admin.selections.index') }}">Selections</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.selectionprices.index') }}">Prices</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.icons.index') }}">Icons</a>
                     </li>
                 </ul>
             </li>

@@ -9,6 +9,11 @@ class RaceEvent extends \Eloquent {
 	public function racemeetings(){
 		return $this->belongsToMany('TopBetta\Models\RaceMeeting', 'tbdb_event_group_event', 'event_id', 'event_group_id');
 	}
+
+    public function eventstatus()
+    {
+        return $this->belongsTo('TopBetta\Models\EventStatusModel', 'event_status_id', 'id');
+    }
 	
 	static public function nextToJump($limit = 10) {
 			

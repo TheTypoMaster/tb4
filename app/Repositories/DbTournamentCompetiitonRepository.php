@@ -6,9 +6,11 @@
  * Project: tb4
  */
 
+use TopBetta\Repositories\Contracts\TournamentCompetitionRepositoryInterface;
 use TopBetta\Models\TournamentCompetition;
 
-class DbTournamentCompetiitonRepository extends BaseEloquentRepository {
+class DbTournamentCompetiitonRepository extends BaseEloquentRepository implements TournamentCompetitionRepositoryInterface
+{
     protected $model;
 
     public function __construct(TournamentCompetition $tournamentcompetition){

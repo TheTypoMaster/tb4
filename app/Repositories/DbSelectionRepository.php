@@ -132,6 +132,56 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return $selections->toArray();
     }
 
+    public function updateWithId($id, $data)
+    {
+        parent::updateWithId($id, array_except($data, array('team', 'player')));
+
+        $selection = $this->model->find($id);
+
+        //assosciate teams
+        if(is_array($team = array_get($data, 'team', false))) {
+            $selection->team()->sync($team);
+        }
+
+        //assosciate players
+        if(is_array($player = array_get($data, 'player', false))) {
+            $selection->player()->sync($player);
+        }
+
+        return $selection->toArray();
+    }
+
+    public function getByExternalIds($externalSelectionId, $externalMarketId, $externalEventId)
+    {
+        $selection = $this->model
+            ->where('external_selection_id', $externalSelectionId)
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first();
+
+        if($selection) {
+            return $selection->toArray();
+        }
+
+        return null;
+    }
+
+    public function getByExternalIdsAndName($externalMarketId, $externalEventId, $name)
+    {
+        $selection = $this->model
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->where('name', $name)
+            ->first();
+
+        if($selection) {
+            return $selection->toArray();
+        }
+
+        return null;
+    }
+
+
 
 	public function getSeletcionIdByExternalId($externalId){
 		$selection = $this->model->where('external_selection_id', $externalId)

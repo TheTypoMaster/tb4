@@ -1,10 +1,28 @@
 <?php namespace TopBetta\Http\Controllers\Backend;
 
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Http\Controllers\Backend\RiskRaceStatusController;
+
 use Illuminate\Support\Facades\Input;
+use TopBetta\Services\Betting\BetResults\BetResultService;
+
 
 class RiskResultsController extends Controller
 {
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
+    /**
+     * @var RiskRaceStatusController
+     */
+    private $riskRaceStatusController;
+
+    public function __construct(BetResultService $betResultService, RiskRaceStatusController $riskRaceStatusController )
+    {
+        $this->betResultService = $betResultService;
+        $this->riskRaceStatusController = $riskRaceStatusController;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -22,7 +40,7 @@ class RiskResultsController extends Controller
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
         }
 
-        $errors = static::updateRaceResults($input, $input['race_id']);
+        $errors = $this->updateRaceResults($input, $input['race_id']);
 
         if (count($errors)) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id'], "messages" => $errors);
@@ -30,7 +48,7 @@ class RiskResultsController extends Controller
         return array("success" => true, "result" => "Results updated for race " . $input['race_id']);
     }
 
-    private static function updateRaceResults(array $raceResults, $raceId)
+    private function updateRaceResults(array $raceResults, $raceId)
     {
         // delete all results records for this event
         \TopBetta\Models\RaceResult::deleteResultsForRaceId($raceId);
@@ -56,7 +74,7 @@ class RiskResultsController extends Controller
                     break;
 
                 case 'race_status':
-                    if (!\TopBetta\Http\Backend\Controllers\RiskRaceStatusController::updateRaceStatus($raceResult, $raceId)) {
+                    if (!$this->riskRaceStatusController->updateRaceStatus($raceResult, $raceId)) {
                         $errors[] = "Problem updating race status";
                     }
 

@@ -98,7 +98,6 @@ class BaseEloquentRepository {
         return $resource->toArray();
     }
 
-
 	public function validate($input) {
 		return $this->validator ? $this->validator->validateForCreation($input) : true;
 	}
@@ -106,5 +105,6 @@ class BaseEloquentRepository {
 	public function validateUpdate($input) {
 		return $this->validator ? $this->validator->validateForUpdate($input) : true;
 	}
+
 
 } 

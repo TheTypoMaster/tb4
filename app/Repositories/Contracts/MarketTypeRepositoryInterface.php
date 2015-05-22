@@ -8,6 +8,8 @@
 
 namespace TopBetta\Repositories\Contracts;
 
+use DB;
+
 interface MarketTypeRepositoryInterface  {
 
     public function allMarketTypes();
@@ -15,4 +17,6 @@ interface MarketTypeRepositoryInterface  {
     public function searchMarketTypes($searchTerm);
 
     public function getMarketTypeById($id);
+
+    public function getMarketTypesIn($marketTypes, $orderByIn = true);
 }

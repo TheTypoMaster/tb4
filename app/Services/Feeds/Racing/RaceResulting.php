@@ -17,6 +17,7 @@ use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 
 use TopBetta\Repositories\BetResultRepo;
+use TopBetta\Services\Betting\BetResults\BetResultService;
 
 class RaceResulting {
 
@@ -26,19 +27,25 @@ class RaceResulting {
     protected $competitions;
     protected $betproducts;
     protected $betresults;
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
                                 SelectionResultRepositoryInterface $results,
                                 CompetitionRepositoryInterface $competitions,
                                 BetProductRepositoryInterface $betproducts,
-                                BetResultRepo $betresults){
+                                BetResultRepo $betresults,
+                                BetResultService $betResultService){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
         $this->competitions = $competitions;
         $this->betproducts = $betproducts;
         $this->betresults = $betresults;
+        $this->betResultService = $betResultService;
     }
 
     public function ResultEvents($racingArray){
@@ -246,7 +253,7 @@ class RaceResulting {
             $currentTimeMs = $partSec.$partMsec;
             File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
-            $this->betresults->resultAllBetsForEvent($eventModel->id);
+            $this->betResultService->resultBetsForEvent($eventModel);
         }
 
         return array('error' => false,

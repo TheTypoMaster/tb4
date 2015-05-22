@@ -5,7 +5,7 @@ use Carbon\Carbon;
 use TopBetta;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\DbTournamentRepository;
-
+use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Repositories\BetResultRepo;
 
 class SportsController extends Controller {
@@ -56,16 +56,23 @@ class SportsController extends Controller {
     protected $markets;
     protected $tournaments;
     protected $betresults;
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
+
 
 	public function __construct(MarketRepositoryInterface $markets,
                                 DbTournamentRepository $tournaments,
-								BetResultRepo $betresults)
+								BetResultRepo $betresults,
+                                BetResultService $betResultService)
 	{
         $this->markets = $markets;
         $this->tournaments = $tournaments;
         $this->betresults = $betresults;
 		//$this->beforeFilter('apiauth');
-	}
+        $this->betResultService = $betResultService;
+    }
 	
 	
 	/**
@@ -269,6 +276,8 @@ class SportsController extends Controller {
 								
 								// update competiton with new event close time if it's after the current stored time
 								if ($dataArray['EventTime'] > $compModel->close_time){
+
+                                    TopBetta\LogHelper::l("BackAPI: Sports - TEST RUN", 1);
 									$compModel->close_time = $dataArray['EventTime'];
 									$compModel->save();
 
@@ -573,7 +582,9 @@ class SportsController extends Controller {
 											// result any sport bet for this market
 											\Log::info('RESULTING: all sport bets for market id: ' . $marketId);
 											// $betResultRepo = new TopBetta\Repositories\BetResultRepo();
-											$this->betresults->resultAllSportBetsForMarket($marketId);
+                                            if( isset($marketModel) ) {
+                                                $this->betResultService->resultBetsForMarket($marketModel);
+                                            }
 
 											// TAKEN OUT TILL WE GO FULL AUTO
 // 											// update the event status to paying
