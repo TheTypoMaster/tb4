@@ -30,7 +30,7 @@ class FrontUsersBettingLimitsController extends Controller {
 		$bet_limit = null;
 
 		// fetch the users bet_limit
-		$user = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user() -> id) -> get();
+		$user = \TopBetta\Models\TopBettaUser::where('user_id', '=', \Auth::user() -> id) -> get();
 		$user = $user[0];
 
 		if ($user -> bet_limit >= 0) {
@@ -79,7 +79,7 @@ class FrontUsersBettingLimitsController extends Controller {
 		} else {
 
 			//forward to legacy API to handle
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 
 			$limit = $l -> query('setBetLimit', $input);
 

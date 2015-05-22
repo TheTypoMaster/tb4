@@ -73,7 +73,7 @@ class FrontBetsController extends Controller {
 	 */
 	public function index() {
 
-		$betModel = new \TopBetta\Bet;
+		$betModel = new \TopBetta\Models\Bet;
 
 		// active live bets
 		$activeBetList = $betModel -> getActiveLiveBetsForUserId(\Auth::user() -> id);
@@ -159,7 +159,7 @@ class FrontBetsController extends Controller {
 					$exoticAmount = abs($exoticBetTransaction -> amount);
 				}
 
-				$exoticDividend = \TopBetta\Bet::getExoticDividendForType($recentBet -> bet_type, $recentBet -> event_id);
+				$exoticDividend = \TopBetta\Models\Bet::getExoticDividendForType($recentBet -> bet_type, $recentBet -> event_id);
 
 			}
 
@@ -255,13 +255,13 @@ class FrontBetsController extends Controller {
                 // if tournament racing bet lts check the bet limit stuff... torture class
                 if ($input['source'] == 'tournamentracing'){
                     // get tournament details
-                    $tournament = \TopBetta\Tournament::find($input['tournament_id']);
+                    $tournament = \TopBetta\Models\Tournament::find($input['tournament_id']);
 
                     $betLimitEnabled = $tournament->bet_limit_flag;
                     $tournamentBetLimit = $tournament->bet_limit_per_event;
 
                     if($betLimitEnabled){
-                        $betModel = new \TopBetta\Bet;
+                        $betModel = new \TopBetta\Models\Bet;
                         $legacyData = $betModel -> getLegacyBetData($input['selections'][0]);
 
                         // get tournament ticket for user
@@ -273,7 +273,7 @@ class FrontBetsController extends Controller {
                         }
 
                         // get bet total for user in tournament
-                        $totalBetOnEvent = \TopBetta\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+                        $totalBetOnEvent = \TopBetta\Models\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
                             ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
                             ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
                             // ->where('tbdb_tournament_')
@@ -357,8 +357,8 @@ class FrontBetsController extends Controller {
 
 		//TODO: remove tournament bets from here - they belong in FrontTournamentsBetsController
 		
-		$l = new \TopBetta\LegacyApiHelper;
-		$betModel = new \TopBetta\Bet;
+		$l = new \TopBetta\Helpers\LegacyApiHelper;
+		$betModel = new \TopBetta\Models\Bet;
 
 
 		if ($exotic) {
@@ -544,7 +544,7 @@ class FrontBetsController extends Controller {
 						} elseif ($input['source'] == 'tournamentracing') {
 
                             // get tournament details
-                            $tournament = \TopBetta\Tournament::find($input['tournament_id']);
+                            $tournament = \TopBetta\Models\Tournament::find($input['tournament_id']);
 
                             $betLimitEnabled = $tournament->bet_limit_flag;
                             $tournamentBetLimit = $tournament->bet_limit_per_event;
@@ -564,7 +564,7 @@ class FrontBetsController extends Controller {
                                 }
 
                                 // get bet total for user in tournament
-                                $totalBetOnEvent = \TopBetta\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+                                $totalBetOnEvent = \TopBetta\Models\TournamentBet::join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
                                     ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
                                     ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
                                     // ->where('tbdb_tournament_')
@@ -715,7 +715,7 @@ class FrontBetsController extends Controller {
 										'contentType' => 'Bet',
 										'action'      => 'User Placed Bet',
 										'description' => 'User placed sport bet',
-										'details'     => 'Bet Details - Selection: '.$selectionModel->name .', Amount: '.$input['amount']
+										'details'     => 'Bet Details - Selection: '.$selectionModel->name
 										//'updated'     => $id ? true : false,
 									]);
 								}

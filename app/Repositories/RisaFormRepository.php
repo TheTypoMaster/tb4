@@ -1,12 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: jason
- * Date: 14/07/14
- * Time: 10:37 AM
- */
-
-namespace TopBetta\Repositories;
+<?php namespace TopBetta\Repositories;
 
 use Illuminate\Support\Facades\Log;
 use TopBetta\Models\RisaForm;
@@ -14,11 +6,8 @@ use TopBetta\Models\RisaForm;
 class RisaFormRepository extends BaseEloquentRepository {
 
 	/**
-	 * @var \TopBetta\RisaForm
+	 * @var RisaForm
 	 */
-
-
-
 	protected $model;
 
 	function __construct(RisaForm $model) {
@@ -29,6 +18,7 @@ class RisaFormRepository extends BaseEloquentRepository {
 
 		$data = array();
 
+		Log::debug('Runner', $runner);
 		$runnersForm = $this->model->with('lastStarts')->where('runner_code', $runner['runner_code'])->first();
 
 		$code = $runner['runner_code'];
@@ -56,8 +46,10 @@ class RisaFormRepository extends BaseEloquentRepository {
                 'season' => $runnersForm->season_results,
                 'heavy' => $runnersForm->heavy_results);
 
+			//Log::debug('Runnner Form: '. print_r($runnersForm->last_starts, true));
+
             $lastStarts = array();
-			foreach ($runnersForm->last_starts as $last_starts){
+			foreach ($runnersForm->lastStarts as $last_starts){
 				$lastStarts[] =  array('id' => (int)$last_starts->id, 'finish_position' => (int)$last_starts->finish_position, 'race_starters' => (int)$last_starts->race_starters, 'abr_venue' => $last_starts->abr_venue, 'race_distance' => $last_starts->race_distance,
 					'name_race_form' => $last_starts->name_race_form, 'mgt_date' => date('dM y',strtotime($last_starts->mgt_date)), 'track_condition' => $last_starts->track_condition, 'numeric_rating' => $last_starts->numeric_rating, 'jockey_initials' => $last_starts->jockey_initials,
 					'jockey_surname' => $last_starts->jockey_surname, 'handicap' => $last_starts->handicap, 'barrier' => (int)$last_starts->barrier, 'starting_win_price' => $last_starts->starting_win_price, 'other_runner_name' => $last_starts->other_runner_name,

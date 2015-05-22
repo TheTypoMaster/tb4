@@ -1,7 +1,7 @@
 <?php namespace TopBetta\Http\Controllers\Frontend;
 
 use TopBetta\Http\Controllers\Controller;
-
+use TopBetta\Helpers\TimeHelper;
 use TopBetta;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use Illuminate\Support\Facades\Input;
@@ -263,10 +263,10 @@ class FrontTournamentsController extends Controller {
 				$meetingName = $tournament -> event_group_name;
 				$meetingId = $tournament -> event_group_id;
 				
-				$nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-                $nextEventStartTime = \TopBetta\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-                ($nextEventStartTime) ? $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TimeHelper::isoDate($tournament->start_date);
-                // $nextEventStartTime = \TimeHelper::isoDate($nextEventStartTime);
+				$nextEventStartTime = \TopBetta\Models\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
+                $nextEventStartTime = \TopBetta\Models\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
+                ($nextEventStartTime) ? $nextEventStartTime = \TopBetta\Helpers\TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TopBetta\Helpers\TimeHelper::isoDate($tournament->start_date);
+                // $nextEventStartTime = \TopBetta\Helpers\TimeHelper::isoDate($nextEventStartTime);
 
 				$tourns = array();
 
@@ -302,14 +302,14 @@ class FrontTournamentsController extends Controller {
 						$placesPaid = $tournamentModel -> calculateTournamentPlacesPaid($tourn, $numEntries, $prizePool);
 
 						//convert the date to ISO 8601 format
-						$startDatetime = \TimeHelper::isoDate($tourn -> start_date);
-						$endDatetime = \TimeHelper::isoDate($tourn -> end_date);
+						$startDatetime = \TopBetta\Helpers\TimeHelper::isoDate($tourn -> start_date);
+						$endDatetime = \TopBetta\Helpers\TimeHelper::isoDate($tourn -> end_date);
 
 						// TEMP FOR ATP
 						$labels = array();
-						if (array_key_exists($tourn -> id, $atpTournaments)) {
-							$labels = $atpTournaments[$tourn -> id];
-						}
+//						if (array_key_exists($tourn -> id, $atpTournaments)) {
+//							$labels = $atpTournaments[$tourn -> id];
+//						}
 
                         // TEMP for tournament landing page until proper tournament group/labels are implimented
                         ($tourn->featured == "Featured") ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
@@ -318,7 +318,7 @@ class FrontTournamentsController extends Controller {
 
                         /// if tournament has a entry close time and it's before teh start time then set the start date to that
                         if($tourn->entries_close != '0000-00-00 00:00:00' && $tourn->entries_close < $tourn->start_date ){
-                            $startDatetime = \TimeHelper::isoDate($tourn->entries_close);
+                            $startDatetime = \TopBetta\Helpers\TimeHelper::isoDate($tourn->entries_close);
                         }
 
 						$tourns[] = array('id' => (int)$tourn -> id, 'name' => $tourn->name, 'buy_in' => (int)$tourn -> buy_in, 'entry_fee' => (int)$tourn -> entry_fee, 'num_entries' => (int)$numEntries, 'prize_pool' => (int)$prizePool, 'places_paid' => (int)$placesPaid, 'start_currency' => $tourn -> start_currency, 'bet_limit_flag' => $tourn->bet_limit_flag, 'start_date' => $startDatetime, 'end_date' => $endDatetime, 'labels' => $labels, 'featured' => $featuredTournamentFlag, 'tournament_sponsor_name' => $tourn->tournament_sponsor_name, 'tournament_sponsor_logo' => $tourn->tournament_sponsor_logo, 'tournament_sponsor_logo_link' => $tourn->tournament_sponsor_logo_link, 'reinvest_winnings_flag' => $tourn->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tourn->closed_betting_on_first_match_flag,
@@ -396,7 +396,7 @@ class FrontTournamentsController extends Controller {
 		$grouped = \Input::get('grouped', $groupedStatus);
 
 		//does tournament exist?
-		$tournamentModel = new \TopBetta\Tournament;
+		$tournamentModel = new \TopBetta\Models\Tournament;
 		$tournament = $tournamentModel -> find($tournamentId);
 
 		if (is_null($tournament)) {
@@ -415,7 +415,7 @@ class FrontTournamentsController extends Controller {
 		if (!$isRacingTournament) {
 
 			//get the comp_id and events list
-			$eventGroup = \TopBetta\SportsComps::find($meetingId);
+			$eventGroup = \TopBetta\Models\SportsComps::find($meetingId);
 
 			$eventList = \TopBetta\Models\SportsEvents::where('event_group_id', '=', $meetingId) -> get();
 
@@ -437,7 +437,7 @@ class FrontTournamentsController extends Controller {
 		});
 
 		//leaderboard
-		// $leaderboardModel = new \TopBetta\TournamentLeaderboard;
+		// $leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
         $leaderboard = array();
 
 		if (strtotime($tournament -> start_date) < time()) {
@@ -518,7 +518,7 @@ class FrontTournamentsController extends Controller {
         $numRegistrations = count($playerList);
 
         // TEMP for tournament landing page until proper tournament group/labels are implimented
-        (TopBetta\Tournament::isTournamentFeatured($tournament->id)) ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
+        (TopBetta\Models\Tournament::isTournamentFeatured($tournament->id)) ? $featuredTournamentFlag = true : $featuredTournamentFlag = false;
 
         //calculate tournament end date/betting open
 
@@ -541,8 +541,8 @@ class FrontTournamentsController extends Controller {
                 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag,
                 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag,
                 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
-                'start_date' => \TimeHelper::isoDate($tournament -> start_date),
-                'end_date' => \TimeHelper::isoDate($tournament -> end_date),
+                'start_date' => TimeHelper::isoDate($tournament -> start_date),
+                'end_date' => TimeHelper::isoDate($tournament -> end_date),
                 
                 //rebuy info
                 'rebuys' => $tournament->rebuys,
@@ -582,7 +582,7 @@ class FrontTournamentsController extends Controller {
         if ($isRacingTournament) {
 
             // ::: racing related data :::
-            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
+            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => TimeHelper::isoDate($tournament -> start_date), 'end_date' => TimeHelper::isoDate($tournament -> end_date), 'end_date' => TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 'r', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
                 //rebuy info
                 'rebuys' => $tournament->rebuys,
                 'rebuy_currency' => $tournament->rebuy_currency,
@@ -604,7 +604,7 @@ class FrontTournamentsController extends Controller {
         } else {
 
             // ::: sports related data :::
-            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
+            return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'competition_id' => (int)$meetingId, 'events' => $events, 'name' => $tournament -> name, 'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament -> start_date), 'end_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 'closed_betting_on_first_match_flag' => ($tournament -> closed_betting_on_first_match_flag == 0) ? false : true, 'reinvest_winnings_flag' => ($tournament -> reinvest_winnings_flag == 0) ? false : true, 'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 'password_protected' => false, 'tournament_type' => 's', 'reinvest_winnings_flag' => $tournament->reinvest_winnings_flag, 'closed_betting_on_first_match_flag' => $tournament->closed_betting_on_first_match_flag, 'tournament_sponsor_name' => $tournament->tournament_sponsor_name,
                 //rebuy info
                 'rebuys' => $tournament->rebuys,
                 'rebuy_currency' => $tournament->rebuy_currency,

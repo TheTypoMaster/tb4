@@ -105,7 +105,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 			"bet_type"			   => $betType,
             "external_id"          => array_get($bet, 'id', 0),
             //clunky way to get bet dividend. Should be changed
-            "bet_dividend"         => bcdiv($this->betRepo->getBetPayoutAmount(\TopBetta\Bet::find($data['id'])), array_get($bet, 'percentage', 0) != 0 ? array_get($bet, 'percentage', 0)  : array_get($bet, 'bet_amount', 1), 2),
+            "bet_dividend"         => bcdiv($this->betRepo->getBetPayoutAmount(\TopBetta\Models\Bet::find($data['id'])), array_get($bet, 'percentage', 0) != 0 ? array_get($bet, 'percentage', 0)  : array_get($bet, 'bet_amount', 1), 2),
             "type"                 => null,
             "transactions"         => array(),
             "user"                 => null,

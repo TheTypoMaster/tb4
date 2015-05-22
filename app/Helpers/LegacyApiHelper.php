@@ -1,4 +1,6 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Helpers;
+
+use Log;
 
 class LegacyApiHelper {
 
@@ -20,10 +22,11 @@ class LegacyApiHelper {
 			switch ($method) {
 				//Handle any special cases
 				case 'doUserLogin' :
-
+Log::debug('here....');
 					//1. get login hash
 					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
 
+					Log::debug('Hash: '. print_r($login_hash,true));
 					//2. perform login
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
@@ -264,7 +267,10 @@ class LegacyApiHelper {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
-		$buffer = json_decode(curl_exec($ch), true);
+		$response = curl_exec($ch);
+
+		Log::debug('Legacy Curl Response to URL: '.$url.' - Payload: '. print_r($payload,true));
+		$buffer = json_decode($response, true);
 
 		curl_close($ch);
 

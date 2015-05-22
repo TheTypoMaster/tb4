@@ -40,7 +40,7 @@ class FrontUsersController extends Controller {
 
 		} else {
 
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 			$login = $l -> query('doUserLogin', $input);
 
 			if ($login['status'] == 200) {
@@ -50,7 +50,7 @@ class FrontUsersController extends Controller {
 
 				if (Auth::check()) {
 
-					$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', Auth::user()->id) -> first();
+					$tbUser = \TopBetta\Models\TopBettaUser::where('user_id', '=', Auth::user()->id) -> first();
 
 					if (!$login['userInfo']['full_account']) {
 						$parts = explode(" ", Auth::user()->name);
@@ -85,7 +85,7 @@ class FrontUsersController extends Controller {
 						//'updated'     => $id ? true : false,
 					]);
 
-					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "email" => \Auth::user()->email, "mobile" => $mobile, "full_account" => $login['userInfo']['full_account'], "verified" => $verified, "register_date" => \TimeHelper::isoDate(\Auth::user()->registerDate)));
+					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "email" => \Auth::user()->email, "mobile" => $mobile, "full_account" => $login['userInfo']['full_account'], "verified" => $verified, "register_date" => \TopBetta\Helpers\TimeHelper::isoDate(\Auth::user()->registerDate)));
 
 				} else {
 
@@ -149,7 +149,7 @@ class FrontUsersController extends Controller {
 			case 'exclude' :
 
 				//forward to legacy API to handle
-				$l = new \TopBetta\LegacyApiHelper;
+				$l = new \TopBetta\Helpers\LegacyApiHelper;
 
 				$exclude = $l -> query('doSelfExclude', $input = array());
 
@@ -337,7 +337,7 @@ class FrontUsersController extends Controller {
 		} else {
 
 			// create user via legacy API
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 
 			if ($input['type'] == 'basic') {
 

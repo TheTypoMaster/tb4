@@ -9,6 +9,8 @@ use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
+use Response;
+
 class FrontTournamentsTicketsController extends Controller {
 
     /**
@@ -39,7 +41,7 @@ class FrontTournamentsTicketsController extends Controller {
 		$userId = \Auth::user() -> id;
 
 		$ticketModel = new \TopBetta\Models\TournamentTicket;
-		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+		$leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
 
 		// active tourn tickets
 		$activeTicketList = $ticketModel -> getTournamentTicketActiveListByUserID($userId);
@@ -51,7 +53,7 @@ class FrontTournamentsTicketsController extends Controller {
 			foreach ($activeTicketList as $activeTicket) {
 
 				//get the event group from the tournament id
-				$tournament = \TopBetta\Tournament::find($activeTicket -> tournament_id);
+				$tournament = \TopBetta\Models\Tournament::find($activeTicket -> tournament_id);
 
 				$availableCurrency = $ticketModel -> getAvailableTicketCurrency($activeTicket -> tournament_id, \Auth::user() -> id);
 
@@ -68,7 +70,7 @@ class FrontTournamentsTicketsController extends Controller {
 
 				if ($next) {
 
-					$nextToJump[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries, 'buy_in' => $activeTicket->buy_in, 'closed_betting_on_first_match_flag' => $activeTicket->closed_betting_on_first_match_flag, 'reinvest_winnings_flag' => $activeTicket->reinvest_winnings_flag, 'tournament_sponsor_name' => $activeTicket->tournament_sponsor_name);
+					$nextToJump[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'type' => ($next -> type) ? strtolower($next -> type) : $next -> sport_name, 'meeting_id' => (int)$next -> meeting_id, 'tournament_name' => $activeTicket -> tournament_name, 'meeting_name' => $next -> meeting_name, 'state' => $next -> state, 'race_number' => (int)$next -> number, 'event_id' => (int)$next -> id, 'event_name' => $next -> name, 'to_go' => \TopBetta\Helpers\TimeHelper::nicetime(strtotime($next -> start_date), 2), 'start_datetime' => \TopBetta\Helpers\TimeHelper::isoDate($next -> start_date), 'distance' => $next -> distance, 'leaderboard_rank' => $rank, 'available_currency' => $availableCurrency, 'num_entries' => (int)$numEntries, 'buy_in' => $activeTicket->buy_in, 'closed_betting_on_first_match_flag' => $activeTicket->closed_betting_on_first_match_flag, 'reinvest_winnings_flag' => $activeTicket->reinvest_winnings_flag, 'tournament_sponsor_name' => $activeTicket->tournament_sponsor_name);
 
 				}
 			}
@@ -102,7 +104,7 @@ class FrontTournamentsTicketsController extends Controller {
 		// special case to load a ticket for a specified tournament
 		if ($tournamentId != 'get') {
 
-			$tournamentModel = new \TopBetta\Tournament;
+			$tournamentModel = new \TopBetta\Models\Tournament;
 			$tournament = $tournamentModel -> find($tournamentId);
 
 			if (is_null($tournament)) {
@@ -124,7 +126,7 @@ class FrontTournamentsTicketsController extends Controller {
 			
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($tournamentId, \Auth::user() -> id);
 
-			$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+			$leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
 			$leaderboardDetails = $leaderboardModel -> getLeaderBoardRankByUserAndTournament(\Auth::user() -> id, $tournament);
 
 			$prize = 0;
@@ -147,7 +149,7 @@ class FrontTournamentsTicketsController extends Controller {
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
             // get sport name for tournament ticket
-            $sport_name = \TopBetta\SportsSportName::getSportsNameByID($tournament->tournament_sport_id);
+            $sport_name = \TopBetta\Models\SportsSportName::getSportsNameByID($tournament->tournament_sport_id);
 
             return array('success' => true, 'result' => array(
                 'id' => (int)$myTicketID[0]->id,
@@ -162,8 +164,8 @@ class FrontTournamentsTicketsController extends Controller {
 				'prize' => $prize,
 				'qualified' => ($leaderboardDetails -> qualified) ? true : false,
 				'sport_name' => $sport_name,
-				'start_date' => \TimeHelper::isoDate($tournament -> start_date),
-				'end_date' => \TimeHelper::isoDate($tournament -> end_date),
+				'start_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament -> start_date),
+				'end_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament -> end_date),
 				'cancelled_flag' => ($tournament -> cancelled_flag) ? true : false,
 				'unregister_allowed' => $unregisterAllowed,
 
@@ -202,10 +204,10 @@ class FrontTournamentsTicketsController extends Controller {
 
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($activeTicket -> tournament_id, $userId);
 
-			$tournamentModel = new \TopBetta\Tournament;
+			$tournamentModel = new \TopBetta\Models\Tournament;
 			$tournament = $tournamentModel -> find($activeTicket -> tournament_id);
 
-			$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+			$leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
 			$leaderboardDetails = $leaderboardModel -> getLeaderBoardRankByUserAndTournament($userId, $tournament);
 
 			$rank = ($leaderboardDetails -> rank == 0) ? '-' : (int)$leaderboardDetails -> rank;
@@ -213,7 +215,7 @@ class FrontTournamentsTicketsController extends Controller {
 			$unregisterAllowed = $ticketModel->unregisterAllowed($activeTicket -> tournament_id, $activeTicket -> id);
 			$unregisterAllowed = $unregisterAllowed->allowed;
 
-			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => $unregisterAllowed,
+			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TopBetta\Helpers\TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TopBetta\Helpers\TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => $unregisterAllowed,
                 //rebuy info
                  'rebuys' => $tournament->rebuys,
                  'rebuy_currency' => $tournament->rebuy_currency,
@@ -244,10 +246,10 @@ class FrontTournamentsTicketsController extends Controller {
 
 			$availableCurrency = $ticketModel -> getAvailableTicketCurrency($recentTicket -> tournament_id, \Auth::user() -> id);
 
-			$tournamentModel = new \TopBetta\Tournament;
+			$tournamentModel = new \TopBetta\Models\Tournament;
 			$tournament = $tournamentModel -> find($recentTicket -> tournament_id);
 
-			$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+			$leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
 			$leaderboardDetails = $leaderboardModel -> getLeaderBoardRankByUserAndTournament($userId, $tournament);
 
 			$prize = 0;
@@ -269,7 +271,7 @@ class FrontTournamentsTicketsController extends Controller {
 
 			$rank = ($leaderboardDetails -> rank == "-") ? 'N/Q' : (int)$leaderboardDetails -> rank;
 
-			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => false,
+			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails -> qualified) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TopBetta\Helpers\TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TopBetta\Helpers\TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => false,
                 //rebuy info
                  'rebuys' => $tournament->rebuys,
                  'rebuy_currency' => $tournament->rebuy_currency,
@@ -317,14 +319,14 @@ class FrontTournamentsTicketsController extends Controller {
 
 		foreach ($tournaments['tournaments'] as $tournamentId) {
 
-			$newRateLimiter = new TopBetta\APIRateLimiter('10', '0', '-ticketPurchase-'.\Auth::user()->id .'-'.$tournamentId, '2');
+			$newRateLimiter = new TopBetta\Libraries\APIRateLimiter('10', '0', '-ticketPurchase-'.\Auth::user()->id .'-'.$tournamentId, '2');
 			$checkRateLimit = $newRateLimiter->RateLimiter();
 			
 			// if were not rate limited
 			if(!$checkRateLimit) {
 
 				// save tournament tickets via legacy API
-				$l = new \TopBetta\LegacyApiHelper;
+				$l = new \TopBetta\Helpers\LegacyApiHelper;
 				$tournDetailsArray = array("id" => $tournamentId);
 				
 				// Add free creidt flag to payload if it's been set on the client
@@ -336,7 +338,7 @@ class FrontTournamentsTicketsController extends Controller {
 	
 				if ($ticket['status'] == 200) {
                     //get the tournament
-                    $tournament = \TopBetta\Tournament::find($tournamentId);
+                    $tournament = \TopBetta\Models\Tournament::find($tournamentId);
 
                     //decrease turnover balance
                     $this->userAccountService->decreaseBalanceToTurnOver(
@@ -353,7 +355,7 @@ class FrontTournamentsTicketsController extends Controller {
 	
 				} elseif ($ticket['status'] == 401) {
 	
-					return \Response::json(array("success" => false, "error" => "Please login first."), 401);
+					return Response::json(array("success" => false, "error" => "Please login first."), 401);
 	
 				} elseif ($ticket['status'] == 500) {
 	
@@ -366,7 +368,7 @@ class FrontTournamentsTicketsController extends Controller {
 	
 				}
 			}else{
-				return \Response::json(array("success" => false, "error" => \Lang::get('tournaments.existing_ticket')), 429);
+				return Response::json(array("success" => false, "error" => \Lang::get('tournaments.existing_ticket')), 429);
 			}
 		}
 
@@ -434,7 +436,7 @@ class FrontTournamentsTicketsController extends Controller {
 					$refunded = $ticketModel->refundTicket($ticket[0], true);
 
 					if ($refunded) {
-						$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+						$leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
 						$leaderboardModel->deleteByUserAndTournamentID(\Auth::user() -> id, $tournamentId);
 						
 						return array('success' => true, 'result' => \Lang::get('tournaments.refunded_ticket', array('ticketId' => $ticketId)));

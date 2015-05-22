@@ -50,6 +50,8 @@ class FrontMeetingsController extends Controller {
 
 				$eachMeeting = FrontMeetingsController::getMeetingsAndRaces($meetDate, $typeCode);
 
+				//Log::debug('Meetings Log: ', $eachMeeting);
+
 				return array('success' => true, 'result' => $eachMeeting);
 
 			});
@@ -109,6 +111,8 @@ class FrontMeetingsController extends Controller {
 				}
 
 			}
+
+
 
 			return array('success' => true, 'result' => $eachMeeting);
 

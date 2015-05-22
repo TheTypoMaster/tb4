@@ -90,7 +90,7 @@ class FrontPasswordResetsController extends Controller
             }
 
             // generate a password via Joomla legacy method
-            $l = new \TopBetta\LegacyApiHelper;
+            $l = new \TopBetta\Helpers\LegacyApiHelper;
             $genPassword = $l->query('generateJoomlaPassword', array('password' => $creds['password']));
 
             if ($genPassword['status'] == 200) {

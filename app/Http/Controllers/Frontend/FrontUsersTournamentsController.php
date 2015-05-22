@@ -3,8 +3,12 @@
 use TopBetta\Http\Controllers\Controller;
 
 use Auth;
+use Input;
 use TopBetta;
 use \Carbon\Carbon;
+
+use TopBetta\Helpers\TimeHelper;
+use TopBetta\Repositories\UserTicketsRepository;
 
 class FrontUsersTournamentsController extends Controller {
 
@@ -13,7 +17,7 @@ class FrontUsersTournamentsController extends Controller {
 	 */
 	private $userTicketsRepository;
 
-	public function __construct(TopBetta\Repositories\UserTicketsRepository $userTicketsRepository) {
+	public function __construct(UserTicketsRepository $userTicketsRepository) {
 		$this -> beforeFilter('auth');
 		$this->userTicketsRepository = $userTicketsRepository;
 	}
@@ -25,12 +29,12 @@ class FrontUsersTournamentsController extends Controller {
 	 */
 	public function index() {
 
-		$report = \Input::get('report', 'transactions');
+		$report = Input::get('report', 'transactions');
 
-		$type = \Input::get('type', null);
+		$type = Input::get('type', null);
 
-		$limit = \Input::get('per_page', 25);
-		$page = \Input::get('page', 1);
+		$limit = Input::get('per_page', 25);
+		$page = Input::get('page', 1);
 
 		$offset = $limit * ($page - 1);
 
@@ -112,7 +116,7 @@ class FrontUsersTournamentsController extends Controller {
 					}
 
 					//put it all together
-					$transactions[] = array('id' => $transaction -> id, 'date' => \TimeHelper::isoDate($transaction -> created_date), 'description' => $description, 'value' => $transaction -> amount, 'type' => $transactionType);
+					$transactions[] = array('id' => $transaction -> id, 'date' => \TopBetta\Helpers\TimeHelper::isoDate($transaction -> created_date), 'description' => $description, 'value' => $transaction -> amount, 'type' => $transactionType);
 
 				}
 
@@ -143,7 +147,7 @@ class FrontUsersTournamentsController extends Controller {
 					$tournament->betta_bucks	= $ticket_model->getAvailableTicketCurrency($tournament->id, $userId);
 					//get leaderboard rank
 		
-					$leaderboard_model				= new \TopBetta\TournamentLeaderboard;
+					$leaderboard_model				= new \TopBetta\Models\TournamentLeaderboard;
 					$leaderboard					= $leaderboard_model->getLeaderBoardRankByUserAndTournament($userId, $tournament);
 					$tournament->leaderboard_rank	= $leaderboard->rank;
 					$tournament->num_entries		= $ticket_model->countTournamentEntrants($tournament->id);
@@ -159,7 +163,7 @@ class FrontUsersTournamentsController extends Controller {
 					if ($tournament->result_transaction_id) {
 						if ($tournament->jackpot_flag && !empty($tournament->parent_tournament_id) && -1 != $tournament->parent_tournament_id) {
 							$transaction_record = \TopBetta\Models\FreeCreditBalance::find($tournament->result_transaction_id);
-							$parent_tournament = \TopBetta\Tournament::find($tournament->parent_tournament_id);
+							$parent_tournament = \TopBetta\Models\Tournament::find($tournament->parent_tournament_id);
 						} else {
 							$transaction_record = \TopBetta\Models\AccountBalance::find($tournament->result_transaction_id);
 						}
@@ -193,8 +197,8 @@ class FrontUsersTournamentsController extends Controller {
 						'sport' => $tournament->sport_name . ' - ' . $tournament->tournament_name,
 						'sub_type' => $tournament->sub_type,
 						'tournament_name' => $tournament->tournament_name,
-						'start_date' => \TimeHelper::isoDate($tournament->start_date),
-                        'end_date' => \TimeHelper::isoDate($tournament->end_date),
+						'start_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament->start_date),
+                        'end_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament->end_date),
 						'total' => (int)$tournament->betta_bucks,
 						'place' => $tournament->leaderboard_rank,
 						'num_entries' => (int)$tournament->num_entries,
@@ -233,7 +237,7 @@ class FrontUsersTournamentsController extends Controller {
 
 		$c = new Carbon();
 		$twoDaysAgo = $c->subDays(2);
-		$sinceDate = \Input::get('since', $twoDaysAgo);
+		$sinceDate = Input::get('since', $twoDaysAgo);
 		$ticketsList = $this->userTicketsRepository->getUsersTicketsAndTournaments($sinceDate)->toArray();
 
 		// Create a new instance of a tournaments repository. This repository will be re-used while iterating through the

@@ -6,7 +6,7 @@ class SportsSelectionPrice extends \Eloquent {
 
     public function selections()
     {
-        return $this->belongsTo('TopBetta\SportsSelection', 'selection_id', 'id')->whereNull('number');
+        return $this->belongsTo('TopBetta\Models\SportsSelection', 'selection_id', 'id')->whereNull('number');
     }
 	
 	/**

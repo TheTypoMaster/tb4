@@ -70,7 +70,7 @@ class FrontCombinedTournamentsController extends Controller {
 
             // work out next event for this meeting
             $meetingId = $tournamentDetails['meeting_id'];
-            $races = Topbetta\RaceMeeting::getRacesForMeetingId($meetingId);
+            $races = TopBetta\Models\RaceMeeting::getRacesForMeetingId($meetingId);
 
             $nextEvent = false;
 

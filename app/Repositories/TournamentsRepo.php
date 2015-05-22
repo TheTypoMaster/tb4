@@ -2,7 +2,7 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\Tournament;
+use TopBetta\Models\Tournament;
 
 /**
  * Tournament Repo for admin interface

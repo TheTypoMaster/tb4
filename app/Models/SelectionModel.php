@@ -39,17 +39,17 @@ class SelectionModel extends Eloquent{
 
     public function sportsResults()
     {
-        return $this->hasOne('TopBetta\SportsResults', 'selection_id', 'id');
+        return $this->hasOne('TopBetta\Models\SportsResults', 'selection_id', 'id');
     }
 
     public function selectionprice()
     {
-        return $this->hasOne('TopBetta\SportsSelectionPrice', 'selection_id', 'id');
+        return $this->hasOne('TopBetta\Models\SportsSelectionPrice', 'selection_id', 'id');
     }
 
     public function selectionresult()
     {
-        return $this->hasOne('TopBetta\SportsSelectionResults', 'selection_id', 'id');
+        return $this->hasOne('TopBetta\Models\SportsSelectionResults', 'selection_id', 'id');
     }
 
     public function selectionstatus()

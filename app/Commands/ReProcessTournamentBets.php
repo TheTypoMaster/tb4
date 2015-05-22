@@ -4,7 +4,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-use TopBetta\Tournaments\TournamentReprocess;
+use TopBetta\Models\Tournaments\TournamentReprocess;
 
 class ReProcessTournamentBets extends Command {
 

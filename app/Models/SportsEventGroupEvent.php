@@ -17,7 +17,7 @@ class SportEventGroupEvent extends \Eloquent {
 	}
 
     public function competitions(){
-        return $this->belongsTo('\TopBetta\SportsComps', 'event_group_id', 'id');
+        return $this->belongsTo('\TopBetta\Models\SportsComps', 'event_group_id', 'id');
     }
 
     public function events(){

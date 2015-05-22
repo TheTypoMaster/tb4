@@ -77,7 +77,7 @@ class FrontUsersDepositController extends Controller {
 				$ccTokenDetailsArray = array();
 
 				// grab all the managedCustomerId's for the users stored CC's out of the database
-				$usersCCTokens = TopBetta\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
+				$usersCCTokens = TopBetta\Models\PaymentEwayTokens::getEwayTokens(\Auth::user()->id);
 			
 				$tokenCount = count($usersCCTokens);
 			
@@ -276,7 +276,7 @@ class FrontUsersDepositController extends Controller {
             }
 
 			//pass data onto legacy api
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 			$deposit = $l -> query('doInstantDeposit', $input);
 
 			if ($deposit['status'] == 200) {
@@ -314,7 +314,7 @@ class FrontUsersDepositController extends Controller {
 			case 'create_customer_and_payment':
 			
 				// Get required user details from the database. Title/First and Last name, Country
-				$topbettaUserDetails = TopBetta\TopBettaUser::getTopBettaUserDetails(\Auth::user()->id)->toArray();
+				$topbettaUserDetails = TopBetta\Models\TopBettaUser::getTopBettaUserDetails(\Auth::user()->id)->toArray();
 				$title = $topbettaUserDetails[0]['title'];
 				$firstName = $topbettaUserDetails[0]['first_name'];
 				$lastName = $topbettaUserDetails[0]['last_name'];
@@ -371,7 +371,7 @@ class FrontUsersDepositController extends Controller {
 					if($soapResponse['success'] && $soapResponse['result']->CreateCustomerResult){
 						
 						// Store the new CC token in our DB
-						$ccTokenModel = new TopBetta\PaymentEwayTokens();
+						$ccTokenModel = new TopBetta\Models\PaymentEwayTokens();
 						$ccTokenModel->user_id = \Auth::user()->id;
 						$ccTokenModel->cc_token = $soapResponse['result']->CreateCustomerResult;
 						$ccTokenModel->save();
@@ -417,7 +417,7 @@ class FrontUsersDepositController extends Controller {
 				} else {
 					
 					// Check the managed customer ID is stored in the DB
-					$usersCCTokenID = TopBetta\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $input['managedCustomerID']);
+					$usersCCTokenID = TopBetta\Models\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $input['managedCustomerID']);
 					
 					if (!$usersCCTokenID){
 						return array("success" => false, "error" => \Lang::get('banking.cc_token_invalid'));
@@ -604,9 +604,9 @@ class FrontUsersDepositController extends Controller {
 		if($type == "query_eway_customer") {
 
 			//check the specified credit card token exists
-			if (TopBetta\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $managedCustomerId)) {
+			if (TopBetta\Models\PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $managedCustomerId)) {
 				//delete the token
-				$paymentToken = TopBetta\PaymentEwayTokens::where("cc_token", "=", $managedCustomerId)->first();
+				$paymentToken = TopBetta\Models\PaymentEwayTokens::where("cc_token", "=", $managedCustomerId)->first();
 				//dd($paymentToken->cc_token);
 				$paymentToken->delete();
 

@@ -47,7 +47,7 @@ class FrontUsersReferController extends Controller {
 
 		} else {
 
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 			$refer = $l -> query('doReferFriend', $input);
 
 			if ($refer['status'] == 200) {

@@ -8,22 +8,22 @@ class SportsSelection extends \Eloquent {
 	// Relationships
     public function markets()
     {
-        return $this->belongsTo('TopBetta\SportsMarket', 'market_id', 'id');
+        return $this->belongsTo('TopBetta\Models\SportsMarket', 'market_id', 'id');
     }
 
     public function sportsResults()
 	{
-		return $this->hasOne('TopBetta\SportsResults', 'selection_id', 'id');
+		return $this->hasOne('TopBetta\Models\SportsResults', 'selection_id', 'id');
 	}
 
     public function selectionprice()
     {
-        return $this->hasOne('TopBetta\SportsSelectionPrice', 'selection_id', 'id');
+        return $this->hasOne('TopBetta\Models\SportsSelectionPrice', 'selection_id', 'id');
     }
 
     public function selectionresult()
     {
-        return $this->hasOne('TopBetta\SportsSelectionResults', 'selection_id', 'id');
+        return $this->hasOne('TopBetta\Models\SportsSelectionResults', 'selection_id', 'id');
     }
 
     public function selectionstatus()

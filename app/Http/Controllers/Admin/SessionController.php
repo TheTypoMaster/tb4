@@ -56,7 +56,7 @@ class SessionController extends Controller
 			// make sure they are a joomla admin user (gid == 25) before attempting login
 			if (UserModel::where('username', $input['username'])->pluck('gid') == 25) {
 //				// legacy login
-//				$l = new \TopBetta\LegacyApiHelper;
+//				$l = new \TopBetta\Helpers\LegacyApiHelper;
 //				$login = $l->query('doUserLogin', $input);
 
 

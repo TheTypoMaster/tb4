@@ -214,7 +214,7 @@ class TournamentLeaderboard extends \Eloquent {
 	}
 
 	public function tournament() {
-		return $this->belongsTo('\TopBetta\Tournament', 'tournament_id');
+		return $this->belongsTo('\TopBetta\Models\Tournament', 'tournament_id');
 	}
 
 	public function scopeQualified($query) {

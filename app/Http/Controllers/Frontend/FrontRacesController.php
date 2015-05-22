@@ -1,7 +1,7 @@
 <?php namespace TopBetta\Http\Controllers\Frontend;
 
 use TopBetta\Http\Controllers\Controller;
-
+use Log;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Caching\NextToJumpCacheService;
@@ -41,6 +41,7 @@ class FrontRacesController extends Controller {
 
         $ret['result'] = $result;
 
+		//Log::debug('N2J Log: ', $ret);
         return $ret;
 
 	}
@@ -96,7 +97,7 @@ class FrontRacesController extends Controller {
 
 			foreach ($nextToJump as $next) {
 
-				$toGo = \TimeHelper::nicetime(strtotime($next -> start_date), 2);
+				$toGo = \TopBetta\Helpers\TimeHelper::nicetime(strtotime($next -> start_date), 2);
 
 				//convert the date to ISO 8601 format
 				$startDatetime = new \DateTime($next -> start_date);

@@ -9,7 +9,7 @@ class TournamentTicket extends \Eloquent {
 	public static $rules = array();
 
 	public function tournament() {
-		return $this->belongsTo('TopBetta\Tournament', 'tournament_id');
+		return $this->belongsTo('TopBetta\Models\Tournament', 'tournament_id');
 	}
 	
 	/**
@@ -483,7 +483,7 @@ class TournamentTicket extends \Eloquent {
 		$error = array();
 
 		// HAS THE TOURNAMENT ALREADY STARTED
-		$tournament = \TopBetta\Tournament::find($tournamentId);
+		$tournament = \TopBetta\Models\Tournament::find($tournamentId);
 		
 		if ($tournament) {
 			if (strtotime($tournament->start_date) < time()) {

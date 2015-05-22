@@ -78,7 +78,7 @@ class FrontUsersWithdrawController extends Controller {
             }
 
 			//pass data onto legacy api
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 			$withdraw = $l -> query('doWithdrawRequest', $input);
 
 			if ($withdraw['status'] == 200) {

@@ -16,7 +16,7 @@ return array(
 
     'single' => 'market',
 
-    'model' => '\TopBetta\SportsMarket',
+    'model' => '\TopBetta\Models\SportsMarket',
 
     /**
      * The display columns

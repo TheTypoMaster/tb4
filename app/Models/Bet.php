@@ -10,7 +10,7 @@ class Bet extends \Eloquent {
 
 	public function selections()
 	{
-		return $this->hasMany('TopBetta\BetSelection', 'bet_id', 'id');
+		return $this->hasMany('TopBetta\Models\BetSelection', 'bet_id', 'id');
 	}
 	
 	public function user() {
@@ -18,11 +18,11 @@ class Bet extends \Eloquent {
 	}
 	
 	public function betType() {
-		return $this->belongsTo('TopBetta\BetTypes', 'bet_type_id');
+		return $this->belongsTo('TopBetta\Models\BetTypes', 'bet_type_id');
 	}
 	
 	public function status() {
-		return $this->belongsTo('TopBetta\BetResultStatus', 'bet_result_status_id');
+		return $this->belongsTo('TopBetta\Models\BetResultStatus', 'bet_result_status_id');
 	}
 
     /**

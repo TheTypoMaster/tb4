@@ -28,7 +28,7 @@ class FrontUsersBettingController extends Controller {
 		return \Cache::remember('usersBettingHistory-' . \Auth::user() -> id . '-' . $filter['result_type'] . $limit . $page, 1, function() use (&$type, &$limit, &$offset, $filter, $page) {
 
 			//pass data onto legacy api
-			$l = new \TopBetta\LegacyApiHelper;
+			$l = new \TopBetta\Helpers\LegacyApiHelper;
 			$history = $l -> query('getBettingHistory', $filter);
 
 			if ($history['status'] == 200) {
@@ -37,7 +37,7 @@ class FrontUsersBettingController extends Controller {
 
 				foreach ($history['bet_list'] as $key => $transaction) {
 
-					$transactions[] = array('id' => $key, 'date' => \TimeHelper::isoDate($transaction['bet_time']), 'selections' => $transaction['label'], 'bet_type' => $transaction['bet_type'], 'bet_amount' => (int)$transaction['amount'], 'bet_total' => (int)$transaction['bet_total'], 'freebet_amount' => (int)$transaction['bet_freebet_amount'], 'dividend' => (float)$transaction['dividend'], 'paid' => (int)$transaction['paid'], 'result' => $transaction['result'], 'half_refund' => $transaction['half_refund']);
+					$transactions[] = array('id' => $key, 'date' => \TopBetta\Helpers\TimeHelper::isoDate($transaction['bet_time']), 'selections' => $transaction['label'], 'bet_type' => $transaction['bet_type'], 'bet_amount' => (int)$transaction['amount'], 'bet_total' => (int)$transaction['bet_total'], 'freebet_amount' => (int)$transaction['bet_freebet_amount'], 'dividend' => (float)$transaction['dividend'], 'paid' => (int)$transaction['paid'], 'result' => $transaction['result'], 'half_refund' => $transaction['half_refund']);
 
 				}
 

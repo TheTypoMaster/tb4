@@ -8,11 +8,11 @@ class RisaForm extends \Eloquent {
     protected $table = 'tb_data_risa_runner_form';
     
     public function selection(){
-    	return $this->hasOne('TopBetta\RaceSelection', 'runner_code', 'runner_code');
+    	return $this->hasOne('TopBetta\Models\RaceSelection', 'runner_code', 'runner_code');
     }
 
     public function lastStarts(){
-    	return $this->hasMany('TopBetta\RisaFormLastStarts', 'runner_form_id', 'id');
+    	return $this->hasMany('TopBetta\Models\RisaFormLastStarts', 'runner_form_id', 'id');
      }
     
      // check if runner_code exists in DB already

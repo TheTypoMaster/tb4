@@ -86,7 +86,7 @@ class TestJSONController extends \BaseController {
 	{
 		
 		// Log this
-		TopBetta\LogHelper::l("BackAPI: TEST - Reciving POST");
+		TopBetta\Helpers\LogHelper::l("BackAPI: TEST - Reciving POST");
 		
 		// get the JSON POST
 		$racingJSON = \Input::json();
@@ -107,7 +107,7 @@ class TestJSONController extends \BaseController {
 		// make sure JSON was received
 		$keyCount = count($racingJSON);
 		if(!$keyCount){
-			TopBetta\LogHelper::l("BackAPI: Racing - No Data In POST",2);
+			TopBetta\Helpers\LogHelper::l("BackAPI: Racing - No Data In POST",2);
 			return \Response::json(array(
 					'error' => true,
 					'message' => 'Error: No JSON data received'),

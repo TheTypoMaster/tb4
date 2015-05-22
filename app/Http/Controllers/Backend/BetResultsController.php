@@ -222,13 +222,13 @@ class BetResultsController extends \BaseController {
 									Topbetta\LogHelper::l("BackAPI: BetResults - iGas TransactionID: ".$transaction['transactionID'].". BetOutcome: ".$transaction['betOutcome'].". Return Amount: ".$transaction['returnAmount']);
 									
 									// check if transaction ID exists in DB if not throw error
-									$transactionExists = TopBetta\Bet::getBetExists($transaction['transactionID']);
+									$transactionExists = TopBetta\Models\Bet::getBetExists($transaction['transactionID']);
 									
 									// If there is a matching bet
 									if($transactionExists){
 										Topbetta\LogHelper::l("BackAPI: BetResults - iGas bet found in DB");
 										// get the bet record based on the transactionID
-										$betObject = TopBetta\Bet::getBetDetails($transaction['transactionID'])->toArray();
+										$betObject = TopBetta\Models\Bet::getBetDetails($transaction['transactionID'])->toArray();
 										
 										$b = print_r($betObject[0],true);
 										Topbetta\LogHelper::l("BackAPI: BetResults - Bet data from DB: $b");
@@ -424,10 +424,10 @@ class BetResultsController extends \BaseController {
 	{
 	
 		// get a model instance of the bet table
-		$betRecord = TopBetta\Bet::find($betArray['id']);
+		$betRecord = TopBetta\Models\Bet::find($betArray['id']);
 		
 		// Set results status to PAID
-		$result_status = TopBetta\BetResultStatus::STATUS_PAID;
+		$result_status = TopBetta\Models\BetResultStatus::STATUS_PAID;
 		
 		// Set resulted flag to 0 in model
 		$betRecord->resulted_flag = 1;
@@ -466,7 +466,7 @@ class BetResultsController extends \BaseController {
                                 $resultAmount = $transaction['returnAmount'];
 			}
 			$betRecord->refunded_flag = 1;
-			$result_status = TopBetta\BetResultStatus::STATUS_FULL_REFUND;
+			$result_status = TopBetta\Models\BetResultStatus::STATUS_FULL_REFUND;
 				
 		}
 	
@@ -497,13 +497,13 @@ class BetResultsController extends \BaseController {
 		}
 	
 		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_SUBMITTED){
-			$result_status = TopBetta\BetResultStatus::STATUS_UNRESULTED;
+			$result_status = TopBetta\Models\BetResultStatus::STATUS_UNRESULTED;
 			Topbetta\LogHelper::l('BackAPI: BetResults - Submitted: ' . $transaction['returnAmount'] . ' cents');
 			$betRecord->resulted_flag = 0;
 		}
 		
 		Topbetta\LogHelper::l('BackAPI: BetResults - Resulted Bet ID: ' . $betArray['id']);
-		$betRecord->bet_result_status_id = TopBetta\BetResultStatus::getBetResultStatusByName($result_status);
+		$betRecord->bet_result_status_id = TopBetta\Models\BetResultStatus::getBetResultStatusByName($result_status);
 		
 		$br = print_r($betRecord,true);
 		Topbetta\LogHelper::l("BackAPI: BetResults - Result Status ID: $br");

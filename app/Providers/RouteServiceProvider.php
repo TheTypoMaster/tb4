@@ -4,6 +4,7 @@ use Auth;
 use Route;
 use Redirect;
 use Config;
+use Response;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 

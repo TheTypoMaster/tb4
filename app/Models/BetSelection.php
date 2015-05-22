@@ -14,11 +14,11 @@ class BetSelection extends \Eloquent {
 	 * @return type
 	 */
 	public function selection() {
-		return $this->belongsTo('TopBetta\RaceSelection', 'selection_id', 'id');
+		return $this->belongsTo('TopBetta\Models\RaceSelection', 'selection_id', 'id');
 	}	
 	
 	public function bet() {
-		return $this->belongsTo('TopBetta\Bet', 'bet_id');
+		return $this->belongsTo('TopBetta\Models\Bet', 'bet_id');
 	}
 	
 	public static function getExoticSelectionsForBetId($betId) {

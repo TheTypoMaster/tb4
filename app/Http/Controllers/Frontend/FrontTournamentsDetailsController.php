@@ -19,7 +19,7 @@ class FrontTournamentsDetailsController extends Controller {
 		//TODO: work with jackpot tournaments
 
 		//does tournament exist?
-		$tournamentModel = new \TopBetta\Tournament;
+		$tournamentModel = new \TopBetta\Models\Tournament;
 		$tournament = $tournamentModel -> find($tournamentId);
 
 		if (is_null($tournament)) {
@@ -42,7 +42,7 @@ class FrontTournamentsDetailsController extends Controller {
 		});
 
 		//leaderboard
-		$leaderboardModel = new \TopBetta\TournamentLeaderboard;
+		$leaderboardModel = new \TopBetta\Models\TournamentLeaderboard;
 		
 		$leaderboard = array();
 		if (strtotime($tournament->start_date) < time()) {
@@ -101,8 +101,8 @@ class FrontTournamentsDetailsController extends Controller {
 
 			//our data to send back
 			return array('success' => true, 'result' => array('parent_tournament_id' => (int)$tournament -> parent_tournament_id, 'meeting_id' => (int)$meetingId, 'name' => $tournament -> name, 
-			'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TimeHelper::isoDate($tournament -> start_date),
-			'end_date' => \TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee, 
+			'description' => $tournament -> description, 'start_currency' => (int)$tournament -> start_currency, 'start_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament -> start_date),
+			'end_date' => \TopBetta\Helpers\TimeHelper::isoDate($tournament -> end_date), 'jackpot_flag' => ($tournament -> jackpot_flag == 0) ? false : true, 'num_registrations' => (int)$numRegistrations, 'buy_in' => (int)$tournament -> buy_in, 'entry_fee' => (int)$tournament -> entry_fee,
 			'paid_flag' => ($tournament -> paid_flag == 0) ? false : true, 'cancelled_flag' => ($tournament -> cancelled_flag == 0) ? false : true, 'cancelled_reason' => $tournament -> cancelled_reason, 
 			'place_list' => $placeList, 'prize_pool' => $prizePool, 'players' => $playerList, 'leaderboard' => $leaderboard, 'places_paid' => $places_paid, 'private' => ($tournament -> private_flag == 0) ? false : true, 
 			'password_protected' => false));

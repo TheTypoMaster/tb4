@@ -33,8 +33,8 @@ class RiskResultsController extends Controller
     private static function updateRaceResults(array $raceResults, $raceId)
     {
         // delete all results records for this event
-        \TopBetta\RaceResult::deleteResultsForRaceId($raceId);       
-        \TopBetta\RaceResult::deleteExoticResultsForRaceId($raceId);
+        \TopBetta\Models\RaceResult::deleteResultsForRaceId($raceId);
+        \TopBetta\Models\RaceResult::deleteExoticResultsForRaceId($raceId);
 
         $errors = array();
 
@@ -103,7 +103,7 @@ class RiskResultsController extends Controller
         // loop over each position and save it separately
         foreach ($raceResult as $result) {
 
-            $runner = \TopBetta\RaceSelection::getByEventIdAndRunnerNumber($raceId, $result['number']);
+            $runner = \TopBetta\Models\RaceSelection::getByEventIdAndRunnerNumber($raceId, $result['number']);
 
             if (count($runner)) {
 
@@ -118,7 +118,7 @@ class RiskResultsController extends Controller
                     $resultData['place_dividend'] = $result['place_dividend'];
                 }
 
-                if (\TopBetta\RaceResult::create($resultData)) {
+                if (\TopBetta\Models\RaceResult::create($resultData)) {
                     $success++;
                 }
             }

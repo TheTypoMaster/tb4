@@ -32,7 +32,7 @@ class FrontSportsOptionsController extends Controller {
 		// store sports types in cache for 10 min at a time
 		// return \Cache::remember('sportsOptions-' . $eventId . '-' . $typeId, .2, function() use (&$eventId, &$typeId) {
 
-			$sportsOptions = new TopBetta\SportsOptions;
+			$sportsOptions = new TopBetta\Models\SportsOptions;
 			$options = $sportsOptions -> getOptions($eventId, $typeId);
 
 			$betOptions = count($options);
@@ -77,7 +77,7 @@ class FrontSportsOptionsController extends Controller {
 	}
 	
 	public function getAllOptionsForMarketTypeId($allEvents, $marketTypeId) {
-			$sportsOptions = new TopBetta\SportsOptions;
+			$sportsOptions = new TopBetta\Models\SportsOptions;
 			$options = $sportsOptions -> getOptionsForMarketType($allEvents, $marketTypeId);	
 // 			dd($options);
 			$betOptions = count($options);

@@ -87,7 +87,7 @@ class FrontSportsController extends Controller {
 	 */
 	public function show($id) {
 		// fetch the sport this comp belongs to
-		$sportsComps = new TopBetta\SportsComps;
+		$sportsComps = new TopBetta\Models\SportsComps;
 		$sports = $sportsComps -> getCompWithSport($id);
 
 		if ($sports) {

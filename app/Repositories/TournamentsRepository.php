@@ -10,8 +10,8 @@ namespace TopBetta\Repositories;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use TopBetta\Tournament;
-use TopBetta\TournamentLeaderboard;
+use TopBetta\Models\Tournament;
+use TopBetta\Models\TournamentLeaderboard;
 
 class TournamentsRepository extends BaseEloquentRepository {
 
@@ -51,7 +51,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 		->orderBy('qualified', 'DESC')
 		->get()->toArray();
 
-//		$a = \TopBetta\Tournament::select(\DB::raw('*, tbdb_tournament_sport.name AS sport_name, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))->join('tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id')->join('tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id')->where('tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId)->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')->orderBy('qualified', 'DESC')->get()->toArray();
+//		$a = \TopBetta\Models\Tournament::select(\DB::raw('*, tbdb_tournament_sport.name AS sport_name, tbdb_tournament_leaderboard.turned_over >= tbdb_tournament.start_currency AS qualified'))->join('tbdb_tournament_sport', 'tbdb_tournament.tournament_sport_id', '=', 'tbdb_tournament_sport.id')->join('tbdb_tournament_leaderboard', 'tbdb_tournament_leaderboard.tournament_id', '=', 'tbdb_tournament.id')->where('tbdb_tournament_leaderboard.tournament_id', '=', $tournamentId)->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')->orderBy('qualified', 'DESC')->get()->toArray();
 
 	}
 
@@ -108,7 +108,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 	}
 
 	/**
-	 * @return \TopBetta\Tournament
+	 * @return \TopBetta\Models\Tournament
 	 */
 	public function getTournament()
 	{
@@ -116,7 +116,7 @@ class TournamentsRepository extends BaseEloquentRepository {
 	}
 
 	/**
-	 * @param \TopBetta\Tournament $tournament
+	 * @param \TopBetta\Models\Tournament $tournament
 	 */
 	public function setTournament($tournament)
 	{

@@ -10,7 +10,7 @@ class RaceMarket extends \Eloquent {
      * @return mixed
      */
     public function event(){
-        return $this->belongsTo('TopBetta\RaceEvent', 'event_id', 'id');
+        return $this->belongsTo('TopBetta\Models\RaceEvent', 'event_id', 'id');
     }
 
     /**

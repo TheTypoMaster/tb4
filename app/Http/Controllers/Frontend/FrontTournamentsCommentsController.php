@@ -21,7 +21,7 @@ class FrontTournamentsCommentsController extends Controller {
 	public function index($tournamentId)
 	{
 		//does tournament exist?
-		$tournamentModel = new \TopBetta\Tournament;
+		$tournamentModel = new \TopBetta\Models\Tournament;
 		$tournament = $tournamentModel -> find($tournamentId);
 
 		if ($tournament) {
@@ -29,7 +29,7 @@ class FrontTournamentsCommentsController extends Controller {
 			$dir = \Input::get('dir', false);
 			$commentId = \Input::get('comment_id', false);
 
-			$tournamentComments = \TopBetta\TournamentComment::getTournamentCommentListByTournamentId($tournamentId, $limit, $dir, $commentId);
+			$tournamentComments = \TopBetta\Models\TournamentComment::getTournamentCommentListByTournamentId($tournamentId, $limit, $dir, $commentId);
 
 			$comments = array();
 
@@ -39,11 +39,11 @@ class FrontTournamentsCommentsController extends Controller {
 					'tournament_id' => (int)$comment->tournament_id,
 					'username' => $comment->username,
 					'comment' => $comment->comment,
-					'date' => \TimeHelper::isoDate($comment->created_at)
+					'date' => \TopBetta\Helpers\TimeHelper::isoDate($comment->created_at)
 					);
 			}
 
-			$commentsAllowed = \TopBetta\TournamentComment::isTournamentCommentingAllowed($tournamentId);
+			$commentsAllowed = \TopBetta\Models\TournamentComment::isTournamentCommentingAllowed($tournamentId);
 
 			return array("success" => true, "result" => array(
 					"comments_allowed" => $commentsAllowed,
@@ -93,7 +93,7 @@ class FrontTournamentsCommentsController extends Controller {
 			}
 
 			// only let them post comments for 2 days after the tournament end date
-			if (!\TopBetta\TournamentComment::isTournamentCommentingAllowed($tournamentId)) {
+			if (!\TopBetta\Models\TournamentComment::isTournamentCommentingAllowed($tournamentId)) {
 				return array("success" => false, "error" => \Lang::get('tournaments.commenting_closed'));
 			}
 
@@ -118,7 +118,7 @@ class FrontTournamentsCommentsController extends Controller {
 				"comment" => $comment
 			);
 
-			$tournamentComment = \TopBetta\TournamentComment::create($params);
+			$tournamentComment = \TopBetta\Models\TournamentComment::create($params);
 
 			if ($tournamentComment) {
 				return array("success" => true, "result" => \Lang::get('tournaments.comment_posted'));

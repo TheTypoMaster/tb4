@@ -48,7 +48,7 @@ class FrontSportsResultsController extends Controller {
 		// store event results in cache for 2 min at a time
 		return \Cache::remember('sportsResults-' . $id, 2, function() use($id) {
 
-			$eventResults = \TopBetta\SportsResults::getResultsForEventId($id);
+			$eventResults = \TopBetta\Models\SportsResults::getResultsForEventId($id);
 
 			$result = array();
 

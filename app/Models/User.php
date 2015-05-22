@@ -25,11 +25,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @return type
 	 */
 	public function topbettaUser() {
-		return $this->hasOne('TopBetta\TopBettaUser', 'user_id');
+		return $this->hasOne('TopBetta\Models\TopBettaUser', 'user_id');
 	}
 	
 	public function bets() {
-		return $this->hasMany('TopBetta\Bet');
+		return $this->hasMany('TopBetta\Models\Bet');
 	}
 	
 	public function accountTransactions() {
@@ -54,7 +54,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @return mixed
 	 */
 	public function tournamentTickets() {
-		return $this->hasMany('\TopBetta\TournamentTicket', 'user_id');
+		return $this->hasMany('\TopBetta\Models\TournamentTicket', 'user_id');
 	}
 
 	/**

@@ -11,7 +11,7 @@ namespace TopBetta\Repositories;
 
 use Carbon\Carbon;
 use TopBetta\Models\TournamentTicket;
-use User;
+use TopBetta\Models\UserModel;
 use Whoops\Example\Exception;
 
 class UserTicketsRepository {
@@ -26,7 +26,7 @@ class UserTicketsRepository {
 	 */
 	private $ticket;
 
-	function __construct(User $user, TournamentTicket $ticket) {
+	function __construct(UserModel $user, TournamentTicket $ticket) {
 		$this->user = $user;
 		$this->ticket = $ticket;
 	}

@@ -2,7 +2,7 @@
 
 use TopBetta\Http\Controllers\Controller;
 
-use TopBetta\BetTypes;
+use TopBetta\Models\BetTypes;
 use TopBetta\Repositories\RisaFormRepository;
 
 class FrontCombinedRacingController extends Controller {
@@ -61,7 +61,7 @@ class FrontCombinedRacingController extends Controller {
 		$meeting = $meetingAndRaces;
 
         // get the totes being paid fow win/place/exotic
-        $totesPaid = \TopBetta\ProductDefaults::getTotePaidForMeeting($meeting['country'], $meeting['meeting_grade'], $meeting['type_code']);
+        $totesPaid = \TopBetta\Models\ProductDefaults::getTotePaidForMeeting($meeting['country'], $meeting['meeting_grade'], $meeting['type_code']);
 
         foreach($totesPaid as $tote){
             switch($tote['bet_type']){

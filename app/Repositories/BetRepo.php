@@ -13,7 +13,7 @@ use TopBetta\Services\Betting\SelectionService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 
-use TopBetta\SportsSelectionResults;
+use TopBetta\Models\SportsSelectionResults;
 use Carbon;
 
 /**
@@ -348,7 +348,7 @@ class BetRepo
 	 * Pass in selections for a new bet and check against a bet for an exact match
 	 *
 	 * @param array $selections
-	 * @param \TopBetta\Bet $bet
+	 * @param \TopBetta\Models\Bet $bet
 	 * @return boolean
 	 */
 	public function checkSelectionsMatchExoticBet(array $selections, Bet $bet)

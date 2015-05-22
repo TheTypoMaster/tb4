@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Helpers;
 
 /* Name: LogHelper
  * Purpose: Add a simple debug and log format wrapper to the laravel log class

@@ -7,7 +7,7 @@ class SportsMarket extends \Eloquent {
     protected $fillable = ['market_status'];
 
     public function markettypes(){
-        return $this->belongsTo('\TopBetta\SportsMarketType', 'market_type_id', 'id');
+        return $this->belongsTo('\TopBetta\Models\SportsMarketType', 'market_type_id', 'id');
     }
 
     public function events(){

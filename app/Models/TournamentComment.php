@@ -41,7 +41,7 @@ class TournamentComment extends \Eloquent {
 	 * @return boolean               
 	 */
 	public static function isTournamentCommentingAllowed($tournamentId) {
-		$tournament = \TopBetta\Tournament::find($tournamentId);
+		$tournament = \TopBetta\Models\Tournament::find($tournamentId);
 		$tournamentEndDate = date_create($tournament['end_date']);
 		$diff = $tournamentEndDate->diff(date_create("now"))->format("%d");	
 

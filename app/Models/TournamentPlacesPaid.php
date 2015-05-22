@@ -107,7 +107,7 @@ class TournamentPlacesPaid extends \Eloquent {
 	 * @return array
 	 */
 	public function getPrizeDistribution($tournament, $prize_pool = null) {
-		$leaderboard 		= new \TopBetta\TournamentLeaderboard;
+		$leaderboard 		= new \TopBetta\Models\TournamentLeaderboard;
 		$qualified_list 	= $leaderboard->getLeaderBoardRank($tournament, null, true);
 
 		if(empty($qualified_list)) {
@@ -115,7 +115,7 @@ class TournamentPlacesPaid extends \Eloquent {
 		}
 
 		if(is_null($prize_pool)) {
-			$tournament_model 	= new \TopBetta\TournamentLeaderboard;
+			$tournament_model 	= new \TopBetta\Models\TournamentLeaderboard;
 			$prize_pool 		= $tournament_model->calculateTournamentPrizePool($tournament->id);
 		}
 
@@ -170,9 +170,9 @@ class TournamentPlacesPaid extends \Eloquent {
 	 */
 	private function _getJackpotPrizeDistribution($tournament, $qualified_list, $prize_pool) {
 
-		$tournament_model = new \TopBetta\Tournament;
+		$tournament_model = new \TopBetta\Models\Tournament;
 		//$parent = $tournament_model->getTournament($tournament->parent_tournament_id);
-		$parent = \TopBetta\Tournament::find($tournament->parent_tournament_id);		
+		$parent = \TopBetta\Models\Tournament::find($tournament->parent_tournament_id);
 
 		if(is_null($parent)) {
 			return false;
@@ -457,9 +457,9 @@ class TournamentPlacesPaid extends \Eloquent {
 	 * @return array
 	 */
 	private function _getJackpotPlaceList($tournament, $entrant_count, $prize_pool) {
-		$tournament_model = new \TopBetta\Tournament;
+		$tournament_model = new \TopBetta\Models\Tournament;
 		//$parent = $tournament_model->getTournament($tournament->parent_tournament_id);
-		$parent = \TopBetta\Tournament::find($tournament->parent_tournament_id);
+		$parent = \TopBetta\Models\Tournament::find($tournament->parent_tournament_id);
 
 		if(is_null($parent)) {
 			return false;
@@ -499,7 +499,7 @@ class TournamentPlacesPaid extends \Eloquent {
 //			//$prize_format_model =& JModel::getInstance('TournamentPrizeFormat', 'TournamentModel');
 //			//$private_tournament_model =& JModel::getInstance('TournamentPrivate', 'TournamentModel');
 //			//$private_tournament = $private_tournament_model->getTournamentPrivateByTournamentID($tournament->id);
-//			$private_tournament = \TopBetta\TournamentPrivate::find($tournament->id);
+//			$private_tournament = \TopBetta\Models\TournamentPrivate::find($tournament->id);
 //
 //			//$prize_format = $prize_format_model->getTournamentPrizeFormat($private_tournament->tournament_prize_format_id);
 			$prize_format = TournamentPrizeFormat::find($tournament->tournament_prize_format);

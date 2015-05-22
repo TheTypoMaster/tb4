@@ -70,7 +70,7 @@ class FrontUsersBankingController extends Controller {
 
 					}					
 					
-					$transactions[] = array('id' => $transaction -> id, 'date' => \TimeHelper::isoDate($transaction -> created_date), 'description' => $description, 'value' => $transaction -> amount, 'type' => $transactionType);
+					$transactions[] = array('id' => $transaction -> id, 'date' => \TopBetta\Helpers\TimeHelper::isoDate($transaction -> created_date), 'description' => $description, 'value' => $transaction -> amount, 'type' => $transactionType);
 
 				}
  

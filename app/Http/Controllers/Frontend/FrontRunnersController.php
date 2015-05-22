@@ -21,14 +21,14 @@ class FrontRunnersController extends Controller {
 		//TODO: make sure we have a race id
 
 		if ($skipCache) {
-			$runners = \TopBetta\RaceSelection::getRunnersForRaceId($raceId);
+			$runners = \TopBetta\Models\RaceSelection::getRunnersForRaceId($raceId);
 			return array('success' => true, 'result' => $runners);			
 		}
 
 		// store runners in cache for 1 min at a time
 		return \Cache::remember('runners-' . $raceId, 1, function() use (&$raceId) {
 			
-			$runners = \TopBetta\RaceSelection::getRunnersForRaceId($raceId);
+			$runners = \TopBetta\Models\RaceSelection::getRunnersForRaceId($raceId);
 
 			return array('success' => true, 'result' => $runners);
 		});

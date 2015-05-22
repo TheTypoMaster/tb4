@@ -16,7 +16,7 @@ return array(
 
     'single' => 'competition-event',
 
-    'model' => '\TopBetta\SportEventGroupEvent',
+    'model' => '\TopBetta\Models\SportEventGroupEvent',
 
     /**
      * The display columns

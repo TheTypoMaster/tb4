@@ -19,7 +19,7 @@ class FrontUsersProfileController extends Controller {
 	public function index($username) {
 
 		//TODO: fetch the topbetta user object
-		$l = new \TopBetta\LegacyApiHelper;
+		$l = new \TopBetta\Helpers\LegacyApiHelper;
 		$user = $l -> query('getUser', array('username' => \Auth::user() -> username));
 
 		if ($user['status'] == 200) {
@@ -72,7 +72,7 @@ class FrontUsersProfileController extends Controller {
 
 				//we need the legacy API to generate a Joomla password
 				$joomlaPassword = false;
-				$l = new \TopBetta\LegacyApiHelper;
+				$l = new \TopBetta\Helpers\LegacyApiHelper;
 				$pwd = $l -> query('generateJoomlaPassword', array('password' => $input['password']));
 
 				if ($pwd['status'] == 200) {
@@ -105,7 +105,7 @@ class FrontUsersProfileController extends Controller {
 			//handle our jackpot flag
 			if (isset($input['jackpot_flag'])) {
 
-				$tbUser = \TopBetta\TopBettaUser::where('user_id', '=', \Auth::user() -> id) -> take(1) -> get();
+				$tbUser = \TopBetta\Models\TopBettaUser::where('user_id', '=', \Auth::user() -> id) -> take(1) -> get();
 
 				$oldFlag = $tbUser[0] -> email_jackpot_reminder_flag;
 

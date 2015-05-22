@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Tournaments;
+<?php namespace TopBetta\Models\Tournaments;
 /**
  * Coded by Oliver Shanahan
  * File creation date: 16/08/2014
@@ -17,7 +17,7 @@ use TopBetta\Repositories\DbTournamentSelectionResultRepository;
 
 /**
  * Completely reprocess a tournament by re-resulting all bets.
- * @package TopBetta\Tournaments
+ * @package TopBetta\Models\Tournaments
  */
 class TournamentReprocess {
 
