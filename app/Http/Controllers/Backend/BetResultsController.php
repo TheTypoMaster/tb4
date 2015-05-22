@@ -2,7 +2,9 @@
 
 use TopBetta;
 
-class BetResultsController extends \BaseController {
+use TopBetta\Http\Controllers\Controller;
+
+class BetResultsController extends Controller {
 
 	/**
 	 * Default log message type
@@ -158,7 +160,7 @@ class BetResultsController extends \BaseController {
 		// make sure JSON was received
 		$keyCount = count($resultsJSON);
 		if(!$keyCount){
-			Topbetta\LogHelper::l("BackAPI: BetResults - No Data In POST",2);
+			TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - No Data In POST",2);
 			return \Response::json(array(
 					'error' => true,
 					'message' => 'Error: No JSON data received'),
@@ -200,7 +202,7 @@ class BetResultsController extends \BaseController {
 					
 					// Meeting Data - the meeting/venue
 					case "OutcomeList":
-						Topbetta\LogHelper::l("BackAPI: BetResults - Processing OutcomeList, Object:$objectCount");
+						TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Processing OutcomeList, Object:$objectCount");
 						
 						//TODO: CHECK DataKey to validate bet result
 						//$dataKey = $resultsArray['DataKey'];
@@ -219,23 +221,23 @@ class BetResultsController extends \BaseController {
 									$transaction['betOutcome'] = $dataArray['BetOutcome'];
 									$transaction['returnAmount'] = $dataArray['ReturnAmount'];
 										
-									Topbetta\LogHelper::l("BackAPI: BetResults - iGas TransactionID: ".$transaction['transactionID'].". BetOutcome: ".$transaction['betOutcome'].". Return Amount: ".$transaction['returnAmount']);
+									TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - iGas TransactionID: ".$transaction['transactionID'].". BetOutcome: ".$transaction['betOutcome'].". Return Amount: ".$transaction['returnAmount']);
 									
 									// check if transaction ID exists in DB if not throw error
 									$transactionExists = TopBetta\Models\Bet::getBetExists($transaction['transactionID']);
 									
 									// If there is a matching bet
 									if($transactionExists){
-										Topbetta\LogHelper::l("BackAPI: BetResults - iGas bet found in DB");
+										TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - iGas bet found in DB");
 										// get the bet record based on the transactionID
 										$betObject = TopBetta\Models\Bet::getBetDetails($transaction['transactionID'])->toArray();
 										
 										$b = print_r($betObject[0],true);
-										Topbetta\LogHelper::l("BackAPI: BetResults - Bet data from DB: $b");
+										TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Bet data from DB: $b");
 																			
 										// check it can be processed
 										if($this->_canTransactionBeProcessed($transaction,$this->status_process_unresulted_list) && $betObject[0]['bet_result_status_id'] == "1"){
-											Topbetta\LogHelper::l("BackAPI: BetResults - Bet status '".$transaction['betOutcome']."' processing ");
+											TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Bet status '".$transaction['betOutcome']."' processing ");
 											// process unresulted bets
 											$this->processTransaction($transaction, $betObject[0]);
 										}
@@ -305,7 +307,7 @@ class BetResultsController extends \BaseController {
 		$j = json_encode($responsePayload);
 		
 		$b = print_r($j,true);
-		Topbetta\LogHelper::l("BackAPI: BetResults - RETURNED JSON: $b");
+		TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - RETURNED JSON: $b");
 		return \Response::json($responsePayload);
 		
 		/* return \Response::json(array(
@@ -436,33 +438,33 @@ class BetResultsController extends \BaseController {
                 $resultAmount = 0;
 		
 		// Log some stuff
-		Topbetta\LogHelper::l('BackAPI: BetResults - Processing Bet ID: ' . $betArray['id'] .'. Bet free flag: '. $betArray['bet_freebet_flag']. '. Bet free amount: '. $betArray['bet_freebet_amount']);
+		TopBetta\Helpers\LogHelper::l('BackAPI: BetResults - Processing Bet ID: ' . $betArray['id'] .'. Bet free flag: '. $betArray['bet_freebet_flag']. '. Bet free amount: '. $betArray['bet_freebet_amount']);
 			
 		// Bet should be refunded
 		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_CANCELLED || $transaction['betOutcome'] == self::TRANSACTION_STATUS_INVALID || $transaction['betOutcome'] == self::TRANSACTION_STATUS_REFUNDED){
 			// Full bet amount was on free credit
 			if ($betArray['bet_freebet_flag'] == 1 && $betArray['bet_freebet_amount'] == $transaction['returnAmount']) {
-				Topbetta\LogHelper::l("BackAPI: BetResults - Full bet amount was on free credit");
+				TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Full bet amount was on free credit");
 				$betRecord->refund_freebet_transaction_id = $this->awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
-				Topbetta\LogHelper::l('Free Bet full refund: ' . $betArray['bet_freebet_amount'] . ' cents');
+				TopBetta\Helpers\LogHelper::l('Free Bet full refund: ' . $betArray['bet_freebet_amount'] . ' cents');
                                 $resultAmount = $betArray['bet_freebet_amount'];
 			} else if ($betArray['bet_freebet_flag'] == 1 && $betArray['bet_freebet_amount'] < $transaction['returnAmount']) {
 				// Free bet amount was less then refund
-				Topbetta\LogHelper::l("BackAPI: BetResults - Free bet amount was less than refund");
+				TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Free bet amount was less than refund");
 				$refund_amount = $transaction['returnAmount'] - $betArray['bet_freebet_amount'];
 				// Refund free bet amount
 				$betRecord->refund_freebet_transaction_id = $this->awardFreeBetRefund($betArray['user_id'], $betArray['bet_freebet_amount']);
-				Topbetta\LogHelper::l('Free Bet partial refund: ' . $betArray['bet_freebet_amount'] . ' cents');
+				TopBetta\Helpers\LogHelper::l('Free Bet partial refund: ' . $betArray['bet_freebet_amount'] . ' cents');
 				// Refund balance to account
 				$betRecord->refund_transaction_id =$this->awardBetRefund($betArray['user_id'], $refund_amount);
-				Topbetta\LogHelper::l('Paid partial refund: ' . $refund_amount . ' cents');
+				TopBetta\Helpers\LogHelper::l('Paid partial refund: ' . $refund_amount . ' cents');
                                 
                                 // TODO: confirm this
                                 $resultAmount = $betArray['bet_freebet_amount'] + $refund_amount;
 			} else {
 				// No free credit was used - refund full amount to account
 				$betRecord->refund_transaction_id = $this->awardBetRefund($betArray['user_id'], $transaction['returnAmount']);
-				Topbetta\LogHelper::l('Paid refund: ' . $transaction['returnAmount'] . ' cents');
+				TopBetta\Helpers\LogHelper::l('Paid refund: ' . $transaction['returnAmount'] . ' cents');
                                 $resultAmount = $transaction['returnAmount'];
 			}
 			$betRecord->refunded_flag = 1;
@@ -480,13 +482,13 @@ class BetResultsController extends \BaseController {
 			$betRecord->result_transaction_id = $this->awardBetWin($betArray['user_id'], $actual_win_amount);
 			
 			$br = print_r($betRecord->result_transaction_id,true);
-			Topbetta\LogHelper::l("BackAPI: BetResults -  Result Trans ID:$br");
+			TopBetta\Helpers\LogHelper::l("BackAPI: BetResults -  Result Trans ID:$br");
 			
 			if ($betArray['bet_freebet_flag'] == 1) {
-				Topbetta\LogHelper::l('BackAPI: BetResults - Paid win: ' . $transaction['returnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
+				TopBetta\Helpers\LogHelper::l('BackAPI: BetResults - Paid win: ' . $transaction['returnAmount'] . ' cents - ' . $betArray['bet_freebet_amount'] . ' cents free credit = ' . $actual_win_amount . ' cents');
 			} else {
-				Topbetta\LogHelper::l('BackAPI: BetResults - Paid win: ' . $transaction['returnAmount'] . ' cents');
-				Topbetta\LogHelper::l("BackAPI: BetResults - Transaction ID for Bet Win record: $betRecord->result_transaction_id");
+				TopBetta\Helpers\LogHelper::l('BackAPI: BetResults - Paid win: ' . $transaction['returnAmount'] . ' cents');
+				TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Transaction ID for Bet Win record: $betRecord->result_transaction_id");
 			}
                         
                         $resultAmount = $actual_win_amount;
@@ -498,15 +500,15 @@ class BetResultsController extends \BaseController {
 	
 		if ($transaction['betOutcome'] == self::TRANSACTION_STATUS_SUBMITTED){
 			$result_status = TopBetta\Models\BetResultStatus::STATUS_UNRESULTED;
-			Topbetta\LogHelper::l('BackAPI: BetResults - Submitted: ' . $transaction['returnAmount'] . ' cents');
+			TopBetta\Helpers\LogHelper::l('BackAPI: BetResults - Submitted: ' . $transaction['returnAmount'] . ' cents');
 			$betRecord->resulted_flag = 0;
 		}
 		
-		Topbetta\LogHelper::l('BackAPI: BetResults - Resulted Bet ID: ' . $betArray['id']);
+		TopBetta\Helpers\LogHelper::l('BackAPI: BetResults - Resulted Bet ID: ' . $betArray['id']);
 		$betRecord->bet_result_status_id = TopBetta\Models\BetResultStatus::getBetResultStatusByName($result_status);
 		
 		$br = print_r($betRecord,true);
-		Topbetta\LogHelper::l("BackAPI: BetResults - Result Status ID: $br");
+		TopBetta\Helpers\LogHelper::l("BackAPI: BetResults - Result Status ID: $br");
 				
 		// change
 		$betRecord->save();

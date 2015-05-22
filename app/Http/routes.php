@@ -198,6 +198,16 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
 	Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
 
+	// From Sports Branch
+	Route::resource('marketordering', 'Admin\MarketOrderingController');
+	Route::resource('basecompetitions', 'Admin\BaseCompetitionController');
+	Route::resource('teams', 'Admin\TeamController');
+	Route::resource('players', 'Admin\PlayerController');
+	Route::resource('competitionregions', 'Admin\CompetitionRegionController');
+	Route::resource('icons', 'Admin\IconController');
+
+
+
 });
 
 
