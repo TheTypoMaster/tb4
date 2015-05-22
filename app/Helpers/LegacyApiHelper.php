@@ -22,11 +22,10 @@ class LegacyApiHelper {
 			switch ($method) {
 				//Handle any special cases
 				case 'doUserLogin' :
-Log::debug('here....');
+
 					//1. get login hash
 					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
 
-					Log::debug('Hash: '. print_r($login_hash,true));
 					//2. perform login
 					$payload[$login_hash['login_hash']] = 1;
 					return $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
@@ -250,7 +249,6 @@ Log::debug('here....');
 	private function curl($method, $type, $payload = array(), $del_cookie = true) {
 
 	    $url = \URL::to('/api/?method=') . $method;
-        //$url = 'http://services.dev/api/?method=' . $method;
 
 		$ch = curl_init();
 		if ($type == 'post') {
@@ -269,7 +267,7 @@ Log::debug('here....');
 
 		$response = curl_exec($ch);
 
-		Log::debug('Legacy Curl Response to URL: '.$url.' - Payload: '. print_r($payload,true));
+		//Log::debug('Legacy Curl Response to URL: '.$url.' - Payload: '. print_r($payload,true));
 		$buffer = json_decode($response, true);
 
 		curl_close($ch);

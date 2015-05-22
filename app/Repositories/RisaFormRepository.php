@@ -18,7 +18,6 @@ class RisaFormRepository extends BaseEloquentRepository {
 
 		$data = array();
 
-		Log::debug('Runner', $runner);
 		$runnersForm = $this->model->with('lastStarts')->where('runner_code', $runner['runner_code'])->first();
 
 		$code = $runner['runner_code'];

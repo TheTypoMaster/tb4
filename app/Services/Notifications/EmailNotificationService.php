@@ -43,7 +43,8 @@ class EmailNotificationService {
 
         );
 
-        Mail::send('topbetta::emails.alert_notification', $data, function($message) use ($emailDetails)
+        Mail::send('
+        emails.alert_notification', $data, function($message) use ($emailDetails)
         {
             $message->from($emailDetails['from_email'], $emailDetails['from_name']);
             $message->to($emailDetails['to_email'], $emailDetails['to_email'])
