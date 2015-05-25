@@ -171,6 +171,9 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
     Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
     Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
 
+    //user tournament bets
+    Route::resource('user.tournament.bets', 'TopBetta\Frontend\Controllers\UserTournamentBetsController');
+
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
 	Route::get('combined/racing', 'FrontCombinedRacing@index');

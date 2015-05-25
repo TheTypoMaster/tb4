@@ -19,11 +19,12 @@ class TournamentBetModel extends Eloquent {
      * Model Relationships
      */
 
-    public function selections(){
-        return $this->hasManyThrough('TopBetta\Models\SelectionModel', 'TopBetta\Models\BetModel', 'selection_id', 'id');
+    public function selections()
+    {
+        return $this->belongsToMany('TopBetta\Models\SelectionModel', 'tbdb_tournament_bet_selection', 'tournament_bet_id', 'selection_id');
     }
 
     public function betselections(){
-        return $this->hasMany('TopBetta\Models\BetSelectionsModel', 'tournament_bet_id', 'id');
+        return $this->hasMany('TopBetta\Models\TournamentBetSelectionModel', 'tournament_bet_id', 'id');
     }
 } 

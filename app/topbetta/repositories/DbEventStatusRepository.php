@@ -20,4 +20,9 @@ class DbEventStatusRepository extends BaseEloquentRepository implements EventSta
     public function getEventStatusList(){
         return $this->model->lists('name', 'id');
     }
+
+    public function getStatusIds($eventStatuses)
+    {
+        return $this->model->whereIn('keyword', $eventStatuses)->lists('id');
+    }
 }
