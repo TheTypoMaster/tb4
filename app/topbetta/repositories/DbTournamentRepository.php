@@ -14,6 +14,8 @@ use TopBetta\Services\Validation\TournamentValidator;
 class DbTournamentRepository extends BaseEloquentRepository implements TournamentRepositoryInterface
 {
 
+    protected $order = array("start_date", "DESC");
+
     protected $model;
 
     public function __construct(TournamentModel $tournaments, TournamentValidator $tournamentValidator){
