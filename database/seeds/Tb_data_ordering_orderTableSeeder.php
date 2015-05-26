@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tb_data_ordering_orderTableSeeder extends Seeder {
 
     public function run()

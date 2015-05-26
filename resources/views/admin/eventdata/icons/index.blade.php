@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
     <div class="row">
@@ -8,16 +8,16 @@
                     <a href="{{route('admin.icons.create', array("q" => $search))}}" class="btn btn-primary">Create <i class="glyphicon glyphicon-plus"></i></a>
                 </h1>
 
-                {{ Form::open(array('method' => 'GET')) }}
+                {!! Form::open(array('method' => 'GET')) !!}
                 <div class="input-group custom-search-form col-lg-4 pull-right">
-                    {{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
+                    {!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
                     <span class="input-group-btn">
         					<button class="btn btn-default" type="button">
                                 <i class="fa fa-search"></i>
                             </button>
         				</span>
                 </div>
-                {{ Form::close() }}
+                {!! Form::close() !!}
             </div>
 
             <table class="table table-striped">
@@ -36,10 +36,10 @@
                         <td>{{ $icon->name }}</td>
                         <td>{{ $icon->iconType->name }}</td>
                         <td>
-                            {{ Form::open(array("class" => "form form-inline", "method" => "DELETE", "route" => array('admin.icons.destroy', $icon->id, 'q' => $search))) }}
+                            {!! Form::open(array("class" => "form form-inline", "method" => "DELETE", "route" => array('admin.icons.destroy', $icon->id, 'q' => $search))) !!}
                                 <a href="{{ route('admin.icons.edit', array($icon->id, 'q' => $search)) }}" class="btn btn-warning btn-small"><i class="glyphicon glyphicon-edit"></i></a>
                                 <button type="submit" class="btn btn-danger btn-small delete-button"><i class="glyphicon glyphicon-remove"></i></button>
-                            {{ Form::close() }}
+                            {!! Form::close() !!}
                         </td>
                     </tr>
                 @endforeach

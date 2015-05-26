@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Frontend\Controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir

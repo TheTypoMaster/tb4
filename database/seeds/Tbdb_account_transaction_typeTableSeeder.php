@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_account_transaction_typeTableSeeder extends Seeder {
 
     public function run()

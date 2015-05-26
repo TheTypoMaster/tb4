@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Controllers\Frontend;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
 use Input;
 use Redirect;
@@ -56,7 +56,7 @@ class MarketOrderingController extends Controller {
 
         $competitions = $this->baseCompetitionRepository->findAll();
 
-        return View::make('admin::eventdata.marketordering.index', compact('marketTypes', 'marketOrdering', 'competitions', 'competitionId'));
+        return View::make('admin.eventdata.marketordering.index', compact('marketTypes', 'marketOrdering', 'competitions', 'competitionId'));
 	}
 
 

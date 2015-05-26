@@ -1,52 +1,44 @@
 @section('main')
-    {{ Form::macro('datetime', function($name, $value) {
-        return "<div class='input-group datepicker'>
-                    <input type='text' class='form-control' name='$name' id='$name' value='$value' readonly/>
-                    <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
-                    </span>
-                </div>";
-    }); }}
 
-
-<div class="row">
+    <div class="row">
     <div class="col-lg-12">
         <h2 class="page-header"> {{ $modelName }} {{ $model ? $model->name : ""}}
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{{ link_to_route($returnRoute, 'Back to Sports', array("q"=>$search), array('class' => 'btn btn-outline btn-warning')) }}</span>
+            <span class='pull-right'>{!! link_to_route($returnRoute, 'Back to Sports', array("q"=>$search), array('class' => 'btn btn-outline btn-warning')) !!}</span>
         </ul>
         <h4>Edit {{ $modelName }}</h4>
         <div class='col-lg-6'>
-            {{ Form::model($model, $formAction) }}
+            {!! Form::model($model, $formAction) !!}
 
             <div class="form-group">
-                {{ Form::label('icon_id', 'Icon:') }}
+                {!! Form::label('icon_id', 'Icon:') !!}
                 <select class="icon-select form-control" name="icon_id">
                     @foreach($icons as $icon)
                         <option value="{{ $icon->id }}" data-icon-url="{{ $icon->icon_url  }}" >{{ $icon->name }}</option>
                     @endforeach
                 </select>
-                <span>{{ link_to_route(Route::currentRouteName(), "More Icons", Route::current()->parameters() + array("all_icons" => true)) }}</span>
+                <span>{!! link_to_route(Route::currentRouteName(), "More Icons", Route::current()->parameters() + array("all_icons" => true)) !!}</span>
             </div>
 
             <div class="form-group">
-                {{ Form::label('name', 'Name:') }}
-                {{ Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}
+                {!! Form::label('name', 'Name:') !!}
+                {!! Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) !!}
             </div>
             <div class="form-group">
-                {{ Form::label('short_name', 'Short Name:') }}
-                {{ Form::text('short_name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}
+                {!! Form::label('short_name', 'Short Name:') !!}
+                {!! Form::text('short_name', null, array('class' => 'form-control', 'placeholder' => 'Name')) !!}
             </div>
             <div class="form-group">
-                {{ Form::label('default_name', 'Default Name:') }}
-                {{ Form::text('default_name', null, array('class' => 'form-control', 'placeholder' => 'Name')) }}
+                {!! Form::label('default_name', 'Default Name:') !!}
+                {!! Form::text('default_name', null, array('class' => 'form-control', 'placeholder' => 'Name')) !!}
             </div>
 
             @if( ! in_array( 'description', $excludedFields ) )
             <div class="form-group">
-                {{ Form::label('description', 'Description:') }}
-                {{ Form::text('description', null, array('class' => 'form-control', 'placeholder' => 'Description')) }}
+                {!! Form::label('description', 'Description:') !!}
+                {!! Form::text('description', null, array('class' => 'form-control', 'placeholder' => 'Description')) !!}
             </div>
             @endif
 
@@ -54,16 +46,16 @@
                 <label>Display: </label>
 
                 <label class="radio-inline">
-                    {{Form::radio('display_flag', 0)}} No
+                    {!! Form::radio('display_flag', 0) !!} No
                 </label>
                 <label class="radio-inline">
-                    {{Form::radio('display_flag', 1)}} Yes
+                    {!! Form::radio('display_flag', 1) !!} Yes
                 </label>
             </div>
 
             @foreach($extraFields as $header=>$field)
                 <div class="form-group">
-                    {{ Form::label($field['field'], $header) }}
+                    {!! Form::label($field['field'], $header) !!}
                     @if($field['type'] == 'icon-select')
                         <select name="{{ $field['field'] }}" class="icon-select form-control" >
                             @foreach($field['icons'] as $icon)
@@ -71,7 +63,7 @@
                             @endforeach
                         </select>
                     @elseif($field['type'] == 'datetime')
-                        {{ Form::datetime($field['field'], object_get($model, $field['field'])) }}
+                        {!! Form::datetime($field['field'], null, object_get($model, $field['field'])) !!}
                     @elseif($field['type'] == 'select')
                         <select name="{{ $field['field'] }}" class="form-control select2">
                             @foreach($field['data'] as $option)
@@ -85,7 +77,7 @@
                             @endforeach
                         </select>
                     @else
-                        {{ Form::text($field['field'], null,  array('class' => 'form-control', 'placeholder' => $header)) }}
+                        {!! Form::text($field['field'], null,  array('class' => 'form-control', 'placeholder' => $header)) !!}
                     @endif
                 </div>
             @endforeach
@@ -93,9 +85,9 @@
 
         <div class="col-lg-12">
             <div class="form-group">
-                {{ Form::submit('Save', array('class' => 'btn btn-info')) }}
+                {!! Form::submit('Save', array('class' => 'btn btn-info')) !!}
             </div>
-            {{ Form::close() }}
+            {!! Form::close() !!}
         </div>
         @if ($errors->any())
         <ul>

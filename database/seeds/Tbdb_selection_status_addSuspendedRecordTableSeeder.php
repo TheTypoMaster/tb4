@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_selection_status_addSuspendedRecordTableSeeder extends Seeder {
 
     public function run()

@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Database\Seeder;
+
 class Tb_api_usersTableSeeder extends Seeder {
 	public function run() {
 		// wipe the table clean before populating

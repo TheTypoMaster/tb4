@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Controllers\Frontend;
+<?php namespace TopBetta\Http\Controllers\Admin;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -32,11 +32,11 @@ class BaseCompetitionController extends CrudResourceController
 
     protected $deleteRoute = 'admin.basecompetitions.destroy';
 
-    protected $indexView = 'admin::eventdata.basecompetitions.index';
+    protected $indexView = 'admin.eventdata.basecompetitions.index';
 
-    protected $createView = 'admin::eventdata.basecompetitions.create';
+    protected $createView = 'admin.eventdata.basecompetitions.create';
 
-    protected $editView = 'admin::eventdata.basecompetitions.edit';
+    protected $editView = 'admin.eventdata.basecompetitions.edit';
 
     private $sportRepository;
 

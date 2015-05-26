@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_bet_limit_add_sports_limitTableSeeder extends Seeder
 {
 

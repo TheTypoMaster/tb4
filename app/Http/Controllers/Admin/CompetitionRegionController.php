@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Controllers\Frontend;
+<?php namespace TopBetta\Http\Controllers\Admin;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -28,10 +28,10 @@ class CompetitionRegionController extends CrudResourceController {
 
     protected $deleteRoute = 'admin.competitionregions.destroy';
 
-    protected $indexView = 'admin::eventdata.regions.index';
+    protected $indexView = 'admin.eventdata.regions.index';
 
-    protected $createView = 'admin::eventdata.regions.create';
+    protected $createView = 'admin.eventdata.regions.create';
 
-    protected $editView = 'admin::eventdata.regions.edit';
+    protected $editView = 'admin.eventdata.regions.edit';
     
 }

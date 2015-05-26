@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Controllers\Frontend;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\IconRepositoryInterface;
@@ -43,7 +43,7 @@ class IconController extends Controller {
             $icons = $this->iconRepository->findAllPaginated();
         }
 
-        return View::make('admin::eventdata.icons.index', compact('icons', 'search'));
+        return View::make('admin.eventdata.icons.index', compact('icons', 'search'));
 	}
 
 
@@ -58,7 +58,7 @@ class IconController extends Controller {
         //get the icon types
         $iconTypes = $this->iconTypeRepository->findAll();
 
-        return View::make('admin::eventdata.icons.create', compact('iconTypes', 'search'));
+        return View::make('admin.eventdata.icons.create', compact('iconTypes', 'search'));
 	}
 
 
@@ -120,7 +120,7 @@ class IconController extends Controller {
 
         $iconTypes = $this->iconTypeRepository->findAll();
 
-        return View::make('admin::eventdata.icons.edit', compact('icon', 'iconTypes', 'search'));
+        return View::make('admin.eventdata.icons.edit', compact('icon', 'iconTypes', 'search'));
 	}
 
 

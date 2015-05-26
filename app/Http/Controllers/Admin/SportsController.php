@@ -28,11 +28,11 @@ class SportsController extends CrudResourceController
 
     protected $deleteRoute = 'admin.sports.destroy';
 
-    protected $indexView = 'admin::eventdata.sports.index';
+    protected $indexView = 'admin.eventdata.sports.index';
 
-    protected $createView = 'admin::eventdata.sports.create';
+    protected $createView = 'admin.eventdata.sports.create';
 
-    protected $editView = 'admin::eventdata.sports.edit';
+    protected $editView = 'admin.eventdata.sports.edit';
 
     /**
      * Display a listing of the resource.

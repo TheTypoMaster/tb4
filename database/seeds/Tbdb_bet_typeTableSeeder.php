@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_bet_typeTableSeeder extends Seeder
 {
 

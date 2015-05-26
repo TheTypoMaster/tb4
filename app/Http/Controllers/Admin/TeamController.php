@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Controllers\Frontend;
+<?php namespace TopBetta\Http\Controllers\Admin;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -28,11 +28,11 @@ class TeamController extends CrudResourceController {
 
     protected $deleteRoute = 'admin.teams.destroy';
 
-    protected $indexView = 'admin::eventdata.teams.index';
+    protected $indexView = 'admin.eventdata.teams.index';
 
-    protected $createView = 'admin::eventdata.teams.create';
+    protected $createView = 'admin.eventdata.teams.create';
 
-    protected $editView = 'admin::eventdata.teams.edit';
+    protected $editView = 'admin.eventdata.teams.edit';
 
 
 }

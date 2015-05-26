@@ -36,11 +36,11 @@ class CompetitionsController extends CrudResourceController
 
     protected $deleteRoute = 'admin.competitions.destroy';
 
-    protected $indexView = 'admin::eventdata.competitions.index';
+    protected $indexView = 'admin.eventdata.competitions.index';
 
-    protected $createView = 'admin::eventdata.competitions.create';
+    protected $createView = 'admin.eventdata.competitions.create';
 
-    protected $editView = 'admin::eventdata.competitions.edit';
+    protected $editView = 'admin.eventdata.competitions.edit';
 
     private $baseCompetitionRepository;
 

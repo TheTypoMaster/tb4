@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tb_product_defaultTableSeeder extends Seeder {
 
     public function run()

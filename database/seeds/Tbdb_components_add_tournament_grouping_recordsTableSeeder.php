@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_components_add_tournament_grouping_recordsTableSeeder extends Seeder {
 
     public function run()

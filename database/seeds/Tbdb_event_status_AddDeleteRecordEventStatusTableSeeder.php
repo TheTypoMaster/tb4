@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_event_status_AddDeleteRecordEventStatusTableSeeder extends Seeder {
 
     public function run()

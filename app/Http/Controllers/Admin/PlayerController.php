@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Http\Controllers\Frontend;
+<?php namespace TopBetta\Http\Controllers\Admin;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -30,11 +30,11 @@ class PlayerController extends CrudResourceController {
 
     protected $deleteRoute = 'admin.players.destroy';
 
-    protected $indexView = 'admin::eventdata.players.index';
+    protected $indexView = 'admin.eventdata.players.index';
 
-    protected $createView = 'admin::eventdata.players.create';
+    protected $createView = 'admin.eventdata.players.create';
 
-    protected $editView = 'admin::eventdata.players.edit';
+    protected $editView = 'admin.eventdata.players.edit';
 
     protected $excludedFields = array('description');
 

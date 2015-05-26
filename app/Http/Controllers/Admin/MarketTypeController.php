@@ -30,11 +30,11 @@ class MarketTypeController extends CrudResourceController {
 
     protected $deleteRoute = 'admin.markettypes.destroy';
 
-    protected $indexView = 'admin::eventdata.markettypes.index';
+    protected $indexView = 'admin.eventdata.markettypes.index';
 
-    protected $createView = 'admin::eventdata.markettypes.create';
+    protected $createView = 'admin.eventdata.markettypes.create';
 
-    protected $editView = 'admin::eventdata.markettypes.edit';
+    protected $editView = 'admin.eventdata.markettypes.edit';
 
     public function index($relations = array(), $extraData = array())
     {

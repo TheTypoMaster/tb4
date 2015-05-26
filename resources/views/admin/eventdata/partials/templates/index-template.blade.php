@@ -2,20 +2,20 @@
     <div class="col-lg-12">
         <div class="row page-header">
             <h2 class="col-lg-4">
-                {{ $modelName }} <small>({{ number_format($modelCollection->getTotal()) }})</small>
+                {{ $modelName }} <small>({{ number_format($modelCollection->total()) }})</small>
                 <a href="{{route($createRoute, array("q" => $search))}}" class="btn btn-primary">Create <i class="glyphicon glyphicon-plus"></i></a>
             </h2>
 
-            {{ Form::open(array('method' => 'GET')) }}
+            {!! Form::open(array('method' => 'GET')) !!}
             <div class="input-group custom-search-form col-lg-4 pull-right">
-                {{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
+                {!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button">
                         <i class="fa fa-search"></i>
                     </button>
                 </span>
             </div>
-            {{ Form::close() }}
+            {!! Form::close() !!}
         </div>
 
         @if (count($modelCollection))
@@ -70,15 +70,15 @@
                         <td>
                             <a href="{{ URL::route($editRoute, array($model->id, "q" => $search)) }}" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
 
-                            {{Form::open(array("method" => "DELETE", "route"=>array($deleteRoute, $model->id)))}}
+                            {!! Form::open(array("method" => "DELETE", "route"=>array($deleteRoute, $model->id))) !!}
                                 <button type="submit" class="btn btn-danger delete-button"><i class="glyphicon glyphicon-remove"></i></button>
-                            {{Form::close()}}
+                            {!! Form::close() !!}
                         </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
-            {{ $modelCollection->appends(array('q' => $search))->links() }}
+            {{ $modelCollection->appends(array('q' => $search))->render() }}
         @else
             <p>There is nothing to display</p>
         @endif
