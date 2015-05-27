@@ -40,7 +40,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->where('tbdb_tournament_ticket.tournament_id', $tournament)
             ->whereIn('tbdb_event.event_status_id', $eventStatuses)
             ->groupBy('tbdb_tournament_bet.id')
-            ->with('selections', 'selections.market.event', 'selections.result', 'selections.price')
+            ->with('selections', 'selections.market.event.competition.sport', 'selections.result', 'selections.price')
             ->get(array("tbdb_tournament_bet.*"));
     }
 
