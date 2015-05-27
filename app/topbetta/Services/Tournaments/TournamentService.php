@@ -111,6 +111,8 @@ class TournamentService {
                 $tournamentData['rebuy_buyin'] = $buyin->buy_in * 100;
                 $tournamentData['rebuy_entry'] = $buyin->entry_fee * 100;
             }
+
+            $tournamentData['rebuy_currency'] = $tournamentData['rebuy_currency'] * 100;
         }
 
         //topup data
@@ -121,6 +123,8 @@ class TournamentService {
                 $tournamentData['topup_buyin'] = $buyin->buy_in * 100;
                 $tournamentData['topup_entry'] = $buyin->entry_fee * 100;
             }
+
+            $tournamentData['topup_currency'] = $tournamentData['topup_currency'] * 100;
         }
 
         $tournament = $this->tournamentRepository->create(array_except($tournamentData, array(
