@@ -7,7 +7,7 @@
             <h2>User Activity</h2>
         </div>
 
-        {{ Form::open(array('url' => 'admin/user-activity/download', 'method' => "GET")) }}
+        {{ Form::open(array('url' => 'admin/user-activity/download', 'method' => "POST", "files" => true)) }}
 
         <div class="form-group">
             {{ Form::label("users", "Users CSV: ") }}

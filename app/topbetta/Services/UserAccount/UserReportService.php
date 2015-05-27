@@ -26,12 +26,12 @@ class UserReportService {
         $this->activityService = $activityService;
     }
 
-    public function userTransactionHistoryByNameDOB($user)
+    public function userTransactionHistoryByNameDOB($firstName, $lastName, $dob)
     {
         $data = null;
 
         //get the user
-        $user = $this->userAccountService->findUserByNameAndDob($user['first_name'], $user['last_name'], $user['dob']);
+        $user = $this->userAccountService->findUserByNameAndDob($firstName, $lastName, $dob);
 
         //user exists so get transaction history
         if( $user ) {

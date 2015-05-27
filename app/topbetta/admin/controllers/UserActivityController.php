@@ -41,17 +41,12 @@ class UserActivityController extends \BaseController {
 
         $users = Input::file('users');
 
-        if( $users->getExtension() != "csv" ) {
-            return Redirect::route('admin.user-activity.index')
-                ->with(array('flash_message' => "Invalid file format. File must be CSV"));
-        }
-
         //get the activity data
         $data = array();
         $users = $users->openFile();
         while( $record = $users->fgetcsv() ) {
-            if ( $userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record) ) {
-                $data[] = $userHistory;
+            if ( $userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record[0], $record[1], $record[2]) ) {
+                $data = array_merge($data, $userHistory);
             }
         }
 
