@@ -26,17 +26,16 @@ class UserReportService {
         $this->activityService = $activityService;
     }
 
-    public function userTransactionHistoryByNameDOB($users)
+    public function userTransactionHistoryByNameDOB($user)
     {
-        $data = array();
-        foreach($users as $name) {
-            //get the user
-            $user = $this->userAccountService->findUserByNameAndDob($name['first_name'], $name['last_name'], $name['dob']);
+        $data = null;
 
-            //user exists so get transaction history
-            if( $user ) {
-                $data = array_merge($data, $this->activityService->userTransactionHistory($user));
-            }
+        //get the user
+        $user = $this->userAccountService->findUserByNameAndDob($user['first_name'], $user['last_name'], $user['dob']);
+
+        //user exists so get transaction history
+        if( $user ) {
+            $data = $this->activityService->userTransactionHistory($user);
         }
 
         return $data;

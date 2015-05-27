@@ -2,6 +2,7 @@
 
 namespace TopBetta\admin\controllers;
 
+use Redirect;
 use Response;
 use Input;
 use File;
@@ -33,16 +34,26 @@ class UserActivityController extends \BaseController {
 
     public function downloadUserActivity()
     {
-        $users = Input::get('users', '');
+        if( ! Input::hasFile('users') ) {
+            return Redirect::route('admin.user-activity.index')
+                ->with(array('flash_message' => "No file uploaded"));
+        }
 
-        $users = array_map(function($v){
-            return array_map('trim', array_combine(array('first_name', 'last_name', 'dob'), explode(',', $v)));
-        }, explode(PHP_EOL, $users));
+        $users = Input::file('users');
 
+        if( $users->getExtension() != "csv" ) {
+            return Redirect::route('admin.user-activity.index')
+                ->with(array('flash_message' => "Invalid file format. File must be CSV"));
+        }
 
-        dd($users);
         //get the activity data
-        $data = $this->userReportService->userTransactionHistoryByNameDOB($users);
+        $data = array();
+        $users = $users->openFile();
+        while( $record = $users->fgetcsv() ) {
+            if ( $userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record) ) {
+                $data[] = $userHistory;
+            }
+        }
 
         $filename = '/tmp/user-activity-' . Carbon::now()->timestamp . '.csv';
         $csv = fopen($filename, 'w');

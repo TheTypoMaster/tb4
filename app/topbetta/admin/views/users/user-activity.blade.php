@@ -10,8 +10,8 @@
         {{ Form::open(array('url' => 'admin/user-activity/download', 'method' => "GET")) }}
 
         <div class="form-group">
-            {{ Form::label("users", "Users: ") }}
-            {{ Form::textarea("users", null, array("class" => "form-control")) }}
+            {{ Form::label("users", "Users CSV: ") }}
+            {{ Form::file("users") }}
         </div>
 
         <div class="form-group">
