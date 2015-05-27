@@ -36,9 +36,11 @@ class UserActivityController extends \BaseController {
         $users = Input::get('users', '');
 
         $users = array_map(function($v){
-            return array_combine(array('first_name', 'last_name', 'dob'), explode(' ', $v));
+            return array_map('trim', array_combine(array('first_name', 'last_name', 'dob'), explode(',', $v)));
         }, explode(PHP_EOL, $users));
 
+
+        dd($users);
         //get the activity data
         $data = $this->userReportService->userTransactionHistoryByNameDOB($users);
 
