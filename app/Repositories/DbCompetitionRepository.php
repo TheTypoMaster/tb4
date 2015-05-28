@@ -90,11 +90,11 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $this->model->where('external_event_group_id', $externalId)->first();
     }
 
+
     public function findByName($name)
     {
         return $this->model->where('name', $name)->first();
     }
-
 
     public function competitionFeed($input){
 
