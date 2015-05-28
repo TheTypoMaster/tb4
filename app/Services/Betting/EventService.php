@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta\Services\Betting;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -6,13 +6,17 @@
  * Time: 11:15 AM
  */
 
-namespace TopBetta\Services\Betting;
-
-
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 
 class EventService {
+
+    private static $eventClosedStatuses = array(
+        EventStatusRepositoryInterface::STATUS_INTERIM,
+        EventStatusRepositoryInterface::STATUS_PAID,
+        EventStatusRepositoryInterface::STATUS_PAYING,
+        EventStatusRepositoryInterface::STATUS_CLOSED,
+    );
 
     /**
      * @var EventStatusRepositoryInterface
@@ -61,5 +65,10 @@ class EventService {
     public function isEventInterim($event)
     {
         return $event->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM;
+    }
+
+    public function getClosedEventStatusIds()
+    {
+        return $this->eventStatusRepository->getStatusIds(self::$eventClosedStatuses);
     }
 }

@@ -1,12 +1,10 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
-namespace TopBetta\Frontend\Controllers;
-
-
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Tournaments\TournamentBetService;
 
-class UserTournamentBetsController extends \BaseController {
+class UserTournamentBetsController extends Controller {
 
 
     /**
