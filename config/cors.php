@@ -31,6 +31,7 @@ return array(
 				"https://www.topbetta.com.au", // Production Website
                 "https://services.topbetta.com.au", // Production API
                 "http://tb4test.mugbookie.com", // Test website
+                "http://testwww1.mugbookie.com", // Test website
                 "http://testing1.mugbookie.com", // Test API
                 "http://beta.mugbookie.com",
                 "http://jason.mugbookie.com",
