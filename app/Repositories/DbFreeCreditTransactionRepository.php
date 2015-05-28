@@ -10,7 +10,7 @@ namespace TopBetta\Repositories;
 
 use DB;
 use Carbon\Carbon;
-use TopBetta\models\FreeCreditTransactionModel;
+use TopBetta\Models\FreeCreditTransactionModel;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 
 class DbFreeCreditTransactionRepository extends BaseEloquentRepository implements FreeCreditTransactionRepositoryInterface {

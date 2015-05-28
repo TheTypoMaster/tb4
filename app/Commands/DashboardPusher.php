@@ -11,7 +11,7 @@ use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface as FreeTransactionType;
 use TopBetta\Models\BetModel;
-use TopBetta\models\FreeCreditTransactionModel;
+use TopBetta\Models\FreeCreditTransactionModel;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface;
 
 class DashboardPusher extends Command {
