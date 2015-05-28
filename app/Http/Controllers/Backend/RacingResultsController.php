@@ -9,7 +9,7 @@
 use TopBetta\Http\Controllers\Controller;
 use Input;
 use Response;
-use TopBetta\api\backend\Racing\RaceResulting;
+use TopBetta\Services\Feeds\Racing\RaceResulting;
 
 class RacingResultsController extends Controller {
     protected $results;
