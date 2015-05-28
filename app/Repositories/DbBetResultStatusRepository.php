@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories;
 
 
-use TopBetta\BetResultStatus;
+use TopBetta\Models\BetResultStatus;
 use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 
 class DbBetResultStatusRepository extends BaseEloquentRepository implements BetResultStatusRepositoryInterface
