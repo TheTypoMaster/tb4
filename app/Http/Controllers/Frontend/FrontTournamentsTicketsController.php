@@ -2,6 +2,7 @@
 
 use TopBetta\Http\Controllers\Controller;
 
+use Auth;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Tournaments\TournamentBuyInService;
@@ -457,6 +458,10 @@ class FrontTournamentsTicketsController extends Controller {
     public function rebuy($ticketId)
     {
         try{
+            if( ! $this->tournamentService->ticketBelongsToUser($ticketId, Auth::user()->id) ) {
+                return array("success" => false, 'error' => "Tournament ticket does not belong to current user");
+            }
+
             $this->tournamentService->rebuyIntoTournament($ticketId);
         } catch (TournamentBuyInException $e) {
             return array('success' => false, 'error' => $e->getMessage());
@@ -470,6 +475,10 @@ class FrontTournamentsTicketsController extends Controller {
     public function topup($ticketId)
     {
         try{
+            if( ! $this->tournamentService->ticketBelongsToUser($ticketId, Auth::user()->id) ) {
+                return array("success" => false, 'error' => "Tournament ticket does not belong to current user");
+            }
+
             $this->tournamentService->topupTournament($ticketId);
         } catch (TournamentBuyInException $e) {
             return array('success' => false, 'error' => $e->getMessage());

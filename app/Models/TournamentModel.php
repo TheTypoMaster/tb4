@@ -8,17 +8,6 @@ class TournamentModel extends Eloquent {
     public static $rules = array();
     protected $table = 'tbdb_tournament';
 
-
-    public function setRebuyCurrencyAttribute($value)
-    {
-        $this->attributes['rebuy_currency'] = $value * 100;
-    }
-
-    public function setTopUpCurrencyAttribute($value)
-    {
-        $this->attributes['topup_currency'] = $value * 100;
-    }
-
 	/*
 	 * Model relationships
 	 */
