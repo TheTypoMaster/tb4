@@ -197,8 +197,8 @@ class FrontTournamentsController extends Controller {
 		}
 
 		// >>>>>>>>>>>>>>>>>> START TEMP ATP
-		$affiliateId = 'G01';
-		$campaignId = 'ATP2';
+//		$affiliateId = 'G01';
+//		$campaignId = 'ATP2';
 		
 		/*
 		$atpTournaments = array(
@@ -226,13 +226,13 @@ class FrontTournamentsController extends Controller {
 		echo serialize($atpTournaments);exit;
 		/*/
 
-		//$atpTournaments = \TopBetta\Models\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+//		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
 //		if ($atpTournaments) {
 //			$atpTournaments = unserialize($atpTournaments);
 //		} else {
 //			$atpTournaments = array();
 //		}
-//		// <<<<<<<<<<<<<<<<< END TEMP ATP
+		// <<<<<<<<<<<<<<<<< END TEMP ATP
 
 		$meetingId = NULL;
 		$eachMeeting = array();
@@ -264,7 +264,6 @@ class FrontTournamentsController extends Controller {
 				$meetingId = $tournament -> event_group_id;
 				
 				$nextEventStartTime = \TopBetta\Models\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
-                $nextEventStartTime = \TopBetta\Models\Tournament::getNextEventStartTimeForEventGroupId($meetingId);
                 ($nextEventStartTime) ? $nextEventStartTime = \TopBetta\Helpers\TimeHelper::isoDate($nextEventStartTime) : $nextEventStartTime = \TopBetta\Helpers\TimeHelper::isoDate($tournament->start_date);
                 // $nextEventStartTime = \TopBetta\Helpers\TimeHelper::isoDate($nextEventStartTime);
 

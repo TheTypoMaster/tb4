@@ -22,6 +22,10 @@ class UserModel extends Eloquent implements AuthenticatableContract, CanResetPas
     protected $guarded = array();
     protected $hidden = array('password', 'remember_token');
 
+	/*
+	 * Relationships
+	 */
+
     public function topbettauser() {
         return $this->hasOne('TopBetta\Models\TopBettaUserModel', 'user_id');
     }
@@ -29,6 +33,26 @@ class UserModel extends Eloquent implements AuthenticatableContract, CanResetPas
     public function accountTransactions() {
         return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id');
     }
+
+	public function affiliate()
+	{
+		return $this->belongsTo('TopBetta\Models\AffiliatesModel', 'user_affiliate_id', 'affiliate_id');
+	}
+
+	public function campaigns()
+	{
+		return $this->belongsToMany('TopBetta\Models\CampaignModel', 'tb_campaign_users', 'campaign_id', 'user_id');
+	}
+
+	public function promotions()
+	{
+		return $this->belongsToMany('TopBetta\Models\PromotionsModel', 'tb_promotios_users', 'user_id', 'promotion_id');
+	}
+
+	public function accountBalance()
+	{
+		return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
+	}
 
     public function depositLimit() {
         return $this->hasOne('TopBetta\Models\UserDepositLimitModel', 'user_id');
@@ -101,8 +125,12 @@ class UserModel extends Eloquent implements AuthenticatableContract, CanResetPas
     {
         return $this->hasMany('TopBetta\Models\FreeCreditTransactionModel', 'recipient_id');
     }
-
-
+    
+	/**
+	 * @param $relationship
+	 * @param $closure
+	 * @return mixed
+	 */
     public function whereNotInRelationship($relationship, $closure)
     {
         $relationship = $this->$relationship();
