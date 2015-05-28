@@ -206,6 +206,10 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('competitionregions', 'Admin\CompetitionRegionController');
 	Route::resource('icons', 'Admin\IconController');
 
+	//user activity
+	Route::post('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
+	Route::resource('user-activity', 'Admin\UserActivityController');
+
 
 
 });
