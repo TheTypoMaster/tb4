@@ -48,11 +48,16 @@ class UserActivityController extends \BaseController {
         $users = $users->openFile();
         while( $record = $users->fgetcsv() ) {
             try {
+                if( count($record) < 3 ) {
+                    throw new InvalidFormatException($record, "Record could not be processed");
+                }
                 if ($userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record[0], $record[1], $record[2])) {
                     $data = array_merge($data, $userHistory);
                 }
             } catch (InvalidFormatException $e) {
-                $invalidData[] = implode(', ', $e->getData()) . ' - ' . $e->getMessage();
+                if( implode(', ', $e->getData()) != '') {
+                    $invalidData[] = implode(', ', $e->getData()) . ' - ' . $e->getMessage();
+                }
             }
         }
 
