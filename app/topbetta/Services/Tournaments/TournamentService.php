@@ -110,10 +110,6 @@ class TournamentService {
 
     public function createTournament($tournamentData)
     {
-        //get tournament name and desc
-        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
-        $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
-
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
@@ -179,6 +175,10 @@ class TournamentService {
             }
         }
 
+        //get tournament name and desc
+        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
+        $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
+
         $tournament = $this->tournamentRepository->create(array_except($tournamentData, array(
             'tournament_buyin_id',
             'tournament_topup_buyin_id',
@@ -211,7 +211,6 @@ class TournamentService {
         $reinvest_winnings_flag = array_get($tournamentData, 'reinvest_winnings_flag', 0);
         $closed_betting_on_first_match_flag = array_get($tournamentData, 'closed_betting_on_first_match_flag', 0);
         $tournament_sponsor_name = array_get($tournamentData, 'tournament_sponsor_name', null);
-
 
         $buyin_amount				= number_format(array_get($tournamentData, 'buy_in', 0)/100, 2);
         $minimum_prize_pool_amount	= number_format($minimum_prize_pool, 2);

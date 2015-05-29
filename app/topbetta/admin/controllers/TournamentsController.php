@@ -207,6 +207,7 @@ class TournamentsController extends \BaseController
         } catch (ValidationException $e) {
             return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getErrors()))->withInput();
         } catch (\Exception $e) {
+            \Log::info($e->getTraceAsString());
             return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getMessage()))->withInput();
         }
 
@@ -232,7 +233,43 @@ class TournamentsController extends \BaseController
 	 */
 	public function edit($id)
 	{
-		//
+        $tournament = $this->tournamentRepo->find($id);
+
+        $sports = array("Select Sport") + $this->sportsrepo->selectList();
+
+        //get tournament comps
+        $competitions = array("Select Competition");
+        $competitionsCollection = $this->tournamentCompetiitonRepository->getBySport($tournament->sport->id);
+        if($competitionsCollection) {
+            $competitions += $competitionsCollection->lists('name', 'id');
+        }
+
+        //get event groups
+        $eventGroups = array("Select Event Group");
+        $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($tournament->eventGroup->id);
+        if($eventGroupsCollection) {
+            $eventGroups += $eventGroupsCollection->lists('name', 'id');
+        }
+        $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name);
+
+
+        //get the buyins
+        $buyins = array("Select Ticket Value");
+
+        foreach($this->buyInRepository->findAll() as $buyin) {
+            $buyins[$buyin->id] = $buyin->buy_in . ' + ' . $buyin->entry_fee;
+        }
+
+        //get tod venues
+        $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword');
+
+        //get tournament labels
+        $labels = $this->labelsRepository->findAll()->lists('label', 'id');
+
+        //get prize formats
+        $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
+
+        return View::make('admin::tournaments.edit', compact('tournament', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
 
 	/**
@@ -350,12 +387,16 @@ class TournamentsController extends \BaseController
         $sport = $this->sportsrepo->find($sportId);
 
         if ($sport->racing_flag) {
-            $tournaments = $this->tournamentRepo->findCurrentTournamentsByType('racing');
+            $tournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
         } else {
-            $tournaments = $this->tournamentRepo->findCurrentTournamentsByType('sport');
+            $tournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
         }
 
-        return $this->formatForResponse(array("Select tournament") + $tournaments->lists('name', 'id'));
+        $tournaments = $tournaments->map(function($value){
+            return array("id" => $value->id, "name" => $value->name . ' - ' . $value->start_date);
+        });
+
+        return $this->formatForResponse(array(-1 => "Select tournament") + $tournaments->lists('name', 'id'));
 
     }
 
