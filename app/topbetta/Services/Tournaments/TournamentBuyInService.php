@@ -160,6 +160,10 @@ class TournamentBuyInService
         //create history record
         $this->createRebuyHistoryRecord($ticketId, $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
 
+        //increment rebuys
+        $ticket->rebuy_count += 1;
+        $ticket->save();
+
         //add funds to leaderboard currency
         return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->rebuy_currency);
     }
@@ -196,6 +200,10 @@ class TournamentBuyInService
 
         //create history record
         $this->createTopupHistoryRecord($ticketId, $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        //increment rebuys
+        $ticket->topup_count += 1;
+        $ticket->save();
 
         //add funds to leaderboard currency
         return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->topup_currency);
