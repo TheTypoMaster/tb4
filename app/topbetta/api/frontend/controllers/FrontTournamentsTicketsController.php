@@ -181,7 +181,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                 'rebuy_entry' => $tournament->rebuy_entry,
                 'rebuy_buyin' => $tournament->rebuy_buyin,
                 'rebuy_end' => $tournament->rebuy_end,
-                'ticket_rebuys' => $this->tournamentService->getTotalRebuysForTicket($myTicketID[0]->id),
+                'ticket_rebuys' => $myTicketID[0]->rebuy_count,
 
                 //topup info
                 'tournament_topups' => $tournament->topups,
@@ -190,7 +190,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                 'topup_buyin' => $tournament->topup_buyin,
                 'topup_end_date' => $tournament->topup_end_date,
                 'topup_start_date' => $tournament->topup_start_date,
-                'ticket_topups' => $this->tournamentService->getTotalTopupsForTicket($myTicketID[0]->id),
+                'ticket_topups' => $myTicketID[0]->topup_count,
 
 			));
 
@@ -229,7 +229,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                  'rebuy_entry' => $tournament->rebuy_entry,
                  'rebuy_buyin' => $tournament->rebuy_buyin,
                  'rebuy_end' => $tournament->rebuy_end,
-                 'ticket_rebuys' => $this->tournamentService->getTotalRebuysForTicket($activeTicket->id),
+                 'ticket_rebuys' => $activeTicket->rebuy_count,
 
                 //topup info
                  'topups' => $tournament->topups,
@@ -238,7 +238,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                  'topup_buyin' => $tournament->topup_buyin,
                  'topup_end_date' => $tournament->topup_end_date,
                  'topup_start_date' => $tournament->topup_start_date,
-                 'ticket_topups' => $this->tournamentService->getTotalTopupsForTicket($activeTicket->id),
+                 'ticket_topups' => $activeTicket->topup_count,
             );
 
 		}
@@ -287,7 +287,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                  'rebuy_entry' => $tournament->rebuy_entry,
                  'rebuy_buyin' => $tournament->rebuy_buyin,
                  'rebuy_end' => $tournament->rebuy_end,
-                 'ticket_rebuys' => $this->tournamentService->getTotalRebuysForTicket($recentTicket->id),
+                 'ticket_rebuys' => $recentTicket->rebuy_count,
 
                 //topup info
                  'topups' => $tournament->topups,
@@ -296,7 +296,7 @@ class FrontTournamentsTicketsController extends \BaseController {
                  'topup_buyin' => $tournament->topup_buyin,
                  'topup_end_date' => $tournament->topup_end_date,
                  'topup_start_date' => $tournament->topup_start_date,
-                 'ticket_topups' => $this->tournamentService->getTotalTopupsForTicket($recentTicket->id),
+                 'ticket_topups' => $recentTicket->topup_count,
             );
 
 		}
