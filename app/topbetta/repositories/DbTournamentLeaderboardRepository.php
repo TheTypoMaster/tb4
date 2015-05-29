@@ -64,6 +64,11 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
         return $tournamentLeaderboard;
     }
 
+    public function getAllLeaderboardRecordsForTournament($tournament)
+    {
+        return $this->model->where('tournament_id', '=', $tournament)->orderBy('currency', 'DESC')->with('tournament')->get();
+    }
+
     public function getLeaderboardRecordForUserInTournament($userId, $tournamentId){
         return $this->model->where('user_id', $userId)
                             ->where('tournament_id', $tournamentId)
@@ -85,37 +90,39 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
 
     public function getLeaderBoardPositionForUser($userId, $tournamentId, $qualified = true)
     {
-        if( $qualified ) {
-            //make sure user has qualified
 
-            $leaderboardRecord = $this->model
-                ->where('user_id', $userId)
-                ->where('tournament_id', $tournamentId)
-                ->whereHas('tournament', function($q) {
-                    $q->where('turned_over', '>=', DB::raw('start_currency'));
-                })
-                ->first();
 
-            if( !  $leaderboardRecord ) {
-                return 0;
-            }
+        $leaderboardRecord = $this->model
+            ->where('user_id', $userId)
+            ->where('tournament_id', $tournamentId)
+            ->where('qualified', true)
+            ->first();
+
+        if( !  $leaderboardRecord ) {
+            return 0;
         }
+
 
         //get the position
         $position = $this->model
-            ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_leaderboard.tournament_id')
             ->where('tournament_id', $tournamentId)
-            ->where('currency', '>', function($q) use ($userId, $tournamentId) {
-                $q->from('tbdb_tournament_leaderboard')
-                    ->where('user_id', $userId)
-                    ->where('tournament_id', $tournamentId)
-                    ->select('currency');
-            });
+            ->where('qualified', true)
+            ->where('turned_over', '>=', \DB::raw('balance_to_turnover'))
+            ->count();
 
-        if( $position ) {
-            $position->where('turned_over', '>=', 'start_currency');
+        return $position + 1;
+    }
+
+    public function getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified = true)
+    {
+        $model  = $this->model
+            ->where('tournament_id', $tournamentId)
+            ->where('currency', '>', $currency);
+
+        if( $onlyQualified ) {
+            $model->where('turned_over', '>=', \DB::raw('balance_to_turnover'));
         }
 
-        return $position->count() + 1;
+        return $model->get();
     }
 }

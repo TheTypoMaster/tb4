@@ -473,7 +473,7 @@ class FrontTournamentsController extends \BaseController {
 		}
 
 		//get prize pool in cents & places paid
-
+        \Cache::forget("tournament-$tournamentId-prizepool");
         $prizePool = \Cache::remember("tournament-$tournamentId-prizepool", 5, function() use ($tournamentModel, $tournamentId) {
             return $tournamentModel -> calculateTournamentPrizePool($tournamentId);
         });
