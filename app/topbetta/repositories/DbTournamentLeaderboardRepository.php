@@ -107,7 +107,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
         $position = $this->model
             ->where('tournament_id', $tournamentId)
             ->where('qualified', true)
-            ->where('turned_over', '>=', \DB::raw('balance_to_turnover'))
+            ->where('turned_over', '>=', DB::raw('balance_to_turnover'))
             ->count();
 
         return $position + 1;
@@ -120,7 +120,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
             ->where('currency', '>', $currency);
 
         if( $onlyQualified ) {
-            $model->where('turned_over', '>=', \DB::raw('balance_to_turnover'));
+            $model->where('turned_over', '>=', DB::raw('balance_to_turnover'));
         }
 
         return $model->get();
