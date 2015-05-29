@@ -106,11 +106,11 @@ class Api_User extends JController {
 
 		global $mainframe;
         // first validate a legit token has been sent
-		$server_token = JUtility::getToken();
+//		$server_token = JUtility::getToken();
 
 
 
-		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
+//		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
 			//token validates - good to go
 			$credentials = array();
 			$credentials['username'] = JRequest::getVar('username', NULL);
@@ -167,10 +167,10 @@ class Api_User extends JController {
 				// we need both username and password
 				$result = OutputHelper::json(500, array('error_msg' => 'Invalid username or password'));
 			}
-		} else {
+	//	} else {
 			//  invalid login hash
-			$result = OutputHelper::json(500, array('error_msg' => 'There was a problem with your login'));
-		}
+	//		$result = OutputHelper::json(500, array('error_msg' => 'There was a problem with your login'));
+	//	}
 
 		return $result;
 
