@@ -264,8 +264,17 @@ class TournamentsController extends \BaseController
         foreach($buyins as $buyinId => $buyin) {
             if( number_format($tournament->buy_in/100, 2) . ' + ' . number_format($tournament->entry_fee/100, 2) == $buyin){
                 $tournament->tournament_buyin_id = $buyinId;
-                break;
             }
+
+            if( $tournament->rebuys && number_format($tournament->rebuy_buyin/100, 2) . ' + ' . number_format($tournament->rebuy_entry/100, 2) == $buyin){
+                $tournament->tournament_rebuy_buyin_id = $buyinId;
+            }
+
+            if( $tournament->topups && number_format($tournament->topup_buyin/100, 2) . ' + ' . number_format($tournament->topup_entry/100, 2) == $buyin){
+                $tournament->tournament_topup_buyin_id = $buyinId;
+            }
+
+
         }
 
         if ($tournament->sport->racing_flag) {

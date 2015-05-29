@@ -237,7 +237,7 @@ class TournamentService {
 
         //tournament of the day
         $tod = array_get($tournamentData, 'tod_flag', null);
-        if ( $tod && $this->tournamentRepository->tournamentOfTheDay($tod, Carbon::createFromFormat('Y-m-d H:i:s', $tournamentData['start_date'])->toDateString()) ) {
+        if ( $tod && $this->tournamentRepository->tournamentOfTheDay($tod, Carbon::createFromFormat('Y-m-d H:i:s', $tournamentData['start_date'])->toDateString())->id != $id ) {
             throw new \Exception("Tournament of the day already exists");
         } else if ( ! $tod ) {
             $tournamentData['tod_flag'] = '';
@@ -245,9 +245,11 @@ class TournamentService {
 
         //rebuy data
         if ( array_get($tournamentData, 'rebuys', null) ) {
+
             $buyin = $this->buyInRepository->find(array_get($tournamentData, 'tournament_rebuy_buyin_id'));
 
             if( $buyin ) {
+
                 $tournamentData['rebuy_buyin'] = $buyin->buy_in * 100;
                 $tournamentData['rebuy_entry'] = $buyin->entry_fee * 100;
             }
@@ -270,7 +272,7 @@ class TournamentService {
             'tournament_labels',
         )));
 
-        $tournament = $this->tournamentRepository->find($tournament['id']);
+        $tournament = $this->tournamentRepository->find($id);
 
         //add labels
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {

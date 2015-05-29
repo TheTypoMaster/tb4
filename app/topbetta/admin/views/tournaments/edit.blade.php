@@ -96,7 +96,7 @@
 
                     <div class="form-group">
                         {{ Form::label("tournament_labels", "Tournament Labels") }}
-                        {{ Form::select('tournament_labels[]', $labels, null, array("class"=>"form-control", "multiple"=>"multiple")) }}
+                        {{ Form::select('tournament_labels[]', $labels, $tournament->tournamentlabels ? $tournament->tournamentlabels->lists('id') : null, array("class"=>"form-control", "multiple"=>"multiple")) }}
                     </div>
 
                     <div class="form-group">
@@ -112,7 +112,7 @@
 
                     <div class="form-group">
                         {{ Form::label('tournament_prize_format', 'Prize Payout Format') }}
-                        {{ Form::select('tournament_prize_format', $prizeFormats, 3, array('class'=>'form-control')) }}
+                        {{ Form::select('tournament_prize_format', $prizeFormats, $tournament->tournament_prize_format ?: 3, array('class'=>'form-control')) }}
                     </div>
                 </div>
             </fieldset>
@@ -170,7 +170,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         {{ Form::label('rebuys', 'No. Rebuys') }}
-                        {{ Form::number('rebuys', 0, array('class'=>'form-control')) }}
+                        {{ Form::number('rebuys', null, array('class'=>'form-control')) }}
                     </div>
 
                     <div class="form-group">
@@ -182,7 +182,7 @@
                         {{ Form::label('rebuy_currency', 'Rebuy Currency ') }}
                         <div class="input-group">
                             <div class="input-group-addon">$</div>
-                            {{ Form::number('rebuy_currency', 1000, array("class" => "form-control")) }}
+                            {{ Form::number('rebuy_currency', $tournament->rebuy_currency ? $tournament->rebuy_currency/100 : 1000, array("class" => "form-control")) }}
                         </div>
                     </div>
 
@@ -193,7 +193,7 @@
                                 {{ Form::select('rebuy_end_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
                             </div>
                             <div class="col-lg-6">
-                                {{ Form::datetime('rebuy_end', null, array("class"=>"event-date")) }}
+                                {{ Form::datetime('rebuy_end', $tournament->rebuy_end, array("class"=>"event-date")) }}
                             </div>
                         </div>
                     </div>
@@ -202,7 +202,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         {{ Form::label('topups', 'No. Topups') }}
-                        {{ Form::number('topups', 0, array("class" =>"form-control")) }}
+                        {{ Form::number('topups', null, array("class" =>"form-control")) }}
                     </div>
 
                     <div class="form-group">
@@ -216,7 +216,7 @@
                         {{ Form::label('topup_currency', 'Topup Currency ') }}
                         <div class="input-group">
                             <div class="input-group-addon">$</div>
-                            {{ Form::number('topup_currency', 1000, array("class" => "form-control")) }}
+                            {{ Form::number('topup_currency', $tournament->topup_currency ? $tournament->topup_currency/100 : 1000, array("class" => "form-control")) }}
                         </div>
                     </div>
 
@@ -227,7 +227,7 @@
                                 {{ Form::select('topup_start_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
                             </div>
                             <div class="col-lg-6">
-                                {{ Form::datetime('topup_start_date', null, array("class"=>"event-date")) }}
+                                {{ Form::datetime('topup_start_date', $tournament->topup_start_date, array("class"=>"event-date")) }}
                             </div>
                         </div>
                     </div>
@@ -239,7 +239,7 @@
                                 {{ Form::select('topup_end_after', array("Select Event"), null, array("class"=>"form-control events-selector")) }}
                             </div>
                             <div class="col-lg-6">
-                                {{ Form::datetime('topup_end_date', null, array("class" => "event-date")) }}
+                                {{ Form::datetime('topup_end_date', $tournament->topup_end_date, array("class" => "event-date")) }}
                             </div>
                         </div>
                     </div>
