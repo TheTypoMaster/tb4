@@ -243,6 +243,7 @@ class TournamentsController extends \BaseController
         if($competitionsCollection) {
             $competitions += $competitionsCollection->lists('name', 'id');
         }
+        $tournament->competition_id = $tournament->eventGroup->tournament_competition_id;
 
         //get event groups
         $eventGroups = array("Select Event Group");
@@ -260,6 +261,23 @@ class TournamentsController extends \BaseController
             $buyins[$buyin->id] = $buyin->buy_in . ' + ' . $buyin->entry_fee;
         }
 
+        foreach($buyins as $buyinId => $buyin) {
+            if( number_format($tournament->buy_in/100, 2) . ' + ' . number_format($tournament->entry_fee/100, 2) == $buyin){
+                $tournament->tournament_buyin_id = $buyinId;
+                break;
+            }
+        }
+
+        if ($tournament->sport->racing_flag) {
+            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
+        } else {
+            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
+        }
+
+        $parentTournaments = array(-1 => 'Select Tournament') + $parentTournaments->map(function($value){
+            return array('id' => $value->id, 'name' => $value->name . ' - ' . $value->start_date);
+        })->lists('name', 'id');
+
         //get tod venues
         $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword');
 
@@ -269,7 +287,7 @@ class TournamentsController extends \BaseController
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
 
-        return View::make('admin::tournaments.edit', compact('tournament', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
+        return View::make('admin::tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
 
 	/**
@@ -280,7 +298,47 @@ class TournamentsController extends \BaseController
 	 */
 	public function update($id)
 	{
-		//
+        $tournamentData = array_except(Input::all(), array(
+            '_method',
+            '_token',
+            'competition_id',
+            'rebuy_end_after',
+            'topup_start_after',
+            'topup_end_after',
+            'entries_close_after',
+        ));
+
+        //rebuy data
+        if( ! Input::get('rebuys') ) {
+            $tournamentData = array_except($tournamentData, array(
+                'rebuys',
+                'rebuy_currency',
+                'rebuy_end',
+                'tournament_rebuy_buyin_id',
+            ));
+        }
+
+        //topup data
+        if ( ! Input::get('topups') ) {
+            $tournamentData = array_except($tournamentData, array(
+                'topups',
+                'topup_currency',
+                'topup_end_date',
+                'topup_start_date',
+                'tournament_topup_buyin_id',
+            ));
+        }
+
+        try {
+            $tournament = $this->tournamentService->updateTournament($id, $tournamentData);
+        } catch (ValidationException $e) {
+            return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getErrors()))->withInput();
+        } catch (\Exception $e) {
+            \Log::info($e->getTraceAsString());
+            return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getMessage()))->withInput();
+        }
+
+        return Redirect::route('admin.tournaments.index')->with(array('flash_message' => 'success'));
 	}
 
 	/**

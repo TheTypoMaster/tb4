@@ -7,10 +7,14 @@
                 <h2 class="col-lg-4">Tournaments</h2>
             </div>
 
-            {{ Form::model($tournament, array("route" => "admin.tournaments.update", "method" => "put")) }}
+            {{ Form::model($tournament, array("route" => array("admin.tournaments.update", $tournament->id), "method" => "put")) }}
             <fieldset>
                 <legend>Tournament Details</legend>
                 <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ Form::label('name', 'Name') }}
+                        {{ Form::text('name', null, array('class' => 'form-control')) }}
+                    </div>
                     <div class="form-group">
                         {{ Form::label('tournament_sport_id', 'Sports') }}
                         {{ Form::select('tournament_sport_id', $sports, null, array("class"=>"form-control")) }}
@@ -42,9 +46,9 @@
                         </label>
                     </div>
 
-                    <div class="form-group" id="parent-tournament" style="display:none;">
+                    <div class="form-group" id="parent-tournament" @if( ! $tournament->jackpot_flag ) style="display:none;" @endif>
                         {{ Form::label('parent_tournament_id', 'Parent Tournament') }}
-                        {{ Form::select('parent_tournament_id', array('select'), null, array('class' => 'form-control')) }}
+                        {{ Form::select('parent_tournament_id', $parentTournaments, null, array('class' => 'form-control')) }}
                     </div>
 
                     <div class="form-group">
@@ -62,6 +66,10 @@
 
                 </div>
                 <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ Form::label('description', "Description") }}
+                        {{ Form::textarea('description', null, array('class' => 'form-control')) }}
+                    </div>
                     <div class="form-group">
                         {{ Form::label('tod_flag', 'Tournament of the Day') }}
                         {{ Form::select('tod_flag', $tod, null, array("class" => "form-control")) }}
