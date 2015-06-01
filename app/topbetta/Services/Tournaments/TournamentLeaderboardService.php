@@ -94,6 +94,8 @@ class TournamentLeaderboardService {
                 'currency' => $record['currency'],
                 'qualified' => $record['qualified'],
                 'turned_over' => $record['turned_over'],
+                'rebuys' => $record['rebuys'],
+                'topups' => $record['topups'],
             );
 
             if($record['qualified']) {
