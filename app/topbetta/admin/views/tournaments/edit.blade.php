@@ -55,7 +55,7 @@
                         {{ Form::label('start_currency', 'Starting Currency ') }}
                         <div class="input-group">
                             <div class="input-group-addon">$</div>
-                            {{ Form::number('start_currency', 1000, array("class" => "form-control")) }}
+                            {{ Form::number('start_currency', $tournament->start_currency/100, array("class" => "form-control")) }}
                         </div>
                     </div>
 

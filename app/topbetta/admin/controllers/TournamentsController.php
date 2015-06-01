@@ -442,7 +442,7 @@ class TournamentsController extends \BaseController
         }
 
         $events = array_map(function($value) {
-            return array("id" => $value['id'], "name" => $value['name'], "start_date" => $value['start_date']);
+            return array("id" => $value['id'], "name" => $value['number'] ? $value['number'] . '. ' . $value['name'] : $value['name'], "start_date" => $value['start_date']);
         }, $eventGroup->events()->get()->toArray());
 
 
