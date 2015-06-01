@@ -69,7 +69,7 @@ class TournamentLeaderboardService {
 
         //add the balance to needed turnover?
         if( $addBalanceToTurnOver ){
-            $data['balance_to_turnover'] = $leaderboard->balance_to_turnover + $amount;
+            $data['balance_to_turnover'] = $leaderboard->turned_over + $amount;
         }
 
         return $this->leaderboardRepository->updateWithId($leaderboardId, $data);
