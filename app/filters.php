@@ -42,7 +42,8 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Response::json(array("success" => false, "error" => "Please login first."), 401);
 });
 
-Route::filter('auth.admin', function() {
+Route::filter('auth.admin', function($route) {
+    dd($route);
 	if (Auth::guest() || Auth::user()->gid != 25) return Redirect::guest('/admin/login');
 });
 
