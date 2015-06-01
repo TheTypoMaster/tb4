@@ -95,7 +95,7 @@ return array(
 		|
 		*/
 
-		'model' => 'Cartalyst\Sentry\Groups\Eloquent\Group',
+		'model' => 'TopBetta\Models\AdminGroupModel',
 
 	),
 
@@ -120,7 +120,7 @@ return array(
 		|
 		*/
 
-		'model' => 'Cartalyst\Sentry\Users\Eloquent\User',
+		'model' => 'User',
 
 		/*
 		|--------------------------------------------------------------------------
@@ -149,7 +149,7 @@ return array(
 	|
 	*/
 
-	'user_groups_pivot_table' => 'users_groups',
+	'user_groups_pivot_table' => 'tb_admin_users_groups',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -174,7 +174,7 @@ return array(
 		|
 		*/
 
-		'enabled' => true,
+		'enabled' => false,
 
 		/*
 		|--------------------------------------------------------------------------
