@@ -326,6 +326,10 @@ class TournamentsController extends \BaseController
             return array("Select Event Group");
         }
 
+        $eventGroups = $eventGroups->map(function($q) {
+            return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
+        });
+
         return $this->formatForResponse(array("Select Event Group") + $eventGroups->lists('name', 'id'));
     }
 
