@@ -110,9 +110,6 @@ class TournamentService {
 
     public function createTournament($tournamentData)
     {
-        //convert from cents
-        $tournamentData['start_currency'] *= 100;
-        $tournamentData['minimum_prize_pool'] *= 100;
 
         //dates
         $tournamentData['created_date'] = Carbon::now()->toDateTimeString();
@@ -178,6 +175,10 @@ class TournamentService {
         //get tournament name and desc
         $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
         $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
+
+        //convert from cents
+        $tournamentData['start_currency'] *= 100;
+        $tournamentData['minimum_prize_pool'] *= 100;
 
         $tournament = $this->tournamentRepository->create(array_except($tournamentData, array(
             'tournament_buyin_id',
