@@ -42,6 +42,8 @@ class TournamentTicket extends \Eloquent {
 				tk.id,
 				tk.tournament_id,
 				tk.result_transaction_id,
+				tk.topup_count,
+				tk.rebuy_count,
 				t.buy_in,
 				t.entry_fee,
 				t.start_currency,
@@ -102,6 +104,8 @@ class TournamentTicket extends \Eloquent {
 				tk.tournament_id,
 				tk.result_transaction_id,
 				tk.winner_alert_flag,
+				tk.topup_count,
+				tk.rebuy_count,
 				t.buy_in,
 				t.entry_fee,
 				t.start_currency,
@@ -176,7 +180,9 @@ class TournamentTicket extends \Eloquent {
 				resulted_flag,
 				created_date,
 				resulted_date,
-				extra_starting_currency
+				extra_starting_currency,
+				rebuy_count,
+				topup_count
 			FROM
 				tbdb_tournament_ticket
 			WHERE

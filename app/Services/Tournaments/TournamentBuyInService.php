@@ -191,7 +191,7 @@ class TournamentBuyInService
         $ticket->save();
 
         //add funds to leaderboard currency
-        return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->rebuy_currency);
+        return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->rebuy_currency, true);
     }
 
     public function topupTournament($ticketId)
@@ -240,7 +240,7 @@ class TournamentBuyInService
         $ticket->save();
 
         //add funds to leaderboard currency
-        return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->topup_currency);
+        return $this->leaderboardService->increaseCurrency($leaderboard['id'], $tournament->topup_currency, true);
     }
 
     /**
