@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="row page-header">
-            <h2 class="col-lg-6">Tournament: <small>{{ $tournament->name }}</small></h2>
+            <h2 class="col-lg-12">Tournament: <small>{{ $tournament->name . ', $' . number_format($tournament->buy_in/100, 2) . ' + $' . number_format($tournament->entry_fee/100, 2) . ', ' . $tournament->start_date }}</small></h2>
         </div>
 
         @if(isset($result) && count($result))
