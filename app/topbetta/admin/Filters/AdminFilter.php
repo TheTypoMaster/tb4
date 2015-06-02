@@ -11,6 +11,8 @@ namespace TopBetta\admin\Filters;
 use App;
 use Auth;
 use Sentry;
+use Redirect;
+use Config;
 
 class AdminFilter {
 
@@ -48,7 +50,19 @@ class AdminFilter {
                     throw new \Exception("Unknown Route");
             }
         } else {
-            $permission = $name;
+            //no named route, so check custom routes for uri
+            $uri = $route->getUri();
+
+            //get the permission
+            $permission = array_where(Config::get('adminresources.custom_routes'), function($k, $v) use ($uri) {
+                return preg_match('/' . str_replace('/', '\/', $v['uri']) . '/', AdminFilter::ROUTE_PREFIX . '/' . $uri);
+            });
+
+            if ( empty($permission) ) {
+                throw new \Exception("Unknown Route");
+            }
+            //permission name
+            $permission = array_values($permission)[0]['permission'];
         }
 
         if( ! Auth::user() ) {

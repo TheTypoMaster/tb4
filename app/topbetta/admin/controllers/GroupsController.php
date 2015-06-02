@@ -43,7 +43,9 @@ class GroupsController extends \BaseController {
 	{
 		$resources = Config::get('adminresources.resources');
 
-        return View::make('admin::groups.create', compact('resources'));
+        $otherPermissions = Config::get('adminresources.custom_permissions');
+
+        return View::make('admin::groups.create', compact('resources', 'otherPermissions'));
 	}
 
 
@@ -87,7 +89,9 @@ class GroupsController extends \BaseController {
 
         $resources = Config::get('adminresources.resources');
 
-        return View::make('admin::groups.edit', compact('group', 'resources'));
+        $otherPermissions = Config::get('adminresources.custom_permissions');
+
+        return View::make('admin::groups.edit', compact('group', 'resources', 'otherPermissions'));
 	}
 
 
