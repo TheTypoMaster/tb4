@@ -179,6 +179,8 @@ class TournamentService {
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
+        $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
+        $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
         $tournament = $this->tournamentRepository->create(array_except($tournamentData, array(
             'tournament_buyin_id',
@@ -202,6 +204,8 @@ class TournamentService {
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
+        $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
+        $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
         //dates
         $tournamentData['created_date'] = Carbon::now()->toDateTimeString();
