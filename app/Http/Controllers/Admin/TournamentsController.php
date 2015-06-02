@@ -206,6 +206,7 @@ class TournamentsController extends Controller
         } catch (ValidationException $e) {
             return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getErrors()))->withInput();
         } catch (\Exception $e) {
+            \Log::info($e->getTraceAsString());
             return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getMessage()))->withInput();
         }
 
@@ -231,7 +232,70 @@ class TournamentsController extends Controller
 	 */
 	public function edit($id)
 	{
-		//
+        $tournament = $this->tournamentRepo->find($id);
+
+        $sports = array("Select Sport") + $this->sportsrepo->selectList();
+
+        //get tournament comps
+        $competitions = array("Select Competition");
+        $competitionsCollection = $this->tournamentCompetiitonRepository->getBySport($tournament->sport->id);
+        if($competitionsCollection) {
+            $competitions += $competitionsCollection->lists('name', 'id');
+        }
+        $tournament->competition_id = $tournament->eventGroup->tournament_competition_id;
+
+        //get event groups
+        $eventGroups = array("Select Event Group");
+        $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($tournament->eventGroup->id);
+        if($eventGroupsCollection) {
+            $eventGroups += $eventGroupsCollection->lists('name', 'id');
+        }
+        $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name);
+
+
+        //get the buyins
+        $buyins = array("Select Ticket Value");
+
+        foreach($this->buyInRepository->findAll() as $buyin) {
+            $buyins[$buyin->id] = $buyin->buy_in . ' + ' . $buyin->entry_fee;
+        }
+
+        foreach($buyins as $buyinId => $buyin) {
+            if( number_format($tournament->buy_in/100, 2) . ' + ' . number_format($tournament->entry_fee/100, 2) == $buyin){
+                $tournament->tournament_buyin_id = $buyinId;
+            }
+
+            if( $tournament->rebuys && number_format($tournament->rebuy_buyin/100, 2) . ' + ' . number_format($tournament->rebuy_entry/100, 2) == $buyin){
+                $tournament->tournament_rebuy_buyin_id = $buyinId;
+            }
+
+            if( $tournament->topups && number_format($tournament->topup_buyin/100, 2) . ' + ' . number_format($tournament->topup_entry/100, 2) == $buyin){
+                $tournament->tournament_topup_buyin_id = $buyinId;
+            }
+
+
+        }
+
+        if ($tournament->sport->racing_flag) {
+            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
+        } else {
+            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
+        }
+
+        $parentTournaments = array(-1 => 'Select Tournament') + $parentTournaments->map(function($value){
+            return array('id' => $value->id, 'name' => $value->name . ' - ' . $value->start_date);
+        })->lists('name', 'id');
+
+        //get tod venues
+        $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword');
+
+        //get tournament labels
+        $labels = $this->labelsRepository->findAll()->lists('label', 'id');
+
+        //get prize formats
+        $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
+
+        return View::make('admin::tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
 
 	/**
@@ -242,7 +306,47 @@ class TournamentsController extends Controller
 	 */
 	public function update($id)
 	{
-		//
+        $tournamentData = array_except(Input::all(), array(
+            '_method',
+            '_token',
+            'competition_id',
+            'rebuy_end_after',
+            'topup_start_after',
+            'topup_end_after',
+            'entries_close_after',
+        ));
+
+        //rebuy data
+        if( ! Input::get('rebuys') ) {
+            $tournamentData = array_except($tournamentData, array(
+                'rebuys',
+                'rebuy_currency',
+                'rebuy_end',
+                'tournament_rebuy_buyin_id',
+            ));
+        }
+
+        //topup data
+        if ( ! Input::get('topups') ) {
+            $tournamentData = array_except($tournamentData, array(
+                'topups',
+                'topup_currency',
+                'topup_end_date',
+                'topup_start_date',
+                'tournament_topup_buyin_id',
+            ));
+        }
+
+        try {
+            $tournament = $this->tournamentService->updateTournament($id, $tournamentData);
+        } catch (ValidationException $e) {
+            return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getErrors()))->withInput();
+        } catch (\Exception $e) {
+            \Log::info($e->getTraceAsString());
+            return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getMessage()))->withInput();
+        }
+
+        return Redirect::route('admin.tournaments.index')->with(array('flash_message' => 'success'));
 	}
 
 	/**
@@ -341,7 +445,7 @@ class TournamentsController extends Controller
         }
 
         $events = array_map(function($value) {
-            return array("id" => $value['id'], "name" => $value['name'], "start_date" => $value['start_date']);
+            return array("id" => $value['id'], "name" => $value['number'] ? $value['number'] . '. ' . $value['name'] : $value['name'], "start_date" => $value['start_date']);
         }, $eventGroup->events()->get()->toArray());
 
 
@@ -353,12 +457,16 @@ class TournamentsController extends Controller
         $sport = $this->sportsrepo->find($sportId);
 
         if ($sport->racing_flag) {
-            $tournaments = $this->tournamentRepo->findCurrentTournamentsByType('racing');
+            $tournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
         } else {
-            $tournaments = $this->tournamentRepo->findCurrentTournamentsByType('sport');
+            $tournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
         }
 
-        return $this->formatForResponse(array("Select tournament") + $tournaments->lists('name', 'id'));
+        $tournaments = $tournaments->map(function($value){
+            return array("id" => $value->id, "name" => $value->name . ' - ' . $value->start_date);
+        });
+
+        return $this->formatForResponse(array(-1 => "Select tournament") + $tournaments->lists('name', 'id'));
 
     }
 
