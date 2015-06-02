@@ -92,6 +92,10 @@
                 <a href="{{ route('admin.settings.index') }}"><i class="fa fa-cogs fa-fw"></i> Settings</a>
             </li>
 
+            <li>
+                <a href="{{ route('admin.groups.index') }}"><i class="fa fa-user fa-fw"></i> User Groups</a>
+            </li>
+
 			{{--
 			<li>
 				<a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>

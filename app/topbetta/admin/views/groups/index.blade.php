@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="row page-header">
-                <h2 class="col-lg-8">User Groups</h2>
+                <h2 class="col-lg-8">User Groups <span>{{ link_to_route("admin.groups.create", "Create", array(), array("class" => "btn btn-primary")) }}</span></h2>
             </div>
 
             <table class="table table-striped">
