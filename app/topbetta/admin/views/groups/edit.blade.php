@@ -7,7 +7,7 @@
                 <h2 class="col-lg-8">User Groups</h2>
             </div>
 
-            {{ Form::open(array('route' => 'admin.groups.store', 'method' => 'POST')) }}
+            {{ Form::model($group, array('route' => array('admin.groups.update', $group->id), 'method' => 'PUT')) }}
 
             <div class="form-group">
                 {{ Form::label('name', "Name: ") }}
@@ -35,7 +35,9 @@
                                     {{ Form::select("permissions[". Config::get('adminresources.prefix') . '.' . $resource['name'] . '.' . $permission ."]", array(
                                         0 => "No",
                                         1 => "Yes"
-                                    ), 0, array("class" => "form-control")) }}
+                                    ),
+                                    array_get($group->permissions, Config::get('adminresources.prefix') . '.' . $resource['name'] . '.' . $permission, 0),
+                                    array("class" => "form-control")) }}
                                 </td>
                             @else
                                 <td></td>

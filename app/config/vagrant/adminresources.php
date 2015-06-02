@@ -4,6 +4,8 @@ return array(
 
     "prefix" => "admin",
 
+    "permissions" => array("view", "create", "edit", "delete"),
+
     "resources" => array(
         array("name" => "dashboard", "only" => array("view")),
         array("name" => "users"),

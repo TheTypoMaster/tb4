@@ -230,6 +230,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
 
+    Route::resource('groups', 'TopBetta\admin\controllers\GroupsController');
+    Route::resource('user-permissions', 'TopBetta\admin\controllers\UserPermissionsController');
+
     //custom tournament routes
     Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
     Route::post('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsers');
