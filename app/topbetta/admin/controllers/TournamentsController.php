@@ -175,9 +175,6 @@ class TournamentsController extends \BaseController
             '_method',
             '_token',
             'competition_id',
-            'rebuy_end_after',
-            'topup_start_after',
-            'topup_end_after',
             'entries_close_after',
         ));
 
@@ -188,6 +185,7 @@ class TournamentsController extends \BaseController
                 'rebuy_currency',
                 'rebuy_end',
                 'tournament_rebuy_buyin_id',
+                'rebuy_end_after'
             ));
         }
 
@@ -199,6 +197,8 @@ class TournamentsController extends \BaseController
                 'topup_end_date',
                 'topup_start_date',
                 'tournament_topup_buyin_id',
+                'topup_end_after',
+                'topup_start_after',
             ));
         }
 
