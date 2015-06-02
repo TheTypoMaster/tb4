@@ -146,8 +146,8 @@ class TournamentBuyInService
 
         //TODO: check this is correct
         //check currency is less then starting
-        if($leaderboard['currency'] >= $tournament->start_currency) {
-            throw new TournamentBuyInException("Total BettaBucks must be less than " . $tournament->start_currency . " to rebuy");
+        if($leaderboard['currency'] > 0) {
+            throw new TournamentBuyInException("Must have no $0.00 BettaBucks to rebuy");
         }
 
         //create transactions
