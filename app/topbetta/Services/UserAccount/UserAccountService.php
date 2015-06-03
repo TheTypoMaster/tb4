@@ -306,9 +306,29 @@ class UserAccountService {
         return true;
     }
 
-    public function decreaseBalanceToTurnOver($userId, $amount)
+    public function addFreeCreditWinsToTurnOver($userId, $amount)
     {
-        return $this->addBalanceToTurnOver($userId, -$amount);
+        if( $amount ) {
+            return $this->fullUser->updateFreeCreditWinsToTurnOver($userId, $amount);
+        }
+
+        return true;
+    }
+
+    public function decreaseBalanceToTurnOver($userId, $amount, $decreaseFreeCreditTurnover = false)
+    {
+        $user = $this->fullUser->findByUserId($userId);
+
+        $remainingAmount = $amount;
+        if( $user->balance_to_turnover > 0 ) {
+            $remainingAmount = $amount - $user->balance_to_turnover;
+
+            $this->addBalanceToTurnOver($userId, -$amount);
+        }
+
+        if ( $remainingAmount > 0 && $decreaseFreeCreditTurnover) {
+            $this->addFreeCreditWinsToTurnOver($userId, -$remainingAmount);
+        }
     }
 
     public function getBalanceToTurnOver($userId)
@@ -321,6 +341,7 @@ class UserAccountService {
 
         return 0;
     }
+
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
     {
         $checkForName = $this->basicUser->getUserDetailsFromUsername($username);
