@@ -259,7 +259,7 @@ class BetResultRepo
 			Log::info('WINNING BET: id - ' . $bet->id);
 
             //update user turnover
-            $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount, \TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) > self::TURNOVER_MIN_AMOUNT);
+            $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount, \TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) >= self::TURNOVER_MIN_AMOUNT);
 
             return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);
 		}

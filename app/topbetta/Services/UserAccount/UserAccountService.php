@@ -320,14 +320,14 @@ class UserAccountService {
         $user = $this->fullUser->findByUserId($userId);
 
         $remainingAmount = $amount;
-        if( $user->balance_to_turnover > 0 ) {
-            $remainingAmount = $amount - $user->balance_to_turnover;
+        if( $decreaseFreeCreditTurnover && $user->free_credit_wins_to_turnover > 0 ) {
+            $remainingAmount = $amount - $user->free_credit_wins_to_turnover;
 
-            $this->addBalanceToTurnOver($userId, -$amount);
+            $this->addFreeCreditWinsToTurnOver($userId, -$amount);
         }
 
-        if ( $remainingAmount > 0 && $decreaseFreeCreditTurnover) {
-            $this->addFreeCreditWinsToTurnOver($userId, -$remainingAmount);
+        if ( $remainingAmount > 0 && $user->balance_to_turnover > 0) {
+            $this->addBalanceToTurnOver($userId, -$remainingAmount);
         }
     }
 
