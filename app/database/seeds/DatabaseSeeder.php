@@ -36,6 +36,8 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tbdb_bet_limit_add_sports_limitTableSeeder');
 		$this->call('TbConfigurationTableSeeder');
 		$this->call('TbdbTournamentBuyinTypeTableSeeder');
+		$this->call('TbdbAccountTransactionTypeRebuyFieldsTableSeeder');
+		$this->call('TbdbTournamentTransactionTypeRebuyFieldsTableSeeder');
 	}
 
 }
