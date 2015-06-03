@@ -408,12 +408,14 @@ class TournamentModelTournamentLeaderboard extends JModel
 				tournament_id,
 				user_id,
 				currency,
-				turned_over
+				turned_over,
+				balance_to_turnover
 			) VALUES (
 				' . $db->quote($params['tournament_id']) . ',
 				' . $db->quote($params['user_id']) . ',
 				' . $db->quote($params['currency']) . ',
-				' . $db->quote($params['turned_over']) . '
+				' . $db->quote($params['turned_over']) . ',
+				' . $db->quote($params['balance_to_turnover']) . '
 			)';
 
 		$db->setQuery($query);

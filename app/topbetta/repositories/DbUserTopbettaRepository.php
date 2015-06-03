@@ -56,6 +56,21 @@ class DbUserTopbettaRepository extends BaseEloquentRepository implements UserTop
         $user->free_credit_wins_to_turnover = max($user->free_credit_wins_to_turnover + $amount, 0);
 
         return $user->save();
+	}
+	
+    public function getUserByNameAndDob($firstName, $lastName, $day = null, $month = null, $year = null)
+    {
+        $model = $this->model
+            ->where('first_name', 'LIKE', $firstName)
+            ->where('last_name', 'LIKE', $lastName);
+
+        if( $day ) {
+            $model->where('dob_day', $day)
+                ->where('dob_month', $month)
+                ->where('dob_year', $year);
+        }
+
+        return $model->first();
     }
 
 }

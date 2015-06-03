@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Services\Exceptions\InvalidFormatException;
 use Validator;
 use Hash;
 use Mail;
@@ -340,6 +341,27 @@ class UserAccountService {
         }
 
         return 0;
+    }
+
+    public function findUserByNameAndDob($firstName, $lastName, $dob)
+    {
+        //format the date
+        try {
+            $dob = Carbon::createFromFormat('d-M-y', trim($dob));
+        } catch (\Exception $e) {
+            try {
+                $dob = Carbon::createFromFormat('d/m/Y', trim($dob));
+            } catch (\Exception $e) {
+                throw new InvalidFormatException(array($firstName, $lastName, $dob), "Invalid DOB format");
+            }
+        }
+
+        //get the user
+        if ( $dob ) {
+            return $this->fullUser->getUserByNameAndDob($firstName, $lastName, $dob->day, $dob->month, $dob->year);
+        }
+
+        return $this->fullUser->getUserByNameAndDob($firstName, $lastName);
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

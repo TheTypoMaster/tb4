@@ -85,6 +85,12 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competition;
     }
 
+    public function getCompetitionByExternalId($externalId)
+    {
+        return $this->model->where('external_event_group_id', $externalId)->first();
+    }
+
+
     public function competitionFeed($input){
 
         $query = $this->model->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id');
