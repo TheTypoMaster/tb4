@@ -1,6 +1,7 @@
 <?php
 namespace TopBetta\frontend;
 
+use Carbon\Carbon;
 use Auth;
 use TopBetta;
 use Illuminate\Support\Facades\Input;
@@ -157,6 +158,10 @@ class FrontTournamentsTicketsController extends \BaseController {
             // get sport name for tournament ticket
             $sport_name = \TopBetta\SportsSportName::getSportsNameByID($tournament->tournament_sport_id);
 
+            $rebuyAvailable = (bool) $leaderboardDetails['leaderboard']->currency == 0 &&
+                ($leaderboardDetails['leaderboard']->balance_to_turnover <= $leaderboardDetails['leaderboard']->turned_over) &&
+                Carbon::now() <= $tournament->rebuy_end;
+
             return array('success' => true, 'result' => array(
                 'id' => (int)$myTicketID[0]->id,
 				'tournament_id' => (int)$tournamentId,
@@ -177,6 +182,7 @@ class FrontTournamentsTicketsController extends \BaseController {
 				'unregister_allowed' => $unregisterAllowed,
 
                 //rebuy info
+                'rebuy_available' => $rebuyAvailable,
                 'rebuys' => $tournament->rebuys,
                 'rebuy_currency' => $tournament->rebuy_currency,
                 'rebuy_entry' => $tournament->rebuy_entry,
@@ -222,9 +228,14 @@ class FrontTournamentsTicketsController extends \BaseController {
 			$unregisterAllowed = $ticketModel->unregisterAllowed($activeTicket -> tournament_id, $activeTicket -> id);
 			$unregisterAllowed = $unregisterAllowed->allowed;
 
+            $rebuyAvailable = (bool) $leaderboardDetails['leaderboard']->currency == 0 &&
+                ($leaderboardDetails['leaderboard']->balance_to_turnover <= $leaderboardDetails['leaderboard']->turned_over) &&
+                Carbon::now() <= $tournament->rebuy_end;
+
 			$activeTickets[] = array('id' => (int)$activeTicket -> id, 'tournament_id' => (int)$activeTicket -> tournament_id, 'tournament_name' => $activeTicket -> tournament_name, 'buy_in' => (int)$activeTicket -> buy_in, 'entry_fee' => (int)$activeTicket -> entry_fee, 'start_currency' => (int)$activeTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails['leaderboard'] -> turned_over, 'leaderboard_rank' => $rank, 'qualified' => (($leaderboardDetails['leaderboard']->balance_to_turnover <= $leaderboardDetails['leaderboard']->turned_over)) ? true : false, 'sport_name' => $activeTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($activeTicket -> start_date), 'end_date' => \TimeHelper::isoDate($activeTicket -> end_date), 'cancelled_flag' => ($activeTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => $unregisterAllowed,
                  'turnover_remaining' => max($leaderboardDetails['leaderboard']->balance_to_turnover - $leaderboardDetails['leaderboard'] -> turned_over, 0),
                 //rebuy info
+                 'rebuy_available' => $rebuyAvailable,
                  'rebuys' => $tournament->rebuys,
                  'rebuy_currency' => $tournament->rebuy_currency,
                  'rebuy_entry' => $tournament->rebuy_entry,
@@ -279,10 +290,15 @@ class FrontTournamentsTicketsController extends \BaseController {
 
 			$rank = (! $leaderboardDetails['position']) ? 'N/Q' : (int)$leaderboardDetails['position'];
 
+            $rebuyAvailable = (bool) $leaderboardDetails['leaderboard']->currency == 0 &&
+                ($leaderboardDetails['leaderboard']->balance_to_turnover <= $leaderboardDetails['leaderboard']->turned_over) &&
+                Carbon::now() <= $tournament->rebuy_end;
+
 			$recentTickets[] = array('id' => (int)$recentTicket -> id, 'tournament_id' => (int)$recentTicket -> tournament_id, 'tournament_name' => $recentTicket -> tournament_name, 'buy_in' => (int)$recentTicket -> buy_in, 'entry_fee' => (int)$recentTicket -> entry_fee, 'start_currency' => (int)$recentTicket -> start_currency, 'available_currency' => $availableCurrency, 'turned_over' => (int)$leaderboardDetails['leaderboard'] -> turned_over, 'leaderboard_rank' => $rank, 'prize' => $prize, 'qualified' => ($leaderboardDetails['leaderboard']->balance_to_turnover <= $leaderboardDetails['leaderboard']->turned_over) ? true : false, 'sport_name' => $recentTicket -> sport_name, 'start_date' => \TimeHelper::isoDate($recentTicket -> start_date), 'end_date' => \TimeHelper::isoDate($recentTicket -> end_date), 'cancelled_flag' => ($recentTicket -> cancelled_flag) ? true : false, 'unregister_allowed' => false,
 
                  'turnover_remaining' => max($leaderboardDetails['leaderboard']->balance_to_turnover - $leaderboardDetails['leaderboard'] -> turned_over, 0),
                 //rebuy info
+                 'rebuy_available' => $rebuyAvailable,
                  'rebuys' => $tournament->rebuys,
                  'rebuy_currency' => $tournament->rebuy_currency,
                  'rebuy_entry' => $tournament->rebuy_entry,
