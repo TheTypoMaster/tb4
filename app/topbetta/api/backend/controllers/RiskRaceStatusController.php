@@ -2,6 +2,8 @@
 
 namespace TopBetta\backend;
 
+use Queue;
+use Config;
 use Illuminate\Support\Facades\Input;
 
 class RiskRaceStatusController extends \BaseController
@@ -55,7 +57,8 @@ class RiskRaceStatusController extends \BaseController
 
             if ($eventStatus == 6 || $eventStatus == 2 || $eventStatus == 3) {
                 // result bets for race status of interim, paying or abandoned
-                \TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
+                //\TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
+                Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $event->id), Config::get('betresulting.queue'));
             }			
 
             return true;

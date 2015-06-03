@@ -9,6 +9,8 @@
 use Log;
 use File;
 use Carbon;
+use Queue;
+use Config;
 
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -246,7 +248,8 @@ class RaceResulting {
             $currentTimeMs = $partSec.$partMsec;
             File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
-            $this->betresults->resultAllBetsForEvent($eventModel->id);
+            //$this->betresults->resultAllBetsForEvent($eventModel->id);
+            Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id), Config::get('betresulting.queue'));
         }
 
         return array('error' => false,
