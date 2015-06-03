@@ -15,6 +15,11 @@ class TopBettaUserModel extends Eloquent {
     protected $guarded = array();
 
 
+    public function user()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
+    }
+
     // --- Accessors for urlencoded ' in user's names amd remove \ ---
     public function getFirstNameAttribute($value) {
         return str_replace("\\", "", urldecode($value));

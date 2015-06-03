@@ -40,6 +40,7 @@
 			<td>{{ TopBetta\TournamentTicket::countTournamentEntrants($tournament->id) }}</td>
 			<td>{{ ($tournament->status_flag) ? 'Active' : 'Inactive' }}</td>
             <td>
+                {{ link_to_route('admin.tournaments.edit', "Edit", array($tournament->id), array("class" => 'btn btn-warning')) }}
                 @if($tournament->end_date > Carbon\Carbon::now())
                     {{ link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) }}
                 @endif

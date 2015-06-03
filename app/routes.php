@@ -171,6 +171,9 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
     Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
     Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
 
+    //user tournament bets
+    Route::resource('user.tournament.bets', 'TopBetta\Frontend\Controllers\UserTournamentBetsController');
+
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
@@ -237,6 +240,11 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
     Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
+
+    //user activity
+    Route::post('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@createUserActivity');
+    Route::get('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@downloadUserActivity');
+    Route::resource('user-activity', 'TopBetta\admin\controllers\UserActivityController');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

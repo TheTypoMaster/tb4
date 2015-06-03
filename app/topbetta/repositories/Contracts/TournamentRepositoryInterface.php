@@ -15,6 +15,6 @@ interface TournamentRepositoryInterface
 
     public function tournamentOfTheDay($todVenue, $day = null);
 
-    public function findCurrentTournamentsByType($type, $excludedTournaments = null);
+    public function findCurrentJackpotTournamentsByType($type, $excludedTournaments = null);
 
 }
