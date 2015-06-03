@@ -271,7 +271,11 @@ class Tournament extends \Eloquent {
 
 		$query = 'SELECT
 				t.buy_in AS buy_in,
-				COUNT(tt.user_id) AS entrants
+				t.rebuy_buyin as rebuy_buyin,
+				t.topup_buyin as topup_buyin,
+				COUNT(tt.user_id) AS entrants,
+				SUM(tt.rebuy_count) as rebuys,
+                SUM(tt.topup_count) as topups
 			FROM
 				tbdb_tournament_ticket AS tt
 			INNER JOIN
@@ -287,7 +291,7 @@ class Tournament extends \Eloquent {
 
 		$result = \DB::select($query);
 
-		$current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants;
+		$current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants + $result[0]->rebuy_buyin * $result[0]->rebuys + $result[0]->topup_buyin * $result[0]->topups;
 		return ($current_prize_pool > $tournament -> minimum_prize_pool) ? $current_prize_pool : $tournament -> minimum_prize_pool;
 	}
 

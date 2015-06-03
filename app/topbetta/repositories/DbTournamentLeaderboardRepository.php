@@ -57,7 +57,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
 
         $tournamentLeaderboard = $query->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
             ->take($limit)
-            ->select(DB::raw('tbdb_users.id as id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, '.$qualified.' as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency'))
+            ->select(DB::raw('tbdb_users.id as id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, '.$qualified.' as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups'))
             ->get()
             ->toArray();
 

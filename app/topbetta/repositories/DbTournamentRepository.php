@@ -14,6 +14,8 @@ use TopBetta\Services\Validation\TournamentValidator;
 class DbTournamentRepository extends BaseEloquentRepository implements TournamentRepositoryInterface
 {
 
+    protected $order = array("start_date", "DESC");
+
     protected $model;
 
     public function __construct(TournamentModel $tournaments, TournamentValidator $tournamentValidator){
@@ -60,9 +62,11 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
         return $this->model->where('tod_flag', $todVenue)->where('start_date', '>=', $day)->where('start_date', '<', $nextDay)->first();
     }
 
-    public function findCurrentTournamentsByType($type, $excludedTournaments = null)
+    public function findCurrentJackpotTournamentsByType($type, $excludedTournaments = null)
     {
-        $model = $this->model->where('end_date', '>=', Carbon::now()->toDateTimeString());
+        $model = $this->model->where('end_date', '>=', Carbon::now()->toDateTimeString())
+            ->where('jackpot_flag', true);
+
 
         if($type == 'racing') {
             $model->whereIn('tournament_sport_id', array(1,2,3));

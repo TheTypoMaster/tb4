@@ -277,7 +277,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         if( $race = array_get($selection, 'market.event', null) ) {
             $runner['race'] = array(
                 "external_id" => array_get($race, 'id', 0),
-                "race_number " => array_get($race, 'number', 0),
+                "race_number" => array_get($race, 'number', 0),
                 "race_name" => array_get($race, 'name', null),
                 "race_start_date" => array_get($race, 'start_date', null),
                 "race_distance" => array_get($race, 'distance', null),
