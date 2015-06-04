@@ -63,7 +63,7 @@ class AccountTransactionService {
         $this->betOriginRepository = $betOriginRepository;
     }
 
-    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
+    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null, $source = null){
 
         // get the transaction type details for the keyword
         $transactionTypeDetails = $this->accounttransactiontypes->getTransactionTypeByKeyword($keyword);
@@ -93,15 +93,16 @@ class AccountTransactionService {
             'amount' 					=> $amount,
             'notes' 					=> $desc,
             'account_transaction_type_id' 	=> $transactionTypeDetails['id'],
-            'created_date'              => $transactionDate ? $transactionDate : Carbon::now('Australia/Sydney')
+            'created_date'              => $transactionDate ? $transactionDate : Carbon::now('Australia/Sydney'),
+            'source_id'                 => $source,
 
         );
 
         return $this->accounttransactions->create($params);
     }
 
-    public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
-        return $this->increaseAccountBalance($userID, -$amount, $keyword, $giverId, $desc, $transactionDate);
+    public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null, $source = null){
+        return $this->increaseAccountBalance($userID, -$amount, $keyword, $giverId, $desc, $transactionDate, $source);
     }
 
 

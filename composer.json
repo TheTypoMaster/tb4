@@ -6,7 +6,8 @@
 		"laravel/framework": "4.2.*",
 		"guzzlehttp/guzzle": "~5.1",
 		"pda/pheanstalk": "~2.1",
-	  	"barryvdh/laravel-cors": "0.2.x"
+	  	"barryvdh/laravel-cors": "0.2.x",
+		"omnipay/eway": "~2.0"
 	},
 	"require-dev": {
 	  "way/generators": "1.*",
