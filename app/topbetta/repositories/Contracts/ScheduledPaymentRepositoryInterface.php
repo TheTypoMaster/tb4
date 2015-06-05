@@ -7,6 +7,11 @@
  */
 namespace TopBetta\Repositories\Contracts;
 
+use Config;
+
 interface ScheduledPaymentRepositoryInterface
 {
+    public function getPaymentsDueAfterDate($date);
+
+    public function getActivePaymentsForUser($userId, $source = null);
 }

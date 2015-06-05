@@ -30,6 +30,15 @@ abstract class CreditCardPaymentService {
         $this->accountTransactionService = $accountTransactionService;
     }
 
+    /**
+     * Perform deposit with gateway
+     * @param $user
+     * @param $amount
+     * @param $card
+     * @param bool $recurring
+     * @return mixed
+     * @throws PaymentException
+     */
     public function deposit($user, $amount, $card, $recurring = false)
     {
         $request = $this->gateway->purchase($this->getDepositPayload($amount, $card, $recurring));
@@ -43,6 +52,13 @@ abstract class CreditCardPaymentService {
         return $response;
     }
 
+    /**
+     * Format payload for transaction
+     * @param $amount
+     * @param $card
+     * @param bool $recurring
+     * @return array
+     */
     public function getDepositPayload($amount, $card, $recurring = false)
     {
         return array(
@@ -53,5 +69,10 @@ abstract class CreditCardPaymentService {
         );
     }
 
+    /**
+     * Get card validation rules
+     * @param $user
+     * @return mixed
+     */
     abstract public function getCardValidationRules($user);
 }

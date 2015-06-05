@@ -6,13 +6,13 @@
  * Time: 12:23 PM
  */
 
-namespace TopBetta\Services\DashboardNotification\Queue;
+namespace TopBetta\Services\ExternalSourceNotifications\Queue;
 
 
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface as TransactionType;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface as FreeCreditTransactionType;
 
-abstract class AbstractTransactionDashboardNotificationService extends DashboardNotificationQueueService
+abstract class AbstractTransactionExternalSourceNotificationService extends ExternalSourceNotificationQueueService
 {
 
     //account transaction transforms
@@ -65,11 +65,6 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         FreeCreditTransactionType::TRANSACTION_TYPE_TOPUP_BUYIN     => "tournament_topup_buyin_bonus_credit",
         FreeCreditTransactionType::TRANSACTION_TYPE_TOPUP_ENTRY     => "tournament_topup_entry_bonus_credit",
     );
-
-    /**
-     * @var
-     */
-    private $accountTransactionRepository;
 
     abstract public function getTransaction($transactionId);
 

@@ -28,4 +28,18 @@ class DbScheduledPaymentRepository extends BaseEloquentRepository implements Sch
             ->where('next_payment', '<=', $date)
             ->get();
     }
+
+    public function getActivePaymentsForUser($userId, $source = null)
+    {
+        $model = $this->model
+            ->where('active', true)
+            ->where('user_id', $userId)
+            ->with('paymentToken');
+
+        if( $source ) {
+            $model->where("source_id", $source);
+        }
+
+        return $model->get();
+    }
 }

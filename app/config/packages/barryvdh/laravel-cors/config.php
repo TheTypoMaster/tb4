@@ -29,18 +29,7 @@ return array(
         '^/' => array(
             'supportsCredentials' => true,
             'allowedOrigins' => array(
-                "https://www.topbetta.com.au", // Production Website
-                "https://services.topbetta.com.au", // Production API
-                "http://tb4test.mugbookie.com", // Test website
-                "http://testing1.mugbookie.com", // Test API
-                "http://beta.mugbookie.com",
-                "http://jason.mugbookie.com",
-                "http://jasontb.mugbookie.com",
-                "http://evan.mugbookie.com",
-                "http://mic.mugbookie.com",
-                "http://greg.mugbookie.com",
-                "http://topbetta.dev:9778", // Development Website
-                "http://services.dev" // Development API
+                "*" // Development API
             ),
             'allowedHeaders' => array('*'),
             'allowedMethods' => array('POST', 'PUT', 'GET', 'DELETE'),

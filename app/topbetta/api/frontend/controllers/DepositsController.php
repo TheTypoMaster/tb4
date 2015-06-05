@@ -7,6 +7,7 @@ use Auth;
 use TopBetta\Services\Accounting\DepositService;
 use TopBetta\Services\Accounting\Payments\Exceptions\PaymentException;
 use TopBetta\Services\Response\ApiResponse;
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 class DepositsController extends \BaseController {
 
@@ -21,6 +22,7 @@ class DepositsController extends \BaseController {
 
     public function __construct(DepositService $depositService, ApiResponse $response)
     {
+        $this->beforeFilter('token.auth');
         $this->depositService = $depositService;
         $this->response = $response;
     }
@@ -48,7 +50,7 @@ class DepositsController extends \BaseController {
 
 
 	/**
-	 * Store a newly created resource in storage.
+	 * Creates a deposit
 	 *
 	 * @return Response
 	 */
@@ -60,11 +62,13 @@ class DepositsController extends \BaseController {
 
         try {
             $this->depositService->creditCardDeposit($user, $input);
+        } catch ( ValidationException $e) {
+            return $this->response->failed($e->getErrors());
         } catch ( PaymentException $e ) {
             return $this->response->failed($e->getMessage());
         }
 
-        return $this->reponse->success("Successful deposit");
+        return $this->response->success("Successful deposit");
 	}
 
 

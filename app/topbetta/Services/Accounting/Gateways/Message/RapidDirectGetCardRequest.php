@@ -14,16 +14,28 @@ use Omnipay\Eway\Message\RapidResponse;
 
 class RapidDirectGetCardRequest extends RapidDirectAbstractRequest {
 
+    /**
+     * Get the eway endpoint for card details
+     * @return string
+     */
     public function getEndPoint()
     {
         return $this->getEndpointBase() . '/Customer/' . $this->getCardReference();
     }
 
+    /**
+     * @inherit
+     */
     public function getData()
     {
         return $this->getBaseData();
     }
 
+    /**
+     * Send data to eway and return response
+     * @param mixed $data
+     * @return RapidResponse
+     */
     public function sendData($data)
     {
         $httpResponse = $this->httpClient->get($this->getEndPoint())

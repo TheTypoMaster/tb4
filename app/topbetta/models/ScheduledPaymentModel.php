@@ -20,4 +20,14 @@ class ScheduledPaymentModel extends Eloquent {
     {
         return $this->morphTo();
     }
+
+    public function source()
+    {
+        return $this->belongsTo('TopBetta\Models\BetSourceModel', 'source_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
+    }
 }

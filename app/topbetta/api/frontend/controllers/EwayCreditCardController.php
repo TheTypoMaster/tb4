@@ -21,7 +21,7 @@ class EwayCreditCardController extends \BaseController {
 
     public function __construct(EwayPaymentService $ewayPaymentService, ApiResponse $response)
     {
-        $this->beforeFilter('auth');
+        $this->beforeFilter('token.auth');
         $this->ewayPaymentService = $ewayPaymentService;
         $this->response = $response;
     }
@@ -39,7 +39,7 @@ class EwayCreditCardController extends \BaseController {
         $cards = array();
         foreach($user->ewayTokens as $token) {
             try {
-                $cards[] = $this->ewayPaymentService->getCard($token);
+                $cards[] = $this->ewayPaymentService->getCard($token->cc_token);
             } catch (\Exception $e) {
                 Log::error("Eway Token ERROR fetching card details for token " . $token->cc_token ." with message " . $e->getMessage());
             }
@@ -119,6 +119,10 @@ class EwayCreditCardController extends \BaseController {
         if (PaymentEwayTokens::checkTokenExists(\Auth::user()->id, $id)) {
             //delete the token
             $paymentToken = PaymentEwayTokens::where("cc_token", "=", $id)->first();
+
+            if( $paymentToken->scheduledPayments ) {
+                return array("success" => false, "error" => "Card is linked to recurring payments. Please cancel these first before removing card");
+            }
 
             $paymentToken->delete();
 

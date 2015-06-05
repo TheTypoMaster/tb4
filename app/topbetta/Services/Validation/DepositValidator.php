@@ -12,6 +12,7 @@ namespace TopBetta\Services\Validation;
 class DepositValidator extends Validator {
 
     public $rules = array(
-        'amount' => 'required|Integer|Min:1000'
+        'amount' => 'required|Integer|Min:1000',
+        'child_username' => 'exists:tbdb_users,username'
     );
 }

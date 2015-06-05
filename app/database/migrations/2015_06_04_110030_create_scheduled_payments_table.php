@@ -21,6 +21,8 @@ class CreateScheduledPaymentsTable extends Migration {
             $table->dateTime('next_payment');
             $table->tinyInteger('active');
             $table->integer('retries')->default(0);
+            $table->integer('source_id')->nullable()->unsigned();
+            $table->integer('user_id')->unsigned();
 
             $table->integer('payment_token_id')->unsigned();
             $table->string('payment_token_type');

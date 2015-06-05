@@ -9,10 +9,13 @@
 namespace TopBetta\Processes;
 
 use Log;
+use TopBetta\Processes\Exceptions\ProcessAlreadyRunningException;
 use TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface;
 use TopBetta\Services\Accounting\ScheduledDepositService;
 
 class ScheduledDepositProcess extends AbstractProcess{
+
+    protected $serviceName = "scheduled_deposit_process";
 
     /**
      * @var ScheduledDepositService
