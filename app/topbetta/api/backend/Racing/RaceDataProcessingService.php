@@ -263,6 +263,7 @@ class RaceDataProcessingService {
 			// set start date for meeting if it's not set or this race is earlier
 			if ($existingMeetingDetails['start_date'] == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
 				$existingMeetingDetails['start_date'] = $race['JumpTime'];
+                unset($existingMeetingDetails['created_at'], $existingMeetingDetails['updated_at']);
 				$this->competitions->updateOrCreate($existingMeetingDetails, 'meeting_code');
 			}
 
