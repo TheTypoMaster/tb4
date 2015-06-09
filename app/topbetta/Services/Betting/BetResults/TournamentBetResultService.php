@@ -18,6 +18,7 @@ use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use TopBetta\Services\Betting\BetDividend\BetDividendService;
 use TopBetta\Services\Betting\EventService;
+use TopBetta\Services\Tournaments\TournamentLeaderboardService;
 
 class TournamentBetResultService {
 
@@ -42,9 +43,9 @@ class TournamentBetResultService {
      */
     private $betDividendService;
     /**
-     * @var DbTournamentLeaderboardRepository
+     * @var TournamentLeaderboardService
      */
-    private $leaderboardRepository;
+    private $leaderboardService;
 
 
     public function __construct(EventService $eventService,
@@ -52,14 +53,14 @@ class TournamentBetResultService {
                                 BetTypeRepositoryInterface $betTypeRepository,
                                 BetResultStatusRepositoryInterface $betResultStatusRepository,
                                 BetDividendService $betDividendService,
-                                DbTournamentLeaderboardRepository $leaderboardRepository)
+                                TournamentLeaderboardService $leaderboardService)
     {
         $this->eventService = $eventService;
         $this->betRepositoryInterface = $betRepositoryInterface;
         $this->betTypeRepository = $betTypeRepository;
         $this->betResultStatusRepository = $betResultStatusRepository;
         $this->betDividendService = $betDividendService;
-        $this->leaderboardRepository = $leaderboardRepository;
+        $this->leaderboardService = $leaderboardService;
     }
 
     /**
@@ -140,7 +141,7 @@ class TournamentBetResultService {
 
         //set the bet to resulted if it is winning or event is paying
         if( ! $interim || $amount ) {
-            $this->updateLeaderboardCurrency($bet, $amount);
+            $this->leaderboardService->increaseCurrencyForUserTournament($bet->ticket->user_id, $bet->ticket->tournament_id, $amount - $bet->bet_amount);
             $bet->resulted_flag = true;
             $bet->bet_result_status_id = $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PAID)->id;
         }
@@ -153,21 +154,6 @@ class TournamentBetResultService {
         $bet->save();
 
         return $bet;
-    }
-
-    /**
-     * Updates the leaderboard record with bet results //TODO: Abstract to tournament leaderboard service
-     * @param $bet
-     * @param $amount
-     * @return mixed
-     */
-    public function updateLeaderboardCurrency($bet, $amount)
-    {
-        $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($bet->ticket->user_id, $bet->ticket->tournament_id);
-
-        return $this->leaderboardRepository->updateWithId($leaderboard->id, array(
-            "currency" => $leaderboard->currency + $amount - $bet->bet_amount,
-        ));
     }
 
     /**
