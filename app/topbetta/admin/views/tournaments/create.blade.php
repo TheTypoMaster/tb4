@@ -277,9 +277,9 @@
             var html = $();
 
             $.each(json, function(index, value){
-                if ( !$.inArray(value, ['Select Competition', 'Select Sport', 'Select Event'])) {
-                    html = html.add($('<option></option>').text(value.name).val(value.id));
-                }
+//                if ( !$.inArray(value, ['Select Competition', 'Select Sport', 'Select Event'])) {
+                html = html.add($('<option></option>').text(value.name).val(value.id));
+//                }
             });
 
             return html;
