@@ -16,18 +16,18 @@
                         {{ Form::text('name', null, array('class' => 'form-control')) }}
                     </div>
                     <div class="form-group">
-                        {{ Form::label('tournament_sport_id', 'Sports') }}
-                        {{ Form::select('tournament_sport_id', $sports, null, array("class"=>"form-control")) }}
+                        {{ Form::label('tournament_sport_id', 'Sports') }}<br/>
+                        {{ Form::select('tournament_sport_id', $sports, null, array("multiple" => "multiple", "class"=>"sport-multiselect form-control")) }}
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('competition_id', 'Competitions') }}
-                        {{ Form::select('competition_id', $competitions, null, array("class"=>"form-control")) }}
+                        {{ Form::label('competition_id', 'Competitions') }}<br/>
+                        {{ Form::select('competition_id', $competitions, null, array("multiple" => "multiple","class"=>"competition-multiselect form-control")) }}
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('event_group_id', 'Event Group') }}
-                        {{ Form::select('event_group_id', $eventGroups, null, array("class" => "form-control")) }}
+                        {{ Form::label('event_group_id', 'Event Group') }}<br/>
+                        {{ Form::select('event_group_id', $eventGroups, null, array("multiple" => "multiple","class" => "event-multiselect form-control")) }}
                     </div>
 
                     <div class="form-group">
@@ -359,4 +359,5 @@
             }
         })
     </script>
+
 @stop
