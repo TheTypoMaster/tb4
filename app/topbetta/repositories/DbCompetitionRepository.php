@@ -29,12 +29,17 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
      * @param $search
      * @return mixed
      */
-    public function search($search)
+    public function search($search, $sportOnly = false)
     {
-        return $this->model
+        $model = $this->model
             ->orderBy('start_date', 'DESC')
-            ->where('name', 'LIKE', "%$search%")
-            ->paginate();
+            ->where('name', 'LIKE', "%$search%");
+
+        if( $sportOnly ) {
+            $model->where('sport_id', '>', 3);
+        }
+
+        return $model->paginate();
     }
 
     /**
@@ -164,6 +169,19 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->join('tbdb_selection', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
             ->where('tbdb_selection.id', $selectionId)
             ->firstOrFail();
+    }
+
+    public function findAllSportsCompetitions($paged = null)
+    {
+        $model = $this->model
+            ->where('sport_id', '>', 3)
+            ->orderBy('start_date', 'DESC');
+
+        if( $paged ) {
+            return $model->paginate($paged);
+        }
+
+        return $model->get();
     }
 
 } 

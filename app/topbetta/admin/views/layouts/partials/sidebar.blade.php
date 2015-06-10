@@ -55,6 +55,9 @@
                     <li>
                         <a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-list fa-fw"></i> Tournament List</a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.tournament-sport-markets.index') }}"><i class="fa fa-edit fa-fw"></i> Tournament Sport Markets</a>
+                    </li>
                     {{--<li>--}}
                         {{--<a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-plus fa-fw"></i> Create Tournament</a>--}}
                     {{--</li>--}}

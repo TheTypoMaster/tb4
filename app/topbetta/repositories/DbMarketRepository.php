@@ -176,4 +176,14 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
             ->paginate();
     }
 
+    public function getMarketsForCompetition($competitionId)
+    {
+        return $this->model
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+            ->where('tbdb_event_group_event.event_group_id', $competitionId)
+            ->with('marketType')
+            ->get(array('tbdb_market.*'));
+    }
+
 }
