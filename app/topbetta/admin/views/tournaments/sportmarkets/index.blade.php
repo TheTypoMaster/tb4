@@ -46,6 +46,8 @@
                 @endforeach
                 </tbody>
             </table>
+
+            {{ $competitions->appends(array('q' => $search))->links() }}
         </div>
         <!-- /.col-lg-12 -->
     </div>
