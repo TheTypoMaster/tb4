@@ -100,6 +100,15 @@ class TournamentBetResultService {
         return $results;
     }
 
+    public function refundBetsForMarket($market)
+    {
+        $bets = $this->betRepositoryInterface->getBetsForMarket($market);
+
+        foreach($bets as $bet) {
+            $this->refundBet($bet);
+        }
+    }
+
     /**
      * Result all given tournament bets
      * @param $bets
@@ -154,6 +163,17 @@ class TournamentBetResultService {
         $bet->save();
 
         return $bet;
+    }
+
+    public function refundBet($bet)
+    {
+        Log::info("REFUNDING TOURNAMENT BET " . $bet->id);
+        return $this->betRepositoryInterface->updateWithId($bet->id, array(
+            "resulted_flag" => true,
+            "bet_result_status_id" => $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_FULLY_REFUNDED)->id,
+            "win_amount" => $bet->bet_amount,
+            "updated_date" => Carbon::now()
+        ));
     }
 
     /**

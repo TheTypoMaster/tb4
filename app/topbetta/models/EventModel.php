@@ -8,6 +8,7 @@
  */
 
 use Eloquent;
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 
 class EventModel extends Eloquent {
 
@@ -30,6 +31,11 @@ class EventModel extends Eloquent {
     public function markets()
     {
         return $this->hasMany('TopBetta\Models\MarketModel', 'event_id');
+    }
+
+    public function isPaying()
+    {
+        return $this->event_status->keyword == EventStatusRepositoryInterface::STATUS_PAYING || $this->event_status->keyword == EventStatusRepositoryInterface::STATUS_PAID;
     }
 
 }

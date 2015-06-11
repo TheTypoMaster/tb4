@@ -79,4 +79,11 @@ class EventService {
     {
         return $this->eventRepository->updateWithId($event->id, array("paid_flag" => true));
     }
+
+    public function setEventPaying($event, $paidFlag = false)
+    {
+        return $this->eventRepository->updateWithId($event->id, array(
+            "event_status_id" => $this->eventStatusRepository->getByName(EventStatusRepositoryInterface::STATUS_PAYING)->id,
+        ));
+    }
 }

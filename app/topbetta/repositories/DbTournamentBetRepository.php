@@ -71,4 +71,15 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->get(array("tbdb_tournament_bet.*"));
     }
 
+    public function getBetsForMarket($marketId)
+    {
+        return $this->model
+            ->join('tbdb_tournament_bet_selection', 'tbdb_tournament_bet_selection.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+            ->join('tbdb_selection', 'tbdb_tournament_bet_selection.selection_id', '=', 'tbdb_selection.id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->where('tbdb_market.id', $marketId)
+            ->where('tbdb_tournament_bet.resulted_flag', false)
+            ->get(array("tbdb_tournament_bet.*"));
+    }
+
 } 

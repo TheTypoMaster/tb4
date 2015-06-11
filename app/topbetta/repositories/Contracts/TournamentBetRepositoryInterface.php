@@ -20,4 +20,6 @@ interface TournamentBetRepositoryInterface
     public function getBetsForEventByStatusIn($eventId, $status, $betType = null);
 
     public function getBetsForSelection($selectionId);
+
+    public function getBetsForMarket($marketId);
 }

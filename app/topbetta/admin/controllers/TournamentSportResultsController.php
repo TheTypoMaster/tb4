@@ -2,7 +2,17 @@
 
 namespace TopBetta\admin\controllers;
 
+use Carbon\Carbon;
+use Input;
+use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
+use TopBetta\Services\Betting\EventService;
 use View;
+use Redirect;
+use Log;
+use Queue;
+use Config;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 
 class TournamentSportResultsController extends \BaseController {
@@ -11,10 +21,34 @@ class TournamentSportResultsController extends \BaseController {
      * @var EventModelRepositoryInterface
      */
     private $eventRepository;
+    /**
+     * @var MarketRepositoryInterface
+     */
+    private $marketRepository;
+    /**
+     * @var EventService
+     */
+    private $eventService;
+    /**
+     * @var SelectionRepositoryInterface
+     */
+    private $selectionRepository;
+    /**
+     * @var SelectionResultRepositoryInterface
+     */
+    private $selectionResultRepository;
 
-    public function __construct(EventModelRepositoryInterface $eventRepository)
+    public function __construct(EventModelRepositoryInterface $eventRepository,
+                                MarketRepositoryInterface $marketRepository,
+                                EventService $eventService,
+                                SelectionRepositoryInterface $selectionRepository,
+                                SelectionResultRepositoryInterface $selectionResultRepository)
     {
         $this->eventRepository = $eventRepository;
+        $this->marketRepository = $marketRepository;
+        $this->eventService = $eventService;
+        $this->selectionRepository = $selectionRepository;
+        $this->selectionResultRepository = $selectionResultRepository;
     }
 
     /**
@@ -24,9 +58,15 @@ class TournamentSportResultsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$events = $this->eventRepository->getAllSportEvents(15);
+		$search = Input::get('q', '');
 
-        return View::make('admin::tournaments.events.index');
+        if( $search ) {
+            $events = $this->eventRepository->searchSportEvents($search, 15);
+        } else {
+            $events = $this->eventRepository->getAllSportEvents(15);
+        }
+
+        return View::make('admin::tournaments.events.index', compact('events', 'search'));
 	}
 
 
@@ -72,9 +112,19 @@ class TournamentSportResultsController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$event = $this->eventRepository->find($id);
+		$search = Input::get('q', '');
 
-        return View::make('admin::tournaments.events.edit', compact('event'));
+        $event = $this->eventRepository->find($id);
+
+        $tournamentMarketTypes = $event->competition->first()->tournamentMarketTypes->lists('id');
+
+        $tournamentMarkets = $event->markets->filter(function($q) use ($tournamentMarketTypes) {
+            return in_array($q->market_type_id, $tournamentMarketTypes);
+        });
+
+        $eventPaying = $this->eventService->isEventPaying($event);
+
+        return View::make('admin::tournaments.events.edit', compact('event', 'tournamentMarkets', 'eventPaying', 'search'));
 	}
 
 
@@ -86,7 +136,46 @@ class TournamentSportResultsController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+        $search = Input::get('q', '');
+
+        $event = $this->eventRepository->find($id);
+
+        $selectionResults = Input::get('market_results', array());
+
+        foreach($selectionResults as $market => $selectionId) {
+            if ( ! $selectionId ) {
+                $this->marketRepository->updateWithId($market, array(
+                    "market_status" => "R",
+                ));
+
+                $this->selectionResultRepository->deleteResultsForMarket($market);
+
+                Queue::push('TopBetta\Services\Betting\MarketBetRefundingQueueService', array("market_id" => $market), Config::get('betresulting.queue'));
+            }
+        }
+
+        $selections = $this->selectionRepository->findIn($selectionResults);
+        foreach($selections as $selection) {
+
+            if( $selection->market->result->count() && $selection->market->result->selection_id != $selection->id) {
+                Log::info("Deleting result for selection " . $selection->market->result->selection_id . " market " . $selection->market->id);
+                $selection->market->result->delete();
+            }
+
+            if( ! $selection->market->result->count() || $selection->market->result->selection_id != $selection->id ) {
+                Log::info("Creating result for selection " . $selection->id . " market " . $selection->market->id);
+                $this->selectionResultRepository->create(array(
+                    "selection_id" => $selection->id,
+                    "created_date" => Carbon::now(),
+                ));
+            }
+        }
+
+        $this->eventService->setEventPaying($event);
+        Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $event->id), Config::get('betresulting.queue'));
+
+        return Redirect::route('admin.tournament-sport-results.index', compact('search'))
+            ->with(array("flash_message" => "Saved"));
 	}
 
 
