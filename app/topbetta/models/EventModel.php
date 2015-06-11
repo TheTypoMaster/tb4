@@ -27,4 +27,9 @@ class EventModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\EventStatusModel', 'event_status_id', 'id');
     }
 
+    public function markets()
+    {
+        return $this->hasMany('TopBetta\Models\MarketModel', 'event_id');
+    }
+
 }

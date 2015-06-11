@@ -31,4 +31,19 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
 
         return $event;
     }
+
+    public function getAllSportEvents($paged = false)
+    {
+        $model = $this->model
+            ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_event_group', 'tbdb_event_group_event.event_group_id', '=', 'tbdb_event_group.id')
+            ->where('sport_id', '>', 3)
+            ->orderBy('e.start_date', 'DESC');
+
+        if( $paged ) {
+            return $model->paginate($paged);
+        }
+
+        return $model->get();
+    }
 }
