@@ -11,7 +11,7 @@ namespace TopBetta\Services\ExternalSourceNotifications;
 
 class DepositExternalSourceNotificationService extends AbstractExternalSourceNotificationService {
 
-    protected $queueService = 'TopBetta\Services\ExternalSourceNotifications\Queue\DepositExternalSourceNotificationQueueService';
+    protected $notificationType = 'deposit';
 
     protected $endpointKey = 'deposit_endpoint';
 

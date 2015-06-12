@@ -20,7 +20,7 @@ abstract class AbstractExternalSourceNotificationService {
 
     protected $httpMethod;
 
-    protected $queueService;
+    protected $notificationType;
 
     /**
      * @var
@@ -49,7 +49,7 @@ abstract class AbstractExternalSourceNotificationService {
 
         try {
             //push job on to the queue
-            Queue::push($this->queueService, array("payload" => $data, "parameters" => $parameters), Config::get('externalsource.queue'));
+            Queue::push($this->getQueueService(array_get($data, 'source')), array("payload" => $data, "parameters" => $parameters), Config::get('externalsource.queue'));
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             $this->sendErrorAlert($data, $e);
@@ -90,5 +90,10 @@ abstract class AbstractExternalSourceNotificationService {
             "api_password" => $sourceModel['api_password'],
             "http_method" => $this->httpMethod
         );
+    }
+
+    public function getQueueService($source)
+    {
+        return Config::get('externalsource.notification_services.' . $this->notificationType . '.' . $source);
     }
 }

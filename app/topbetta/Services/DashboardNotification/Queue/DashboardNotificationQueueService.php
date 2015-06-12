@@ -46,7 +46,7 @@ abstract class DashboardNotificationQueueService {
         try {
             $response = $client->send($request);
         } catch (RequestException $e) {
-            Log::error("DashboardNotificationQueueService Guzzle Request Exception : " . $e->getMessage() . " Response " . $e->getResponse());
+            Log::error("DashboardNotificationQueueService Guzzle Request Exception : " . $e->getMessage());
             return false;
         }
 

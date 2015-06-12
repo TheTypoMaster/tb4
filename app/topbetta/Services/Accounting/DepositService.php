@@ -99,7 +99,7 @@ class DepositService {
         );
 
         //notifications
-        $this->sendNotifications($depositUser->parent_user_id ? $depositUser->parent_user_id : $depositUser->id, $transaction['id'], array_get($input, 'source', null));
+        $this->sendNotifications($depositUser->parent_user_id ? $depositUser->parent_user_id : $depositUser->id, $transaction['id'], array_get($input, 'source', null), $user->parent_user_id ? $user->id : null);
 
         return $transaction;
     }
@@ -121,7 +121,7 @@ class DepositService {
         $transaction = $this->createDepositTransaction($user, AccountTransactionTypeRepositoryInterface::TYPE_EWAY_RECURRING_DEPOSIT, $amount, $source);
 
         //notifications
-        $this->sendNotifications($user->parent_user_id ? $user->parent_user_id : $user->id, $transaction['id'], $source);
+        $this->sendNotifications($user->parent_user_id ? $user->parent_user_id : $user->id, $transaction['id'], $source, $user->parent_user_id ? $user->id : null);
 
         return $transaction;
     }
@@ -151,20 +151,23 @@ class DepositService {
             $transactionType,
             $user->id,
             null,
+            null,
             $source ? $source['id'] : null
         );
     }
 
-    public function sendNotifications($userId, $transactionId, $source = null)
+    public function sendNotifications($userId, $transactionId, $source = null, $childUserId = null)
     {
-        //notify external source if necessary
-        $this->externalSourceNotificationService->notify(array(
+        $payload = array(
             "id" => $userId,
-            "transactions" => array(
-                $transactionId,
-            ),
+            "transaction" => $transactionId,
             "source" => $source
-        ));
+        );
+
+        if( $childUserId ) { $payload['child_id'] = $childUserId; }
+
+        //notify external source if necessary
+        $this->externalSourceNotificationService->notify($payload);
 
         //notify dashboard
         $this->dashboardNotificationService->notify(array(
