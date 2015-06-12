@@ -50,7 +50,7 @@
                         <td>{{ $competition->sport->name }}</td>
                         <td>{{ $competition->start_date }}</td>
                         <td>
-                            {{ link_to_route('admin.tournament-sport-markets.edit', "Edit", array($competition->id, "q" => $search), array("class" => "btn btn-warning")) }}
+                            {{ link_to_route('admin.tournament-sport-markets.edit', "Edit", array($competition->id, "q" => $search, 'sport'=>$sport, 'competition' => $selectedComp), array("class" => "btn btn-warning")) }}
                         </td>
                     </tr>
                 @endforeach

@@ -99,12 +99,14 @@ class EventGroupMarketsController extends \BaseController {
 	public function edit($id)
 	{
         $search = Input::get('q', '');
+        $sport = Input::get('sport', null);
+        $selectedComp = Input::get('competition', null);
 
         $competition = $this->competitionRepository->find($id);
 
         $markets = $this->marketTypeRepository->getMarketTypesForCompetition($id);
 
-        return View::make('admin::tournaments.sportmarkets.edit', compact('competition', 'markets' ,'search'));
+        return View::make('admin::tournaments.sportmarkets.edit', compact('competition', 'markets' ,'search', 'sport', 'selectedComp'));
 	}
 
 
@@ -117,8 +119,10 @@ class EventGroupMarketsController extends \BaseController {
 	public function update($id)
 	{
         $search = Input::get('q', '');
+        $sport = Input::get('sport', null);
+        $selectedComp = Input::get('competition', null);
 
-        $marketTypes = Input::get('market_types');
+        $marketTypes = Input::get('market_types', array());
 
         $competition = $this->competitionRepository->find($id);
 
@@ -126,7 +130,7 @@ class EventGroupMarketsController extends \BaseController {
 
         $competition->save();
 
-        return Redirect::route('admin.tournament-sport-markets.index', array("q" => $search))
+        return Redirect::route('admin.tournament-sport-markets.index', array("q" => $search, 'sport' => $sport, 'competition' => $selectedComp))
             ->with(array("flash_message" => "Saved!"));
 	}
 

@@ -40,7 +40,7 @@
             </div>
 
             <div class="row">
-                {{ Form::open(array("route" => array("admin.tournament-sport-markets.update", $competition->id, "q" => $search), 'method' => "PUT")) }}
+                {{ Form::open(array("route" => array("admin.tournament-sport-markets.update", $competition->id, "q" => $search, 'sport'=>$sport, 'competition' => $selectedComp), 'method' => "PUT")) }}
 
                 <table class="table table-striped table-hover">
                     <thead>
