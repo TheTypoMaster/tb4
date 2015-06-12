@@ -29,7 +29,7 @@ class TokenAuthFilter {
     {
         if( ! Auth::user() ) {
             try {
-                $user = $this->authenticationService->tokenLogin(Input::only(array("token", "betting_user_name", "club_user_name", "source")));
+                $user = $this->authenticationService->tokenLogin(Input::only(array("token", "username", "parent_username", "source")));
             } catch (\Exception $e) {
                 \Log::error("UNAUTHED: " . $e->getMessage() . $e->getErrors());
                 return Response::json(array("error" => "true", "message" => "Unauthorized Access"), 401);
