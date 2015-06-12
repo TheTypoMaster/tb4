@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('TbdbTournamentTransactionTypeRebuyFieldsTableSeeder');
 		$this->call('TbdbBetSourceUpdateTableSeeder');
 		$this->call('TbBetSourceUpdateTableSeeder');
+		$this->call('TbdbAccountTransactionTypeRecurringTypeTableSeeder');
 	}
 
 }
