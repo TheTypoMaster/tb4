@@ -3,6 +3,7 @@
 namespace TopBetta\admin\controllers;
 
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
+use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use View;
 use Input;
 use Redirect;
@@ -18,11 +19,16 @@ class EventGroupMarketsController extends \BaseController {
      * @var MarketRepositoryInterface
      */
     private $marketRepository;
+    /**
+     * @var MarketTypeRepositoryInterface
+     */
+    private $marketTypeRepository;
 
-    public function __construct(CompetitionRepositoryInterface $competitionRepository, MarketRepositoryInterface $marketRepository)
+    public function __construct(CompetitionRepositoryInterface $competitionRepository, MarketRepositoryInterface $marketRepository, MarketTypeRepositoryInterface $marketTypeRepository)
     {
         $this->competitionRepository = $competitionRepository;
         $this->marketRepository = $marketRepository;
+        $this->marketTypeRepository = $marketTypeRepository;
     }
 
 	/**
@@ -33,14 +39,20 @@ class EventGroupMarketsController extends \BaseController {
 	public function index()
 	{
 		$search = Input::get('q', '');
+        $sport = Input::get('sport', null);
+        $selectedComp = Input::get('competition', null);
 
         if( $search ) {
             $competitions = $this->competitionRepository->search($search, true);
+        } else if ( $sport && ! $selectedComp ) {
+            $competitions = $this->competitionRepository->findBySport($sport, array('start_date', 'DESC'), 15);
+        } else if ( $selectedComp ) {
+            $competitions = array($this->competitionRepository->find($selectedComp));
         } else {
             $competitions = $this->competitionRepository->findAllSportsCompetitions(15);
         }
 
-        return View::make("admin::tournaments.sportmarkets.index", compact("competitions", "search"));
+        return View::make("admin::tournaments.sportmarkets.index", compact("competitions", "search", 'sport', 'selectedComp'));
 	}
 
 
@@ -90,7 +102,7 @@ class EventGroupMarketsController extends \BaseController {
 
         $competition = $this->competitionRepository->find($id);
 
-        $markets = $this->marketRepository->getMarketsForCompetition($id);
+        $markets = $this->marketTypeRepository->getMarketTypesForCompetition($id);
 
         return View::make('admin::tournaments.sportmarkets.edit', compact('competition', 'markets' ,'search'));
 	}

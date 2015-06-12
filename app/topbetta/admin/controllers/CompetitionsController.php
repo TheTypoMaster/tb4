@@ -132,4 +132,9 @@ class CompetitionsController extends BaseController
 		//
 	}
 
+    public function getBySport($id)
+    {
+        return $this->competitionsrepo->findBySport($id)->toArray();
+    }
+
 }

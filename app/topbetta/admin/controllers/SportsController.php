@@ -121,4 +121,9 @@ class SportsController extends BaseController
 		//
 	}
 
+    public function getSports()
+    {
+        return $this->sportsrepo->sportsFeed();
+    }
+
 }

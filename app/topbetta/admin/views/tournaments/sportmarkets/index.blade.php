@@ -21,6 +21,16 @@
                 </h2>
             </div>
 
+            {{ Form::open(array('method' => 'GET', 'class' => 'form-inline')) }}
+                {{ Form::label('sport', "Sport") }}
+                {{ Form::select('sport', array(), null, array("class" => "form-control")) }}
+
+                {{ Form::label('competition', "Competition") }}
+                {{ Form::select('competition', array(), null, array("class" => "form-control")) }}
+
+                {{ Form::submit('Filter', array("class" => "form-control btn btn-primary")) }}
+            {{Form::close()}}
+
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
@@ -47,9 +57,66 @@
                 </tbody>
             </table>
 
-            {{ $competitions->appends(array('q' => $search))->links() }}
+            @if ( ! is_array($competitions) )
+                {{ $competitions->appends(array('q' => $search))->links() }}
+            @endif
         </div>
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.row -->
+
+    <script type="text/javascript">
+        //TODO: clean up and abstract
+        (function(){
+            function createSelectOptions(json, parameters) {
+                var html = $(),
+                    options = parameters || {},
+                    textField = options.textField || 'name',
+                    valField = options.valField || 'id',
+                    selected = options.selected || 0;
+
+                console.log(textField);
+                html = html.add($('<option></option>').text('Select...').val(0));
+
+                $.each(json, function(index, value){
+                    var $option = $('<option></option>').text(value[textField]).val(value[valField]);
+
+                    if( value[valField] == selected ) { $option.attr('selected', 'selected') }
+
+                    html = html.add($option);
+                });
+
+                return html;
+            }
+
+            $.fn.sportCompetitionFilter = function(competitionTarget) {
+
+                var $this = $(this);
+
+                $.get("/admin/sports")
+                    .done(function(data){
+                        $this.html(createSelectOptions(data, {
+                            'textField' : 'sport_name',
+                            'valField' : 'sport_id',
+                            'selected' : "{{ $sport }}"
+                        }));
+
+                        $this.change();
+                    });
+
+                $(this).change(function(e) {
+                    if( $(this).val() > 0 ) {
+                        $.get("/admin/sports/" + $(this).val() + "/competitions")
+                                .done(function (data) {
+                                    $(competitionTarget).html(createSelectOptions(data, {"selected": "{{ $selectedComp }}"}));
+                                })
+                    }
+                });
+            }
+
+        }($));
+
+        $('#sport').sportCompetitionFilter('#competition');
+
+    </script>
 @stop	

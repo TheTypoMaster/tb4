@@ -46,7 +46,6 @@
                     <thead>
                     <tr>
                         <th>Market</th>
-                        <th>Line</th>
                         <th>Description</th>
                         <th>Status</th>
                     </tr>
@@ -55,11 +54,10 @@
                     <tbody>
                     @foreach($markets as $market)
                         <tr>
-                            <td>{{ $market->marketType->name }}</td>
-                            <td>{{ $market->line }}</td>
-                            <td>{{ $market->marketType->description }}</td>
+                            <td>{{ $market->name }}</td>
+                            <td>{{ $market->description }}</td>
                             <td>
-                                {{ Form::checkbox('market_types[]', $market->marketType->id, in_array($market->marketType->id, $competition->tournament_market_types->lists('id'))) }}
+                                {{ Form::checkbox('market_types[]', $market->id, in_array($market->id, $competition->tournament_market_types->lists('id'))) }}
                             </td>
                         </tr>
                     @endforeach

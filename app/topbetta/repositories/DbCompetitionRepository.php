@@ -184,4 +184,15 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
+    public function findBySport($sportId, $orderBy = array('name', 'ASC'), $paged = null)
+    {
+        $model = $this->model->where('sport_id', $sportId)->orderBy($orderBy[0], $orderBy[1]);
+
+        if( $paged ) {
+            return $model->paginate($paged);
+        }
+
+        return $model->get();
+    }
+
 } 

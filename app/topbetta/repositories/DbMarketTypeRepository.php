@@ -38,4 +38,14 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
     {
         return $this->model->find($id);
     }
+
+    public function getMarketTypesForCompetition($competitionId)
+    {
+        return $this->model
+            ->join('tbdb_market', 'tbdb_market.market_type_id', '=', 'tbdb_market_type.id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->where('tbdb_event_group_event.event_group_id', $competitionId)
+            ->get(array("tbdb_market_type.*"));
+    }
 }
