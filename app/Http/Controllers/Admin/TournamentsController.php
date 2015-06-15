@@ -4,6 +4,7 @@ use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Request;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\TODRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
@@ -61,6 +62,10 @@ class TournamentsController extends Controller
      * @var TournamentAdminService
      */
     private $tournamentAdminService;
+    /**
+     * @var MarketRepositoryInterface
+     */
+    private $marketRepository;
 
     /**
      * @param DbTournamentRepository $tournamentRepo
@@ -82,7 +87,8 @@ class TournamentsController extends Controller
                                 TournamentLabelsRepositoryInterface $labelsRepository,
                                 TournamentPrizeFormatRepositoryInterface $prizeFormatRepository,
                                 TournamentService $tournamentService,
-                                TournamentAdminService $tournamentAdminService )
+                                TournamentAdminService $tournamentAdminService,
+                                MarketRepositoryInterface $marketRepository )
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -96,6 +102,7 @@ class TournamentsController extends Controller
         $this->prizeFormatRepository = $prizeFormatRepository;
         $this->tournamentService = $tournamentService;
         $this->tournamentAdminService = $tournamentAdminService;
+        $this->marketRepository = $marketRepository;
     }
 
 	/**
@@ -419,6 +426,28 @@ class TournamentsController extends Controller
 
         return $this->formatForResponse(array("Select Competition") + $competitions->lists('name', 'id'));
 
+    }
+
+    public function getMarkets($competitionId)
+    {
+        $competition = $this->competitionRepository->find($competitionId);
+
+        if($competition->sport_id <= 3) {
+            return array();
+        }
+
+        $competitionMarkets = $competition->tournament_market_types->lists('id');
+        $markets = $this->marketRepository->getMarketsForCompetition($competitionId)->toArray();
+
+        foreach($markets as &$market) {
+            if(in_array($market['market_type']['id'], $competitionMarkets)) {
+                $market['tournament_status'] = true;
+            } else {
+                $market['tournament_status'] = false;
+            }
+        }
+
+        return $markets;
     }
 
     public function getEventGroups($competitionId)

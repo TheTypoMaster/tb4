@@ -241,6 +241,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::resource('competitionregions', 'TopBetta\admin\controllers\CompetitionRegionController');
 
     Route::resource('tournament-sport-results', 'TopBetta\admin\controllers\TournamentSportResultsController');
+ 	Route::resource('tournament-sport-markets', 'TopBetta\admin\controllers\EventGroupMarketsController');
 
     Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
 
@@ -263,12 +264,16 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
     Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
     Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
+    Route::get('tournaments/get-markets/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getMarkets');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
 
     //user activity
     Route::post('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@createUserActivity');
     Route::get('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@downloadUserActivity');
     Route::resource('user-activity', 'TopBetta\admin\controllers\UserActivityController');
+
+    Route::get('sports', 'TopBetta\admin\controllers\SportsController@getSports');
+    Route::get('sports/{sportId}/competitions', 'TopBetta\admin\controllers\CompetitionsController@getBySport');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {

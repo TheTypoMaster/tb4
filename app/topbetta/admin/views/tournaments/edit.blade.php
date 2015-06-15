@@ -117,6 +117,23 @@
                 </div>
             </fieldset>
 
+            <fieldset id="markets" style="display:none">
+                <legend>Markets</legend>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Market</th>
+                        <th>Line</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="market-table-body">
+                    </tbody>
+                </table>
+            </fieldset>
+
             <fieldset>
                 <legend>Advanced Settings</legend>
 
@@ -336,6 +353,7 @@
             });
         });
 
+
         $('#event_group_id').change(function() {
             if ( ! $(this).val()) {return;}
             var val = $(this).val();
@@ -353,7 +371,26 @@
                             $('.event-multiselect').multiselect("rebuild");
                             $('.competition-multiselect').multiselect("rebuild");
                         })
+				 $.get('/admin/tournaments/get-markets/' + value)
+                    .done(function(data) {
+                        if( data.length > 0 ) {
+                            var html = $();
+                            $.each(data, function(i,v){
+                                var $row = $("<tr/>");
+                                $row.append("<td/>").text(v.market_type.name);
+                                $row.append("<td/>").text(v.line);
+                                $row.append("<td/>").text(v.tournament_status ? "Yes" : "No");
+                                html.add($row);
+                            });
+
+                            $('#market-table-body').html(html);
+                            $('#markets').slideDown();
+                        } else {
+                            $('#markets').slideUp();
+                        }
+                    });
             });
+
         });
 
 
