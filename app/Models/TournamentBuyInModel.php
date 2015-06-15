@@ -6,7 +6,7 @@
  * Time: 10:04 AM
  */
 
-namespace TopBetta\models;
+namespace TopBetta\Models;
 
 use Eloquent;
 

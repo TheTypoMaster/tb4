@@ -31,12 +31,12 @@ class FreeCreditTransactionModel extends Eloquent {
 
     public function giver()
     {
-        return $this->belongsTo('TopBetta\models\UserModel', 'giver_id');
+        return $this->belongsTo('TopBetta\Models\UserModel', 'giver_id');
     }
 
     public function transactionType()
     {
-        return $this->belongsTo('TopBetta\models\FreeCreditTransactionTypeModel', 'tournament_transaction_type_id');
+        return $this->belongsTo('TopBetta\Models\FreeCreditTransactionTypeModel', 'tournament_transaction_type_id');
     }
 
     public function bet()

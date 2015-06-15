@@ -73,12 +73,8 @@
 					<td>-</td>
 					<td>{{ (!$user->isTopBetta) ? 'Yes' : 'No' }}</td>
 					<td>{{ ($user->block) ? 'Blocked' : 'Active' }}</td>
-                    <td>{{ link_to_route('admin.user-permissions.edit', 'Edit', array($user->id), array('class' => 'btn btn-info')) }}</td>
-                    {{--<td>
-                        {!! Form::open(array('method' => 'DELETE', 'route' => array('admin.users.destroy', $user->id))) !!}
-					{!! Form::submit('Delete', array('class' => 'btn btn-danger')) !!}
-					{!! Form::close() !!}
-                    </td>--}}
+                    <td>{!! link_to_route('admin.user-permissions.edit', 'Edit', array($user->id), array('class' => 'btn btn-info')) !!}</td>
+
                 </tr>				
 				@endif
 				@endforeach

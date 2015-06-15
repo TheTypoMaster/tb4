@@ -10,7 +10,7 @@ namespace TopBetta\Repositories;
 
 
 
-use TopBetta\models\ProcessParamsModel;
+use TopBetta\Models\ProcessParamsModel;
 use TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface;
 
 class DbProcessParamsRepository extends BaseEloquentRepository implements ProcessParamsRepositoryInterface

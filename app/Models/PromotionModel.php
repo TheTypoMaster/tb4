@@ -18,7 +18,7 @@ class PromotionModel extends Eloquent {
 
 	public function user()
 	{
-		return $this->belongsTo('TopBetta\models\UserModel', 'pro_entered_by');
+		return $this->belongsTo('TopBetta\Models\UserModel', 'pro_entered_by');
 	}
 
 	public function getProValueAttribute($value)

@@ -14,6 +14,6 @@ class IconModel extends Eloquent {
 
     public function iconType()
     {
-        return $this->belongsTo('TopBetta\models\IconTypeModel', 'icon_type_id');
+        return $this->belongsTo('TopBetta\Models\IconTypeModel', 'icon_type_id');
     }
 }
