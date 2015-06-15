@@ -10,4 +10,8 @@ namespace TopBetta\Repositories\Contracts;
 interface EventModelRepositoryInterface
 {
     public function setDisplayFlagForEvent($eventId, $displayFlag);
+
+    public function getAllSportEvents($paged = false);
+
+    public function searchSportEvents($term, $paged = false);
 }

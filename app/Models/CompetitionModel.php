@@ -44,4 +44,9 @@ class CompetitionModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\IconModel', 'default_event_icon_id');
     }
 
+    public function tournamentMarketTypes()
+    {
+        return $this->belongsToMany('TopBetta\Models\MarketTypeModel', 'tbdb_event_group_market_type', 'event_group_id', 'market_type_id');
+    }
+
 }

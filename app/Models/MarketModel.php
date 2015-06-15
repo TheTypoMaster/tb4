@@ -27,5 +27,21 @@ class MarketModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\MarketTypeModel', 'market_type_id', 'id');
     }
 
+    public function selections()
+    {
+        return $this->hasMany('TopBetta\Models\SelectionModel', 'market_id');
+    }
+
+    public function result()
+    {
+        $model = $this->selections()->has('result');
+
+        if( $model->first() ) {
+            return $model->first()->result();
+        }
+
+        return $model;
+    }
+
 
 }

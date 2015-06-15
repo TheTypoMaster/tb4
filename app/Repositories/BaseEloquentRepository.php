@@ -53,6 +53,11 @@ class BaseEloquentRepository {
         return $model->paginate($paginate);
     }
 
+    public function findIn(array $ids, $column = 'id')
+    {
+        return $this->model->whereIn($column, $ids)->get();
+    }
+
 	/**
 	 * Update record with the given id and data
 	 * @param $id

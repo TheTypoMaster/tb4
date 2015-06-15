@@ -11,6 +11,7 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -44,6 +45,10 @@ class RaceDataProcessingService {
 	protected $laststarts;
 	protected $prices;
 	protected $betproduct;
+    /**
+     * @var TournamentBetService
+     */
+    private $tournamentBetService;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -59,7 +64,9 @@ class RaceDataProcessingService {
 								BetResultRepo $betresultrepository,
 								MarketRepositoryInterface $markets,
 								RisaFormRepository $risaform,
-								LastStartRepositoryInterface $laststarts){
+								LastStartRepositoryInterface $laststarts,
+								SelectionPriceRepositoryInterface $prices,
+                                TournamentBetService $tournamentBetService){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -76,6 +83,7 @@ class RaceDataProcessingService {
 		$this->betproduct = $betproduct;
 
 		$this->logprefix = 'RaceDataProcessingService: ';
+        $this->tournamentBetService = $tournamentBetService;
     }
 
 
@@ -524,6 +532,7 @@ class RaceDataProcessingService {
 		foreach ($scratchList as $scratchedId) {
 			Log::info($this->logprefix.'Scratching - Refunding bets for runner id: ' . $scratchedId);
 			$this->betrepository->refundBetsForRunnerId($scratchedId);
+            $this->tournamentBetService->refundBetsForSelection($scratchedId);
 		}
 
 		return "Runenr(s) Processed";
