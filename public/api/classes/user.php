@@ -167,7 +167,7 @@ class Api_User extends JController {
 			}
 		} else {
 			//  invalid login hash
-			$result = OutputHelper::json(500, array('error_msg' => 'There was a problem with your login'));
+			$result = OutputHelper::json(500, array('error_msg' => 'There was a problem with your login token'));
 		}
 
 		return $result;
