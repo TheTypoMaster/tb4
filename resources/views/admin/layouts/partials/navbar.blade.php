@@ -6,7 +6,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" href="{{ route('admin.dashboard.index') }}">TopBetta Admin</a>
+		<a class="navbar-brand" href="{{ route('admin.dashboard.index') }}"></a>
 	</div>
 	<!-- /.navbar-header -->
 

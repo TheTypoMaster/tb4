@@ -7,7 +7,7 @@
 			<h2 class="col-lg-4">Tournaments <small>{{ number_format($tournaments->total()) }}</small>
                 {!! link_to_route('admin.tournaments.create', 'Create', array(), array('class' => 'btn btn-info')) !!}
             </h2>
-
+            <h2 class="col-lg-4 pull-right">
 			{!! Form::open(array('method' => 'GET')) !!}
 			<div class="input-group custom-search-form col-lg-4 pull-right">
 				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search (id,name)...")) !!}
@@ -18,6 +18,7 @@
 				</span>
 			</div>		
 			{!! Form::close() !!}
+            </h2>
 		</div>		
 		@include('admin.tournaments.partials.tournament-list')
 	</div>

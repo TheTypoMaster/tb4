@@ -10,6 +10,7 @@ namespace TopBetta\Services\Tournaments;
 
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
@@ -50,6 +51,10 @@ class TournamentService {
      * @var TournamentTicketService
      */
     private $ticketService;
+    /**
+     * @var EventModelRepositoryInterface
+     */
+    private $eventRepository;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -57,7 +62,8 @@ class TournamentService {
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
                                 TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
                                 TournamentBuyInService $buyInService,
-                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService)
+                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
+                                EventModelRepositoryInterface $eventRepository)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -67,6 +73,7 @@ class TournamentService {
         $this->buyInService = $buyInService;
         $this->leaderboardService = $leaderboardService;
         $this->ticketService = $ticketService;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -187,6 +194,9 @@ class TournamentService {
             'tournament_topup_buyin_id',
             'tournament_rebuy_buyin_id',
             'tournament_labels',
+            'rebuy_end_after',
+            'topup_end_after',
+            'topup_start_after',
         )));
 
         $tournament = $this->tournamentRepository->find($tournament['id']);
@@ -336,8 +346,20 @@ class TournamentService {
                 }else {
                     $tournamntType = 'cash';
                 }
-                $automated_text  = 'This is a ' . $tournamntType . ' tournament.';
-                $automated_text .= ' The cost of entry is ';
+                $automated_text  = 'This is a ' . $tournamntType . ' tournament';
+
+                if( $rebuys = array_get($tournamentData, 'rebuys', 0) ) {
+                    $event = $this->eventRepository->find(array_get($tournamentData, 'rebuy_end_after'));
+                    $automated_text .= ' with ' . $rebuys . ' Re-Buy Ins available until the start of ';
+
+                    if( $event->competition->first()->sport_id ) {
+                        $automated_text .= $event->name;
+                    } else {
+                        $automated_text .= 'race ' . $event->number;
+                    }
+                }
+
+                $automated_text .= '. The cost of entry is ';
 
                 if ($buyin_amount > 0) {
                     $automated_text .= '$' . $buyin_amount . ' + $' . number_format(array_get($tournamentData, 'entry_fee',0)/100, 2) . '.';
@@ -365,8 +387,15 @@ class TournamentService {
                     }
 
                     if ($buyin_amount > 0) {
-                        $automated_text .= ' Once the minimum is reached, the prize pool will continue to grow by $' . $buyin_amount . ' per entrant.';
+                        $automated_text .= ' Once the minimum is reached, the prize pool will continue to grow by $' . $buyin_amount . ' per entrant';
+
+                        if( $rebuys = array_get($tournamentData, 'rebuys', 0) ) {
+                            $automated_text .= ' and re-buys';
+                        }
+
+                        $automated_text .= '.';
                     }
+
                 } else {
                     $parent_tournament	= $this->tournamentRepository->find($parent_tournament_id);
                     $start_date_time	= strtotime($parent_tournament->start_date);

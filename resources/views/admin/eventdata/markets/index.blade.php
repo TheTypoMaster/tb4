@@ -2,43 +2,48 @@
 
 @section('main')
 
-<div class="row">
-	<div class="col-lg-12">
-		<div class="row page-header">
-        			<h2 class="col-lg-4">Markets <small>({{ count($markets) ? number_format($markets->total()) : 0 }})</small></h2>
-
-        			{!! Form::open(array('method' => 'GET')) !!}
-        			<div class="input-group custom-search-form col-lg-4 pull-right">
-        				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
-        				<span class="input-group-btn">
-        					<button class="btn btn-default" type="button">
-        						<i class="fa fa-search"></i>
-        					</button>
-        				</span>
-        			</div>
-        			{!! Form::close() !!}
-        		</div>
-        </div>
-        <div class="pull-right">
-            <div class="pull-right">
-                {!! link_to_route('admin.events.index', "Back to Events", array(), array("class" => "btn btn-outline btn-warning")) !!}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row page-header">
+                <h2 class="col-lg-4">Markets
+                    <small>({{ count($markets) ? number_format($markets->total()) : 0 }})</small>
+                </h2>
+                <h2 class="col-lg-4 pull-right">
+                    {!! Form::open(array('method' => 'GET')) !!}
+                    <div class="input-group custom-search-form">
+                        {!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
+                        <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                    </div>
+                    {!! Form::close() !!}
+                </h2>
             </div>
         </div>
 
-		@if (count($markets))
-        <table class="table table-striped table-bordered table-hover">
-        	<thead>
-        		<tr>
-        			<th>ID</th>
-        			<th>Market Name</th>
-                    <th>Event Name</th>
-        			<th>Market Status</th>
-        			<th>Display</th>
-        			<th>Created</th>
-        			<th>Updated</th>
-        			<th colspan="1">Action</th>
-        		</tr>
-        	</thead>
+        <div class="col-lg-12">
+            <div class="pull-right">
+                <div class="pull-right">
+                    {!! link_to_route('admin.events.index', "Back to Events", array(), array("class" => "btn btn-outline btn-warning")) !!}
+                </div>
+            </div>
+
+            @if (count($markets))
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Market Name</th>
+                        <th>Event Name</th>
+                        <th>Market Status</th>
+                        <th>Display</th>
+                        <th>Created</th>
+                        <th>Updated</th>
+                        <th colspan="1">Action</th>
+                    </tr>
+                    </thead>
 
         	<tbody>
         		@foreach($markets as $market)

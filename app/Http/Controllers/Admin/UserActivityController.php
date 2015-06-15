@@ -6,6 +6,7 @@ use Redirect;
 use Response;
 use Input;
 use File;
+use TopBetta\Services\Exceptions\InvalidFormatException;
 use View;
 use Carbon\Carbon;
 use TopBetta\Services\UserAccount\UserReportService;
@@ -32,7 +33,7 @@ class UserActivityController extends \BaseController {
 		return View::make('admin::users.user-activity');
 	}
 
-    public function downloadUserActivity()
+    public function createUserActivity()
     {
         if( ! Input::hasFile('users') ) {
             return Redirect::route('admin.user-activity.index')
@@ -43,10 +44,20 @@ class UserActivityController extends \BaseController {
 
         //get the activity data
         $data = array();
+        $invalidData = array();
         $users = $users->openFile();
         while( $record = $users->fgetcsv() ) {
-            if ( $userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record[0], $record[1], $record[2]) ) {
-                $data = array_merge($data, $userHistory);
+            try {
+                if( count($record) < 3 ) {
+                    throw new InvalidFormatException($record, "Record could not be processed");
+                }
+                if ($userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record[0], $record[1], $record[2])) {
+                    $data = array_merge($data, $userHistory);
+                }
+            } catch (InvalidFormatException $e) {
+                if( implode(', ', $e->getData()) != '') {
+                    $invalidData[] = implode(', ', $e->getData()) . ' - ' . $e->getMessage();
+                }
             }
         }
 
@@ -75,12 +86,26 @@ class UserActivityController extends \BaseController {
         }
         fclose($csv);
 
-        //download file
-        $response = Response::make(file_get_contents($filename), 200, array("Content-type" => "text/csv; charset=UTF-8", "Content-disposition" => "attachment; filename=user-activity.csv"));
+        return Redirect::route('admin.user-activity.index')
+            ->with('filename', $filename)
+            ->with('invalidData', $invalidData);
+    }
 
-        File::delete($filename);
+    public function downloadUserActivity()
+    {
+        $file = Input::get('filename', null);
 
-        return $response;
+        if( $file ) {
+            //download file
+            $response = Response::make(file_get_contents($file), 200, array("Content-type" => "text/csv; charset=UTF-8", "Content-disposition" => "attachment; filename=user-activity.csv"));
+
+            File::delete($file);
+
+            return $response;
+        }
+
+        return Redirect::route('admin.user-activity.index')
+            ->with(array('flash_message' => "error occurred while trying to download file"));
     }
 
 	/**
