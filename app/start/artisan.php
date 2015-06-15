@@ -15,3 +15,5 @@ Artisan::resolve('BetResultWatchdogCommand');
 Artisan::resolve('ChargeDormantAccounts');
 
 Artisan::resolve('DashboardPusher');
+
+Artisan::resolve("CreateTestSport");

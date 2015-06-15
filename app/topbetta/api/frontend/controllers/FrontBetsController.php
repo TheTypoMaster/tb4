@@ -505,7 +505,7 @@ class FrontBetsController extends BaseController {
 								$errors++;
 
 								return false;
-							}							
+							}
 
 							$bet = $l -> query('saveBet', $betData);
 
