@@ -20,7 +20,7 @@ class DbSelectionStatusRepository extends BaseEloquentRepository implements Sele
 
     public function getSelectionStatusIdByName($statusName)
     {
-        return $this->model->where("name", "=", $statusName)->pluck("id");
+        return $this->model->where("name", "=", $statusName)->value("id");
     }
 
 }

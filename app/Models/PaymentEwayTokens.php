@@ -12,7 +12,7 @@ class PaymentEwayTokens extends \Eloquent {
     
     static public function checkTokenExists($userID, $managedId){
     	return PaymentEwayTokens::where('user_id', '=', $userID)
-    							->where('cc_token' , '=', $managedId)->pluck('id');
+    							->where('cc_token' , '=', $managedId)->value('id');
     }
     
     

@@ -89,7 +89,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
 	public function getEventIdFromExternalId($externalEventId){
 		$eventId = $this->model->where('external_event_id', $externalEventId)
-								->pluck('id');
+								->value('id');
 		if(!$eventId) return null;
 
 		return $eventId;

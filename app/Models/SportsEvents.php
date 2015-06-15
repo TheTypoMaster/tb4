@@ -20,7 +20,7 @@ class SportsEvents extends \Eloquent {
 		return $result;
 
 
-		// return SportsEvents::where('external_event_id', '=', $eventId) -> pluck('id');
+		// return SportsEvents::where('external_event_id', '=', $eventId) -> value('id');
 
 	}
 

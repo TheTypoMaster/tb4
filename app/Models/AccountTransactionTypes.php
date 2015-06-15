@@ -17,7 +17,7 @@ class AccountTransactionTypes extends \Eloquent {
      */
     static public function getTransactionTypeId($keyword)
     {
-    	return AccountTransactionTypes::where('keyword', '=', $keyword) -> pluck('id');
+    	return AccountTransactionTypes::where('keyword', '=', $keyword) -> value('id');
     }
     
     /**

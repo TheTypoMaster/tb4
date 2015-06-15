@@ -11,6 +11,6 @@ class SportsMatches extends \Eloquent {
 	static public function eventExists($eventId) {
 		return SportsMatches::where('external_event_id', '=', $eventId) 
 								->whereNull('number') 
-								->pluck('id');
+								->value('id');
 	}
 }

@@ -14,7 +14,7 @@ class SportsSelectionResults extends \Eloquent {
      * - The record ID if a record is found
      */
     static public function selectionResultExists($selectionId){
-    	return SportsSelectionResults::where('selection_id', $selectionId)->pluck('id');
+    	return SportsSelectionResults::where('selection_id', $selectionId)->value('id');
     }
     
     

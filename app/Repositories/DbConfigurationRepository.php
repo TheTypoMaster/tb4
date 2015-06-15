@@ -29,7 +29,7 @@ class DbConfigurationRepository extends BaseEloquentRepository implements Config
 
     public function getIdByName($name)
     {
-        return $this->model->where('name', $name)->pluck('id');
+        return $this->model->where('name', $name)->value('id');
     }
 
 }

@@ -13,7 +13,7 @@ class SportEventGroupEvent extends \Eloquent {
 	 */
 	static public function eventGEExists($eventId, $compId){
 		return SportEventGroupEvent::where('event_id', '=', $eventId )
-									  ->where('event_group_id', '=', $compId )->pluck('event_id');
+									  ->where('event_group_id', '=', $compId )->value('event_id');
 	}
 
     public function competitions(){

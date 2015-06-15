@@ -464,7 +464,7 @@ class RacingController extends \BaseController
 
                                         // Add the event_group_event record if adding race
                                         // TODO: maybe through eloquent check if the race already exists in DB also need to check what event_id field stores
-                                        $egeExists = \DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->pluck('event_id');
+                                        $egeExists = \DB::table('tbdb_event_group_event')->where('event_id', $raceEventID)->where('event_group_id', $meetingExists)->value('event_id');
 
                                         if (!$egeExists) {
                                             $eventGroupEvent = new TopBetta\Models\RaceEventGroupEvent;
@@ -540,7 +540,7 @@ class RacingController extends \BaseController
                                         $raceRunner = new TopBetta\Models\RaceSelection;
 
                                         // get market ID
-                                        $marketTypeID = TopBetta\Models\RaceMarketType::where('name', '=', $marketName)->pluck('id');
+                                        $marketTypeID = TopBetta\Models\RaceMarketType::where('name', '=', $marketName)->value('id');
 
                                         // check if market for event exists
                                         $marketID = TopBetta\Models\RaceMarket::marketExists($raceExists['EventId'], $marketTypeID);
@@ -747,7 +747,7 @@ class RacingController extends \BaseController
                                         // if it exists
                                         if ($selectionsExists) {
                                             // Check if we have results already
-                                            $resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->pluck('id');
+                                            $resultExists = \DB::table('tbdb_selection_result')->where('selection_id', $selectionsExists)->value('id');
                                             if ($resultExists) {
                                                 TopBetta\Helpers\LogHelper::l($log_msg_prefix . "  PriceType:$priceType Already in DB", 1);
                                                 $raceResult = TopBetta\Models\RaceResult::find($resultExists);
@@ -947,7 +947,7 @@ class RacingController extends \BaseController
                                     $raceExists = TopBetta\Models\RaceEvent::eventExists($meetingId, $raceNo);
 
                                     // grab the race type code
-                                    $raceTypeCode = TopBetta\Models\RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
+                                    $raceTypeCode = TopBetta\Models\RaceMeeting::where('external_event_group_id', '=', $meetingId)->value('type_code');
 
                                     // if race exists update that record
                                     if ($raceExists) {
@@ -965,7 +965,7 @@ class RacingController extends \BaseController
 
                                                     if ($selectionExists) {
                                                         //TopBetta\Helpers\LogHelper::l("BackAPI: Racing - Processing Odds. In DB", 1);
-                                                        $priceExists = \DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->pluck('id');
+                                                        $priceExists = \DB::table('tbdb_selection_price')->where('selection_id', $selectionExists)->value('id');
 
                                                         // if result exists update that record otherwise create a new one
                                                         if ($priceExists) {

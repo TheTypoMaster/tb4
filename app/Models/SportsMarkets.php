@@ -25,13 +25,13 @@ class SportsMarket extends \Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function marketExists($marketID){
-		return SportsMarket::where('external_market_id', '=', $marketID )->pluck('id');
+		return SportsMarket::where('external_market_id', '=', $marketID )->value('id');
 	}
 	
 	static public function sportMarketExists($marketID, $eventID){
 		return SportsMarket::where('external_market_id', '=', $marketID )
 							->where('external_event_id','=',$eventID)
-							->pluck('id');
+							->value('id');
 	}
 
 }

@@ -16,7 +16,7 @@ class RiskManagerAPI
 
         $bet = array(
             'ReferenceId' => $betResultData->id,
-            'Status' => BetResultStatus::where('id', $betResultData->bet_result_status_id)->pluck('name'),
+            'Status' => BetResultStatus::where('id', $betResultData->bet_result_status_id)->value('name'),
             'Amount' => $betResultData->resultAmount,
             'ResultDate' => \Carbon\Carbon::now()
         );

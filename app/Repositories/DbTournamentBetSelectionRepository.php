@@ -32,7 +32,7 @@ class DbTournamentBetSelectionRepository extends BaseEloquentRepository {
 
     public function getBetSelectionId($betId){
         return $this->model->where('tournament_bet_id', $betId)
-                            ->pluck('selection_id');
+                            ->value('selection_id');
     }
 
 } 

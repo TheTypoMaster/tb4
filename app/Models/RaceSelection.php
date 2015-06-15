@@ -21,7 +21,7 @@ class RaceSelection extends \Eloquent {
 					->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
 					->where('tbdb_event_group.external_event_group_id',$meetingId )
 					->where('tbdb_event.number', $raceNo)
-					->where('tbdb_selection.number', $runnerNo)->pluck('tbdb_selection.id');
+					->where('tbdb_selection.number', $runnerNo)->value('tbdb_selection.id');
 	
 		//return $this::where('number', $raceNo)->where('external_event_group_id', '=', $meetingId)->racemeetings;
 		//return self::racemeetings;

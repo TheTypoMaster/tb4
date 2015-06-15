@@ -27,7 +27,7 @@ class FrontCombinedSportsController extends Controller {
                   return array("success" => false, "error" => "No Next To Jump Sports Event");			
                 } 
                 $compId = $nextSport[0]->comp_id;
-                $eventId = \TopBetta\Models\RaceEvent::where('external_event_id',$nextSport[0]->external_event_id)->pluck('id');
+                $eventId = \TopBetta\Models\RaceEvent::where('external_event_id',$nextSport[0]->external_event_id)->value('id');
         }
 
         $compId = \Input::get('comp', $compId);
@@ -39,7 +39,7 @@ class FrontCombinedSportsController extends Controller {
                 return array("success" => false, "error" => "No Next To Jump Sports Event");			
             } 
             $compId = $nextToJump[0]->comp_id;
-            $eventId = \TopBetta\Models\RaceEvent::where('external_event_id',$nextToJump[0]->external_event_id)->pluck('id');
+            $eventId = \TopBetta\Models\RaceEvent::where('external_event_id',$nextToJump[0]->external_event_id)->value('id');
         }
 
         // SPORTS & COMP

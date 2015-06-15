@@ -17,15 +17,15 @@ class RisaForm extends \Eloquent {
     
      // check if runner_code exists in DB already
     static public function checkForRunnerCode($runnerCode) {
-    	return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('id');
+    	return  RisaForm::where('runner_code', '=', $runnerCode)-> value('id');
     }
     
     static public function getRunnerLastStarts($runnerCode) {
-    	return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('last_starts_summary');
+    	return  RisaForm::where('runner_code', '=', $runnerCode)-> value('last_starts_summary');
     }
 
     static public function getRunnerSilkId($runnerCode) {
-        return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('silk_image');
+        return  RisaForm::where('runner_code', '=', $runnerCode)-> value('silk_image');
     }
     
     static public function getRunnersFormForRunnerId($runnerId){

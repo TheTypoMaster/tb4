@@ -35,20 +35,20 @@ class RaceMeeting extends Eloquent {
 	 */
 	static public function meetingExists($meetingId) {
 		return RaceMeeting::where('external_event_group_id', '=', $meetingId)
-							->where('sport_id', '0')-> pluck('id');
+							->where('sport_id', '0')-> value('id');
 	}
 	
 	static public function meetingExistsByCode($meetingCode) {
-		return RaceMeeting::where('meeting_code', '=', $meetingCode)-> pluck('id');
+		return RaceMeeting::where('meeting_code', '=', $meetingCode)-> value('id');
 	}
 	
 	static public function isRace($meetingId) {
-		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingId)->pluck('type_code');
+		$type_code = RaceMeeting::where('external_event_group_id', '=', $meetingId)->value('type_code');
 		return ($type_code == 'NULL' ? false : true);
 	}
 
 	static public function isInternational($meetingId) {
-		$countryCode = RaceMeeting::where('id', '=', $meetingId)->pluck('country');
+		$countryCode = RaceMeeting::where('id', '=', $meetingId)->value('country');
 		return $countryCode !== 'AU' && $countryCode !== 'NZ';
 	}
 

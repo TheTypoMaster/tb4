@@ -29,6 +29,6 @@ class RaceMarket extends \Eloquent {
 	 */
 	 public function marketExists($eventID, $marketTypeID){
 		return $this->where('event_id', '=', $eventID)
-							->where('market_type_id', '=', $marketTypeID)->pluck('id');
+							->where('market_type_id', '=', $marketTypeID)->value('id');
 	}
 }

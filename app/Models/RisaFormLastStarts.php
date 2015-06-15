@@ -14,7 +14,7 @@ class RisaFormLastStarts extends \Eloquent {
     
     // check if runner_code exists in DB already
     static public function checkForRunnerCode($runnerCode) {
-    	return  RisaForm::where('runner_code', '=', $runnerCode)-> pluck('id');
+    	return  RisaForm::where('runner_code', '=', $runnerCode)-> value('id');
     }
     
     

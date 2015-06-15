@@ -51,7 +51,7 @@ class Bet extends \Eloquent {
 	 * - ID of the bet transaction
 	 */
 	static public function getBetExists($transactionID) {
-		return Bet::where('invoice_id', '=', $transactionID) -> pluck('id');
+		return Bet::where('invoice_id', '=', $transactionID) -> value('id');
 	}
 
 	/**

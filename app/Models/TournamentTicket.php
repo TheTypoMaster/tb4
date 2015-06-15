@@ -569,7 +569,7 @@ class TournamentTicket extends \Eloquent {
 		return \DB::table('tbdb_tournament AS t')
 			->join('tbdb_tournament_ticket AS tt', 'tt.tournament_id', '=', 't.id')
 			->where('tt.id', $ticketId)
-			->pluck('t.buy_in');
+			->value('t.buy_in');
 	}	
 
 	private function getNumBetsForTicket($ticketId) {

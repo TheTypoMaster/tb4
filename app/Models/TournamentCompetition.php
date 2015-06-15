@@ -10,7 +10,7 @@ class TournamentCompetition extends \Eloquent {
     
     static public function tournamentCompetitionExists($name, $sportID) {
     	return TournamentCompetition::where('name', '=', $name)->where('tournament_sport_id', '=', $sportID) 
-    										-> pluck('id');
+    										-> value('id');
     }
 
     

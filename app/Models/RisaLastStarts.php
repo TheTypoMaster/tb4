@@ -11,6 +11,6 @@ class RisaLastStarts extends \Eloquent {
     static public function checkForRunnerLastStart($raceCode, $runnerCode) {
     	return  RisaLastStarts::where('runner_code', $runnerCode)
     							->where('race_code', $raceCode)			
-    							-> pluck('id');
+    							-> value('id');
     }
 }

@@ -56,7 +56,7 @@ class BetResultStatus extends \Eloquent {
      * - text of the result status
      */
     static public function getBetResultStatusByName($result_status) {
-    	return BetResultStatus::where('name', '=', $result_status) -> pluck('id');
+    	return BetResultStatus::where('name', '=', $result_status) -> value('id');
     }
     
     

@@ -134,7 +134,7 @@ class BetLimitRepo
 		// 3: do our checks now
 		if ($this->betTypes->find($betData['bet_type_id'])->isExotic()) {
 			// exotic bet
-			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst($this->betTypes->where('id', $betData['bet_type_id'])->pluck('name'));
+			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst($this->betTypes->where('id', $betData['bet_type_id'])->value('name'));
 			$exotic = new $exoticClass;
 			$exotic->selections = $betData['selection'];
 			$exotic->betAmount = $betData['value'];
@@ -269,7 +269,7 @@ class BetLimitRepo
 	{
 		return $this->betLimitType
 						->where('name', 'default')
-						->pluck('default_amount');
+						->value('default_amount');
 	}
 
 	/**
@@ -281,7 +281,7 @@ class BetLimitRepo
 	{
 		return $this->betLimitType
 						->where('name', 'default_flexi')
-						->pluck('default_amount');
+						->value('default_amount');
 	}
 	
 	/**
@@ -293,7 +293,7 @@ class BetLimitRepo
 	{
 		return $this->betLimitType
 						->where('name', 'default_sport')
-						->pluck('default_amount');
+						->value('default_amount');
 	}	
 
 	/**
@@ -309,7 +309,7 @@ class BetLimitRepo
 		$limit = $this->betLimitType
 				->where('name', $type)
 				->where('value', $value)
-				->pluck('default_amount');
+				->value('default_amount');
 
 		if (!$limit) {
 			$limit = $this->getDefaultBetLimit();

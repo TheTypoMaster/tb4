@@ -78,7 +78,7 @@ class FrontTournamentsController extends Controller {
 			echo serialize($featuredTourns);exit;
 			*/
 
-			$featuredTourns = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+			$featuredTourns = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->value('filter');
 			if ($featuredTourns) {
 				$featuredTourns = unserialize($featuredTourns);
 			} else {
@@ -138,7 +138,7 @@ class FrontTournamentsController extends Controller {
 
 		// filter for affiliate only tournaments
 		if ($affiliateId && $campaignId && !$entered) {
-			$filter = \TopBetta\Models\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+			$filter = \TopBetta\Models\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->value('filter');
 			if ($filter) {
 				$filter = unserialize($filter);
 
@@ -226,7 +226,7 @@ class FrontTournamentsController extends Controller {
 		echo serialize($atpTournaments);exit;
 		/*/
 
-//		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->pluck('filter');
+//		$atpTournaments = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->value('filter');
 //		if ($atpTournaments) {
 //			$atpTournaments = unserialize($atpTournaments);
 //		} else {

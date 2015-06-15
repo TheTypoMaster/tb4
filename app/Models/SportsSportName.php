@@ -18,9 +18,9 @@ class SportsSportName extends \Eloquent {
      * - The record ID if a record is found
      */
     static public function sportExists($sportName) {
-    	return SportsSportName::where('name', '=', $sportName) -> pluck('id');
+    	return SportsSportName::where('name', '=', $sportName) -> value('id');
     }
         static public function getSportsNameByID($sportId) {
-            return SportsSportName::where('id', '=', $sportId) -> pluck('name');
+            return SportsSportName::where('id', '=', $sportId) -> value('name');
     }
 }

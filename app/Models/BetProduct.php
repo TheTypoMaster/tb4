@@ -35,7 +35,7 @@ class BetProduct extends \Eloquent {
     										->where('country', '=', $meetingCountry)
     										->where('region', '=', $meetingGrade)
     										->where('provider_name', '=', $providerName)
-    										->pluck('tbdb_bet_product.id'); */
+    										->value('tbdb_bet_product.id'); */
     	return $result;
 	}
 }

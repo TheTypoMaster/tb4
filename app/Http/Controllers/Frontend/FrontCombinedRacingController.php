@@ -28,7 +28,7 @@ class FrontCombinedRacingController extends Controller {
 
 		// work out meeting id based off race id only
 		if (!$meetingId && $raceId) {
-			$meetingId = \TopBetta\Models\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+			$meetingId = \TopBetta\Models\RaceEventGroupEvent::where('event_id', $raceId)->value('event_group_id');
 		}
 
 		$meetingsController = new FrontMeetingsController();
@@ -136,7 +136,7 @@ class FrontCombinedRacingController extends Controller {
 
         // work out meeting id based off race id only
         if (!$meetingId && $raceId) {
-            $meetingId = \TopBetta\Models\RaceEventGroupEvent::where('event_id', $raceId)->pluck('event_group_id');
+            $meetingId = \TopBetta\Models\RaceEventGroupEvent::where('event_id', $raceId)->value('event_group_id');
         }
 
         $meetingsController = new FrontMeetingsController();

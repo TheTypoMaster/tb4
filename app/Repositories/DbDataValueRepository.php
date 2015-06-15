@@ -34,7 +34,7 @@ class DbDataValueRepository  extends BaseEloquentRepository implements DataValue
 			->leftjoin('tb_data_provider', 'tb_data_provider.id', '=', 'tb_data_provider_match.provider_id')
 			->where('tb_data_provider_match.value', $value)
 			->where('tb_data_provider_match.value', $type)
-			->pluck('tb_data_types.data_type');
+			->value('tb_data_types.data_type');
 
 		if(!$defaultvalue) return null;
 

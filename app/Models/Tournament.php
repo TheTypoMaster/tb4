@@ -39,7 +39,7 @@ class Tournament extends \Eloquent {
                         ->join('tb_tournament_label_tournament', 'tb_tournament_label_tournament.tournament_id', '=', 'tbdb_tournament.id')
                         ->join('tb_tournament_labels', 'tb_tournament_labels.id', '=', 'tb_tournament_label_tournament.tournament_label_id')
                         ->where('tbdb_tournament.id', $tournamentId)
-                        ->where('tb_tournament_labels.label', 'Featured')->pluck('tb_tournament_labels.id');
+                        ->where('tb_tournament_labels.label', 'Featured')->value('tb_tournament_labels.id');
 
         //return static::with('tournamentlabels')->where('id', $tournamentId)->get();
     }
@@ -366,7 +366,7 @@ class Tournament extends \Eloquent {
                     ->where('tbdb_event.event_status_id',1)
                     ->orderBy('tbdb_event.start_date', 'asc')
                     ->take(1)
-                    ->pluck('tbdb_event.start_date');
+                    ->value('tbdb_event.start_date');
 	}
 
 	public function leaderboards() {

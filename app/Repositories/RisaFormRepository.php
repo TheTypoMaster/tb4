@@ -62,7 +62,7 @@ class RisaFormRepository extends BaseEloquentRepository {
 
 	public function getFormIdByRunnerCode($runnerCode){
 		$formId = $this->model->where('runner_code', $runnerCode)
-							->pluck('id');
+							->value('id');
 		if(!$formId) return null;
 		return $formId;
 

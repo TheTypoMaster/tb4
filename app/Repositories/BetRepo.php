@@ -62,7 +62,7 @@ class BetRepo
 					// RACING: simple check - do we have a result record for this selection id and win dividend
 					$dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
 							->where('win_dividend', '>', 0)
-							->pluck('win_dividend');
+							->value('win_dividend');
 				} else if ($bet->bet_origin_id == 3 && $this->selectionService->isSelectionSports($bet->selections[0]->selection_id)) {
 					// SPORTS: check for a result record
 					$win = SportsSelectionResults::selectionResultExists($bet->selections[0]->selection_id);
@@ -80,7 +80,7 @@ class BetRepo
 				// simple check: do we have a result record for this selection id and place dividend
 				$dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
 						->where('place_dividend', '>', 0)
-						->pluck('place_dividend');
+						->value('place_dividend');
 				break;
 
 			// EXOTICS
@@ -124,7 +124,7 @@ class BetRepo
                     // RACING: simple check - do we have a result record for this selection id and win dividend
                     $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
                         ->where('win_dividend', '>', 0)
-                        ->pluck('win_dividend');
+                        ->value('win_dividend');
                 } elseif ($bet->bet_origin_id == 3) {
                     // SPORTS: check for a result record
                     $win = SportsSelectionResults::selectionResultExists($bet->selections[0]->selection_id);
@@ -140,7 +140,7 @@ class BetRepo
                 // simple check: do we have a result record for this selection id and place dividend
                 $dividend = RaceResult::where('selection_id', $bet->selections[0]->selection_id)
                     ->where('place_dividend', '>', 0)
-                    ->pluck('place_dividend');
+                    ->value('place_dividend');
                 break;
 
             // EXOTICS
@@ -190,7 +190,7 @@ class BetRepo
 		foreach ($bet->selections as $selection) {
 			$position = RaceResult::where('selection_id', $selection->selection_id)
 					->where('position', '>', 0)
-					->pluck('position');
+					->value('position');
 
 			switch ($bet->betType->name) {
 				case 'quinella':
@@ -320,7 +320,7 @@ class BetRepo
 	public function getExoticDividendForEvent($exoticName, $eventId)
 	{
 		$exoticDividend = RaceEvent::where('id', $eventId)
-				->pluck($exoticName . '_dividend');
+				->value($exoticName . '_dividend');
 
 		if ($exoticDividend) {
 			$uDividend = unserialize($exoticDividend);
@@ -334,7 +334,7 @@ class BetRepo
 	public function getExoticDividendsForEvent($exoticName, $eventId)
 	{
 		$exoticDividend = RaceEvent::where('id', $eventId)
-			->pluck($exoticName . '_dividend');
+			->value($exoticName . '_dividend');
 
 		if ($exoticDividend) {
 			return unserialize($exoticDividend);
@@ -376,7 +376,7 @@ class BetRepo
 	{
 		return BetSelection::where('bet_id', $bet->id)
 						->where('selection_id', $bet->selections[0]->selection_id)
-						->pluck('fixed_odds');
+						->value('fixed_odds');
 	}
 
 	/**

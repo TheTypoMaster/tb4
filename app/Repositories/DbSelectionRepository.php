@@ -185,7 +185,7 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
 
 	public function getSeletcionIdByExternalId($externalId){
 		$selection = $this->model->where('external_selection_id', $externalId)
-								->pluck('id');
+								->value('id');
 		if(!$selection) return null;
 		return $selection;
 	}

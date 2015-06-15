@@ -80,7 +80,7 @@ class DbMarketRepository extends BaseEloquentRepository implements MarketReposit
     }
 
     public function getMarketEventStartTime($marketId){
-        return $this->model->find($marketId)->event()->pluck('start_date');
+        return $this->model->find($marketId)->event()->value('start_date');
     }
 
     /**
@@ -106,7 +106,7 @@ class DbMarketRepository extends BaseEloquentRepository implements MarketReposit
         if ($status == 'C' || $status == 'R') {
             $selectionId = SportsSelection::where('market_id', $marketId)
                 ->where('name', $score)
-                ->pluck('id');
+                ->value('id');
 
             if (!$selectionId) {
                 $errors[] = "Can't find selection/score: $score, for this market";

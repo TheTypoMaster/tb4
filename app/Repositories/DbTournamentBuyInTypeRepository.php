@@ -22,6 +22,6 @@ class DbTournamentBuyInTypeRepository extends BaseEloquentRepository implements 
 
     public function getIdByKeyword($keyword)
     {
-        return $this->model->where('keyword', $keyword)->pluck('id');
+        return $this->model->where('keyword', $keyword)->value('id');
     }
 }

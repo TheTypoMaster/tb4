@@ -22,7 +22,7 @@ class SportsComps extends \Eloquent {
      * - The record ID if a record is found
      */
     static public function compExists($compName) {
-    	return SportsComps::where('name', '=', $compName) -> pluck('id');
+    	return SportsComps::where('name', '=', $compName) -> value('id');
     }
 
    public function getCompsSorted ($date = NULL, $sid = NULL){

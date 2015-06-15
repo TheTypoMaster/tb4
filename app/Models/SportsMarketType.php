@@ -11,7 +11,7 @@ class SportsMarketType extends \Eloquent {
 	 * - The record ID if a record is found
 	 */
 	static public function marketTypeExists($betType) {
-		return SportsMarketType::where('name', '=', $betType) -> pluck('id');
+		return SportsMarketType::where('name', '=', $betType) -> value('id');
 	}
 
 }

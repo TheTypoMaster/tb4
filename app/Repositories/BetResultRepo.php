@@ -138,7 +138,7 @@ class BetResultRepo
 	{
 		$processBet = false;
 
-		$eventStatus = RaceEvent::where('id', $bet->event_id)->pluck('event_status_id');
+		$eventStatus = RaceEvent::where('id', $bet->event_id)->value('event_status_id');
 
 		// RACE ABANDONED - REFUND BET
 		if ($eventStatus == 3) {

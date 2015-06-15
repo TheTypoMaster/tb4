@@ -150,7 +150,7 @@ return [
 		 */
 		'Collective\Html\HtmlServiceProvider',
 		'Barryvdh\Cors\CorsServiceProvider',
-		'Regulus\ActivityLog\ActivityLogServiceProvider',
+	//	'Regulus\ActivityLog\ActivityLogServiceProvider',
 
 		/*
 		 * TopBetta Service Providers
@@ -214,7 +214,7 @@ return [
 		 */
 		'Form' => 'Collective\Html\FormFacade',
 		'Html' => 'Collective\Html\HtmlFacade',
-		'Activity' => 'Regulus\ActivityLog\Models\Activity',
+	//	'Activity' => 'Regulus\ActivityLog\Models\Activity',
 
 		/*
 		 * TopBetta Aliases

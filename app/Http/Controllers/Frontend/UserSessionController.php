@@ -7,7 +7,7 @@
  * Project: tb4
  */
 
-use Regulus\ActivityLog\Models\Activity;
+// use Regulus\ActivityLog\Models\Activity;
 use TopBetta\Http\Controllers\Controller;
 use Input;
 use Validator;
@@ -53,17 +53,17 @@ class UserSessionController extends Controller {
 
         $user = Auth::loginUsingId($userDetails['id']);
 
-		if (Auth::check()) {
-			// record the logout to the activity table
-			Activity::log([
-				'contentId'   => Auth::user()->id,
-				'contentType' => 'User',
-				'action'      => 'Log In',
-				'description' => 'User logged into TopBetta',
-				'details'     => 'Username: '.Auth::user()->username,
-				//'updated'     => $id ? true : false,
-			]);
-		}
+//		if (Auth::check()) {
+//			// record the logout to the activity table
+//			Activity::log([
+//				'contentId'   => Auth::user()->id,
+//				'contentType' => 'User',
+//				'action'      => 'Log In',
+//				'description' => 'User logged into TopBetta',
+//				'details'     => 'Username: '.Auth::user()->username,
+//				//'updated'     => $id ? true : false,
+//			]);
+//		}
 
         return $this->response->success($user->load('topbettaUser'));
 
@@ -71,17 +71,17 @@ class UserSessionController extends Controller {
 
     public function logout(){
 
-		if (Auth::check()) {
-			// record the logout to the activity table
-			Activity::log([
-				'contentId'   => Auth::user()->id,
-				'contentType' => 'User',
-				'action'      => 'User Logged Out',
-				'description' => 'User logged out of TopBetta',
-				'details'     => 'Username: '.Auth::user()->username,
-				//'updated'     => $id ? true : false,
-			]);
-		}
+//		if (Auth::check()) {
+//			// record the logout to the activity table
+//			Activity::log([
+//				'contentId'   => Auth::user()->id,
+//				'contentType' => 'User',
+//				'action'      => 'User Logged Out',
+//				'description' => 'User logged out of TopBetta',
+//				'details'     => 'Username: '.Auth::user()->username,
+//				//'updated'     => $id ? true : false,
+//			]);
+//		}
 
         Auth::Logout();
 
