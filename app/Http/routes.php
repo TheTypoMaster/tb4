@@ -169,6 +169,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('events', 'Admin\EventsController');
 	Route::resource('free-credit-management', 'Admin\FreeCreditManagementController');
 	Route::resource('free-credit-transactions', 'Admin\FreeCreditTransactionsController');
+    Route::resource('groups', 'Admin\GroupsController');
 	Route::resource('markets', 'Admin\MarketsController');
 	Route::resource('markettypes', 'Admin\MarketTypeController');
 	Route::resource('promotions', 'Admin\PromotionController');
