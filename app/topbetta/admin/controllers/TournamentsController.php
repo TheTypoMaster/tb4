@@ -107,9 +107,14 @@ class TournamentsController extends \BaseController
 	public function index()
 	{
 		$search = Request::get('q', '');
+        $from = Request::get('from', null);
+        $to = Request::get('to', null);
+
 		if ($search) {
 			$tournaments = $this->tournamentRepo->search($search);
-		} else {
+		} else if ($from && $to) {
+            $tournaments = $this->tournamentRepo->getTournamentsInDateRange($from, $to, 15);
+        } else {
 			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
 
