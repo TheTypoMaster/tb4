@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories;
 
 
-use TopBetta\models\FreeCreditTransactionTypeModel;
+use TopBetta\Models\FreeCreditTransactionTypeModel;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 
 class DbFreeCreditTransactionTypeRepository extends BaseEloquentRepository implements FreeCreditTransactionTypeRepositoryInterface

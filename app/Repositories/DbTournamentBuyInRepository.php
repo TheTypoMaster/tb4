@@ -8,7 +8,7 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\models\TournamentBuyInModel;
+use TopBetta\Models\TournamentBuyInModel;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
 
 class DbTournamentBuyInRepository extends BaseEloquentRepository implements TournamentBuyInRepositoryInterface
