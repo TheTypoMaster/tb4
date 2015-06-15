@@ -1,4 +1,24 @@
 @if (count($tournaments))
+
+<div class="row col-lg-12">
+    {{ Form::open(array("method" => "GET", "class" => "form form-inline")) }}
+
+        <div class="form-group">
+            {{ Form::label("from", 'From') }}
+            {{ Form::datetime("from", null, array("class" => "datepicker")) }}
+        </div>
+
+        <div class="form-group">
+            {{ Form::label("to", "To") }}
+            {{ Form::datetime("to", null, array("class" => "datepicker")) }}
+        </div>
+
+        <div class="form-group">
+            {{ Form::submit("Filter", array("class" => "btn btn-primary")) }}
+        </div>
+    {{ Form::close() }}
+</div>
+
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
@@ -54,3 +74,7 @@
 @else
 <p>There are no tournaments to display</p>
 @endif
+
+<script type="text/javascript">
+    $(".datepicker").datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+</script>

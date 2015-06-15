@@ -82,4 +82,17 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
         return $model->get();
     }
 
+    public function getTournamentsInDateRange($from, $to, $paged = null)
+    {
+        $model = $this->model
+            ->where('start_date', '>=', $from)
+            ->where('start_date', '<=', $to);
+
+        if( $paged ) {
+            return $model->paginate($paged);
+        }
+
+        return $model->get();
+    }
+
 } 
