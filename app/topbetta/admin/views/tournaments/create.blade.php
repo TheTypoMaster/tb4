@@ -13,7 +13,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         {{ Form::label('tournament_sport_id', 'Sports') }}<br/>
-                        {{ Form::select('tournament_sport_id', $sports, null, array("multiple" => "multiple", "class"=>"sport-multiselect form-control")) }}
+                        {{ Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) }}
                     </div>
 
                     <div class="form-group">
@@ -287,7 +287,14 @@
 
         $('#tournament_sport_id').change(function(){
             if ( ! $(this).val()) {return;}
-            $.each($(this).val(), function (index, value) {
+
+            var val = $(this).val();
+
+            if ( ! $.isArray(val) ) {
+                val = [val];
+            }
+
+            $.each(val, function (index, value) {
                 $.get('/admin/tournaments/get-competitions/' + value)
                     .done(function(data) {
                         $('#competition_id').html(createSelectOptions(data));
@@ -304,7 +311,14 @@
 
         $('#competition_id').change(function(){
             if ( ! $(this).val()) {return;}
-            $.each($(this).val(), function (index, value) {
+
+            var val = $(this).val();
+
+            if ( ! $.isArray(val) ) {
+                val = [val];
+            }
+
+            $.each(val, function (index, value) {
                 $.get('/admin/tournaments/get-event-groups/' + value)
                         .done(function(data){
                             $('#event_group_id').html(createSelectOptions(data));
@@ -318,8 +332,13 @@
 
         $('#event_group_id').change(function() {
             if ( ! $(this).val()) {return;}
+            var val = $(this).val();
 
-            $.each($(this).val(), function (index, value) {
+            if ( ! $.isArray(val) ) {
+                val = [val];
+            }
+
+            $.each(val, function (index, value) {
                 $.get('/admin/tournaments/get-events/' + value)
                         .done(function(data){
                             events = data;
