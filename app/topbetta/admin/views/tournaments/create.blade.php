@@ -18,12 +18,12 @@
 
                     <div class="form-group">
                         {{ Form::label('competition_id', 'Competitions') }}<br/>
-                        {{ Form::select('competition_id', [], null, array("multiple" => "multiple","class"=>"competition-multiselect form-control")) }}
+                        {{ Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) }}
                     </div>
 
                     <div class="form-group">
                         {{ Form::label('event_group_id', 'Event Group') }}<br/>
-                        {{ Form::select('event_group_id', [], null, array("multiple" => "multiple","class" => "event-multiselect form-control")) }}
+                        {{ Form::select('event_group_id', [], null, array("" => "","class" => "event-multiselect form-control")) }}
                     </div>
 
                     <div class="form-group">
