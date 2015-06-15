@@ -307,9 +307,29 @@ class UserAccountService {
         return true;
     }
 
-    public function decreaseBalanceToTurnOver($userId, $amount)
+    public function addFreeCreditWinsToTurnOver($userId, $amount)
     {
-        return $this->addBalanceToTurnOver($userId, -$amount);
+        if( $amount ) {
+            return $this->fullUser->updateFreeCreditWinsToTurnOver($userId, $amount);
+        }
+
+        return true;
+    }
+
+    public function decreaseBalanceToTurnOver($userId, $amount, $decreaseFreeCreditTurnover = false)
+    {
+        $user = $this->fullUser->findByUserId($userId);
+
+        $remainingAmount = $amount;
+        if( $decreaseFreeCreditTurnover && $user->free_credit_wins_to_turnover > 0 ) {
+            $remainingAmount = $amount - $user->free_credit_wins_to_turnover;
+
+            $this->addFreeCreditWinsToTurnOver($userId, -$amount);
+        }
+
+        if ( $remainingAmount > 0 && $user->balance_to_turnover > 0) {
+            $this->addBalanceToTurnOver($userId, -$remainingAmount);
+        }
     }
 
     public function getBalanceToTurnOver($userId)
