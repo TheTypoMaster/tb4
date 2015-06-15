@@ -1,9 +1,13 @@
 
-li a {
+#side-menu li a {
     color: white;
 }
 
-.nav li a:hover {
+.navbar-top-links a {
+    color: white;
+}
+
+#side-menu a:hover, .navbar-top-links a:hover {
     background-color: #DBDBDA;
     color: #333;
 }
