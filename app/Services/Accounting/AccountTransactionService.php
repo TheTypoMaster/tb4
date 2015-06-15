@@ -63,7 +63,7 @@ class AccountTransactionService {
         $this->betOriginRepository = $betOriginRepository;
     }
 
-    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
+    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null, $source = null){
 
         // get the transaction type details for the keyword
         $transactionTypeDetails = $this->accounttransactiontypes->getTransactionTypeByKeyword($keyword);
@@ -93,15 +93,16 @@ class AccountTransactionService {
             'amount' 					=> $amount,
             'notes' 					=> $desc,
             'account_transaction_type_id' 	=> $transactionTypeDetails['id'],
-            'created_date'              => $transactionDate ? $transactionDate : Carbon::now('Australia/Sydney')
+            'created_date'              => $transactionDate ? $transactionDate : Carbon::now('Australia/Sydney'),
+            'source_id'                 => $source,
 
         );
 
         return $this->accounttransactions->create($params);
     }
 
-    public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
-        return $this->increaseAccountBalance($userID, -$amount, $keyword, $giverId, $desc, $transactionDate);
+    public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null, $source = null){
+        return $this->increaseAccountBalance($userID, -$amount, $keyword, $giverId, $desc, $transactionDate, $source);
     }
 
 
@@ -117,9 +118,9 @@ class AccountTransactionService {
         // validation rules
         $rules = array(
             'source' => 'required',
-            'parent_user_name' => 'required|alphadash',
-            'personal_betting_user_name' => 'required|alphadash',
-            'child_betting_user_name' => 'required|alphadash',
+            'parent_username' => 'required|alphadash',
+            'personal_username' => 'required|alphadash',
+            'child_username' => 'required|alphadash',
             'transfer_amount' => 'required|numeric',
             'token' => 'required'
         );
@@ -132,15 +133,15 @@ class AccountTransactionService {
         if(!$this->authentication->checkSource($input)) throw new ValidationException("Validation Failed", 'Source not confirmed');
 
         // get the parent user account details
-        $parentUserDetails = $this->user->getUserDetailsFromUsername($input['parent_user_name']);
+        $parentUserDetails = $this->user->getUserDetailsFromUsername($input['parent_username']);
         if(!$parentUserDetails) throw new ValidationException("Validation Failed", 'Parent user acccount not found');
 
         // check that the parent betting account exists
-        $childBettingUserDetails = $this->user->getUserDetailsFromUsername($input['child_betting_user_name']);
+        $childBettingUserDetails = $this->user->getUserDetailsFromUsername($input['child_username']);
         if(!$childBettingUserDetails) throw new ValidationException("Validation Failed", 'Betting user not found');
 
         // confirm child account is a child of the parent account
-        if(!$this->useraccountservice->confirmBettingAccount($input['parent_user_name'], $input['child_betting_user_name'])) throw new ValidationException("Validation Failed", 'Invalid Payload - child betting account is not a child of the parent account');
+        if(!$this->useraccountservice->confirmBettingAccount($input['parent_username'], $input['child_username'])) throw new ValidationException("Validation Failed", 'Invalid Payload - child betting account is not a child of the parent account');
 
         // get parent account balance
         $parentAccountBalance = $this->accounttransactions->getAccountBalanceByUserId($parentUserDetails['id']);

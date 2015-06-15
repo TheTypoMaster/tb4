@@ -15,4 +15,6 @@ interface UserRepositoryInterface {
 
     public function getUserWithActivationHash($activationHash);
 
+    public function getUserByUsername($username);
+
 }

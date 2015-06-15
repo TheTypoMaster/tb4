@@ -32,6 +32,8 @@ use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 
 class ExternalSourceBetNotificationService {
 
+    const ENDPOINT_KEY = 'bet_enpoint';
+
     protected $source;
     protected $bet;
     protected $transactions;
@@ -113,6 +115,9 @@ class ExternalSourceBetNotificationService {
 
         // make sure the record has an endpoint
         if(!$betSourceDetails['api_endpoint']) return false;
+
+        //get the endpoint
+        $betSourceDetails['api_endpoint'] = $betSourceDetails['api_endpoint'][self::ENDPOINT_KEY];
 
         // return api endpoint
         return $betSourceDetails;

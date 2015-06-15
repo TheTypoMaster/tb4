@@ -14,6 +14,15 @@ class PaymentEwayTokens extends \Eloquent {
     	return PaymentEwayTokens::where('user_id', '=', $userID)
     							->where('cc_token' , '=', $managedId)->value('id');
     }
-    
+
+    public function user()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
+    }
+
+    public function scheduledPayments()
+    {
+        return $this->morphMany('TopBetta\Models\ScheduledPaymentModel', 'payment_token');
+    }
     
 }

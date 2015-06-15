@@ -48,6 +48,11 @@ class User extends Cartalyst\Sentry\Users\Eloquent\User implements UserInterface
     {
         return $this->hasOne('TopBetta\Models\UserDepositLimitModel', 'user_id');
     }
+
+    public function ewayTokens()
+    {
+        return $this->hasMany('TopBetta\PaymentEwayTokens', 'user_id');
+    }
 	
 	/**
 	 * A User can have many tickets for tournaments

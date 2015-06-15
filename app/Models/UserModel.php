@@ -120,12 +120,13 @@ class UserModel extends Eloquent implements AuthenticatableContract, CanResetPas
     {
         return $this->hasMany('TopBetta\Models\FreeCreditTransactionModel', 'recipient_id');
     }
-    
-	/**
-	 * @param $relationship
-	 * @param $closure
-	 * @return mixed
-	 */
+
+    public function ewayTokens()
+    {
+        return $this->hasMany('TopBetta\PaymentEwayTokens', 'user_id');
+    }
+
+
     public function whereNotInRelationship($relationship, $closure)
     {
         $relationship = $this->$relationship();

@@ -134,5 +134,10 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
                         -> first();
     }
 
+    public function getUserByUsername($username)
+    {
+        return $this->model->where('username', $username)->first();
+    }
+
 
 }

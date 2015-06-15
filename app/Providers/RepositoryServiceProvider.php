@@ -229,6 +229,14 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\BetTypeRepositoryInterface',
             'TopBetta\Repositories\DbBetTypeRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\PaymentEwayTokenRepositoryInterface',
+            'TopBetta\Repositories\DbPaymentEwayTokenRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ScheduledPaymentRepositoryInterface',
+            'TopBetta\Repositories\DbScheduledPaymentRepository'
+        );
     }
 
 } 
