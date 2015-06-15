@@ -1,5 +1,4 @@
-<?php
-namespace TopBetta\Models;
+<?php namespace TopBetta\Models;
 
 class PaymentEwayTokens extends \Eloquent {
     protected $guarded = array();

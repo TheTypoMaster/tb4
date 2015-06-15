@@ -1,15 +1,16 @@
 <?php
 
-namespace TopBetta\admin\controllers;
+namespace TopBetta\Http\Controllers\Admin;
 
 use View;
 use Config;
 use Input;
 use Sentry;
 use Redirect;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\AdminGroupsRepositoryInterface;
 
-class GroupsController extends \BaseController {
+class GroupsController extends Controller {
 
     /**
      * @var AdminGroupsRepositoryInterface

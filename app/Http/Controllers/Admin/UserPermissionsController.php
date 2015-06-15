@@ -1,15 +1,14 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use TopBetta\Repositories\Contracts\AdminGroupsRepositoryInterface;
-use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use View;
 use Input;
 use Sentry;
 use Redirect;
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Repositories\Contracts\AdminGroupsRepositoryInterface;
+use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 
-class UserPermissionsController extends \BaseController {
+class UserPermissionsController extends Controller {
 
     /**
      * @var AdminGroupsRepositoryInterface

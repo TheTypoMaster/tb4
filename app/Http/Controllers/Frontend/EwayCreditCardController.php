@@ -1,14 +1,13 @@
-<?php
-
-namespace TopBetta\Frontend;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 use Auth;
 use Log;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\PaymentEwayTokens;
 use TopBetta\Services\Accounting\Payments\EwayPaymentService;
 use TopBetta\Services\Response\ApiResponse;
 
-class EwayCreditCardController extends \BaseController {
+class EwayCreditCardController extends Controller {
 
     /**
      * @var EwayPaymentService

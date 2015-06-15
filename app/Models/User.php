@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta\Models;
 
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableInterface;
@@ -33,10 +33,10 @@ class User extends Cartalyst\Sentry\Users\Eloquent\User implements UserInterface
 	}
 	
 	public function accountTransactions() {
-		return $this->hasMany('TopBetta\AccountBalance', 'recipient_id');
+		return $this->hasMany('TopBetta\Models\AccountBalance', 'recipient_id');
 	}
 	public function freeCreditTransactions() {
-		return $this->hasMany('TopBetta\FreeCreditBalance', 'recipient_id');
+		return $this->hasMany('TopBetta\Models\FreeCreditBalance', 'recipient_id');
 	}
 
     public function accountBalance()
@@ -51,7 +51,7 @@ class User extends Cartalyst\Sentry\Users\Eloquent\User implements UserInterface
 
     public function ewayTokens()
     {
-        return $this->hasMany('TopBetta\PaymentEwayTokens', 'user_id');
+        return $this->hasMany('TopBetta\Models\PaymentEwayTokens', 'user_id');
     }
 	
 	/**

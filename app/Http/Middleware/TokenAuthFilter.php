@@ -1,12 +1,10 @@
-<?php
+<?php namespace TopBetta\Http\Middleware;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
  * Date: 5/06/2015
  * Time: 2:37 PM
  */
-
-namespace TopBetta\Services\Authentication\Filters;
 
 use Auth;
 use Input;

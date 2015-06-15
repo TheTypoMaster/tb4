@@ -1,12 +1,10 @@
-<?php
+<?php namespace TopBetta\Http\Middleware;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
  * Date: 1/06/2015
  * Time: 3:34 PM
  */
-
-namespace TopBetta\admin\Filters;
 
 use App;
 use Auth;

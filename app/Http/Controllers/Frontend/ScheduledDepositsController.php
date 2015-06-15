@@ -1,9 +1,8 @@
-<?php
-
-namespace TopBetta\Frontend;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 use Auth;
 use Input;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\ScheduledPaymentRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Services\Accounting\Payments\Exceptions\PaymentException;
@@ -11,7 +10,7 @@ use TopBetta\Services\Accounting\ScheduledDepositService;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 
-class ScheduledDepositsController extends \BaseController {
+class ScheduledDepositsController extends Controller {
 
     /**
      * @var ScheduledDepositService

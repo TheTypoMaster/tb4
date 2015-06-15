@@ -1,22 +1,22 @@
 @if (count($tournaments))
 
 <div class="row col-lg-12">
-    {{ Form::open(array("method" => "GET", "class" => "form form-inline")) }}
+    {!! Form::open(array("method" => "GET", "class" => "form form-inline")) !!}
 
         <div class="form-group">
-            {{ Form::label("from", 'From') }}
-            {{ Form::datetime("from", null, array("class" => "datepicker")) }}
+            {!! Form::label("from", 'From') !!}
+            {!! Form::datetime("from", null, array("class" => "datepicker")) !!}
         </div>
 
         <div class="form-group">
-            {{ Form::label("to", "To") }}
-            {{ Form::datetime("to", null, array("class" => "datepicker")) }}
+            {!! Form::label("to", "To") !!}
+            {!! Form::datetime("to", null, array("class" => "datepicker")) !!}
         </div>
 
         <div class="form-group">
-            {{ Form::submit("Filter", array("class" => "btn btn-primary")) }}
+            {!! Form::submit("Filter", array("class" => "btn btn-primary")) !!}
         </div>
-    {{ Form::close() }}
+    {!! Form::close() !!}
 </div>
 
 <table class="table table-striped table-bordered table-hover">
@@ -60,7 +60,7 @@
 			<td>{{ TopBetta\Models\TournamentTicket::countTournamentEntrants($tournament->id) }}</td>
 			<td>{{ ($tournament->status_flag) ? 'Active' : 'Inactive' }}</td>
             <td>
-                {{ link_to_route('admin.tournaments.edit', "Edit", array($tournament->id), array("class" => 'btn btn-warning')) }}
+                {!! link_to_route('admin.tournaments.edit', "Edit", array($tournament->id), array("class" => 'btn btn-warning')) !!}
                 @if($tournament->end_date > Carbon\Carbon::now())
                     {!! link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) !!}
                 @endif

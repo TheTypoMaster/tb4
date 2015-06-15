@@ -1,15 +1,14 @@
-<?php
-
-namespace TopBetta\Frontend;
+<?php namespace TopBetta\Http\Controllers\Frontend;
 
 use Input;
 use Auth;
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Services\Accounting\DepositService;
 use TopBetta\Services\Accounting\Payments\Exceptions\PaymentException;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 
-class DepositsController extends \BaseController {
+class DepositsController extends Controller {
 
     /**
      * @var DepositService

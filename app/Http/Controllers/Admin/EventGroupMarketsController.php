@@ -1,15 +1,14 @@
-<?php
+<?php namespace TopBetta\Http\Controllers\Admin;
 
-namespace TopBetta\admin\controllers;
-
-use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
-use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
+use TopBetta\Http\Controllers\Controller;
 use View;
 use Input;
 use Redirect;
+use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
+use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 
-class EventGroupMarketsController extends \BaseController {
+class EventGroupMarketsController extends Controller {
 
     /**
      * @var CompetitionRepositoryInterface

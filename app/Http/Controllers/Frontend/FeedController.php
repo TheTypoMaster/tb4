@@ -7,16 +7,15 @@
  * Project: tb4
  */
 
-use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Input;
-use TopBetta\Services\Response\ApiResponse;
 use File;
 use Response;
 use Request;
 use Config;
 use Cache;
-
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;

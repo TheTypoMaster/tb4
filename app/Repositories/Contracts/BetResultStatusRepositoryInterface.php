@@ -11,6 +11,7 @@ interface BetResultStatusRepositoryInterface
 {
     const RESULT_STATUS_UNRESULTED = 'unresulted';
     const RESULT_STATUS_PAID = 'paid';
+    const RESULT_STATUS_FULLY_REFUNDED = 'fully-refunded';
 
     public function getByName($name);
 }

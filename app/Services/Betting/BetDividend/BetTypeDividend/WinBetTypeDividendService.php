@@ -28,9 +28,10 @@ class WinBetTypeDividendService extends AbstractBetTypeDividendService {
      */
     public function getResultedDividendForBet($bet)
     {
-        if( $bet->selection->first()->result && $bet->selection->first()->result->position == 1 ) {
-            if( $bet->betselection->first()->fixed_odds && $this->selectionService->isSelectionSports($bet->selection->first()->id) ) {
-                return $bet->betselection->first()->fixed_odds;
+        if( $bet->selection->first()->result && ($bet->selection->first()->result->position == 1 ||$bet->selection->first()->result->position == null) ) {
+            if( ($bet->betselection->first()->fixed_odds || $bet->fixed_odds) && $this->selectionService->isSelectionSports($bet->selection->first()->id) ) {
+                //hack for tournament fixed odds stored differently
+                return $bet->betselection->first()->fixed_odds ? : $bet->fixed_odds;
             }
 
             return $bet->selection->first()->result->win_dividend;

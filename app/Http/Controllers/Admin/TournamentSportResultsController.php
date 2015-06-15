@@ -1,21 +1,20 @@
-<?php
-
-namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use Input;
-use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
-use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
-use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
-use TopBetta\Services\Betting\EventService;
 use View;
 use Redirect;
 use Log;
 use Queue;
 use Config;
+use TopBetta\Http\Controllers\Controller;
+use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
+use TopBetta\Services\Betting\EventService;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 
-class TournamentSportResultsController extends \BaseController {
+class TournamentSportResultsController extends Controller {
 
     /**
      * @var EventModelRepositoryInterface

@@ -36,7 +36,8 @@ class BetTypeDividendServiceFactory {
             case BetTypeRepositoryInterface::TYPE_EIGHT_LEG_MULTI:
             case BetTypeRepositoryInterface::TYPE_NINE_LEG_MULTI:
             case BetTypeRepositoryInterface::TYPE_TEN_LEG_MULTI:
-            return App::make('TopBetta\Services\Betting\BetDividend\BetTypeDividend\MultiBetTypeDividendService');
+                //return App::make('TopBetta\Services\Betting\BetDividend\BetTypeDividend\MultiBetTypeDividendService');
+                throw new \Exception("Invalid Bet Type");
         }
 
     }
