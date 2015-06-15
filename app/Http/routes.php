@@ -182,6 +182,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::resource('tournament-sport-results', 'Admin\TournamentSportResultsController');
     Route::resource('tournament-sport-markets', 'Admin\EventGroupMarketsController');
     Route::resource('users', 'Admin\UsersController');
+    Route::resource('user-permissions', 'Admin\UserPermissionsController');
 	Route::resource('users.account-transactions', 'Admin\UserAccountTransactionsController');
 	Route::resource('users.bet-limits', 'Admin\UserBetLimitsController');
 	Route::resource('users.bets', 'Admin\UserBetsController', array('only' => array('index')));
