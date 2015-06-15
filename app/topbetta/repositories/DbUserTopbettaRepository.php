@@ -35,6 +35,11 @@ class DbUserTopbettaRepository extends BaseEloquentRepository implements UserTop
         return false;
     }
 
+    public function findByUserId($userId)
+    {
+        return $this->model->where('user_id', $userId)->first();
+    }
+
     public function updateBalanceToTurnOver($userId, $amount)
     {
         $user = $this->model->where('user_id', $userId)->first();
@@ -44,6 +49,15 @@ class DbUserTopbettaRepository extends BaseEloquentRepository implements UserTop
         return $user->save();
     }
 
+    public function updateFreeCreditWinsToTurnOver($userId, $amount)
+    {
+        $user = $this->model->where('user_id', $userId)->first();
+
+        $user->free_credit_wins_to_turnover = max($user->free_credit_wins_to_turnover + $amount, 0);
+
+        return $user->save();
+	}
+	
     public function getUserByNameAndDob($firstName, $lastName, $day = null, $month = null, $year = null)
     {
         $model = $this->model
