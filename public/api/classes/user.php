@@ -108,8 +108,6 @@ class Api_User extends JController {
         // first validate a legit token has been sent
 		$server_token = JUtility::getToken();
 
-
-
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
 			//token validates - good to go
 			$credentials = array();
@@ -188,152 +186,148 @@ class Api_User extends JController {
         // first validate a legit token has been sent
 		$server_token = JUtility::getToken();
 
-
-
 		if (JRequest::getVar($server_token, FALSE,'', 'alnum')) {
 
-			       // Get required system objects
-					$user 		= clone(JFactory::getUser());
-					$pathway 	=& $mainframe->getPathway();
-					$config		=& JFactory::getConfig();
-					$authorize	=& JFactory::getACL();
-					$document   =& JFactory::getDocument();
+           // Get required system objects
+            $user 		= clone(JFactory::getUser());
+            $pathway 	=& $mainframe->getPathway();
+            $config		=& JFactory::getConfig();
+            $authorize	=& JFactory::getACL();
+            $document   =& JFactory::getDocument();
 
-					require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
-		            $model = new TopbettaUserModelTopbettaUser();
-                    $model->loadDynamicOptions();
-					$session =& JFactory::getSession();
+            require_once (JPATH_BASE . DS . 'components' . DS . 'com_topbetta_user' . DS . 'models' . DS . 'topbettauser.php');
+            $model = new TopbettaUserModelTopbettaUser();
+            $model->loadDynamicOptions();
+            $session =& JFactory::getSession();
 
-					// If user registration is not allowed, show 403 not authorized.
-					$usersConfig = &JComponentHelper::getParams( 'com_users' );
-					if ($usersConfig->get('allowUserRegistration') == '0') {
+            // If user registration is not allowed, show 403 not authorized.
+            $usersConfig = &JComponentHelper::getParams( 'com_users' );
+            if ($usersConfig->get('allowUserRegistration') == '0') {
 
-						return OutputHelper::json(500, array('error_msg' => JError::raiseError( 403, JText::_( 'Access Forbidden' )) ));
-					}
+                return OutputHelper::json(500, array('error_msg' => JError::raiseError( 403, JText::_( 'Access Forbidden' )) ));
+            }
 
+            // Get user registration details from post.
+            $username	= JRequest::getString('username', null, 'post');
+            $first_name	= JRequest::getString('first_name', null, 'post');
+            $last_name	= JRequest::getString('last_name', null, 'post');
+            $email		= JRequest::getString('email', null, 'post');
+            $email2		= JRequest::getString('email', null, 'post');
+            $password	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
+            $password2	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
+            $mobile		= JRequest::getString('mobile', null, 'post');
+            $source		= JRequest::getString('source', null, 'post');
+            $optbox		= JRequest::getVar('optbox', null, 'post');
+            $btag		= JRequest::getString('btag', 'kx8FbVSXTgEWqcfzuvZcQGNd7ZgqdRLk', 'post');
+            //$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
 
+            //do validations
+            $err = array();
 
-					// Get user registration details from post.
-					$username	= JRequest::getString('username', null, 'post');
-					$first_name	= JRequest::getString('first_name', null, 'post');
-					$last_name	= JRequest::getString('last_name', null, 'post');
-					$email		= JRequest::getString('email', null, 'post');
-					$email2		= JRequest::getString('email', null, 'post');
-					$password	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
-                    $password2	= JRequest::getString('password', null, 'post', JREQUEST_ALLOWRAW);
-					$mobile		= JRequest::getString('mobile', null, 'post');
-					$source		= JRequest::getString('source', null, 'post');
-					$optbox		= JRequest::getVar('optbox', null, 'post');
-					$btag		= JRequest::getString('btag', 'kx8FbVSXTgEWqcfzuvZcQGNd7ZgqdRLk', 'post');
-					//$source		= ($source) ? $source : htmlspecialchars($_SERVER['HTTP_REFERER']);
-
-					//do validations
-					$err = array();
-
-					if ($username) {
-						$this->_validate_username($username, $model, $err);
-					}
-					$this->_validate_firstname($first_name, $err);
-					$this->_validate_lastname($last_name, $err);
-					$this->_validate_email($email, $email2, $model, $err);
-					$this->_validate_password($password, $password2, $err);
-					if(!empty($mobile)) $this->_validate_mobile($mobile,$err);
+            if ($username) {
+                $this->_validate_username($username, $model, $err);
+            }
+            $this->_validate_firstname($first_name, $err);
+            $this->_validate_lastname($last_name, $err);
+            $this->_validate_email($email, $email2, $model, $err);
+            $this->_validate_password($password, $password2, $err);
+            if(!empty($mobile)) $this->_validate_mobile($mobile,$err);
 
 
-					$err_mag = '<br>';
-					if (count($err) >  0) {
-						//attempt to quickly pretty up the error messages
-						//$err = str_ireplace('array', '', print_r($err, TRUE));
-						foreach ($err as $er) $err_mag .= $er . '<br>';
-						return OutputHelper::json(500, array('error_msg' => 'There were some errors processing this form.' ,
-                                                       'errors' => $err_mag ,
-							                           'data' => $_GET
-						                              ));
+            $err_mag = '<br>';
+            if (count($err) >  0) {
+                //attempt to quickly pretty up the error messages
+                //$err = str_ireplace('array', '', print_r($err, TRUE));
+                foreach ($err as $er) $err_mag .= $er . '<br>';
+                return OutputHelper::json(500, array('error_msg' => 'There were some errors processing this form.' ,
+                                               'errors' => $err_mag ,
+                                               'data' => $_GET
+                                              ));
 
-					}
+            }
 
-                    // $username = $this->_generate_username($first_name,$last_name, $model);
-                    if (!$username) {
-	                    $username = $this->_generate_username($first_name,$last_name, $model);
-                    }
+            // $username = $this->_generate_username($first_name,$last_name, $model);
+            if (!$username) {
+                $username = $this->_generate_username($first_name,$last_name, $model);
+            }
 
-                    // Put data in required fields
-					$fullName	= $first_name.' '.$last_name;
+            // Put data in required fields
+            $fullName	= $first_name.' '.$last_name;
 
-					$postVariables['username']	= $username; //generated username
-					$postVariables['name']		= $fullName;
-					$postVariables['email']		= $email;
-					$postVariables['password']	= $postVariables['password2'] = $password;
+            $postVariables['username']	= $username; //generated username
+            $postVariables['name']		= $fullName;
+            $postVariables['email']		= $email;
+            $postVariables['password']	= $postVariables['password2'] = $password;
 
-					// Initialize new usertype setting
-					$newUsertype = $usersConfig->get( 'new_usertype' );
-					if (!$newUsertype) {
-						$newUsertype = 'Registered';
-					}
+            // Initialize new usertype setting
+            $newUsertype = $usersConfig->get( 'new_usertype' );
+            if (!$newUsertype) {
+                $newUsertype = 'Registered';
+            }
 
-					// Bind the post array to the user object
-					if (!$user->bind( $postVariables, 'usertype' )) {
+            // Bind the post array to the user object
+            if (!$user->bind( $postVariables, 'usertype' )) {
 
-						return OutputHelper::json(500, array('error_msg' => JError::raiseError( 500, $user->getError()) ));
-					}
+                return OutputHelper::json(500, array('error_msg' => JError::raiseError( 500, $user->getError()) ));
+            }
 
-					// Set some initial user values
-					$user->set('id', 0);
-					$user->set('usertype', $newUsertype);
-					$user->set('gid', $authorize->get_group_id( '', $newUsertype, 'ARO' ));
-					$date =& JFactory::getDate();
-					$user->set('registerDate', $date->toMySQL());
-					$user->set('isTopBetta', 0);
+            // Set some initial user values
+            $user->set('id', 0);
+            $user->set('usertype', $newUsertype);
+            $user->set('gid', $authorize->get_group_id( '', $newUsertype, 'ARO' ));
+            $date =& JFactory::getDate();
+            $user->set('registerDate', $date->toMySQL());
+            $user->set('isTopBetta', 0);
 
-					//set default activated
-					$user->set('activated_flag',1);
+            //set default activated
+            $user->set('activated_flag',1);
 
-					// If user activation is turned on, we need to set the activation information
-					$useractivation = $usersConfig->get( 'useractivation' );
-					if ($useractivation == '1') {
-						jimport('joomla.user.helper');
-						$user->set('activation', JUtility::getHash( JUserHelper::genRandomPassword()) );
-						$user->set('block', '1');
-					}
+            // If user activation is turned on, we need to set the activation information
+            $useractivation = $usersConfig->get( 'useractivation' );
+            if ($useractivation == '1') {
+                jimport('joomla.user.helper');
+                $user->set('activation', JUtility::getHash( JUserHelper::genRandomPassword()) );
+                $user->set('block', '1');
+            }
 
 
-					// If there was an error with registration, set the message and display form
-					if (!$user->save()) {
-						// JText::_( $user->getError(). ' - Username:'.$user->get('username').' - Error Ref:'. $newUserPIN);
-						return OutputHelper::json(500, array('error_msg' => $user->getError() ));
-					}
+            // If there was an error with registration, set the message and display form
+            if (!$user->save()) {
+                // JText::_( $user->getError(). ' - Username:'.$user->get('username').' - Error Ref:'. $newUserPIN);
+                return OutputHelper::json(500, array('error_msg' => $user->getError() ));
+            }
 
-				    // Send registration confirmation mail
-		            $this->_sendMail($user);
+            // Send registration confirmation mail
+            $this->_sendMail($user);
 
-					// get the userid
-					$user_id = $user->get('id');
+            // get the userid
+            $user_id = $user->get('id');
 
-					// Create User Extension table record for new user.
-					$params = array(
-						  'user_id'					=> $user_id,
-						  'title'					=> $title,
-						  'first_name'				=> $first_name,
-						  'last_name'				=> $last_name,
-						  'msisdn'					=> $mobile,
-						  'source'					=> $source,
-						  'marketing_opt_in_flag'	=> $optbox ? 1 : 0,
-						  'btag'					=> $btag
-					);
+            // Create User Extension table record for new user.
+            $params = array(
+                  'user_id'					=> $user_id,
+                  'title'					=> $title,
+                  'first_name'				=> $first_name,
+                  'last_name'				=> $last_name,
+                  'msisdn'					=> $mobile,
+                  'source'					=> $source,
+                  'marketing_opt_in_flag'	=> $optbox ? 1 : 0,
+                  'btag'					=> $btag
+            );
 
-					if (!$model->store($params)) {
-						//
-					}
+            if (!$model->store($params)) {
+                //
+            }
 
-                    // Everything went fine, set relevant message depending upon user activation state and display message
-					if ($useractivation == 1) {
+            // Everything went fine, set relevant message depending upon user activation state and display message
+            if ($useractivation == 1) {
 
-						return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created. Please check your email to activate your account.'), 'id' => $user_id  ));
+                return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created. Please check your email to activate your account.'), 'id' => $user_id  ));
 
-					} else {
+            } else {
 
-						return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created.<br>You can now login with <br>username: <b>'.$username.'</b>.' ), 'username' => $username, 'id' => $user_id ));
-					}
+                return OutputHelper::json(200, array('success' => JText::_( 'Your TopBetta account has been created.<br>You can now login with <br>username: <b>'.$username.'</b>.' ), 'username' => $username, 'id' => $user_id ));
+            }
 
 
 
