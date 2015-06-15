@@ -9,7 +9,7 @@
         "guzzlehttp/guzzle": "~5.1",
         "pda/pheanstalk": "^3.0",
         "barryvdh/laravel-cors": "0.5.x@dev",
-        "laravelcollective/html": "~5.0"
+        "laravelcollective/html": "~5.0",
 		"omnipay/eway": "~2.0"
 	},
 	"require-dev": {

@@ -116,11 +116,6 @@ class UserModel extends Eloquent implements AuthenticatableContract, CanResetPas
         return str_replace("\\", "", urldecode($value));
     }
 
-    public function accountBalance()
-    {
-        return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
-    }
-
     public function freeCreditTransactions()
     {
         return $this->hasMany('TopBetta\Models\FreeCreditTransactionModel', 'recipient_id');
