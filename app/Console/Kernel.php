@@ -12,9 +12,9 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected $commands = [
 		'TopBetta\Console\Commands\Inspire',
-		'TopBetta\Console\Commands\BetResultWatchdogCommand',
-		'TopBetta\Console\Commands\ChargeDormantAccounts',
-		'TopBetta\Console\Commands\DashboardPusher',
+		'TopBetta\Jobs\BetResultWatchdogCommand',
+		'TopBetta\Jobs\ChargeDormantAccounts',
+		'TopBetta\Jobs\DashboardPusher',
 
 	];
 
