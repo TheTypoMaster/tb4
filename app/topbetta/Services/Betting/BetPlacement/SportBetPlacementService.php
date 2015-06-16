@@ -8,10 +8,9 @@
 
 namespace TopBetta\Services\Betting\BetPlacement;
 
-
-use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
+use TopBetta\Services\Betting\BetLimitService;
 use TopBetta\Services\Betting\BetSelection\SportBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
@@ -19,9 +18,9 @@ use TopBetta\Services\Risk\RiskSportsBetService;
 
 class SportBetPlacementService extends SingleSelectionBetPlacementService {
 
-    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskSportsBetService $riskBetService)
+    public function __construct(SportBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitService $betLimitService, RiskSportsBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitService, $riskBetService);
     }
 
     /**
@@ -30,15 +29,15 @@ class SportBetPlacementService extends SingleSelectionBetPlacementService {
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
         foreach($selections as $selection) {
-            $exceedLimit = $this->betLimitRepo->checkExceedBetLimitForBetData(array(
-                'id'          => $selection['selection']->market->event->id,
-                'selection'   => $selection['selection']->id,
-                'bet_type_id' => $this->betTypeRepository->getBetTypeByName($betType)->id,
-                'value'       => $amount,
-            ), 'sport');
+            $exceedLimit = $this->betLimitService->getSportsBetLimitExceeded(
+                $user,
+                $amount,
+                $selection['selection'],
+                $this->betTypeRepository->getBetTypeByName($betType)->id
+            );
 
-            if( $exceedLimit['result'] ) {
-                throw new BetLimitExceededException($exceedLimit);
+            if( $exceedLimit ) {
+                throw new BetLimitExceededException(array('betValueLimit' => $exceedLimit));
             }
         }
     }

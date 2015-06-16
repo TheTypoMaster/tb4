@@ -8,10 +8,9 @@
 
 namespace TopBetta\Services\Betting\BetPlacement;
 
-
-use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
+use TopBetta\Services\Betting\BetLimitService;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Risk\AbstractRiskBetService;
@@ -25,9 +24,9 @@ use TopBetta\Services\Risk\RiskRacingWinPlaceBetService;
  */
 abstract class SingleSelectionBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, AbstractRiskBetService $riskBetService)
+    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitService $betLimitService, AbstractRiskBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitService, $riskBetService);
     }
 
     /**

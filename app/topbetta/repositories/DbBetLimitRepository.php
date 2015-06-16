@@ -9,8 +9,10 @@
 namespace TopBetta\Repositories;
 
 use TopBetta\Models\BetLimitUserModel;
+use TopBetta\Repositories\Contracts\BetLimitRepositoryInterface;
 
-class DbBetLimitRepository extends BaseEloquentRepository {
+class DbBetLimitRepository extends BaseEloquentRepository implements BetLimitRepositoryInterface
+{
 
     public function __construct(BetLimitUserModel $model)
     {

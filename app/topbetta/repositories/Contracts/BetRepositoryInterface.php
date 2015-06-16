@@ -8,5 +8,8 @@
  */
  
 interface BetRepositoryInterface {
-    
+
+    public function getBetsForUserByEvent($userId, $eventId, $type = null);
+
+    public function getBetsForUserBySelection($userId, $selection, $type = null);
 }

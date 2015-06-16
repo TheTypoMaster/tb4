@@ -8,15 +8,15 @@
 
 namespace TopBetta\Services\Betting;
 
+use TopBetta\Repositories\Contracts\BetLimitRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetLimitTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
-use TopBetta\Repositories\DbBetLimitRepository;
-use TopBetta\Repositories\DbBetLimitTypeRepository;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 
 class BetLimitService {
 
     /**
-     * @var DbBetLimitRepository
+     * @var BetLimitRepositoryInterface
      */
     private $betLimitRepository;
     /**
@@ -28,11 +28,11 @@ class BetLimitService {
      */
     private $betSelectionService;
     /**
-     * @var DbBetLimitTypeRepository
+     * @var BetLimitTypeRepositoryInterface
      */
     private $betLimitTypeRepository;
 
-    public function __construct(DbBetLimitRepository $betLimitRepository, DbBetLimitTypeRepository $betLimitTypeRepository, BetRepositoryInterface $betRepository, ExoticRacingBetSelectionService $betSelectionService)
+    public function __construct(BetLimitRepositoryInterface $betLimitRepository, BetLimitTypeRepositoryInterface $betLimitTypeRepository, BetRepositoryInterface $betRepository, ExoticRacingBetSelectionService $betSelectionService)
     {
         $this->betLimitRepository = $betLimitRepository;
         $this->betRepository = $betRepository;
@@ -40,7 +40,14 @@ class BetLimitService {
         $this->betLimitTypeRepository = $betLimitTypeRepository;
     }
 
-
+    /**
+     * Bet Limit for racing win place bets
+     * @param $user
+     * @param $betAmount
+     * @param $selection
+     * @param $betType
+     * @return null
+     */
     public function getWinPlaceBetLimitExceeded($user, $betAmount, $selection, $betType)
     {
         $limit = $this->betLimitRepository->getLimitForUserAndBetType($user->id, $betType);
@@ -58,10 +65,19 @@ class BetLimitService {
         return null;
     }
 
+    /**
+     * Bet limit for exotic racing bets
+     * @param $user
+     * @param $betAmount
+     * @param $percentage
+     * @param $selections
+     * @param $betType
+     * @return array
+     */
     public function getExoticBetLimitsExceeded($user, $betAmount, $percentage, $selections, $betType)
     {
         $limit = $this->betLimitRepository->getLimitForUserAndBetType($user->id, $betType);
-        $flexiLimit = $this->betLimitRepository->getLimitForUserAndBetType($user->id, $betType, 'bet_flexi');
+        $flexiLimit = $this->betLimitRepository->getLimitForUserAndBetType($user->id, $betType, BetLimitTypeRepositoryInterface::BET_LIMIT_FLEXI) / 100;
 
         if ( ! $limit ) {
             $limit = $this->getDefaultRacingBetLimit();
@@ -97,9 +113,17 @@ class BetLimitService {
         return $limits;
     }
 
+    /**
+     * Bet limit for sports
+     * @param $user
+     * @param $betAmount
+     * @param $selection
+     * @param $betType
+     * @return null
+     */
     public function getSportsBetLimitExceeded($user, $betAmount, $selection, $betType)
     {
-        $limit = $this->betLimitRepository->getLimitForUserAndBetType($user->id, $betType, 'bet_sports');
+        $limit = $this->betLimitRepository->getLimitForUserAndBetType($user->id, $betType, BetLimitTypeRepositoryInterface::BET_LIMIT_SPORT);
 
         $currentBetAmount = $this->betRepository->getBetsForUserBySelection($user->id, $selection->id)->sum(function($v) { return $v->bet_amount; });
 
@@ -112,17 +136,17 @@ class BetLimitService {
 
     public function getDefaultRacingBetLimit()
     {
-        return $this->betLimitTypeRepository->getByName('default')->first()->default_amount;
+        return $this->betLimitTypeRepository->getByName(BetLimitTypeRepositoryInterface::BET_LIMIT_DEFAULT)->first()->default_amount;
     }
 
     public function getDefaultFlexiBetLimit()
     {
-        return $this->betLimitTypeRepository->getByName('default_flexi')->first()->default_amount;
+        return $this->betLimitTypeRepository->getByName(BetLimitTypeRepositoryInterface::BET_LIMIT_FLEXI_DEFAULT)->first()->default_amount;
     }
 
     public function getDefaultSportsBetLimit()
     {
-        return $this->betLimitTypeRepository->getByName('default_sport')->first()->default_amount;
+        return $this->betLimitTypeRepository->getByName(BetLimitTypeRepositoryInterface::BET_LIMIT_SPORT_DEFAULT)->first()->default_amount;
     }
 
 }

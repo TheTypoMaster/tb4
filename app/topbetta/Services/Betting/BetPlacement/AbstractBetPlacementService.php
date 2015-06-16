@@ -10,10 +10,10 @@ namespace TopBetta\Services\Betting\BetPlacement;
 
 use Log;
 use Carbon\Carbon;
-use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Accounting\UserAccountBalanceService;
+use TopBetta\Services\Betting\BetLimitService;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
@@ -39,22 +39,27 @@ abstract class AbstractBetPlacementService {
      */
     protected $betTransactionService;
     /**
-     * @var BetLimitRepo
-     */
-    protected $betLimitRepo;
-    /**
      * @var AbstractRiskBetService
      */
     protected $riskBetService;
+    /**
+     * @var BetLimitService
+     */
+    protected $betLimitService;
 
-    public function __construct(AbstractBetSelectionService $betSelectionService, BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, AbstractRiskBetService $riskBetService)
+    public function __construct(AbstractBetSelectionService $betSelectionService,
+                                BetTransactionService $betTransactionService,
+                                BetRepositoryInterface $betRepository,
+                                BetTypeRepositoryInterface $betTypeRepository,
+                                BetLimitService $betLimitService,
+                                AbstractRiskBetService $riskBetService)
     {
         $this->betRepository = $betRepository;
         $this->betTypeRepository = $betTypeRepository;
         $this->betSelectionService = $betSelectionService;
         $this->betTransactionService = $betTransactionService;
-        $this->betLimitRepo = $betLimitRepo;
         $this->riskBetService = $riskBetService;
+        $this->betLimitService = $betLimitService;
     }
 
     /**

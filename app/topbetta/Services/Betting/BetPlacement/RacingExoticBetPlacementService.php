@@ -9,9 +9,9 @@
 namespace TopBetta\Services\Betting\BetPlacement;
 
 use Lang;
-use TopBetta\Repositories\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
+use TopBetta\Services\Betting\BetLimitService;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\EventService;
@@ -22,9 +22,9 @@ use TopBetta\Services\Risk\RiskExoticBetService;
 
 class RacingExoticBetPlacementService extends AbstractBetPlacementService {
 
-    public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitRepo $betLimitRepo, RiskExoticBetService $riskBetService)
+    public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitService $betLimitService, RiskExoticBetService $riskBetService)
     {
-        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitRepo, $riskBetService);
+        parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitService, $riskBetService);
     }
 
     /**
@@ -40,19 +40,23 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
      */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
-        //format selections for old bet limit stuff
-        $selectionsArray = $this->betSelectionService->formatSelectionsForExoticLibrary($selections);
+        $exoticBetLibrary = ExoticBetLibraryFactory::make($betType, $amount, $this->betSelectionService->formatSelectionsForExoticLibrary($selections));
 
-        $result = $this->betLimitRepo->checkExceedBetLimitForBetData(array(
-            'id' => $selections[0]['selection']->market->event->id,
-            'race_id' => $selections[0]['selection']->market->event->id,
-            'value' => $amount,
-            'selection' => $selectionsArray,
-            'bet_type_id' => $this->betTypeRepository->getBetTypeByName($betType)->id,
-        ), 'racing');
+        $result = $this->betLimitService->getExoticBetLimitsExceeded(
+            $user,
+            $amount,
+            $exoticBetLibrary->getFlexiPercentage(),
+            $selections,
+            $this->betTypeRepository->getBetTypeByName($betType)->id
+        );
 
-        if( $result['result'] ) {
-            throw new BetLimitExceededException($result);
+        if( count($result) ) {
+
+            $resultArray = array();
+            $resultArray['flexiLimit'] = array_get($result, 'percentage', null);
+            $resultArray['betValueLimit'] = array_get($result, 'amount', null);
+
+            throw new BetLimitExceededException($resultArray);
         }
     }
 

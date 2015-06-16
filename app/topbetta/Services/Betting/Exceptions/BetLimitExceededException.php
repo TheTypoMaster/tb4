@@ -20,6 +20,10 @@ class BetLimitExceededException extends BetPlacementException {
 
     public function constructMessage($data, $selection = null)
     {
+        if(array_get($data, 'betValueLimit', null)) {
+            $data['betValueLimit'] = number_format($data['betValueLimit']/100, 2);
+        }
+
         if( array_get($data, 'betValueLimit', null) && array_get($data, 'flexiLimit', null) ) {
             return Lang::get('bets.exceed_bet_limit_value_and_flexi', $data);
         } else if( array_get($data, 'flexiLimit', null) ) {
