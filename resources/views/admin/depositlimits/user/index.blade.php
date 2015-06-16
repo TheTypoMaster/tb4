@@ -9,13 +9,14 @@
             @if( ! $depositLimit )
                 <h4>No Deposit Limit</h4>
             @else
-                <dl class="dl-horizontal">
-                    <dt>Deposit Limit</dt>
-                    <dd>${{ number_format($depositLimit->amount, 2) }}</dd>
+                <div class="col-lg-4">
+                    <dl class="dl-horizontal">
+                        <dt>Deposit Limit</dt>
+                        <dd>${{ number_format($depositLimit->amount, 2) }}</dd>
 
-                    <dt>Notes</dt>
-                    <dd>{{ $depositLimit->notes }}</dd>
-                </dl>
+                        <dt>Notes</dt>
+                        <dd>{{ $depositLimit->notes }}</dd>
+                    </dl>
             @endif
 
         </div>

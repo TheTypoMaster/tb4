@@ -23,7 +23,7 @@ class AdminFilter {
         $matches = array();
 
         //get the route
-        if( preg_match('/^' . self::ROUTE_PREFIX . '\.(.*)\.(index|create|edit|update|store|destroy)$/', $name, $matches) ) {
+        if( preg_match('/^' . self::ROUTE_PREFIX . '\.(.*)\.(index|show|create|edit|update|store|destroy)$/', $name, $matches) ) {
             $resource = $matches[1];
             $action = $matches[2];
 
