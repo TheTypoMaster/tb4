@@ -1,5 +1,7 @@
 <?php namespace TopBetta;
 
+use Config;
+
 class LegacyApiHelper {
 
 	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post', 'setBetLimit' => 'post', 'doSelfExclude' => 'post', 'generateJoomlaPassword' => 'post', 'doReferFriend' => 'post', 'getBettingHistory' => 'post', 'doUserUpgradeTopBetta' => 'post');
@@ -249,6 +251,8 @@ class LegacyApiHelper {
 	    $url = \URL::to('/api/?method=') . $method;
         //$url = 'http://services.dev/api/?method=' . $method;
 
+        $payload['api_key'] = hash_hmac("sha256", serialize($payload) . $method, Config::get("legacyapi.api_key"));
+
 		$ch = curl_init();
 		if ($type == 'post') {
 			//send through our payload as post fields
@@ -265,7 +269,8 @@ class LegacyApiHelper {
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
 		$buffer = json_decode(curl_exec($ch), true);
-
+        $buffer[] = serialize($payload) . $method;
+        dd($buffer);
 		curl_close($ch);
 
 		return $buffer;

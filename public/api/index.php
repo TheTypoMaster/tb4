@@ -41,6 +41,15 @@ $method = RequestHelper::validate('method');
 $apikey = RequestHelper::validate('apikey');
 $secret = RequestHelper::validate('secret');
 
+$input = $_POST;
+$key = $input['api_key'];
+unset($input['api_key']);
+
+if( hash_hmac('sha256', serialize($input) . $method, 's3cr3t') !== $key ) {
+    echo OutputHelper::json(403, array("error_msg" => "Unauthorized Access", serialize($input). $method));
+    exit;
+}
+
 /* branch off for each method */
 switch($method) {
 
