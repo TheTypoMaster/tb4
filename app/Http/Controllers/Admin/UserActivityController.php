@@ -1,17 +1,17 @@
-<?php
-
-namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
 use Redirect;
 use Response;
 use Input;
 use File;
-use TopBetta\Services\Exceptions\InvalidFormatException;
+use TopBetta\Http\Controllers\Controller;
 use View;
 use Carbon\Carbon;
+use TopBetta\Services\Exceptions\InvalidFormatException;
 use TopBetta\Services\UserAccount\UserReportService;
 
-class UserActivityController extends \BaseController {
+
+class UserActivityController extends Controller {
 
     /**
      * @var UserReportService
