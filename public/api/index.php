@@ -42,12 +42,15 @@ $method = RequestHelper::validate('method');
 $apikey = RequestHelper::validate('apikey');
 $secret = RequestHelper::validate('secret');
 
+//check api key
 $input = $_POST;
 $key = $input['api_key'];
 unset($input['api_key']);
 
-if( hash_hmac('sha256', implode("", array_flatten($input)) . $method, 's3cr3t') !== $key ) {
-    echo OutputHelper::json(403, array("error_msg" => "Unauthorized Access", $input));
+$config = JFactory::getConfig();
+
+if( ! compare_hash(create_hash_key($input, $method, $config->getValue('tb_api_key')), $key) ) {
+    echo OutputHelper::json(403, array("error_msg" => "Unauthorized Access",  $input));
     exit;
 }
 
