@@ -50,7 +50,7 @@ class CompetitorService {
     {
         $competitor = $this->getCompetitorByExternalId($competitorId);
 
-        if( $competitor && ! in_array($selectionId, $competitor->selections->lists('id')) ) {
+        if( $competitor && ! in_array($selectionId, $competitor->selections->lists('id')->all()) ) {
             $competitor->selections()->attach(array($selectionId));
         }
 

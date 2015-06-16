@@ -44,7 +44,7 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
     }
 
     public function selectList(){
-        return $this->model->lists('name', 'id');
+        return $this->model->lists('name', 'id')->all();
     }
 
     public function sportsFeed(){

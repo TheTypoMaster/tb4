@@ -26,7 +26,7 @@ class DbPlayersRepository extends BaseEloquentRepository implements PlayersRepos
 
         if($teams = array_get($data, 'teams', false)) {
 
-            $currentTeams = $model->teams()->select('tb_teams.id as teamId')->lists('teamId');
+            $currentTeams = $model->teams()->select('tb_teams.id as teamId')->lists('teamId')->all();
 
             if(count(array_diff($currentTeams, $teams))) {
                 $model->teams()->detach(array_diff($currentTeams, $teams));

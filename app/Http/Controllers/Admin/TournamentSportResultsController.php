@@ -115,7 +115,7 @@ class TournamentSportResultsController extends Controller {
 
         $event = $this->eventRepository->find($id);
 
-        $tournamentMarketTypes = $event->competition->first()->tournamentMarketTypes->lists('id');
+        $tournamentMarketTypes = $event->competition->first()->tournamentMarketTypes->lists('id')->all();
 
         $tournamentMarkets = $event->markets->filter(function($q) use ($tournamentMarketTypes) {
             return in_array($q->market_type_id, $tournamentMarketTypes);

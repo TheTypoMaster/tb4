@@ -34,7 +34,7 @@ class DbTeamRepository extends BaseEloquentRepository implements TeamRepositoryI
         $team = $this->model->where('id', $teamId)->with('players')->first();
 
         //only attach players that aren't already attached
-        $toAttach = array_diff($players, $team->players->lists('id'));
+        $toAttach = array_diff($players, $team->players->lists('id')->all());
 
         if(count($toAttach)) {
             return $team->players()->attach($toAttach);

@@ -253,7 +253,7 @@ class BetLimitRepo
 
 	public function getAllLimitTypesNicknames($excludeGlobal = true)
 	{
-		$list = $this->betLimitType->lists('nickname', 'id');
+		$list = $this->betLimitType->lists('nickname', 'id')->all();
 
 		return ($excludeGlobal) ?
 				array_except($list, array('1', '2', '13')) :

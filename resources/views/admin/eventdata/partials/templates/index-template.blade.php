@@ -78,7 +78,7 @@
                 @endforeach
                 </tbody>
             </table>
-            {{ $modelCollection->appends(array('q' => $search))->render() }}
+            {!! $modelCollection->appends(array('q' => $search))->render() !!}
         @else
             <p>There is nothing to display</p>
         @endif

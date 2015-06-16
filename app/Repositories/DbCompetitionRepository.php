@@ -71,7 +71,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     }
 
     public function selectList(){
-        return $this->model->lists('name', 'id');
+        return $this->model->lists('name', 'id')->all();
     }
 
     public function getDisplayedEventsForCompetition($competitionId)

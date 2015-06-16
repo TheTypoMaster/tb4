@@ -111,8 +111,8 @@ class SelectionsController extends Controller
             return Redirect::route('admin.selections.index');
         }
 
-        $teams = array_merge(array(0 => ''), $this->teamRepository->findAll()->lists('name', 'id'));
-        $players = array_merge(array(0 => ''), $this->playersRepository->findAll()->lists('name', 'id'));
+        $teams = array_merge(array(0 => ''), $this->teamRepository->findAll()->lists('name', 'id')->all());
+        $players = array_merge(array(0 => ''), $this->playersRepository->findAll()->lists('name', 'id')->all());
 
         return View::make('admin.eventdata.selections.edit', compact('selection', 'search', 'players', 'teams'));
 	}

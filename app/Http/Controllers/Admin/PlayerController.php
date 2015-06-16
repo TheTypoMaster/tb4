@@ -52,7 +52,7 @@ class PlayerController extends CrudResourceController {
             "Teams" => array(
                 "type" => "closure",
                 "field" => function($model) {
-                    return implode(', ', $model->teams->lists('name'));
+                    return implode(', ', $model->teams->lists('name')->all());
                 }
             )
         );

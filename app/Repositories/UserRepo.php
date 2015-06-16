@@ -73,7 +73,7 @@ class UserRepo
 		$tickets = $this->user
 				->find($userId)
 				->tournamentTickets
-				->lists('tournament_id');
+				->lists('tournament_id')->all();
 
 		if (!$tickets) {
 			return array();

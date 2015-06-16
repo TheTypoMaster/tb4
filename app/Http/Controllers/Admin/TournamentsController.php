@@ -142,7 +142,7 @@ class TournamentsController extends Controller
             $competitionsCollection = $this->tournamentCompetiitonRepository->getBySport($sportId);
 
             if($competitionsCollection) {
-                $competitions += $competitionsCollection->lists('name', 'id');
+                $competitions += $competitionsCollection->lists('name', 'id')->all();
             }
         }
 
@@ -152,7 +152,7 @@ class TournamentsController extends Controller
             $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
 
             if($eventGroupsCollection) {
-                $eventGroups += $eventGroupsCollection->lists('name', 'id');
+                $eventGroups += $eventGroupsCollection->lists('name', 'id')->all();
             }
         }
 
@@ -164,13 +164,13 @@ class TournamentsController extends Controller
         }
 
         //get tod venues
-        $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword');
+        $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword')->all();
 
         //get tournament labels
-        $labels = $this->labelsRepository->findAll()->lists('label', 'id');
+        $labels = $this->labelsRepository->findAll()->lists('label', 'id')->all();
 
         //get prize formats
-        $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
+        $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
         return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
@@ -252,7 +252,7 @@ class TournamentsController extends Controller
         $competitions = array("Select Competition");
         $competitionsCollection = $this->tournamentCompetiitonRepository->getBySport($tournament->sport->id);
         if($competitionsCollection) {
-            $competitions += $competitionsCollection->lists('name', 'id');
+            $competitions += $competitionsCollection->lists('name', 'id')->all();
         }
         $tournament->competition_id = $tournament->eventGroup->tournament_competition_id;
 
@@ -260,7 +260,7 @@ class TournamentsController extends Controller
         $eventGroups = array("Select Event Group");
         $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($tournament->eventGroup->id);
         if($eventGroupsCollection) {
-            $eventGroups += $eventGroupsCollection->lists('name', 'id');
+            $eventGroups += $eventGroupsCollection->lists('name', 'id')->all();
         }
         $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name);
 
@@ -296,16 +296,16 @@ class TournamentsController extends Controller
 
         $parentTournaments = array(-1 => 'Select Tournament') + $parentTournaments->map(function($value){
             return array('id' => $value->id, 'name' => $value->name . ' - ' . $value->start_date);
-        })->lists('name', 'id');
+        })->lists('name', 'id')->all();
 
         //get tod venues
-        $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword');
+        $tod = array("Select Venue") + $this->TODRepository->findAll()->lists('venue', 'keyword')->all();
 
         //get tournament labels
-        $labels = $this->labelsRepository->findAll()->lists('label', 'id');
+        $labels = $this->labelsRepository->findAll()->lists('label', 'id')->all();
 
         //get prize formats
-        $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
+        $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
         return View::make('admin.tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
@@ -441,7 +441,7 @@ class TournamentsController extends Controller
             return array();
         }
 
-        $competitionMarkets = $competition->tournament_market_types->lists('id');
+        $competitionMarkets = $competition->tournament_market_types->lists('id')->all();
         $markets = $this->marketRepository->getMarketsForCompetition($competitionId)->toArray();
 
         foreach($markets as &$market) {
@@ -467,7 +467,7 @@ class TournamentsController extends Controller
             return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
         });
 
-        return $this->formatForResponse(array("Select Event Group") + $eventGroups->lists('name', 'id'));
+        return $this->formatForResponse(array("Select Event Group") + $eventGroups->lists('name', 'id')->all());
     }
 
     public function getEvents($eventGroupId)
@@ -500,7 +500,7 @@ class TournamentsController extends Controller
             return array("id" => $value->id, "name" => $value->name . ' - ' . $value->start_date);
         });
 
-        return $this->formatForResponse(array(-1 => "Select tournament") + $tournaments->lists('name', 'id'));
+        return $this->formatForResponse(array(-1 => "Select tournament") + $tournaments->lists('name', 'id')->all());
 
     }
 
