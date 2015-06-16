@@ -20,6 +20,9 @@
 
     <!-- SB Admin CSS - Include with every page -->
     <link href="/css/sb-admin.css" rel="stylesheet">
+    <link href="/css/custom-admin.css" rel="stylesheet">
+
+    <link href="/js/plugins/multiselect/css/bootstrap-multiselect.css" rel="stylesheet">
 
 </head>
 
@@ -29,6 +32,7 @@
     <script src="/js/jquery-2.1.1.min.js"></script>
     <script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/plugins/multiselect/js/bootstrap-multiselect.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>

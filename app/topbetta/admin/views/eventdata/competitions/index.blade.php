@@ -7,9 +7,9 @@
         			<h2 class="col-lg-4">Competitions <small>({{ number_format($competitions->getTotal()) }})</small>
         			    {{ link_to_route('admin.competitions.create', 'New', null, array('class' => 'btn btn-info')) }}
         			</h2>
-
+            <h2 class="col-lg-4 pull-right">
         			{{ Form::open(array('method' => 'GET')) }}
-        			<div class="input-group custom-search-form col-lg-4 pull-right">
+        			<div class="input-group custom-search-form">
         				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
         				<span class="input-group-btn">
         					<button class="btn btn-default" type="button">
@@ -18,6 +18,7 @@
         				</span>
         			</div>
         			{{ Form::close() }}
+                <h2>
         		</div>
 		@if (count($competitions))
         <table class="table table-striped table-bordered table-hover">

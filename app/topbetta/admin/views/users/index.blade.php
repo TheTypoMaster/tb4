@@ -6,8 +6,9 @@
 		<div class="row page-header">
 			<h2 class="col-lg-4">TopBetta Users <small>{{ number_format($users->getTotal()) }}</small></h2>
 
+            <h2 class="col-lg-4 pull-right">
 			{{ Form::open(array('method' => 'GET')) }}
-			<div class="input-group custom-search-form col-lg-4 pull-right">
+			<div class="input-group custom-search-form ">
 				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
 				<span class="input-group-btn">
 					<button class="btn btn-default" type="button">
@@ -16,6 +17,7 @@
 				</span>
 			</div>		
 			{{ Form::close() }}
+            </h2>
 		</div>
 
 		{{-- <p>{{ link_to_route('admin.users.create', 'Add new user') }}</p> --}}
