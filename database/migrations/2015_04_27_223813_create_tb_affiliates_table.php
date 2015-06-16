@@ -8,7 +8,7 @@ class CreateTbAffiliatesTable extends Migration {
 	public function up()
 	{
 
-		//Schema::drop('tb_affiliates');
+		Schema::drop('tb_affiliates');
 
 
 		Schema::create('tb_affiliates', function(Blueprint $table) {
