@@ -13,7 +13,7 @@ use Log;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
-use TopBetta\Repositories\DbSelectionPricesRepository;
+use TopBetta\Repositories\DbSelectionPriceRepository;
 use TopBetta\Services\Events\CompetitorService;
 
 class SelectionListProcessor extends AbstractFeedProcessor {
@@ -42,7 +42,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
     public function __construct(MarketRepositoryInterface $marketRepository,
                                 SelectionRepositoryInterface $selectionRepository,
                                 EventRepositoryInterface $eventRepository,
-                                DbSelectionPricesRepository $selectionPricesRepository,
+                                DbSelectionPriceRepository $selectionPricesRepository,
                                 CompetitorService $competitorService)
     {
         $this->marketRepository = $marketRepository;
