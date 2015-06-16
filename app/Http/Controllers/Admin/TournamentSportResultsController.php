@@ -65,7 +65,7 @@ class TournamentSportResultsController extends Controller {
             $events = $this->eventRepository->getAllSportEvents(15);
         }
 
-        return View::make('admin::tournaments.events.index', compact('events', 'search'));
+        return View::make('admin.tournaments.events.index', compact('events', 'search'));
 	}
 
 
@@ -123,7 +123,7 @@ class TournamentSportResultsController extends Controller {
 
         $eventPaying = $this->eventService->isEventPaying($event);
 
-        return View::make('admin::tournaments.events.edit', compact('event', 'tournamentMarkets', 'eventPaying', 'search'));
+        return View::make('admin.tournaments.events.edit', compact('event', 'tournamentMarkets', 'eventPaying', 'search'));
 	}
 
 

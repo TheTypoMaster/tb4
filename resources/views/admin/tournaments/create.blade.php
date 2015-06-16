@@ -12,18 +12,18 @@
                 <legend>Tournament Details</legend>
                 <div class="col-lg-6">
                     <div class="form-group">
-                        {{ Form::label('tournament_sport_id', 'Sports') }}<br/>
-                        {{ Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) }}
+                        {!! Form::label('tournament_sport_id', 'Sports') !!}<br/>
+                        {!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('competition_id', 'Competitions') }}<br/>
-                        {{ Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) }}
+                        {!! Form::label('competition_id', 'Competitions') !!}<br/>
+                        {!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}
                     </div>
 
                     <div class="form-group">
-                        {{ Form::label('event_group_id', 'Event Group') }}<br/>
-                        {{ Form::select('event_group_id', [], null, array("" => "","class" => "event-multiselect form-control")) }}
+                        {!! Form::label('event_group_id', 'Event Group') !!}<br/>
+                        {!! Form::select('event_group_id', [], null, array("" => "","class" => "event-multiselect form-control")) !!}
                     </div>
 
                     <div class="form-group">

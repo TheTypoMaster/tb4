@@ -2,7 +2,7 @@
 
 use View;
 use Input;
-use Sentry;
+use Cartalyst\Sentry\Facades\Laravel\Sentry;
 use Redirect;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\AdminGroupsRepositoryInterface;
@@ -82,7 +82,7 @@ class UserPermissionsController extends Controller {
 
         $groups = $this->groupsRepository->findAll();
 
-        return View::make('admin::users.permissions.edit', compact('user', 'groups'))
+        return View::make('admin.users.permissions.edit', compact('user', 'groups'))
             ->with('active', 'user-permissions');
 	}
 

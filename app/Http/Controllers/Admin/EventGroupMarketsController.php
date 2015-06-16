@@ -51,7 +51,7 @@ class EventGroupMarketsController extends Controller {
             $competitions = $this->competitionRepository->findAllSportsCompetitions(15);
         }
 
-        return View::make("admin::tournaments.sportmarkets.index", compact("competitions", "search", 'sport', 'selectedComp'));
+        return View::make("admin.tournaments.sportmarkets.index", compact("competitions", "search", 'sport', 'selectedComp'));
 	}
 
 
@@ -105,7 +105,7 @@ class EventGroupMarketsController extends Controller {
 
         $markets = $this->marketTypeRepository->getMarketTypesForCompetition($id);
 
-        return View::make('admin::tournaments.sportmarkets.edit', compact('competition', 'markets' ,'search', 'sport', 'selectedComp'));
+        return View::make('admin.tournaments.sportmarkets.edit', compact('competition', 'markets' ,'search', 'sport', 'selectedComp'));
 	}
 
 

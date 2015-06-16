@@ -20,18 +20,18 @@
             </ul>
         @endif
 
-        {{ Form::open(array('url' => 'admin/user-activity/download', 'method' => "POST", "files" => true)) }}
+        {!! Form::open(array('url' => 'admin/user-activity/download', 'method' => "POST", "files" => true)) !!}
 
         <div class="form-group">
-            {{ Form::label("users", "Users CSV: ") }}
-            {{ Form::file("users") }}
+            {!! Form::label("users", "Users CSV: ") !!}
+            {!! Form::file("users") !!}
         </div>
 
         <div class="form-group">
-            {{ Form::submit("Download", array("class" => "form-control btn btn-primary")) }}
+            {!! Form::submit("Download", array("class" => "form-control btn btn-primary")) !!}
         </div>
 
-        {{ Form::close() }}
+        {!! Form::close() !!}
     </div>
 
     @if( $file = Session::get('filename', null) )

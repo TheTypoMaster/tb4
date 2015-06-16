@@ -307,7 +307,7 @@ class TournamentsController extends Controller
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id');
 
-        return View::make('admin::tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
+        return View::make('admin.tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
 	}
 
 	/**

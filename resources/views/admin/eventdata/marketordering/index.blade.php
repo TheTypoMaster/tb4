@@ -9,7 +9,7 @@
             <div class="row page-header">
                 <h2 class="col-lg-4">Market Ordering</h2>
 
-                {{ Form::open(array('method' => 'GET', "class" => "form-inline")) }}
+                {!! Form::open(array('method' => 'GET', "class" => "form-inline")) !!}
                 <div class="form-group custom-search-form col-lg-4 pull-right">
                     <label for="competition">Competition: </label>
                         <select name="competition" class="form-control" id="competition-select">
@@ -20,7 +20,7 @@
                         </select>
 
                 </div>
-                {{ Form::close() }}
+                {!! Form::close() !!}
             </div>
 
             @if(count($marketTypes))
@@ -34,7 +34,7 @@
                 </div>
             @endif
 
-            {{Form::open(array('method' => 'POST', "route" => array('admin.marketordering.store', "competition" => $competitionId))) }}
+            {!! Form::open(array('method' => 'POST', "route" => array('admin.marketordering.store', "competition" => $competitionId))) !!}
             <table class="table table-striped table-bordered table-hover" id="market-ordering-table">
                 <thead>
                 <tr>
@@ -61,7 +61,7 @@
             </table>
 
             <button class="btn btn-primary btn-large form-control" type="submit">Save</button>
-            {{Form::close()}}
+            {!! Form::close() !!}
 
         </div>
         <!-- /.col-lg-12 -->

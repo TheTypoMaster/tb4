@@ -1,10 +1,10 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
     <div class="row">
         <div class="col-lg-12">
             <div class="row page-header">
-                <h2 class="col-lg-8">User Groups <span>{{ link_to_route("admin.groups.create", "Create", array(), array("class" => "btn btn-primary")) }}</span></h2>
+                <h2 class="col-lg-8">User Groups <span>{!! link_to_route("admin.groups.create", "Create", array(), array("class" => "btn btn-primary")) !!}</span></h2>
             </div>
 
             <table class="table table-striped">
@@ -22,7 +22,7 @@
                         <td>{{ $group->id }}</td>
                         <td>{{ $group->name }}</td>
                         <td>
-                            {{ link_to_route('admin.groups.edit', "Edit", array($group->id), array("class" => "btn btn-warning")) }}
+                            {!! link_to_route('admin.groups.edit', "Edit", array($group->id), array("class" => "btn btn-warning")) !!}
                         </td>
                     </tr>
                 @endforeach

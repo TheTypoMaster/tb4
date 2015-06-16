@@ -12,9 +12,9 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Cartalyst\Sentry\Users\Eloquent\User as SentryUserModel;
 
-
-class UserModel extends Eloquent implements AuthenticatableContract, CanResetPasswordContract{
+class UserModel extends SentryUserModel implements AuthenticatableContract, CanResetPasswordContract{
 
 	use Authenticatable, CanResetPassword;
 
@@ -65,6 +65,16 @@ class UserModel extends Eloquent implements AuthenticatableContract, CanResetPas
 	public function tournamentTickets() {
 		return $this->hasMany('\TopBetta\Models\TournamentTicket', 'user_id');
 	}
+
+    /**
+     * Returns the relationship between users and groups.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function groups()
+    {
+        return $this->belongsToMany('TopBetta\Models\AdminGroupModel', 'tb_admin_users_groups', 'group_id', 'user_id');
+    }
 
     /**
      * Get the unique identifier for the user.

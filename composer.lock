@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "95dc8a9915924ef16c2615392d30bb13",
+    "hash": "09dbe817d8bd9da364eb2d0317290761",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -100,26 +100,26 @@
         },
         {
             "name": "cartalyst/sentry",
-            "version": "v2.1.5",
+            "version": "dev-feature/laravel-5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cartalyst/sentry.git",
-                "reference": "0ae4158353e41cc4061631c86c1cddd67c1f23be"
+                "reference": "092192e969520bb287b402fbe77ab070d4267910"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cartalyst/sentry/zipball/0ae4158353e41cc4061631c86c1cddd67c1f23be",
-                "reference": "0ae4158353e41cc4061631c86c1cddd67c1f23be",
+                "url": "https://api.github.com/repos/cartalyst/sentry/zipball/092192e969520bb287b402fbe77ab070d4267910",
+                "reference": "092192e969520bb287b402fbe77ab070d4267910",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "illuminate/cookie": ">=4.0.9,<4.2",
-                "illuminate/database": ">=4.0.9,<4.2",
-                "illuminate/http": ">=4.0.9,<4.2",
-                "illuminate/session": ">=4.0.9,<4.2",
+                "illuminate/cookie": "~4.0|~5.0",
+                "illuminate/database": "~4.0|~5.0",
+                "illuminate/http": "~4.0|~5.0",
+                "illuminate/session": "~4.0|~5.0",
                 "ircmaxell/password-compat": "1.0.*",
                 "mockery/mockery": "0.9.*"
             },
@@ -143,7 +143,7 @@
                     "2": "master"
                 },
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "2.2.x-dev"
                 }
             },
             "autoload": {
@@ -196,7 +196,7 @@
                 "laravel",
                 "security"
             ],
-            "time": "2015-03-06 03:17:20"
+            "time": "2015-04-20 12:47:58"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -814,16 +814,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.1.1",
+            "version": "v5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "3a44db7e70146dc1282b39887b5faa67c8583015"
+                "reference": "65a3a4ca4b20083517a9e2effa6a86a49f3e9c96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/3a44db7e70146dc1282b39887b5faa67c8583015",
-                "reference": "3a44db7e70146dc1282b39887b5faa67c8583015",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/65a3a4ca4b20083517a9e2effa6a86a49f3e9c96",
+                "reference": "65a3a4ca4b20083517a9e2effa6a86a49f3e9c96",
                 "shasum": ""
             },
             "require": {
@@ -938,7 +938,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-06-09 14:13:59"
+            "time": "2015-06-15 18:25:50"
         },
         {
             "name": "laravelcollective/html",
@@ -3699,7 +3699,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "barryvdh/laravel-cors": 20
+        "barryvdh/laravel-cors": 20,
+        "cartalyst/sentry": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

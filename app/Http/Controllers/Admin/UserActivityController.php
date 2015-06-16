@@ -30,7 +30,7 @@ class UserActivityController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('admin::users.user-activity');
+		return View::make('admin.users.user-activity');
 	}
 
     public function createUserActivity()

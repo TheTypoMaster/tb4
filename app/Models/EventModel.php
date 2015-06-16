@@ -35,7 +35,7 @@ class EventModel extends Eloquent {
 
     public function isPaying()
     {
-        return $this->event_status->keyword == EventStatusRepositoryInterface::STATUS_PAYING || $this->event_status->keyword == EventStatusRepositoryInterface::STATUS_PAID;
+        return $this->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING || $this->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID;
     }
 
 }

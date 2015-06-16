@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
     <div class="row">
@@ -8,28 +8,28 @@
 
 
                 <h2 class="col-lg-4 pull-right">
-                    {{ Form::open(array('method' => 'GET')) }}
+                    {!! Form::open(array('method' => 'GET')) !!}
                     <div class="input-group custom-search-form">
-                        {{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search (id,name)...")) }}
+                        {!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search (id,name)...")) !!}
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button">
                                 <i class="fa fa-search"></i>
                             </button>
                         </span>
                     </div>
-                    {{ Form::close() }}
+                    {!! Form::close() !!}
                 </h2>
             </div>
 
-            {{ Form::open(array('method' => 'GET', 'class' => 'form-inline')) }}
-                {{ Form::label('sport', "Sport") }}
-                {{ Form::select('sport', array(), null, array("class" => "form-control")) }}
+            {!! Form::open(array('method' => 'GET', 'class' => 'form-inline')) !!}
+                {!! Form::label('sport', "Sport") !!}
+                {!! Form::select('sport', array(), null, array("class" => "form-control")) !!}
 
-                {{ Form::label('competition', "Competition") }}
-                {{ Form::select('competition', array(), null, array("class" => "form-control")) }}
+                {!! Form::label('competition', "Competition") !!}
+                {!! Form::select('competition', array(), null, array("class" => "form-control")) !!}
 
-                {{ Form::submit('Filter', array("class" => "form-control btn btn-primary")) }}
-            {{Form::close()}}
+                {!! Form::submit('Filter', array("class" => "form-control btn btn-primary")) !!}
+            {!! Form::close() !!}
 
             <table class="table table-striped table-hover">
                 <thead>
@@ -50,7 +50,7 @@
                         <td>{{ $competition->sport->name }}</td>
                         <td>{{ $competition->start_date }}</td>
                         <td>
-                            {{ link_to_route('admin.tournament-sport-markets.edit', "Edit", array($competition->id, "q" => $search, 'sport'=>$sport, 'competition' => $selectedComp), array("class" => "btn btn-warning")) }}
+                            {!! link_to_route('admin.tournament-sport-markets.edit', "Edit", array($competition->id, "q" => $search, 'sport'=>$sport, 'competition' => $selectedComp), array("class" => "btn btn-warning")) !!}
                         </td>
                     </tr>
                 @endforeach
@@ -58,7 +58,7 @@
             </table>
 
             @if ( ! is_array($competitions) )
-                {{ $competitions->appends(array('q' => $search))->links() }}
+                {!! $competitions->appends(array('q' => $search))->render() !!}
             @endif
         </div>
         <!-- /.col-lg-12 -->

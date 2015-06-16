@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
     <div class="row">
@@ -7,11 +7,11 @@
                 <h2 class="col-lg-8">User Groups</h2>
             </div>
 
-            {{ Form::model($group, array('route' => array('admin.groups.update', $group->id), 'method' => 'PUT')) }}
+            {!!  Form::model($group, array('route' => array('admin.groups.update', $group->id), 'method' => 'PUT')) 11}
 
             <div class="form-group">
-                {{ Form::label('name', "Name: ") }}
-                {{ Form::text('name', null, array("class" => 'form-control')) }}
+                {!!  Form::label('name', "Name: ") !!}
+                {!!  Form::text('name', null, array("class" => 'form-control')) !!}
             </div>
 
             <fieldset>
@@ -35,12 +35,12 @@
                             @foreach( Config::get('adminresources.permissions') as $permission )
                                 @if( ! array_get($resource, 'only', null) || in_array($permission, $resource['only']) )
                                     <td class="col-xs-1">
-                                        {{ Form::select("permissions[". Config::get('adminresources.prefix') . '.' . $resource['name'] . '.' . $permission ."]", array(
+                                        {!!  Form::select("permissions[". Config::get('adminresources.prefix') . '.' . $resource['name'] . '.' . $permission ."]", array(
                                             0 => "No",
                                             1 => "Yes"
                                         ),
                                         array_get($group->permissions, Config::get('adminresources.prefix') . '.' . $resource['name'] . '.' . $permission, 0),
-                                        array("class" => "form-control")) }}
+                                        array("class" => "form-control")) !!}
                                     </td>
                                 @else
                                     <td></td>
@@ -68,12 +68,12 @@
                         <tr>
                             <td>{{ $permission['display_name'] }}</td>
                             <td class="col-xs-1">
-                                {{ Form::select("permissions[". Config::get('adminresources.prefix') . '.' . $permission['name'] ."]", array(
+                                {!!  Form::select("permissions[". Config::get('adminresources.prefix') . '.' . $permission['name'] ."]", array(
                                                     0 => "No",
                                                     1 => "Yes"
                                                 ),
                                                  array_get($group->permissions, Config::get('adminresources.prefix') . '.' . $permission['name'], 0),
-                                                array("class" => "form-control")) }}
+                                                array("class" => "form-control")) !!}
                             </td>
                         </tr>
                     @endforeach
@@ -82,7 +82,7 @@
             </fieldset>
 
             <div class="form-group">
-                {{ Form::submit('Save', array('class' => 'form-control btn btn-primary')) }}
+                {!!  Form::submit('Save', array('class' => 'form-control btn btn-primary')) !!}
             </div>
 
         </div>

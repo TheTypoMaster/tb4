@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Seeder;
+
 class Tbdb_user_create_super_userTableSeeder extends Seeder {
 
 	public function run()

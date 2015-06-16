@@ -31,7 +31,7 @@ class GroupsController extends Controller {
 	{
 		$groups = $this->groupsRepository->findAll();
 
-        return View::make('admin::groups.index', compact('groups'));
+        return View::make('admin.groups.index', compact('groups'));
 	}
 
 
@@ -46,7 +46,7 @@ class GroupsController extends Controller {
 
         $otherPermissions = Config::get('adminresources.custom_permissions');
 
-        return View::make('admin::groups.create', compact('resources', 'otherPermissions'));
+        return View::make('admin.groups.create', compact('resources', 'otherPermissions'));
 	}
 
 
@@ -92,7 +92,7 @@ class GroupsController extends Controller {
 
         $otherPermissions = Config::get('adminresources.custom_permissions');
 
-        return View::make('admin::groups.edit', compact('group', 'resources', 'otherPermissions'));
+        return View::make('admin.groups.edit', compact('group', 'resources', 'otherPermissions'));
 	}
 
 

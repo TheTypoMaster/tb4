@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('main')
     <div class="row">
@@ -40,7 +40,7 @@
             </div>
 
             <div class="row">
-                {{ Form::open(array("route" => array("admin.tournament-sport-markets.update", $competition->id, "q" => $search, 'sport'=>$sport, 'competition' => $selectedComp), 'method' => "PUT")) }}
+                {!! Form::open(array("route" => array("admin.tournament-sport-markets.update", $competition->id, "q" => $search, 'sport'=>$sport, 'competition' => $selectedComp), 'method' => "PUT")) !!}
 
                 <table class="table table-striped table-hover">
                     <thead>
@@ -57,7 +57,7 @@
                             <td>{{ $market->name }}</td>
                             <td>{{ $market->description }}</td>
                             <td>
-                                {{ Form::checkbox('market_types[]', $market->id, in_array($market->id, $competition->tournament_market_types->lists('id'))) }}
+                                {!! Form::checkbox('market_types[]', $market->id, in_array($market->id, $competition->tournament_market_types->lists('id'))) !!}
                             </td>
                         </tr>
                     @endforeach
@@ -65,7 +65,7 @@
                 </table>
 
                 <div class="form-group">
-                    {{ Form::submit("Save", array("class" => "form-control btn btn-primary")) }}
+                    {!! Form::submit("Save", array("class" => "form-control btn btn-primary")) !!}
                 </div>
 
             </div>
