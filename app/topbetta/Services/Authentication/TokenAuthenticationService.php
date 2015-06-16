@@ -212,7 +212,7 @@ class TokenAuthenticationService {
      */
     private function _confirmBettingAccount($input, $bettingUserDetails){
         // get club user details
-        $clubUserDetails = $this->user->getUserDetailsFromUsername($input['club_username']);
+        $clubUserDetails = $this->user->getUserDetailsFromUsername($input['parent_username']);
 
         // check if betting account userid is child of club
         if($clubUserDetails['id'] == $bettingUserDetails['parent_user_id']) return true;
