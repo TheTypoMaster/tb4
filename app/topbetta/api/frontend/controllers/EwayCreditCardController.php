@@ -45,7 +45,7 @@ class EwayCreditCardController extends \BaseController {
             }
         }
 
-        Log::info("EWAY RESPONSE: " . print_r($this->response->success($cards)));
+        Log::info("EWAY RESPONSE: " . print_r($this->response->success($cards), true));
 
         return $this->response->success($cards);
 	}
