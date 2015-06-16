@@ -2,6 +2,8 @@
 
 namespace TopBetta\admin\controllers;
 
+use Cartalyst\Sentry\Users\UserNotFoundException;
+use Sentry;
 use Auth;
 use Input;
 use Redirect;
@@ -44,21 +46,23 @@ class SessionController extends \BaseController
 
 		if ($validation->passes()) {
 
-			// make sure they are a joomla admin user (gid == 25) before attempting login
-			if (User::where('username', $input['username'])->pluck('gid') == 25) {
-				// legacy login
-				$l = new \TopBetta\LegacyApiHelper;
-				$login = $l->query('doUserLogin', $input);
+            //find the sentry user
+            try {
+                $user = Sentry::findUserByLogin($input['username']);
+            } catch( UserNotFoundException $e ) {
+                return Redirect::back()->with('flash_message', 'Invalid credentials OR your account is disabled')->withInput();
+            }
 
-				//dd('admin user found, login:'. print_r($login,true));
-				if ($login['status'] == 200) {
+            //check the user has admin permissions
+			if ( $user->hasAccess("admin.*") ) {
 
-					$attempt = Auth::loginUsingId($login['userInfo']['id']);
+                //log user in to laravel
+                $attempt = Auth::loginUsingId($user->id);
 
-					if ($attempt) {
-						return Redirect::intended('/admin/dashboard')->with('flash_message', 'You are now logged in!');
-					}
-				}
+                if ($attempt) {
+                    return Redirect::intended('/admin/dashboard')->with('flash_message', 'You are now logged in!');
+                }
+
 			}
 		}
 
