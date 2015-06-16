@@ -95,7 +95,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
         $leaderboardRecord = $this->model
             ->where('user_id', $userId)
             ->where('tournament_id', $tournamentId)
-            ->where('qualified', true)
+            ->where('turned_over', '>=', DB::raw('balance_to_turnover'))
             ->first();
 
         if( !  $leaderboardRecord ) {
@@ -106,8 +106,8 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
         //get the position
         $position = $this->model
             ->where('tournament_id', $tournamentId)
-            ->where('qualified', true)
             ->where('turned_over', '>=', DB::raw('balance_to_turnover'))
+            ->where('currency', '>', $leaderboardRecord->currency)
             ->count();
 
         return $position + 1;
