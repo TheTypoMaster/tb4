@@ -7,6 +7,10 @@ Route::get('/', function() {
 
 // Route group for backend API. Uses basic stateless auth filter
 Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
+
+	/*
+	 * Data Feeds
+	 */
 	// incoming race data and results
 	Route::resource('racing', 'Backend\RacingController');
 	// incoming sports data and results
@@ -17,6 +21,12 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('raceresults', 'Backend\RacingResultsController');
 	//incoming race data
 	Route::resource('racedata', 'Backend\RacingDataController');
+    //New sport feed endpoint
+    Route::resource('sports-feed', 'Backend\SportsFeedController', array("only" => array('store')));
+
+    /*
+     * Risk Manager
+     */
 	// special case where Risk Manager can push race results to TopBetta
 	Route::resource('risk-results', 'Backend\RiskResultsController', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
