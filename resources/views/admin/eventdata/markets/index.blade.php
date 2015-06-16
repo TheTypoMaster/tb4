@@ -49,7 +49,7 @@
         		@foreach($markets as $market)
         		<tr>
         			<td>{{ $market->id }}</td>
-        			<td>{{ $market->market_type_name . ($market->line ? ' (+/-' . $market->line . ')' : ''); }}</td>
+        			<td>{{ $market->market_type_name . ($market->line ? ' (+/-' . $market->line . ')' : '') }}</td>
         			<td>{{ $market->event_name }}</td>
                     <td>{{ $market->market_status }}</td>
         			<td>{{ ($market->display_flag) ? 'Yes' : 'No' }}</td>
