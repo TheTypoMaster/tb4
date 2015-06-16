@@ -57,7 +57,7 @@
                             <td>{{ $market->name }}</td>
                             <td>{{ $market->description }}</td>
                             <td>
-                                {!! Form::checkbox('market_types[]', $market->id, in_array($market->id, $competition->tournament_market_types->lists('id'))) !!}
+                                {!! Form::checkbox('market_types[]', $market->id, in_array($market->id, $competition->tournament_market_types->lists('id')->all())) !!}
                             </td>
                         </tr>
                     @endforeach
