@@ -3,7 +3,7 @@
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class User extends Eloquent implements UserInterface, RemindableInterface {
+class User extends Cartalyst\Sentry\Users\Eloquent\User implements UserInterface, RemindableInterface {
 
 	/**
 	 * The database table used by the model.
@@ -53,9 +53,20 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * A User can have many tickets for tournaments
 	 * @return mixed
 	 */
-	public function tournamentTickets() {
+	public function tournamentTickets()
+    {
 		return $this->hasMany('\TopBetta\TournamentTicket', 'user_id');
 	}
+
+    /**
+     * Returns the relationship between users and groups.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function groups()
+    {
+        return $this->belongsToMany('TopBetta\Models\AdminGroupModel', 'tb_admin_users_groups', 'group_id', 'user_id');
+    }
 
 	/**
 	 * Get the unique identifier for the user.
