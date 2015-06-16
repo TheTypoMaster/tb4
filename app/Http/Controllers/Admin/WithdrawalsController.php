@@ -125,7 +125,7 @@ class WithdrawalsController extends Controller
 		unset($data['email_flag']);
 
         //can the user withdraw this amount?
-        if($withdrawal->amount > $withdrawal->user->accountBalance() - $withdrawal->user->topbettauser->balance_to_turnover && $data['approved_flag'] == 1) {
+        if($withdrawal->amount > $this->accountTransactionService->getAvailableWithdrawalBalance($withdrawal->user->id) && $data['approved_flag'] == 1) {
             return Redirect::route('admin.withdrawals.edit', array($withdrawal->id))->with(array("flash_message" => "Amount is greater than available withdrawal balance"));
         }
 

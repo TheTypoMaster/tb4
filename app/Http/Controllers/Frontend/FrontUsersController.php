@@ -94,7 +94,6 @@ class FrontUsersController extends Controller {
 				}
 
 			} else {
-
 				return array("success" => false, "error" => $login['error_msg']);
 
 			}

@@ -257,19 +257,18 @@ class BetResultRepo
         if ($payout) {
 			// WINNING BET
 			Log::info('WINNING BET: id - ' . $bet->id);
-            //update user turnover
-            if(\TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) > self::TURNOVER_MIN_AMOUNT) {
-                $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
-            }
 
-			return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);
+            //update user turnover
+            $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount, \TopBetta\Facades\BetRepo::getBaseDividendForBet($bet) >= self::TURNOVER_MIN_AMOUNT);
+
+            return \TopBetta\Facades\BetRepo::payoutBet($bet, $payout);
 		}
 
 		// if we get here, the bet was not a winning bet or not refunded
 		if ($bet->save()) {
 
             //update user turnover
-            $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount);
+            $this->userAccountService->decreaseBalanceToTurnOver($bet->user_id, $bet->bet_amount - $bet->bet_freebet_amount, true);
 
 			$bet->resultAmount = 0;
 			Log::info('LOSING BET: ' . $bet->id);

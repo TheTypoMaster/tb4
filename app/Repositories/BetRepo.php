@@ -394,7 +394,8 @@ class BetRepo
 			$amount -= $bet->bet_freebet_amount;
 
             \Log::info("AMOUNT: " . $this->getBetPayoutAmount($bet, true) . " freebet " . $bet->bet_freebet_amount);
-            $this->userAccountService->addBalanceToTurnOver(
+
+            $this->userAccountService->addFreeCreditWinsToTurnOver(
                 $bet->user_id,
                 max($this->getBetPayoutAmount($bet, true) - $bet->bet_freebet_amount, 0)
             );

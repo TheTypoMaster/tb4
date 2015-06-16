@@ -370,7 +370,8 @@ class FrontTournamentsTicketsController extends Controller {
                     //decrease turnover balance
                     $this->userAccountService->decreaseBalanceToTurnOver(
                         \Auth::user()->id,
-                        $tournament->buy_in + $tournament->entry_fee
+                        $tournament->buy_in + $tournament->entry_fee,
+                        true
                     );
 
                     //store buyin history record

@@ -200,7 +200,8 @@ class AccountTransactionService {
 
     public function getAvailableWithdrawalBalance($userId)
     {
-        return $this->getAccountBalanceForUser($userId) - $this->useraccountservice->getBalanceToTurnOver($userId);
+        $user = $this->useraccountservice->getTopBettaUser($userId);
+        return $this->getAccountBalanceForUser($userId) - $user->topbettauser->balance_to_turnover - $user->topbettauser->free_credit_wins_to_turnover;
 	}
 	
     public function getAccountTransactionsForUserPaginated($userId)
