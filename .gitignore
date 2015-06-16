@@ -6,3 +6,4 @@ composer.lock
 /nbproject
 .idea
 atlassian-ide-plugin.xml
+.vagrant

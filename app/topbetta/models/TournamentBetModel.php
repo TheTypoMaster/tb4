@@ -31,4 +31,26 @@ class TournamentBetModel extends Eloquent {
     public function betType() {
         return $this->belongsTo('TopBetta\Models\BetTypeModel', 'bet_type_id');
     }
+
+    public function ticket()
+    {
+        return $this->belongsTo('TopBetta\Models\TournamentTicketModel', 'tournament_ticket_id');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo('TopBetta\Models\BetTypeModel', 'bet_type_id');
+    }
+
+    // --- Selection relationships to match BetModel ---
+
+    public function selection()
+    {
+        return $this->belongsToMany('TopBetta\Models\SelectionModel', 'tbdb_tournament_bet_selection', 'tournament_bet_id', 'selection_id');
+    }
+
+    public function betselection()
+    {
+        return $this->hasMany('TopBetta\Models\TournamentBetSelectionModel', 'tournament_bet_id', 'id');
+    }
 } 

@@ -23,4 +23,6 @@
 	</li>
     <li class="{{($active != 'deposit-limit') ?: 'active' }}">{{ link_to_route('admin.users.deposit-limit.index', 'Deposit Limit', array($user->id), array()) }}
     </li>
+    <li class="{{($active != 'user-permissions') ?: 'active' }}">{{ link_to_route('admin.user-permissions.edit', 'Permissions', array($user->id), array()) }}
+    </li>
 </ul>
