@@ -22,6 +22,7 @@ defined('_JEXEC') or die('Restricted access');
 include 'helpers/request.php';
 include 'helpers/output.php';
 include 'helpers/riskmanager.php';
+include 'helpers/functions.php';
 
 /* include all our req classes */
 include 'classes/user.php';
@@ -45,8 +46,8 @@ $input = $_POST;
 $key = $input['api_key'];
 unset($input['api_key']);
 
-if( hash_hmac('sha256', serialize($input) . $method, 's3cr3t') !== $key ) {
-    echo OutputHelper::json(403, array("error_msg" => "Unauthorized Access", serialize($input). $method));
+if( hash_hmac('sha256', implode("", array_flatten($input)) . $method, 's3cr3t') !== $key ) {
+    echo OutputHelper::json(403, array("error_msg" => "Unauthorized Access", $input));
     exit;
 }
 

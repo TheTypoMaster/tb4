@@ -251,7 +251,11 @@ class LegacyApiHelper {
 	    $url = \URL::to('/api/?method=') . $method;
         //$url = 'http://services.dev/api/?method=' . $method;
 
-        $payload['api_key'] = hash_hmac("sha256", serialize($payload) . $method, Config::get("legacyapi.api_key"));
+        $payload['api_key'] = hash_hmac(
+            "sha256",
+            implode("", array_flatten($payload)) . $method,
+            Config::get("legacyapi.api_key")
+        );
 
 		$ch = curl_init();
 		if ($type == 'post') {
@@ -269,7 +273,8 @@ class LegacyApiHelper {
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
 		$buffer = json_decode(curl_exec($ch), true);
-        $buffer[] = serialize($payload) . $method;
+        unset($payload['api_key']);
+        $buffer[] = $payload;
         dd($buffer);
 		curl_close($ch);
 
