@@ -25,7 +25,7 @@ class PlayerProcessor extends AbstractFeedProcessor {
 
     public function process($data)
     {
-        if( ! $externalId = array_get($data, 'Id', false) ) {
+        if( ! $externalId = array_get($data, 'player_id', false) ) {
             Log::error("BackAPI Sports no player id specified");
             return 0;
         }
