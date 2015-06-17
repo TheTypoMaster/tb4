@@ -393,7 +393,6 @@
 
         });
 
-
         $('.events-selector').change(function(){
             var needle = $(this).val();
             var startDate;

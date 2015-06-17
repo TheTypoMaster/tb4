@@ -272,7 +272,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@downloadUserActivity');
     Route::resource('user-activity', 'TopBetta\admin\controllers\UserActivityController');
 
-    Route::get('sports', 'TopBetta\admin\controllers\SportsController@getSports');
+    Route::get('sports-list', 'TopBetta\admin\controllers\SportsController@getSports');
     Route::get('sports/{sportId}/competitions', 'TopBetta\admin\controllers\CompetitionsController@getBySport');
 });
 
