@@ -297,6 +297,8 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 
 	// Funds management/transfer
 	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
+	Route::post('accounting/returnfunds', 'TopBetta\Frontend\FrontAccountingController@returnFunds');
+
 
 	// Full user account registration routes
 	Route::post('registration/createfull', 'TopBetta\Frontend\Controllers\UserRegistrationController@createFull');
