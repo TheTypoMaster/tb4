@@ -86,7 +86,7 @@ class UserModel extends Eloquent implements UserInterface, RemindableInterface {
 
     public function freeCreditTransactions()
     {
-        return $this->hasMany('TopBetta\Models\FreeCreditTransactionModel', 'recipient_id');
+        return $this->hasMany('TopBetta\models\FreeCreditTransactionModel', 'recipient_id');
     }
 
 

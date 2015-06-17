@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12">
             @include('admin::users.partials.header')
-            <h4 class="page-header">Deposit Limit</h4>
+            <h2 class="page-header">Deposit Limit</h2>
 
             @if( ! $depositLimit )
                 <div class="col-lg-4">

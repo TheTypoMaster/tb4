@@ -11,6 +11,7 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -48,6 +49,10 @@ class RaceDataProcessingService {
 	protected $laststarts;
 	protected $prices;
 	protected $betproduct;
+    /**
+     * @var TournamentBetService
+     */
+    private $tournamentBetService;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -63,7 +68,8 @@ class RaceDataProcessingService {
 								MarketRepositoryInterface $markets,
 								RisaFormRepository $risaform,
 								LastStartRepositoryInterface $laststarts,
-								SelectionPriceRepositoryInterface $prices){
+								SelectionPriceRepositoryInterface $prices,
+                                TournamentBetService $tournamentBetService){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -80,6 +86,7 @@ class RaceDataProcessingService {
 		$this->betproduct = $betproduct;
 
 		$this->logprefix = 'RaceDataProcessingService: ';
+        $this->tournamentBetService = $tournamentBetService;
     }
 
 
@@ -263,6 +270,7 @@ class RaceDataProcessingService {
 			// set start date for meeting if it's not set or this race is earlier
 			if ($existingMeetingDetails['start_date'] == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
 				$existingMeetingDetails['start_date'] = $race['JumpTime'];
+                unset($existingMeetingDetails['created_at'], $existingMeetingDetails['updated_at']);
 				$this->competitions->updateOrCreate($existingMeetingDetails, 'meeting_code');
 			}
 
@@ -526,6 +534,7 @@ class RaceDataProcessingService {
 		foreach ($scratchList as $scratchedId) {
 			Log::info($this->logprefix.'Scratching - Refunding bets for runner id: ' . $scratchedId);
 			$this->betrepository->refundBetsForRunnerId($scratchedId);
+            $this->tournamentBetService->refundBetsForSelection($scratchedId);
 		}
 
 		return "Runenr(s) Processed";
