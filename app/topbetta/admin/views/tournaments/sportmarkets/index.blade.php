@@ -93,7 +93,7 @@
 
                 var $this = $(this);
 
-                $.get("/admin/sports")
+                $.get("/admin/sports-list")
                     .done(function(data){
                         $this.html(createSelectOptions(data, {
                             'textField' : 'sport_name',

@@ -55,7 +55,7 @@ class AdminFilter {
 
             //get the permission
             $permission = array_where(Config::get('adminresources.custom_routes'), function($k, $v) use ($uri) {
-                return preg_match('/' . str_replace('/', '\/', $v['uri']) . '/', AdminFilter::ROUTE_PREFIX . '/' . $uri);
+                return preg_match('/^' . AdminFilter::ROUTE_PREFIX . '\/' . str_replace(array('/', '{', '}'), array('\/', '\{', '\}'), $v['uri']) . '$/', $uri);
             });
 
             if ( empty($permission) ) {

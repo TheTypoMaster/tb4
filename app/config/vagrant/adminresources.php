@@ -44,8 +44,11 @@ return array(
 
     // non resource routes. Mapping for uri to permissions.
     "custom_routes" => array(
+        array("uri" => "sports/{sportId}/competitions", "permission" => "competitions.view"),
         array("uri" => "removeFreeCredits", "permission" => "remove_free_credits"),
         array("uri" => "tournaments/add-users/{tournamentId}", "permission" => "add_users_to_tournament"),
         array("uri" => "tournaments/get-.*", "permission" => "tournaments.view"),
+        array("uri" => "sports-list", "permission" => "sports.view"),
+
     ),
 );
