@@ -11,9 +11,9 @@ use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 
 class DbAccountTransactionRepository extends BaseEloquentRepository implements AccountTransactionRepositoryInterface{
 
-    const BET_TRANSACTION_BET    = 'bet';
-    const BET_TRANSACTION_REFUND = 'betRefund';
-    const BET_TRANSACTION_WIN    = 'betWin';
+    const BET_TRANSACTION_BET    = 'tbdb_bet.bet_transaction_id';
+    const BET_TRANSACTION_REFUND = 'tbdb_bet.refund_transaction_id';
+    const BET_TRANSACTION_WIN    = 'tbdb_bet.result_transaction_id';
 
     protected $model;
 
@@ -22,8 +22,45 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
         $this->model = $model;
     }
 
+    public function findAllWithTypePaged($page, $count, $startDate = null, $endDate = null)
+    {
+        $model = $this->model->orderBy('created_date', 'DESC')->with('transactionType');
+
+        if($startDate) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if($endDate) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->forPage($page, $count)->get();
+    }
+
+    public function findWithType($transactionId)
+    {
+        return $this->model->with(array('transactionType', 'giver', 'giver.topbettauser'))->where('id', $transactionId)->first()->toArray();
+    }
+
     public function getAccountBalanceByUserId($userId) {
         return $this->model->where('recipient_id', '=', $userId)->sum('amount');
+    }
+
+    public function getTransactionWithUsers($transactionId)
+    {
+        return $this
+            ->model
+            ->where('id', $transactionId)
+            ->with(array('transactionType', 'recipient', 'giver'))
+            ->first()->toArray();
+	}
+	
+    public function getUserTransactionsPaginated($userId) {
+        return $this->model
+            ->where('recipient_id', $userId)
+            ->with('transactionType', 'giver', 'recipient')
+            ->orderBy('created_date', 'DESC')
+            ->paginate();
     }
 
     public function getTotalTransactionsForUserByType($userId, $type)
@@ -50,14 +87,23 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
      * @param $types
      * @return mixed
      */
-    public function getTotalOnlyPositiveTransactionsForUserByTypeIn($userId, $types)
+    public function getTotalOnlyPositiveTransactionsForUserByTypeIn($userId, $types, $startDate = null, $endDate = null)
     {
-        return $this
+        $model = $this
             ->model
             ->where('recipient_id', '=', $userId)
             ->where('amount', '>', 0)
-            ->whereIn('account_transaction_type_id', $types)
-            ->sum('amount');
+            ->whereIn('account_transaction_type_id', $types);
+
+        if( $startDate ) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if( $endDate ) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->sum('amount');
     }
 
 
@@ -106,11 +152,13 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
     {
         return $this
             ->model
-            ->where('recipient_id', '=', $userId)
-            ->whereHas($transactionType, function($q) use ($origin) {
-                $q->whereIn('bet_origin_id', $origin);
+            ->join('tbdb_bet', function($join) use ($transactionType, $userId) {
+                $join->on('tbdb_account_transaction.id', '=', $transactionType);
+                $join->on('tbdb_bet.user_id', '=', \DB::raw($userId));
             })
-            ->sum('amount');
+            ->where('recipient_id', '=', $userId)
+            ->whereIn('bet_origin_id', $origin)
+            ->sum('tbdb_account_transaction.amount');
     }
 
     public function getRecentPositiveTransactionsForUserByTypeIn($userId, $dateAfter, $types)

@@ -12,13 +12,19 @@ use TopBetta\SportsMarket;
 use TopBetta\SportsSelection;
 use TopBetta\SportsSelectionResults;
 
+use TopBetta\Repositories\BetResultRepo;
+
 
 class DbMarketsRepository extends BaseEloquentRepository implements MarketRepositoryInterface {
 
     protected $model;
 
-    public function __construct(RaceMarket $model){
+	protected $betresults;
+
+    public function __construct(RaceMarket $model,
+								BetResultRepo $betresults){
         $this->model = $model;
+		$this->betresults = $betresults;
     }
 
     /**
@@ -120,8 +126,8 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
                 $extMarket = SportsMarket::find($marketId);
                 if ($extMarket) {
                     \Log::info('Resulting bets for ext market id: ' . $extMarket->external_market_id);
-                    $betResultRepo = new BetResultRepo();
-                    $betResultRepo->resultAllSportBetsForMarket($extMarket->external_market_id);
+                    //$betResultRepo = new BetResultRepo();
+					$this->betresults->resultAllSportBetsForMarket($extMarket->external_market_id);
                 } else {
                     \Log::info('Couldnt find market id: ' . $marketId);
                 }
@@ -147,4 +153,27 @@ class DbMarketsRepository extends BaseEloquentRepository implements MarketReposi
 
         return $markets->toArray();
     }
+
+
+	public function getMarketDetailByEventIdAndMarket($eventId, $martketTypeId){
+		$market = $this->model->where('event_id', $eventId)
+								->where('market_type_id', $martketTypeId)
+								->first();
+		if(!$market) return null;
+		return $market->toArray();
+	}
+
+    public function getAllMarketsForEvent($eventId)
+    {
+        return $this->model->join('tbdb_market_type', 'tbdb_market.market_type_id', '=', 'tbdb_market_type.id')
+            ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+            ->where('tbdb_market.event_id', $eventId)
+            ->select('tbdb_market.id as id', 'tbdb_market.display_flag as display_flag',
+                'tbdb_market.created_at as created_at', 'tbdb_market.updated_at as updated_at',
+                'tbdb_market_type.name as market_type_name', 'tbdb_event.name as event_name',
+                'tbdb_market.market_status as market_status', 'tbdb_market.line as line')
+            ->orderBy('tbdb_market.id', 'DESC')
+            ->paginate();
+    }
+
 }

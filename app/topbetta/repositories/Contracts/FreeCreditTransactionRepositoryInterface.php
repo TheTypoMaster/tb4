@@ -14,4 +14,6 @@ interface FreeCreditTransactionRepositoryInterface {
     public function getFreeCreditBalanceForUser($userId);
 
     public function createTransaction($userId, $giverId, $amount, $transactionTypeId, $notes);
+
+    public function findWithType($id);
 }

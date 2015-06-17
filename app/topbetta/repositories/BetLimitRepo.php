@@ -17,7 +17,9 @@ use TopBetta\RaceMeeting;
 class BetLimitRepo
 {
 
-	/**
+	const LIMIT_BET_SPORTS = 'bet_sports';
+
+    /**
 	 * @var UserRepo
 	 */
 	private $userRepo;
@@ -192,8 +194,12 @@ class BetLimitRepo
 	{
 		$lowestLimit = false;
 		// 1: check every rule the user has for a match
-		// TODO: NOT REQUIRED AS YET
-		
+		foreach($this->userBetLimits as $limit) {
+            if($limit->limitType->name == self::LIMIT_BET_SPORTS && ( ! $lowestLimit || $limit->amount * 100 < $lowestLimit )) {
+                $lowestLimit = $limit->amount * 100;
+            }
+        }
+        \Log::info("LOWEST LIMIT: " . $lowestLimit);
 		// 2: if we didn't find a user rule matching, fetch global sport default limit
 		if (!$lowestLimit) {
 			$lowestLimit = $this->getDefaultSportsBetLimit();

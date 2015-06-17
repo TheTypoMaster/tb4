@@ -18,8 +18,16 @@
 				<a href="{{ route('admin.dashboard.index') }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
 			</li>
 			<li>
-				<a href="{{ route('admin.users.index') }}"><i class="fa fa-user fa-fw"></i> Users</a>
-			</li>
+                <a href="#"><i class="fa fa-user fa-fw"></i> Users<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{{ route('admin.users.index') }}">Users</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.user-activity.index') }}">User Activity Report</a>
+                    </li>
+                </ul>
+            </li>
 			<li>
 				<a href="{{ route('admin.bets.index') }}"><i class="fa fa-list fa-fw"></i> Bets</a>
 			</li>
@@ -46,6 +54,10 @@
                 <ul class="nav nav-second-level">
                     <li>
                         <a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-list fa-fw"></i> Tournament List</a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('admin.tournament-sport-results.index') }}"><i class="fa fa-edit fa-fw"></i> Tournament Event Results</a>
                     </li>
                     {{--<li>--}}
                         {{--<a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-plus fa-fw"></i> Create Tournament</a>--}}
@@ -108,6 +120,10 @@
 
             <li>
                 <a href="{{ route('admin.settings.index') }}"><i class="fa fa-cogs fa-fw"></i> Settings</a>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.groups.index') }}"><i class="fa fa-user fa-fw"></i> User Groups</a>
             </li>
 
 			{{--

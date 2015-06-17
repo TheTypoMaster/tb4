@@ -121,7 +121,8 @@ class AccountBalance extends \Eloquent {
 				$where[] = ' tt.keyword IN ("tournamentdollars", "tournamentwin", "entry", "buyin")';
 				break;
 		}
-		
+
+        $where[] = "t.amount != '0'";
 		$where[] = 't.recipient_id = "' . $userId . '"';
 		$where[] = '(tourn.parent_tournament_id IS NULL OR tourn.parent_tournament_id = -1)';
 		$where[] = '(br.bet_result_status_id NOT IN (6,7) OR br.bet_result_status_id IS NULL)';
@@ -172,6 +173,7 @@ class AccountBalance extends \Eloquent {
     	}
     	// return the new transaction ID
      	LogHelper::l("AccountBalance newTransaction: Saved: ID:$transaction->id.");
+
     	return $transaction->id;
     }
     
@@ -187,7 +189,6 @@ class AccountBalance extends \Eloquent {
     //TODO:  this needs to be looked at once the legacy API is removed. Passing in $userID at this stage
     static public function _increment($userID, $amount, $keyword, $desc = null)
     {
-    	
     	// Grab the ID for the keyword
     	$transactionTypeId = AccountTransactionTypes::getTransactionTypeId($keyword);
        	$tracking_id = -1;
@@ -201,7 +202,7 @@ class AccountBalance extends \Eloquent {
     	if(!$transactionTypeId) {
     		return false;
     	}
-    
+
     	if(null == $desc) {
     		$transactionTypeRec = AccountTransactionTypes::getTransactionType($keyword)->toArray();
     		
@@ -233,7 +234,9 @@ class AccountBalance extends \Eloquent {
     			'notes' 					=> $desc,
     			'account_transaction_type' 	=> $keyword,
     	);
-    
+
+
+
     	return AccountBalance::newTransaction($params);
     }
     

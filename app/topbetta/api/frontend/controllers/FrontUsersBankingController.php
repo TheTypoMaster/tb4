@@ -63,7 +63,7 @@ class FrontUsersBankingController extends \BaseController {
 
 					}
 
-					if ($transaction -> amount < 0) {
+					else if ($transaction -> amount < 0) {
 
 						$transactionType = 'Withdrawal - ' . $transaction -> type;
 

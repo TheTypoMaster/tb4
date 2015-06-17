@@ -50,7 +50,7 @@ class ReportRepo
 		$query = DB::table('tbdb_bet AS b')
 				->select(DB::raw("
 						brs.name AS status, eg.state, eg.name AS venue, eg.type_code, e.number AS race_number, 
-						e.start_date AS completed_date, FORMAT(b.bet_amount/100, 2) AS bet_amount,  
+						DATE_FORMAT(e.start_date, \"%d/%m/%Y\") AS completed_date, FORMAT(b.bet_amount/100, 2) AS bet_amount,
 						FORMAT(act.amount/100, 2) AS return_amount
 						"))
 				->join('tbdb_bet_result_status AS brs', 'brs.id', '=', 'b.bet_result_status_id')

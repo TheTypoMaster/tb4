@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Services\Exceptions\InvalidFormatException;
 use Validator;
 use Hash;
 use Mail;
@@ -55,6 +56,7 @@ class UserAccountService {
     /**
      * Create a FULL topbetta user
      * - adds records on both the users and topbetta users table
+     * - adds aro records
      * @param $input
      * @return array
      */
@@ -66,9 +68,12 @@ class UserAccountService {
         // get the user id of the new account
         $input['user_id'] = $basic['id'];
 
-        // unset fields not required for basic
-        unset($input['username'], $input['email'], $input['password']);
+        // unset fields not required for full account
+        unset($input['username'], $input['email'], $input['password'], $input['auto_activate']);
         if(isset($input['parent_user_id'])) unset($input['parent_user_id']);
+
+        // create aro records
+        $this->basicUser->createAroRecordsForJoomla(array('user_id' => $basic['id'], 'name' => $basic['name']));
 
         // create the full account record
         $full = $this->createFullAccount($input);
@@ -94,6 +99,7 @@ class UserAccountService {
         $basicData['name'] = $input['first_name'].' '.$input['last_name'];
         $basicData['usertype'] = 'Registered';
         $basicData['gid'] = '18';
+        $basicData['isTopBetta'] = '1';
         $basicData['registerDate'] = Carbon::now();
         $basicData['lastVisitDate'] = Carbon::now();
 
@@ -284,6 +290,78 @@ class UserAccountService {
     {
         return $this->basicUser->getWithTopBettaUser($userId);
 
+    }
+
+    /**
+     * Adds the amount to the users balance to turn over
+     * @param $userId
+     * @param $amount
+     * @return bool
+     */
+    public function addBalanceToTurnOver($userId, $amount)
+    {
+        if( $amount ) {
+            return $this->fullUser->updateBalanceToTurnOver($userId, $amount);
+        }
+
+        return true;
+    }
+
+    public function addFreeCreditWinsToTurnOver($userId, $amount)
+    {
+        if( $amount ) {
+            return $this->fullUser->updateFreeCreditWinsToTurnOver($userId, $amount);
+        }
+
+        return true;
+    }
+
+    public function decreaseBalanceToTurnOver($userId, $amount, $decreaseFreeCreditTurnover = false)
+    {
+        $user = $this->fullUser->findByUserId($userId);
+
+        $remainingAmount = $amount;
+        if( $decreaseFreeCreditTurnover && $user->free_credit_wins_to_turnover > 0 ) {
+            $remainingAmount = $amount - $user->free_credit_wins_to_turnover;
+
+            $this->addFreeCreditWinsToTurnOver($userId, -$amount);
+        }
+
+        if ( $remainingAmount > 0 && $user->balance_to_turnover > 0) {
+            $this->addBalanceToTurnOver($userId, -$remainingAmount);
+        }
+    }
+
+    public function getBalanceToTurnOver($userId)
+    {
+        $user = $this->fullUser->getUserDetailsFromUserId($userId);
+
+        if($user) {
+            return $user['balance_to_turnover'];
+        }
+
+        return 0;
+    }
+
+    public function findUserByNameAndDob($firstName, $lastName, $dob)
+    {
+        //format the date
+        try {
+            $dob = Carbon::createFromFormat('d-M-y', trim($dob));
+        } catch (\Exception $e) {
+            try {
+                $dob = Carbon::createFromFormat('d/m/Y', trim($dob));
+            } catch (\Exception $e) {
+                throw new InvalidFormatException(array($firstName, $lastName, $dob), "Invalid DOB format");
+            }
+        }
+
+        //get the user
+        if ( $dob ) {
+            return $this->fullUser->getUserByNameAndDob($firstName, $lastName, $dob->day, $dob->month, $dob->year);
+        }
+
+        return $this->fullUser->getUserByNameAndDob($firstName, $lastName);
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

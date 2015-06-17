@@ -3,6 +3,7 @@ namespace TopBetta\frontend;
 
 use TopBetta;
 use Illuminate\Support\Facades\Input;
+use Log;
 
 class FrontMeetingsController extends \BaseController {
 

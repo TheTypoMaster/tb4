@@ -81,6 +81,7 @@ class UserRepo
 
 		return $this->tournament
 						->whereIn('id', $tickets)
+                        ->orderBy('end_date', 'DESC')
 						->paginate();
 	}
 

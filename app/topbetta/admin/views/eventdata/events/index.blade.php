@@ -6,8 +6,9 @@
 		<div class="row page-header">
         			<h2 class="col-lg-4">Events <small>({{ number_format($events->getTotal()) }})</small></h2>
 
+            <h2 class="col-lg-4 pull-right">
         			{{ Form::open(array('method' => 'GET')) }}
-        			<div class="input-group custom-search-form col-lg-4 pull-right">
+        			<div class="input-group custom-search-form">
         				{{ Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) }}
         				<span class="input-group-btn">
         					<button class="btn btn-default" type="button">
@@ -16,6 +17,7 @@
         				</span>
         			</div>
         			{{ Form::close() }}
+                </h2>
         		</div>
 		@if (count($events))
         <table class="table table-striped table-bordered table-hover">
@@ -52,7 +54,10 @@
         			<td>{{ ($event->display_flag) ? 'Yes' : 'No' }}</td>
         			<td>{{ $event->created_at }}</td>
         			<td>{{ $event->updated_at }}</td>
-        			<td>{{ link_to_route('admin.events.edit', 'Edit', array($event->id, "q" => $search), array('class' => 'btn btn-info')) }}</td>
+        			<td>
+                        {{ link_to_route('admin.events.edit', 'Edit', array($event->id, "q" => $search), array('class' => 'btn btn-info')) }}
+                        {{ link_to_route('admin.markets.index', 'Markets', array('event' => $event->id), array('class' => 'btn btn-primary')) }}
+                    </td>
 
         		</tr>
         		@endforeach

@@ -56,6 +56,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 	Route::resource('betresults', 'BackBets');
     //incoming race result data
     Route::resource('raceresults', 'RaceResulting');
+	//incoming race data
+	Route::resource('racedata', 'RacingData');
 	// special case where Risk Manager can push race results to TopBetta
 	Route::resource('risk-results', 'RiskResults', array('only' => array('store')));
 	// special case where Risk Manager can push race status changes to TopBetta
@@ -76,6 +78,7 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
 	Route::put('risk-show-competition/{competition}', "RiskCompetition@showCompetition");
 	Route::put('risk-hide-competition/{competition}', "RiskCompetition@hideCompetition");
+
 });
 
 
@@ -164,6 +167,13 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 	Route::get('/tournaments/tickets/next-to-jump', 'FrontTournamentsTickets@nextToJump');
 	Route::resource('tournaments.tickets', 'FrontTournamentsTickets');
 
+    //tournament rebuys and topups
+    Route::post('tournaments/tickets/{ticketId}/rebuy', 'FrontTournamentsTickets@rebuy');
+    Route::post('tournaments/tickets/{ticketId}/topup', 'FrontTournamentsTickets@topup');
+
+    //user tournament bets
+    Route::resource('user.tournament.bets', 'TopBetta\Frontend\Controllers\UserTournamentBetsController');
+
 	// ::: SPECIAL COMBINED CALLS :::
 	Route::get('combined/tournaments', 'FrontCombinedTournaments@index');
 	Route::get('combined/racing', 'FrontCombinedRacing@index');
@@ -214,6 +224,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selections', 'TopBetta\admin\controllers\SelectionsController');
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
+
     Route::resource('marketordering', 'TopBetta\admin\controllers\MarketOrderingController');
 
     Route::resource('basecompetitions', 'TopBetta\admin\controllers\BaseCompetitionController');
@@ -224,12 +235,35 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::resource('competitionregions', 'TopBetta\admin\controllers\CompetitionRegionController');
 
+    Route::resource('tournament-sport-results', 'TopBetta\admin\controllers\TournamentSportResultsController');
+
+    Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
+
+
 	Route::resource('promotions', 'TopBetta\admin\controllers\PromotionController');
 
     Route::resource('icons', 'TopBetta\admin\controllers\IconController');
 
 	Route::resource('free-credit-management', 'TopBetta\admin\controllers\FreeCreditManagementController');
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
+
+    Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
+
+    Route::resource('groups', 'TopBetta\admin\controllers\GroupsController');
+    Route::resource('user-permissions', 'TopBetta\admin\controllers\UserPermissionsController');
+
+    //custom tournament routes
+    Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
+    Route::post('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsers');
+    Route::get('tournaments/get-competitions/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getCompetitions');
+    Route::get('tournaments/get-event-groups/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getEventGroups');
+    Route::get('tournaments/get-events/{eventGroupId}', 'TopBetta\admin\controllers\TournamentsController@getEvents');
+    Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
+
+    //user activity
+    Route::post('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@createUserActivity');
+    Route::get('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@downloadUserActivity');
+    Route::resource('user-activity', 'TopBetta\admin\controllers\UserActivityController');
 });
 
 Route::group(array('prefix' => 'api/backend/test'), function() {
@@ -250,7 +284,6 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => '
 
 	// Token request and login
 	Route::post('authentication/token/request', 'TopBetta\Frontend\Controllers\UserTokenController@tokenRequest');
-	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 	// Funds management/transfer
 	Route::post('accounting/transfer', 'TopBetta\Frontend\FrontAccountingController@transferFunds');
@@ -277,6 +310,9 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
 
 	// normal logout
 	Route::get('authentication/logout', 'TopBetta\Frontend\Controllers\UserSessionController@logout');
+
+	// token login
+	Route::get('authentication/token/login', 'TopBetta\Frontend\Controllers\UserTokenController@tokenLogin');
 
 });
 

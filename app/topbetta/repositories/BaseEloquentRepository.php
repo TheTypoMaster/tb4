@@ -14,7 +14,7 @@ class BaseEloquentRepository {
 
     protected $model;
 
-    protected $order;
+    protected $order = null;
 
 	/**
 	 * Find the model given an ID
@@ -51,6 +51,11 @@ class BaseEloquentRepository {
         }
 
         return $model->paginate($paginate);
+    }
+
+    public function findIn(array $ids, $column = 'id')
+    {
+        return $this->model->whereIn($column, $ids)->get();
     }
 
 	/**

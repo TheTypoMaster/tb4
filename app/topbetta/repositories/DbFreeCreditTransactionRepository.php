@@ -20,6 +20,11 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
         $this->model = $freeCreditTransaction;
     }
 
+    public function findWithType($id)
+    {
+        return $this->model->with(array('transactionType', 'giver', 'giver.topbettauser'))->where('id', $id)->first()->toArray();
+    }
+
     public function getFreeCreditBalanceForUser($userId)
     {
         return $this    -> model
@@ -39,6 +44,21 @@ class DbFreeCreditTransactionRepository extends BaseEloquentRepository implement
             "notes"                             => $notes,
             "created_date"                      => Carbon::now()->toDateTimeString(),
         ));
+    }
+
+    public function findAllPaged($page, $count, $startDate = null, $endDate = null)
+    {
+        $model = $this->model->forPage($page, $count)->orderBy('created_date', 'DESC');
+
+        if($startDate) {
+            $model->where('created_date', '>=', $startDate);
+        }
+
+        if($endDate) {
+            $model->where('created_date', '<=', $endDate);
+        }
+
+        return $model->get();
     }
 
 }

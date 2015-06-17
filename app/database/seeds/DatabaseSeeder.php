@@ -33,6 +33,12 @@ class DatabaseSeeder extends Seeder {
 		$this->call('TbDataProviderMatchTableSeeder');
 		$this->call('TbProcessParamsTableSeeder');
 		$this->call('TbdbAccountTransactionTypeTableSeeder');
+		$this->call('Tbdb_bet_limit_add_sports_limitTableSeeder');
+		$this->call('TbConfigurationTableSeeder');
+		$this->call('TbdbTournamentBuyinTypeTableSeeder');
+		$this->call('Tbdb_user_create_super_userTableSeeder');
+		$this->call('TbdbAccountTransactionTypeRebuyFieldsTableSeeder');
+		$this->call('TbdbTournamentTransactionTypeRebuyFieldsTableSeeder');
 	}
 
 }

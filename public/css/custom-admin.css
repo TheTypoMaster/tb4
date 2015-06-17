@@ -1,0 +1,99 @@
+
+#side-menu li a {
+    color: white;
+}
+
+.navbar-top-links a {
+    color: white;
+}
+
+#side-menu a:hover, .navbar-top-links a:hover {
+    background-color: #DBDBDA;
+    color: #333;
+}
+
+.navbar, .navbar-default, .navbar-fixed-top {
+    background-color: #111;
+}
+
+.navbar-fixed-top {
+    background-color: black;
+}
+
+#side-menu li {
+    border-bottom: 1px solid #222;
+}
+
+.navbar-default {
+    border-color: black;
+}
+
+#wrapper {
+    background-color: #111;
+}
+
+#page-wrapper {
+    position: relative;
+    padding: 0px;
+    padding-left: 14px;
+    padding-top: 95px;
+}
+
+.navbar-brand-text {
+    float: left;
+    color: red;
+    position: absolute;
+}
+
+.navbar-brand {
+    background: url('/images/TOPBETTA_site_logo.png') 0 center no-repeat;
+    background-repeat: no-repeat;
+    width: 150px;
+    float: left;
+    padding: 15px 10px;
+    font-size: 18px;
+    line-height: 20px;
+    height: 50px;
+    margin-left: 10%;
+}
+
+.row .page-header {
+    left: 0px;
+    top: -95px;
+    position: absolute;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    padding-left: 15px;
+}
+
+h2.page-header {
+    left: -5px;
+    top: -95px;
+    position: absolute;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.page-header {
+    color: white;
+    text-shadow: 0 0 10px black;
+    background-image: url('/images/home_hero1.jpg');
+    background-position-y: -350px;
+    min-height: 75px;
+}
+
+h2 small {
+    color: white;
+}
+
+.alert {
+    position: absolute;
+    z-index: 9;
+    top: 0px;
+}

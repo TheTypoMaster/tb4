@@ -9,4 +9,9 @@
 
 interface UserTopBettaRepositoryInterface {
 
-} 
+    public function updateBalanceToTurnOver($userId, $amount);
+
+    public function updateFreeCreditWinsToTurnOver($userId, $amount);
+
+    public function findByUserId($userId);
+}

@@ -9,11 +9,16 @@
 use Eloquent;
 
 
-class TopbettaUserModel extends Eloquent {
+class TopBettaUserModel extends Eloquent {
 
     protected $table = 'tbdb_topbetta_user';
     protected $guarded = array();
 
+
+    public function user()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
+    }
 
     // --- Accessors for urlencoded ' in user's names amd remove \ ---
     public function getFirstNameAttribute($value) {

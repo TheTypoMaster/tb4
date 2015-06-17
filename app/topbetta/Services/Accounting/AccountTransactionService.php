@@ -7,9 +7,10 @@
  */
 
 use Carbon\Carbon;
-use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
-use TopBetta\Repositories\DbAccountTransactionTypeRepository;
+
 use Validator;
+
+use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
 
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
@@ -46,6 +47,7 @@ class AccountTransactionService {
      */
     protected $betOrigins = array();
 
+
     public function __construct(AccountTransactionRepositoryInterface $accounttransactions,
                                 AccountTransactionTypeRepositoryInterface $accounttransactiontypes,
                                 UserRepositoryInterface $user,
@@ -61,7 +63,7 @@ class AccountTransactionService {
         $this->betOriginRepository = $betOriginRepository;
     }
 
-    public function increaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
+    public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
 
         // get the transaction type details for the keyword
         $transactionTypeDetails = $this->accounttransactiontypes->getTransactionTypeByKeyword($keyword);
@@ -77,16 +79,16 @@ class AccountTransactionService {
         }
 
         $tracking_id = -1;
-        $giver_id = -1;
+        // $giverId = -1;
         $recipient_id = $userID;
 
         if($recipient_id == null) {
-            $recipient_id = $giver_id;
+            $recipient_id = $giverId;
         }
 
         $params = array(
             'recipient_id' 				=> $recipient_id,
-            'giver_id' 					=> $giver_id,
+            'giver_id' 					=> $giverId,
             'session_tracking_id' 		=> $tracking_id,
             'amount' 					=> $amount,
             'notes' 					=> $desc,
@@ -98,8 +100,8 @@ class AccountTransactionService {
         return $this->accounttransactions->create($params);
     }
 
-    public function decreaseAccountBalance($userID, $amount, $keyword, $desc = null, $transactionDate = null){
-        return $this->increaseAccountBalance($userID, -$amount, $keyword, $desc, $transactionDate);
+    public function decreaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null){
+        return $this->increaseAccountBalance($userID, -$amount, $keyword, $giverId, $desc, $transactionDate);
     }
 
 
@@ -143,15 +145,15 @@ class AccountTransactionService {
         // get parent account balance
         $parentAccountBalance = $this->accounttransactions->getAccountBalanceByUserId($parentUserDetails['id']);
 
-        // make sure there is enough to fund the transfer from the parent account to the child account
+        // make sure there is enough to funds the transfer from the parent account to the child account
         if($parentAccountBalance < $input['transfer_amount']) throw new ValidationException("Validation Failed", 'Insuffcient parent betting funds');
 
         // remove the funds from the parent account
-        $removeFunds = $this->decreaseAccountBalance($parentUserDetails['id'], $input['transfer_amount'], 'clubfundaccount');
+        $removeFunds = $this->decreaseAccountBalance($parentUserDetails['id'], $input['transfer_amount'], 'clubfundaccount', $parentUserDetails['id']);
         if (!$removeFunds) throw new ValidationException("Validation Failed", 'Failed to decrease parent account');
 
         // increase child account
-        $addFunds = $this->increaseAccountBalance($childBettingUserDetails['id'], $input['transfer_amount'], 'bettingfundaccount');
+        $addFunds = $this->increaseAccountBalance($childBettingUserDetails['id'], $input['transfer_amount'], 'bettingfundaccount', $parentUserDetails['id']);
         if (!$addFunds) throw new ValidationException("Validation Failed", 'Failed to increase child betting account');
 
         return $addFunds;
@@ -176,11 +178,17 @@ class AccountTransactionService {
                     $user->id,
                     min($balance, $dormantAmount),
                     AccountTransactionTypeRepositoryInterface::TYPE_DORMANT_CHARGE,
+                    -1,
                     null,
                     $transactionDate
                 );
             }
         }
+    }
+
+    public function getTransaction($transactionId)
+    {
+        return $this->accounttransactions->find($transactionId);
     }
 
     public function getAccountBalanceForUser($userId)
@@ -189,12 +197,41 @@ class AccountTransactionService {
     }
 
 
+    public function getAvailableWithdrawalBalance($userId)
+    {
+        $user = $this->useraccountservice->getTopBettaUser($userId);
+        return $this->getAccountBalanceForUser($userId) - $user->topbettauser->balance_to_turnover - $user->topbettauser->free_credit_wins_to_turnover;
+	}
+	
+    public function getAccountTransactionsForUserPaginated($userId)
+    {
+        return $this->accounttransactions->getUserTransactionsPaginated($userId);
+    }
+
+    public function isDepositTransaction($transactionType)
+    {
+        return in_array($transactionType, self::$depositTransactions);
+    }
+
     public function getTotalDepositsForUser($userId)
     {
         //get positive deposit transactions only
         return $this->accounttransactions->getTotalOnlyPositiveTransactionsForUserByTypeIn(
             $userId,
             $this->getTransactionTypeIds(self::$depositTransactions)
+        );
+    }
+
+    public function getTotalDailyDepositsForUser($userId)
+    {
+        $start = Carbon::now()->startOfDay();
+        $end = Carbon::now()->addDay()->startOfDay();
+
+        return $this->accounttransactions->getTotalOnlyPositiveTransactionsForUserByTypeIn(
+            $userId,
+            $this->getTransactionTypeIds(self::$depositTransactions),
+            $start,
+            $end
         );
     }
 

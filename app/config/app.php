@@ -112,7 +112,8 @@ return array(
         'TopBetta\Providers\BetResultRepoServiceProvider',
 		'TopBetta\Providers\BetRepoServiceProvider',
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
-        'TopBetta\ServiceProviders\RepositoryServiceProvider'
+        'TopBetta\ServiceProviders\RepositoryServiceProvider',
+        'Cartalyst\Sentry\SentryServiceProvider'
 
 	),
 
@@ -213,6 +214,7 @@ return array(
 		'BackSports'	=> 'TopBetta\backend\SportsController',
 		'BackBets'		=> 'TopBetta\backend\BetResultsController',
         'RaceResulting' => 'TopBetta\backend\RacingResultsController',
+        'RacingData' => 'TopBetta\backend\RacingDataController',
 		'RiskResults'		=> 'TopBetta\backend\RiskResultsController',
 		'RiskRaceStatus'		=> 'TopBetta\backend\RiskRaceStatusController',
 		'RiskSportBets'		=> 'TopBetta\backend\RiskSportBetsController',
@@ -227,7 +229,7 @@ return array(
 		'BetResultRepo' => 'TopBetta\Facades\BetResultRepo',
 		'BetRepo' => 'TopBetta\Facades\BetRepo',
 		'BetLimitRepo' => 'TopBetta\Facades\BetLimitRepo',
-
+        'Sentry' => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
     ),
 
     'cipher' => MCRYPT_RIJNDAEL_256,

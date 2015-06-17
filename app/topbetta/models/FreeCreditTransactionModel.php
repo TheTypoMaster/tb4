@@ -28,4 +28,29 @@ class FreeCreditTransactionModel extends Eloquent {
     {
         return $this->belongsTo("TopBetta\\models\\UserModel", "recipient_id");
     }
+
+    public function giver()
+    {
+        return $this->belongsTo('TopBetta\models\UserModel', 'giver_id');
+    }
+
+    public function transactionType()
+    {
+        return $this->belongsTo('TopBetta\models\FreeCreditTransactionTypeModel', 'tournament_transaction_type_id');
+    }
+
+    public function bet()
+    {
+        return $this->hasOne('TopBetta\Models\BetModel', 'bet_freebet_transaction_id');
+    }
+
+    public function tournamentEntry()
+    {
+        return $this->hasOne('TopBetta\Models\TournamentTicketModel', 'entry_fee_transaction_id');
+    }
+
+    public function tournamentBuyin()
+    {
+        return $this->hasOne('TopBetta\Models\TournamentTicketModel', 'buy_in_transaction_id');
+    }
 }
