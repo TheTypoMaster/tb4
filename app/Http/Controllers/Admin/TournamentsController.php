@@ -429,7 +429,7 @@ class TournamentsController extends Controller
             return array("Select Competition");
         }
 
-        return $this->formatForResponse(array("Select Competition") + $competitions->lists('name', 'id'));
+        return $this->formatForResponse(array("Select Competition") + $competitions->lists('name', 'id')->all());
 
     }
 
