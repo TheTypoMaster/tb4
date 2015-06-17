@@ -12,7 +12,7 @@
             @foreach($tournamentMarkets as $market)
                 <div class="form-group">
                     {!! Form::label('market_results[]', $market->marketType->name) !!}
-                    {!! Form::select("market_results[" . $market->id ."]", array(0 => "Refund/Cancel") + $market->selections->lists('name', 'id'), $market->result->count() ? $market->result->selection_id : null, array("class" => "form-control")); !!}
+                    {!! Form::select("market_results[" . $market->id ."]", array(0 => "Refund/Cancel") + $market->selections->lists('name', 'id')->all(), $market->result->count() ? $market->result->selection_id : null, array("class" => "form-control")); !!}
                 </div>
             @endforeach
 
