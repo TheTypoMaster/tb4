@@ -225,6 +225,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::resource('selectionprices', 'TopBetta\admin\controllers\SelectionPricesController');
 
     Route::resource('tournament-sport-markets', 'TopBetta\admin\controllers\EventGroupMarketsController');
+    Route::resource('tournament-sport-results', 'TopBetta\admin\controllers\TournamentSportResultsController');
 
     Route::resource('users.deposit-limit', 'TopBetta\admin\controllers\UserDepositLimitsController');
 
@@ -234,6 +235,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 	Route::get('removeFreeCredits', 'TopBetta\admin\controllers\FreeCreditManagementController@removeDormantCredits');
 
     Route::resource('withdrawal-config', 'TopBetta\admin\controllers\WithdrawalConfigController');
+
+    Route::resource('groups', 'TopBetta\admin\controllers\GroupsController');
+    Route::resource('user-permissions', 'TopBetta\admin\controllers\UserPermissionsController');
 
     //custom tournament routes
     Route::get('tournaments/add-users/{tournamentId}', 'TopBetta\admin\controllers\TournamentsController@addUsersForm');
