@@ -115,16 +115,6 @@ class TournamentProcessor extends TopBettaCLI
 			$this->_processAbandonedEventList($abandoned_list);
 			$this->_updateLeaderboardList($abandoned_list);
 		}
-	
-		// process paying match bets
-		$paying_list = $this->event->getPayingEventList(true);
-		
-		if(empty($paying_list)){
-			$this->l("No unresulted paying matches available to process");
-		} else {
-			$this->_processPayingEventList($paying_list);
-			$this->_updateLeaderboardList($paying_list);
-		}
 		
 		// payout tournaments
 		$tournament_list = $this->tournament->getTournamentCompletedList();

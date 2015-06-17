@@ -20,3 +20,8 @@ $(function() {
 $(function() {
 	$('.alert-dismissable').fadeOut(5000);
 });
+
+//Select 2 for controls
+$(function(){
+    $('.select2').select2();
+});

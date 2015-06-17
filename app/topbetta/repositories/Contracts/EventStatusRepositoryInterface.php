@@ -13,4 +13,6 @@ interface EventStatusRepositoryInterface {
     const STATUS_PAID = 'paid';
     const STATUS_INTERIM = 'interim';
     const STATUS_CLOSED = 'closed';
+
+    public function getByName($name);
 } 
