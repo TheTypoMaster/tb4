@@ -365,30 +365,30 @@
                             $('.competition-multiselect').multiselect("rebuild");
                         });
 
-            if(value > 0) {
-				$.get('/admin/tournaments/get-markets/' + $(this).val())
-                        .done(function (data) {
-                            if (data.length > 0) {
-                                var html = $();
-                                $.each(data, function (i, v) {
-                                    var $row = $("<tr/>");
-                                    $row.append($("<td/>").text(v.market_type.name));
-                                    $row.append($("<td/>").text(v.line));
-                                    $row.append($("<td/>").text(v.tournament_status ? "Yes" : "No"));
-                                    html = html.add($row);
-                                });
+                if(value > 0) {
+                    $.get('/admin/tournaments/get-markets/' + $(this).val())
+                            .done(function (data) {
+                                if (data.length > 0) {
+                                    var html = $();
+                                    $.each(data, function (i, v) {
+                                        var $row = $("<tr/>");
+                                        $row.append($("<td/>").text(v.market_type.name));
+                                        $row.append($("<td/>").text(v.line));
+                                        $row.append($("<td/>").text(v.tournament_status ? "Yes" : "No"));
+                                        html = html.add($row);
+                                    });
 
-                                console.log(html);
+                                    console.log(html);
 
-                                $('#market-table-body').html(html);
-                                $('#markets').slideDown();
-                            } else {
-                                $('#markets').slideUp();
-                            }
-                        });
-			} else {
-                $('#markets').slideUp();
-            }
+                                    $('#market-table-body').html(html);
+                                    $('#markets').slideDown();
+                                } else {
+                                    $('#markets').slideUp();
+                                }
+                            });
+                } else {
+                    $('#markets').slideUp();
+                }
             });
         });
 
