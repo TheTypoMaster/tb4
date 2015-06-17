@@ -73,7 +73,7 @@
                     @elseif($field['type'] == 'multi-select')
                         <select name="{{ $field['field'] }}[]" class="form-control select2" multiple>
                             @foreach($field['data'] as $option)
-                                <option value="{{ $option->id }}" {{ in_array($option->id, $model ? $model->$field['field']->lists('id') : array()) ? "selected" : ""}}>{{ $option->name }}</option>
+                                <option value="{{ $option->id }}" {{ in_array($option->id, $model ? $model->$field['field']->lists('id')->all() : array()) ? "selected" : ""}}>{{ $option->name }}</option>
                             @endforeach
                         </select>
                     @else
