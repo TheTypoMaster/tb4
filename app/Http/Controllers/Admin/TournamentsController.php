@@ -441,7 +441,7 @@ class TournamentsController extends Controller
             return array();
         }
 
-        $competitionMarkets = $competition->tournament_market_types->lists('id')->all();
+        $competitionMarkets = $competition->tournamentMarketTypes->lists('id')->all();
         $markets = $this->marketRepository->getMarketsForCompetition($competitionId)->toArray();
 
         foreach($markets as &$market) {
