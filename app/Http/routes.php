@@ -237,6 +237,7 @@ Route::group(array('prefix' => '/api/external/v1', 'before' => 'basic.once', 'af
 
 	// Funds management/transfer
 	Route::post('accounting/transfer', 'Frontend\FrontAccountingController@transferFunds');
+    Route::post('accounting/returnfunds', 'Frontend\FrontAccountingController@returnFunds');
 
 	// Full user account registration routes
 	Route::post('registration/createfull', 'Frontend\UserRegistrationController@createFull');
