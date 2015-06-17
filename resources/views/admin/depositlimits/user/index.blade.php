@@ -4,10 +4,12 @@
     <div class="row">
         <div class="col-lg-12">
             @include('admin.users.partials.header')
-            <h4 class="page-header">Deposit Limit {!! link_to_route('admin.users.deposit-limit.edit', "Edit", array($user->id, 'get'), array("class" => "btn btn-warning")) !!}</h4>
+            <h2 class="page-header">Deposit Limit</h2>
 
             @if( ! $depositLimit )
-                <h4>No Deposit Limit</h4>
+                <div class="col-lg-4">
+                    {!! link_to_route('admin.users.deposit-limit.edit', "Create", array($user->id, 'get'), array("class" => "btn btn-success")) !!}
+                </div>
             @else
                 <div class="col-lg-4">
                     <dl class="dl-horizontal">
@@ -17,6 +19,10 @@
                         <dt>Notes</dt>
                         <dd>{{ $depositLimit->notes }}</dd>
                     </dl>
+                </div>
+                <div class="col-lg-4">
+                    {!! link_to_route('admin.users.deposit-limit.edit', "Edit", array($user->id, 'get'), array("class" => "btn btn-warning")) !!}
+                </div>
             @endif
 
         </div>
