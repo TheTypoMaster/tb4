@@ -230,7 +230,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
 
 // used for Punters Club application related things atm (Token Creation / Logins / Child Betting account creation and funding)
-Route::group(array('prefix' => '/api/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
+Route::group(array('prefix' => '/api/external/v1', 'before' => 'basic.once', 'after' => 'topbetta_secure_links'), function() {
 
 	// Token request and login
 	Route::post('authentication/token/request', 'Frontend\UserTokenController@tokenRequest');
