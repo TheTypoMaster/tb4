@@ -47,7 +47,7 @@ class TournamentTicketService {
         return $ticket;
     }
 
-    public function getFreeBuyinsForPeriod($user, $period, $startDate = null)
+    public function getLimitedTournamentFreeBuyinsForPeriod($user, $period, $startDate = null)
     {
         //get the start and end dates of the period
         if( $startDate ) {
@@ -59,7 +59,7 @@ class TournamentTicketService {
         }
 
 
-        $tickets = $this->tournamentTicketRepository->getTicketsForUserByBuyinBetween($user->id, 0, $start, $end);
+        $tickets = $this->tournamentTicketRepository->getLimitedFreeTicketsForUserBetween($user->id, $start, $end);
 
         return $tickets;
     }

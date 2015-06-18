@@ -130,6 +130,10 @@ class TournamentService {
                 $tournamentData['buy_in'] = $buyin->buy_in * 100;
                 $tournamentData['entry_fee'] = $buyin->entry_fee * 100;
             }
+
+            if( $tournamentData['buy_in'] > 0 ) {
+                $tournamentData = array_except($tournamentData, 'free_tournament_buyin_limit_flag');
+            }
         }
 
         //get start and end dates
@@ -228,6 +232,10 @@ class TournamentService {
             if( $buyin ) {
                 $tournamentData['buy_in'] = $buyin->buy_in * 100;
                 $tournamentData['entry_fee'] = $buyin->entry_fee * 100;
+            }
+
+            if( $tournamentData['buy_in'] > 0 ) {
+                $tournamentData['free_tournament_buyin_limit_flag'] = false;
             }
         }
 

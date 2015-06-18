@@ -65,11 +65,13 @@ class TournamentBuyInRulesService {
     {
         switch($rule)
         {
+
             //check for max free tournament entries
             case 'max_free_tournament':
                 if ( $tournament->buy_in == 0 &&
+                    $tournament->free_tournament_buyin_limit_flag &&
                     array_get($data, 'number', 0) &&
-                    $this->tournamentTicketService->getFreeBuyinsForPeriod($user, array_get($data, 'period', 'month'), $tournament->start_date)->count() >= $data['number']
+                    $this->tournamentTicketService->getLimitedTournamentFreeBuyinsForPeriod($user, array_get($data, 'period', 'month'), $tournament->start_date)->count() >= $data['number']
                 ) {
                     $this->messages[] = Lang::get('tournaments.exceed_free_tournament_tickets', array(
                         'period' => array_get($data, 'period', 'month'),
