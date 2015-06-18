@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Tbdb_user_create_super_userTableSeeder');
 		$this->call('TbdbAccountTransactionTypeRebuyFieldsTableSeeder');
 		$this->call('TbdbTournamentTransactionTypeRebuyFieldsTableSeeder');
+		$this->call('TbConfigurationTournamentBuyinSettingsTableSeeder');
 	}
 
 }

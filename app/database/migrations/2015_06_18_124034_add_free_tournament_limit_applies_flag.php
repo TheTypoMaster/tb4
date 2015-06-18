@@ -14,7 +14,7 @@ class AddFreeTournamentLimitAppliesFlag extends Migration {
 	{
 		Schema::table('tbdb_tournament', function(Blueprint $table)
 		{
-			$table->tinyInteger('free_tournament_buyin_limit_flag')->default(0);
+			$table->tinyInteger('free_tournament_buyin_limit_flag')->default(0)->after('email_flag');
 		});
 	}
 
