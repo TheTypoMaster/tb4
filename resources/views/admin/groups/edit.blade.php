@@ -7,7 +7,7 @@
                 <h2 class="col-lg-8">User Groups</h2>
             </div>
 
-            {!!  Form::model($group, array('route' => array('admin.groups.update', $group->id), 'method' => 'PUT')) 11}
+            {!!  Form::model($group, array('route' => array('admin.groups.update', $group->id), 'method' => 'PUT')) !!}
 
             <div class="form-group">
                 {!!  Form::label('name', "Name: ") !!}
