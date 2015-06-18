@@ -212,6 +212,10 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
     Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
 
+    // tournament settings
+    Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
+    Route::put('tournament-settings', 'Admin\TournamentSettingsController@update');
+
     // From Sports Branch
     Route::resource('marketordering', 'Admin\MarketOrderingController');
     Route::resource('basecompetitions', 'Admin\BaseCompetitionController');
