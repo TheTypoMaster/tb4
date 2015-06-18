@@ -29,6 +29,9 @@
                     <div class="form-group">
                         {!! Form::label('tournament_buyin_id', "Ticket Value") !!}
                         {!! Form::select('tournament_buyin_id', $buyins, null, array("class" => "form-control")) !!}
+                        <label id="limit_applies" style="display:none;">
+                            {!! Form::checkbox('free_tournament_buyin_limit_flag', true, true) !!} Free Buyin Limit Applies
+                        </label>
                     </div>
 
                     <div class="form-group">
@@ -408,11 +411,23 @@
             }
         });
 
+        $('#tournament_buyin_id').change(function(){
+
+            var $limitApplies = $('#limit_applies');
+            if($(this).find("option:selected").text() == '0.00 + 0.00') {
+                $limitApplies.show();
+            } else {
+                $limitApplies.hide();
+            }
+        });
+
         $(document).ready(function(){
             var $eventGroupId = $('#event_group_id');
             if($eventGroupId.val() != 0) {
                 $eventGroupId.change();
             }
+
+            $('#tournament_buyin_id').change();
         })
     </script>
 

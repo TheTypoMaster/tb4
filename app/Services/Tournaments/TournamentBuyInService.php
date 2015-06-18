@@ -10,16 +10,11 @@ namespace TopBetta\Services\Tournaments;
 
 
 use Carbon\Carbon;
-use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
-use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
-use TopBetta\Repositories\DbTournamentTicketRepository;
-use TopBetta\Services\Accounting\AccountTransactionService;
-use TopBetta\Services\Accounting\FreeCreditTransactionService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
@@ -264,4 +259,5 @@ class TournamentBuyInService
     {
         return $tournament['start_currency'] + $tournament['rebuy_currency'] * $rebuys + $tournament['topup_currency'] * $topups;
     }
+
 }

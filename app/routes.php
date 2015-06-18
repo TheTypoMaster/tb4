@@ -267,6 +267,10 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-markets/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getMarkets');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'TopBetta\admin\controllers\TournamentsController@getParentTournaments');
 
+    //tournament settings
+    Route::get('tournament-settings', 'TopBetta\admin\controllers\TournamentSettingsController@edit');
+    Route::put('tournament-settings', 'TopBetta\admin\controllers\TournamentSettingsController@update');
+
     //user activity
     Route::post('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@createUserActivity');
     Route::get('user-activity/download', 'TopBetta\admin\controllers\UserActivityController@downloadUserActivity');

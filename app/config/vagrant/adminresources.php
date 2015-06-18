@@ -40,6 +40,7 @@ return array(
     "custom_permissions" => array(
         array( "name" => "remove_free_credits", "display_name" => "Remove free credits from dormant accounts"),
         array("name" => "add_users_to_tournament", "display_name" => "Add users to tournaments"),
+        array("name" => "tournament_settings", "display_name" => "Tournament Settings"),
     ),
 
     // non resource routes. Mapping for uri to permissions.
@@ -49,6 +50,6 @@ return array(
         array("uri" => "tournaments/add-users/{tournamentId}", "permission" => "add_users_to_tournament"),
         array("uri" => "tournaments/get-.*", "permission" => "tournaments.view"),
         array("uri" => "sports-list", "permission" => "sports.view"),
-
+        array('uri' => 'tournament-settings', "permission" => "tournament_settings"),
     ),
 );
