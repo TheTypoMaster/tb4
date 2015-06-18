@@ -10,6 +10,7 @@ use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 use TopBetta\Services\Tournaments\TournamentLeaderboardService;
+use TopBetta\Services\Tournaments\TournamentBuyInRulesService;
 
 class FrontTournamentsTicketsController extends \BaseController {
 
@@ -29,18 +30,24 @@ class FrontTournamentsTicketsController extends \BaseController {
      * @var TournamentLeaderboardService
      */
     private $leaderboardService;
+    /**
+     * @var TournamentBuyInRulesService
+     */
+    private $tournamentBuyinRulesService;
 
 
     public function __construct(UserAccountService $userAccountService,
                                 TournamentDashboardNotificationService $tournamentDashboardNotificationService,
                                 TournamentBuyInService $tournamentService,
-                                TournamentLeaderboardService $leaderboardService)
+                                TournamentLeaderboardService $leaderboardService,
+                                TournamentBuyInRulesService $tournamentBuyinRulesService)
     {
 		$this -> beforeFilter('auth');
         $this->userAccountService = $userAccountService;
 		$this->tournamentDashboardNotificationService = $tournamentDashboardNotificationService;
         $this->tournamentService = $tournamentService;
         $this->leaderboardService = $leaderboardService;
+        $this->tournamentBuyinRulesService = $tournamentBuyinRulesService;
     }
 
 	public function nextToJump() {
@@ -350,6 +357,13 @@ class FrontTournamentsTicketsController extends \BaseController {
 			
 			// if were not rate limited
 			if(!$checkRateLimit) {
+
+                //check user can buyin
+                if( ! $this->tournamentBuyinRulesService->canBuyin($tournamentId, Auth::user()) ) {
+                    $messages[] = array("id" => $tournamentId, "success" => false, "error" => $this->tournamentBuyinRulesService->getFirstMessage());
+                    $errors++;
+                    continue;
+                }
 
 				// save tournament tickets via legacy API
 				$l = new \TopBetta\LegacyApiHelper;

@@ -44,4 +44,15 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
             ->first();
     }
 
+    public function getTicketsForUserByBuyinBetween($userId, $buyin, $start, $end)
+    {
+        return $this->model
+            ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
+            ->where('user_id', $userId)
+            ->where('start_date', '>=', $start)
+            ->where('start_date', '<=', $end)
+            ->where('buy_in', $buyin)
+            ->get(array('tbdb_tournament_ticket.*'));
+    }
+
 } 

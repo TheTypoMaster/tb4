@@ -22,6 +22,7 @@ return array(
 	"refunded_ticket" => "Ticket #:ticketId has been refunded",
 	"refund_ticket_problem" => "Ticket #:ticketId could not be refunded",
     "bet_limit_exceeded" => "Maxium bet amount bet per race is",
+    "exceed_free_tournament_tickets" => "You have exceeded the maximum number (:number) of free tournaments for this :period",
 
 	// COMMENTS/SLEDGE
 	"comment_posted" => "Comment Posted!",
