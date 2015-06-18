@@ -27,6 +27,11 @@ class DbConfigurationRepository extends BaseEloquentRepository implements Config
         return json_decode($config->values, $asArray);
     }
 
+    public function getByName($name)
+    {
+        return $this->model->where('name', $name)->first();
+    }
+
     public function getIdByName($name)
     {
         return $this->model->where('name', $name)->pluck('id');

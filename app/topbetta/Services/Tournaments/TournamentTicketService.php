@@ -47,10 +47,17 @@ class TournamentTicketService {
         return $ticket;
     }
 
-    public function getFreeBuyinsForPeriod($user, $period)
+    public function getFreeBuyinsForPeriod($user, $period, $startDate = null)
     {
-        $start = Carbon::now()->{ 'startOf' . ucfirst($period) }();
-        $end = Carbon::now()->{ 'endOf' . ucfirst($period) }();
+        //get the start and end dates of the period
+        if( $startDate ) {
+            $start = Carbon::createFromFormat('Y-m-d H:i:s', $startDate)->{ 'startOf' . ucfirst($period) }();
+            $end = Carbon::createFromFormat('Y-m-d H:i:s', $startDate)->{ 'endOf' . ucfirst($period) }();
+        } else {
+            $start = Carbon::now()->{ 'startOf' . ucfirst($period) }();
+            $end = Carbon::now()->{ 'endOf' . ucfirst($period) }();
+        }
+
 
         $tickets = $this->tournamentTicketRepository->getTicketsForUserByBuyinBetween($user->id, 0, $start, $end);
 

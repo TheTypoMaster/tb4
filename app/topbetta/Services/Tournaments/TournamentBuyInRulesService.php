@@ -17,9 +17,9 @@ class TournamentBuyInRulesService {
     const CONFIG_NAME = 'tournament_buyin_settings';
 
     public static $freeTournamentPeriods = array(
-        'day',
-        'month',
-        'week'
+        'day' => 'Day',
+        'week' => 'Week',
+        'month' => 'Month',
     );
 
     private $messages = array();
@@ -69,7 +69,7 @@ class TournamentBuyInRulesService {
             case 'max_free_tournament':
                 if ( $tournament->buy_in == 0 &&
                     array_get($data, 'number', 0) &&
-                    $this->tournamentTicketService->getFreeBuyinsForPeriod($user, array_get($data, 'period', 'month'))->count() >= $data['number']
+                    $this->tournamentTicketService->getFreeBuyinsForPeriod($user, array_get($data, 'period', 'month'), $tournament->start_date)->count() >= $data['number']
                 ) {
                     $this->messages[] = Lang::get('tournaments.exceed_free_tournament_tickets', array(
                         'period' => array_get($data, 'period', 'month'),
