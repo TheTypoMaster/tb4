@@ -152,7 +152,9 @@ class TournamentsController extends Controller
             $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
 
             if($eventGroupsCollection) {
-                $eventGroups += $eventGroupsCollection->lists('name', 'id')->all();
+                $eventGroups += $eventGroupsCollection->map(function($q) {
+                    return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
+                })->lists('name', 'id')->all();
             }
         }
 
@@ -260,9 +262,11 @@ class TournamentsController extends Controller
         $eventGroups = array("Select Event Group");
         $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($tournament->eventGroup->id);
         if($eventGroupsCollection) {
-            $eventGroups += $eventGroupsCollection->lists('name', 'id')->all();
+            $eventGroups += $eventGroupsCollection->map(function($q) {
+                return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
+            })->lists('name', 'id')->all();
         }
-        $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name);
+        $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name . ' - ' . $tournament->eventGroup->start_date);
 
 
         //get the buyins
@@ -295,7 +299,8 @@ class TournamentsController extends Controller
         }
 
         $parentTournaments = array(-1 => 'Select Tournament') + $parentTournaments->map(function($value){
-            return array('id' => $value->id, 'name' => $value->name . ' - ' . $value->start_date);
+            return array('id' => $value->id, 'name' => $value->name . ' - ' . $value->start_date . ' ($' .
+                number_format($value->buy_in/100, 2) . ' + $' . number_format($value->entry_fee/100, 2) . ')');
         })->lists('name', 'id')->all();
 
         //get tod venues
@@ -497,7 +502,8 @@ class TournamentsController extends Controller
         }
 
         $tournaments = $tournaments->map(function($value){
-            return array("id" => $value->id, "name" => $value->name . ' - ' . $value->start_date);
+            return array("id" => $value->id, "name" => $value->name . ' - ' . $value->start_date . ' ($' .
+                number_format($value->buy_in/100, 2) . ' + $' . number_format($value->entry_fee/100, 2) . ')');
         });
 
         return $this->formatForResponse(array(-1 => "Select tournament") + $tournaments->lists('name', 'id')->all());
