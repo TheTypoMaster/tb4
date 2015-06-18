@@ -1,10 +1,10 @@
-<?php
-
-namespace TopBetta\admin\controllers;
+<?php namespace TopBetta\Http\Controllers\Admin;
 
 use View;
 use Input;
 use Redirect;
+use TopBetta\Http\Controllers\Controller;
+
 use TopBetta\Repositories\Contracts\ConfigurationRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBuyInRulesService;
 
@@ -31,7 +31,7 @@ class TournamentSettingsController extends \BaseController {
 	{
 		$config = $this->configurationRepository->getConfigByName(TournamentBuyInRulesService::CONFIG_NAME, true);
 
-        return View::make('admin::tournaments.settings.edit', compact('config'));
+        return View::make('admin.tournaments.settings.edit', compact('config'));
 	}
 
 
