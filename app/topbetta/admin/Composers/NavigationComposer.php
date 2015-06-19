@@ -27,6 +27,11 @@ class NavigationComposer {
         $this->adminFilter = $adminFilter;
     }
 
+    /**
+     * View composer function
+     * @param $view
+     * @return mixed
+     */
     public function compose($view)
     {
         $navItems = Config::get('adminresources.navigation', array());
@@ -34,6 +39,11 @@ class NavigationComposer {
         return $view->with(array("navItems" => $this->filterItems($navItems)));
     }
 
+    /**
+     * Filter the menu items
+     * @param $menuItems
+     * @return array
+     */
     public function filterItems($menuItems)
     {
         if( ! Auth::check() ) {
@@ -45,16 +55,24 @@ class NavigationComposer {
         return $this->_filterItems($menuItems);
     }
 
+    /**
+     * Recursively filter navigation links based on user permissions
+     * @param $menuItems
+     * @return array
+     * @throws \Exception
+     */
     private function _filterItems($menuItems)
     {
         $menu = array();
 
         foreach($menuItems as $item) {
+            //has children so is a parent menu item
             if( $children = array_get($item, 'children', null) ) {
                 $childItems = $this->_filterItems($children);
 
                 if( count($childItems) ) {
 
+                    //check the route to see if we need to make the parent active
                     if(in_array(Route::current()->getName(), array_fetch($childItems, 'route')) ||
                         in_array(Route::current()->getUri(), array_fetch($childItems, 'url'))) {
                         $item['active'] = true;
@@ -64,7 +82,7 @@ class NavigationComposer {
                     $menu[] = $item;
                 }
             } else {
-
+                //check user has permissions to this route/url
                 if( ($route = array_get($item, 'route', null)) &&  $this->user->hasAccess($this->adminFilter->getPermissionForRouteName($route)) ) {
                     $item['link'] = route($route);
                     $menu[] = $item;
