@@ -50,26 +50,29 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         $this->eventRepository = $eventRepository;
         $this->selectionPricesRepository = $selectionPricesRepository;
         $this->competitorService = $competitorService;
+        $this->logprefix = 'SportsFeedService - SelectionListProcessor: ';
     }
 
     public function process($data)
     {
         if ( ! ($eventId = array_get($data, 'GameId', null)) || ! ($marketId = array_get($data, 'MarketId', null)) || ! ($selectionId = array_get($data, 'SelectionNo', null))) {
-            Log::error("BackAPI sports no EventId, marketId or SelectionId specified");
+            Log::error($this->logprefix."No EventId, marketId or SelectionId specified");
             return 0;
         }
 
         //get the event
         if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
-            Log::error("BackAPI: Sports - event $eventId does not exist");
+            Log::error($this->logprefix."Event $eventId does not exist");
             return 0;
         }
 
         //get the market
         if ( ! $market = $this->marketRepository->getMarketByExternalIds($marketId, $eventId) ) {
-            Log::error("BackAPI: Sports - market $marketId does not exist");
+            Log::error($this->logprefix."Market $marketId does not exist");
             return 0;
         }
+
+        Log::debug($this->logprefix."Selection/Price " . $data['GameId'].", ".$data['MarketId'].", ".$data['SelectionNo'].", ".$data['Odds'].", " .$data['Line']);
 
         //process selection
         $selection = $this->processSelection($market['id'], $data);
@@ -94,7 +97,6 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
     private function processSelection($marketId, $data)
     {
-        Log::info("BackAPI: Sports - Processing Selection " . $data['SelectionNo']);
         //selection data
         $selectionData = array(
             "market_id" => $marketId,
@@ -131,7 +133,6 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
     private function processSelectionPrice($selection, $data)
     {
-        Log::info("BackAPI: Sports - Processing Selection Price");
         //price data
         $priceData = array(
             "selection_id" => $selection,
