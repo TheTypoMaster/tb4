@@ -59,6 +59,10 @@
                     <li>
                         <a href="{{ route('admin.tournament-sport-results.index') }}"><i class="fa fa-edit fa-fw"></i> Tournament Event Results</a>
                     </li>
+
+                    <li>
+                        <a href="{{ url('/admin/tournament-settings') }}"><i class="fa fa-cog fa-fw"></i> Tournament Settings</a>
+                    </li>
                     {{--<li>--}}
                         {{--<a href="{{ route('admin.tournaments.index') }}"><i class="fa fa-plus fa-fw"></i> Create Tournament</a>--}}
                     {{--</li>--}}
