@@ -495,7 +495,7 @@ class TournamentsController extends Controller
     {
         $sport = $this->sportsrepo->find($sportId);
 
-        if ($sport->racing_flag) {
+        if ($sport->isRacing()) {
             $tournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
         } else {
             $tournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
