@@ -21,16 +21,17 @@ class PlayerProcessor extends AbstractFeedProcessor {
     public function __construct(PlayersRepositoryInterface $playerRepository)
     {
         $this->playerRepository = $playerRepository;
+        $this->logprefix = 'SportsFeedService - PlayerProcessor: ';
     }
 
     public function process($data)
     {
         if( ! $externalId = array_get($data, 'player_id', false) ) {
-            Log::error("BackAPI Sports no player id specified");
+            Log::error($this->logprefix."No player id specified");
             return 0;
         }
 
-        Log::info("BackAPI sports, processing player " . $externalId);
+        Log::info($this->logprefix."Processing player " . $externalId);
         
         $data = array(
             "external_player_id" => $externalId,
@@ -44,7 +45,7 @@ class PlayerProcessor extends AbstractFeedProcessor {
             return $player['id'];
         }
 
-        Log::error("BackAPI sports error creating/updating player " . $externalId);
+        Log::error($this->logprefix."Error creating/updating player " . $externalId);
         return 0;
     }
 

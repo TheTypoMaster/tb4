@@ -35,20 +35,21 @@ class MarketListProcessor extends AbstractFeedProcessor {
         $this->marketTypeRepository = $marketTypeRepository;
         $this->eventRepository = $eventRepository;
         $this->marketRepository = $marketRepository;
+        $this->logprefix = 'SportsFeedService - MarketListProcessor: ';
     }
 
     public function process($data)
     {
         //make sure game and market ids exists
         if( ! ($eventId = array_get($data, 'GameId', false)) || ! ($marketId = array_get($data, 'MarketId', false)) ||  ! ($marketTypeId = array_get($data, 'BetType', false)) ) {
-            Log::error("BackAPI sports no GameId or MarketId specified");
+            Log::error($this->logprefix."No GameId or MarketId specified");
             return 0;
         }
 
         $eventId = array_get($data, 'GameId', false);
         //get the event
         if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
-            Log::error("BackAPI sports event not found, external id: " . $eventId);
+            Log::error($this->logprefix."Event not found, external id: " . $eventId);
             return 0;
         }
 
@@ -78,7 +79,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
             $marketTypeName = $marketTypeName . ' ' . $period;
         }
 
-        Log::info("BackAPI: Sports - Processing Market Type, BetTypeName: $marketTypeName");
+        Log::info($this->logprefix."Processing Market Type, BetTypeName: $marketTypeName");
 
         //market type data
         $data = array(
@@ -92,7 +93,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
 
     private function processMarket($marketType, $event, $data)
     {
-        Log::info("BackAPI: Sports - Processing Market");
+        Log::info($this->logprefix."Processing Market");
 
         //market data
         $marketData = array(

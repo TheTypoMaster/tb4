@@ -70,13 +70,14 @@ class GameListProcessor extends AbstractFeedProcessor {
         $this->tournamentCompetitionRepository = $tournamentCompetitionRepository;
         $this->tournaments = $tournaments;
         $this->teamProcessor = $teamProcessor;
+        $this->logprefix = 'SportsFeedService - GameListProcessor: ';
     }
 
     public function process($data)
     {
         //need to have external id to identify event
         if( ! $externalId = array_get($data, 'GameId', false)) {
-            Log::error("BackAPI sports no GameId specified");
+            Log::error($this->logprefix."No GameId specified");
             return 0;
         }
 
@@ -125,7 +126,7 @@ class GameListProcessor extends AbstractFeedProcessor {
 
     private function processBaseCompetition($baseCompetition, $competitionName, $sport, $region)
     {
-        Log::info("BackAPI: Sports - Processing Base Competition: $baseCompetition");
+        Log::info($this->logprefix. "Processing Base Competition: $baseCompetition");
 
         //competition name
         $data = array("name" => $competitionName, 'external_base_competition_id' => $baseCompetition);
@@ -146,7 +147,7 @@ class GameListProcessor extends AbstractFeedProcessor {
     private function processCompetition($data, $baseCompetition, $sport)
     {
         $competitionName = array_get($data, 'League', '') . ' ' . array_get($data, 'Round', '');
-        Log::info("BackAPI: Sports - Processing Competition: $competitionName");
+        Log::info($this->logprefix. "Processing Competition: $competitionName");
 
         $tournCompData = array("name" => $competitionName);
         $compData = $tournCompData;
@@ -218,7 +219,7 @@ class GameListProcessor extends AbstractFeedProcessor {
 
     private function processEvent($externalId, $name, $time, $competition)
     {
-        Log::info("BackAPI: Sports - Processing Event: $name");
+        Log::info($this->logprefix. "Processing Event: $name");
 
         $data = array("name" => $name, "external_event_id" => $externalId, "event_status_id" => 1);
 

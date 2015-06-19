@@ -26,17 +26,18 @@ class TeamProcessor extends AbstractFeedProcessor {
     {
         $this->teamRepository = $teamRepository;
         $this->playerProcessor = $playerProcessor;
+        $this->logprefix = 'SportsFeedService - TeamProcessor: ';
     }
 
     public function process($team)
     {
         //check team id exists
         if( ! $teamId = array_get($team, 'team_id', null) ) {
-            Log::error("BackAPI sports no team_id specified");
+            Log::error($this->logprefix."No team_id specified");
             return 0;
         }
 
-        Log::info("BackAPI sports processing team " . $teamId);
+        Log::info($this->logprefix."Processing team " . $teamId);
         //team data
         $data = array(
             "external_team_id" => $teamId,

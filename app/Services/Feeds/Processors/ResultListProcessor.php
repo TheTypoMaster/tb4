@@ -49,6 +49,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
         $this->selectionRepository = $selectionRepository;
         $this->selectionResultRepository = $selectionResultRepository;
         $this->betResultRepository = $betResultRepository;
+        $this->logprefix = 'SportsFeedService - ResultListProcessor: ';
     }
 
     public function process($data)
@@ -60,7 +61,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
 
         //get the event
         if( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
-            Log::error("Back API Sports external event id $eventId does not exists");
+            Log::error($this->logprefix."External event id $eventId does not exists");
             return 0;
         }
 
@@ -72,7 +73,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
 
         //check market status exists
         if ( ! $marketStatus = array_get($data, 'MarketStatus', null) ) {
-            Log::error("BackAPI Sports No market status");
+            Log::error($this->logprefix."No market status");
             return 0;
         }
 
@@ -91,7 +92,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
 
     private function processResults($data, $marketStatus, $eventId, $marketId)
     {
-        Log::info("BackAPI Sports Processing result for event $eventId market $marketId");
+        Log::info($this->logprefix."Processing result for event $eventId market $marketId");
 
         $result = 0;
 
@@ -111,7 +112,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
                 $result = $this->processScore($data, $eventId);
             }
         } else {
-            Log::error("BackAPI Sports Market status invalid - $marketStatus");
+            Log::error($this->logprefix."Market status invalid - $marketStatus");
         }
 
         return $result;
@@ -122,7 +123,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
 
         //check Score field exists
         if ( ! $name = array_get($data, 'Score', null) ) {
-            Log::error("Back API Sports Results no Score field found ");
+            Log::error($this->logprefix."No Score field found ");
             return 0;
         }
 
@@ -130,7 +131,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
         $selection = $this->selectionRepository->getByExternalIdsAndName($marketId, $eventId, $name);
 
         if( ! $selection ) {
-            Log::error("Back API Sports no selection for event $eventId, market $marketId, name $name ");
+            Log::error($this->logprefix."No selection for event $eventId, market $marketId, name $name ");
             return 0;
         }
 
@@ -149,7 +150,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
     {
         //check Score field exists
         if ( ! $score = array_get($data, 'Score', null) ) {
-            Log::error("Back API Sports Results no Score field found ");
+            Log::error($this->logprefix."No Score field found ");
             return 0;
         }
 
