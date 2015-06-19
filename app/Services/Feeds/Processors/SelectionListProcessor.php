@@ -72,7 +72,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
             return 0;
         }
 
-        Log::debug($this->logprefix."Selection/Price " . $data['GameId'].", ".$data['MarketId'].", ".$data['SelectionNo'].", ".$data['Odds'].", " .$data['Line']);
+        Log::debug($this->logprefix."Selection/Price - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", SelectionNo: ".$data['SelectionNo'].", Odds ".$data['Odds'].", Line: " .$data['Line']);
 
         //process selection
         $selection = $this->processSelection($market['id'], $data);
