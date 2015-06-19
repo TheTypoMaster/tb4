@@ -95,7 +95,7 @@ class RaceDataProcessingService {
 	 */
 	public function processRacingData($data){
 
-		Log::debug('Processing Payload');
+		//Log::debug('Processing Payload');
 		foreach ($data as $key => $racingData) {
 
 			switch ($key) {
