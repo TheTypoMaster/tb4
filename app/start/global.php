@@ -198,3 +198,5 @@ Response::macro('xml', function($vars, $status = 200, array $header = array(), $
     }
     return Response::make($xml->asXML(), $status, $header);
 });
+
+View::composer('admin::*', 'TopBetta\admin\Composers\NavigationComposer');
