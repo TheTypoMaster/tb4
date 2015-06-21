@@ -136,6 +136,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
                 $q->where('start_date', '>=', Carbon::now()->toDateTimeString());
             })
             ->where('display_flag', 1)
+            ->orderBy('start_date', 'ASC')
             ->get();
     }
 
