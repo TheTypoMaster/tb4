@@ -59,6 +59,7 @@ Route::filter('not.excluded', function() {
 
 });
 
+Route::filter('token.auth', 'TopBetta\Services\Authentication\Filters\TokenAuthFilter');
 
 Route::filter('auth.basic', function()
 {

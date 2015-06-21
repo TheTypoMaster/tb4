@@ -9,4 +9,5 @@
 
 interface BetSourceRepositoryInterface {
 
-} 
+    public function getSourceByKeyword($keyword);
+}

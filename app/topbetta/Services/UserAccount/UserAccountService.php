@@ -160,9 +160,9 @@ class UserAccountService {
         // validation rules
         $rules = array(
             'source' => 'required',
-            'parent_user_name' => 'required|alphadash',
-            'personal_betting_user_name' => 'required|alphadash',
-            'child_betting_user_name' => 'alphadash',
+            'parent_username' => 'required|alphadash',
+            'personal_username' => 'required|alphadash',
+            'child_username' => 'alphadash',
             'token' => 'required'
         );
 
@@ -175,20 +175,20 @@ class UserAccountService {
 
         $autoGenerate = false;
 
-        if(isset($input['child_betting_user_name'])){
-            $uniqueUsername = $input['child_betting_user_name'];
+        if(isset($input['child_username'])){
+            $uniqueUsername = $input['child_username'];
         }else{
-            $uniqueUsername = $input['parent_user_name'].'_'.$input['personal_betting_user_name'];
+            $uniqueUsername = $input['parent_username'].'_'.$input['personal_username'];
             $autoGenerate = true;
         }
 
         $username = $this->_generateUniqueUserNameFromBase($uniqueUsername, $autoGenerate);
 
         // get details of betting acount to base club betting account off or throw exception if it does not exist
-        $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_betting_user_name']);
+        $bettingAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['personal_username']);
         if(!$bettingAccountDetails) throw new ValidationException("Validation Failed", 'Personal betting account does not exist?');
 
-        $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_user_name']);
+        $parentAccountDetails = $this->basicUser->getFullUserDetailsFromUsername($input['parent_username']);
         if(!$parentAccountDetails) throw new ValidationException("Validation Failed", 'Parent account does not exist?');
 
         // create club betting account
