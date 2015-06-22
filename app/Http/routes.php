@@ -1,7 +1,7 @@
 <?php
 
 
-Route::get('/', 'HomeController');
+Route::get('/', 'HomeController@index');
 
 
 // Route group for backend API. Uses basic stateless auth filter
