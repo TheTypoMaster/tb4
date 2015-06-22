@@ -228,7 +228,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
     Route::resource('user-activity', 'Admin\UserActivityController');
 
-
+    Route::get('sports-list', 'Admin\SportsController@getSports');
+    Route::get('sports/{sportId}/competitions', 'Admin\CompetitionsController@getBySport');
 
 });
 

@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="row page-header">
-                <h2 class="col-lg-4">Sport Competitions</h2>
+                <h2 class="col-lg-4">Sports Markets</h2>
 
 
                 <h2 class="col-lg-4 pull-right">

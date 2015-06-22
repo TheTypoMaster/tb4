@@ -133,6 +133,9 @@ class CompetitionsController extends CrudResourceController
         );
     }
 
-
+    public function getBySport($id)
+    {
+        return $this->repository->findBySport($id)->toArray();
+    }
 
 }
