@@ -11,6 +11,7 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
@@ -49,6 +50,10 @@ class RaceDataProcessingService {
      * @var TournamentBetService
      */
     private $tournamentBetService;
+    /**
+     * @var RunnerRepositoryInterface
+     */
+    private $runnerRepository;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -66,7 +71,8 @@ class RaceDataProcessingService {
 								RisaFormRepository $risaform,
 								LastStartRepositoryInterface $laststarts,
 								SelectionPriceRepositoryInterface $prices,
-                                TournamentBetService $tournamentBetService){
+                                TournamentBetService $tournamentBetService,
+                                RunnerRepositoryInterface $runnerRepository){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -84,6 +90,7 @@ class RaceDataProcessingService {
 
 		$this->logprefix = 'RaceDataProcessingService: ';
         $this->tournamentBetService = $tournamentBetService;
+        $this->runnerRepository = $runnerRepository;
     }
 
 
@@ -94,7 +101,7 @@ class RaceDataProcessingService {
 	 * @return string|void
 	 */
 	public function processRacingData($data){
-
+        \Log::info(print_r($data,true));
 		//Log::debug('Processing Payload');
 		foreach ($data as $key => $racingData) {
 
@@ -407,6 +414,12 @@ class RaceDataProcessingService {
 			}else{
 				$runnerDetails['market_id'] = $existingMarketDetails['id'];
 			}
+
+            //get the runner
+            if( $baseRunner = array_get($runner, 'external_runner_id') ) {
+                $baseRunner = $this->runnerRepository->getByExternalId($baseRunner);
+                $runnerDetails['runner_id'] = $baseRunner ? $baseRunner->id : 0;
+            }
 
 			// meeting details
 			$existingMeetingDetails = $this->competitions->getMeetingFromExternalId($runner['MeetingId']);

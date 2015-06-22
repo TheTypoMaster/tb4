@@ -19,4 +19,9 @@ class DbRunnerRepository extends BaseEloquentRepository implements RunnerReposit
     {
         $this->model = $model;
     }
+
+    public function getByExternalId($externalId)
+    {
+        return $this->model->where('external_runner_id', $externalId)->first();
+    }
 }
