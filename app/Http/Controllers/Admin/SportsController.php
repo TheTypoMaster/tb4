@@ -100,4 +100,9 @@ class SportsController extends CrudResourceController
         return parent::edit($id, $extraData);
 	}
 
+    public function getSports()
+    {
+        return $this->repository->sportsFeed();
+    }
+
 }
