@@ -19,7 +19,7 @@ class CreateTrainersTable extends Migration
             $table->string('name');
             $table->string('location')->nullable();
             $table->string('state')->nullable();
-            $table->string('postcode')->nullable();
+            $table->integer('postcode')->nullable();
             $table->string('initials')->nullable();
 
             $table->timestamps();
