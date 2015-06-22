@@ -30,7 +30,8 @@ class HomeController extends Controller {
 	 */
 	public function index()
 	{
-		return view('home');
+        return \Redirect::to('https://www.topbetta.com.au');
+		//return view('home');
 	}
 
 }

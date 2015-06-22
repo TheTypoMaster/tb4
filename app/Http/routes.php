@@ -2,7 +2,8 @@
 
 
 Route::get('/', function() {
-    return \Redirect::to('https://www.topbetta.com.au');
+    Route::get('index', 'HomeController');
+   // return \Redirect::to('https://www.topbetta.com.au');
 });
 
 // Route group for backend API. Uses basic stateless auth filter
