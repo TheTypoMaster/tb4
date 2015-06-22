@@ -68,7 +68,7 @@ class TokenAuthenticationService {
         $rules = array(
             'source' => 'required',
             //'club_user_name' => 'required',
-            'betting_user_name' => 'required',
+            'username' => 'required',
             'token' => 'required'
         );
 
@@ -79,11 +79,11 @@ class TokenAuthenticationService {
         if(!$this->checkSource($input)) throw new ValidationException("Validation Failed", 'Invalid Payload - source');
 
         // get betting account user details
-        $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['betting_user_name']);
+        $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['username']);
         if(!$bettingUserDetails) throw new ValidationException("Validation Failed", 'Invalid Payload - betting account');
 
         // if this is a club betting account login
-        if(isset($input['club_user_name'])){
+        if(isset($input['parent_username'])){
             // confirm betting account is a child of the club account
             if(!$this->_confirmBettingAccount($input, $bettingUserDetails)) throw new ValidationException("Validation Failed", 'Invalid Payload - non child');
         }
@@ -114,17 +114,17 @@ class TokenAuthenticationService {
         // get token, username and source and validate
         $rules = array(
             'source' => 'required',
-            'betting_user_name' => 'required',
+            'username' => 'required',
             'token' => 'required'
         );
         $validated = $this->_validateParams($input, $rules);
 
         // get betting account user details
-        $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['betting_user_name']);
+        $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['username']);
         if(!$bettingUserDetails) throw new ValidationException("Validation Failed", 'Betting user account does not exist');
 
         // if club_name is supplied then this is a child betting acount login and we need to make sure this username is a child of the source?
-        if(isset($input['club_user_name'])){
+        if(isset($input['parent_username'])){
             if(!$this->_confirmBettingAccount($input, $bettingUserDetails)) throw new ValidationException("Validation Failed", 'Bettung user account is not linked to club account');
         }
 
@@ -212,7 +212,7 @@ class TokenAuthenticationService {
      */
     private function _confirmBettingAccount($input, $bettingUserDetails){
         // get club user details
-        $clubUserDetails = $this->user->getUserDetailsFromUsername($input['club_user_name']);
+        $clubUserDetails = $this->user->getUserDetailsFromUsername($input['parent_username']);
 
         // check if betting account userid is child of club
         if($clubUserDetails['id'] == $bettingUserDetails['parent_user_id']) return true;

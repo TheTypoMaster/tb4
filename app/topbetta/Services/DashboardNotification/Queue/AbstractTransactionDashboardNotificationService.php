@@ -44,6 +44,7 @@ abstract class AbstractTransactionDashboardNotificationService extends Dashboard
         TransactionType::TYPE_TOURNAMENT_REBUY_ENTRY => "tournament_rebuy_entry",
         TransactionType::TYPE_TOURNAMENT_TOPUP_BUYIN => "tournament_topup_buyin",
         TransactionType::TYPE_TOURNAMENT_TOPUP_ENTRY => "tournament_topup_entry",
+        TransactionType::TYPE_EWAY_RECURRING_DEPOSIT => "eway_recurring_deposit",
     );
 
     private $freeCreditTransactionTypeMapping = array(

@@ -185,8 +185,10 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
     //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
    // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
 
-
-
+    // --- NEW DEPOSIT ROUTES ---
+    Route::resource('deposits', 'TopBetta\Frontend\DepositsController');
+    Route::resource('scheduled-deposits', 'TopBetta\Frontend\ScheduledDepositsController');
+    Route::resource('eway-tokens', 'TopBetta\Frontend\EwayCreditCardController');
 });
 
 Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), function() {

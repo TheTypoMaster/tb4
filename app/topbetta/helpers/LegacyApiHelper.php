@@ -1,5 +1,8 @@
 <?php namespace TopBetta;
 
+use Config;
+use TopBetta\Services\Exceptions\UnauthorizedAccessException;
+
 class LegacyApiHelper {
 
 	protected $allowed_methods = array('doUserLogin' => 'post', 'doUserRegisterBasic' => 'post', 'doUserRegisterTopBetta' => 'post', 'doInstantDeposit' => 'post', 'doWithdrawRequest' => 'post', 'getLoginHash' => 'post', 'getUser' => 'get', 'saveBet' => 'post', 'saveRacingBet' => 'post', 'saveSportBet' => 'post', 'saveTournamentBet' => 'post', 'saveTournamentSportsBet' => 'post', 'saveTournamentTicket' =>'post', 'setBetLimit' => 'post', 'doSelfExclude' => 'post', 'generateJoomlaPassword' => 'post', 'doReferFriend' => 'post', 'getBettingHistory' => 'post', 'doUserUpgradeTopBetta' => 'post');
@@ -16,221 +19,224 @@ class LegacyApiHelper {
 		$ret = array();
 
 		if (array_key_exists($method, $this -> allowed_methods)) {
+            try {
+                switch ($method) {
+                    //Handle any special cases
+                    case 'doUserLogin' :
 
-			switch ($method) {
-				//Handle any special cases
-				case 'doUserLogin' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. perform login
+                        $payload[$login_hash['login_hash']] = 1;
+                        return $this->curl('doUserLogin', $this->allowed_methods['doUserLogin'], $payload);
 
-					//2. perform login
-					$payload[$login_hash['login_hash']] = 1;
-					return $this -> curl('doUserLogin', $this -> allowed_methods['doUserLogin'], $payload);
+                        break;
 
-					break;
+                    case 'doUserRegisterBasic' :
 
-				case 'doUserRegisterBasic' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. perform login
+                        $payload[$login_hash['login_hash']] = 1;
+                        return $this->curl('doUserRegisterBasic', $this->allowed_methods['doUserRegisterBasic'], $payload);
 
-					//2. perform login
-					$payload[$login_hash['login_hash']] = 1;
-					return $this -> curl('doUserRegisterBasic', $this -> allowed_methods['doUserRegisterBasic'], $payload);
+                        break;
 
-					break;
+                    case 'doUserRegisterTopBetta' :
 
-				case 'doUserRegisterTopBetta' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. perform login
+                        $payload[$login_hash['login_hash']] = 1;
+                        return $this->curl('doUserRegisterTopBetta', $this->allowed_methods['doUserRegisterTopBetta'], $payload);
 
-					//2. perform login
-					$payload[$login_hash['login_hash']] = 1;
-					return $this -> curl('doUserRegisterTopBetta', $this -> allowed_methods['doUserRegisterTopBetta'], $payload);
+                        break;
 
-					break;
+                    case 'doUserUpgradeTopBetta' :
 
-				case 'doUserUpgradeTopBetta' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. perform login
+                        $payload[$login_hash['login_hash']] = 1;
+                        return $this->curl('doUserUpgradeTopBetta', $this->allowed_methods['doUserUpgradeTopBetta'], $payload);
 
-					//2. perform login
-					$payload[$login_hash['login_hash']] = 1;
-					return $this -> curl('doUserUpgradeTopBetta', $this -> allowed_methods['doUserUpgradeTopBetta'], $payload);
+                        break;
 
-					break;
+                    case 'doInstantDeposit' :
 
-				case 'doInstantDeposit' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. perform login
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('doInstantDeposit', $this->allowed_methods['doInstantDeposit'], $payload);
 
-					//2. perform login
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('doInstantDeposit', $this -> allowed_methods['doInstantDeposit'], $payload);
+                        break;
 
-					break;
+                    case 'doWithdrawRequest' :
 
-				case 'doWithdrawRequest' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. perform login
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('doWithdrawRequest', $this->allowed_methods['doWithdrawRequest'], $payload);
 
-					//2. perform login
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('doWithdrawRequest', $this -> allowed_methods['doWithdrawRequest'], $payload);
+                        break;
 
-					break;
+                    case 'saveBet' :
 
-				case 'saveBet' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('saveBet', $this->allowed_methods['saveBet'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('saveBet', $this -> allowed_methods['saveBet'], $payload);
+                        break;
 
-					break;
+                    case 'saveRacingBet' :
 
-				case 'saveRacingBet' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('saveRacingBet', $this->allowed_methods['saveRacingBet'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('saveRacingBet', $this -> allowed_methods['saveRacingBet'], $payload);
+                        break;
 
-					break;
+                    case 'saveSportBet' :
 
-				case 'saveSportBet' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('saveSportBet', $this->allowed_methods['saveSportBet'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('saveSportBet', $this -> allowed_methods['saveSportBet'], $payload);
+                        break;
 
-					break;
+                    case 'saveTournamentBet' :
 
-				case 'saveTournamentBet' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save tournament bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('saveTournamentBet', $this->allowed_methods['saveTournamentBet'], $payload);
 
-					//2. save tournament bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('saveTournamentBet', $this -> allowed_methods['saveTournamentBet'], $payload);
+                        break;
 
-					break;
+                    case 'saveTournamentSportsBet' :
 
-				case 'saveTournamentSportsBet' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save tournament bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('saveTournamentSportsBet', $this->allowed_methods['saveTournamentSportsBet'], $payload);
 
-					//2. save tournament bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('saveTournamentSportsBet', $this -> allowed_methods['saveTournamentSportsBet'], $payload);
+                        break;
 
-					break;
+                    case 'saveTournamentTicket' :
 
-				case 'saveTournamentTicket' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('saveTournamentTicket', $this->allowed_methods['saveTournamentTicket'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('saveTournamentTicket', $this -> allowed_methods['saveTournamentTicket'], $payload);
+                        break;
 
-					break;
+                    case 'setBetLimit' :
 
-				case 'setBetLimit' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('setBetLimit', $this->allowed_methods['setBetLimit'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('setBetLimit', $this -> allowed_methods['setBetLimit'], $payload);
+                        break;
 
-					break;
+                    case 'doSelfExclude' :
 
-				case 'doSelfExclude' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('doSelfExclude', $this->allowed_methods['doSelfExclude'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('doSelfExclude', $this -> allowed_methods['doSelfExclude'], $payload);
+                        break;
 
-					break;
+                    case 'generateJoomlaPassword' :
 
-				case 'generateJoomlaPassword' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        return $this->curl('generateJoomlaPassword', $this->allowed_methods['generateJoomlaPassword'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					return $this -> curl('generateJoomlaPassword', $this -> allowed_methods['generateJoomlaPassword'], $payload);
+                        break;
 
-					break;
+                    case 'doReferFriend' :
 
-				case 'doReferFriend' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        return $this->curl('doReferFriend', $this->allowed_methods['doReferFriend'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					return $this -> curl('doReferFriend', $this -> allowed_methods['doReferFriend'], $payload);
+                        break;
 
-					break;
+                    case 'getBettingHistory' :
 
-				case 'getBettingHistory' :
+                        //1. get login hash
+                        $login_hash = $this->curl('getLoginHash', $this->allowed_methods['getLoginHash'], $payload, false);
 
-					//1. get login hash
-					$login_hash = $this -> curl('getLoginHash', $this -> allowed_methods['getLoginHash'], $payload, false);
+                        //2. save bet
+                        $payload[$login_hash['login_hash']] = 1;
+                        $payload['l_user_id']               = \Auth::user()->id;
+                        return $this->curl('getBettingHistory', $this->allowed_methods['getBettingHistory'], $payload);
 
-					//2. save bet
-					$payload[$login_hash['login_hash']] = 1;
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('getBettingHistory', $this -> allowed_methods['getBettingHistory'], $payload);
+                        break;
 
-					break;
-				
-				case 'getUser' :
+                    case 'getUser' :
 
-					$payload['l_user_id'] = \Auth::user() -> id;
-					return $this -> curl('getUser', $this -> allowed_methods['getUser'], $payload);
+                        $payload['l_user_id'] = \Auth::user()->id;
+                        return $this->curl('getUser', $this->allowed_methods['getUser'], $payload);
 
-					break;				
+                        break;
 
-				default :
+                    default :
 
-					//pass api call straight through
-					return $this -> curl($method, $this -> allowed_methods[$method], $payload);
+                        //pass api call straight through
+                        return $this->curl($method, $this->allowed_methods[$method], $payload);
 
-					break;
-			}
+                        break;
+                }
+            } catch( UnauthorizedAccessException $e) {
+                return array("status" => 403, "error_msg" => "Unauthorized Access");
+            }
 
 
 		} else {
@@ -248,6 +254,8 @@ class LegacyApiHelper {
 
 	    $url = \URL::to('/api/?method=') . $method;
         //$url = 'http://services.dev/api/?method=' . $method;
+
+        $payload['api_key'] = $this->createHashKey($payload, $method, Config::get("legacyapi.api_key"));
 
 		$ch = curl_init();
 		if ($type == 'post') {
@@ -268,8 +276,27 @@ class LegacyApiHelper {
 
 		curl_close($ch);
 
+        if( array_get($buffer, 'status', null) == 403 ) {
+            throw new UnauthorizedAccessException();
+        }
+
 		return $buffer;
 
 	}
+
+    private function createHashKey(array $payload, $method, $secret)
+    {
+        $sanitizedPayload = array();
+
+        array_walk_recursive($payload, function($v) use (&$sanitizedPayload) {
+            $sanitizedPayload[] = is_bool($v) ? (int) $v : $v;
+        });
+
+        return hash_hmac(
+            "sha256",
+            implode("", $sanitizedPayload) . $method,
+            $secret
+        );
+    }
 
 }
