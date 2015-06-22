@@ -17,6 +17,8 @@ class CreateRunnersTable extends Migration {
 			$table->increments('id');
 
             $table->integer('external_runner_id')->unsigned();
+            $table->integer('owner_id')->unsigned()->default(0);
+            $table->integer('trainer_id')->unsigned()->default(0);
             $table->string('name');
             $table->string('colour');
             $table->char('sex');
