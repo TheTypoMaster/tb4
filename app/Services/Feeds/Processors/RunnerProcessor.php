@@ -36,7 +36,7 @@ class RunnerProcessor extends AbstractFeedProcessor {
     public function __construct(RunnerRepositoryInterface $runnerRepository, TrainerRepositoryInterface $trainerRepository, OwnerRepositoryInterface $ownerRepository)
     {
         $this->runnerRepository = $runnerRepository;
-        $this->logprefix = "RunnerProcessor: ";
+        $this->logprefix = "RunnerDataService - RunnerProcessor: ";
         $this->trainerRepository = $trainerRepository;
         $this->ownerRepository = $ownerRepository;
     }
@@ -44,7 +44,7 @@ class RunnerProcessor extends AbstractFeedProcessor {
     public function process($data)
     {
         if( ! $runner = array_get($data, 'external_runner_id') ) {
-            Log::error($this->logprefix . " No runner id specified");
+            Log::error($this->logprefix . " No runner id specified", $data);
             return 0;
         }
 

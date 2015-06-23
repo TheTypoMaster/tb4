@@ -26,13 +26,13 @@ class OwnerProcessor extends AbstractFeedProcessor {
     public function __construct(OwnerRepositoryInterface $ownerRepository)
     {
         $this->ownerRepository = $ownerRepository;
-        $this->logprefix = "OwnerProcessor: ";
+        $this->logprefix = "RunnerDataService - OwnerProcessor: ";
     }
 
     public function process($data)
     {
         if( ! $owner = array_get($data, 'external_owner_id', null) ) {
-            Log::error($this->logprefix . "No owner id specified");
+            Log::error($this->logprefix . "No owner id specified", $data);
             return 0;
         }
 

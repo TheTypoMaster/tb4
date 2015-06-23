@@ -21,13 +21,13 @@ class TrainerProcessor extends AbstractFeedProcessor {
     public function __construct(TrainerRepositoryInterface $trainerRepository)
     {
         $this->trainerRepository = $trainerRepository;
-        $this->logprefix = 'TrainerProcessor: ';
+        $this->logprefix = 'RunnerDataService - TrainerProcessor: ';
     }
 
     public function process($data)
     {
         if( ! $trainer = array_get($data, 'external_trainer_id') ) {
-            Log::error($this->logprefix . "No Trainer ID specified");
+            Log::error($this->logprefix . "No Trainer ID specified", $data);
             return 0;
         }
 
