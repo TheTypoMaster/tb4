@@ -23,6 +23,12 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('racedata', 'Backend\RacingDataController');
     //New sport feed endpoint
     Route::resource('sports-feed', 'Backend\SportsFeedController', array("only" => array('store')));
+    //Trainer endpoint
+    Route::resource('trainers', 'Backend\TrainerController', array("only" => array('store')));
+    //Owner endpoint
+    Route::resource('owners', 'Backend\OwnerController', array("only" => array('store')));
+    //Runner endpoint
+    Route::resource('runners', 'Backend\RunnerController', array("only" => array('store')));
 
     /*
      * Risk Manager

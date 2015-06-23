@@ -67,4 +67,9 @@ class SelectionModel extends Eloquent{
         return $this->morphedByMany('TopBetta\Models\PlayerModel', 'competitor', 'tb_selection_competitor', 'selection_id');
     }
 
+    public function runner()
+    {
+        return $this->belongsTo('TopBetta\Models\RunnerModel', 'runner_id');
+    }
+
 } 
