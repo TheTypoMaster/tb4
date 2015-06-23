@@ -86,7 +86,8 @@ class RouteServiceProvider extends ServiceProvider {
 			return Auth::onceBasic('username');
 		});
 
-		
+        Route::filter('token.auth', 'TopBetta\Services\Authentication\Filters\TokenAuthFilter');
+
 		parent::boot($router);
 	}
 

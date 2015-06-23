@@ -1,9 +1,8 @@
 <?php
 
 
-Route::get('/', function() {
-    return \Redirect::to('https://www.topbetta.com.au');
-});
+Route::get('/', 'HomeController@index');
+
 
 // Route group for backend API. Uses basic stateless auth filter
 Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), function() { //, 'before' => 'basic.once'
@@ -154,6 +153,11 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
     Route::get('feed/sports.{ext}', 'Frontend\FeedController@index');
     //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
     // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+
+    // --- NEW DEPOSIT ROUTES ---
+    Route::resource('deposits', 'Frontend\DepositsController');
+    Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
+    Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
 
 
 

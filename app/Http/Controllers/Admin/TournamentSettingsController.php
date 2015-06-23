@@ -8,7 +8,7 @@ use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\ConfigurationRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBuyInRulesService;
 
-class TournamentSettingsController extends \BaseController {
+class TournamentSettingsController extends Controller {
 
     /**
      * @var ConfigurationRepositoryInterface
