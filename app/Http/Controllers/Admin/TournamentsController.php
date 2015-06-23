@@ -115,6 +115,7 @@ class TournamentsController extends Controller
 		$search = Request::get('q', '');
         $from = Request::get('from', null);
         $to = Request::get('to', null);
+        $order = Request::get('order', array());
 
 		if ($search) {
 			$tournaments = $this->tournamentRepo->search($search);
@@ -124,7 +125,7 @@ class TournamentsController extends Controller
 			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
 
-		return View::make('admin.tournaments.index', compact('tournaments', 'search', 'from', 'to'));
+		return View::make('admin.tournaments.index', compact('tournaments', 'search', 'from', 'to', 'order'));
 	}
 
 	/**
