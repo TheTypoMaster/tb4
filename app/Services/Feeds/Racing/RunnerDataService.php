@@ -37,16 +37,19 @@ class RunnerDataService {
 
     public function processOwner($data)
     {
+        //\Log::info(print_r($data,true));
         return $this->ownerProcessor->processArray($data);
     }
 
     public function processTrainer($data)
     {
+        //\Log::info(print_r($data,true));
         return $this->trainerProcessor->processArray($data);
     }
 
     public function processRunner($data)
     {
+        //\Log::info(print_r($data,true));
         return $this->runnerProcessor->processArray($data);
     }
 }
