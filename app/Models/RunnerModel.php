@@ -9,7 +9,7 @@ class RunnerModel extends Model
     protected $table = 'tb_runners';
 
     protected $fillable = array(
-        'external_runner_id', 'owner_id', 'trainer_id', 'name', 'colour', 'sex', 'age', 'foal_date', 'sire', 'dam'
+        'external_runner_id', 'owner_id', 'trainer_id', 'name', 'colour', 'sex', 'age', 'foal_date', 'sire', 'dam', 'type'
     );
 
     public function selections()

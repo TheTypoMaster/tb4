@@ -59,7 +59,8 @@ class RunnerProcessor extends AbstractFeedProcessor {
             "age"                => array_get($data, 'runner_age', 0),
             "foal_date"          => array_get($data, 'runner_foal_date'),
             "sire"               => array_get($data, 'runner_sire'),
-            "dam"                => array_get($data, 'runner_dam')
+            "dam"                => array_get($data, 'runner_dam'),
+            "type"               => array_get($data, 'runner_type'),
         );
 
         //get the trainer and the owner
