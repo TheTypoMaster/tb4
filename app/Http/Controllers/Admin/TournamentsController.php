@@ -124,7 +124,7 @@ class TournamentsController extends Controller
 			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
 
-		return View::make('admin.tournaments.index', compact('tournaments', 'search'));
+		return View::make('admin.tournaments.index', compact('tournaments', 'search', 'from', 'to'));
 	}
 
 	/**

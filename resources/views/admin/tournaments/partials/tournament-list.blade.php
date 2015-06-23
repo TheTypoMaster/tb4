@@ -5,12 +5,12 @@
 
         <div class="form-group">
             {!! Form::label("from", 'From') !!}
-            {!! Form::datetime("from", null, array("class" => "datepicker")) !!}
+            {!! Form::datetime("from", $from, array("class" => "datepicker")) !!}
         </div>
 
         <div class="form-group">
             {!! Form::label("to", "To") !!}
-            {!! Form::datetime("to", null, array("class" => "datepicker")) !!}
+            {!! Form::datetime("to", $to, array("class" => "datepicker")) !!}
         </div>
 
         <div class="form-group">
@@ -22,7 +22,7 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
-			<th>ID</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'id', 'ID', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>Tournament Name</th>
 			<th>TOD</th>
 			<th>Parent Name</th>
