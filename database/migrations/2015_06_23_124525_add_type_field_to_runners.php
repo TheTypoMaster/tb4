@@ -13,7 +13,7 @@ class AddTypeFieldToRunners extends Migration
     public function up()
     {
         Schema::table('tb_runners', function (Blueprint $table) {
-            $table->string('type');
+            $table->string('type')->after('dam');
         });
     }
 
