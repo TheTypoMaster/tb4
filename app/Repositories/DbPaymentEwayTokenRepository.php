@@ -9,7 +9,7 @@
 namespace TopBetta\Repositories;
 
 
-use TopBetta\PaymentEwayTokens;
+use TopBetta\Models\PaymentEwayTokens;
 use TopBetta\Repositories\Contracts\PaymentEwayTokenRepositoryInterface;
 
 class DbPaymentEwayTokenRepository extends BaseEloquentRepository implements PaymentEwayTokenRepositoryInterface

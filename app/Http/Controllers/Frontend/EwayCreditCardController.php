@@ -3,7 +3,7 @@
 use Auth;
 use Log;
 use TopBetta\Http\Controllers\Controller;
-use TopBetta\PaymentEwayTokens;
+use TopBetta\Models\PaymentEwayTokens;
 use TopBetta\Services\Accounting\Payments\EwayPaymentService;
 use TopBetta\Services\Response\ApiResponse;
 

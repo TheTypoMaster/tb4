@@ -11,7 +11,7 @@ namespace TopBetta\Services\Accounting\Payments;
 use Config;
 use Omnipay\Common\CreditCard;
 use Omnipay\Omnipay;
-use TopBetta\PaymentEwayTokens;
+use TopBetta\Models\PaymentEwayTokens;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\Gateways\EwayRapidDirectGateway;
 use TopBetta\Services\Accounting\Payments\Exceptions\PaymentException;

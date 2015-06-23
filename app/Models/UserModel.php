@@ -133,7 +133,7 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
 
     public function ewayTokens()
     {
-        return $this->hasMany('TopBetta\PaymentEwayTokens', 'user_id');
+        return $this->hasMany('TopBetta\Models\PaymentEwayTokens', 'user_id');
     }
 
 

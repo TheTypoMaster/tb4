@@ -12,7 +12,6 @@ namespace TopBetta\Services\Accounting;
 use Carbon\Carbon;
 use Log;
 use Config;
-use TopBetta\PaymentEwayTokens;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\PaymentEwayTokenRepositoryInterface;
 use TopBetta\Repositories\Contracts\ScheduledPaymentRepositoryInterface;
