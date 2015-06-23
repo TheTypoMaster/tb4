@@ -32,7 +32,7 @@ class OwnerProcessor extends AbstractFeedProcessor {
     public function process($data)
     {
         if( ! $owner = array_get($data, 'external_owner_id', null) ) {
-            Log::error($this->logprefix . "No owner id specified", $data);
+            Log::error($this->logprefix . "No owner id specified ", $data);
             return 0;
         }
 

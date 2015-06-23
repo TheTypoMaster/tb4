@@ -101,7 +101,7 @@ class RaceDataProcessingService {
 	 * @return string|void
 	 */
 	public function processRacingData($data){
-        \Log::info(print_r($data,true));
+        //\Log::info(print_r($data,true));
 		//Log::debug('Processing Payload');
 		foreach ($data as $key => $racingData) {
 

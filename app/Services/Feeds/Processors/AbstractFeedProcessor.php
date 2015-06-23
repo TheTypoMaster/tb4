@@ -26,6 +26,7 @@ abstract class AbstractFeedProcessor {
     {
         $objects = array();
 
+        //\Log::debug('#####', $dataArray);
         foreach($dataArray as $data) {
             $objects[] = $this->process($data);
         }
