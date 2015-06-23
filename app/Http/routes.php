@@ -154,6 +154,11 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
     //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
     // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
 
+    // --- NEW DEPOSIT ROUTES ---
+    Route::resource('deposits', 'Frontend\DepositsController');
+    Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
+    Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
+
 
 
 });
@@ -235,11 +240,6 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::get('sports-list', 'Admin\SportsController@getSports');
     Route::get('sports/{sportId}/competitions', 'Admin\CompetitionsController@getBySport');
-
-    // --- NEW DEPOSIT ROUTES ---
-    Route::resource('deposits', 'TopBetta\Frontend\DepositsController');
-    Route::resource('scheduled-deposits', 'TopBetta\Frontend\ScheduledDepositsController');
-    Route::resource('eway-tokens', 'TopBetta\Frontend\EwayCreditCardController');
 
 });
 
