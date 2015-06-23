@@ -236,6 +236,11 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('sports-list', 'Admin\SportsController@getSports');
     Route::get('sports/{sportId}/competitions', 'Admin\CompetitionsController@getBySport');
 
+    // --- NEW DEPOSIT ROUTES ---
+    Route::resource('deposits', 'TopBetta\Frontend\DepositsController');
+    Route::resource('scheduled-deposits', 'TopBetta\Frontend\ScheduledDepositsController');
+    Route::resource('eway-tokens', 'TopBetta\Frontend\EwayCreditCardController');
+
 });
 
 
