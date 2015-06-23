@@ -18,7 +18,8 @@ class HtmlBuilder extends CollectiveHtmlBuilder {
         $linkOrder = array($field);
         $linkOrder[] = array_get($order, 0) == $field && array_get($order, 1) == 'ASC' ? 'DESC' : 'ASC';
 
-        $link = link_to_route($route, $name, array_merge($linkOrder, $query), $attributes);
+        $query['order'] = $linkOrder;
+        $link = link_to_route($route, $name, $query, $attributes);
 
         $icon = "";
         if( array_get($order, 0) == $field ) {
