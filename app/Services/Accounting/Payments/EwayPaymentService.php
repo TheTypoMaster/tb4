@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Accounting\Payments;
 
+use Log;
 use Config;
 use Omnipay\Common\CreditCard;
 use Omnipay\Omnipay;
@@ -134,6 +135,34 @@ class EwayPaymentService extends CreditCardPaymentService {
             throw new PaymentException($response->getMessage());
         }
 
-        return $response->getData();
+        return $this->formatResponse($response->getData());
+    }
+
+    /**
+     * Formats eway response
+     * @param $data
+     * @return array
+     */
+    private function formatResponse($data)
+    {
+        if( $error = array_get($data, 'Errors') ) {
+            Log::error("EwayPaymentService: Fetching credit card " . $error);
+            return array();
+        }
+        $formattedData = array();
+        $data = array_get($data, 'Customers', array())[0];
+
+        foreach(array_except($data, array('TokenCustomerID', 'CardDetails')) as $key => $detail) {
+            $formattedData[$key] = $detail;
+        }
+
+        foreach(array_get($data, 'CardDetails', array()) as $key => $detail) {
+            $formattedData[$key] = $detail;
+        }
+
+        $formattedData['id'] = array_get($data, 'TokenCustomerID');
+
+
+        return $formattedData;
     }
 }
