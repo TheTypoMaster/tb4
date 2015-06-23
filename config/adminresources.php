@@ -51,5 +51,6 @@ return array(
         array("uri" => "tournaments/get-.*", "permission" => "tournaments.view"),
         array("uri" => "sports-list", "permission" => "sports.view"),
         array('uri' => 'tournament-settings', "permission" => "tournament_settings"),
+        array('uri' => 'tournaments/cancel/{tournamentId}', "permission" => 'tournaments.delete'),
     ),
 );

@@ -374,8 +374,46 @@ class TournamentsController extends Controller
 	 */
 	public function destroy($id)
 	{
-		//
+		try {
+            $this->tournamentService->deleteTournament($id);
+        } catch (\Exception $e) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => $e->getMessage()));
+        }
+
+        return Redirect::route('admin.tournaments.index')
+            ->with(array('flash_message' => "Tournament deleted"));
 	}
+
+    public function cancelForm($id)
+    {
+        $tournament = $this->tournamentRepo->find($id);
+
+        if( ! $tournament ) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => "Tournament not found"));
+        }
+
+        if( $tournament->paid_flag ) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => "Tournament has already paid, cannot cancel"));
+        }
+
+        return View::make('admin.tournaments.cancel', compact('tournament'));
+    }
+
+    public function cancel($id)
+    {
+        try {
+            $this->tournamentService->cancelTournament($id, Input::get('reason', null));
+        } catch (\Exception $e) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => $e->getMessage()));
+        }
+
+        return Redirect::route('admin.tournaments.index')
+            ->with(array('flash_message' => "Tournament cancelled"));
+    }
 
     /**
      * Form for adding user to tournament
