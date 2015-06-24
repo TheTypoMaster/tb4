@@ -268,6 +268,13 @@ Route::group(array('prefix' => '/api/external/v1', 'before' => 'basic.once', 'af
 
 });
 
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links', 'middleware' => 'destroy.session'), function() {
+    // --- NEW DEPOSIT ROUTES ---
+    Route::resource('deposits', 'Frontend\DepositsController');
+    Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
+    Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
+});
+
 // new login/logout methods
 Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
 

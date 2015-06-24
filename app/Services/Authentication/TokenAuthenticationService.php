@@ -146,6 +146,10 @@ class TokenAuthenticationService {
         // log betting user In
         Auth::login($user);
 
+        $this->usertoken->updateWithId($tokenRecord['id'], array(
+            'expiry' => Carbon::now(),
+        ));
+
         // get both user model details
         $userBasic = Auth::user()->toArray();
         $userFull = $this->usertopbetta->getUserDetailsFromUserId($userBasic['id']);
