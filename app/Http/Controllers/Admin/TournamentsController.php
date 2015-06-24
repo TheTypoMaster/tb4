@@ -117,6 +117,11 @@ class TournamentsController extends Controller
         $to = Request::get('to', null);
         $order = Request::get('order', array());
 
+        //set the ordering
+        if( count($order) ) {
+            $this->tournamentRepo->setOrder($order);
+        }
+
 		if ($search) {
 			$tournaments = $this->tournamentRepo->search($search);
 		} else if ($from && $to) {

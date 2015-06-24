@@ -45,10 +45,15 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
     public function search($search)
     {
         return $this->model
-            ->orderBy('start_date', 'desc')
-            ->where('name', 'LIKE', "%$search%")
-            ->orWhere('id', 'LIKE', "%$search%")
+            ->from('tbdb_tournament as tournament')
+            ->leftJoin('tbdb_tournament as parent', 'parent.id', '=', 'tournament.parent_tournament_id')
+            ->leftJoin('tbdb_event_group', 'tbdb_event_group.id', '=', 'tournament.event_group_id')
+            ->leftJoin('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id')
+            ->orderBy($this->order[0], $this->order[1])
+            ->where('tournament.name', 'LIKE', "%$search%")
+            ->orWhere('tournament.id', 'LIKE', "%$search%")
             ->with('parentTournament', 'eventGroup', 'sport')
+            ->select(array('tournament.*'))
             ->paginate();
     }
 
@@ -85,14 +90,37 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
     public function getTournamentsInDateRange($from, $to, $paged = null)
     {
         $model = $this->model
-            ->where('start_date', '>=', $from)
-            ->where('start_date', '<=', $to);
+            ->from('tbdb_tournament as tournament')
+            ->leftJoin('tbdb_tournament as parent', 'parent.id', '=', 'tournament.parent_tournament_id')
+            ->leftJoin('tbdb_event_group', 'tbdb_event_group.id', '=', 'tournament.event_group_id')
+            ->leftJoin('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id')
+            ->orderBy($this->order[0], $this->order[1])
+            ->where('tournament.start_date', '>=', $from)
+            ->where('tournament.start_date', '<=', $to);
 
         if( $paged ) {
-            return $model->paginate($paged);
+            return $model->select(array('tournament.*'))->paginate($paged);
         }
 
-        return $model->get();
+        return $model->get(array('tournament.*'));
+    }
+
+    public function findAllPaginated($relations = array(), $paginate = 15)
+    {
+        return $this->model
+            ->from('tbdb_tournament as tournament')
+            ->leftJoin('tbdb_tournament as parent', 'parent.id', '=', 'tournament.parent_tournament_id')
+            ->leftJoin('tbdb_event_group as event_group', 'event_group.id', '=', 'tournament.event_group_id')
+            ->leftJoin('tbdb_tournament_sport as sport', 'sport.id', '=', 'event_group.sport_id')
+            ->orderBy($this->order[0], $this->order[1])
+            ->select(array('tournament.*'))
+            ->paginate();
+    }
+
+    public function setOrder(array $order)
+    {
+        $this->order = $order;
+        return $this;
     }
 
 } 
