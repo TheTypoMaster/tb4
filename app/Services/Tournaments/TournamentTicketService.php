@@ -8,7 +8,7 @@
 
 namespace TopBetta\Services\Tournaments;
 
-
+use Log;
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
@@ -19,10 +19,15 @@ class TournamentTicketService {
      * @var TournamentTicketRepositoryInterface
      */
     private $tournamentTicketRepository;
+    /**
+     * @var TournamentTransactionService
+     */
+    private $transactionService;
 
-    public function __construct(TournamentTicketRepositoryInterface $tournamentTicketRepository)
+    public function __construct(TournamentTicketRepositoryInterface $tournamentTicketRepository, TournamentTransactionService $transactionService)
     {
         $this->tournamentTicketRepository = $tournamentTicketRepository;
+        $this->transactionService = $transactionService;
     }
 
     /**
@@ -41,7 +46,7 @@ class TournamentTicketService {
         ));
 
         if ( ! $ticket ) {
-            throw new TournamentEntryException("Error createing ticket");
+            throw new TournamentEntryException("Error creating ticket");
         }
 
         return $ticket;
@@ -62,5 +67,60 @@ class TournamentTicketService {
         $tickets = $this->tournamentTicketRepository->getLimitedFreeTicketsForUserBetween($user->id, $start, $end);
 
         return $tickets;
+    }
+
+    /**
+     * Gets the total cost of the ticket
+     * @param $ticket
+     * @return mixed
+     */
+    public function getTicketValue($ticket)
+    {
+        return $ticket->tournament->buy_in + $ticket->tournament->entry_fee +
+            $ticket->rebuy_count * ( $ticket->tournament->rebuy_buyin + $ticket->tournament->rebuy_entry ) +
+            $ticket->topup_count * ( $ticket->tournament->topup_buyin + $ticket->tournament->topup_entry );
+    }
+
+    /**
+     * Creates a tournament refund transaction
+     * @param $ticket
+     * @return bool|null
+     */
+    public function refundTicket($ticket)
+    {
+        Log::info("TournamentTicketService: Refunding ticket " . $ticket->id);
+
+        //validation
+        if( $ticket->refunded_flag ) {
+            Log::error("TournamentTicketService: Ticket " . $ticket->id . "already refunded");
+            return null;
+        }
+
+        if( $ticket->resulted_flag ) {
+            Log::error("TournamentTicketService: Ticket " . $ticket->id . " already resulted");
+            return null;
+        }
+
+        $value = $this->getTicketValue($ticket);
+
+        //create refund transaction
+        $transaction = $this->transactionService->createRefundTransaction($ticket->user_id, $value);
+
+        //update tickets with refund info
+        $this->tournamentTicketRepository->updateWithId($ticket->id, array(
+            "refunded_flag" => true,
+            "result_transaction_id" => $transaction['id'],
+        ));
+
+        return $transaction;
+    }
+
+    public function removeTournamentTicketForUser($tournament, $userId)
+    {
+        $ticket = $this->tournamentTicketRepository->getTicketByUserAndTournament($userId, $tournament->id);
+
+        $this->refundTicket($ticket);
+
+        return $ticket->delete();
     }
 }

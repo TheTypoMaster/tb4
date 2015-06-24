@@ -149,5 +149,12 @@ class TournamentLeaderboardService {
         return $this->increaseCurrency($leaderboard->id, $amount);
     }
 
+    public function removeLeaderboardRecordForUser($tournament, $userId)
+    {
+        $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($userId, $tournament->id);
+
+        return $leaderboard->delete();
+    }
+
 
 }

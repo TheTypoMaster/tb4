@@ -235,7 +235,9 @@ class TournamentsController extends Controller
 	 */
 	public function show($id)
 	{
-		//
+		$tournament = $this->tournamentRepo->find($id);
+
+        return View::make('admin.tournaments.show', compact('tournament'));
 	}
 
 	/**
@@ -419,6 +421,18 @@ class TournamentsController extends Controller
         $tournament = $this->tournamentRepo->find($tournamentId);
 
         return View::make('admin.tournaments.add-users', compact('tournament', 'result'));
+    }
+
+    public function removeUserFromTournament($tournamentId, $userId)
+    {
+        try {
+            $this->tournamentService->removeUserFromTournament($tournamentId, $userId);
+        } catch(\Exception $e) {
+            return Redirect::route('admin.tournaments.show', array($tournamentId))
+                ->with(array("flash_message" => $e->getMessage()));
+        }
+
+        return;
     }
 
     /**

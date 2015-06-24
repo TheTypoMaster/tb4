@@ -23,15 +23,15 @@
             </ul>
         @endif
 
-        {!! Form::open(array("url" => array("/admin/tournaments/add-users", $tournament->id), "method" => "POST")) }}
+        {!! Form::open(array("url" => array("/admin/tournaments/add-users", $tournament->id), "method" => "POST")) !!}
 
         <div class="form-group">
-            {!! Form::label("users", "Users: ") }}
-            {!! Form::textarea("users", null, array("class" => "form-control")) }}
+            {!! Form::label("users", "Users: ") !!}
+            {!! Form::textarea("users", null, array("class" => "form-control")) !!}
         </div>
 
         <div class="form-group">
-            {!! Form::submit("Save", array("class" => "btn btn-primary form-control")) }}
+            {!! Form::submit("Save", array("class" => "btn btn-primary form-control")) !!}
         </div>
     </div>
     <!-- /.col-lg-12 -->
