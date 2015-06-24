@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use Request;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
+use TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface;
 use TopBetta\Repositories\Contracts\TODRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
@@ -66,6 +67,10 @@ class TournamentsController extends Controller
      * @var MarketRepositoryInterface
      */
     private $marketRepository;
+    /**
+     * @var MeetingVenueRepositoryInterface
+     */
+    private $meetingVenueRepository;
 
     /**
      * @param DbTournamentRepository $tournamentRepo
@@ -77,6 +82,9 @@ class TournamentsController extends Controller
      * @param TournamentLabelsRepositoryInterface $labelsRepository
      * @param TournamentPrizeFormatRepositoryInterface $prizeFormatRepository
      * @param TournamentService $tournamentService
+     * @param TournamentAdminService $tournamentAdminService
+     * @param MarketRepositoryInterface $marketRepository
+     * @param MeetingVenueRepositoryInterface $meetingVenueRepository
      */
     public function __construct(DbTournamentRepository $tournamentRepo,
                                 DbSportsRepository $sportsrepo,
@@ -88,7 +96,8 @@ class TournamentsController extends Controller
                                 TournamentPrizeFormatRepositoryInterface $prizeFormatRepository,
                                 TournamentService $tournamentService,
                                 TournamentAdminService $tournamentAdminService,
-                                MarketRepositoryInterface $marketRepository )
+                                MarketRepositoryInterface $marketRepository,
+                                MeetingVenueRepositoryInterface $meetingVenueRepository )
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -103,6 +112,7 @@ class TournamentsController extends Controller
         $this->tournamentService = $tournamentService;
         $this->tournamentAdminService = $tournamentAdminService;
         $this->marketRepository = $marketRepository;
+        $this->meetingVenueRepository = $meetingVenueRepository;
     }
 
 	/**
@@ -174,7 +184,9 @@ class TournamentsController extends Controller
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
-        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
+        $venues = array("Select Meeting") + $this->meetingVenueRepository->findAll()->lists('name', 'id')->all();
+
+        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'venues'));
 	}
 
 	/**
@@ -187,7 +199,6 @@ class TournamentsController extends Controller
         $tournamentData = array_except(Input::all(), array(
             '_method',
             '_token',
-            'competition_id',
             'entries_close_after',
         ));
 
@@ -220,7 +231,7 @@ class TournamentsController extends Controller
         } catch (ValidationException $e) {
             return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getErrors()))->withInput();
         } catch (\Exception $e) {
-            \Log::info($e->getTraceAsString());
+            \Log::info($e->getMessage() . PHP_EOL . $e->getTraceAsString());
             return Redirect::route('admin.tournaments.create')->with(array('flash_message' => $e->getMessage()))->withInput();
         }
 

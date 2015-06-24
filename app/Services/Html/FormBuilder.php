@@ -22,9 +22,10 @@ class FormBuilder extends \Collective\Html\FormBuilder{
 	public function datetime($name, $value, $options){
 
 		$class = array_get($options, 'class');
+        $disabled = in_array('disabled', $options) ? 'disabled' : null;
 
 		return "<div class='input-group datepicker'>
-                    <input type='text' class='form-control $class' name='$name' id='$name' readonly value='$value'/>
+                    <input type='text' class='form-control $class' name='$name' id='$name' $disabled readonly value='$value'/>
                     <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span>
                     </span>
                 </div>";

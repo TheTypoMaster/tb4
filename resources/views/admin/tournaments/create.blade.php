@@ -21,14 +21,28 @@
                         {!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group event-group-container" id="event-group">
                         {!! Form::label('event_group_id', 'Event Group') !!}<br/>
                         {!! Form::select('event_group_id', [], null, array("" => "","class" => "event-multiselect form-control")) !!}
+                        <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select Future Meeting</a>
+                    </div>
+
+
+                    <div class="event-group-container" id="future-meeting" style='display:none'>
+                        <div class="form-group">
+                            {!! Form::label('future_meeting_id', "Future Meeting") !!}<br/>
+                            {!! Form::select('future_meeting_id', $venues, null, array("class" => "event-multiselect form-control", "disabled")) !!}
+                            <a style='display:none' href="#" class="event-group-toggle" data-target="#event-group">Select Existing Meeting</a>
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('future_meeting_date', "Future Meeting Start") !!}
+                            {!! Form::datetime('future_meeting_date', null, array()) !!}
+                        </div>
                     </div>
 
                     <div class="form-group">
                         {!! Form::label('tournament_buyin_id', "Ticket Value") !!}
-                        {!! Form::select('tournament_buyin_id', $buyins, null, array("class" => "form-control")) !!}
+                        {!! Form::select('tournament_buyin_id', $buyins, null, array("class" => "form-control",)) !!}
                         <label id="limit_applies" style="display:none;">
                             {!! Form::checkbox('free_tournament_buyin_limit_flag', true, true) !!} Free Buyin Limit Applies
                         </label>
@@ -309,6 +323,18 @@
                     });
             });
 
+            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
+                $('#event-group').find('.event-group-toggle').show();
+            } else {
+                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
+                $eventGroup.show();
+                $eventGroup.find('.form-control').removeAttr('disabled');
+                $eventGroup.find('.event-group-toggle').hide();
+                $eventGroup.find('.event-multiselect').multiselect('enable');
+                $future.hide();
+                $future.find('.form-control').attr('disabled', 'disabled');
+            }
+
 
         });
 
@@ -331,6 +357,22 @@
                             $('.competition-multiselect').multiselect("rebuild");
                         });
             });
+
+        });
+
+        $('.event-group-toggle').click(function() {
+            var $target = $($(this).data('target'));
+            $target.show();
+            $target.find('.form-control').removeAttr('disabled');
+            $target.find('.event-multiselect').multiselect('enable');
+            $target.find('.event-group-toggle').show();
+
+            var $container = $(this).parents('.event-group-container');
+            $container.hide();
+            $container.find('.form-control').attr('disabled', 'disabled');
+            $container.find('.event-multiselect').multiselect('disable');
+            $container.find('.event-group-toggle').hide();
+
         });
 
         $('#event_group_id').change(function() {
@@ -443,6 +485,12 @@
             $('.sport-multiselect').multiselect(config);
             $('.event-multiselect').multiselect(config);
             $('.competition-multiselect').multiselect(config);
+
+            //trigger the change event on load
+            var $tournamentSportId = $('#tournament_sport_id');
+            if($tournamentSportId.val() > 0) {
+                $tournamentSportId.change();
+            }
         });
     </script>
 @stop

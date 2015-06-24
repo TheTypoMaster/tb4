@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Tournaments;
 
 
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
@@ -16,6 +17,7 @@ use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
 use TopBetta\Repositories\DbTournamentRepository;
 use Carbon\Carbon;
+use TopBetta\Services\Events\CompetitionService;
 
 class TournamentService {
 
@@ -55,6 +57,10 @@ class TournamentService {
      * @var EventModelRepositoryInterface
      */
     private $eventRepository;
+    /**
+     * @var CompetitionService
+     */
+    private $competitionService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -63,7 +69,8 @@ class TournamentService {
                                 TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
                                 TournamentBuyInService $buyInService,
                                 TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
-                                EventModelRepositoryInterface $eventRepository)
+                                EventModelRepositoryInterface $eventRepository,
+                                CompetitionService $competitionService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -74,6 +81,7 @@ class TournamentService {
         $this->leaderboardService = $leaderboardService;
         $this->ticketService = $ticketService;
         $this->eventRepository = $eventRepository;
+        $this->competitionService = $competitionService;
     }
 
     /**
@@ -117,7 +125,6 @@ class TournamentService {
 
     public function createTournament($tournamentData)
     {
-
         //dates
         $tournamentData['created_date'] = Carbon::now()->toDateTimeString();
         $tournamentData['updated_date'] = Carbon::now()->toDateTimeString();
@@ -137,7 +144,24 @@ class TournamentService {
         }
 
         //get start and end dates
-        if( $eventGroupId = array_get($tournamentData, 'event_group_id', null)) {
+        if( $futureMeetingId = array_get($tournamentData, 'future_meeting_id', null) ) {
+            $competition = $this->competitionService->createCompetitionFromMeetingVenue(
+                array_get($tournamentData, 'tournament_sport_id', null),
+                array_get($tournamentData, 'competition_id', null),
+                $futureMeetingId,
+                Carbon::createFromFormat('Y-m-d H:i', array_get($tournamentData, 'future_meeting_date'))
+            );
+
+            $tournamentData['event_group_id'] = $competition['id'];
+            $tournamentData['start_date'] = array_get($tournamentData, 'future_meeting_date');
+            $tournamentData['end_date'] = $tournamentData['start_date'];
+
+            //betting closed date
+            if (array_get($tournamentData, 'close_betting_on_first_match_flag')) {
+                $tournamentData['betting_closed_date'] = $tournamentData['start_date'];
+            }
+
+        } else if( $eventGroupId = array_get($tournamentData, 'event_group_id', null)) {
             if ($event = $this->competitionRepository->getFirstEventForCompetition($eventGroupId)) {
                 $tournamentData['start_date'] = $event->start_date;
                 $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
@@ -193,15 +217,28 @@ class TournamentService {
         $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
         $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
-        $tournament = $this->tournamentRepository->create(array_except($tournamentData, array(
-            'tournament_buyin_id',
-            'tournament_topup_buyin_id',
-            'tournament_rebuy_buyin_id',
-            'tournament_labels',
-            'rebuy_end_after',
-            'topup_end_after',
-            'topup_start_after',
-        )));
+        try {
+            $tournament = $this->tournamentRepository->create(array_except($tournamentData, array(
+                'tournament_buyin_id',
+                'tournament_topup_buyin_id',
+                'tournament_rebuy_buyin_id',
+                'tournament_labels',
+                'rebuy_end_after',
+                'topup_end_after',
+                'topup_start_after',
+                'future_meeting_id',
+                'future_meeting_date',
+                'competition_id',
+            )));
+        } catch (ValidationException $e) {
+            //clean up any competition that might have been created
+            if(array_Get($tournamentData, 'future_meeting_id')) {
+                $comp = $this->competitionRepository->find(array_get($tournamentData, 'event_group_id'));
+                $comp->delete();
+            }
+
+            throw $e;
+        }
 
         $tournament = $this->tournamentRepository->find($tournament['id']);
 
