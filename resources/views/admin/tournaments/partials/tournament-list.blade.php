@@ -64,6 +64,7 @@
                 @if($tournament->end_date > Carbon\Carbon::now())
                     {!! link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) !!}
                 @endif
+                {!! link_to_route('admin.tournaments.show', "Show Entrants", array($tournament->id), array("class" => "btn btn-success")) !!}
             </td>
 		</tr>
 

@@ -432,7 +432,8 @@ class TournamentsController extends Controller
                 ->with(array("flash_message" => $e->getMessage()));
         }
 
-        return;
+        return Redirect::route('admin.tournaments.show', array($tournamentId))
+            ->with(array('flash_message' => "User removed"));
     }
 
     /**

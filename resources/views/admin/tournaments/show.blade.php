@@ -26,7 +26,13 @@
                         <td>{{ $ticket->user->username }}</td>
                         <td>{{ $ticket->rebuy_count }}</td>
                         <td>{{ $ticket->topup_count }}</td>
-                        <td></td>
+                        <td>
+                            @if( ! $tournament->paid_flag )
+                                {!! Form::open(array("url" => "/admin/tournaments/remove/" . $tournament->id . "/" . $ticket->user->id , "method" => "POST")) !!}
+                                {!! Form::submit('Remove Entrant', array('class' => 'btn btn-danger')) !!}
+                                {!! Form::close() !!}
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
