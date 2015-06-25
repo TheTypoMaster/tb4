@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta;
+namespace TopBetta\Helpers;
 
 use Illuminate\Support\Facades\Config;
 
