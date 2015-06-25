@@ -18,4 +18,8 @@ class TournamentTicketModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');
     }
 
+    public function bets()
+    {
+        return $this->hasMany('TopBetta\Models\TournamentBetModel', 'tournament_ticket_id');
+    }
 }
