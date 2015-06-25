@@ -53,6 +53,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
             return 0;
         }
 
+
         //process market type
         $marketType = null;
         if( $marketTypeName = array_get($data, 'BetTypeName', null) ) {
@@ -69,6 +70,9 @@ class MarketListProcessor extends AbstractFeedProcessor {
             return $market['id'];
         }
 
+        if($marketTypeName && $market){
+            Log::debug($this->logprefix."Market/Type - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", MarketTypeName: ".$data['BetTypeName'].", MarketStatus ".$data['MarketStatus']);
+        }
         return 0;
     }
 
@@ -79,7 +83,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
             $marketTypeName = $marketTypeName . ' ' . $period;
         }
 
-        Log::info($this->logprefix."Processing Market Type, BetTypeName: $marketTypeName");
+       // Log::info($this->logprefix."Processing Market Type, BetTypeName: $marketTypeName");
 
         //market type data
         $data = array(
@@ -93,7 +97,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
 
     private function processMarket($marketType, $event, $data)
     {
-        Log::info($this->logprefix."Processing Market");
+       // Log::info($this->logprefix."Processing Market");
 
         //market data
         $marketData = array(
