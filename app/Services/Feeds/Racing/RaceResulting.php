@@ -252,9 +252,9 @@ class RaceResulting {
             Log::info('RESULTING: all bets for event id: ' . $eventModel->id);
 
             // get current micro time
-            list($partMsec, $partSec) = explode(" ", microtime());
-            $currentTimeMs = $partSec.$partMsec;
-            File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
+//            list($partMsec, $partSec) = explode(" ", microtime());
+//            $currentTimeMs = $partSec.$partMsec;
+//            File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
             //$this->betresults->resultAllBetsForEvent($eventModel->id);
             Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id), Config::get('betresulting.queue'));
