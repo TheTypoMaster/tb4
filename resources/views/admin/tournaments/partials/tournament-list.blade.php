@@ -71,7 +71,7 @@
 
                 @if( ! $tournament->tickets->count() )
                     {!! Form::open(array("route" => array("admin.tournaments.destroy", $tournament->id), "method" => "DELETE")) !!}
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger delete-button">Delete</button>
                     {!! Form::close() !!}
                 @endif
             </td>
