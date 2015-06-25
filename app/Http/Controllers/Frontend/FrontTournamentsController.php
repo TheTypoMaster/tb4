@@ -2,7 +2,6 @@
 
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Helpers\TimeHelper;
-use TopBetta;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Services\Tournaments\TournamentLeaderboardService;

@@ -1,6 +1,6 @@
 <?php namespace TopBetta\Http\Controllers\Frontend;
 
-use TopBetta;
+use TopBetta\Http\Controllers\Controller;
 
 class FrontUsersBettingLimitsController extends Controller {
 
@@ -18,7 +18,7 @@ class FrontUsersBettingLimitsController extends Controller {
 		//if there's a requested bet limit change, get the request date from audit table
 		$requested_date = null;
 
-		$requested_log = \TopBetta\UserAudit::getRecentUserAuditByUserIDAndFieldName(\Auth::user() -> id, array('requested_bet_limit', 'bet_limit'));
+		$requested_log = \TopBetta\Models\UserAudit::getRecentUserAuditByUserIDAndFieldName(\Auth::user() -> id, array('requested_bet_limit', 'bet_limit'));
 
 		if (!is_null($requested_log) && $requested_log -> field_name == 'requested_bet_limit') {
 
