@@ -167,7 +167,7 @@
                         {!! Form::label("bet_limit_per_event", "Bet limit per event ") !!}
                         <div class="input-group">
                             <div class="input-group-addon">$</div>
-                            {!! Form::number('bet_limit_per_event', null, array("class" => "form-control")) !!}
+                            {!! Form::number('bet_limit_per_event', $tournament->bet_limit_per_event/100, array("class" => "form-control")) !!}
                         </div>
                     </div>
 

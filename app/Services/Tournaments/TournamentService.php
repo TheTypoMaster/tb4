@@ -143,8 +143,8 @@ class TournamentService {
                 $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
             } else {
                 if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
-                    $tournamentData['start_date'] = $eventGroup->find($eventGroup)->start_date;
-                    $tournamentData['end_date']   = $eventGroup->competitionRepository->find($eventGroup)->start_date;
+                    $tournamentData['start_date'] = $eventGroup->start_date;
+                    $tournamentData['end_date']   = $eventGroup->start_date;
                 }
             }
             //betting closed date
@@ -190,6 +190,7 @@ class TournamentService {
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
+        $tournamentData['bet_limit_per_event'] *= 100;
         $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
         $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
@@ -218,6 +219,7 @@ class TournamentService {
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
+        $tournamentData['bet_limit_per_event'] *= 100;
         $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
         $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
@@ -246,8 +248,8 @@ class TournamentService {
                 $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
             } else {
                 if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
-                    $tournamentData['start_date'] = $eventGroup->find($eventGroup)->start_date;
-                    $tournamentData['end_date']   = $eventGroup->competitionRepository->find($eventGroup)->start_date;
+                    $tournamentData['start_date'] = $eventGroup->start_date;
+                    $tournamentData['end_date']   = $eventGroup->start_date;
                 }
             }
             //betting closed date
