@@ -48,15 +48,16 @@ class RaceResulting {
         $this->betproducts = $betproducts;
         $this->betresults = $betresults;
         $this->betResultService = $betResultService;
+        $this->logprefix = 'RaceResultService - Result Events: ';
     }
 
     public function ResultEvents($racingArray){
 
         // Log the POST of results data
-        $date = substr(Carbon\Carbon::now(), 0, 10);
-        list($partMsec, $partSec) = explode(" ", microtime());
-        $currentTimeMs = $partSec.$partMsec;
-        File::append('/tmp/'.$date.'-ResultPost-'. $currentTimeMs, json_encode($racingArray));
+        //$date = substr(Carbon\Carbon::now(), 0, 10);
+        //list($partMsec, $partSec) = explode(" ", microtime());
+        //$currentTimeMs = $partSec.$partMsec;
+        //File::append('/tmp/'.$date.'-ResultPost-'. $currentTimeMs, json_encode($racingArray));
 
         $eventList = array();
         $firstProcess = true;
@@ -68,7 +69,7 @@ class RaceResulting {
             if (!isset($dataArray ['MeetingId']) || !isset($dataArray ['RaceNo']) || !isset($dataArray ['Selection']) || !isset($dataArray ['BetType'])
                                                 || !isset($dataArray ['PriceType']) || !isset($dataArray ['PlaceNo']) || !isset($dataArray ['Payout']))
             {
-                Log::debug("BackAPI: Racing - Processing Result. Missing Results data. Can't process");
+                Log::debug($this->logprefix."Missing Results data. Can't process");
                 continue;
             }
 
@@ -85,7 +86,7 @@ class RaceResulting {
             $payout = $dataArray ['Payout'];
             $providerName = "igas"; // TODO remove this hard coding
 
-            $log_msg_prefix = "BackAPI: Racing - Processing Result. MID:$meetingId, RN:$raceNo";
+            $log_msg_prefix = $this->logprefix. " MID:$meetingId, RN:$raceNo -";
 
             // check if this is a product we need to store in the DB
             $productUsed = $this->_canProductBeProcessed($dataArray, $providerName, $raceNo, "Result");
