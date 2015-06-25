@@ -37,12 +37,13 @@ class TeamProcessor extends AbstractFeedProcessor {
             return 0;
         }
 
-        Log::info($this->logprefix."Processing team " . $teamId);
         //team data
         $data = array(
             "external_team_id" => $teamId,
             "name" => array_get($team, 'team_name', null),
         );
+
+        Log::info($this->logprefix."Processing team " . $teamId. ", Name: ".$data['name']);
 
         //create the team
         $teamModel = $this->teamRepository->updateOrCreate($data, 'external_team_id');
