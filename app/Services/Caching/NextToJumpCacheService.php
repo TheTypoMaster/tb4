@@ -107,7 +107,7 @@ class NextToJumpCacheService {
      * @return mixed
      */
     private function _updateNextToJumpCacheObject($nextToJumpArray){
-        Log::debug($this->logprefix.'Adding cache object - '.print_r($nextToJumpArray,true));
+        Log::debug($this->logprefix.'Adding cache object - ', $nextToJumpArray);
         return Cache::tags('topbetta-nexttojump')->forever('topbetta-nexttojump', $nextToJumpArray);
     }
 
