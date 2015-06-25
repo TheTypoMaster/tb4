@@ -365,7 +365,7 @@ class TournamentsController extends Controller
         } catch (ValidationException $e) {
             return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getErrors()))->withInput();
         } catch (\Exception $e) {
-            \Log::info($e->getTraceAsString());
+            \Log::info($e->getMessage() . PHP_EOL . $e->getTraceAsString());
             return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getMessage()))->withInput();
         }
 

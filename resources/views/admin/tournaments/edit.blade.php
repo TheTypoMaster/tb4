@@ -94,7 +94,7 @@
                         {!! Form::label('minimum_prize_pool', 'Minimum Prize Pool ') !!}
                         <div class="input-group">
                             <div class="input-group-addon">$</div>
-                            {!! Form::number('minimum_prize_pool', 10, array("class" => "form-control")) !!}
+                            {!! Form::number('minimum_prize_pool', $tournament->minimum_prize_pool/100, array("class" => "form-control")) !!}
                         </div>
                     </div>
 
@@ -167,7 +167,7 @@
                         {!! Form::label("bet_limit_per_event", "Bet limit per event ") !!}
                         <div class="input-group">
                             <div class="input-group-addon">$</div>
-                            {!! Form::number('bet_limit_per_event', null, array("class" => "form-control")) !!}
+                            {!! Form::number('bet_limit_per_event', $tournament->bet_limit_per_event/100, array("class" => "form-control")) !!}
                         </div>
                     </div>
 
@@ -178,7 +178,7 @@
                                 {!! Form::select('entries_close_after', array("Select Event"), null, array("class"=>"form-control events-selector")) !!}
                             </div>
                             <div class="col-lg-6">
-                                {!! Form::datetime('entries_close', null, array("class"=>"event-date")) !!}
+                                {!! Form::datetime('entries_close', $tournament->entries_close, array("class"=>"event-date")) !!}
                             </div>
                         </div>
                     </div>
@@ -374,8 +374,20 @@
                             $('.sport-multiselect').multiselect("rebuild");
                             $('.event-multiselect').multiselect("rebuild");
                             $('.competition-multiselect').multiselect("rebuild");
-                        })
-				 $.get('/admin/tournaments/get-markets/' + value)
+
+                            //hacky way to set event
+                            $('.events-selector').each(function() {
+                                var $eventSelect = $(this);
+                                var $date = $(this).parents('.form-group').find('.event-date');
+
+                                $.each(events, function(i, v) {
+                                    if(v.start_date == $date.val()) {
+                                        $eventSelect.val(v.id)
+                                    }
+                                })
+                            });
+                        });
+				$.get('/admin/tournaments/get-markets/' + value)
                     .done(function(data) {
                         if( data.length > 0 ) {
                             var html = $();
@@ -407,7 +419,8 @@
                 }
             });
 
-            $(this).parents('.form-group').find('.event-date').val(startDate);
+            var $eventDates = $(this).parents('.form-group').find('.event-date');
+            $eventDates.val(startDate);
         });
 
         $('input[name="jackpot_flag"]').change(function(){
