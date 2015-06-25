@@ -5,12 +5,12 @@
 
         <div class="form-group">
             {!! Form::label("from", 'From') !!}
-            {!! Form::datetime("from", null, array("class" => "datepicker")) !!}
+            {!! Form::datetime("from", $from, array("class" => "datepicker")) !!}
         </div>
 
         <div class="form-group">
             {!! Form::label("to", "To") !!}
-            {!! Form::datetime("to", null, array("class" => "datepicker")) !!}
+            {!! Form::datetime("to", $to, array("class" => "datepicker")) !!}
         </div>
 
         <div class="form-group">
@@ -22,21 +22,21 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
-			<th>ID</th>
-			<th>Tournament Name</th>
-			<th>TOD</th>
-			<th>Parent Name</th>
-			<th>Event Group</th>
-			<th>Type/Sport</th>
-			<th>Start Time</th>
-			<th>End Time</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.id', 'ID', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.name', 'Tournament Name', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.tod_flag', 'TOD', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'parent.name', 'Parent Name', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'event_group..name', 'Event Group', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'sport.name', 'Sport', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.start_date', 'Start Date', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.end_date', 'End Date', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>Prize</th>
-			<th>FCP</th>
-			<th>Game</th>
-			<th>Buy-in</th>
-			<th>Entry-fee</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.free_credit_flag', 'FCP', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.jackpot_flag', 'Game', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.buy_in', 'Buy In', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.entry_fee', 'Entry Fee', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>Ent.</th>
-			<th>Status</th>
+			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.status_flag', 'Status', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
             <th>Action</th>
 		</tr>
 	</thead>
