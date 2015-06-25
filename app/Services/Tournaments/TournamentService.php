@@ -8,8 +8,8 @@
 
 namespace TopBetta\Services\Tournaments;
 
-
 use TopBetta\Services\Validation\Exceptions\ValidationException;
+use Log;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
@@ -167,8 +167,8 @@ class TournamentService {
                 $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
             } else {
                 if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
-                    $tournamentData['start_date'] = $eventGroup->find($eventGroup)->start_date;
-                    $tournamentData['end_date']   = $eventGroup->competitionRepository->find($eventGroup)->start_date;
+                    $tournamentData['start_date'] = $eventGroup->start_date;
+                    $tournamentData['end_date']   = $eventGroup->start_date;
                 }
             }
             //betting closed date
@@ -214,6 +214,7 @@ class TournamentService {
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
+        $tournamentData['bet_limit_per_event'] *= 100;
         $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
         $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
@@ -255,6 +256,7 @@ class TournamentService {
         //convert from cents
         $tournamentData['start_currency'] *= 100;
         $tournamentData['minimum_prize_pool'] *= 100;
+        $tournamentData['bet_limit_per_event'] *= 100;
         $tournamentData['rebuy_currency'] = array_get($tournamentData, 'rebuy_currency', 0) * 100;
         $tournamentData['topup_currency'] = array_get($tournamentData, 'topup_currency', 0) * 100;
 
@@ -283,8 +285,8 @@ class TournamentService {
                 $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
             } else {
                 if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
-                    $tournamentData['start_date'] = $eventGroup->find($eventGroup)->start_date;
-                    $tournamentData['end_date']   = $eventGroup->competitionRepository->find($eventGroup)->start_date;
+                    $tournamentData['start_date'] = $eventGroup->start_date;
+                    $tournamentData['end_date']   = $eventGroup->start_date;
                 }
             }
             //betting closed date
@@ -339,6 +341,70 @@ class TournamentService {
         }
 
         return $tournament;
+    }
+
+    /**
+     * Cancels a tournament
+     * @param $tournamentId
+     * @param $reason
+     * @return mixed
+     * @throws \Exception
+     */
+    public function cancelTournament($tournamentId, $reason)
+    {
+        $tournament = $this->tournamentRepository->find($tournamentId);
+
+        //check exists
+        if( ! $tournament ) {
+            throw new \Exception("Tournament does not exist");
+        }
+
+        //check the tournament is not paid
+        if( $tournament->paid_flag ) {
+            throw new \Exception("Tournament has already been paid");
+        }
+
+        //check there is a reason
+        if( ! $reason ) {
+            throw new \Exception("No reason supplied");
+        }
+
+        Log::info("TournamentService: Cancelling Tournament " . $tournament->id);
+
+        //refund all tickets
+        foreach($tournament->tickets as $ticket) {
+            $this->ticketService->refundTicket($ticket);
+        }
+
+        //set to cancelled
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            "cancelled_flag" => true,
+            "cancelled_reason" => $reason,
+        ));
+
+        return $tournament;
+    }
+
+    /**
+     * Deletes as tournament
+     * @param $tournamentId
+     * @return mixed
+     * @throws \Exception
+     */
+    public function deleteTournament($tournamentId)
+    {
+        $tournament = $this->tournamentRepository->find($tournamentId);
+
+        if( ! $tournament ) {
+            throw new \Exception("Tournament does not exist");
+        }
+
+        //can't delete if the tournament has tickets
+        if( $tournament->tickets->count() ) {
+            throw new\Exception("Cannot delete tournament with entrants");
+        }
+
+        return $tournament->delete();
     }
 
     /**

@@ -23,4 +23,12 @@ class HtmlServiceProvider extends CollectiveHtmlServiceProvider {
 
 	}
 
+    public function registerHtmlBuilder()
+    {
+        $this->app->bindShared('html', function($app)
+        {
+            return new HtmlBuilder($app['url']);
+        });
+    }
+
 }

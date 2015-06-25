@@ -143,6 +143,9 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
     Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
     Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
 
+    //user tournament bets
+    Route::resource('user.tournament.bets', 'Frontend\UserTournamentBetsController');
+
     // ::: SPECIAL COMBINED CALLS :::
     Route::get('combined/tournaments', 'Frontend\FrontCombinedTournamentsController@index');
     Route::get('combined/racing', 'Frontend\FrontCombinedRacingController@index');
@@ -222,6 +225,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-markets/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getMarkets');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
     Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
+    Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
+    Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
