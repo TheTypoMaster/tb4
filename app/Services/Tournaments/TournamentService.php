@@ -98,6 +98,20 @@ class TournamentService {
         return $transactions;
     }
 
+    public function removeUserFromTournament($tournamentId, $userId)
+    {
+        $tournament = $this->tournamentRepository->find($tournamentId);
+        if( $tournament->paid_flag ) {
+            throw new \Exception("Tournament has finished");
+        }
+
+        $this->ticketService->removeTournamentTicketForUser($tournament, $userId);
+
+        $this->leaderboardService->removeLeaderboardRecordForUser($tournament, $userId);
+
+        return $tournament;
+    }
+
     public function isTournamentOpen($tournament)
     {
         if( $tournament->closed_betting_on_first_match_flag && $tournament->start_date < Carbon::now()) {

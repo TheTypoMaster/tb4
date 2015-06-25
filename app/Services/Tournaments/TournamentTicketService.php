@@ -114,4 +114,13 @@ class TournamentTicketService {
 
         return $transaction;
     }
+
+    public function removeTournamentTicketForUser($tournament, $userId)
+    {
+        $ticket = $this->tournamentTicketRepository->getTicketByUserAndTournament($userId, $tournament->id);
+
+        $this->refundTicket($ticket);
+
+        return $ticket->delete();
+    }
 }

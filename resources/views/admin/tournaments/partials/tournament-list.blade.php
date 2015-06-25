@@ -65,6 +65,9 @@
                     {!! link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) !!}
                 @endif
 
+                {!! link_to_route('admin.tournaments.show', "Show Entrants", array($tournament->id), array("class" => "btn btn-success")) !!}
+
+
                 @if( ! $tournament->paid_flag && ! $tournament->cancelled_flag )
                     {!! link_to('/admin/tournaments/cancel/' . $tournament->id, "Cancel", array("class" => "btn btn-warning")) !!}
                 @endif
@@ -74,6 +77,7 @@
                     <button type="submit" class="btn btn-danger">Delete</button>
                     {!! Form::close() !!}
                 @endif
+
             </td>
 		</tr>
 

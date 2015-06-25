@@ -224,8 +224,10 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-events/{eventGroupId}', 'Admin\TournamentsController@getEvents');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
     Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
+    Route::post('tournaments/remove/{tournamentId}/{userId}', 'Admin\TournamentsController@removeUserFromTournament');
     Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
+
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
