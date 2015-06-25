@@ -115,6 +115,12 @@ class TournamentsController extends Controller
 		$search = Request::get('q', '');
         $from = Request::get('from', null);
         $to = Request::get('to', null);
+        $order = Request::get('order', array());
+
+        //set the ordering
+        if( count($order) ) {
+            $this->tournamentRepo->setOrder($order);
+        }
 
 		if ($search) {
 			$tournaments = $this->tournamentRepo->search($search);
@@ -124,7 +130,7 @@ class TournamentsController extends Controller
 			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
 
-		return View::make('admin.tournaments.index', compact('tournaments', 'search'));
+		return View::make('admin.tournaments.index', compact('tournaments', 'search', 'from', 'to', 'order'));
 	}
 
 	/**
@@ -361,7 +367,7 @@ class TournamentsController extends Controller
         } catch (ValidationException $e) {
             return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getErrors()))->withInput();
         } catch (\Exception $e) {
-            \Log::info($e->getTraceAsString());
+            \Log::info($e->getMessage() . PHP_EOL . $e->getTraceAsString());
             return Redirect::route('admin.tournaments.edit', array($id))->with(array('flash_message' => $e->getMessage()))->withInput();
         }
 
@@ -376,8 +382,46 @@ class TournamentsController extends Controller
 	 */
 	public function destroy($id)
 	{
-		//
+		try {
+            $this->tournamentService->deleteTournament($id);
+        } catch (\Exception $e) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => $e->getMessage()));
+        }
+
+        return Redirect::route('admin.tournaments.index')
+            ->with(array('flash_message' => "Tournament deleted"));
 	}
+
+    public function cancelForm($id)
+    {
+        $tournament = $this->tournamentRepo->find($id);
+
+        if( ! $tournament ) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => "Tournament not found"));
+        }
+
+        if( $tournament->paid_flag ) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => "Tournament has already paid, cannot cancel"));
+        }
+
+        return View::make('admin.tournaments.cancel', compact('tournament'));
+    }
+
+    public function cancel($id)
+    {
+        try {
+            $this->tournamentService->cancelTournament($id, Input::get('reason', null));
+        } catch (\Exception $e) {
+            return Redirect::route('admin.tournaments.index')
+                ->with(array('flash_message' => $e->getMessage()));
+        }
+
+        return Redirect::route('admin.tournaments.index')
+            ->with(array('flash_message' => "Tournament cancelled"));
+    }
 
     /**
      * Form for adding user to tournament
