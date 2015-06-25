@@ -8,6 +8,9 @@
  */
 
 
-interface SportRepositoryInterface {
-
+interface SportRepositoryInterface
+{
+    const SPORT_GALLOPING  = 'galloping';
+    const SPORT_HARNESS    = 'harness';
+    const SPORT_GREYHOUNDS = 'greyhounds';
 }

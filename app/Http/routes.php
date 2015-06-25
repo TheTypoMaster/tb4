@@ -222,6 +222,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-competitions/{sportId}', 'Admin\TournamentsController@getCompetitions');
     Route::get('tournaments/get-event-groups/{competitionId}', 'Admin\TournamentsController@getEventGroups');
     Route::get('tournaments/get-events/{eventGroupId}', 'Admin\TournamentsController@getEvents');
+    Route::get('tournaments/get-markets/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getMarkets');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
     Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
     Route::post('tournaments/remove/{tournamentId}/{userId}', 'Admin\TournamentsController@removeUserFromTournament');
