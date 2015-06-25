@@ -142,9 +142,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     {
         return $this->model
             ->where('tournament_competition_id', $tournamentCompetitionId)
-            ->whereHas('events', function($q){
-                $q->where('start_date', '>=', Carbon::now()->toDateTimeString());
-            })
+            ->where('start_date', '>=', Carbon::now())
             ->where('display_flag', 1)
             ->orderBy('start_date', 'ASC')
             ->get();
