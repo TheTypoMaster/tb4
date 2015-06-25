@@ -37,11 +37,6 @@ class TournamentModel extends Eloquent {
 		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
 
-    public function tickets()
-    {
-        return $this->hasMany('TopBetta\Models\TournamentTicketModel', 'tournament_id');
-    }
-
     public function calculateTournamentPrizePool($tournamentId) {
         $tournament = TournamentModel::find($tournamentId);
 
