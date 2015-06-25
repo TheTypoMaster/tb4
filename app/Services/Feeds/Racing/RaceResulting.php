@@ -249,7 +249,7 @@ class RaceResulting {
          * result BETS
          */
         if($eventModel){
-            Log::info('RESULTING: all bets for event id: ' . $eventModel->id);
+            Log::info($log_msg_prefix . "RESULTING: all bets for event id: " . $eventModel->id);
 
             // get current micro time
 //            list($partMsec, $partSec) = explode(" ", microtime());
@@ -286,10 +286,10 @@ class RaceResulting {
         $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
 
         if (!$productUsed) {
-            Log::debug("BackAPI: Racing - Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+            Log::debug($this->logprefix . "Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
             return false;
         }
-        Log::info("BackAPI: Racing - Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
+        Log::info($this->logprefix . "Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
         return true;
     }
 }
