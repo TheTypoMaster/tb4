@@ -272,7 +272,7 @@ class BetResultRepo
 
 			$bet->resultAmount = 0;
 			Log::info('LOSING BET: ' . $bet->id);
-			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+			\TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
 			return true;
 		}	
 		
