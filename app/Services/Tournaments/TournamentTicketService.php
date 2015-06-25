@@ -119,6 +119,11 @@ class TournamentTicketService {
     {
         $ticket = $this->tournamentTicketRepository->getTicketByUserAndTournament($userId, $tournament->id);
 
+        //delete all tournament bet for ticket
+        foreach($ticket->bets as $bet) {
+            $bet->delete();
+        }
+
         $this->refundTicket($ticket);
 
         return $ticket->delete();
