@@ -112,14 +112,14 @@ class GameListProcessor extends AbstractFeedProcessor {
 
     private function processSport($sport)
     {
-        Log::info("BackAPI: Sports - Processing Sport: $sport");
+        Log::info($this->logprefix."Processing Sport: $sport");
 
         return $this->sportRepository->updateOrCreate(array("name" => $sport), "name");
     }
 
     private function processRegion($region)
     {
-        Log::info("BackAPI: Sports - Processing Region: $region");
+        Log::info($this->logprefix."Processing Region: $region");
 
         return $this->regionRepository->updateOrCreate(array("name" => $region), "name");
     }
