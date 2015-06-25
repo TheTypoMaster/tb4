@@ -35,6 +35,22 @@ class TournamentTransactionService {
         return array('buyin_transaction' => $buyin, 'entry_transaction' => $entry);
     }
 
+    /**
+     * Creates refund transaction for user
+     * @param $userId
+     * @param $amount
+     * @return bool
+     */
+    public function createRefundTransaction($userId, $amount)
+    {
+        return $this->accountTransactionService->increaseAccountBalance($userId, $amount, $this->getRefundTransactionType());
+    }
+
+    private function getRefundTransactionType()
+    {
+        return AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REFUND;
+    }
+
     private function getBuyInTransactionType($type)
     {
         switch($type)

@@ -255,6 +255,7 @@ class TournamentBuyInService
         return $transactions;
     }
 
+
     private function getTotalToTurnOverForTournament($tournament, $rebuys = 0, $topups = 0 )
     {
         return $tournament['start_currency'] + $tournament['rebuy_currency'] * $rebuys + $tournament['topup_currency'] * $topups;
