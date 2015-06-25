@@ -24,18 +24,26 @@
 
     <div class="row">
         <div class="col-lg-12">
-            {!! Form::open(array('url' => "/admin/tournaments/cancel/" . $tournament->id, "method" => "POST", "class" => "form")) !!}
+            {!! Form::open(array('url' => "/admin/tournaments/cancel/" . $tournament->id, "method" => "POST", "class" => "form", 'id' => "cancel-form")) !!}
             <div class="form-group">
                 {!! Form::label('reason', 'Reason ') !!}
                 {!! Form::textarea('reason', null, array("class" => "form-control")) !!}
             </div>
 
             <div class="form-group">
-                {!! Form::submit('Cancel', array('class' => 'form-control btn btn-primary')) !!}
+                {!! Form::submit('Cancel Tournament', array('class' => 'form-control btn btn-primary')) !!}
             </div>
             {!! Form::close() !!}
 
         </div>
     </div>
+
+    <script type="text/javascript">
+        $('#cancel-form').submit(function(){
+            var conf = confirm("Are you sure you want to cancel this tournament?");
+
+            return conf;
+        })
+    </script>
 
 @stop
