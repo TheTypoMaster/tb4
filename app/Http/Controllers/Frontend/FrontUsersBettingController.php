@@ -1,5 +1,6 @@
 <?php namespace TopBetta\Http\Controllers\Frontend;
 
+use TopBetta\Http\Controllers\Controller;
 use TopBetta;
 
 class FrontUsersBettingController extends Controller {
