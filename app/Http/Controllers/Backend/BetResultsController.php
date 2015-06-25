@@ -514,7 +514,7 @@ class BetResultsController extends Controller {
 		$betRecord->save();
                 
                 // send result to Risk Manager
-                TopBetta\RiskManagerAPI::sendBetResult(array(
+                TopBetta\Helpers\RiskManagerAPI::sendBetResult(array(
                             "ReferenceId" => $betArray['id'],
                             "ClientId" => $betArray['user_id'],
                             "Status" => $result_status,

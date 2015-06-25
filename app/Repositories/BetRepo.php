@@ -415,7 +415,7 @@ class BetRepo
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
-			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+			\TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
 			return true;
 		}
 
@@ -464,7 +464,7 @@ class BetRepo
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
-			\TopBetta\RiskManagerAPI::sendBetResult($bet);
+			\TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
 
             //notify bet refund
             $this->betDashboardNotificationService->notify(array('id' => $bet->id, 'notification_type' => 'bet_refund'));
