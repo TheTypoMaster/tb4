@@ -41,7 +41,7 @@ class UserRegistrationController extends Controller {
 
 			//send the welcome/activation email if external_welcome_email is not specified or false
 			if( ! $externalWelcomeEmail ) {
-				$this->accountservice->sendWelcomeEmail($accountCreationResponse['id'], Input::get("email_source", null));
+				$this->accountservice->sendWelcomeEmail($accountCreationResponse['user_id'], Input::get("email_source", null));
 			}
 
             $this->userDashboardNotificationService->notify($accountCreationResponse);

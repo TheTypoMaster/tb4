@@ -161,6 +161,7 @@ return [
 		'TopBetta\Providers\BetLimitRepoServiceProvider',
 		'TopBetta\Providers\RepositoryServiceProvider',
 		'TopBetta\Services\Html\HtmlServiceProvider',
+        'TopBetta\Providers\EmailServiceProvider',
 
 	],
 

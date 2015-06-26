@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Exceptions\InvalidFormatException;
 use Validator;
 use Hash;
@@ -36,20 +37,27 @@ class UserAccountService {
      * @var BetSourceRepositoryInterface
      */
     protected $betsource;
+    /**
+     * @var ThirdPartyEmailServiceInterface
+     */
+    private $emailService;
 
 
     /**
      * @param BetSourceRepositoryInterface $betsource
      * @param UserRepositoryInterface $basicUser
      * @param UserTopBettaRepositoryInterface $fullUser
+     * @param ThirdPartyEmailServiceInterface $emailService
      */
     function __construct(BetSourceRepositoryInterface $betsource,
                          UserRepositoryInterface $basicUser,
-                         UserTopbettaRepositoryInterface $fullUser)
+                         UserTopbettaRepositoryInterface $fullUser,
+                         ThirdPartyEmailServiceInterface $emailService)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
         $this->betsource = $betsource;
+        $this->emailService = $emailService;
     }
 
 
@@ -77,6 +85,9 @@ class UserAccountService {
 
         // create the full account record
         $full = $this->createFullAccount($input);
+
+        //create email contact
+        $this->emailService->addUserToContacts($this->basicUser->find($basic['id']));
 
         return array_merge($basic, $full);
     }
