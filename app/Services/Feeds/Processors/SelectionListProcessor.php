@@ -55,8 +55,8 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
     public function process($data)
     {
-        if ( ! ($eventId = array_get($data, 'GameId', null)) || ! ($marketId = array_get($data, 'MarketId', null)) || ! ($selectionId = array_get($data, 'SelectionNo', null))) {
-            Log::error($this->logprefix."No EventId, marketId or SelectionId specified");
+        if ( ! ($eventId = array_get($data, 'GameId', null)) || ! ($marketId = array_get($data, 'MarketId', null))) {
+            Log::error($this->logprefix."No EventId or MarketId");
             return 0;
         }
 
