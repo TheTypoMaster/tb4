@@ -22,6 +22,8 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
     protected $guarded = array();
     protected $hidden = array('password', 'remember_token');
 
+    protected $hashableAttributes = array();
+
 	/*
 	 * Relationships
 	 */

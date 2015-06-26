@@ -6,6 +6,8 @@ use TopBetta;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
 //use Regulus\ActivityLog\Models\Activity;
 
+use TopBetta\Repositories\Contracts\UserRepositoryInterface;
+use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
 use View;
@@ -18,12 +20,24 @@ class FrontUsersController extends Controller {
      * @var UserDashboardNotificationService
      */
     private $userDashboardNotificationService;
+    /**
+     * @var UserRepositoryInterface
+     */
+    private $userRepository;
+    /**
+     * @var ThirdPartyEmailServiceInterface
+     */
+    private $emailService;
 
-    public function __construct(UserDashboardNotificationService $userDashboardNotificationService) {
+    public function __construct(UserDashboardNotificationService $userDashboardNotificationService,
+                                UserRepositoryInterface $userRepository,
+                                ThirdPartyEmailServiceInterface $emailService) {
 		//we are only protecting certain routes in this controller
 		$this -> beforeFilter('auth', array('only' => array('index')));
 
         $this->userDashboardNotificationService = $userDashboardNotificationService;
+        $this->userRepository = $userRepository;
+        $this->emailService = $emailService;
     }
 
 	public function login() {
@@ -361,6 +375,7 @@ class FrontUsersController extends Controller {
 
 			if ($user['status'] == 200) {
 
+                $this->emailService->addUserToContacts($this->userRepository->find($user['id']));
                 $this->userDashboardNotificationService->notify(array('id' => array_get($user, 'id', null)));
 
 				if ($input['type'] != 'upgrade') {
