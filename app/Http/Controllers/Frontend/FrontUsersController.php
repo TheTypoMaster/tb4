@@ -4,7 +4,7 @@ use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use TopBetta\Services\DashboardNotification\UserDashboardNotificationService;
-//use Regulus\ActivityLog\Models\Activity;
+use Regulus\ActivityLog\Models\Activity;
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Lang;
@@ -75,15 +75,18 @@ class FrontUsersController extends Controller {
 						$verified = ($tbUser -> identity_verified_flag) ? true : false;
 					}
 
-					// record the login to the activity table
-//					Activity::log([
-//						'contentId'   => Auth::user()->id,
-//						'contentType' => 'User',
-//						'action'      => 'Legacy Log In',
-//						'description' => 'User logged in to TopBetta',
-//						'details'     => 'Username: '.Auth::user()->username,
-//						//'updated'     => $id ? true : false,
-//					]);
+                    $ua = $this->getBrowser();
+                    $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . " User Agent:" . $ua['userAgent'];
+
+                    // record the login to the activity table
+					Activity::log([
+						'contentId'   => Auth::user()->id,
+						'contentType' => 'User',
+						'action'      => 'Legacy Log In',
+						'description' => 'User logged in to TopBetta',
+						'details'     => 'Username: '.Auth::user()->username. ' - '.$user_details,
+						//'updated'     => $id ? true : false,
+					]);
 
 					return array("success" => true, "result" => array("id" => $login['userInfo']['id'], "username" => $login['userInfo']['username'], "first_name" => ucwords($firstname), "last_name" => ucwords($lastname), "email" => \Auth::user()->email, "mobile" => $mobile, "full_account" => $login['userInfo']['full_account'], "verified" => $verified, "register_date" => \TopBetta\Helpers\TimeHelper::isoDate(\Auth::user()->registerDate)));
 
@@ -104,17 +107,17 @@ class FrontUsersController extends Controller {
 
 	public function logout() {
 
-//		if (Auth::check()) {
-//			// record the logout to the activity table
-//			Activity::log([
-//				'contentId'   => Auth::user()->id,
-//				'contentType' => 'User',
-//				'action'      => 'Legacy Log Out',
-//				'description' => 'User logged out of TopBetta',
-//				'details'     => 'Username: '.Auth::user()->username,
-//				//'updated'     => $id ? true : false,
-//			]);
-//		}
+		if (Auth::check()) {
+			// record the logout to the activity table
+			Activity::log([
+				'contentId'   => Auth::user()->id,
+				'contentType' => 'User',
+				'action'      => 'Legacy Log Out',
+				'description' => 'User logged out of TopBetta',
+				'details'     => 'Username: '.Auth::user()->username,
+				//'updated'     => $id ? true : false,
+			]);
+		}
 
 		//logout of laravel only
 		Auth::logout();
@@ -186,7 +189,7 @@ class FrontUsersController extends Controller {
 		$bname = 'Unknown';
 		$platform = 'Unknown';
 		$version= "";
-	
+
 		//First get the platform?
 		if (preg_match('/linux/i', $u_agent)) {
 			$platform = 'linux';
@@ -197,7 +200,7 @@ class FrontUsersController extends Controller {
 		elseif (preg_match('/windows|win32/i', $u_agent)) {
 			$platform = 'windows';
 		}
-	
+
 		// Next get the name of the useragent yes seperately and for good reason
 		if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
 		{

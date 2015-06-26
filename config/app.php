@@ -151,7 +151,7 @@ return [
 		'Collective\Html\HtmlServiceProvider',
 		'Barryvdh\Cors\CorsServiceProvider',
         'Cartalyst\Sentry\SentryServiceProvider',
-	//	'Regulus\ActivityLog\ActivityLogServiceProvider',
+		'Regulus\ActivityLog\ActivityLogServiceProvider',
 
 		/*
 		 * TopBetta Service Providers
@@ -216,7 +216,7 @@ return [
 		'Form' => 'Collective\Html\FormFacade',
 		'Html' => 'Collective\Html\HtmlFacade',
         'Sentry' => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
-	//	'Activity' => 'Regulus\ActivityLog\Models\Activity',
+		'Activity' => 'Regulus\ActivityLog\Models\Activity',
 
 		/*
 		 * TopBetta Aliases

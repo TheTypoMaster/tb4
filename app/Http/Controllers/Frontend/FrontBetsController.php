@@ -7,7 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\Input;
 use Auth;
 use Log;
-// use Regulus\ActivityLog\Models\Activity;
+use Regulus\ActivityLog\Models\Activity;
 
 use TopBetta\Facades\BetLimitRepo;
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
@@ -442,18 +442,17 @@ class FrontBetsController extends Controller {
                     $this->betnotificationservice->notifyBetPlacement($betSourceRecord['id'], $messages);
                 }
 
-
-//				if (Auth::check()) {
-//					// record the logout to the activity table
-//					Activity::log([
-//						'contentId'   => $bet['bet_id'],
-//						'contentType' => 'Bet',
-//						'action'      => 'User Placed Bet',
-//						'description' => 'User placed racing exotic bet',
-//						'details'     => 'Bet Details - Meeting ID: '. $legacyData[0]->meeting_id. ', Race Id: '. $legacyData[0]->race_id. ', Amount: '.$input['amount']
-//						//'updated'     => $id ? true : false,
-//					]);
-//				}
+				if (Auth::check()) {
+					// record the logout to the activity table
+					Activity::log([
+						'contentId'   => $bet['bet_id'],
+						'contentType' => 'Bet',
+						'action'      => 'User Placed Bet',
+						'description' => 'User placed racing exotic bet',
+						'details'     => 'Bet Details - Meeting ID: '. $legacyData[0]->meeting_id. ', Race Id: '. $legacyData[0]->race_id. ', Amount: '.$input['amount']
+						//'updated'     => $id ? true : false,
+					]);
+				}
 
 			} elseif ($bet['status'] == 401) {
 
@@ -526,17 +525,17 @@ class FrontBetsController extends Controller {
 
                             if($bet['status'] == 200) {
 
-//								if (Auth::check()) {
-//									// record the logout to the activity table
-//									Activity::log([
-//										'contentId'   => $bet['bet_id'],
-//										'contentType' => 'Bet',
-//										'action'      => 'User Placed Bet',
-//										'description' => 'User placed racing bet',
-//										'details'     => 'Bet Details - Meeting ID: '. $legacyData[0]->meeting_id. ', Race Id: '. $legacyData[0]->race_id. ', Amount: '.$input['amount']
-//										//'updated'     => $id ? true : false,
-//									]);
-//								}
+								if (Auth::check()) {
+									// record the logout to the activity table
+									Activity::log([
+										'contentId'   => $bet['bet_id'],
+										'contentType' => 'Bet',
+										'action'      => 'User Placed Bet',
+										'description' => 'User placed racing bet',
+										'details'     => 'Bet Details - Meeting ID: '. $legacyData[0]->meeting_id. ', Race Id: '. $legacyData[0]->race_id. ', Amount: '.$input['amount']
+										//'updated'     => $id ? true : false,
+									]);
+								}
 
                                 $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'],'notification_type' => 'bet_placement'));
                             }
@@ -708,17 +707,17 @@ class FrontBetsController extends Controller {
 
                             if($bet['status'] == 200) {
 
-//								if (Auth::check()) {
-//									// record the logout to the activity table
-//									Activity::log([
-//										'contentId'   => $bet['bet_id'],
-//										'contentType' => 'Bet',
-//										'action'      => 'User Placed Bet',
-//										'description' => 'User placed sport bet',
-//										'details'     => 'Bet Details - Selection: '.$selectionModel->name
-//										//'updated'     => $id ? true : false,
-//									]);
-//								}
+								if (Auth::check()) {
+									// record the logout to the activity table
+									Activity::log([
+										'contentId'   => $bet['bet_id'],
+										'contentType' => 'Bet',
+										'action'      => 'User Placed Bet',
+										'description' => 'User placed sport bet',
+										'details'     => 'Bet Details - Selection: '.$selectionModel->name
+										//'updated'     => $id ? true : false,
+									]);
+								}
 
                                 $this->dashboardNotificationService->notify(array("id" => $bet['bet_id'], 'notification_type' => 'bet_placement'));
                             }
@@ -775,7 +774,8 @@ class FrontBetsController extends Controller {
 						}
 
 					}
-// tournament bets don't have this set... quick fix
+
+                    // tournament bets don't have this set... quick fix
 					if (!isset($bet['bet_id'])) $bet['bet_id'] = '';
 
 					//bet has been placed by now, deal with messages and errors
