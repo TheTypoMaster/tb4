@@ -10,6 +10,7 @@ use App;
 use Hash;
 use Auth;
 use Carbon\Carbon;
+use Regulus\ActivityLog\Activity;
 
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTokenRepositoryInterface;
@@ -153,6 +154,18 @@ class TokenAuthenticationService {
         // get both user model details
         $userBasic = Auth::user()->toArray();
         $userFull = $this->usertopbetta->getUserDetailsFromUserId($userBasic['id']);
+
+        if (Auth::check()) {
+            // record the logout to the activity table
+            Activity::log([
+                'contentId'   => Auth::user()->id,
+                'contentType' => 'User',
+                'action'      => 'Token Log In',
+                'description' => 'User logged into TopBetta',
+                'details'     => 'Username: '.Auth::user()->username,
+                //'updated'     => $id ? true : false,
+            ]);
+        }
 
         // return user and topbetta_user model
         return array_merge($userBasic, $userFull);
