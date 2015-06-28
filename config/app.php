@@ -116,7 +116,7 @@ return [
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
 		'Illuminate\Auth\AuthServiceProvider',
 		'Illuminate\Bus\BusServiceProvider',
-		'Illuminate\Cache\CacheServiceProvider',
+        'Illuminate\Cache\CacheServiceProvider',
 		'Illuminate\Foundation\Providers\ConsoleSupportServiceProvider',
 		'Illuminate\Routing\ControllerServiceProvider',
 		'Illuminate\Cookie\CookieServiceProvider',
@@ -144,6 +144,7 @@ return [
 		'TopBetta\Providers\ConfigServiceProvider',
 		'TopBetta\Providers\EventServiceProvider',
 		'TopBetta\Providers\RouteServiceProvider',
+        'TopBetta\Providers\ResponseServiceProvider',
 
 		/*
 		 * 3rd Party Service Providers
