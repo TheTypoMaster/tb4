@@ -1,9 +1,8 @@
 /bootstrap/compiled.php
 /vendor
-composer.phar
-composer.lock
 .DS_Store
 /nbproject
 .idea
 atlassian-ide-plugin.xml
 .vagrant
+.env
