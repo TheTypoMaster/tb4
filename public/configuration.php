@@ -60,6 +60,7 @@ class JConfig {
 	public $api_test_mode = false;
 	public $time_zone = 'AEST';
 	public $time_zone_long = 'AEST (UT+10:00)';
+    public $tb_api_key = 't0pb3tt@l3g@cy@p1k3y';
 
 	/*
 	public function __construct() {
