@@ -1,5 +1,7 @@
 <?php namespace TopBetta\Models;
 
+use Log;
+
 class AccountBalance extends \Eloquent {
 	
 	protected $table = 'tbdb_account_transaction';
