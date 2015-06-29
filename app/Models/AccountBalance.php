@@ -164,15 +164,15 @@ class AccountBalance extends \Eloquent {
      	
     	// debugging
     	$o = print_r($transaction,true);
-    	LogHelper::l("AccountBalance newTransaction: About to save transaction:  Object:$o", 1);
+    	Log::debug("AccountBalance newTransaction: About to save transaction:  Object:$o");
     	
     	// return false if save fails
     	if(!$transaction->id) {
-    		LogHelper::l("AccountBalance newTransaction: Save Failed: ID:$transaction->id.");
+    		Log::debug("AccountBalance newTransaction: Save Failed: ID:$transaction->id.");
     		return false;
     	}
     	// return the new transaction ID
-     	LogHelper::l("AccountBalance newTransaction: Saved: ID:$transaction->id.");
+     	Log::debug("AccountBalance newTransaction: Saved: ID:$transaction->id.");
 
     	return $transaction->id;
     }
@@ -208,7 +208,7 @@ class AccountBalance extends \Eloquent {
     		
     		$t = print_r($transactionTypeRec,true);
     		
-    		LogHelper::l("AccountBalance _increment: Desc: $t.");
+    		Log::debug("AccountBalance _increment: Desc: $t.");
     		$desc = $transactionTypeRec[0]['description'];
     	}
     
