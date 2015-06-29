@@ -387,7 +387,8 @@ class TournamentProcessor extends TopBettaCLI
 			'user_id' 		=> $user->id,
 			'tournament_id' => $tournament->id,
 			'currency' 		=> $tournament->start_currency,
-			'turned_over' 	=> 0
+			'turned_over' 	=> 0,
+            'balance_to_turnover' => $tournament->start_currency,
 		);
 
 		$this->leaderboard->store($leaderboard);
