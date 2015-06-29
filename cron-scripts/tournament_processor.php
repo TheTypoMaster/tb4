@@ -290,7 +290,7 @@ class TournamentProcessor extends TopBettaCLI
 					$display_cash = '$' . number_format($cash / 100, 2);
 					$payout_final->win_amount = (int) $prize['cash'];
 
-					if($formula == 'cash') {
+					if($formula == 'cash' || $formula == 'ticket') {
 						$display_cash .= ' in cash';
 						$result_id = $this->_awardCash($qualifier, $cash);
 						$payout_final->saveCashPayout();
