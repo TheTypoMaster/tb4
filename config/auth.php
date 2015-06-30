@@ -60,7 +60,7 @@ return [
 
 	'password' => [
 		'email' => 'emails.password',
-		'table' => 'password_resets',
+		'table' => 'tb_password_reminders',
 		'expire' => 60,
 	],
 
