@@ -45,11 +45,11 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     //Risk endpoint to get user account details
     Route::resource('risk-user-account', 'Backend\RiskUserAccountController', array('only' => array('show')));
 
-    Route::put('risk-show-event/{event}', "Backend\RiskEventsController@showEvent");
-    Route::put('risk-hide-event/{event}', "Backend\RiskEventsController@hideEvent");
+    Route::put('risk-show-event/{event}', 'Backend\RiskEventsController@showEvent');
+    Route::put('risk-hide-event/{event}', 'Backend\RiskEventsController@hideEvent');
 
-    Route::put('risk-show-competition/{competition}', "Backend\RiskCompetitionController@showCompetition");
-    Route::put('risk-hide-competition/{competition}', "Backend\RiskCompetitionController@hideCompetition");
+    Route::put('risk-show-competition/{competition}', 'Backend\RiskCompetitionController@showCompetition');
+    Route::put('risk-hide-competition/{competition}', 'Backend\RiskCompetitionController@hideCompetition');
 
 });
 
@@ -222,7 +222,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/get-competitions/{sportId}', 'Admin\TournamentsController@getCompetitions');
     Route::get('tournaments/get-event-groups/{competitionId}', 'Admin\TournamentsController@getEventGroups');
     Route::get('tournaments/get-events/{eventGroupId}', 'Admin\TournamentsController@getEvents');
-    Route::get('tournaments/get-markets/{competitionId}', 'TopBetta\admin\controllers\TournamentsController@getMarkets');
+    Route::get('tournaments/get-markets/{competitionId}', 'Admin\TournamentsController@getMarkets');
     Route::get('tournaments/get-parent-tournaments/{sportId}', 'Admin\TournamentsController@getParentTournaments');
     Route::post('tournaments/add-users/{tournamentId}', 'Admin\TournamentsController@addUsers');
     Route::post('tournaments/remove/{tournamentId}/{userId}', 'Admin\TournamentsController@removeUserFromTournament');
