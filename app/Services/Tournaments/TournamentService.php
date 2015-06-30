@@ -474,14 +474,21 @@ class TournamentService {
                 $automated_text  = 'This is a ' . $tournamntType . ' tournament';
 
                 if( $rebuys = array_get($tournamentData, 'rebuys', 0) ) {
-                    $event = $this->eventRepository->find(array_get($tournamentData, 'rebuy_end_after'));
-                    $automated_text .= ' with ' . $rebuys . ' Re-Buy Ins available until the start of ';
 
-                    if( $event->competition->first()->sport_id ) {
-                        $automated_text .= $event->name;
-                    } else {
-                        $automated_text .= 'race ' . $event->number;
+                    // if it was a future meeting we use a modified version of the automated text as we don't have the race or event available yet
+                    if($tournamentData['future_meeting_id'] != 0){
+                        $automated_text .= ' with ' . $rebuys . ' Re-Buy Ins available until '.$tournamentData['rebuy_end'];
+                    }else{
+                        $event = $this->eventRepository->find(array_get($tournamentData, 'rebuy_end_after'));
+                        $automated_text .= ' with ' . $rebuys . ' Re-Buy Ins available until the start of ';
+
+                        if( $event->competition->first()->sport_id ) {
+                            $automated_text .= $event->name;
+                        } else {
+                            $automated_text .= 'race ' . $event->number;
+                        }
                     }
+
                 }
 
                 $automated_text .= '. The cost of entry is ';
