@@ -51,7 +51,7 @@ class FrontPasswordResetsController extends Controller
             });
 
             if(isset($input['custom_remind_message'])){
-                \Config::set('auth.reminder.email', 'emails.auth.reminder_toptippa');
+                \Config::set('auth.password.email', 'emails.auth.reminder_toptippa');
                 \Config::set('mail.from.address', 'help@toptippa.com.au');
                 \Config::set('mail.from.name', 'TopTippa');
             }
