@@ -54,7 +54,7 @@ return [
 	|
 	*/
 
-	'from' => ['address' => null, 'name' => null],
+    'from' => array('address' => env('MAIL_FROM_EMAIL', 'help@topbetta.com'), 'name' => env('MAIL_FROM_NAME', 'TopBetta API')),
 
 	/*
 	|--------------------------------------------------------------------------
