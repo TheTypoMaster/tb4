@@ -27,7 +27,6 @@ class GetClientDetails {
             $platform = 'windows';
         }
 
-        $ub = '';
         // Next get the name of the useragent yes seperately and for good reason
         if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
         {
@@ -58,6 +57,9 @@ class GetClientDetails {
         {
             $bname = 'Netscape';
             $ub = "Netscape";
+        }else{
+            $bname = 'Unknown';
+            $ub = "Unknown";
         }
 
         // finally get the correct version number
