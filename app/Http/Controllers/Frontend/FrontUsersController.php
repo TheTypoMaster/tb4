@@ -215,7 +215,7 @@ class FrontUsersController extends Controller {
 			$platform = 'windows';
 		}
 
-		// Next get the name of the useragent yes seperately and for good reason
+    	// Next get the name of the useragent yes seperately and for good reason
 		if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
 		{
 			$bname = 'Internet Explorer';
@@ -245,7 +245,10 @@ class FrontUsersController extends Controller {
 		{
 			$bname = 'Netscape';
 			$ub = "Netscape";
-		}
+		}else{
+            $bname = 'Unknown';
+            $ub = "Unknown";
+        }
 	
 		// finally get the correct version number
 		$known = array('Version', $ub, 'other');
