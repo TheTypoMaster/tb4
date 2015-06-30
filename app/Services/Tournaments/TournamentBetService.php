@@ -48,7 +48,7 @@ class TournamentBetService {
         $bets = $this->betRepository->getBetsForSelection($selection);
 
         foreach($bets as $bet) {
-            Log::info("REFUNDING TOURNAMENT BET " . $bet->id . " FOR SELECTION " . $selection->id);
+            Log::info("REFUNDING TOURNAMENT BET " . $bet->id . " FOR SELECTION " . $selection);
 
             $this->betRepository->updateWithId($bet->id, array(
                 "resulted_flag" => true,

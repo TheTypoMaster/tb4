@@ -5,6 +5,7 @@ namespace TopBetta\Repositories;
 use TopBetta\Models\BetLimitType;
 use TopBetta\Models\BetLimitUser;
 use TopBetta\Models\BetModel;
+use TopBetta\Models\Bet;
 use TopBetta\Models\BetTypes;
 use TopBetta\Models\RaceMeeting;
 use TopBetta\Facades\BetRepo;
@@ -134,7 +135,7 @@ class BetLimitRepo
 		// 3: do our checks now
 		if ($this->betTypes->find($betData['bet_type_id'])->isExotic()) {
 			// exotic bet
-			$exoticClass = "\\TopBetta\\libraries\\exotic\\ExoticBet" . ucfirst($this->betTypes->where('id', $betData['bet_type_id'])->value('name'));
+			$exoticClass = "\\TopBetta\\Libraries\\exotic\\ExoticBet" . ucfirst($this->betTypes->where('id', $betData['bet_type_id'])->value('name'));
 			$exotic = new $exoticClass;
 			$exotic->selections = $betData['selection'];
 			$exotic->betAmount = $betData['value'];
