@@ -51,6 +51,7 @@ class TournamentLeaderboardService {
             'user_id' => $user->id,
             'currency' => $tournament->start_currency,
             'turned_over' => 0,
+            'balance_to_turnover' => $tournament->start_currency,
             'updated_date' => Carbon::now()->toDateTimeString(),
         ));
 
