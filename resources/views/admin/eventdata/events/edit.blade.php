@@ -67,7 +67,7 @@
             @foreach(array(0,1) as $i)
                 <div class="form-group teams-template form-inline">
                     {!! Form::label('teams', 'Team: ') !!}
-                    {!! Form::select("teams[]", array(0 => null) + $teams->lists('name', 'id'), array_get($event->teams->toArray(), $i . '.id', null), array("class" => "form-control select2")) !!}
+                    {!! Form::select("teams[]", array(0 => null) + $teams->lists('name', 'id')->all(), array_get($event->teams->toArray(), $i . '.id', null), array("class" => "form-control select2")) !!}
                     {!! Form::select("team_position[]", array(0 => null, 'home' => 'home', 'away' => 'away'), array_get($event->teams->toArray(), $i . '.pivot.team_position', null), array('class' => 'form-control')) !!}
                 </div>
             @endforeach

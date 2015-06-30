@@ -31,7 +31,7 @@ class FrontPasswordResetsController extends Controller
 
             return array("success" => false, "error" => $validator->messages()->all());
         } else {
-            $user = User::where('email', '=', $input['email']);
+            $user = UserModel::where('email', '=', $input['email']);
             if (! $user->count()) {
                 return array('success' => false, 'error' => Lang::get('reminders.user'));
             }
@@ -73,7 +73,7 @@ class FrontPasswordResetsController extends Controller
             return array("success" => false, "error" => $validator->messages()->all());
         } else {
 
-            $users = User::where('email', '=', $creds['email'])->get();
+            $users = UserModel::where('email', '=', $creds['email'])->get();
 
             if (!$users) {
                 return array('success' => false, 'error' => array(Lang::get('reminders.user')));

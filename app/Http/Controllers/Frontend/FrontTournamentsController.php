@@ -77,7 +77,7 @@ class FrontTournamentsController extends Controller {
 			echo serialize($featuredTourns);exit;
 			*/
 
-			$featuredTourns = \TopBetta\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->value('filter');
+			$featuredTourns = \TopBetta\Models\Affiliates::where('affiliate_id', $affiliateId)->where('campaign_id', $campaignId)->value('filter');
 			if ($featuredTourns) {
 				$featuredTourns = unserialize($featuredTourns);
 			} else {
