@@ -59,7 +59,7 @@ class UserSessionController extends Controller {
         $user = Auth::loginUsingId($userDetails['id']);
 
         $ua = $this->clientDetails->getBrowser();
-        $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . " User Agent:" . $ua['userAgent'];
+        $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . ", User Agent:" . $ua['userAgent'];
 
 		if (Auth::check()) {
 			// record the logout to the activity table

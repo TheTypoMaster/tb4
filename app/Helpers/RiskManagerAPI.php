@@ -1,5 +1,6 @@
 <?php namespace TopBetta\Helpers;
 
+use TopBetta\Models\BetResultStatus;
 use Illuminate\Support\Facades\Config;
 
 class RiskManagerAPI

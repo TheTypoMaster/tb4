@@ -1,4 +1,4 @@
-<?php namespace TopBetta;
+<?php namespace TopBetta\Helpers;
 
 /* Name: CurlRequestHelper
  * 

@@ -6,7 +6,7 @@
 
         </h2>
         <ul class="nav nav-tabs">
-            <span class='pull-right'>{!! link_to_route($returnRoute, 'Back to Sports', array("q"=>$search), array('class' => 'btn btn-outline btn-warning')) !!}</span>
+            <span class='pull-right'>{!! link_to_route($returnRoute, 'Back to ' . $modelName, array("q"=>$search), array('class' => 'btn btn-outline btn-warning')) !!}</span>
         </ul>
         <h4>Edit {{ $modelName }}</h4>
         <div class='col-lg-6'>
@@ -63,7 +63,7 @@
                             @endforeach
                         </select>
                     @elseif($field['type'] == 'datetime')
-                        {!! Form::datetime($field['field'], null, object_get($model, $field['field'])) !!}
+                        {!! Form::datetime($field['field'], object_get($model, $field['field']), array()) !!}
                     @elseif($field['type'] == 'select')
                         <select name="{{ $field['field'] }}" class="form-control select2">
                             @foreach($field['data'] as $option)
