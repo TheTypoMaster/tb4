@@ -48,7 +48,7 @@ class FrontPasswordResetsController extends Controller
                 \Config::set('mail.from.address', 'help@toptippa.com.au');
                 \Config::set('mail.from.name', 'TopTippa');
             }
-            Password::sendResetLinksendResetLink(array('email' => $input['email']), function($message) {
+            Password::sendResetLink(array('email' => $input['email']), function($message) {
                 $message->subject('Your Password Reminder');
             });
 
