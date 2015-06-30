@@ -75,7 +75,7 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
      */
     public function groups()
     {
-        return $this->belongsToMany('TopBetta\Models\AdminGroupModel', 'tb_admin_users_groups', 'group_id', 'user_id');
+        return $this->belongsToMany('TopBetta\Models\AdminGroupModel', 'tb_admin_users_groups', 'user_id', 'group_id');
     }
 
     /**
