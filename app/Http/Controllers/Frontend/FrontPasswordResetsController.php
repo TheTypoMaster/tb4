@@ -13,13 +13,6 @@ use View;
 class FrontPasswordResetsController extends Controller
 {
 
-    protected $passwordBroker;
-
-    function __construct(ResetsPasswords $passwordBroker)
-    {
-        $this->passwordBroker = $passwordBroker;
-    }
-
     /**
      * Store a newly created resource in storage.
      *
