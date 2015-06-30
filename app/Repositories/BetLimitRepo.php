@@ -5,6 +5,7 @@ namespace TopBetta\Repositories;
 use TopBetta\Models\BetLimitType;
 use TopBetta\Models\BetLimitUser;
 use TopBetta\Models\BetModel;
+use TopBetta\Models\Bet;
 use TopBetta\Models\BetTypes;
 use TopBetta\Models\RaceMeeting;
 use TopBetta\Facades\BetRepo;

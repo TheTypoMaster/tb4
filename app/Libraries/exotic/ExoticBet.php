@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta\libraries\exotic;
+namespace TopBetta\Libraries\exotic;
 
 /**
  * Description of ExoticBet
