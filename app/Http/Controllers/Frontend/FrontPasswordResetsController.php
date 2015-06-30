@@ -6,7 +6,7 @@ use TopBetta;
 use Password;
 use Hash;
 use Input;
-use Topbetta\Models\UserModel;
+use TopBetta\Models\UserModel;
 use Lang;
 use View;
 
