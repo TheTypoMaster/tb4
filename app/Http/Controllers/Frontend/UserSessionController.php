@@ -58,8 +58,8 @@ class UserSessionController extends Controller {
 
         $user = Auth::loginUsingId($userDetails['id']);
 
-        $ua = $this->clientDetails->getBrowser();
-        $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . ", User Agent:" . $ua['userAgent'];
+      //  $ua = $this->clientDetails->getBrowser();
+      //  $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . ", User Agent:" . $ua['userAgent'];
 
 		if (Auth::check()) {
 			// record the logout to the activity table
@@ -68,7 +68,7 @@ class UserSessionController extends Controller {
 				'contentType' => 'User',
 				'action'      => 'Log In',
 				'description' => 'User logged into TopBetta',
-				'details'     => 'Username: '.Auth::user()->username. ' - '.$user_details,
+				'details'     => 'Username: '.Auth::user()->username, //. ' - '.$user_details,
 				//'updated'     => $id ? true : false,
 			]);
 		}

@@ -89,8 +89,8 @@ class FrontUsersController extends Controller {
 						$verified = ($tbUser -> identity_verified_flag) ? true : false;
 					}
 
-                    $ua = $this->getBrowser();
-                    $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . ", User Agent:" . $ua['userAgent'];
+                    //$ua = $this->getBrowser();
+                    //$user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . ", User Agent:" . $ua['userAgent'];
 
                     // record the login to the activity table
 					Activity::log([
@@ -98,7 +98,7 @@ class FrontUsersController extends Controller {
 						'contentType' => 'User',
 						'action'      => 'Legacy Log In',
 						'description' => 'User logged in to TopBetta',
-						'details'     => 'Username: '.Auth::user()->username. ' - '.$user_details,
+						'details'     => 'Username: '.Auth::user()->username,//. ' - '.$user_details,
 						//'updated'     => $id ? true : false,
 					]);
 
