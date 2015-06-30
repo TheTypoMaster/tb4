@@ -3,6 +3,7 @@
 use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
+use TopBetta\Models\UserModel;
 use Illuminate\Support\Facades\Input;
 
 class FrontUsersProfileController extends Controller {
@@ -87,7 +88,7 @@ class FrontUsersProfileController extends Controller {
 
 				if ($joomlaPassword) {
 
-					$user = \User::find(\Auth::user() -> id);
+					$user = UserModel::find(\Auth::user() -> id);
 
 					$user -> password = $joomlaPassword;
 
@@ -95,7 +96,7 @@ class FrontUsersProfileController extends Controller {
 
 					$messages[] = \Lang::get('users.password_changed');
 
-					$audit = new \TopBetta\UserAudit( array('user_id' => \Auth::user() -> id, 'admin_id' => -1, 'field_name' => 'password', 'old_value' => '*', 'new_value' => '*', 'update_date' => date("Y-m-d H:i:s")));
+					$audit = new \TopBetta\Models\UserAudit( array('user_id' => \Auth::user() -> id, 'admin_id' => -1, 'field_name' => 'password', 'old_value' => '*', 'new_value' => '*', 'update_date' => date("Y-m-d H:i:s")));
 					$audit -> save();
 
 				}
@@ -117,7 +118,7 @@ class FrontUsersProfileController extends Controller {
 
 					$messages[] = \Lang::get('users.jackpot_flag_set');
 
-					$audit = new \TopBetta\UserAudit( array('user_id' => \Auth::user() -> id, 'admin_id' => -1, 'field_name' => 'email_jackpot_reminder_flag', 'old_value' => $oldFlag, 'new_value' => $input['jackpot_flag'], 'update_date' => date("Y-m-d H:i:s")));
+					$audit = new \TopBetta\Models\UserAudit( array('user_id' => \Auth::user() -> id, 'admin_id' => -1, 'field_name' => 'email_jackpot_reminder_flag', 'old_value' => $oldFlag, 'new_value' => $input['jackpot_flag'], 'update_date' => date("Y-m-d H:i:s")));
 					$audit -> save();
 
 				}
