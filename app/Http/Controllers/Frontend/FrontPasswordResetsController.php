@@ -3,7 +3,7 @@
 use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
-use Password;
+use Illuminate\Contracts\Auth\PasswordBroker;
 use Hash;
 use Input;
 use TopBetta\Models\UserModel;
@@ -12,6 +12,13 @@ use View;
 
 class FrontPasswordResetsController extends Controller
 {
+
+    protected $passwordBroker;
+
+    function __construct(PasswordBroker $passwordBroker)
+    {
+        $this->passwordBroker = $passwordBroker;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -49,7 +56,7 @@ class FrontPasswordResetsController extends Controller
                 \Config::set('mail.from.name', 'TopTippa');
             }
 
-            Password::remind(array('email' => $input['email']), function($message) {
+            $this->passwordBroker->sendResetLink(array('email' => $input['email']), function($message) {
                 $message->subject('Your Password Reminder');
             });
 

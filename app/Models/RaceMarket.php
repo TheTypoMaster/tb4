@@ -17,7 +17,7 @@ class RaceMarket extends \Eloquent {
      * @return mixed
      */
     public function markettype(){
-        return $this->hasOne('TopBetta\Models\RaceMarkettType', 'id', 'market_type_id');
+        return $this->hasOne('TopBetta\Models\RaceMarketType', 'id', 'market_type_id');
     }
 
 	
