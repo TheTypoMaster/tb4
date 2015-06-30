@@ -4,7 +4,6 @@ use TopBetta\Http\Controllers\Controller;
 
 use TopBetta;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Foundation\Auth\ResetsPasswords;
 use Hash;
 use Input;
 use TopBetta\Models\UserModel;
