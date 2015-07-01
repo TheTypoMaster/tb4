@@ -18,7 +18,7 @@
 
             <div class="form-group">
                 {!! Form::label("groups[]", "Groups") !!}
-                {!! Form::select("groups[]", $groups->lists('name', 'id'), $user->groups->lists('id'), array("class" => "form-control select2", "multiple")) !!}
+                {!! Form::select("groups[]", $groups->lists('name', 'id')->all(), $user->groups->lists('id')->all(), array("class" => "form-control select2", "multiple")) !!}
             </div>
 
             <div class="form-group">
