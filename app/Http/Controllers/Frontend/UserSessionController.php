@@ -98,4 +98,13 @@ class UserSessionController extends Controller {
         }
         return $this->response->success(array('You have been logged out!'), 200);
     }
+
+    public function user()
+    {
+        if( ! Auth::check() ) {
+            return $this->response->failed(array(), '401', 100, "Not logged in", "Please login first");
+        }
+
+        return $this->response->success(Auth::user()->toArray());
+    }
 }
