@@ -229,7 +229,7 @@ class GameListProcessor extends AbstractFeedProcessor {
         }
 
         //create the event
-        $event = $this->eventRepository->updateOrCreate($data, "name");
+        $event = $this->eventRepository->updateOrCreate($data, "external_event_id");
 
         if( array_get($event, 'id', null) && $competition ) {
             $this->eventRepository->addToCompetition($event['id'], $competition['id']);
