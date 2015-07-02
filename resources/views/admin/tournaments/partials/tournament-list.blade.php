@@ -47,7 +47,7 @@
 			<td>{{ $tournament->id }}</td>
 			<td>{{ $tournament->name }}</td>
 			<td>{{ ($tournament->tod_flag) ? 'Y' : 'N' }}</td>
-			<td>{{ (isset($tournament->parentTournament)) ? $tournament->parentTournament->name : '-' }}</td>
+			<td>{{ $tournament->parentTournament ? $tournament->parentTournament->name .  ' (' . $tournament->parentTournament->id . ')' : '-' }}</td>
 			<td>{{ ($tournament->eventGroup) ? $tournament->eventGroup->name : 'n/a' }}</td>
 			<td>{{ $tournament->sport->name }}</td>
 			<td>{{ $tournament->start_date }}</td>
