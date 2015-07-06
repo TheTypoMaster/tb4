@@ -133,6 +133,11 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
         return $this->hasMany('TopBetta\Models\FreeCreditTransactionModel', 'recipient_id');
     }
 
+    public function freeCreditBalance()
+    {
+        return $this->hasMany('TopBetta\Models\FreeCreditTransactionModel', 'recipient_id')->sum('amount');
+    }
+
     public function ewayTokens()
     {
         return $this->hasMany('TopBetta\Models\PaymentEwayTokens', 'user_id');

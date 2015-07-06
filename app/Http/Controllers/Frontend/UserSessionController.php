@@ -9,6 +9,7 @@
 
 use TopBetta\Http\Controllers\Controller;
 use Input;
+use TopBetta\Models\UserModel;
 use Validator;
 use Auth;
 
@@ -105,6 +106,15 @@ class UserSessionController extends Controller {
             return $this->response->failed(array(), '401', 100, "Not logged in", "Please login first");
         }
 
-        return $this->response->success(Auth::user()->toArray());
+        //get authenticated user
+        $user = Auth::user();
+        $response = $user->toArray();
+
+        //add extra fields
+        $response['account_balance'] = $user->accountBalance();
+        $response['free_credit_balance'] = $user->freeCreditBalance();
+        $response['balance_to_turnover'] = $user->topbettauser ? $user->topbettauser->balance_to_turnover : 0;
+
+        return $this->response->success($response);
     }
 }
