@@ -8,7 +8,7 @@
 
             <h2 class="col-lg-4 pull-right">
 			{!! Form::open(array('method' => 'GET')) !!}
-			<div class="input-group custom-search-form col-lg-4 pull-right">
+			<div class="input-group custom-search-form">
 				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}
 				<span class="input-group-btn">
 					<button class="btn btn-default" type="button">

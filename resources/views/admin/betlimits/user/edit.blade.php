@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		@include('admin.users.partials.header')
-		<h4>Edit Bet Limit</h4>	
+
 		<div class='col-lg-6'>
 			{!! Form::model($betLimit, array('method' => 'PATCH', 'route' => array('admin.users.bet-limits.update', $user->id, $betLimit->id))) !!}
 			<div class="form-group">

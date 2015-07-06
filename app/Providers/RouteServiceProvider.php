@@ -33,9 +33,7 @@ class RouteServiceProvider extends ServiceProvider {
 			if (Auth::guest()) return Response::json(array("success" => false, "error" => "Please login first."), 401);
 		});
 
-		Route::filter('auth.admin', function() {
-			if (Auth::guest() || Auth::user()->gid != 25) return Redirect::guest('/admin/login');
-		});
+		Route::filter('auth.admin', 'TopBetta\Http\Middleware\AdminFilter');
 
 		Route::filter('not.excluded', function() {
 			if(Auth::check()){
