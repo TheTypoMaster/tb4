@@ -199,4 +199,18 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
+    public function getRacingCompetitionsByDate(Carbon $date, $type = null, $relations = array())
+    {
+        $model = $this->model->where('sport_id', '<=', 3)
+            ->where('start_date', $date->toDateString())
+            ->with($relations);
+
+        if( $type ) {
+            $model->where('type_code', $type);
+        }
+
+        return $model->get();
+    }
+
+
 } 
