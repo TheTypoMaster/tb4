@@ -23,6 +23,17 @@ class DbSelectionResultRepository extends BaseEloquentRepository implements Sele
         return $this->model->where('selection_id', $selectionId)->first();
     }
 
+    public function getResultsForRace($raceId)
+    {
+        return $this->model
+            ->join('tbdb_selection', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->where('tbdb_event.id', '=', $raceId)
+            ->orderBy('tbdb_selection_result.position')
+            ->get(array('tbdb_selection_result.*', 'tbdb_selection.name', 'tbdb_selection.number'));
+    }
+
     public function deleteResultsForRaceId($raceId) {
 
         //$this->model->join

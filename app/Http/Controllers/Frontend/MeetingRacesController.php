@@ -2,7 +2,6 @@
 
 namespace TopBetta\Http\Controllers\Frontend;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -11,7 +10,7 @@ use TopBetta\Http\Controllers\Controller;
 use TopBetta\Services\Racing\MeetingService;
 use TopBetta\Services\Response\ApiResponse;
 
-class MeetingsController extends Controller
+class MeetingRacesController extends Controller
 {
     /**
      * @var MeetingService
@@ -31,23 +30,25 @@ class MeetingsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
      * @return ApiResponse
      */
-    public function index(Request $request)
+    public function index($id)
     {
-        $meetings = $this->meetingService->getMeetingsForDate(
-            $request->get('date', null),
-            $request->get('type', null),
-            in_array('races', $request->get('with', array()))
-        );
+        try {
+            $meeting = $this->meetingService->getMeeting(
+                $id,
+                true
+            );
+        } catch ( ModelNotFoundException $e ) {
+            return $this->response->failed(array(), 404, "Meeting not found");
+        }
 
         return $this->response->success(
-            $this->meetingService->formatCollectionsForResponse($meetings)
+            $this->meetingService->formatForResponse($meeting)
         );
     }
 
-    /**
+        /**
      * Show the form for creating a new resource.
      *
      * @return Response
@@ -75,15 +76,7 @@ class MeetingsController extends Controller
      */
     public function show($id)
     {
-        try {
-            $meeting = $this->meetingService->getMeeting($id);
-        } catch ( ModelNotFoundException $e ) {
-            return $this->response->failed(array(), 404, "Meeting not found");
-        }
-
-        return $this->response->success(
-            $this->meetingService->formatForResponse($meeting)
-        );
+        //
     }
 
     /**

@@ -9,15 +9,18 @@
 namespace TopBetta\Services\Racing;
 
 
-class RacingResourceService {
+abstract class RacingResourceService {
 
-    /**
-     * Relations to eager load
-     * @var array
-     */
-    protected static $includes = array();
+    public function formatCollectionsForResponse($collection)
+    {
+        $response = array();
 
-    public static function getIncludes() {
-        return self::$includes;
+        foreach($collection as $model) {
+            $response[] = $this->formatForResponse($model);
+        }
+
+        return $response;
     }
+
+    abstract public function formatForResponse($model);
 }

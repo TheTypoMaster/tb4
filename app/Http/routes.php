@@ -166,6 +166,14 @@ Route::group(array('prefix' => '/api/v1', 'before' => 'not.excluded'), function(
 
 });
 
+Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(){
+    // --- RACING ROUTES ---
+    Route::resource('meetings', 'Frontend\MeetingsController');
+    Route::resource('meeting.races', 'Frontend\MeetingRacesController');
+    Route::resource('meeting.races.selections', 'Frontend\MeetingRaceSelectionsController');
+
+});
+
 
 /*
  * Admin Login & Session Handling
