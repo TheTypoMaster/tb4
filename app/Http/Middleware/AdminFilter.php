@@ -68,7 +68,14 @@ class AdminFilter {
         }
 
         if ( ! Sentry::findUserById(Auth::user()->id)->hasAccess(self::ROUTE_PREFIX . '.' . $permission) ) {
-            App::abort(403, "Unauthorized action");
+
+            if( \Session::get("redirect") ) {
+                return \Redirect::to('/admin')
+                    ->with(array("flash_message" => "Access forbidden"));
+            }
+
+            return \Redirect::back()
+                ->with(array("flash_message" => "Access forbidden", "redirect" => true));
         }
     }
 }
