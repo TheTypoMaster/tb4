@@ -2,10 +2,11 @@
 
 namespace TopBetta\Http\Controllers\Frontend;
 
+use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\BaseEloquentRepository;
 use TopBetta\Services\Response\ApiResponse;
 
-abstract class AbstractResourceController extends \BaseController {
+abstract class AbstractResourceController extends Controller {
     /**
      * @var ApiResponse
      */
@@ -30,9 +31,9 @@ abstract class AbstractResourceController extends \BaseController {
 	 */
 	public function index()
 	{
-		$resources = $this->getResourceRepository()->findAllPaginated();
+		$resources = $this->getResourceRepository()->findAllPaginated()->toArray();
 
-        return $this->apiResponse->success($resources->toArray());
+        return $this->apiResponse->success($resources['data'], 200, array_except($resources, 'data'));
 	}
 
 

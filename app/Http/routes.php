@@ -414,7 +414,27 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
     Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
 
+    Route::resource('sports', 'Frontend\SportsController');
 
+    Route::resource('competitions', 'Frontend\CompetitionsController');
+
+    Route::resource('base-competitions', 'Frontend\BaseCompetitionController');
+
+    Route::resource('events', 'Frontend\EventsController');
+
+    Route::resource('markets', 'Frontend\MarketsController');
+
+    Route::resource('market-types', 'Frontend\MarketTypesController');
+
+    Route::resource('selections', 'Frontend\SelectionsController');
+
+    Route::resource('teams', 'Frontend\TeamsController');
+
+    Route::resource('players', 'Frontend\PlayersController');
+
+    Route::resource('prices', 'Frontend\PricesController');
+
+    Route::resource('results', 'Frontend\ResultsController');
 
 });
 
