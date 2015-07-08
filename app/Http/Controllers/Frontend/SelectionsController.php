@@ -6,7 +6,7 @@
  * Time: 4:04 PM
  */
 
-namespace TopBetta\Frontend\Controllers;
+namespace TopBetta\Http\Controllers\Frontend;
 
 use App;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace TopBetta\Frontend\Controllers;
+namespace TopBetta\Http\Controllers\Frontend;
 
 use TopBetta\Repositories\BaseEloquentRepository;
 use TopBetta\Services\Response\ApiResponse;
@@ -30,7 +30,7 @@ abstract class AbstractResourceController extends \BaseController {
 	 */
 	public function index()
 	{
-		$resources = $this->getResourceRepository()->findAll();
+		$resources = $this->getResourceRepository()->findAllPaginated();
 
         return $this->apiResponse->success($resources->toArray());
 	}
@@ -72,7 +72,7 @@ abstract class AbstractResourceController extends \BaseController {
             return $this->apiResponse->success($resource->toArray());
         }
 
-        return $this->apiResponse->failed(array("resource not found"));
+        return $this->apiResponse->failed(array("resource not found"), 404, "Resource not found");
 	}
 
 
