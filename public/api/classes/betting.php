@@ -1444,7 +1444,7 @@ class Api_Betting extends JController
                     'ClientUsername' => $betUserName,
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
-                    'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'FreeCredit' => $bet->bet_freebet_flag,
                     'FreeBetAmount' => $bet->bet_freebet_amount,
                     'Type' => 'racing',
                     'BetList' => array(
@@ -2034,7 +2034,7 @@ class Api_Betting extends JController
                     'ClientUsername' => $user->username,
                     'Btag' => $tb_model->getUser($user->id)->btag,
                     'Amount' => $bet->bet_amount,
-                    'FreeCredit' => JRequest::getVar('chkFreeBet', 0),
+                    'FreeCredit' => $bet->bet_freebet_flag,
                     'FreeBetAmount' => $bet->bet_freebet_amount,
                     'Type' => 'exotic',
                     'BetList' => array('BetType' => $bet_type_name->id, 'PriceType' => 'TOP'),
@@ -3361,10 +3361,15 @@ class Api_Betting extends JController
             $leaderboard = array(
                 'user_id' => $user->id,
                 'tournament_id' => $tournament->id,
-                'currency' => $tournament->start_currency
+                'currency' => $tournament->start_currency,
+                'balance_to_turnover' => $tournament->start_currency
             );
 
+
+
             $leaderboard_model->store($leaderboard);
+
+            file_put_contents('/tmp/ticket.log', print_r($leaderboard_model, true));
 
             $sport_model = & $this->getModel('TournamentSport', 'TournamentModel');
             $is_racing_tournament = $sport_model->isRacingByTournamentId($tournament->id);

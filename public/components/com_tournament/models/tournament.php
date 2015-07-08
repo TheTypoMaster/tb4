@@ -160,6 +160,18 @@ class TournamentModelTournament extends SuperModel
             'name' 		=> 'Bet Limit Per Event',
             'type' 		=> self::TYPE_INTEGER
         ),
+        'rebuy_currency' => array(
+            'name'      => 'Rebuy Currency',
+            'type'      => self::TYPE_INTEGER,
+        ),
+        'topup_currency' => array(
+            'name'      => 'Topup Currency',
+            'type'      => self::TYPE_INTEGER,
+        ),
+        'email_flag'    => array(
+            'name'      => 'Emai Flag',
+            'type'      => self::TYPE_INTEGER,
+        ),
 	);
 
 	/**
@@ -1077,7 +1089,11 @@ class TournamentModelTournament extends SuperModel
 		$query =
 			'SELECT
 				t.buy_in AS buy_in,
-				COUNT(tt.user_id) AS entrants
+				t.rebuy_buyin as rebuy_buyin,
+				t.topup_buyin as topup_buyin,
+				COUNT(tt.user_id) AS entrants,
+				SUM(tt.rebuy_count) as rebuys,
+                SUM(tt.topup_count) as topups
 			FROM
 				' . $db->nameQuote('#__tournament_ticket') . ' AS tt
 			INNER JOIN
@@ -1094,7 +1110,7 @@ class TournamentModelTournament extends SuperModel
 		$db->setQuery($query);
 		$data = $db->loadObject();
 
-		$current_prize_pool = is_null($data) ? 0 : ($data->buy_in) * $data->entrants;
+		$current_prize_pool = is_null($data) ? 0 : ($data->buy_in) * $data->entrants + $data->rebuy_buyin * $data->rebuys + $data->topup_buyin * $data->topups;
 		return ($current_prize_pool > $tournament->minimum_prize_pool ? $current_prize_pool : $tournament->minimum_prize_pool);
 	}
 
