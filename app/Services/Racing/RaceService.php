@@ -9,9 +9,9 @@
 namespace TopBetta\Services\Racing;
 
 
-use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
-use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 
 class RaceService extends RacingResourceService {
 
@@ -20,7 +20,7 @@ class RaceService extends RacingResourceService {
      */
     private $selectionService;
     /**
-     * @var EventRepositoryInterface
+     * @var EventModelRepositoryInterface
      */
     private $eventRepository;
     /**
@@ -28,11 +28,22 @@ class RaceService extends RacingResourceService {
      */
     private $resultService;
 
-    public function __construct(EventRepositoryInterface $eventRepository, SelectionService $selectionService, RaceResultService $resultService)
+    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionService $selectionService, RaceResultService $resultService)
     {
         $this->selectionService = $selectionService;
         $this->eventRepository = $eventRepository;
         $this->resultService = $resultService;
+    }
+
+    public function getRaceWithSelections($raceId)
+    {
+        $race = $this->eventRepository->getEvent($raceId, true);
+
+        if( ! $race ) {
+            throw new ModelNotFoundException;
+        }
+
+        return $race;
     }
 
     public function raceHasResults($race)

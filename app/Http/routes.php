@@ -307,6 +307,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('meetings', 'Frontend\MeetingsController');
     Route::resource('meeting.races', 'Frontend\MeetingRacesController');
     Route::resource('meeting.races.selections', 'Frontend\MeetingRaceSelectionsController');
+    Route::resource('race.selections', 'Frontend\RaceSelectionsController');
 
     // --- N2J ---
     Route::get('/racing/next-to-jump', 'Frontend\FrontRacesController@nextToJump');
