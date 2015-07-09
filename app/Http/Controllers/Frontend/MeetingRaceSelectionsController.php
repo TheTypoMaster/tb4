@@ -32,17 +32,19 @@ class MeetingRaceSelectionsController extends Controller
      *
      * @return Response
      */
-    public function index($meetingId, $raceId)
+    public function index(Request $request)
     {
         try {
-            $meeting = $this->meetingService->getMeetingWithSelections($meetingId, $raceId);
+            $meeting = $this->meetingService->getMeetingWithSelections(
+                $request->get('meeting_id'),
+                $request->get('race_id', null)
+            );
         } catch ( ModelNotFoundException $e ) {
             return $this->response->failed(array(), 404, "Meeting not found");
         }
 
-        return $this->response->success(
-            $this->meetingService->formatForResponse($meeting)
-        );
+
+        return $this->response->success($meeting->toArray());
     }
 
     /**

@@ -58,6 +58,28 @@ class RaceService extends RacingResourceService {
         return $race->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_SELLING;
     }
 
+    public function loadResultsForRaces($races)
+    {
+        foreach($races as $race) {
+            $this->loadResultForRace($race);
+        }
+
+        return $races;
+    }
+
+    public function loadResultForRace($race)
+    {
+        if( $this->raceHasResults($race) ) {
+            $results = $this->resultService->formatForResponse($race);
+
+            $race->setResultString($results['result_string']);
+            $race->setResults($results['results']);
+            $race->setExoticResults($results['exotic_results']);
+        }
+
+        return $race;
+    }
+
 
     public function formatForResponse($race)
     {

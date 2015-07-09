@@ -79,7 +79,7 @@ class SelectionModel extends Eloquent{
 
     public function lastStarts()
     {
-        return $this->belongsTo('TopBetta\Models\LastStartsModel', 'runner_code', 'runner_code');
+        return $this->hasMany('TopBetta\Models\LastStartsModel', 'runner_code', 'runner_code');
     }
 
 } 

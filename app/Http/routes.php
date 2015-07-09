@@ -308,9 +308,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
 
     // --- RACING ROUTES ---
     Route::resource('meetings', 'Frontend\MeetingsController');
-    Route::resource('meeting.races', 'Frontend\MeetingRacesController');
-    Route::resource('meeting.races.selections', 'Frontend\MeetingRaceSelectionsController');
-    Route::resource('race.selections', 'Frontend\RaceSelectionsController');
+    Route::resource('combined/meetings/races', 'Frontend\MeetingsController@getMeetingsWithRaces');
+    Route::get('combined/meeting/races', 'Frontend\MeetingRacesController@index');
+    Route::get('combined/meeting/races/selections', 'Frontend\MeetingRaceSelectionsController@index');
+    Route::get('combined/race/selections', 'Frontend\RaceSelectionsController@index');
 
     // --- N2J ---
     Route::get('/racing/next-to-jump', 'Frontend\FrontRacesController@nextToJump');
@@ -414,6 +415,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
     Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
 
+    // --- REST ROUTES ---
     Route::resource('sports', 'Frontend\SportsController');
 
     Route::resource('competitions', 'Frontend\CompetitionsController');

@@ -12,10 +12,12 @@ namespace TopBetta\Services\Racing;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\MeetingResource;
 
 class MeetingService extends RacingResourceService {
 
-
+    private $meetingResource = 'TopBetta\Resources\MeetingResource';
     /**
      * @var CompetitionRepositoryInterface
      */
@@ -44,14 +46,24 @@ class MeetingService extends RacingResourceService {
             $date = Carbon::createFromFormat('Y-m-d', $date);
         }
 
-        return $this->competitionRepository->getRacingCompetitionsByDate(
+        $collection = $this->competitionRepository->getRacingCompetitionsByDate(
             $date,
             $type,
             $withRaces
         );
+
+        $collection = new EloquentResourceCollection($collection, $this->meetingResource);
+
+        if( $withRaces ) {
+            foreach($collection as $meeting) {
+                $this->raceService->loadResultsForRaces($meeting->races);
+            }
+        }
+
+        return $collection;
     }
 
-    public function getMeeting($id, $withRaces = false)
+    public function getMeetingModel($id, $withRaces = false)
     {
         $model = $this->competitionRepository->find($id);
 
@@ -60,7 +72,20 @@ class MeetingService extends RacingResourceService {
         }
 
         if( $withRaces ) {
-            $model->load('competitionEvents');
+            $model->load(array('competitionEvents', 'competitionEvents.eventstatus'));
+        }
+
+        return $model;
+    }
+
+    public function getMeeting($id, $withRaces = false)
+    {
+        $model = $this->getMeetingModel($id, $withRaces);
+
+        $model = new MeetingResource($model);
+
+        if( $withRaces ) {
+            $this->raceService->loadResultsForRaces($model->races);
         }
 
         return $model;
@@ -68,7 +93,7 @@ class MeetingService extends RacingResourceService {
 
     public function getMeetingWithSelections($id, $raceId = null)
     {
-        $meeting = $this->getMeeting($id, true);
+        $meeting = $this->getMeetingModel($id, true);
 
         foreach( $meeting->competitionEvents as $event ) {
 
@@ -77,6 +102,9 @@ class MeetingService extends RacingResourceService {
                         return 'markets.selections.'.$q;
                     }, $this->selectionService->getDefaultRelations()));
 
+                $meeting = new MeetingResource($meeting);
+                $this->raceService->loadResultsForRaces($meeting->races);
+
                 return $meeting;
             }
         }
@@ -84,6 +112,9 @@ class MeetingService extends RacingResourceService {
         $meeting->competionsEvents->first()->load(array('market.selections') + array_map(function($q) {
                 return 'market.selections.'.$q;
             }, $this->selectionService->getDefaultRelations()));
+
+        $meeting = new MeetingResource($meeting);
+        $this->raceService->loadResultsForRaces($meeting->races);
 
         return $meeting;
     }

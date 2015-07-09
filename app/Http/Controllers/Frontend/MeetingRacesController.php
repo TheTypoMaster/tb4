@@ -32,20 +32,18 @@ class MeetingRacesController extends Controller
      *
      * @return ApiResponse
      */
-    public function index($id)
+    public function index(Request $request)
     {
         try {
             $meeting = $this->meetingService->getMeeting(
-                $id,
+                $request->get('meeting_id'),
                 true
             );
         } catch ( ModelNotFoundException $e ) {
             return $this->response->failed(array(), 404, "Meeting not found");
         }
 
-        return $this->response->success(
-            $this->meetingService->formatForResponse($meeting)
-        );
+        return $this->response->success($meeting->toArray());
     }
 
         /**

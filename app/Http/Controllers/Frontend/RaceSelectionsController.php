@@ -32,10 +32,12 @@ class RaceSelectionsController extends Controller
      *
      * @return Response
      */
-    public function index($id)
+    public function index(Request $request)
     {
         try {
-            $model = $this->raceService->getRaceWithSelections($id);
+            $model = $this->raceService->getRaceWithSelections(
+                $request->get('race_id')
+            );
         } catch (ModelNotFoundException $e) {
             return $this->response->failed(array(), 404, "Race not found");
         }
