@@ -9,6 +9,8 @@
 namespace TopBetta\Resources;
 
 
+use Carbon\Carbon;
+
 class MeetingResource extends AbstractEloquentResource {
     
     protected $attributes = array(
@@ -32,5 +34,18 @@ class MeetingResource extends AbstractEloquentResource {
     public function races()
     {
         return $this->collection('races', 'TopBetta\Resources\RaceResource', $this->model->competitionEvents);
+    }
+
+    public function setRaces($races)
+    {
+        $this->relations['races'] = $races;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getStartDate()
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->model->start_date);
     }
 }

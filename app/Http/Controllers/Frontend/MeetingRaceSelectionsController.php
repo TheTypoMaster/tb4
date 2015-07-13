@@ -43,8 +43,21 @@ class MeetingRaceSelectionsController extends Controller
             return $this->response->failed(array(), 404, "Meeting not found");
         }
 
-
         return $this->response->success($meeting->toArray());
+    }
+
+    public function getMeetingsWithSelectionsForMeeting(Request $request)
+    {
+        try {
+            $meetings = $this->meetingService->getMeetingsWithSelectionForMeeting(
+                $request->get('meeting_id'),
+                $request->get('race_id', null)
+            );
+        } catch ( ModelNotFoundException $e) {
+            return $this->response->failed(array(), 404, "Meeting not found");
+        }
+
+        return $this->response->success($meetings->toArray());
     }
 
     /**

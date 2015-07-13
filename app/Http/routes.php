@@ -308,9 +308,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
 
     // --- RACING ROUTES ---
     Route::resource('meetings', 'Frontend\MeetingsController');
-    Route::resource('combined/meetings/races', 'Frontend\MeetingsController@getMeetingsWithRaces');
+    Route::get('combined/meetings/races', 'Frontend\MeetingsController@getMeetingsWithRaces');
     Route::get('combined/meeting/races', 'Frontend\MeetingRacesController@index');
     Route::get('combined/meeting/races/selections', 'Frontend\MeetingRaceSelectionsController@index');
+    Route::get('combined/meetings/races/selections', 'Frontend\MeetingRaceSelectionsController@getMeetingsWithSelectionsForMeeting');
     Route::get('combined/race/selections', 'Frontend\RaceSelectionsController@index');
 
     // --- N2J ---

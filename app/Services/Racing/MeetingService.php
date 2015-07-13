@@ -91,9 +91,29 @@ class MeetingService extends RacingResourceService {
         return $model;
     }
 
+    public function getMeetingsWithSelectionForMeeting($meetingId, $raceId = null)
+    {
+        $selectedMeeting = $this->getMeetingWithSelections($meetingId, $raceId);
+
+        $meetings = $this->getMeetingsForDate($selectedMeeting->getStartDate()->toDateString());
+
+        foreach( $meetings as $meeting ) {
+            if( $meeting->id == $selectedMeeting->id ) {
+                $meeting->setRaces($selectedMeeting->races);
+                break;
+            }
+        }
+
+        return $meetings;
+    }
+
     public function getMeetingWithSelections($id, $raceId = null)
     {
         $meeting = $this->getMeetingModel($id, true);
+
+        if( ! $meeting->competitionEvents->count() ) {
+            return new MeetingResource($meeting);
+        }
 
         foreach( $meeting->competitionEvents as $event ) {
 
