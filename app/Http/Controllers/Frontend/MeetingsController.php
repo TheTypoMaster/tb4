@@ -91,7 +91,7 @@ class MeetingsController extends Controller
         }
 
         return $this->response->success(
-            $this->meetingService->formatForResponse($meeting)
+            $meeting->toArray()
         );
     }
 

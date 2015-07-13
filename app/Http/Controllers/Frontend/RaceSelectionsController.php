@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
-use TopBetta\Services\Racing\RaceService;
+use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Response\ApiResponse;
 
 class RaceSelectionsController extends Controller
 {
     /**
-     * @var RaceService
+     * @var RaceResourceService
      */
     private $raceService;
     /**
@@ -21,7 +21,7 @@ class RaceSelectionsController extends Controller
      */
     private $response;
 
-    public function __construct(RaceService $raceService , ApiResponse $response)
+    public function __construct(RaceResourceService $raceService , ApiResponse $response)
     {
         $this->raceService = $raceService;
         $this->response = $response;
@@ -43,7 +43,7 @@ class RaceSelectionsController extends Controller
         }
 
         return $this->response->success(
-            $this->raceService->formatForResponse($model)
+            $model->toArray()
         );
     }
 

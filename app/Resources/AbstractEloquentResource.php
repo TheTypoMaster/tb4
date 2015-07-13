@@ -53,6 +53,13 @@ abstract class AbstractEloquentResource implements ResourceInterface {
         return json_encode($this->toArray());
     }
 
+    public function setRelation($relation, $object)
+    {
+        $this->relations[$relation] = $object;
+
+        return $this;
+    }
+
     public function __get($name)
     {
         return $this->load($name);
@@ -103,7 +110,7 @@ abstract class AbstractEloquentResource implements ResourceInterface {
         return $this->parseType($attribute, object_get($this->model, $attribute));
     }
 
-    protected function loadRelation($relation)
+    public function loadRelation($relation)
     {
         $this->relations[$relation] = $this->{$relation}();
 

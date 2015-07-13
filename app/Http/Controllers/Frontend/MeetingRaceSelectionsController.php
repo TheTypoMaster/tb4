@@ -30,6 +30,7 @@ class MeetingRaceSelectionsController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
     public function index(Request $request)
@@ -43,7 +44,7 @@ class MeetingRaceSelectionsController extends Controller
             return $this->response->failed(array(), 404, "Meeting not found");
         }
 
-        return $this->response->success($meeting->toArray());
+        return $this->response->success($meeting['data']->toArray(), 200, array("selected_race" => $meeting['selected_race']));
     }
 
     public function getMeetingsWithSelectionsForMeeting(Request $request)
@@ -57,7 +58,7 @@ class MeetingRaceSelectionsController extends Controller
             return $this->response->failed(array(), 404, "Meeting not found");
         }
 
-        return $this->response->success($meetings->toArray());
+        return $this->response->success($meetings['data']->toArray(), 200, array("selected_race" => $meetings['selected_race']));
     }
 
     /**

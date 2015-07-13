@@ -28,12 +28,30 @@ class SelectionResource extends AbstractEloquentResource {
         'runner' => 'runner'
     );
 
+    protected $loadRelations = array(
+        'result',
+        'price',
+        'runner',
+        'runner.owner',
+        'runner.trainer',
+        'form',
+        'lastStarts'
+    );
+
+    public function __construct($model)
+    {
+        $model->load($this->loadRelations);
+
+        parent::__construct($model);
+
+    }
+
     public function runner()
     {
         return $this->item('runner', 'TopBetta\Resources\RunnerResource', $this->model->runner);
     }
 
-    protected function loadRelation($relation)
+    public function loadRelation($relation)
     {
         parent::loadRelation($relation);
 

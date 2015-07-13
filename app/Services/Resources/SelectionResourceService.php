@@ -6,12 +6,24 @@
  * Time: 11:17 AM
  */
 
-namespace TopBetta\Services\Racing;
+namespace TopBetta\Services\Resources;
 
 
-class SelectionService extends RacingResourceService {
+use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
-    public function getDefaultRelations()
+class SelectionResourceService {
+
+    /**
+     * @var SelectionRepositoryInterface
+     */
+    private $selectionRepositoryInterface;
+
+    public function __construct(SelectionRepositoryInterface $selectionRepositoryInterface)
+    {
+        $this->selectionRepositoryInterface = $selectionRepositoryInterface;
+    }
+
+    public static function getDefaultRelations()
     {
         return array(
             'result',
