@@ -92,7 +92,6 @@ abstract class AbstractEloquentResource implements ResourceInterface {
     {
         foreach( $this->loadIfRelationExists as $key => $attribute ) {
 
-
             if( $this->checkKey($key) ) {
                 $this->loadRelation($attribute);
             }
@@ -105,6 +104,8 @@ abstract class AbstractEloquentResource implements ResourceInterface {
             return $this->parseType($attribute, call_user_func(array($this, $attribute)));
         } else if ( method_exists($this, 'get' . ucfirst($attribute)) ) {
             return $this->parseType($attribute, call_user_func(array($this, 'get' . ucfirst($attribute))));
+        } else if ( $modelAttribute = array_get($this->attributes, $attribute) ) {
+            return $this->parseType($attribute, object_get($this->model, $modelAttribute));
         }
 
         return $this->parseType($attribute, object_get($this->model, $attribute));

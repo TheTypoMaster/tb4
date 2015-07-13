@@ -56,8 +56,13 @@ class SelectionResource extends AbstractEloquentResource {
         parent::loadRelation($relation);
 
         if( $relation == 'runner' ) {
-            $this->relations[$relation]->setForm($this->model->form);
-            $this->relations[$relation]->setLastStarts($this->model->lastStarts);
+            if( $this->model->form ) {
+                $this->relations[$relation]->setForm($this->model->form);
+            }
+
+            if( $this->model->lastStarts ) {
+                $this->relations[$relation]->setLastStarts($this->model->lastStarts);
+            }
         }
 
         return $this->relations[$relation];
