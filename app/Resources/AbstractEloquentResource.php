@@ -38,7 +38,7 @@ abstract class AbstractEloquentResource implements ResourceInterface {
         $array = array();
 
         foreach( $this->attributes as $attribute => $modelAttribute ) {
-            $array[snake_case($attribute)] = $this->load($modelAttribute);
+            $array[snake_case($attribute)] = $this->load($attribute);
         }
 
         foreach( $this->relations as $name => $relation ) {

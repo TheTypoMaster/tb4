@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\Events;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 
@@ -155,6 +156,68 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         }
 
         return null;
+    }
+
+    public function getNextToJumpSports($number = 10)
+    {
+        $builder = $this->getVisibleSportsEventBuilder();
+
+        $model = $builder
+            ->groupBy('e.id')
+            ->orderBy('e.start_date')
+            ->take($number)
+            ->get(array(
+                'e.id as id',
+                'e.name as name',
+                'eg.id as competition_id',
+                'eg.name as competition_name',
+                'bc.id as base_competition_id',
+                'bc.name as base_competition_name',
+                'tb_sports.id as sport_id',
+                'tb_sports.name as sport_name',
+                'e.start_date as start_date',
+            ));
+
+        return $this->model->hydrate($model);
+    }
+
+    protected function getVisibleSportsEventBuilder(Carbon $date = null)
+    {
+        $builder =  \DB::table('tbdb_event as e')
+            ->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'e.id')
+            ->join('tbdb_event_group as eg', 'eg.id', '=', 'ege.event_group_id')
+            ->join('tb_base_competition as bc', 'bc.id', '=', 'eg.base_competition_id')
+            ->join('tb_sports', 'tb_sports.id', '=', 'bc.sport_id')
+            ->join('tbdb_market as m', 'm.event_id', '=', 'e.id')
+            ->join('tbdb_selection as s', 's.market_id', '=', 'm.id')
+            ->join('tbdb_selection_price as sp', 'sp.selection_id', '=', 's.id')
+            ->where('tb_sports.display_flag', true)
+            ->where('bc.display_flag', true)
+            ->where('eg.display_flag', true)
+            ->where('e.display_flag', true)
+            ->where('m.display_flag', true)
+            ->whereNotIn('m.market_status', array('D', 'S'))
+            ->where(function($q) {
+                $q
+                    ->where(function($p) {
+                        $p->where('sp.win_odds', '>', '1')->whereNull('sp.override_type');
+                    })
+                    ->orWhere(function($p) {
+                        $p->where('sp.override_odds', '>', 1)->where('sp.override_type', '=', 'price');
+                    })
+                    ->orWhere(function($p) {
+                        $p->where(\DB::raw('sp.override_odds * sp.win_odds'), '>', '1')->where('sp.override_type', 'percentage');
+                    });
+            })
+            ->where('s.selection_status_id', 1);
+
+        if( $date ) {
+            $builder->where('eg.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('eg.start_date', '<=', $date->endOfDay()->toDateTimeString());
+        } else {
+            $builder->where('eg.start_date', '>=', Carbon::now());
+        }
+
+        return $builder;
     }
 
 
