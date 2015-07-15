@@ -12,6 +12,7 @@ namespace TopBetta\Resources;
 class RunnerResource extends AbstractEloquentResource {
 
     protected $attributes = array(
+        "id"        => "id",
         "name"      =>'name',
         "owner"     => 'owner.name',
         "trainer"   => 'owner.trainer',
