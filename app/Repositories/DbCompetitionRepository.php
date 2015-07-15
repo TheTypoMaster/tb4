@@ -220,9 +220,8 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
-    public function getVisibleCompetitions($date = null)
+    public function getVisibleCompetitions(Carbon $date = null)
     {
-        \DB::enableQueryLog();
         $model = $this->model
             ->from('tbdb_event_group as eg')
             ->join('tb_base_competition as bc', 'bc.id', '=', 'eg.base_competition_id')
@@ -251,12 +250,16 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
                     });
             })
             ->where('s.selection_status_id', 1)
-            ->where('eg.start_date', '>=', Carbon::now())
             ->groupBy('eg.id')
-            ->with(array('baseCompetition', 'baseCompetition.sport'))
-            ->get(array('eg.*'));
-        var_dump(\DB::getQueryLog());
-        return $model;
+            ->with(array('baseCompetition', 'baseCompetition.sport'));
+
+        if( $date ) {
+            $model->where('eg.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('eg.start_date', '<=', $date->endOfDay()->toDateTimeString());
+        } else {
+            $model->where('eg.start_date', '>=', Carbon::now());
+        }
+
+        return $model->get(array('eg.*'));
     }
 
 

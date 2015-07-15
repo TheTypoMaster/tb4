@@ -319,6 +319,9 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('/racing/next-to-jump-eventids', 'Frontend\FrontRacesController@nextToJumpEventIds');
     Route::get('/racing/fast-bet', 'Frontend\FrontRacesController@fastBetEvents');
 
+    // --- SPORTS ROUTES ---
+    Route::get('combined/sports/competitions', 'Frontend\SportsController@getVisibleSportsWithCompetitions');
+
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');
     // 2 custom routes for users auth

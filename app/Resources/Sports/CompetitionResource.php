@@ -15,6 +15,7 @@ class CompetitionResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         "id" => "id",
-        "name" => "name"
+        "name" => "name",
+        "startDate" => "start_date",
     );
 }
