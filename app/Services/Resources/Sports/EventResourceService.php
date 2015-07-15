@@ -29,4 +29,11 @@ class EventResourceService {
 
         return new EloquentResourceCollection($nextToJump, 'TopBetta\Resources\Sports\NextToJumpResource');
     }
+
+    public function getEventsForCompetition($competitionId)
+    {
+        $events = $this->eventRepository->getEventsForCompetition($competitionId);
+
+        return new EloquentResourceCollection($events, 'TopBetta\Resources\Sports\EventResource');
+    }
 }

@@ -9,8 +9,10 @@
 use Carbon\Carbon;
 use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
 class DbCompetitionRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
+    use SportsResourceRepositoryTrait;
 
     protected $competitions;
 
@@ -218,6 +220,16 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         }
 
         return $model->get();
+    }
+
+    public function getVisibleCompetitionByBaseCompetition($baseCompetition)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->where('eg.base_competition_id', $baseCompetition)
+            ->groupBy('eg.id')
+            ->orderBy('start_date');
+
+        return $this->model->hydrate($builder->get(array('eg.*')));
     }
 
     public function getVisibleCompetitions(Carbon $date = null)

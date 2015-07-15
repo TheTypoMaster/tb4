@@ -30,4 +30,11 @@ class CompetitionResourceService {
 
         return new EloquentResourceCollection($competitions, 'TopBetta\Resources\Sports\CompetitionResource');
     }
+
+    public function getVisibleCompetitionsByBaseCompetition($baseCompetition)
+    {
+        $competitions = $this->competitionRepository->getVisibleCompetitionByBaseCompetition($baseCompetition);
+
+        return new EloquentResourceCollection($competitions, 'TopBetta\Resources\Sports\CompetitionResource');
+    }
 }
