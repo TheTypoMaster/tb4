@@ -10,7 +10,7 @@ abstract class AbstractResourceController extends Controller {
     /**
      * @var ApiResponse
      */
-    private $apiResponse;
+    protected $apiResponse;
 
     /**
      * Get the resource repository
