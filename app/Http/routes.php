@@ -322,6 +322,9 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     // --- SPORTS ROUTES ---
     Route::get('combined/sports/competitions', 'Frontend\SportsController@getVisibleSportsWithCompetitions');
 
+    // --- SPORTS N2J
+    Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');
+
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');
     // 2 custom routes for users auth
@@ -361,7 +364,6 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
 
     // ::: SPORTS :::
     //Sports events
-    Route::get('/sports/events/next-to-jump', 'Frontend\FrontSportsEventsController@nextToJump');
     Route::resource('sports/events', 'Frontend\FrontSportsEventsController');
 
     //Sports types
