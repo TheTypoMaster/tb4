@@ -10,7 +10,7 @@ namespace TopBetta\Services\Risk;
 
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
-use TopBetta\RiskManagerAPI;
+use TopBetta\Helpers\RiskManagerAPI;
 use User;
 
 class RiskRacingWinPlaceBetService extends AbstractRiskBetService {

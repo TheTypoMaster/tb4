@@ -45,7 +45,8 @@ class BetPlacementFactory {
             case BetTypeRepositoryInterface::TYPE_EIGHT_LEG_MULTI:
             case BetTypeRepositoryInterface::TYPE_NINE_LEG_MULTI:
             case BetTypeRepositoryInterface::TYPE_TEN_LEG_MULTI:
-                return App::make('TopBetta\Services\Betting\BetPlacement\MultiBetPlacementService');
+                //return App::make('TopBetta\Services\Betting\BetPlacement\MultiBetPlacementService');
+                Throw new \Exception("Bet type not supported currently");
             default:
                 //TODO: BETTER EXCEPTION
                 throw new \Exception;

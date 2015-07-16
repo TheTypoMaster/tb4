@@ -11,7 +11,7 @@ namespace TopBetta\Services\Risk;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
-use TopBetta\RiskManagerAPI;
+use TopBetta\Helpers\RiskManagerAPI;
 
 class RiskSportsBetService extends AbstractRiskBetService {
 

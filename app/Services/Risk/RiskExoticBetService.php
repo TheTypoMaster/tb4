@@ -10,7 +10,7 @@ namespace TopBetta\Services\Risk;
 
 
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
-use TopBetta\RiskManagerAPI;
+use TopBetta\Helpers\RiskManagerAPI;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 
 class RiskExoticBetService extends AbstractRiskBetService {
