@@ -328,6 +328,9 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     // --- SPORTS N2J
     Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');
 
+    // --- BETS ----
+    Route::resource('bets', 'Frontend\BetController');
+
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');
     // 2 custom routes for users auth
@@ -354,10 +357,6 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::post('password_resets/reset', 'Frontend\FrontPasswordResetsController@postReset');
     //The email gets sent via this method
     Route::post('password_resets', 'Frontend\FrontPasswordResetsController@store');
-
-    // ::: BETS :::
-    Route::resource('bets', 'Frontend\FrontBetsController');
-
 
     //Racing Races
     Route::resource('racing/races', 'Frontend\FrontRacesController');
