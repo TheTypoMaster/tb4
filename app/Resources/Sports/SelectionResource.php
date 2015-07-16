@@ -19,4 +19,19 @@ class SelectionResource extends AbstractEloquentResource {
         'line' => 'price.line',
         'price' => 'price.win_odds',
     );
+
+    protected $loadIfRelationExists = array(
+        'team' => 'team',
+        'player' => 'player',
+    );
+
+    public function team()
+    {
+        return $this->item('team', 'TopBetta\Resources\Sports\TeamResource', $this->model->team->first());
+    }
+
+    public function player()
+    {
+        return $this->item('player', 'TopBetta\Resources\Sports\PlayerResource', $this->model->player->first());
+    }
 }

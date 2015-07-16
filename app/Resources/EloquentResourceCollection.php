@@ -27,8 +27,8 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
     public function setRelations($relationName, $key, $relations)
     {
         //create empty collections for each markets
-        $this->collection->each(function($event) {
-            $event->setRelation('markets', new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\MarketResource'));
+        $this->collection->each(function($event) use ($relationName) {
+            $event->setRelation($relationName, new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\MarketResource'));
         });
 
         //get dictionary

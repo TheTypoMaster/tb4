@@ -23,6 +23,8 @@ abstract class AbstractEloquentResource implements ResourceInterface {
 
     protected $loadIfRelationExists = array();
 
+    protected static $defaultRelations = array();
+
     protected $types = array(
         "id" => "int"
     );
@@ -31,6 +33,11 @@ abstract class AbstractEloquentResource implements ResourceInterface {
     {
         $this->model = $model;
         $this->initialize();
+    }
+
+    public static function getDefaultRelations()
+    {
+        return self::$defaultRelations;
     }
 
     public function toArray()
@@ -42,7 +49,7 @@ abstract class AbstractEloquentResource implements ResourceInterface {
         }
 
         foreach( $this->relations as $name => $relation ) {
-            $array[snake_case($name)] = $relation->toArray();
+            $array[snake_case($name)] = $relation ? $relation->toArray() : null;
         }
 
         return $array;
@@ -73,6 +80,11 @@ abstract class AbstractEloquentResource implements ResourceInterface {
     protected function item($name, $class, $model)
     {
         if( ! array_get($this->relations, $name) ) {
+
+            if( ! $model ) {
+                return null;
+            }
+
             $this->relations[$name] = new $class($model);
         }
 

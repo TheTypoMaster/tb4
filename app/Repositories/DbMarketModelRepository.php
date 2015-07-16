@@ -39,4 +39,13 @@ class DbMarketModelRepository implements MarketModelRepositoryInterface
 
         return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections', 'selections.price'));
     }
+
+    public function getMarketsForEvent($event)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->where('e.id', $event)
+            ->groupBy('m.id');
+
+        return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections'));
+    }
 }
