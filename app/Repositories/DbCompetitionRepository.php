@@ -230,7 +230,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->groupBy('eg.id')
             ->orderBy('start_date');
 
-        return $this->model->hydrate($builder->get(array('eg.*')));
+        return $this->model->hydrate($builder->get(array('eg.*')))->load(array('icon', 'baseCompetition.defaultEventGroupIcon'));
     }
 
     public function getVisibleCompetitions(Carbon $date = null)
@@ -264,7 +264,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             })
             ->where('s.selection_status_id', 1)
             ->groupBy('eg.id')
-            ->with(array('baseCompetition', 'baseCompetition.sport'));
+            ->with(array('baseCompetition', 'baseCompetition.sport', 'icon', 'baseCompetition.defaultEventGroupIcon', 'baseCompetition.sport.icon', 'baseCompetition.icon', 'baseCompetition.sport.defaultCompetitionIcon'));
 
         if( $date ) {
             $model->where('e.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('e.start_date', '<=', $date->endOfDay()->toDateTimeString());

@@ -15,11 +15,17 @@ class SportResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         "id" => "id",
-        "name" => "name"
+        "name" => "name",
+        "icon" => "icon",
     );
 
     public function baseCompetitions()
     {
         return $this->collection('baseCompetitions', 'TopBetta\Resources\Sports\BaseCompetitionResource', $this->model->baseCompetitions);
+    }
+
+    public function icon()
+    {
+        return $this->model->icon ? $this->model->icon->icon_url : null;
     }
 }

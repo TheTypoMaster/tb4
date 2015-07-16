@@ -15,6 +15,12 @@ class TeamResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         'id' => 'id',
-        'name' => 'name'
+        'name' => 'name',
+        'icon' => 'icon',
     );
+
+    public function icon()
+    {
+        return $this->model->icon ? $this->model->icon->icon_url : null;
+    }
 }

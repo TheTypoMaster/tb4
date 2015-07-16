@@ -323,6 +323,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('combined/sports/competitions', 'Frontend\SportsController@getVisibleSportsWithCompetitions');
     Route::get('combined/events/markets/selections', 'Frontend\EventsController@getEventsForCompetition');
     Route::get('combined/markets/selections', 'Frontend\MarketsController@getAllMarketsForEvent');
+    Route::get('/sports/competition/market-types', 'Frontend\MarketTypesController@getMarketTypesForCompetition');
 
     // --- SPORTS N2J
     Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');

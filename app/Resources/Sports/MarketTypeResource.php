@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Thomas Muir
  * Date: 16/07/2015
- * Time: 12:41 PM
+ * Time: 2:20 PM
  */
 
 namespace TopBetta\Resources\Sports;
@@ -11,7 +11,7 @@ namespace TopBetta\Resources\Sports;
 
 use TopBetta\Resources\AbstractEloquentResource;
 
-class PlayerResource extends AbstractEloquentResource {
+class MarketTypeResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         'id' => 'id',

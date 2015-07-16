@@ -17,10 +17,22 @@ class CompetitionResource extends AbstractEloquentResource {
         "id" => "id",
         "name" => "name",
         "startDate" => "start_date",
+        "icon" => "icon",
     );
 
     public function events()
     {
         return $this->collection('events', 'TopBetta\Resources\Sports\EventResource', $this->model->event);
+    }
+
+    public function icon()
+    {
+        if( $this->model->icon ) {
+            return $this->model->icon;
+        }
+
+        return $this->model->baseCompetition->defaultEventGroupIcon ?
+            $this->model->baseCompetition->defaultEventGroupIcon->icon_url :
+            null;
     }
 }
