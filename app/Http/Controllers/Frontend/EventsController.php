@@ -9,7 +9,10 @@
 namespace TopBetta\Http\Controllers\Frontend;
 
 use App;
+use Illuminate\Http\Request;
 use TopBetta\Services\Resources\Sports\EventResourceService;
+use TopBetta\Services\Sports\CompetitionService;
+use TopBetta\Services\Sports\EventService;
 
 class EventsController extends AbstractResourceController{
 
@@ -23,5 +26,12 @@ class EventsController extends AbstractResourceController{
         $nextToJump = $eventResourceService->nextToJump();
 
         return $this->apiResponse->success($nextToJump->toArray());
+    }
+
+    public function getEventsForCompetition(CompetitionService $competitionService, Request $request)
+    {
+        $events = $competitionService->getCompetitionsWithEvents($request->only(array('competition_id', 'base_competition_id')), $request->get('types', null));
+
+        return $this->apiResponse->success($events['data']->toArray(), 200, array('selected_competition' => $events['selected_competition']));
     }
 }

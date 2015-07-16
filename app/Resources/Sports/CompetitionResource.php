@@ -18,4 +18,9 @@ class CompetitionResource extends AbstractEloquentResource {
         "name" => "name",
         "startDate" => "start_date",
     );
+
+    public function events()
+    {
+        return $this->collection('events', 'TopBetta\Resources\Sports\EventResource', $this->model->event);
+    }
 }

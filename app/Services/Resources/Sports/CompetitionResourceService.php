@@ -11,6 +11,7 @@ namespace TopBetta\Services\Resources\Sports;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\Sports\CompetitionResource;
 
 class CompetitionResourceService {
 
@@ -29,5 +30,19 @@ class CompetitionResourceService {
         $competitions = $this->competitionRepository->getVisibleCompetitions($date);
 
         return new EloquentResourceCollection($competitions, 'TopBetta\Resources\Sports\CompetitionResource');
+    }
+
+    public function getVisibleCompetitionsByBaseCompetition($baseCompetition)
+    {
+        $competitions = $this->competitionRepository->getVisibleCompetitionByBaseCompetition($baseCompetition);
+
+        return new EloquentResourceCollection($competitions, 'TopBetta\Resources\Sports\CompetitionResource');
+    }
+
+    public function getCompetitionResource($id)
+    {
+        $competition = $this->competitionRepository->find($id);
+
+        return new CompetitionResource($competition);
     }
 }

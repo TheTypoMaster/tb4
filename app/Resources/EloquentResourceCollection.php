@@ -24,6 +24,24 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         });
     }
 
+    public function setRelations($relationName, $key, $relations)
+    {
+        //create empty collections for each markets
+        $this->collection->each(function($event) {
+            $event->setRelation('markets', new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\MarketResource'));
+        });
+
+        //get dictionary
+        $dictionary = $this->collection->getDictionary();
+
+        foreach($relations as $relation) {
+            //push each relation onto correct model relation
+            $dictionary[$relation->{$key}]->{$relationName}->push($relation);
+        }
+
+        return $this;
+    }
+
     public function getIterator()
     {
         return $this->collection->getIterator();

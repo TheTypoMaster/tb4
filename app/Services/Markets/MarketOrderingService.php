@@ -67,13 +67,17 @@ class MarketOrderingService {
         return $types;
     }
 
-    public function getMarketsForEvent($eventId, $userId = 0)
+    public function getMarketTypeIds($competitionId = 0)
     {
-        //get competition id
+        $types = $this->marketOrderingRepository->getMarketOrdering($competitionId);
 
-        //get market type ids
+        if( ! $types && $competitionId ) {
+            return $this->getMarketTypeIds();
+        } else if ( ! $types ) {
+            return array();
+        }
 
-        //get markets for event with market types in
+        return json_decode($types->market_types);
     }
 
     /**
