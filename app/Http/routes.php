@@ -299,3 +299,169 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
     Route::get('authentication/token/login', 'Frontend\UserTokenController@tokenLogin');
 
 });
+
+
+/***********************************************************************************************************************
+ * V2 ROUTES
+ **********************************************************************************************************************/
+Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(){
+
+    // --- RACING ROUTES ---
+    Route::resource('meetings', 'Frontend\MeetingsController');
+    Route::get('combined/meetings/races', 'Frontend\MeetingsController@getMeetingsWithRaces');
+    Route::get('combined/meeting/races', 'Frontend\MeetingRacesController@index');
+    Route::get('combined/meeting/races/selections', 'Frontend\MeetingRaceSelectionsController@index');
+    Route::get('combined/meetings/races/selections', 'Frontend\MeetingRaceSelectionsController@getMeetingsWithSelectionsForMeeting');
+    Route::get('combined/race/selections', 'Frontend\RaceSelectionsController@index');
+
+    // --- N2J ---
+    Route::get('/racing/next-to-jump', 'Frontend\FrontRacesController@nextToJump');
+    Route::get('/racing/next-to-jump-eventids', 'Frontend\FrontRacesController@nextToJumpEventIds');
+    Route::get('/racing/fast-bet', 'Frontend\FrontRacesController@fastBetEvents');
+
+    // --- SPORTS ROUTES ---
+    Route::get('combined/sports/competitions', 'Frontend\SportsController@getVisibleSportsWithCompetitions');
+    Route::get('combined/events/markets/selections', 'Frontend\EventsController@getEventsForCompetition');
+    Route::get('combined/markets/selections', 'Frontend\MarketsController@getAllMarketsForEvent');
+    Route::get('/sports/competition/market-types', 'Frontend\MarketTypesController@getMarketTypesForCompetition');
+
+    // --- SPORTS N2J
+    Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');
+
+    // ::: USER :::
+    Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');
+    // 2 custom routes for users auth
+    Route::post('users/login', 'Frontend\FrontUsersController@login');
+    Route::get('users/logout', 'Frontend\FrontUsersController@logout');
+
+
+    // custom route for refer a friend
+    Route::resource('users/refer', 'Frontend\FrontUsersReferController');
+
+    Route::resource('users', 'Frontend\FrontUsersController');
+    Route::resource('users.profile', 'Frontend\FrontUsersProfileController');
+    Route::resource('users.balances', 'Frontend\FrontUsersBalancesController');
+    Route::resource('users.banking', 'Frontend\FrontUsersBankingController');
+    Route::resource('users.deposit', 'Frontend\FrontUsersDepositController');
+    Route::resource('users.withdraw', 'Frontend\FrontUsersWithdrawController');
+    Route::resource('users.betting', 'Frontend\FrontUsersBettingController');
+    Route::resource('users.betting-limit', 'Frontend\FrontUsersBettingLimitsController');
+    Route::resource('users.tournaments', 'Frontend\FrontUsersTournamentsController');
+    Route::resource('users.poli-deposit', 'Frontend\FrontUsersPoliDepositController');
+
+    // Password Resets
+    // The actual reset password method
+    Route::post('password_resets/reset', 'Frontend\FrontPasswordResetsController@postReset');
+    //The email gets sent via this method
+    Route::post('password_resets', 'Frontend\FrontPasswordResetsController@store');
+
+    // ::: BETS :::
+    Route::resource('bets', 'Frontend\FrontBetsController');
+
+
+    //Racing Races
+    Route::resource('racing/races', 'Frontend\FrontRacesController');
+
+    //Racing Runners
+    Route::resource('racing/runners', 'Frontend\FrontRunnersController');
+
+    // ::: SPORTS :::
+    //Sports events
+    Route::resource('sports/events', 'Frontend\FrontSportsEventsController');
+
+    //Sports types
+    Route::resource('sports/types', 'Frontend\FrontSportsTypesController');
+
+    //Sports options
+    Route::resource('sports/options', 'Frontend\FrontSportsOptionsController');
+
+    //Sports results
+    Route::resource('sports/results', 'Frontend\FrontSportsResultsController');
+
+    //Sports and comps
+    Route::resource('sports', 'Frontend\FrontSportsController');
+    Route::resource('sports.events', 'Frontend\FrontSportsEventsController');
+    Route::resource('sports.events.types', 'Frontend\FrontSportsTypesController');
+    Route::resource('sports.events.types.options', 'Frontend\FrontSportsOptionsController');
+
+    // ::: TOURNAMENTS :::
+    //tournaments
+    Route::resource('tournaments', 'Frontend\FrontTournamentsController');
+
+    //tournaments bets
+    Route::resource('tournaments.comments', 'Frontend\FrontTournamentsCommentsController');
+
+    //tournaments bets
+    Route::resource('tournaments-bets', 'Frontend\FrontTournamentsBetsController');
+
+    //tournaments details
+    Route::resource('tournaments.details', 'Frontend\FrontTournamentsDetailsController');
+
+    //tournaments tickets
+    Route::get('/tournaments/tickets/next-to-jump', 'Frontend\FrontTournamentsTicketsController@nextToJump');
+    Route::resource('tournaments.tickets', 'Frontend\FrontTournamentsTicketsController');
+
+    //tournament rebuys and topups
+    Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
+    Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
+
+    //user tournament bets
+    Route::resource('user.tournament.bets', 'Frontend\UserTournamentBetsController');
+
+    // ::: SPECIAL COMBINED CALLS :::
+    Route::get('combined/tournaments', 'Frontend\FrontCombinedTournamentsController@index');
+    Route::get('combined/racing', 'Frontend\FrontCombinedRacingController@index');
+    Route::get('combined/racingNew', 'Frontend\FrontCombinedRacingController@indexNew');
+    Route::get('combined/sports', 'Frontend\FrontCombinedSportsController@index');
+
+    // Temporary feed routes for sports - another branch has a better implimentation
+    Route::get('feed/sports.{ext}', 'Frontend\FeedController@index');
+    //Route::get('feed/competitions', 'TopBetta\Controllers\FeedController@competitions');
+    // Route::get('feed/sports', 'TopBetta\Controllers\FeedController@sports');
+
+    // --- NEW DEPOSIT ROUTES ---
+    Route::resource('deposits', 'Frontend\DepositsController');
+    Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
+    Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
+
+    // --- REST ROUTES ---
+    Route::resource('sports', 'Frontend\SportsController');
+
+    Route::resource('competitions', 'Frontend\CompetitionsController');
+
+    Route::resource('base-competitions', 'Frontend\BaseCompetitionController');
+
+    Route::resource('events', 'Frontend\EventsController');
+
+    Route::resource('markets', 'Frontend\MarketsController');
+
+    Route::resource('market-types', 'Frontend\MarketTypesController');
+
+    Route::resource('selections', 'Frontend\SelectionsController');
+
+    Route::resource('teams', 'Frontend\TeamsController');
+
+    Route::resource('players', 'Frontend\PlayersController');
+
+    Route::resource('prices', 'Frontend\PricesController');
+
+    Route::resource('results', 'Frontend\ResultsController');
+
+});
+
+// new login/logout methods
+Route::group(array('prefix' => '/api/v2', 'after' => 'topbetta_secure_links'), function() {
+
+    // normal login
+    Route::post('authentication/login', 'Frontend\UserSessionController@login');
+
+    // normal logout
+    Route::get('authentication/logout', 'Frontend\UserSessionController@logout');
+
+    //Get auth user
+    Route::get('authentication/user', 'Frontend\UserSessionController@user');
+
+    // token login
+    Route::get('authentication/token/login', 'Frontend\UserTokenController@tokenLogin');
+
+});

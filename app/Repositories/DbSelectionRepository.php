@@ -8,8 +8,10 @@
 
 use TopBetta\Models\SelectionModel;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
+use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
 class DbSelectionRepository extends BaseEloquentRepository implements SelectionRepositoryInterface{
+    use SportsResourceRepositoryTrait;
 
     protected $selections;
 
@@ -207,5 +209,33 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->paginate();
     }
 
+    public function getSelectionsForEvent($event)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->where('e.id', $event)
+            ->groupBy('s.id');
 
+        return $this->model->hydrate($builder->get(array('s.*')))
+            ->load(array(
+                'price',
+                'result',
+                'team',
+                'player'
+            ));
+    }
+
+    public function getSelectionsForMarkets($markets)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->whereIn('m.id', $markets)
+            ->groupBy('s.id');
+
+        return $this->model->hydrate($builder->get(array('s.*')))
+            ->load(array(
+                'price',
+                'result',
+                'team',
+                'player'
+            ));
+    }
 } 
