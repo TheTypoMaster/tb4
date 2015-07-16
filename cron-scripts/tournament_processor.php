@@ -115,16 +115,6 @@ class TournamentProcessor extends TopBettaCLI
 			$this->_processAbandonedEventList($abandoned_list);
 			$this->_updateLeaderboardList($abandoned_list);
 		}
-	
-		// process paying match bets
-		$paying_list = $this->event->getPayingEventList(true);
-		
-		if(empty($paying_list)){
-			$this->l("No unresulted paying matches available to process");
-		} else {
-			$this->_processPayingEventList($paying_list);
-			$this->_updateLeaderboardList($paying_list);
-		}
 		
 		// payout tournaments
 		$tournament_list = $this->tournament->getTournamentCompletedList();
@@ -300,7 +290,7 @@ class TournamentProcessor extends TopBettaCLI
 					$display_cash = '$' . number_format($cash / 100, 2);
 					$payout_final->win_amount = (int) $prize['cash'];
 
-					if($formula == 'cash') {
+					if($formula == 'cash' || $formula == 'ticket') {
 						$display_cash .= ' in cash';
 						$result_id = $this->_awardCash($qualifier, $cash);
 						$payout_final->saveCashPayout();
@@ -327,7 +317,11 @@ class TournamentProcessor extends TopBettaCLI
 				}
 				$prize_display = implode(' + ', $prize_display);
 				$this->l("{$rank}. {$qualifier->username}: {$prize_display}");
-				$this->_sendWinnerEmail($qualifier, $tournament, $prize);
+
+                if( $tournament->email_flag ) {
+                    $this->_sendWinnerEmail($qualifier, $tournament, $prize);
+                }
+
 				$this->_resultTicket($qualifier, $tournament->id, $result_id);
 			}
 		}
@@ -393,7 +387,8 @@ class TournamentProcessor extends TopBettaCLI
 			'user_id' 		=> $user->id,
 			'tournament_id' => $tournament->id,
 			'currency' 		=> $tournament->start_currency,
-			'turned_over' 	=> 0
+			'turned_over' 	=> 0,
+            'balance_to_turnover' => $tournament->start_currency,
 		);
 
 		$this->leaderboard->store($leaderboard);

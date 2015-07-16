@@ -22,6 +22,7 @@ defined('_JEXEC') or die('Restricted access');
 include 'helpers/request.php';
 include 'helpers/output.php';
 include 'helpers/riskmanager.php';
+include 'helpers/functions.php';
 
 /* include all our req classes */
 include 'classes/user.php';
@@ -40,6 +41,18 @@ $method = RequestHelper::validate('method');
 //TODO: implement auth
 $apikey = RequestHelper::validate('apikey');
 $secret = RequestHelper::validate('secret');
+
+//check api key
+$input = $_POST;
+$key = $input['api_key'];
+unset($input['api_key']);
+
+$config = JFactory::getConfig();
+
+if( ! compare_hash(create_hash_key($input, $method, $config->getValue('tb_api_key')), $key) ) {
+    echo OutputHelper::json(403, array("error_msg" => "Unauthorized Access",  $input));
+    exit;
+}
 
 /* branch off for each method */
 switch($method) {
