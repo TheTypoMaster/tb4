@@ -166,6 +166,7 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         $builder = $this->getVisibleSportsEventBuilder();
 
         $model = $builder
+            ->where('e.start_date', '>=', Carbon::now())
             ->groupBy('e.id')
             ->orderBy('e.start_date')
             ->take($number)

@@ -126,6 +126,7 @@ class SelectionResourceService {
     public function formatRunner($runner)
     {
         return array(
+            "id"        => (int) $runner->id,
             "name"      => $runner->name,
             "owner"     => object_get($runner, 'owner.name'),
             "trainer"   => object_get($runner, 'owner.trainer'),

@@ -35,10 +35,8 @@ class MarketService {
         $this->competitionRepository = $competitionRepository;
     }
 
-    public function getFilteredMarketsForCompetition($competitionId, $types = null)
+    public function getFilteredMarketsForCompetition($competition, $types = null)
     {
-        $competition = $this->competitionRepository->find($competitionId);
-
         if( ! $types ) {
             $types = $this->marketOrderingService->getMarketTypeIds($competition->base_competition_id);
         }

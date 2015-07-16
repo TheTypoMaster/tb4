@@ -14,11 +14,9 @@ use Illuminate\Database\Query\Builder;
 trait SportsResourceRepositoryTrait {
 
     /**
-     *
-     * @param Carbon $date
      * @return Builder
      */
-    protected function getVisibleSportsEventBuilder(Carbon $date = null)
+    protected function getVisibleSportsEventBuilder()
     {
         $builder =  \DB::table('tbdb_event as e')
             ->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'e.id')
@@ -47,12 +45,6 @@ trait SportsResourceRepositoryTrait {
                     });
             })
             ->where('s.selection_status_id', 1);
-
-        if( $date ) {
-            $builder->where('eg.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('eg.start_date', '<=', $date->endOfDay()->toDateTimeString());
-        } else {
-            $builder->where('eg.start_date', '>=', Carbon::now());
-        }
 
         return $builder;
     }

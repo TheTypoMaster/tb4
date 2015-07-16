@@ -226,6 +226,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     {
         $builder = $this->getVisibleSportsEventBuilder()
             ->where('eg.base_competition_id', $baseCompetition)
+            ->where('e.start_date', '>=', Carbon::now())
             ->groupBy('eg.id')
             ->orderBy('start_date');
 
@@ -266,9 +267,9 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->with(array('baseCompetition', 'baseCompetition.sport'));
 
         if( $date ) {
-            $model->where('eg.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('eg.start_date', '<=', $date->endOfDay()->toDateTimeString());
+            $model->where('e.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('e.start_date', '<=', $date->endOfDay()->toDateTimeString());
         } else {
-            $model->where('eg.start_date', '>=', Carbon::now());
+            $model->where('e.start_date', '>=', Carbon::now());
         }
 
         return $model->get(array('eg.*'));

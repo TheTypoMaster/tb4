@@ -50,7 +50,7 @@ class EventService {
 
             return array(
                 "data" => $competitions,
-                "selected_competition" => $competitions->first()->id
+                "selected_competition" => $competitions->first() ? $competitions->first()->id : 0
             );
 
         }
@@ -58,25 +58,14 @@ class EventService {
         throw new \Exception("Parameter Missing");
     }
 
-    public function getCompetitionsAndEventsForBaseCompetition($baseCompetition, $types = null)
-    {
-        $competitions = $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($baseCompetition);
 
-        $competitions->first()->setRelation(
-            'events',
-            $this->getEventsForCompetitionWithFilteredMarkets($competitions->first()->id, $types)
-        );
-
-        return $competitions;
-    }
-
-    public function getEventsForCompetitionWithFilteredMarkets($competitionId, $types = null)
+    public function getEventsForCompetitionWithFilteredMarkets($competition, $types = null)
     {
         //get events
-        $events = $this->eventResourceService->getEventsForCompetition($competitionId);
+        $events = $this->eventResourceService->getEventsForCompetition($competition->id);
 
         //get markets
-        $markets = $this->marketService->getFilteredMarketsForCompetition($competitionId);
+        $markets = $this->marketService->getFilteredMarketsForCompetition($competition, $types);
 
         //create empty collections for each event
         $events->each(function($event) {
