@@ -329,7 +329,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');
 
     // --- BETS ----
-    Route::resource('bets', 'Frontend\BetController');
+    Route::group(array('before' => 'auth'), function() {
+        Route::resource('bets', 'Frontend\BetController');
+    });
+
 
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');

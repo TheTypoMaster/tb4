@@ -12,4 +12,14 @@ interface BetRepositoryInterface {
     public function getBetsForUserByEvent($userId, $eventId, $type = null);
 
     public function getBetsForUserBySelection($userId, $selection, $type = null);
+
+    public function getAllBetsForUser($user, $page = null);
+
+    public function getWinningBetsForUser($user, $page = null);
+
+    public function getLosingBetsForUser($user, $page = null);
+
+    public function getRefundedBetsForUser($user, $page = null);
+
+    public function getUnresultedBetsForUser($user, $page = null);
 }

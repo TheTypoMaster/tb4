@@ -129,4 +129,104 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
 
         return $model->get(array('tbdb_bet.*'));
     }
+
+    public function getAllBetsForUser($user, $page = null)
+    {
+        $model = $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->orderBY('e.start_date', 'DESC');
+
+
+        if ( is_null($page) ) {
+            return $model->get();
+        }
+
+        return $model->paginate();
+    }
+
+    public function getUnresultedBetsForUser($user, $page = null)
+    {
+        $model = $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->where('resulted_flag', false)
+            ->orderBY('e.start_date', 'DESC');
+
+
+        if ( is_null($page) ) {
+            return $model->get();
+        }
+
+        return $model->paginate();
+    }
+
+    public function getWinningBetsForUser($user, $page = null)
+    {
+        $model = $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->where('resulted_flag', true)
+            ->where('result_transaction_id', '>', 0)
+            ->orderBY('e.start_date', 'DESC');
+
+
+        if ( is_null($page) ) {
+            return $model->get();
+        }
+
+        return $model->paginate();
+    }
+
+    public function getLosingBetsForUser($user, $page = null)
+    {
+        $model = $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->where('resulted_flag', true)
+            ->where('result_transaction_id', '=', 0)
+            ->orderBY('e.start_date', 'DESC');
+
+
+        if ( is_null($page) ) {
+            return $model->get();
+        }
+
+        return $model->paginate();
+    }
+
+    public function getRefundedBetsForUser($user, $page = null)
+    {
+        $model = $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->where('refunded_flag', true)
+            ->orderBY('e.start_date', 'DESC');
+
+
+        if ( is_null($page) ) {
+            return $model->get();
+        }
+
+        return $model->paginate();
+    }
+
+    protected function getBetBuilder()
+    {
+        return $this->model
+            ->from('tbdb_bet as b')
+            ->join('tbdb_bet_type as bt', 'bt.id', '=', 'b.bet_type_id')
+            ->join('tbdb_bet_result_status as brs', 'brs.id', '=', 'b.bet_result_status_id')
+            ->leftJoin('tbdb_account_transaction as at', 'at.id', '=', 'b.result_transaction_id')
+            ->join('tbdb_bet_selection as bs', 'bs.bet_id', '=', 'b.id')
+            ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
+            ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
+            ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
+            ->join('tbdb_event as e', 'e.id', '=', 'm.event_id')
+            ->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'e.id')
+            ->join('tbdb_event_group as eg', 'eg.id', '=', 'ege.event_group_id')
+            ->groupBy('b.id')
+            ->select(array(
+                'b.id', 'b.bet_amount', 'b.bet_freebet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
+                'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status', 'at.amount as won_amount',
+                'bt.name as bet_type', 'b.selection_string'
+            ));
+    }
+
+
 }
