@@ -7,6 +7,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\BetModel;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 
@@ -206,6 +207,29 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         return $model->paginate();
     }
 
+    public function getBetsOnDateForUser($user, Carbon $date, $resulted = null)
+    {
+        \DB::enableQueryLog();
+        $model = $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->where('e.start_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('e.start_date', '<=', $date->endOfDay()->toDateTimeString());
+
+        if( ! is_null($resulted) ) {
+            $model->where('resulted_flag', $resulted);
+        }
+
+        return $model->get();
+    }
+
+    public function getBetsForEventGroup($user, $eventGroup)
+    {
+        return $this->getBetBuilder()
+            ->where('b.user_id', $user)
+            ->where('eg.id', $eventGroup)
+            ->get();
+    }
+
     protected function getBetBuilder()
     {
         return $this->model
@@ -224,7 +248,7 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->select(array(
                 'b.id', 'b.bet_amount', 'b.bet_freebet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status', 'at.amount as won_amount',
-                'bt.name as bet_type', 'b.selection_string'
+                'bt.name as bet_type', 'b.selection_string', 'e.start_date as date'
             ));
     }
 

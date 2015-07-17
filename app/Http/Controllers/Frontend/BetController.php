@@ -38,10 +38,26 @@ class BetController extends Controller {
      */
 	public function index(Request $request)
 	{
+        if( $date = $request->get('date', null) ) {
+            return $this->apiResponse->success(
+                $this->betService->getBetsForDate(Auth::user()->id, $date)->toArray()
+            );
+        }
+
 		return $this->apiResponse->success(
             $this->betService->getBetHistory(Auth::user()->id, $request->get('type', 'all'), $request->get('page', null))->toArray()
         );
 	}
+
+    public function getActiveAndRecentBets()
+    {
+        $bets = $this->betService->getActiveAndRecentBetsForUser(Auth::user()->id);
+
+        return $this->apiResponse->success(array(
+            'active' => $bets['active']->toArray(),
+            'recent' => $bets['recent']->toArray()
+        ));
+    }
 
 
 	/**

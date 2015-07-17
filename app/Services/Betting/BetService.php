@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Betting;
 
 
+use Carbon\Carbon;
 use TopBetta\Services\Resources\Betting\BetResourceService;
 
 class BetService {
@@ -41,5 +42,27 @@ class BetService {
         }
 
         return $this->betResourceService->getAllBetsForUser($user, $page);
+    }
+
+    public function getActiveAndRecentBetsForUser($user)
+    {
+        $date = Carbon::now()->subHours(6);
+
+        $active = $this->betResourceService->getUnresultedBetsForUser($user);
+        $recent = $this->betResourceService->getBetsOnDateForUser($user, $date, true);
+
+        return array('active' => $active, 'recent' => $recent);
+    }
+
+    public function getBetsForDate($user, $date)
+    {
+        $date = Carbon::createFromFormat('Y-m-d', $date);
+
+        return $this->betResourceService->getBetsOnDateForUser($user, $date);
+    }
+
+    public function getBetsForEventGroup($user, $eventGroup)
+    {
+        return $this->betResourceService->getBetsForEventGroup($user, $eventGroup);
     }
 }

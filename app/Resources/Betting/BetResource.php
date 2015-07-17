@@ -29,7 +29,8 @@ class BetResource extends AbstractEloquentResource {
         'competitionName' => 'competition_name',
         'betType' => 'bet_type',
         'status' => 'status',
-        'paid' => 'won_amount'
+        'paid' => 'won_amount',
+        'date' => 'date',
     );
 
 
