@@ -34,6 +34,7 @@ return array(
         array("display_name" => "User Deposit Limits", "name" => "users.deposit-limit"),
         array("display_name" => "Promotions", "name" => "promotions"),
         array("display_name" => "Free Credit Management", "name" => "free-credit-management"),
+        array("display_name" => "Tournament Groups", "name" => "tournament-groups"),
     ),
 
     //custom permissions. Permissions which do not fit the resource category

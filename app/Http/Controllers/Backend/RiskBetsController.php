@@ -78,7 +78,7 @@ class RiskBetsController extends Controller {
             $input = Input::json()->all();
         }
 
-        $bet = Bet::findOrFail($input['id']);
+        $bet = BetModel::findOrFail($input['id']);
         $cancel = ($input['action'] == 'cancel') ? true : false;
 
         if (!BetRepo::refundBet($bet, $cancel)) {

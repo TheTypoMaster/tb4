@@ -62,6 +62,9 @@
                     <li>
                         <a href="{{ route('admin.tournament-sport-markets.index') }}"><i class="fa fa-edit fa-fw"></i> Tournament Sport Markets</a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.tournament-groups.index') }}"><i class="fa fa-group fa-fw"></i> Tournament Groups</a>
+                    </li>
 
                     <li>
                         <a href="{{ url('/admin/tournament-settings') }}"><i class="fa fa-cog fa-fw"></i> Tournament Settings</a>
