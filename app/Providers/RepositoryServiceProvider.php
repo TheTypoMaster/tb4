@@ -253,6 +253,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface',
             'TopBetta\Repositories\DbMeetingVenueRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentGroupRepository'
+        );
     }
 
 } 
