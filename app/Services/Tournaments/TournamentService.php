@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Tournaments;
 
+use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use Log;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -65,6 +66,10 @@ class TournamentService {
      * @var TournamentGroupService
      */
     private $tournamentGroupService;
+    /**
+     * @var TournamentResourceService
+     */
+    private $tournamentResourceService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -75,7 +80,8 @@ class TournamentService {
                                 TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
                                 EventModelRepositoryInterface $eventRepository,
                                 CompetitionService $competitionService,
-                                TournamentGroupService $tournamentGroupService)
+                                TournamentGroupService $tournamentGroupService,
+                                TournamentResourceService $tournamentResourceService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -88,6 +94,24 @@ class TournamentService {
         $this->eventRepository = $eventRepository;
         $this->competitionService = $competitionService;
         $this->tournamentGroupService = $tournamentGroupService;
+        $this->tournamentResourceService = $tournamentResourceService;
+    }
+
+    public function getVisibleTournaments($type = 'racing', $date = null)
+    {
+        if( ! is_null($date) ) {
+            $date = Carbon::createFromFormat('Y-m-d', $date);
+        }
+
+        switch($type)
+        {
+            case 'racing':
+                return $this->tournamentResourceService->getVisibleRacingTournaments($date);
+            case 'sport':
+                return $this->tournamentResourceService->getVisibleSportTournaments($date);
+        }
+
+        throw new \InvalidArgumentException("Type " . $type . " is invalid");
     }
 
     /**

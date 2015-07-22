@@ -330,6 +330,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     // --- SPORTS N2J
     Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');
 
+    // --- TOURNAMENT ROUTES ---
+    Route::get('combined/tournament-groups/tournaments', 'Frontend\TournamentGroupController@getVisibleTournamentGroupsWithTournaments');
+    Route::resource('tournaments', 'Frontend\TournamentController');
+
     // --- BETS ----
     Route::resource('bets', 'Frontend\BetController');
 
@@ -387,7 +391,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
 
     // ::: TOURNAMENTS :::
     //tournaments
-    Route::resource('tournaments', 'Frontend\FrontTournamentsController');
+    //Route::resource('tournaments', 'Frontend\FrontTournamentsController');
 
     //tournaments bets
     Route::resource('tournaments.comments', 'Frontend\FrontTournamentsCommentsController');

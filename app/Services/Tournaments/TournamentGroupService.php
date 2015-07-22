@@ -55,4 +55,26 @@ class TournamentGroupService {
 
         return $tournament;
     }
+
+    /**
+     * @param string $type
+     * @param string $date
+     * @return \TopBetta\Resources\EloquentResourceCollection
+     */
+    public function getGroupsWithTournaments($type = 'racing', $date = null)
+    {
+        if( ! is_null($date) ) {
+            $date = Carbon::createFromFormat('Y-m-d', $date);
+        }
+
+        switch($type)
+        {
+            case 'racing':
+                return $this->tournamentGroupRepository->getVisibleRacingTournamentGroupsWithTournaments($date);
+            case 'sport':
+                return $this->tournamentGroupRepository->getVisibleSportTournamentGroupsWithTournaments($date);
+        }
+
+        throw new \InvalidArgumentException("Type " . $type . " is not available");
+    }
 }

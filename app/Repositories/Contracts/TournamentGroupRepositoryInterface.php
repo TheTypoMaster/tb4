@@ -11,5 +11,11 @@ use Carbon\Carbon;
 
 interface TournamentGroupRepositoryInterface
 {
-    public function getVisibleTournamentGroupsWithTournaments(Carbon $date = null);
+    public function getVisibleSportTournamentGroupsWithTournaments(Carbon $date = null);
+
+    public function getVisibleRacingTournamentGroupsWithTournaments(Carbon $date = null);
+
+    public function getByName($name);
+
+    public function search($term);
 }
