@@ -8,6 +8,7 @@
  */
 
 use Eloquent;
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
 class BetModel extends Eloquent {
 
@@ -73,5 +74,7 @@ class BetModel extends Eloquent {
     {
         return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'refund_transaction_id');
     }
+
+
 
 }

@@ -166,6 +166,8 @@ class FrontCombinedSportsController extends Controller {
 //             $options[$key]['type_id'] = (int)$typeId;
 //         }
 
+
+
                 return array('success' => true, 'result' => array('sports_list' => $sportsList, 'sport' => $sport, 'competition' => $comp, 'events' => $events, 'types' => $types, 'options' => $options, 'selected' => array('comp_id' => (int)$compId, 'event_id' => (int)$eventId, 'type_id' => (int)$selectedTypeId, 'market_type_id' => (int)$typeId)));
     }
 

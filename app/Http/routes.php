@@ -340,7 +340,12 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     });
 
     // --- BETS ----
-    Route::resource('bets', 'Frontend\BetController');
+    Route::group(array('before' => 'auth'), function() {
+        Route::resource('bets', 'Frontend\BetController');
+        Route::get('active-bets', 'Frontend\BetController@getActiveAndRecentBets');
+        Route::resource('competition.bets', 'Frontend\CompetitionBetsController');
+    });
+
 
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');

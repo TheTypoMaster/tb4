@@ -2,9 +2,11 @@
 
 namespace TopBetta\Http\Controllers\Frontend;
 
+use Illuminate\Http\Request;
 use Input;
 use Auth;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Services\Betting\BetService;
 use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
@@ -17,21 +19,45 @@ class BetController extends Controller {
      * @var ApiResponse
      */
     private $apiResponse;
+    /**
+     * @var BetService
+     */
+    private $betService;
 
-    public function __construct(ApiResponse $apiResponse)
+    public function __construct(ApiResponse $apiResponse, BetService $betService)
     {
         $this->apiResponse = $apiResponse;
+        $this->betService = $betService;
     }
 
     /**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return Response
+     */
+	public function index(Request $request)
 	{
-		//
+        if( $date = $request->get('date', null) ) {
+            return $this->apiResponse->success(
+                $this->betService->getBetsForDate(Auth::user()->id, $date)->toArray()
+            );
+        }
+
+		return $this->apiResponse->success(
+            $this->betService->getBetHistory(Auth::user()->id, $request->get('type', 'all'), $request->get('page', null))->toArray()
+        );
 	}
+
+    public function getActiveAndRecentBets()
+    {
+        $bets = $this->betService->getActiveAndRecentBetsForUser(Auth::user()->id);
+
+        return $this->apiResponse->success(array(
+            'active' => $bets['active']->toArray(),
+            'recent' => $bets['recent']->toArray()
+        ));
+    }
 
 
 	/**
