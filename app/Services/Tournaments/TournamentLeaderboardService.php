@@ -143,6 +143,11 @@ class TournamentLeaderboardService {
         return array('leaderboard' => $leaderboardRecord, "position" => $position);
     }
 
+    public function getLeaderboardPositionForTicket($ticket)
+    {
+        return $this->leaderboardRepository->getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($ticket->tournament_id, $ticket->leaderboard->currency)->count();
+    }
+
     public function increaseCurrencyForUserTournament($user, $tournament, $amount)
     {
         $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($user, $tournament);

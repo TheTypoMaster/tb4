@@ -334,6 +334,11 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('combined/tournament-groups/tournaments', 'Frontend\TournamentGroupController@getVisibleTournamentGroupsWithTournaments');
     Route::resource('tournaments', 'Frontend\TournamentController');
 
+    Route::group(array('before' => 'auth'), function() {
+        Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
+        Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
+    });
+
     // --- BETS ----
     Route::resource('bets', 'Frontend\BetController');
 
@@ -403,7 +408,6 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('tournaments.details', 'Frontend\FrontTournamentsDetailsController');
 
     //tournaments tickets
-    Route::get('/tournaments/tickets/next-to-jump', 'Frontend\FrontTournamentsTicketsController@nextToJump');
     Route::resource('tournaments.tickets', 'Frontend\FrontTournamentsTicketsController');
 
     //tournament rebuys and topups
