@@ -11,6 +11,9 @@ namespace TopBetta\Services\Tournaments;
 use Log;
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Services\Exceptions\UnauthorizedAccessException;
+use TopBetta\Services\Resources\Tournaments\TicketResourceService;
+use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 
 class TournamentTicketService {
@@ -23,11 +26,16 @@ class TournamentTicketService {
      * @var TournamentTransactionService
      */
     private $transactionService;
+    /**
+     * @var TicketResourceService
+     */
+    private $ticketResourceService;
 
-    public function __construct(TournamentTicketRepositoryInterface $tournamentTicketRepository, TournamentTransactionService $transactionService)
+    public function __construct(TournamentTicketRepositoryInterface $tournamentTicketRepository, TournamentTransactionService $transactionService, TicketResourceService $ticketResourceService)
     {
         $this->tournamentTicketRepository = $tournamentTicketRepository;
         $this->transactionService = $transactionService;
+        $this->ticketResourceService = $ticketResourceService;
     }
 
     /**
@@ -127,5 +135,36 @@ class TournamentTicketService {
         $this->refundTicket($ticket);
 
         return $ticket->delete();
+    }
+
+    public function getTicketsForUser($user, $type = 'all')
+    {
+        switch($type)
+        {
+            case 'all':
+                return $this->ticketResourceService->getAllTicketsForUser($user);
+            case 'active':
+                return $this->ticketResourceService->getActiveTicketsForUser($user);
+        }
+
+        throw new \InvalidArgumentException("Type " . $type . " is invalid");
+    }
+
+    public function getTicketsForUserByDate($user, $date)
+    {
+        $date = Carbon::createFromFormat('Y-m-d', $date);
+
+        return $this->ticketResourceService->getTicketsForUserOnDate($user, $date);
+    }
+
+    public function getTicketForUser($ticket, $user)
+    {
+        $ticket = $this->ticketResourceService->getTicket($ticket);
+
+        if( $ticket->userId != $user->id ) {
+            throw new UnauthorizedAccessException;
+        }
+
+        return $ticket;
     }
 }

@@ -2,14 +2,17 @@
 
 namespace TopBetta\Http\Controllers\Frontend;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 use Auth;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Services\Exceptions\UnauthorizedAccessException;
 use TopBetta\Services\Resources\Tournaments\TicketResourceService;
 use TopBetta\Services\Response\ApiResponse;
+use TopBetta\Services\Tournaments\TournamentTicketService;
 
 class TicketsController extends Controller
 {
@@ -21,11 +24,16 @@ class TicketsController extends Controller
      * @var ApiResponse
      */
     private $response;
+    /**
+     * @var TournamentTicketService
+     */
+    private $ticketService;
 
-    public function __construct(TicketResourceService $ticketResourceService, ApiResponse $response)
+    public function __construct(TournamentTicketService $ticketService, TicketResourceService $ticketResourceService, ApiResponse $response)
     {
         $this->ticketResourceService = $ticketResourceService;
         $this->response = $response;
+        $this->ticketService = $ticketService;
     }
 
     /**
@@ -33,9 +41,22 @@ class TicketsController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = Auth::user();
+
+        if( $date = $request->get('date') ) {
+            return $this->response->success($this->ticketService->getTicketsForUserByDate($user->id, $date)->toArray());
+        }
+
+        try {
+            $tickets = $this->ticketService->getTicketsForUser($user->id, $request->get('type', 'all'));
+        } catch ( \InvalidArgumentException $e ) {
+            return $this->response->failed($e->getMessage(), 400);
+        }
+
+        $tickets = $tickets->toArray();
+        return $this->response->success(array_get($tickets, 'data', $tickets), 200, array_get($tickets, 'data') ? array_except($tickets, 'data') : array());
     }
 
     public function getRecentAndActiveTicketsForUser()
@@ -80,7 +101,15 @@ class TicketsController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $ticket = $this->ticketService->getTicketForUser($id, Auth::user());
+        } catch (UnauthorizedAccessException $e) {
+            return $this->response->failed("Unauthorized", 401);
+        } catch (ModelNotFoundException $e) {
+            return $this->response->failed("Ticket does not exist", 404);
+        }
+
+        return $this->response->success($ticket->toArray());
     }
 
     /**
