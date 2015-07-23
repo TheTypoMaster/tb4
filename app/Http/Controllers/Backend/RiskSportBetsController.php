@@ -77,27 +77,27 @@ class RiskSportBetsController extends Controller {
             $input = Input::json()->all();
         }
 
-        $bet = Bet::findOrFail($input['id']);
-        $cancel = ($input['action'] == 'cancel') ? true : false;
+        $bet = BetModel::findOrFail($input['id']);
+$cancel = ($input['action'] == 'cancel') ? true : false;
 
-        if (!BetRepo::refundBet($bet, $cancel)) {
-            return array("success" => false, "error" => "Problem with " . $input['action'] . " for sport bet id: " . $bet->id);
-        }
+if (!BetRepo::refundBet($bet, $cancel)) {
+    return array("success" => false, "error" => "Problem with " . $input['action'] . " for sport bet id: " . $bet->id);
+}
 
-        return array("success" => true, "result" => "Sport bet " . $input['action'] . ' successful for id: ' . $bet->id);
-	}
+return array("success" => true, "result" => "Sport bet " . $input['action'] . ' successful for id: ' . $bet->id);
+}
 
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
+/**
+ * Remove the specified resource from storage.
+ *
+ * @param  int  $id
+ * @return Response
+ */
+public function destroy($id)
+{
+    //
+}
 
 
 }

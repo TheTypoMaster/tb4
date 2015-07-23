@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-    <meta charset="utf-8">
-</head>
-<body>
+@extends('emails.layouts.standard_email_template')
 
-<p>
-    {{ $body }}
-</p>
+@section('email-body')
 
-</body>
-</html>
+    {!! $body !!}
+
+@stop

@@ -292,6 +292,9 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
     // normal logout
     Route::get('authentication/logout', 'Frontend\UserSessionController@logout');
 
+    //Get auth user
+    Route::get('authentication/user', 'Frontend\UserSessionController@user');
+
     // token login
     Route::get('authentication/token/login', 'Frontend\UserTokenController@tokenLogin');
 
