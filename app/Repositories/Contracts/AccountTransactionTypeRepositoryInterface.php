@@ -40,6 +40,7 @@ interface AccountTransactionTypeRepositoryInterface
     const TYPE_TOURNAMENT_TOPUP_BUYIN = "tournamenttopupbuyin";
     const TYPE_TOURNAMENT_TOPUP_ENTRY = "tournamenttopupentry";
     const TYPE_EWAY_RECURRING_DEPOSIT = 'ewayrecurringdeposit';
+    const TYPE_PROMO_TOURNAMENT_ENTRY = "promotournamententry";
 
     public function getTransactionTypeByKeyword($keyword);
 

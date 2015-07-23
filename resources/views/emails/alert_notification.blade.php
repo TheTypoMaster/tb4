@@ -7,7 +7,7 @@
     <h2>TopBetta Alert Notification</h2>
 
     <div>
-        {{ $detail }}
+        {!! $detail !!}
     </div>
 
 </body>

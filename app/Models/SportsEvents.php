@@ -53,6 +53,7 @@ class SportsEvents extends \Eloquent {
 		$query .= " WHERE e.display_flag = '1' ";
 		$query .= $tournamentFlag ? "" : $dateQuery;
 		$query .= " AND m.market_status NOT IN ('D', 'S') ";
+        $query .= " AND m.display_flag = '1'";
 		$query .= " AND ((sp.win_odds > 1 AND sp.override_type IS NULL) OR (sp.override_odds > 1 AND sp.override_type = 'price') OR (sp.override_odds * sp.win_odds > 1 AND sp.override_type='percentage'))";
 		$query .= " AND s.selection_status_id = '1'";
 		$query .= $compQuery;

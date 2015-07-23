@@ -140,6 +140,11 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
         return $this->model->where('username', $username)->first();
     }
 
+    public function getUserByEmail($email)
+    {
+        return $this->model->where('email', $email)->first();
+    }
+
     public function getChildUserAccounts($parentId)
     {
         $accounts =  $this->model->where('parent_user_id' , $parentId)
@@ -150,4 +155,16 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
         return $accounts->toArray();
 
     }
+
+    public function search($search)
+    {
+        return $this->model
+            ->where('username', 'LIKE', "%$search%")
+            ->orWhere('name', 'LIKE', "%$search%")
+            ->orWhere('id', 'LIKE', "%$search%")
+            ->orWhere('email', 'LIKE', "%$search%")
+            ->with('topbettaUser')
+            ->paginate();
+    }
+
 }

@@ -56,4 +56,44 @@ return array(
         array('uri' => 'tournaments/cancel/{tournamentId}', "permission" => 'tournaments.delete'),
 
     ),
+
+    // --- SIDEBAR NAVIGATION MENU ---
+    "navigation" => array(
+        array("name" => "Dashboard", "route" => "admin.dashboard.index", "fa-icon" => "fa-dashboard"),
+        array("name" => "Users", "fa-icon" => "fa-user", "children" => array(
+            array("name" => "Users", "route" => "admin.users.index"),
+            array("name" => "User Activity Report", "route" => "admin.user-activity.index"),
+        )),
+        array("name" => "Bets", "fa-icon" => "fa-list", "route" => "admin.bets.index"),
+        array("name" => "Payments", "fa-icon" => "fa-money", "children" => array(
+            array("name" => "Withdrawal Requests", "route" => "admin.withdrawals.index"),
+            array("name" => "Account Transactions", "route" => "admin.account-transactions.index"),
+            array("name" => "Free Credit Transactions", "route" => "admin.free-credit-transactions.index"),
+            array("name" => "Free Credit Management", "route" => "admin.free-credit-management.index"),
+        )),
+        array("name" => "Tournaments", "fa-icon" => "fa-trophy", "children" => array(
+            array("name" => "Tournament List", "fa-icon" => "fa-list", "route" => "admin.tournaments.index"),
+            array("name" => "Tournament Event Results", "fa-icon" => "fa-edit", "route" => "admin.tournament-sport-results.index"),
+            array("name" => "Tournament Sport Markets", "fa-icon" => "fa-edit", "route" => "admin.tournament-sport-markets.index"),
+            array("name" => "Tournament Settings", "fa-icon" => "fa-cog", "url" => "/admin/tournament-settings"),
+        )),
+        array("name" => "Reports", "route" => "admin.reports.index", "fa-icon" => "fa-file-text"),
+        array("name" => "Event Management", "fa-icon" => "fa-list", "children" => array(
+            array("name" => "Regions", "route" => "admin.competitionregions.index"),
+            array("name" => "Sports", "route" => "admin.sports.index"),
+            array("name" => "Base Competitions", "route" => "admin.basecompetitions.index"),
+            array("name" => "Competitions", "route" => "admin.competitions.index"),
+            array("name" => "Events", "route" => "admin.events.index"),
+            array("name" => "Teams", "route" => "admin.teams.index"),
+            array("name" => "Players", "route" => "admin.players.index"),
+            array("name" => "Markets", "route" => "admin.markets.index"),
+            array("name" => "Market Types", "route" => "admin.markettypes.index"),
+            array("name" => "Selections", "route" => "admin.selections.index"),
+            array("name" => "Prices", "route" => "admin.selectionprices.index"),
+            array("name" => "Icons", "route" => "admin.icons.index"),
+        )),
+        array("name" => "Promotions", "fa-icon" => "fa-money", "route" => "admin.promotions.index"),
+        array("name" => "Settings", "fa-icon" => "fa-cogs", "route" => "admin.settings.index"),
+        array("name" => "User Groups", "fa-icon" => "fa-user", "route" => "admin.groups.index"),
+    ),
 );
