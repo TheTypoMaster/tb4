@@ -4,11 +4,11 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="row page-header">
-                <h2 class="col-lg-4">Icons
+                <h1 class="col-lg-4">Icons
                     <a href="{{route('admin.icons.create', array("q" => $search))}}" class="btn btn-primary">Create <i class="glyphicon glyphicon-plus"></i></a>
-                </h2>
-				
-				<h2 class="col-lg-4 pull-right">
+                </h1>
+
+                <h2 class="col-lg-4 pull-right">
                 {!! Form::open(array('method' => 'GET')) !!}
                 <div class="input-group custom-search-form">
                     {!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search...")) !!}

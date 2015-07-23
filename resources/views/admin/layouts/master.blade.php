@@ -45,7 +45,7 @@
 
         <div id="page-wrapper">
 			@if (Session::has('flash_message'))
-			<div class="alert alert-info alert-dismissable">
+			<div class="alert alert-info alert-dismissable col-lg-11">
 				<button type="button" class="close" data-dismiss="alert" title="Close Message" aria-hidden="true">&times;</button>
 				<p>{{ Session::get('flash_message') }}</p>
 			</div>     
