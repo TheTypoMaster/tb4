@@ -163,6 +163,7 @@ return [
 		'TopBetta\Providers\RepositoryServiceProvider',
 		'TopBetta\Services\Html\HtmlServiceProvider',
         'TopBetta\Providers\EmailServiceProvider',
+        'TopBetta\Providers\ComposerServiceProvider',
 
 	],
 

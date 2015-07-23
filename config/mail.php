@@ -121,4 +121,14 @@ return [
 
 	'pretend' => env('MAIL_PRETEND', true),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Promo "TO" Address
+    |--------------------------------------------------------------------------
+    | Address to send the promo code emails to
+    |
+     */
+
+    "promo_code_to" => array("address" => "help@topbetta.com", "name" => "TopBetta"),
+
 ];
