@@ -60,16 +60,16 @@
 			<td>{{ TopBetta\Models\TournamentTicket::countTournamentEntrants($tournament->id) }}</td>
 			<td>{{ ($tournament->status_flag) ? 'Active' : 'Inactive' }}</td>
             <td>
-                {!! link_to_route('admin.tournaments.edit', "Edit", array($tournament->id), array("class" => 'btn btn-primary')) !!}
+                {!! link_to_route('admin.tournaments.edit', "Edit", array($tournament->id), array("class" => 'btn btn-primary')) !!} <br/>
                 @if( ! $tournament->cancelled_flag && $tournament->end_date > Carbon\Carbon::now())
-                    {!! link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) !!}
+                    {!! link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) !!} <br/>
                 @endif
 
-                {!! link_to_route('admin.tournaments.show', "Show Entrants", array($tournament->id), array("class" => "btn btn-success")) !!}
+                {!! link_to_route('admin.tournaments.show', "Show Entrants", array($tournament->id), array("class" => "btn btn-success")) !!} <br/>
 
 
                 @if( ! $tournament->paid_flag && ! $tournament->cancelled_flag )
-                    {!! link_to('/admin/tournaments/cancel/' . $tournament->id, "Cancel", array("class" => "btn btn-warning")) !!}
+                    {!! link_to('/admin/tournaments/cancel/' . $tournament->id, "Cancel", array("class" => "btn btn-warning")) !!}<br/>
                 @endif
 
                 @if( ! $tournament->tickets->count() )

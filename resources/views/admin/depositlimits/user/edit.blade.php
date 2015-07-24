@@ -4,7 +4,6 @@
     <div class="row">
         <div class="col-lg-12">
             @include('admin.users.partials.header')
-            <h4 class="page-header">Deposit Limit</h4>
 
             {!! Form::model($depositLimit, array("route"=>array("admin.users.deposit-limit.update", $user->id, 'get'), "method" => "PUT")) !!}
 
