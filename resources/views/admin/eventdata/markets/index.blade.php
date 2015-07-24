@@ -58,6 +58,7 @@
         			<td>
                         {!! link_to_route('admin.markets.edit', 'Edit', array($market->id, "q" => $search), array('class' => 'btn btn-info')) !!}
                         {!! link_to_route('admin.selections.index', 'Selections', array('market' => $market->id, 'event' => $event), array('class' => 'btn btn-primary')) !!}
+                        {!! link_to_route('admin.selections.create', 'Create Selection', array('market' => $market->id, 'event' => $event), array('class' => 'btn btn-success')) !!}
                     </td>
 
         		</tr>

@@ -71,6 +71,8 @@ abstract class CrudResourceController extends Controller {
 
     protected $deleteRoute;
 
+    protected $createChildRoute = null;
+
     // --- VIEWS --- //
     protected $indexView;
 
@@ -117,6 +119,7 @@ abstract class CrudResourceController extends Controller {
             "extraFields"     => $extraData,
             "search"          => $search,
             "excludedFields"  => $this->excludedFields,
+            'createChildRoute' => $this->createChildRoute,
         );
 
         return View::make($this->indexView, compact('data'));

@@ -42,6 +42,12 @@ class CompetitionsController extends CrudResourceController
 
     protected $editView = 'admin.eventdata.competitions.edit';
 
+    protected $createChildRoute = array(
+        "route" => 'admin.events.create',
+        'param' => 'competition_id',
+        'name' => 'Event'
+    );
+
     private $baseCompetitionRepository;
 
 
