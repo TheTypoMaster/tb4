@@ -28,9 +28,13 @@ class SessionController extends Controller
 	 */
 	public function create()
 	{
-		if (Auth::check() && Auth::user()->gid == 25) {
-			// TODO: would be nice for user to set home page
-			return Redirect::to('/admin/dashboard');
+		if (Auth::check()) {
+            $user = $user = Sentry::findUserByLogin(Auth::user()->username);
+
+            if( $user->hasAccess('admin.*') ) {
+                // TODO: would be nice for user to set home page
+                return Redirect::to('/admin/dashboard');
+            }
 		}
 
 		return View::make('admin.sessions.create');
