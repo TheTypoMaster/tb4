@@ -159,10 +159,10 @@ abstract class CrudResourceController extends Controller {
      *
      * @return Response
      */
-    public function store()
+    public function store($extraData = array())
     {
         $data = Input::except('q');
-        $newModel = $this->repository->updateOrCreate($data);
+        $newModel = $this->repository->updateOrCreate(array_merge($data, $extraData));
 
         return Redirect::route($this->indexRoute, array($newModel['id']))
             ->with('flash_message', 'Saved!');
@@ -215,13 +215,13 @@ abstract class CrudResourceController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, $extraData = array())
     {
         //Get the search string for filtering when redirecting
         $search = Input::get("q", '');
 
         $data = Input::except('q');
-        $this->repository->updateWithId($id, $data);
+        $this->repository->updateWithId($id, array_merge($data, $extraData));
 
         return Redirect::route($this->indexRoute, array($id, "q"=>$search))
             ->with('flash_message', 'Saved!');
