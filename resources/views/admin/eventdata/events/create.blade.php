@@ -80,7 +80,7 @@
 
             <div class="col-lg-12">
                 <div class="form-group">
-                    {!! Form::submit('Update', array('class' => 'btn btn-info')) !!}
+                    {!! Form::submit('Create', array('class' => 'btn btn-info')) !!}
                 </div>
                 {!! Form::close() !!}
             </div>

@@ -9,7 +9,6 @@
             <ul class="nav nav-tabs">
                 <span class='pull-right'>{!! link_to_route('admin.markets.index', 'Back to Markets', array('event' => $event, 'q'=>$search), array('class' => 'btn btn-outline btn-warning')) !!}</span>
             </ul>
-            <h4>Edit Selection</h4>
             <div class='col-lg-6'>
                 {!! Form::open(array('method' => 'POST', 'route' => array('admin.selections.store', 'event' => $event, 'market' => $market->id, "q" => $search))) !!}
                 <div class="form-group">
@@ -57,7 +56,7 @@
 
             <div class="col-lg-12">
                 <div class="form-group">
-                    {!! Form::submit('Update', array('class' => 'btn btn-info')) !!}
+                    {!! Form::submit('Save', array('class' => 'btn btn-info')) !!}
                 </div>
                 {!! Form::close() !!}
             </div>

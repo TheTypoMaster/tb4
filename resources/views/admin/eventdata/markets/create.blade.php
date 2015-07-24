@@ -9,7 +9,6 @@
             <ul class="nav nav-tabs">
                 <span class='pull-right'>{!! link_to_route('admin.events.index', 'Back to Events', array("q" => $search), array('class' => 'btn btn-outline btn-warning')) !!}</span>
             </ul>
-            <h4>Edit Market</h4>
             <div class='col-lg-6'>
                 {!! Form::open(array('method' => 'POST', 'route' => array('admin.markets.store', "event_id" => $event->id, "q" => $search))) !!}
                 <div class="form-group">
