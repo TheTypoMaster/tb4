@@ -1,12 +1,15 @@
 <?php namespace TopBetta\Http\Controllers\Admin;
 
+use Cartalyst\Sentry\Users\UserNotFoundException;
 use TopBetta\Http\Controllers\Controller;
 
 use Auth;
 use Input;
 use Redirect;
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 use Validator;
 use View;
+use Sentry;
 
 use TopBetta\Models\UserModel;
 use TopBetta\Services\Authentication\UserAuthenticationService;
@@ -57,12 +60,14 @@ class SessionController extends Controller
 
 		if ($validation->passes()) {
 
-			// make sure they are a joomla admin user (gid == 25) before attempting login
-			if (UserModel::where('username', $input['username'])->value('gid') == 25) {
-//				// legacy login
-//				$l = new \TopBetta\Helpers\LegacyApiHelper;
-//				$login = $l->query('doUserLogin', $input);
+            //find the sentry user
+            try {
+                    $user = Sentry::findUserByLogin($input['username']);
+                } catch( UserNotFoundException $e ) {
+                    return Redirect::back()->with('flash_message', 'Invalid credentials OR your account is disabled')->withInput();
+            }
 
+			if ( $user->hasAccess('admin.*') ) {
 
 				try{
 					$login = $this->authentication->checkMD5PasswordUser($input['username'], $input['password']);
@@ -78,7 +83,11 @@ class SessionController extends Controller
 
 				return Redirect::back()->with('flash_message', 'Invalid credentials OR your account is disabled')->withInput();
 			}
+
+            return Redirect::back()->with('flash_message', 'Access Denied');
 		}
+
+        return Redirect::back()->with('flash_message', 'Please supply username and password');
 	}
 
 	/**
