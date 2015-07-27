@@ -44,8 +44,9 @@ class BetController extends Controller {
             );
         }
 
+        $response = $this->betService->getBetHistory(Auth::user()->id, $request->get('type', 'all'), $request->get('order'))->toArray();
 		return $this->apiResponse->success(
-            $this->betService->getBetHistory(Auth::user()->id, $request->get('type', 'all'), $request->get('page', null))->toArray()
+            $response['data'], 200, array_except($response, 'data')
         );
 	}
 
@@ -53,10 +54,7 @@ class BetController extends Controller {
     {
         $bets = $this->betService->getActiveAndRecentBetsForUser(Auth::user()->id);
 
-        return $this->apiResponse->success(array(
-            'active' => $bets['active']->toArray(),
-            'recent' => $bets['recent']->toArray()
-        ));
+        return $this->apiResponse->success($bets->toArray());
     }
 
 

@@ -14,15 +14,15 @@ interface BetRepositoryInterface {
 
     public function getBetsForUserBySelection($userId, $selection, $type = null);
 
-    public function getAllBetsForUser($user, $page = null);
+    public function getAllBetsForUser($user);
 
-    public function getWinningBetsForUser($user, $page = null);
+    public function getWinningBetsForUser($user);
 
-    public function getLosingBetsForUser($user, $page = null);
+    public function getLosingBetsForUser($user);
 
-    public function getRefundedBetsForUser($user, $page = null);
+    public function getRefundedBetsForUser($user);
 
-    public function getUnresultedBetsForUser($user, $page = null);
+    public function getUnresultedBetsForUser($user, $page = true);
 
     public function getBetsOnDateForUser($user, Carbon $date, $resulted = null);
 

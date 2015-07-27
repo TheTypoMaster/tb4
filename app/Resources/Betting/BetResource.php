@@ -15,22 +15,22 @@ use TopBetta\Resources\AbstractEloquentResource;
 class BetResource extends AbstractEloquentResource {
 
     protected $attributes = array(
-        'id' => 'id',
-        'amount' => 'bet_amount',
+        'id'               => 'id',
+        'amount'           => 'bet_amount',
         'freeCreditAmount' => 'bet_freebet_amount',
-        'selectionId' => 'selection_id',
-        'selectionName' => 'selection_name',
-        'selectionString' => 'selection_string',
-        'marketName' => 'market_name',
-        'marketId' => 'market_id',
-        'eventId' => 'event_id',
-        'eventName' => 'event_name',
-        'competitionId' => 'competition_id',
-        'competitionName' => 'competition_name',
-        'betType' => 'bet_type',
-        'status' => 'status',
-        'paid' => 'won_amount',
-        'date' => 'date',
+        'selectionId'      => 'selection_id',
+        'selectionName'    => 'selection_name',
+        'selectionString'  => 'selection_string',
+        'marketName'       => 'market_name',
+        'marketId'         => 'market_id',
+        'eventId'          => 'event_id',
+        'eventName'        => 'event_name',
+        'competitionId'    => 'competition_id',
+        'competitionName'  => 'competition_name',
+        'betType'          => 'bet_type',
+        'status'           => 'status',
+        'paid'             => 'won_amount',
+        'date'             => 'start_date',
     );
 
 

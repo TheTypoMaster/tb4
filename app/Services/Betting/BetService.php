@@ -25,33 +25,39 @@ class BetService {
     }
 
 
-    public function getBetHistory($user, $criteria = 'all', $page = null)
+    public function getBetHistory($user, $criteria = 'all', $order = null)
     {
+        if( $order ) {
+            $this->betResourceService->setOrder(
+                array_get($order, 0), array_get($order, 1)
+            );
+        }
+
         switch($criteria)
         {
             case 'all':
-                return $this->betResourceService->getAllBetsForUser($user, $page);
+                return $this->betResourceService->getAllBetsForUser($user);
             case 'unresulted':
-                return $this->betResourceService->getUnresultedBetsForUser($user, $page);
+                return $this->betResourceService->getUnresultedBetsForUser($user);
             case 'winning':
-                return $this->betResourceService->getWinningBetsForUser($user, $page);
+                return $this->betResourceService->getWinningBetsForUser($user);
             case 'losing' :
-                return $this->betResourceService->getLosingBetsForUser($user, $page);
+                return $this->betResourceService->getLosingBetsForUser($user);
             case 'refunded':
-                return $this->betResourceService->getRefundedBetsForUser($user, $page);
+                return $this->betResourceService->getRefundedBetsForUser($user);
         }
 
-        return $this->betResourceService->getAllBetsForUser($user, $page);
+        return $this->betResourceService->getAllBetsForUser($user);
     }
 
     public function getActiveAndRecentBetsForUser($user)
     {
         $date = Carbon::now()->subHours(6);
 
-        $active = $this->betResourceService->getUnresultedBetsForUser($user);
+        $active = $this->betResourceService->getUnresultedBetsForUser($user, false);
         $recent = $this->betResourceService->getBetsOnDateForUser($user, $date, true);
 
-        return array('active' => $active, 'recent' => $recent);
+        return $active->merge($recent);
     }
 
     public function getBetsForDate($user, $date)

@@ -13,74 +13,94 @@ use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\PaginatedEloquentResourceCollection;
+use TopBetta\Services\Resources\OrderableResourceService;
 
-class BetResourceService {
+class BetResourceService extends OrderableResourceService {
 
     /**
      * @var BetRepositoryInterface
      */
-    private $betRepository;
+    protected $repository;
+
+    protected $orderFields = array(
+        'id' => 'id',
+        'amount' => 'bet_amount',
+        'free_credot_amount' => 'bet_freebet_amount',
+        'selection_id' => 'selection_id',
+        'selection_name' => 'selection_name',
+        'selection_string' => 'selection_string',
+        'market_name' => 'market_name',
+        'market_id' => 'market_id',
+        'event_name' => 'event_name',
+        'event_id' => 'event_id',
+        'competition_name' => 'competition_name',
+        'competition_id' => 'competition_id',
+        'bet_type' => 'bet_type',
+        'status' => 'status',
+        'paid' => 'won_amount',
+        'date' => 'start_date'
+    );
 
     public function __construct(BetRepositoryInterface $betRepository)
     {
-        $this->betRepository = $betRepository;
+        $this->repository = $betRepository;
     }
 
-    public function getAllBetsForUser($user, $page = null)
+    public function getAllBetsForUser($user)
     {
-        $bets = $this->betRepository->getAllBetsForUser($user, $page);
+        $bets = $this->repository->getAllBetsForUser($user);
+
+        return $this->createBetsCollection($bets);
+    }
+
+    public function getUnresultedBetsForUser($user, $page = true)
+    {
+        $bets = $this->repository->getUnresultedBetsForUser($user, $page);
 
         return $this->createBetsCollection($bets, $page);
     }
 
-    public function getUnresultedBetsForUser($user, $page = null)
+    public function getWinningBetsForUser($user)
     {
-        $bets = $this->betRepository->getUnresultedBetsForUser($user, $page);
+        $bets = $this->repository->getWinningBetsForUser($user);
 
-        return $this->createBetsCollection($bets, $page);
+        return $this->createBetsCollection($bets);
     }
 
-    public function getWinningBetsForUser($user, $page = null)
+    public function getLosingBetsForUser($user)
     {
-        $bets = $this->betRepository->getWinningBetsForUser($user, $page);
+        $bets = $this->repository->getLosingBetsForUser($user);
 
-        return $this->createBetsCollection($bets, $page);
+        return $this->createBetsCollection($bets);
     }
 
-    public function getLosingBetsForUser($user, $page = null)
+    public function getRefundedBetsForUser($user)
     {
-        $bets = $this->betRepository->getLosingBetsForUser($user, $page);
+        $bets = $this->repository->getRefundedBetsForUser($user);
 
-        return $this->createBetsCollection($bets, $page);
-    }
-
-    public function getRefundedBetsForUser($user, $page = null)
-    {
-        $bets = $this->betRepository->getRefundedBetsForUser($user, $page);
-
-        return $this->createBetsCollection($bets, $page);
+        return $this->createBetsCollection($bets);
     }
 
     public function getBetsOnDateForUser($user, Carbon $date, $resulted = null)
     {
-         $bets = $this->betRepository->getBetsOnDateForUser($user, $date, $resulted);
+        $bets = $this->repository->getBetsOnDateForUser($user, $date, $resulted);
 
-        return $this->createBetsCollection($bets);
+        return new EloquentResourceCollection($bets, 'TopBetta\Resources\Betting\BetResource');
     }
 
     public function getBetsForEventGroup($user, $eventGroup)
     {
         return $this->createBetsCollection(
-            $this->betRepository->getBetsForEventGroup($user, $eventGroup)
+            $this->repository->getBetsForEventGroup($user, $eventGroup)
         );
     }
 
-    protected function createBetsCollection($bets, $page = null)
+    protected function createBetsCollection($bets, $page = true)
     {
-        if( ! is_null($page) ) {
+        if( $page ) {
             return new PaginatedEloquentResourceCollection($bets, 'TopBetta\Resources\Betting\BetResource');
         }
 
-        return new EloquentResourceCollection($page ? $bets->getCollection() : $bets, 'TopBetta\Resources\Betting\BetResource');
+        return new EloquentResourceCollection($bets, 'TopBetta\Resources\Betting\BetResource');
     }
 }

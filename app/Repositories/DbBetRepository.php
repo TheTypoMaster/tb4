@@ -14,6 +14,8 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
  
 class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInterface{
 
+    protected $order = array('start_date', 'DESC');
+
     protected $bet;
 
     public function __construct(BetModel $bet)
@@ -131,36 +133,31 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         return $model->get(array('tbdb_bet.*'));
     }
 
-    public function getAllBetsForUser($user, $page = null)
+    public function getAllBetsForUser($user)
     {
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
             ->orderBY('e.start_date', 'DESC');
 
 
-        if ( is_null($page) ) {
-            return $model->get();
-        }
-
         return $model->paginate();
     }
 
-    public function getUnresultedBetsForUser($user, $page = null)
+    public function getUnresultedBetsForUser($user, $page = true)
     {
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
             ->where('resulted_flag', false)
             ->orderBY('e.start_date', 'DESC');
 
-
-        if ( is_null($page) ) {
-            return $model->get();
+        if( $page ) {
+            return $model->paginate();
         }
 
-        return $model->paginate();
+        return $model->get();
     }
 
-    public function getWinningBetsForUser($user, $page = null)
+    public function getWinningBetsForUser($user)
     {
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
@@ -168,15 +165,10 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->where('result_transaction_id', '>', 0)
             ->orderBY('e.start_date', 'DESC');
 
-
-        if ( is_null($page) ) {
-            return $model->get();
-        }
-
         return $model->paginate();
     }
 
-    public function getLosingBetsForUser($user, $page = null)
+    public function getLosingBetsForUser($user)
     {
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
@@ -184,32 +176,21 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->where('result_transaction_id', '=', 0)
             ->orderBY('e.start_date', 'DESC');
 
-
-        if ( is_null($page) ) {
-            return $model->get();
-        }
-
         return $model->paginate();
     }
 
-    public function getRefundedBetsForUser($user, $page = null)
+    public function getRefundedBetsForUser($user)
     {
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
             ->where('refunded_flag', true)
             ->orderBY('e.start_date', 'DESC');
 
-
-        if ( is_null($page) ) {
-            return $model->get();
-        }
-
         return $model->paginate();
     }
 
     public function getBetsOnDateForUser($user, Carbon $date, $resulted = null)
     {
-        \DB::enableQueryLog();
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
             ->where('e.start_date', '>=', $date->startOfDay()->toDateTimeString())
@@ -245,10 +226,11 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'e.id')
             ->join('tbdb_event_group as eg', 'eg.id', '=', 'ege.event_group_id')
             ->groupBy('b.id')
+            ->orderBy($this->order[0], $this->order[1])
             ->select(array(
                 'b.id', 'b.bet_amount', 'b.bet_freebet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status', 'at.amount as won_amount',
-                'bt.name as bet_type', 'b.selection_string', 'e.start_date as date'
+                'bt.name as bet_type', 'b.selection_string', 'e.start_date as start_date'
             ));
     }
 

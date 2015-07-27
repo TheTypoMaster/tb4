@@ -42,6 +42,13 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         return $this;
     }
 
+    public function merge(EloquentResourceCollection $collection)
+    {
+        $this->collection = $this->collection->merge($collection);
+
+        return $this;
+    }
+
     public function getIterator()
     {
         return $this->collection->getIterator();
