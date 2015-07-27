@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources\Tournaments;
 
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\Tournaments\TournamentResource;
@@ -43,6 +44,10 @@ class TournamentResourceService {
     public function getTournament($id)
     {
         $tournament = $this->tournamentRepositoryInterface->find($id);
+
+        if( ! $tournament ) {
+            throw new ModelNotFoundException;
+        }
 
         $tournament->load('tickets');
 

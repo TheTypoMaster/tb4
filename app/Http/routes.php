@@ -333,6 +333,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     // --- TOURNAMENT ROUTES ---
     Route::get('combined/tournament-groups/tournaments', 'Frontend\TournamentGroupController@getVisibleTournamentGroupsWithTournaments');
     Route::resource('tournaments', 'Frontend\TournamentController');
+    Route::get('combined/tournament/events', 'Frontend\TournamentController@getTournamentWithEvents');
 
     Route::group(array('before' => 'auth'), function() {
         Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');

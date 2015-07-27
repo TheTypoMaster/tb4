@@ -46,6 +46,12 @@ class TournamentResource extends AbstractEloquentResource {
 
     private $prizePool = null;
 
+    private $leaderboard = array();
+
+    private $meetings = array();
+
+    private $competitions = array();
+
     public function getEntrants()
     {
         if( is_null($this->entrants) ) {
@@ -64,6 +70,25 @@ class TournamentResource extends AbstractEloquentResource {
         return $this->prizePool;
     }
 
+    public function setLeaderboard($leaderboard)
+    {
+        $this->leaderboard = $leaderboard;
+        return $this;
+    }
+
+    public function addMeeting($meeting)
+    {
+        $this->meetings[] = $meeting;
+        return $this;
+    }
+
+    public function addCompetition($competition)
+    {
+        $this->competitions[] = $competition;
+        return $this;
+    }
+
+
     public function toArray()
     {
         $array = parent::toArray();
@@ -71,6 +96,9 @@ class TournamentResource extends AbstractEloquentResource {
         return array_merge($array, array(
             'entrants' => $this->getEntrants(),
             'prize_pool' => $this->getPrizePool(),
+            'leaderboard' => $this->leaderboard,
+            'meetings' => array_map(function($v) { return $v->toArray(); }, $this->meetings),
+            'competitions' => array_map(function($v) { return $v->toArray(); }, $this->competitions),
         ));
     }
 

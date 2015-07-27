@@ -53,6 +53,17 @@ class TournamentController extends Controller
         return $this->response->success($tournaments->toArray());
     }
 
+    public function getTournamentWithEvents(Request $request)
+    {
+        try {
+            $tournament = $this->tournamentService->getTournamentWithEvents($request->get('tournament_id'), $request->get('event_id'));
+        } catch (ModelNotFoundException $e) {
+            return $this->response->failed("Tournament not found", 404);
+        }
+
+        return $this->response->success($tournament['data']->toArray(), 200, array_except($tournament, 'data'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
