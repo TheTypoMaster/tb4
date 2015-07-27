@@ -34,8 +34,8 @@ class JConfig {
 	public $dbtype = 'mysql';
 	public $host = 'localhost';
 	public $user = 'root';
-	public $db = 'topbetta_igas';
-	public $password = 't0pb3tt@mysqlp@ss';
+	public $db = 'topbetta';
+	public $password = 'root';
 	public $dbprefix = 'tbdb_';
 	public $mailer = 'mail';
 	public $mailfrom = 'help@topbetta.com';
@@ -60,6 +60,7 @@ class JConfig {
 	public $api_test_mode = false;
 	public $time_zone = 'AEST';
 	public $time_zone_long = 'AEST (UT+10:00)';
+    public $tb_api_key = 't0pb3tt@l3g@cy@p1k3y';
 
 	/*
 	public function __construct() {

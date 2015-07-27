@@ -363,13 +363,19 @@ class Api_Payment extends JController {
    			);
    			$emailBody = PaymentHelper::variableReplace($replacements, $emailBody);
 
+            //get email layout
+            $layout = file_get_contents(__DIR__ . '/../../../resources/views/emails/layouts/standard_email_template.blade.php');
+
+            //replace contents in layout
+            $emailBody = str_replace("@yield('email-body')", $emailBody, $layout);
+
     		$mailer->setSender(array($senderEmail, $senderName));
     		$mailer->addReplyTo(array($senderEmail));
 
     		$mailer->addRecipient($userEmail);
     		$mailer->setSubject($emailSubject);
     		$mailer->setBody($emailBody);
-    		$mailer->IsHTML(false);
+    		$mailer->IsHTML(true);
 			$mailer->Send();
     	}
 
@@ -459,7 +465,7 @@ class Api_Payment extends JController {
 		}
 
 		//update user's bet limit
-		if (!$user_model->update($field_to_update, $bet_limit)) {
+		if (!$user_model->update($field_to_update, $bet_limit, $user->user_id)) {
 			return OutputHelper::json(500, array('error_msg' => JText::_("Failed to update your bet limit! Please contact us.")));
 		}
 

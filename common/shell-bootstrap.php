@@ -4,7 +4,8 @@ define('_JEXEC', 1);
 
 // Setup the path related constants.
 define('DS', DIRECTORY_SEPARATOR);
-define('JPATH_BASE', '/mnt/data/sites/services.topbetta.com.au/project-root/public');
+//define('JPATH_BASE', '/mnt/data/sites/services.topbetta.com.au/project-root/public');
+define('JPATH_BASE', '/vagrant/public');
 define('JPATH_ROOT', JPATH_BASE);
 define('JPATH_CONFIGURATION', JPATH_BASE);
 define('JPATH_LIBRARIES', JPATH_BASE . DS . 'libraries');
@@ -14,6 +15,11 @@ define('JPATH_METHODS', JPATH_ROOT . DS . 'methods');
 require_once (JPATH_LIBRARIES . DS . 'joomla' . DS . 'import.php');
 require_once (JPATH_CONFIGURATION . DS . 'configuration.php');
 include_once( JPATH_ROOT.DS.'components' . DS . 'com_topbetta_user' . DS . 'helpers' . DS . 'helper.php' );
+require_once ( JPATH_BASE .DS.'libraries'.DS.'loader.php' );
+
+spl_autoload_register("__autoload");
+
+require_once(JPATH_BASE . DS . ".." . DS . "vendor" . DS . "autoload.php");
 
 // main application dependencies
 jimport('joomla.application.application');
@@ -38,6 +44,7 @@ $framework->loadObject(new JConfig);
 if($framework->getValue('app_environment') != 'development') {
 	ini_set('error_reporting', E_ERROR | E_USER_ERROR);
 }
+
 
 // cli object
 abstract class TopBettaCLI {
