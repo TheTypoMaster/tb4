@@ -211,6 +211,14 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->get();
     }
 
+    public function getBetsForUserByEvents($user, $events)
+    {
+        return $this->model
+            ->where('user_id', $user)
+            ->whereIn('event_id', $events)
+            ->get();
+    }
+
     protected function getBetBuilder()
     {
         return $this->model

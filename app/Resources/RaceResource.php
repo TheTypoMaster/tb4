@@ -42,6 +42,11 @@ class RaceResource extends AbstractEloquentResource {
         return $this->collection('selections', 'TopBetta\Resources\SelectionResource', $this->model->markets->first()->selections);
     }
 
+    public function bets()
+    {
+        return $this->collection('bets', 'TopBetta\Resources\BetResource', $this->model->bets);
+    }
+
     /**
      * @return mixed
      */

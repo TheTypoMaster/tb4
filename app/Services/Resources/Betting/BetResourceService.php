@@ -25,7 +25,7 @@ class BetResourceService extends OrderableResourceService {
     protected $orderFields = array(
         'id' => 'id',
         'amount' => 'bet_amount',
-        'free_credot_amount' => 'bet_freebet_amount',
+        'free_credit_amount' => 'bet_freebet_amount',
         'selection_id' => 'selection_id',
         'selection_name' => 'selection_name',
         'selection_string' => 'selection_string',
@@ -91,7 +91,20 @@ class BetResourceService extends OrderableResourceService {
     public function getBetsForEventGroup($user, $eventGroup)
     {
         return $this->createBetsCollection(
-            $this->repository->getBetsForEventGroup($user, $eventGroup)
+            $this->repository->getBetsForEventGroup($user, $eventGroup),
+            false
+        );
+    }
+
+    public function getBetsByEventForAuthUser($event)
+    {
+        if( ! \Auth::user() ) {
+            return array();
+        }
+
+        return $this->createBetsCollection(
+            $this->repository->getBetsForUserByEvent(\Auth::user()->id, $event),
+            false
         );
     }
 

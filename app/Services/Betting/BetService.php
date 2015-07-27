@@ -8,7 +8,7 @@
 
 namespace TopBetta\Services\Betting;
 
-
+use Auth;
 use Carbon\Carbon;
 use TopBetta\Services\Resources\Betting\BetResourceService;
 
@@ -70,5 +70,14 @@ class BetService {
     public function getBetsForEventGroup($user, $eventGroup)
     {
         return $this->betResourceService->getBetsForEventGroup($user, $eventGroup);
+    }
+
+    public function getBetsByEventGroupForAuthUser($eventGroup)
+    {
+        if( ! Auth::user() ) {
+            return array();
+        }
+
+        return $this->getBetsForEventGroup(Auth::user()->id, $eventGroup);
     }
 }
