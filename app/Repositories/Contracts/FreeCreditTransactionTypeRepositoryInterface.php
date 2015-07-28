@@ -25,6 +25,7 @@ interface FreeCreditTransactionTypeRepositoryInterface
     const TRANSACTION_TYPE_REBUY_ENTRY     = 'rebuyentry';
     const TRANSACTION_TYPE_TOPUP_BUYIN     = 'topupbuyin';
     const TRANSACTION_TYPE_TOPUP_ENTRY     = 'topupentry';
+    const TRANSACTION_TYPE_FREE_BET_PARTIAL_REFUND = "freebetpartialrefund";
 
     public function getIdByName($name);
 }

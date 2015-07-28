@@ -59,7 +59,7 @@ class Bet extends \Eloquent {
 
 	public function getFreeBetAmountAfterRefunds()
 	{
-		return $this->freebet_amount - $this->getFreeCreditRefundAmount();
+		return $this->bet_freebet_amount - $this->getFreeCreditRefundAmount();
 	}
 
 	/**
