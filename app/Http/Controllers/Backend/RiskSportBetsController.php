@@ -1,7 +1,7 @@
 <?php namespace TopBetta\Http\Controllers\Backend;
 
 use TopBetta\Http\Controllers\Controller;
-use TopBetta\Models\BetModel;
+use TopBetta\Models\Bet;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Facades\BetRepo;
 
@@ -77,14 +77,14 @@ class RiskSportBetsController extends Controller {
             $input = Input::json()->all();
         }
 
-        $bet = BetModel::findOrFail($input['id']);
-$cancel = ($input['action'] == 'cancel') ? true : false;
+        $bet = Bet::findOrFail($input['id']);
+        $cancel = ($input['action'] == 'cancel') ? true : false;
 
-if (!BetRepo::refundBet($bet, $cancel)) {
-    return array("success" => false, "error" => "Problem with " . $input['action'] . " for sport bet id: " . $bet->id);
-}
+        if (!BetRepo::refundBet($bet, $cancel)) {
+            return array("success" => false, "error" => "Problem with " . $input['action'] . " for sport bet id: " . $bet->id);
+        }
 
-return array("success" => true, "result" => "Sport bet " . $input['action'] . ' successful for id: ' . $bet->id);
+        return array("success" => true, "result" => "Sport bet " . $input['action'] . ' successful for id: ' . $bet->id);
 }
 
 
