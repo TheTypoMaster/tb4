@@ -6,10 +6,8 @@
  * Time: 4:05 PM
  */
 
-namespace TopBetta\libraries\exotic;
+namespace TopBetta\Libraries\exotic;
 
-
-use TopBetta\Bet;
 
 class ExoticBetFactory {
 
