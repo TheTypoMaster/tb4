@@ -11,7 +11,7 @@
         </ul>
 		<h4>Edit Market</h4>
 		<div class='col-lg-6'>
-        	{!! Form::model($market, array('method' => 'PATCH', 'route' => array('admin.markets.update', $market->id, "q" => $search))) !!}
+        	{!! Form::model($market, array('method' => 'PUT', 'route' => array('admin.markets.update', $market->id, "q" => $search))) !!}
         	<div class="form-group">
                 {!! Form::label('market_id', 'Market Id:') !!}
                 {!! Form::text('market_id', null, array('class' => 'form-control', 'placeholder' => $market->id, 'disabled')) !!}

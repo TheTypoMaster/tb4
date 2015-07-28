@@ -144,6 +144,7 @@ class Vision6 extends AbstractThirdPartyEmailService {
         try {
             $response = $this->client->post(self::API_URL, array(
                 "json" => $payload,
+                "connect_timeout" => \Config::get('vision6.connection_timeout'),
             ));
         } catch(RequestException $e) {
             throw new EmailRequestException($e->getMessage());

@@ -19,5 +19,7 @@ return array(
             "mobile"             => "Mobile Phone",
         ),
 
-    )
+    ),
+
+    "connection_timeout" => 10,
 );
