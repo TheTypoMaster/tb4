@@ -20,7 +20,7 @@
         </ul>
 		<h4>Edit Event</h4>
 		<div class='col-lg-6'>
-        	{!! Form::model($event, array('method' => 'PATCH', 'route' => array('admin.events.update', $event->id, 'q' => $search))) !!}
+        	{!! Form::model($event, array('method' => 'PUT', 'route' => array('admin.events.update', $event->id, 'q' => $search))) !!}
         	<div class="form-group">
         		{!! Form::label('name', 'Event Name:') !!}
         		{!! Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) !!}

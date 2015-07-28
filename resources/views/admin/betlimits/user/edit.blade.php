@@ -6,7 +6,7 @@
 		@include('admin.users.partials.header')
 
 		<div class='col-lg-6'>
-			{!! Form::model($betLimit, array('method' => 'PATCH', 'route' => array('admin.users.bet-limits.update', $user->id, $betLimit->id))) !!}
+			{!! Form::model($betLimit, array('method' => 'PUT', 'route' => array('admin.users.bet-limits.update', $user->id, $betLimit->id))) !!}
 			<div class="form-group">
 				{!! Form::label('bet_limit_type_id', 'Bet Limit Type:') !!}
 				{!! Form::hidden('bet_limit_type_id', $betLimit->bet_limit_type_id) !!}
