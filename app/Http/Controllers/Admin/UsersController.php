@@ -10,6 +10,7 @@ use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Repositories\UserRepo;
 use TopBetta\Models\UserModel;
 use Request;
+use TopBetta\Services\Email\Exceptions\EmailRequestException;
 use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use View;
@@ -143,8 +144,13 @@ class UsersController extends Controller
             "msisdn"     => Input::get('mobile'),
         ));
 
+        try {
+            $this->emailService->updateContact($oldEmail, $user->fresh());
+        } catch ( EmailRequestException $e ) {
+            return Redirect::route('admin.users.edit', array($userId))
+                ->with(array('flash_message' => "Error updating Vision6 record"));
+        }
 
-        $this->emailService->updateContact($oldEmail, $user->fresh());
 
 		return Redirect::route('admin.users.edit', array($userId))
 						->with('flash_message', 'Saved');
