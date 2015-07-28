@@ -35,11 +35,11 @@ class Bet extends \Eloquent {
 	}
 
 	public function refund() {
-		return $this->belongsTo('TopBetta\AccountBalance', 'refund_transaction_id');
+		return $this->belongsTo('TopBetta\Models\AccountBalance', 'refund_transaction_id');
 	}
 
 	public function freeBetRefund() {
-		return $this->belongsTo('TopBetta\FreeCreditBalance', 'refund_freebet_transaction_id');
+		return $this->belongsTo('TopBetta\Models\FreeCreditBalance', 'refund_freebet_transaction_id');
 	}
 
 	public function getRefundAmount()
