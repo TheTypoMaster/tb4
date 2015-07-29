@@ -140,5 +140,12 @@ class BaseEloquentRepository {
         $this->order = $order;
     }
 
+    public function deleteById($id)
+    {
+        $model = $this->model->findOrFail($id);
+
+        return $model->delete();
+    }
+
 
 } 

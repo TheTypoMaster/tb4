@@ -22,4 +22,6 @@ interface TournamentBetRepositoryInterface
     public function getBetsForSelection($selectionId);
 
     public function getBetsForMarket($marketId);
+
+    public function getBetsOnEventForTicket($ticket, $event);
 }

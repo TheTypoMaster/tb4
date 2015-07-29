@@ -118,12 +118,6 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
             ->paginate();
     }
 
-    public function setOrder(array $order)
-    {
-        $this->order = $order;
-        return $this;
-    }
-
     public function getVisibleSportTournaments(Carbon $date = null)
     {
         $model = $this->getVisibleTournamentBuilder($date);

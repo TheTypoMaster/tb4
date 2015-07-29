@@ -1,5 +1,6 @@
 <?php namespace TopBetta\Models;
 
+use Carbon\Carbon;
 use Eloquent;
 
 class TournamentModel extends Eloquent {
@@ -41,6 +42,16 @@ class TournamentModel extends Eloquent {
   	public function leaderboards() {
 		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
+
+    public function competition()
+    {
+        return $this->belongsTo('TopBetta\Models\CompetitionModel', 'event_group_id');
+    }
+
+    public function bettingClosed()
+    {
+        return $this->cancelled_flag || ($this->betting_closed_on_first_match_flag && Carbon::now() > $this->betting_closed_date);
+    }
 
     public function calculateTournamentPrizePool($tournamentId) {
         $tournament = TournamentModel::find($tournamentId);
