@@ -9,6 +9,7 @@ use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
+use TopBetta\Services\Resources\Tournaments\TournamentBetResourceService;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Tournaments\Betting\Exceptions\TournamentBetLimitExceededException;
 use TopBetta\Services\Tournaments\TournamentBetService;
@@ -24,11 +25,16 @@ class TournamentBetsController extends Controller
      * @var ApiResponse
      */
     private $response;
+    /**
+     * @var TournamentBetResourceService
+     */
+    private $betResourceService;
 
-    public function __construct(TournamentBetService $betService, ApiResponse $response)
+    public function __construct(TournamentBetService $betService, ApiResponse $response, TournamentBetResourceService $betResourceService)
     {
         $this->betService = $betService;
         $this->response = $response;
+        $this->betResourceService = $betResourceService;
     }
 
     /**
@@ -36,9 +42,20 @@ class TournamentBetsController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (! $tournament = $request->get('tournament_id') ) {
+            return $this->response->failed("No tournament specified", 400);
+        }
+
+        try {
+            $bets = $this->betResourceService->getBetsForUserInTournament(\Auth::user()->id, $tournament);
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown error");
+        }
+
+        return $this->response->success($bets->toArray());
     }
 
     /**
