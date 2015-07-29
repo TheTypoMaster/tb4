@@ -60,6 +60,7 @@ class TicketResource extends AbstractEloquentResource {
 
     public function getQualified()
     {
+        if( ! $this->model->leaderboard ) dd($this->model);
         return $this->model->leaderboard->turned_over >= $this->model->leaderboard->balance_to_turnover;
     }
 

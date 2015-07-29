@@ -10,8 +10,11 @@ namespace TopBetta\Services\Resources\Tournaments;
 
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\PaginatedEloquentResourceCollection;
+use TopBetta\Resources\Tournaments\TicketResource;
 use TopBetta\Services\Tournaments\TournamentLeaderboardService;
 
 class TicketResourceService {
@@ -57,6 +60,44 @@ class TicketResourceService {
         $tickets = $this->ticketRepository->getTicketsForUserOnDate($user, $date);
 
         return $this->createTicketCollection($tickets);
+    }
+
+    public function getAllTicketsForUser($user)
+    {
+        $tickets = $this->ticketRepository->getAllForUserPaginated($user);
+
+        $tickets->getCollection()->load('leaderboard');
+
+        $tickets = new PaginatedEloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\TicketResource');
+
+        foreach($tickets as $ticket) {
+            if( $ticket->getQualified() ) {
+                $ticket->setPosition(
+                    $this->leaderboardService->getLeaderboardPositionForTicket($ticket)
+                );
+            }
+        }
+
+        return $tickets;
+    }
+
+    public function getTicket($ticket)
+    {
+        $ticket = $this->ticketRepository->find($ticket);
+
+        if( ! $ticket ) {
+            throw new ModelNotFoundException;
+        }
+
+        $ticket->load(array('bets', 'leaderboard'));
+
+        $ticket = new TicketResource($ticket);
+
+        if( $ticket->getQualified() ) {
+            $ticket->setPosition($this->leaderboardService->getLeaderboardPositionForTicket($ticket));
+        }
+
+        return $ticket;
     }
 
     protected function createTicketCollection($tickets)

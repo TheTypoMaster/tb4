@@ -105,7 +105,7 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
             ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
             ->where('user_id', $user)
             ->where('tbdb_tournament.start_date', '>=', $date->startOfDay()->toDateTimeString())
-            ->where('tbdb_tournament.end_date', '<=', $date->endOfDay()->toDateString())
+            ->where('tbdb_tournament.start_date', '<=', $date->endOfDay()->toDateTimeString())
             ->with(array('bets'))
             ->get(array('tbdb_tournament_ticket.*'))
             ->load('leaderboard');
@@ -116,8 +116,7 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
         return $this->model
             ->where('user_id', $user)
             ->with(array('bets'))
-            ->paginate()
-            ->load('leaderboard');
+            ->paginate();
     }
 
 } 
