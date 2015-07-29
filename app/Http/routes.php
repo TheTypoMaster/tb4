@@ -338,6 +338,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
         Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
         Route::resource('tournament-bets', 'Frontend\TournamentBetsController');
+        Route::resource('tickets', 'Frontend\TicketsController');
     });
 
     // --- BETS ----
