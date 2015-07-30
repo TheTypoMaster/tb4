@@ -27,4 +27,10 @@ interface BetRepositoryInterface {
     public function getBetsOnDateForUser($user, Carbon $date, $resulted = null);
 
     public function getBetsForEventGroup($user, $eventGroup);
+
+    public function getByResultTransaction($transaction);
+
+    public function getByRefundTransaction($transaction);
+
+    public function getByEntryTransaction($transaction);
 }

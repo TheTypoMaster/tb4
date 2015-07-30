@@ -34,4 +34,6 @@ interface AccountTransactionRepositoryInterface {
     public function getRecentPositiveTransactionsForUserByTypeIn($userId, $dateAfter, $types);
 
     public function findWithType($transactionId);
+
+    public function findForUserByTypesPaginated($user, array $types);
 }

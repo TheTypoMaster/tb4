@@ -350,6 +350,11 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::resource('competition.bets', 'Frontend\CompetitionBetsController');
     });
 
+    // --- USER TRANSACTIONS ---
+    Route::group(array('before' => 'auth'), function() {
+        Route::get('user/transactions', 'Frontend\AccountTransactionController@index');
+    });
+
 
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');

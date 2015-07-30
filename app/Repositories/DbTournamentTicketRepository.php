@@ -119,4 +119,11 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
             ->paginate();
     }
 
+    public function getByResultTransaction($transaction)
+    {
+        return $this->model
+            ->where('result_transaction_id', $transaction)
+            ->first();
+    }
+
 } 

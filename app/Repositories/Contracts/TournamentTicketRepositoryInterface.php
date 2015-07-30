@@ -30,4 +30,6 @@ interface TournamentTicketRepositoryInterface
     public function getTicketsForUserOnDate($user, \Carbon\Carbon $date);
 
     public function getAllForUserPaginated($user);
+
+    public function getByResultTransaction($transaction);
 }
