@@ -8,6 +8,8 @@
 
 namespace TopBetta\Services\Tournaments;
 
+use TopBetta\Resources\MeetingResource;
+use TopBetta\Resources\Sports\CompetitionResource;
 use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use Log;
@@ -70,6 +72,10 @@ class TournamentService {
      * @var TournamentResourceService
      */
     private $tournamentResourceService;
+    /**
+     * @var TournamentEventService
+     */
+    private $tournamentEventService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -81,7 +87,8 @@ class TournamentService {
                                 EventModelRepositoryInterface $eventRepository,
                                 CompetitionService $competitionService,
                                 TournamentGroupService $tournamentGroupService,
-                                TournamentResourceService $tournamentResourceService)
+                                TournamentResourceService $tournamentResourceService,
+                                TournamentEventService $tournamentEventService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -95,6 +102,7 @@ class TournamentService {
         $this->competitionService = $competitionService;
         $this->tournamentGroupService = $tournamentGroupService;
         $this->tournamentResourceService = $tournamentResourceService;
+        $this->tournamentEventService = $tournamentEventService;
     }
 
     public function getVisibleTournaments($type = 'racing', $date = null)
@@ -112,6 +120,25 @@ class TournamentService {
         }
 
         throw new \InvalidArgumentException("Type " . $type . " is invalid");
+    }
+
+    public function getTournamentWithEvents($id, $eventId = null)
+    {
+        $tournament = $this->tournamentResourceService->getTournament($id);
+        $tournament->setLeaderboard($this->leaderboardService->getLeaderboard($id));
+
+        $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
+
+        foreach($events['data'] as $event) {
+            if( $event instanceof MeetingResource ) {
+                $tournament->addMeeting($event);
+            } else if ( $event instanceof CompetitionResource ) {
+
+                $tournament->addCompetition($event);
+            }
+        }
+
+        return array('data' => $tournament, 'selected_event' => $events['selected_event']);
     }
 
     /**

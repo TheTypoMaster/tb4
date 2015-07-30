@@ -89,4 +89,10 @@ class RaceMeeting extends Eloquent {
 		return $result;	
 	}
 
+    public function sport()
+    {
+        return $this->belongsTo('TopBetta\Models\SportModel', 'sport_id');
+    }
+
+
 }
