@@ -14,6 +14,7 @@ use TopBetta\Resources\AbstractEloquentResource;
 class AccountTransactionResource extends AbstractEloquentResource {
 
     protected $attributes = array(
+        "id" => "id",
         "date" => 'created_date',
         'type' => 'name',
         'description' => 'description',
