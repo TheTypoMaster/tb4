@@ -17,9 +17,9 @@ class TournamentLeaderboard extends EloquentLeaderboardCollection {
     {
         $this->collection = $this->collection->sort(function($a, $b){
 
-            if (! $a->qualified() && $b->qualified()) return -1;
+            if (! $a->qualified() && $b->qualified()) return 1;
 
-            else if ($a->qualified() && ! $b->qualified()) return 1;
+            else if ($a->qualified() && ! $b->qualified()) return -1;
 
             else if (! $a->qualified() && ! $b->qualified()) return 0;
 
@@ -42,7 +42,12 @@ class TournamentLeaderboard extends EloquentLeaderboardCollection {
                 $position = $index;
             }
 
-            $record->setPosition($position);
+            if( $record->qualified() ) {
+                $record->setPosition($position);
+            } else {
+                $record->setPosition('-');
+            }
+
 
             $lastCurrency = $record->currency;
 
