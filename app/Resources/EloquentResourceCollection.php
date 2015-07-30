@@ -15,7 +15,7 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
     /**
      * @var \Illuminate\Database\Eloquent\Collection
      */
-    private $collection;
+    protected $collection;
 
     public function __construct(Collection $collection, $class)
     {
