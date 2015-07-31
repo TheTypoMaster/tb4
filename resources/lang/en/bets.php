@@ -24,6 +24,8 @@ email: help@topbetta.com",
 	"exceed_bet_limit_flexi" => "Flexi percentage exceeds bet limit of :flexiLimit% You can contact our helpdesk to increase this limit, Phone: 1300 886 503
 email: help@topbetta.com",
 
+    "exceed_user_bet_limit" => "Value exceeds your betting limit of :userBetLimit",
+
 	'bet_type_not_valid_international' => "Exotic bet types are not available on international race meetings",
 
     "market_closed" => "Betting is closed on this market",

@@ -58,7 +58,7 @@ class TournamentTicketService {
             throw new TournamentEntryException("Error creating ticket");
         }
 
-        return $ticket;
+        return $this->tournamentTicketRepository->find($ticket['id']);
     }
 
     public function getLimitedTournamentFreeBuyinsForPeriod($user, $period, $startDate = null)
@@ -192,5 +192,26 @@ class TournamentTicketService {
         }
 
         return $ticket;
+    }
+
+    /**
+     * Validates a ticket is able to be created for user in tournament
+     * @param $user \TopBetta\Models\UserModel
+     * @param $tournament \TopBetta\Models\TournamentModel
+     * @throws TournamentEntryException
+     */
+    public function validateForCreation($user, $tournament)
+    {
+        if( $tournament->entryClosed() ) {
+            throw new TournamentEntryException("Tournament is closed");
+        }
+
+        if( $tournament->buy_in > 0 && ! $user->isTopBetta) {
+            throw new TournamentEntryException("You have a basic account. Please upgrade it to enter a paid tournament");
+        }
+
+        if( $this->tournamentTicketRepository->getTicketByUserAndTournament($user->id, $tournament->id) ) {
+            throw new TournamentEntryException("You already have a ticket for this tournament");
+        }
     }
 }

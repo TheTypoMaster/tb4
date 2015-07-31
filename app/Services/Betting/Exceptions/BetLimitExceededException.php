@@ -28,6 +28,8 @@ class BetLimitExceededException extends BetPlacementException {
             return Lang::get('bets.exceed_bet_limit_value_and_flexi', $data);
         } else if( array_get($data, 'flexiLimit', null) ) {
             return Lang::get('bets.exceed_bet_limit_flexi', $data);
+        } else if( array_get($data, 'userBetLimit', null) ) {
+            return Lang::get('bets.exceed_user_bet_limit', array("userBetLimit" => '$' . number_format($data['userBetLimit']/100,2)));
         }
 
         return Lang::get('bets.exceed_bet_limit_value', $data);

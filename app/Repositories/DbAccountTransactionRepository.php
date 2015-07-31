@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\AccountTransactionModel;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 
@@ -196,6 +197,17 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
             ->orderBy($this->order[0], $this->order[1])
             ->select(array('tbdb_account_transaction.*', 'att.name as name', 'att.description as description'))
             ->paginate();
+    }
+
+    public function getTransactionsForUserByDateAndType($user, Carbon $date, array $types)
+    {
+        return $this->model
+            ->join('tbdb_account_transaction_type as att', 'att.id', '=', 'tbdb_account_transaction.account_transaction_type_id')
+            ->where('recipient_id', $user)
+            ->where('created_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('created_date', '<=', $date->endOfDay()->toDateTimeString())
+            ->whereIn('att.keyword', $types)
+            ->get(array('tbdb_account_transaction.*'));
     }
 
 }

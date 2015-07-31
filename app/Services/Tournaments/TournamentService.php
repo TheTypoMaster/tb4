@@ -8,9 +8,11 @@
 
 namespace TopBetta\Services\Tournaments;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Resources\MeetingResource;
 use TopBetta\Resources\Sports\CompetitionResource;
 use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
+use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use Log;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -76,6 +78,10 @@ class TournamentService {
      * @var TournamentEventService
      */
     private $tournamentEventService;
+    /**
+     * @var TournamentTransactionService
+     */
+    private $tournamentTransactionService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -88,7 +94,8 @@ class TournamentService {
                                 CompetitionService $competitionService,
                                 TournamentGroupService $tournamentGroupService,
                                 TournamentResourceService $tournamentResourceService,
-                                TournamentEventService $tournamentEventService)
+                                TournamentEventService $tournamentEventService ,
+                                TournamentTransactionService $tournamentTransactionService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -103,6 +110,7 @@ class TournamentService {
         $this->tournamentGroupService = $tournamentGroupService;
         $this->tournamentResourceService = $tournamentResourceService;
         $this->tournamentEventService = $tournamentEventService;
+        $this->tournamentTransactionService = $tournamentTransactionService;
     }
 
     public function getVisibleTournaments($type = 'racing', $date = null)
@@ -141,21 +149,52 @@ class TournamentService {
         return array('data' => $tournament, 'selected_event' => $events['selected_event']);
     }
 
+    public function storeTournamentTicket($user, $tournamentId)
+    {
+        $tournament = $this->tournamentRepository->find($tournamentId);
+
+        if (! $tournament) {
+            throw new ModelNotFoundException("Tournament not found");
+        }
+
+        return $this->enterUserInTournament($user, $tournament);
+    }
+
     /**
      * @param \TopBetta\Models\UserModel $user
      * @param \TopBetta\Models\TournamentModel $tournament
      * @return array
+     * @throws Exceptions\TournamentBuyInException
+     * @throws TournamentEntryException
+     * @throws \Exception
      */
     public function enterUserInTournament($user, $tournament)
     {
+        if( is_int($tournament) ) {
+            $tournament = $this->tournamentRepository->find($tournament);
+        }
+
+        //validate ticket
+        $this->ticketService->validateForCreation($user, $tournament);
+
         //buyin to tournament
         $transactions = $this->buyInService->buyin($tournament, $user);
 
-        //create ticket
-        $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+        try {
+            //create ticket
+            $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+        } catch (TournamentEntryException $e) {
+            $this->tournamentTransactionService->createRefundTransaction($user->id, $tournament->buy_in + $tournament->entry_fee);
+            throw $e;
+        }
 
-        //create leaderboard record
-        $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+        try {
+            //create leaderboard record
+            $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+        } catch (TournamentEntryException $e) {
+            $this->ticketService->refundTicket($ticket);
+            throw $e;
+        }
 
         //create history record
         $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);

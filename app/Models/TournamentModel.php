@@ -53,6 +53,11 @@ class TournamentModel extends Eloquent {
         return $this->cancelled_flag || ($this->betting_closed_on_first_match_flag && Carbon::now() > $this->betting_closed_date);
     }
 
+    public function entryClosed()
+    {
+        return $this->bettingClosed() || $this->end_date < Carbon::now() || ($this->entries_close && $this->entries_close != '0000-00-00 00:00:00' && $this->entries_close < Carbon::now());
+    }
+
     public function calculateTournamentPrizePool($tournamentId) {
         $tournament = TournamentModel::find($tournamentId);
 

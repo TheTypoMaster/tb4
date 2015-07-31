@@ -1,4 +1,5 @@
 <?php namespace TopBetta\Repositories\Contracts;
+use Carbon\Carbon;
 use TopBetta\Repositories\DbAccountTransactionRepository;
 
 /**
@@ -36,4 +37,6 @@ interface AccountTransactionRepositoryInterface {
     public function findWithType($transactionId);
 
     public function findForUserByTypesPaginated($user, array $types);
+
+    public function getTransactionsForUserByDateAndType($user, Carbon $date, array $types);
 }

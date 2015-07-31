@@ -9,9 +9,14 @@ use Auth;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 use TopBetta\Services\Exceptions\UnauthorizedAccessException;
 use TopBetta\Services\Resources\Tournaments\TicketResourceService;
 use TopBetta\Services\Response\ApiResponse;
+use TopBetta\Services\Tournaments\Betting\Exceptions\TournamentBetLimitExceededException;
+use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
+use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
+use TopBetta\Services\Tournaments\TournamentService;
 use TopBetta\Services\Tournaments\TournamentTicketService;
 
 class TicketsController extends Controller
@@ -28,12 +33,17 @@ class TicketsController extends Controller
      * @var TournamentTicketService
      */
     private $ticketService;
+    /**
+     * @var TournamentService
+     */
+    private $tournamentService;
 
-    public function __construct(TournamentTicketService $ticketService, TicketResourceService $ticketResourceService, ApiResponse $response)
+    public function __construct(TournamentTicketService $ticketService, TicketResourceService $ticketResourceService, TournamentService $tournamentService, ApiResponse $response)
     {
         $this->ticketResourceService = $ticketResourceService;
         $this->response = $response;
         $this->ticketService = $ticketService;
+        $this->tournamentService = $tournamentService;
     }
 
     /**
@@ -88,9 +98,28 @@ class TicketsController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        //
+        if( ! $tournament = $request->get('tournament_id') ) {
+            return $this->response->failed('No tournament specified', 400);
+        }
+
+        try {
+            $ticket = $this->tournamentService->storeTournamentTicket(Auth::user(), $tournament);
+        } catch (TournamentBuyInException $e) {
+            return $this->response->failed($e->getMessage());
+        } catch (TournamentEntryException $e) {
+            return $this->response->failed($e->getMessage());
+        } catch (BetLimitExceededException $e) {
+            return $this->response->failed($e->getMessage(), 400);
+        } catch (ModelNotFoundException $e) {
+            return $this->response->failed($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            \Log::error("TicketsController: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown Error");
+        }
+
+        return $this->response->success("Ticket Purchased");
     }
 
     /**
