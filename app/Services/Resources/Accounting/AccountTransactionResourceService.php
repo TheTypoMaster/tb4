@@ -139,10 +139,10 @@ class AccountTransactionResourceService extends OrderableResourceService {
             case AccountTransactionTypeRepositoryInterface::TYPE_ENTRY:
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REBUY_ENTRY:
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_TOPUP_ENTRY:
-                $ticket = $this->buyInHistoryRepository->getByEntryTransaction($transaction->id)->ticket;
-                if( $ticket ) {
+                $ticket = $this->buyInHistoryRepository->getByEntryTransaction($transaction->id);
+                if( $ticket && $ticket->ticket ) {
                     $transaction->setTicket(
-                        new TicketResource($ticket)
+                        new TicketResource($ticket->ticket)
                     );
                 }
 
@@ -150,10 +150,10 @@ class AccountTransactionResourceService extends OrderableResourceService {
             case AccountTransactionTypeRepositoryInterface::TYPE_BUY_IN:
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REBUY_BUYIN:
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_TOPUP_BUYIN:
-            $ticket = $this->buyInHistoryRepository->getByBuyinTransaction($transaction->id)->ticket;
-            if( $ticket ) {
+            $ticket = $this->buyInHistoryRepository->getByBuyinTransaction($transaction->id);
+            if( $ticket && $ticket->ticket ) {
                 $transaction->setTicket(
-                    new TicketResource($ticket)
+                    new TicketResource($ticket->ticket)
                 );
             }
 
