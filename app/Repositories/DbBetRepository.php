@@ -10,8 +10,9 @@
 use Carbon\Carbon;
 use TopBetta\Models\BetModel;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 
- 
+
 class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInterface{
 
     protected $order = array('start_date', 'DESC');
@@ -173,7 +174,8 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         $model = $this->getBetBuilder()
             ->where('b.user_id', $user)
             ->where('resulted_flag', true)
-            ->where('result_transaction_id', '=', 0)
+            ->where('brs.name', BetResultStatusRepositoryInterface::RESULT_STATUS_PAID)
+            ->whereNull('result_transaction_id')
             ->orderBY('e.start_date', 'DESC');
 
         return $model->paginate();
