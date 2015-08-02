@@ -355,6 +355,9 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::get('user/transactions', 'Frontend\AccountTransactionController@index');
     });
 
+    // --- AFFILIATE ROUTES ---
+    Route::resource('affiliate.acl', 'Frontend\ACLController', array('only' => array('show')));
+
 
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');
