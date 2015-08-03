@@ -19,8 +19,8 @@ class SelectionResource extends AbstractEloquentResource {
         'barrier'    => 'barrier',
         'handicap'   => 'handicap',
         'weight'     => 'weight',
-        'win_odds'   => 'price.win_odds',
-        'place_odds' => 'price.place_odds',
+        'winOdds'   => 'winOdds',
+        'placeOdds' => 'placeOdds',
         'silk_id'    => 'silk_id',
     );
 
@@ -49,6 +49,20 @@ class SelectionResource extends AbstractEloquentResource {
     public function runner()
     {
         return $this->item('runner', 'TopBetta\Resources\RunnerResource', $this->model->runner);
+    }
+
+    public function getWinOdds()
+    {
+        $price = $this->model->price ? $this->model->price->win_odds : 0;
+
+        return $price >= 1 ? $price : null;
+    }
+
+    public function getPlaceOdds()
+    {
+        $price = $this->model->price ? $this->model->price->place_odds : null;
+
+        return $price >= 1 ? $price : null;
     }
 
     public function loadRelation($relation)
