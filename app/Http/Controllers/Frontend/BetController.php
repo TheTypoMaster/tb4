@@ -65,6 +65,7 @@ class BetController extends Controller {
         } catch ( BetPlacementException $e ) {
             return $this->apiResponse->failed(array($e->getMessage()));
         } catch ( \Exception $e ) {
+            \Log::error("BetController: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
             return $this->apiResponse->failed(array($e->getMessage()));
         }
 
