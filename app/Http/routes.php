@@ -375,7 +375,6 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('users.balances', 'Frontend\FrontUsersBalancesController');
     Route::resource('users.banking', 'Frontend\FrontUsersBankingController');
     Route::resource('users.deposit', 'Frontend\FrontUsersDepositController');
-    Route::resource('users.withdraw', 'Frontend\FrontUsersWithdrawController');
     Route::resource('users.betting', 'Frontend\FrontUsersBettingController');
     Route::resource('users.betting-limit', 'Frontend\FrontUsersBettingLimitsController');
     Route::resource('users.tournaments', 'Frontend\FrontUsersTournamentsController');
