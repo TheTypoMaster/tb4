@@ -15,7 +15,7 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
     /**
      * @var \Illuminate\Database\Eloquent\Collection
      */
-    private $collection;
+    protected $collection;
 
     public function __construct(Collection $collection, $class)
     {
@@ -38,6 +38,13 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
             //push each relation onto correct model relation
             $dictionary[$relation->{$key}]->{$relationName}->push($relation);
         }
+
+        return $this;
+    }
+
+    public function merge(EloquentResourceCollection $collection)
+    {
+        $this->collection = $this->collection->merge($collection);
 
         return $this;
     }

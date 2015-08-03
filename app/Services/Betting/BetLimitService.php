@@ -8,10 +8,14 @@
 
 namespace TopBetta\Services\Betting;
 
+use Carbon\Carbon;
+use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetLimitRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetLimitTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
+use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 
 class BetLimitService {
 
@@ -31,13 +35,18 @@ class BetLimitService {
      * @var BetLimitTypeRepositoryInterface
      */
     private $betLimitTypeRepository;
+    /**
+     * @var AccountTransactionRepositoryInterface
+     */
+    private $accountTransactionRepository;
 
-    public function __construct(BetLimitRepositoryInterface $betLimitRepository, BetLimitTypeRepositoryInterface $betLimitTypeRepository, BetRepositoryInterface $betRepository, ExoticRacingBetSelectionService $betSelectionService)
+    public function __construct(BetLimitRepositoryInterface $betLimitRepository, BetLimitTypeRepositoryInterface $betLimitTypeRepository, BetRepositoryInterface $betRepository, ExoticRacingBetSelectionService $betSelectionService, AccountTransactionRepositoryInterface $accountTransactionRepository)
     {
         $this->betLimitRepository = $betLimitRepository;
         $this->betRepository = $betRepository;
         $this->betSelectionService = $betSelectionService;
         $this->betLimitTypeRepository = $betLimitTypeRepository;
+        $this->accountTransactionRepository = $accountTransactionRepository;
     }
 
     /**
@@ -147,6 +156,25 @@ class BetLimitService {
     public function getDefaultSportsBetLimit()
     {
         return $this->betLimitTypeRepository->getByName(BetLimitTypeRepositoryInterface::BET_LIMIT_SPORT_DEFAULT)->first()->default_amount;
+    }
+
+    public function checkUserDailyBetLimit($user, $amount)
+    {
+        if( $user->topbettauser->bet_limit == -1 ) {
+            return;
+        }
+
+        $transactions = $this->accountTransactionRepository->getTransactionsForUserByDateAndType(
+            $user->id,
+            Carbon::now(),
+            array_merge(AccountTransactionService::$betTransactions, AccountTransactionService::$tournamentTransactions)
+        );
+
+        $transactionTotal = $transactions->sum(function($v) { return $v->amount; });
+
+        if( $transactionTotal + $user->topbettauser->bet_limit - $amount < 0 ) {
+            throw new BetLimitExceededException(array('userBetLimit' => $user->topbettauser->bet_limit));
+        }
     }
 
 }

@@ -229,6 +229,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
 
+    //tournament groups
+    Route::resource('tournament-groups', 'Admin\TournamentGroupController');
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
@@ -328,8 +330,34 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     // --- SPORTS N2J
     Route::get('/sports/events/next-to-jump', 'Frontend\EventsController@nextToJump');
 
+    // --- TOURNAMENT ROUTES ---
+    Route::get('combined/tournament-groups/tournaments', 'Frontend\TournamentGroupController@getVisibleTournamentGroupsWithTournaments');
+    Route::resource('tournaments', 'Frontend\TournamentController');
+    Route::resource('tournament.leaderboard', 'Frontend\TournamentLeaderboardController');
+    Route::get('combined/tournament/events', 'Frontend\TournamentController@getTournamentWithEvents');
+
+    Route::group(array('before' => 'auth'), function() {
+        Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
+        Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
+        Route::resource('tournament-bets', 'Frontend\TournamentBetsController');
+        Route::resource('tickets', 'Frontend\TicketsController');
+    });
+
     // --- BETS ----
-    Route::resource('bets', 'Frontend\BetController');
+    Route::group(array('before' => 'auth'), function() {
+        Route::resource('bets', 'Frontend\BetController');
+        Route::get('active-bets', 'Frontend\BetController@getActiveAndRecentBets');
+        Route::resource('competition.bets', 'Frontend\CompetitionBetsController');
+    });
+
+    // --- USER TRANSACTIONS ---
+    Route::group(array('before' => 'auth'), function() {
+        Route::get('user/transactions', 'Frontend\AccountTransactionController@index');
+    });
+
+    // --- AFFILIATE ROUTES ---
+    Route::resource('affiliate.acl', 'Frontend\ACLController', array('only' => array('show')));
+
 
     // ::: USER :::
     Route::get('usersTournamentHistory', 'Frontend\FrontUsersTournamentsController@usersTournamentHistory');
@@ -385,7 +413,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
 
     // ::: TOURNAMENTS :::
     //tournaments
-    Route::resource('tournaments', 'Frontend\FrontTournamentsController');
+    //Route::resource('tournaments', 'Frontend\FrontTournamentsController');
 
     //tournaments bets
     Route::resource('tournaments.comments', 'Frontend\FrontTournamentsCommentsController');
@@ -397,7 +425,6 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('tournaments.details', 'Frontend\FrontTournamentsDetailsController');
 
     //tournaments tickets
-    Route::get('/tournaments/tickets/next-to-jump', 'Frontend\FrontTournamentsTicketsController@nextToJump');
     Route::resource('tournaments.tickets', 'Frontend\FrontTournamentsTicketsController');
 
     //tournament rebuys and topups

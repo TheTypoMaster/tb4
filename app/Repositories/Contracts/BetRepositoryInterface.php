@@ -1,4 +1,5 @@
 <?php namespace TopBetta\Repositories\Contracts;
+use Carbon\Carbon;
 
 /**
  * Coded by Oliver Shanahan
@@ -12,4 +13,24 @@ interface BetRepositoryInterface {
     public function getBetsForUserByEvent($userId, $eventId, $type = null);
 
     public function getBetsForUserBySelection($userId, $selection, $type = null);
+
+    public function getAllBetsForUser($user);
+
+    public function getWinningBetsForUser($user);
+
+    public function getLosingBetsForUser($user);
+
+    public function getRefundedBetsForUser($user);
+
+    public function getUnresultedBetsForUser($user, $page = true);
+
+    public function getBetsOnDateForUser($user, Carbon $date, $resulted = null);
+
+    public function getBetsForEventGroup($user, $eventGroup);
+
+    public function getByResultTransaction($transaction);
+
+    public function getByRefundTransaction($transaction);
+
+    public function getByEntryTransaction($transaction);
 }

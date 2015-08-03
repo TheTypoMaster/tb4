@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\AccountTransactionModel;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
 
@@ -16,6 +17,8 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
     const BET_TRANSACTION_WIN    = 'tbdb_bet.result_transaction_id';
 
     protected $model;
+
+    protected $order = array('created_date', 'DESC');
 
     public function __construct(AccountTransactionModel $model)
     {
@@ -171,6 +174,40 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
             ->where('created_date', '>=', $dateAfter)
             ->orderBy('created_date', 'DESC')
             ->get();
+    }
+
+    public function findAllPaginatedForUser($user)
+    {
+        return $this->model
+            ->join('tbdb_account_transaction_type as att', 'att.id', '=', 'tbdb_account_transaction.account_transaction_type_id')
+            ->where('recipient_id', $user)
+            ->with('transactionType')
+            ->orderBy($this->order[0], $this->order[1])
+            ->select(array('tbdb_account_transaction.*', 'att.name as name', 'att.description as description'))
+            ->paginate();
+    }
+
+    public function findForUserByTypesPaginated($user, array $types)
+    {
+        return $this->model
+            ->join('tbdb_account_transaction_type as att', 'att.id', '=', 'tbdb_account_transaction.account_transaction_type_id')
+            ->where('recipient_id', $user)
+            ->whereIn('att.keyword', $types)
+            ->with('transactionType')
+            ->orderBy($this->order[0], $this->order[1])
+            ->select(array('tbdb_account_transaction.*', 'att.name as name', 'att.description as description'))
+            ->paginate();
+    }
+
+    public function getTransactionsForUserByDateAndType($user, Carbon $date, array $types)
+    {
+        return $this->model
+            ->join('tbdb_account_transaction_type as att', 'att.id', '=', 'tbdb_account_transaction.account_transaction_type_id')
+            ->where('recipient_id', $user)
+            ->where('created_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('created_date', '<=', $date->endOfDay()->toDateTimeString())
+            ->whereIn('att.keyword', $types)
+            ->get(array('tbdb_account_transaction.*'));
     }
 
 }
