@@ -354,6 +354,11 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::group(array('before' => 'auth'), function() {
         Route::get('user/transactions', 'Frontend\AccountTransactionController@index');
         Route::post('user/withdrawal/{type}', 'Frontend\WithdrawalController@store');
+
+        // -- BET LIMITS
+        Route::post('user/set-bet-limit', 'Frontend\UserBetLimitController@setBetLimit');
+        Route::post('user/remove-bet-limit', 'Frontend\UserBetLimitController@removeBetLimit');
+        Route::get('user/bet-limit', 'Frontend\UserBetLimitController@getBetLimit');
     });
 
     // --- AFFILIATE ROUTES ---

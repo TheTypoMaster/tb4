@@ -33,5 +33,9 @@ email: help@topbetta.com",
     "event_closed" => "Betting is closed on this event",
 
     'odds_changed' => "Odds for a selection have changed",
+
+    "bet_limit_updated" => "Bet limit has been updated",
+
+    "bet_limit_requested" => "New bet limit requested. New limit will take effect in 7 days"
 	
 );
