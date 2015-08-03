@@ -281,6 +281,14 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\ACLRepositoryInterface',
             'TopBetta\Repositories\DbACLRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\WithdrawalTypeRepositoryInterface',
+            'TopBetta\Repositories\DbWithdrawalTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\WithdrawalPayPalRepositoryInterface',
+            'TopBetta\Repositories\DbWithdrawalPayPalRepository'
+        );
     }
 
 } 

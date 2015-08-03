@@ -49,7 +49,7 @@ class Validator {
 	 *
 	 * @return array
 	 */
-	protected function mergeRules(array $rules1, array $rules2) {
+	public function mergeRules(array $rules1, array $rules2) {
 
 		foreach ($rules2 as $key => $rule) {
 			if ( ! array_key_exists($key, $rules1)) {

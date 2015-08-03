@@ -350,9 +350,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::resource('competition.bets', 'Frontend\CompetitionBetsController');
     });
 
-    // --- USER TRANSACTIONS ---
+    // --- USERS ---
     Route::group(array('before' => 'auth'), function() {
         Route::get('user/transactions', 'Frontend\AccountTransactionController@index');
+        Route::post('user/withdrawal/{type}', 'Frontend\WithdrawalController@store');
     });
 
     // --- AFFILIATE ROUTES ---
