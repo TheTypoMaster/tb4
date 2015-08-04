@@ -2,6 +2,7 @@
 
 namespace TopBetta\Repositories;
 
+use TopBetta\libraries\exotic\ExoticBetFactory;
 use TopBetta\Models\AccountBalance;
 use TopBetta\Models\Bet;
 use TopBetta\Models\BetResultStatus;
@@ -9,6 +10,8 @@ use TopBetta\Models\BetSelection;
 use TopBetta\Models\FreeCreditBalance;
 use TopBetta\Models\RaceEvent;
 use TopBetta\Models\RaceResult;
+use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
+use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 use TopBetta\Services\Betting\SelectionService;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
@@ -36,12 +39,22 @@ class BetRepo
      * @var SelectionService
      */
     private $selectionService;
+    /**
+     * @var AccountTransactionTypeRepositoryInterface
+     */
+    private $accountTransactionTypeRepository;
+    /**
+     * @var FreeCreditTransactionTypeRepositoryInterface
+     */
+    private $freeCreditTransactionTypeRepository;
 
-    public function __construct(UserAccountService $userAccountService, BetDashboardNotificationService $betDashboardNotificationService, SelectionService $selectionService)
+    public function __construct(UserAccountService $userAccountService, BetDashboardNotificationService $betDashboardNotificationService, SelectionService $selectionService, AccountTransactionTypeRepositoryInterface $accountTransactionTypeRepository, FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository)
     {
         $this->userAccountService = $userAccountService;
 		$this->betDashboardNotificationService = $betDashboardNotificationService;
         $this->selectionService = $selectionService;
+        $this->accountTransactionTypeRepository = $accountTransactionTypeRepository;
+        $this->freeCreditTransactionTypeRepository = $freeCreditTransactionTypeRepository;
     }
 
 	/**
@@ -431,24 +444,24 @@ class BetRepo
 	 */
 	public function refundBet(Bet $bet, $cancel = false)
 	{
+		$betAmount = $bet->getBetAmountAfterRefunds();
+		$freeBetAmount = $bet->getFreeBetAmountAfterRefunds();
+
 		// Full bet amount was on free credit
 		if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount == $bet->bet_amount) {
-			$amount = $bet->bet_freebet_amount;
-			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $amount);
+			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet, $freeBetAmount);
 
 		} else if ($bet->bet_freebet_flag == 1 && $bet->bet_freebet_amount < $bet->bet_amount) {
 			// Free bet amount was less then refund
-			$refundAmount = $bet->bet_amount - $bet->bet_freebet_amount;
-			$amount = $bet->bet_amount;
+			$refundAmount = $betAmount - $freeBetAmount;
 			// Refund free bet amount
-			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet->user_id, $bet->bet_freebet_amount);
+			$bet->refund_freebet_transaction_id = $this->awardFreeBetRefund($bet, $freeBetAmount);
 			// Refund balance to account
-			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $refundAmount);
+			$bet->refund_transaction_id = $this->awardBetRefund($bet, $refundAmount);
 
 		} else {
 			// No free credit was used - refund full amount to account
-			$amount = $bet->bet_amount;
-			$bet->refund_transaction_id = $this->awardBetRefund($bet->user_id, $amount);
+			$bet->refund_transaction_id = $this->awardBetRefund($bet, $betAmount);
 
 		}
 
@@ -461,6 +474,38 @@ class BetRepo
         $bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName($resultStatusId);
 		$bet->refunded_flag = 1;
 		$bet->resulted_flag = 1;
+
+		if ($bet->save()) {
+			$bet->resultAmount = $betAmount;
+			\TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
+			return true;
+		}
+
+		return false;
+	}
+
+	public function partialRefundBet(Bet $bet, $amount)
+	{
+		$betAmount = $bet->getBetAmountAfterRefunds();
+		$freeBetAmount = $bet->getFreeBetAmountAfterRefunds();
+
+		// Full bet amount was on free credit
+		if ($bet->bet_freebet_flag == 1 && $freeBetAmount >= $amount) {
+			$bet->refund_freebet_transaction_id = $this->awardPartialFreeBetRefund($bet, $amount);
+		} else if ($bet->bet_freebet_flag == 1 && $freeBetAmount < $amount) {
+			// Free bet amount was less then refund
+			$refundAmount = $amount - $freeBetAmount;
+			// Refund free bet amount
+			$bet->refund_freebet_transaction_id = $this->awardPartialFreeBetRefund($bet, $freeBetAmount);
+			// Refund balance to account
+			$bet->refund_transaction_id = $this->awardPartialBetRefund($bet, $refundAmount);
+		} else {
+			// No free credit was used - refund full amount to account
+			$bet->refund_transaction_id = $this->awardPartialBetRefund($bet, $amount);
+		}
+
+		$bet->bet_result_status_id = BetResultStatus::getBetResultStatusByName(BetResultStatus::STATUS_PARTIAL_REFUND);
+		$bet->refunded_flag = 1;
 
 		if ($bet->save()) {
 			$bet->resultAmount = $amount;
@@ -477,24 +522,64 @@ class BetRepo
 
 	public function refundBetsForRunnerId($runnerId)
 	{
+		$exoticBetArray = array();
 		// refund win/place bets
 		$betSelections = BetSelection::where('selection_id', $runnerId)->get();
 
+
+
 		foreach ($betSelections as $betSelection) {
 			$bet = Bet::where('id', $betSelection->bet_id)
-					->where('refunded_flag', 0)
+					//->where('refunded_flag', 0)
 					->where('resulted_flag', 0)
 					->first();
 
-			if ($bet && $bet->bet_type_id <= 3) {
+			if ($bet && $bet->bet_type_id <= 3 && ! $bet->refunded_flag ) {
 				\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
 				$this->refundBet($bet);
+			} else if ($bet) {
+				//get distinct exotic bets so we don't try to refund twice
+				$exoticBetArray[$bet->id] = $bet;
 			}
 		}
 
-		// TODO: partial refund exotic bets
+		//refund exotic bets
+		foreach($exoticBetArray as $bet) {
+			$this->refundExoticBet($bet);
+		}
 
 		return true;
+	}
+
+	public function refundExoticBet(Bet $bet)
+	{
+		//get the selections for the bet in the correct format
+		$selections = DbBetSelectionRepository::getUnscratchedExoticSelectionsInPositionForBet($bet->id, (bool) $bet->boxed_flag);
+		//Create the exotic bet
+		$exoticBet = ExoticBetFactory::make($bet->betType->name, $bet->amount, $selections);
+
+		//get the combinations here so we don't have to calculate more then once
+		$combinationCount = $exoticBet->getCombinationCount();
+		if($combinationCount > 0) {
+			//calculate partial refund amount;
+			$newAmount = bcmul($combinationCount, $bet->percentage);
+			$refundAmount = (int) $bet->getBetAmountAfterRefunds() - $newAmount;
+
+			//check we can partial refund without going below bet minimum
+			if($newAmount > 50 && $refundAmount > 0) {
+				$bet->combinations = $combinationCount;
+				\Log::info("Partial refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id . " amount: " . $refundAmount);
+				$this->partialRefundBet($bet, $refundAmount);
+			} else if ($refundAmount > 0) {
+				\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
+				$this->refundBet($bet);
+			}
+
+		} else {
+			//no valid combinations so refund the bet
+			\Log::info("Refunding bet: " . $bet->id . " bet type: " . $bet->bet_type_id);
+			$this->refundBet($bet);
+		}
 	}
 
     /**
@@ -516,15 +601,51 @@ class BetRepo
 		return $this->awardCash($user_id, $amount, AccountBalance::TYPE_BETWIN);
 	}
 
-	private function awardBetRefund($user_id, $amount)
+	private function awardBetRefund($bet, $amount)
 	{
-		return $this->awardCash($user_id, $amount, AccountBalance::TYPE_BETREFUND);
+		if($refund = $bet->refund) {
+			$refund->amount += $amount;
+            $refund->account_transaction_type_id = $this->accountTransactionTypeRepository->getTransactionTypeByKeyword(AccountTransactionTypeRepositoryInterface::TYPE_BET_REFUND)['id'];
+			$refund->save();
+			return $refund->id;
+		}
+
+		return $this->awardCash($bet->user_id, $amount, AccountBalance::TYPE_BETREFUND);
 	}
 
-	private function awardFreeBetRefund($user_id, $amount)
+    private function awardPartialBetRefund($bet, $amount)
+    {
+        if($refund = $bet->refund) {
+            $refund->amount += $amount;
+            $refund->save();
+            return $refund->id;
+        }
+
+        return $this->awardCash($bet->user_id, $amount, AccountTransactionTypeRepositoryInterface::TYPE_BET_PARTIAL_REFUND);
+    }
+
+	private function awardFreeBetRefund($bet, $amount)
 	{
-		return FreeCreditBalance::_increment($user_id, $amount, FreeCreditBalance::TYPE_FREEBETREFUND);
+		if($freeBetRefund = $bet->freeBetRefund) {
+			$freeBetRefund->amount += $amount;
+            $freeBetRefund->tournament_transaction_type_id = $this->freeCreditTransactionTypeRepository->getIdByName(FreeCreditTransactionTypeRepositoryInterface::TRANSACTION_TYPE_FREE_BET_REFUND);
+			$freeBetRefund->save();
+			return $freeBetRefund->id;
+		}
+
+		return FreeCreditBalance::_increment($bet->user_id, $amount, FreeCreditBalance::TYPE_FREEBETREFUND);
 	}
+
+    private function awardPartialFreeBetRefund($bet, $amount)
+    {
+        if($freeBetRefund = $bet->freeBetRefund) {
+            $freeBetRefund->amount += $amount;
+            $freeBetRefund->save();
+            return $freeBetRefund->id;
+        }
+
+        return FreeCreditBalance::_increment($bet->user_id, $amount, FreeCreditTransactionTypeRepositoryInterface::TRANSACTION_TYPE_FREE_BET_PARTIAL_REFUND);
+    }
 
     /**
      * Deduct bet win amount from user account balance

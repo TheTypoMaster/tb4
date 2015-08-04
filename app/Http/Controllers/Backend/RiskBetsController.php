@@ -2,7 +2,7 @@
 
 use TopBetta\Http\Controllers\Controller;
 
-use TopBetta\Models\BetModel;
+use TopBetta\Models\Bet;
 use Illuminate\Support\Facades\Input;
 use TopBetta\Facades\BetRepo;
 
@@ -78,7 +78,7 @@ class RiskBetsController extends Controller {
             $input = Input::json()->all();
         }
 
-        $bet = BetModel::findOrFail($input['id']);
+        $bet = Bet::findOrFail($input['id']);
         $cancel = ($input['action'] == 'cancel') ? true : false;
 
         if (!BetRepo::refundBet($bet, $cancel)) {
