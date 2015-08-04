@@ -95,10 +95,6 @@ abstract class AbstractTournamentBetPlacementService {
             throw new BetSelectionException(null, "Error creating bet selections");
         }
 
-        //update leaderboard record
-        $ticket->leaderboard->balance_to_turnover -= $amount;
-        $ticket->leaderboard->save();
-
         return $bet;
     }
 
