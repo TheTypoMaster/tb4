@@ -335,12 +335,14 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('tournaments', 'Frontend\TournamentController');
     Route::resource('tournament.leaderboard', 'Frontend\TournamentLeaderboardController');
     Route::get('combined/tournament/events', 'Frontend\TournamentController@getTournamentWithEvents');
+    Route::get('comments', 'Frontend\TournamentCommentController@index');
 
     Route::group(array('before' => 'auth'), function() {
         Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
         Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
         Route::resource('tournament-bets', 'Frontend\TournamentBetsController');
         Route::resource('tickets', 'Frontend\TicketsController');
+        Route::post('comments', 'Frontend\TournamentCommentController@store');
     });
 
     // --- BETS ----
