@@ -33,4 +33,6 @@ interface BetRepositoryInterface {
     public function getByRefundTransaction($transaction);
 
     public function getByEntryTransaction($transaction);
+
+    public function findBets($bets);
 }

@@ -95,6 +95,13 @@ class BetResourceService extends OrderableResourceService {
         );
     }
 
+    public function findBets($betIds)
+    {
+        $bets = $this->repository->findBets($betIds);
+
+        return $this->createBetsCollection($bets, false);
+    }
+
     protected function createBetsCollection($bets, $page = true)
     {
         if( $page ) {

@@ -11,6 +11,7 @@ use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Betting\Factories\BetPlacementFactory;
+use TopBetta\Services\Resources\Betting\BetResourceService;
 use TopBetta\Services\Response\ApiResponse;
 
 class BetController extends Controller {
@@ -23,11 +24,16 @@ class BetController extends Controller {
      * @var BetService
      */
     private $betService;
+    /**
+     * @var BetResourceService
+     */
+    private $resourceService;
 
-    public function __construct(ApiResponse $apiResponse, BetService $betService)
+    public function __construct(ApiResponse $apiResponse, BetService $betService, BetResourceService $resourceService)
     {
         $this->apiResponse = $apiResponse;
         $this->betService = $betService;
+        $this->resourceService = $resourceService;
     }
 
     /**
@@ -83,16 +89,19 @@ class BetController extends Controller {
             $response = $service->placeBet(Auth::user(), $input['amount'], $input['bet_type'], $input['origin'], $input['selections'], $input['free_credit_flag']);
         } catch ( BetSelectionException $e ) {
             $selection = $e->getSelection();
-            return $this->apiResponse->failed(array($e->getMessage(), $selection ? $selection->id : null));
+            return $this->apiResponse->failed(array($e->getMessage(), $selection ? $selection->id : null), 400);
         } catch ( BetLimitExceededException $e ) {
-            return $this->apiResponse->failed(array($e->getMessage()));
+            return $this->apiResponse->failed(array($e->getMessage()), 400);
         } catch ( BetPlacementException $e ) {
-            return $this->apiResponse->failed(array($e->getMessage()));
+            return $this->apiResponse->failed(array($e->getMessage()), 400);
         } catch ( \Exception $e ) {
+            \Log::error("BetController: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
             return $this->apiResponse->failed(array($e->getMessage()));
         }
 
-        return $this->apiResponse->success($response);
+        return $this->apiResponse->success(
+            $this->resourceService->findBets(array_get($response, 'id') ? array($response['id']) : array_pluck($response, 'id'))->toArray()
+        );
 	}
 
 
