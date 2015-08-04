@@ -289,7 +289,7 @@ Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_l
 Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), function() {
 
     // normal login
-    Route::post('authentication/login', 'Frontend\UserSessionController@login');
+    Route::post('authentication/login', 'Frontend\UserSessionController@loginExternal');
 
     // normal logout
     Route::get('authentication/logout', 'Frontend\UserSessionController@logout');

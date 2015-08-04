@@ -9,16 +9,16 @@
 
 use TopBetta\Http\Controllers\Controller;
 use Input;
-use TopBetta\Models\UserModel;
-use Validator;
+use TopBetta\Resources\UserResource;
+use TopBetta\Services\Exceptions\UnauthorizedAccessException;
 use Auth;
 
 use Regulus\ActivityLog\Models\Activity;
 
 use TopBetta\Http\Libraries\GetClientDetails;
-use TopBetta\Services\Validation\Exceptions\ValidationException;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Authentication\UserAuthenticationService;
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 
 class UserSessionController extends Controller {
@@ -36,46 +36,41 @@ class UserSessionController extends Controller {
         $this->clientDetails = $clientDetails;
     }
 
-    public function login(){
+    public function loginExternal(){
 
         $input = Input::json()->all();
 
-        $rules = array('username' => 'required', 'password' => 'required');
-
-        $validator = Validator::make($input, $rules);
-
-        if ($validator->fails()) return $this->response->failed($validator->messages()->all(), 400, 101, 'User Login Failed', 'User Login Failed - check errors');
-
-        // topbetta currently has MD5 hashed passwords
-        try{
-            $userDetails = $this->userservice->checkMD5PasswordUser($input['username'], $input['password']);
-        }catch (ValidationException $e){
-            return $this->response->failed($e->getErrors(), 400, 102, 'Login details incorrect', 'Login details incorrect');
+        try {
+            $user = $this->userservice->login($input);
+        } catch (ValidationException $e) {
+            return $this->response->failed($e->getErrors(), 400, 101, 'User Login Failed', 'User Login Failed - check errors');
+        } catch (UnauthorizedAccessException $e) {
+            return $this->response->failed($e->getMessage(), 401);
+        } catch (\Exception $e) {
+            \Log::error("UserSessionController: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown error");
         }
 
-        if( ! $userDetails['activated_flag'] ) {
-            return $this->response->failed(array(), 400, 0, "Account not activated", "Account not activated");
+        return $this->response->success($user);
+
+    }
+
+    public function login()
+    {
+        $input = Input::json()->all();
+
+        try {
+            $user = new UserResource($this->userservice->login($input));
+        } catch (ValidationException $e) {
+            return $this->response->failed($e->getErrors(), 400, 101, 'User Login Failed', 'User Login Failed - check errors');
+        } catch (UnauthorizedAccessException $e) {
+            return $this->response->failed($e->getMessage(), 401);
+        } catch (\Exception $e) {
+            \Log::error("UserSessionController: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown error");
         }
 
-        $user = Auth::loginUsingId($userDetails['id']);
-
-      //  $ua = $this->clientDetails->getBrowser();
-      //  $user_details = "Browser: " . $ua['name'] . ", Version: " . $ua['version'] . ", Platform: " .$ua['platform'] . ", User Agent:" . $ua['userAgent'];
-
-		if (Auth::check()) {
-			// record the logout to the activity table
-			Activity::log([
-				'contentId'   => Auth::user()->id,
-				'contentType' => 'User',
-				'action'      => 'Log In',
-				'description' => 'User logged into TopBetta',
-				'details'     => 'Username: '.Auth::user()->username, //. ' - '.$user_details,
-				//'updated'     => $id ? true : false,
-			]);
-		}
-
-        return $this->response->success($user->load('topbettaUser'));
-
+        return $this->response->success($user->toArray());
     }
 
     public function logout(){
@@ -107,14 +102,10 @@ class UserSessionController extends Controller {
         }
 
         //get authenticated user
-        $user = Auth::user();
-        $response = $user->toArray();
+        $user = Auth::user()->load('topbettauser');
 
-        //add extra fields
-        $response['account_balance'] = $user->accountBalance();
-        $response['free_credit_balance'] = $user->freeCreditBalance();
-        $response['balance_to_turnover'] = $user->topbettauser ? $user->topbettauser->balance_to_turnover : 0;
+        $user = new UserResource($user);
 
-        return $this->response->success($response);
+        return $this->response->success($user->toArray());
     }
 }
