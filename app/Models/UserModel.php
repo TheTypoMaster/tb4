@@ -143,6 +143,12 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
         return $this->hasMany('TopBetta\Models\PaymentEwayTokens', 'user_id');
     }
 
+    /**
+     * Override Sentry Validation
+     */
+    public function validate()
+    {}
+
 
     public function whereNotInRelationship($relationship, $closure)
     {

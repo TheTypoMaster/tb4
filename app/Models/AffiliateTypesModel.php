@@ -2,7 +2,9 @@
 
 namespace TopBetta\Models;
 
-class AffiliateTypesModel extends Eloquent {
+use Illuminate\Database\Eloquent\Model;
+
+class AffiliateTypesModel extends Model {
 
 	protected $table = 'tb_affiliate_types';
 	public $timestamps = true;

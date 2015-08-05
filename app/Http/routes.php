@@ -299,3 +299,14 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
     Route::get('authentication/token/login', 'Frontend\UserTokenController@tokenLogin');
 
 });
+
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links'), function() {
+
+    Route::post('registration/tournament/create', 'External\UserAccountController@createTournamentAccount');
+    Route::post('authentication/tournament/token/request', 'External\UserTokenController@requestToken');
+
+});
+
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links', 'middleware' => ['auth.token', 'destroy.session']), function() {
+    Route::get('test', 'External\UserTokenController@test');
+});
