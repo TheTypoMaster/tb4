@@ -27,6 +27,7 @@ class AddAffiliateTypeRules extends Migration
     {
         Schema::table('tb_affiliate_types', function (Blueprint $table) {
             $table->dropColumn('affiliate_user_rules');
+            $table->renameColumn('affiliate_type_id', 'affilaite_type_id');
         });
     }
 }

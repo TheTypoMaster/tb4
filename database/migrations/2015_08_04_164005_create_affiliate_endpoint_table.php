@@ -19,6 +19,7 @@ class CreateAffiliateEndpointTable extends Migration
             $table->text('affiliate_api_endpoint');
             $table->string('affiliate_endpoint_username');
             $table->string('affiliate_endpoint_password');
+            $table->integer('affiliate_endpoint_type')->unsigned();
 
             $table->timestamps();
         });
