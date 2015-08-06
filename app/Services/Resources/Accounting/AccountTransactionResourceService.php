@@ -66,43 +66,36 @@ class AccountTransactionResourceService extends OrderableResourceService {
 
     public function getAllTransactionsWithDetailsForUser($user)
     {
-        $transactions = $this->repository->findAllPaginatedForUser($user);
+        $transactions = $this->repository->findAllPaginatedForUser($user->id);
 
         $transactions = new PaginatedEloquentResourceCollection($transactions, 'TopBetta\Resources\Accounting\AccountTransactionResource');
 
-        return $this->setTransactionsDetails($transactions);
+        return $this->setTransactionsDetails($transactions, $user);
     }
 
-    public function getTournamentTransactionWithDetailsForUser($user)
+    public function getTransactionsForUserByTypeIn($user, $types)
     {
-        $transactions = $this->repository->findForUserByTypesPaginated($user, AccountTransactionService::$tournamentTransactions);
+        $transactions = $this->repository->findForUserByTypesPaginated($user->id, $types);
 
         $transactions = new PaginatedEloquentResourceCollection($transactions, 'TopBetta\Resources\Accounting\AccountTransactionResource');
 
-        return $this->setTransactionsDetails($transactions);
-
+        return $this->setTransactionsDetails($transactions, $user);
     }
 
-    public function getBetTransactionsWithDetailsForUser($user)
+    public function getLosingBetTransactionsForUser($user)
     {
-        $transactions = $this->repository->findForUserByTypesPaginated($user, AccountTransactionService::$betTransactions);
+        $transactions = $this->repository->findLosingBetTransactionsForUser($user->id);
 
         $transactions = new PaginatedEloquentResourceCollection($transactions, 'TopBetta\Resources\Accounting\AccountTransactionResource');
 
-        return $this->setTransactionsDetails($transactions);
+        return $this->setTransactionsDetails($transactions, $user);
     }
 
-    public function getDepositWithdrawalTransactionsForUser($user)
-    {
-        $transactions = $this->repository->findForUserByTypesPaginated($user, array_merge(AccountTransactionService::$depositTransactions, AccountTransactionService::$withdrawalTransactions));
-
-        return new PaginatedEloquentResourceCollection($transactions, 'TopBetta\Resources\Accounting\AccountTransactionResource');
-    }
-
-    protected function setTransactionsDetails($transactions)
+    protected function setTransactionsDetails($transactions, $user)
     {
         foreach($transactions as $transaction) {
             $this->setTransactionDetails($transaction);
+            $transaction->setRunningBalance($user->accountBalance($transaction->id));
         }
 
         return $transactions;
@@ -142,7 +135,7 @@ class AccountTransactionResourceService extends OrderableResourceService {
                 $ticket = $this->buyInHistoryRepository->getByEntryTransaction($transaction->id);
                 if( $ticket && $ticket->ticket ) {
                     $transaction->setTicket(
-                        new TicketResource($ticket->ticket)
+                        new TicketResource($ticket->ticket->load('tournament'))
                     );
                 }
 
@@ -150,12 +143,12 @@ class AccountTransactionResourceService extends OrderableResourceService {
             case AccountTransactionTypeRepositoryInterface::TYPE_BUY_IN:
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REBUY_BUYIN:
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_TOPUP_BUYIN:
-            $ticket = $this->buyInHistoryRepository->getByBuyinTransaction($transaction->id);
-            if( $ticket && $ticket->ticket ) {
-                $transaction->setTicket(
-                    new TicketResource($ticket->ticket)
-                );
-            }
+                $ticket = $this->buyInHistoryRepository->getByBuyinTransaction($transaction->id);
+                if( $ticket && $ticket->ticket ) {
+                    $transaction->setTicket(
+                        new TicketResource($ticket->ticket->load('tournament'))
+                    );
+                }
 
             break;
             case AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REFUND:
@@ -163,7 +156,7 @@ class AccountTransactionResourceService extends OrderableResourceService {
                 $ticket = $this->ticketRepository->getByResultTransaction($transaction->id);
                 if( $ticket ) {
                     $transaction->setTicket(
-                        new TicketResource($ticket)
+                        new TicketResource($ticket->load('tournament'))
                     );
                 }
                 break;

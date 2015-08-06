@@ -31,6 +31,7 @@ class BetResource extends AbstractEloquentResource {
         'status'           => 'status',
         'paid'             => 'won_amount',
         'date'             => 'start_date',
+        'eventType'        => 'eventType',
     );
 
 
@@ -52,6 +53,11 @@ class BetResource extends AbstractEloquentResource {
     public function selectionString()
     {
         return $this->isExotic() ? $this->model->selection_string : null;
+    }
+
+    public function getEventType()
+    {
+        return $this->model->event_type ? : 'sport';
     }
 
     public function isExotic()

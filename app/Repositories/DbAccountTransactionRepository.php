@@ -189,10 +189,30 @@ class DbAccountTransactionRepository extends BaseEloquentRepository implements A
 
     public function findForUserByTypesPaginated($user, array $types)
     {
-        return $this->model
+        $model = $this->model
             ->join('tbdb_account_transaction_type as att', 'att.id', '=', 'tbdb_account_transaction.account_transaction_type_id')
             ->where('recipient_id', $user)
-            ->whereIn('att.keyword', $types)
+            ->with('transactionType')
+            ->orderBy($this->order[0], $this->order[1])
+            ->select(array('tbdb_account_transaction.*', 'att.name as name', 'att.description as description'));
+
+        if (count($types) > 1) {
+            $model->whereIn('att.keyword', $types);
+        } else {
+            $model->where('att.keyword', array_values($types)[0]);
+        }
+
+        return $model->paginate();
+    }
+
+    public function findLosingBetTransactionsForUser($user)
+    {
+        return $this->model
+            ->join('tbdb_account_transaction_type as att', 'att.id', '=', 'tbdb_account_transaction.account_transaction_type_id')
+            ->join('tbdb_bet as b', 'b.bet_transaction_id', '=', 'tbdb_account_transaction.id')
+            ->where('recipient_id', $user)
+            ->whereNull('b.result_transaction_id')
+            ->where('b.resulted_flag', true)
             ->with('transactionType')
             ->orderBy($this->order[0], $this->order[1])
             ->select(array('tbdb_account_transaction.*', 'att.name as name', 'att.description as description'))

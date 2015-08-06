@@ -37,7 +37,7 @@ class AccountTransactionController extends Controller
     public function index(Request $request)
     {
         try {
-            $transactions = $this->accountTransactionService->getUserTransactions(\Auth::user()->id, $request->get('type', 'all'), $request->get('order', null));
+            $transactions = $this->accountTransactionService->getUserTransactions(\Auth::user(), $request->get('type', 'all'), $request->get('order', null));
             $transactions = $transactions->toArray();
         } catch (\InvalidArgumentException $e) {
             return $this->response->failed($e->getMessage(), 400);

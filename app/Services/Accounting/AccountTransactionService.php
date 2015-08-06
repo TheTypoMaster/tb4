@@ -46,13 +46,12 @@ class AccountTransactionService {
         AccountTransactionTypeRepositoryInterface::TYPE_PROMO_TOURNAMENT_ENTRY,
     );
 
-    public static $betTransactions = array(
-        AccountTransactionTypeRepositoryInterface::TYPE_BET_ENTRY,
+    public static $betRefundTransactions = array(
         AccountTransactionTypeRepositoryInterface::TYPE_BET_REFUND,
-        AccountTransactionTypeRepositoryInterface::TYPE_BET_WIN,
         AccountTransactionTypeRepositoryInterface::TYPE_BETWIN_CANCELLED,
         AccountTransactionTypeRepositoryInterface::TYPE_BET_PARTIAL_REFUND,
     );
+
 
     public static $withdrawalTransactions = array(
         AccountTransactionTypeRepositoryInterface::TYPE_WITHDRAWAL,
@@ -458,11 +457,19 @@ class AccountTransactionService {
             case 'all':
                 return $this->resourceService->getAllTransactionsWithDetailsForUser($user);
             case 'bets':
-                return $this->resourceService->getBetTransactionsWithDetailsForUser($user);
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, array_merge(self::$betRefundTransactions, array(AccountTransactionTypeRepositoryInterface::TYPE_BET_ENTRY, AccountTransactionTypeRepositoryInterface::TYPE_BET_WIN)));
             case 'tournaments':
-                return $this->resourceService->getTournamentTransactionWithDetailsForUser($user);
-            case 'deposits-withdrawals':
-                return $this->resourceService->getDepositWithdrawalTransactionsForUser($user);
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, self::$tournamentTransactions);
+            case 'deposits':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, self::$depositTransactions);
+            case 'withdrawals':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, array(AccountTransactionTypeRepositoryInterface::TYPE_WITHDRAWAL));
+            case 'bet-winning':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, array(AccountTransactionTypeRepositoryInterface::TYPE_BET_WIN));
+            case 'bet-losing':
+                return $this->resourceService->getLosingBetTransactionsForUser($user);
+            case 'bet-refunded':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, self::$betRefundTransactions);
         }
 
         throw new \InvalidArgumentException("Invalid type " . $type);

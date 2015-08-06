@@ -260,7 +260,7 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->select(array(
                 'b.id', 'b.bet_amount', 'b.bet_freebet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status', 'at.amount as won_amount',
-                'bt.name as bet_type', 'b.selection_string', 'e.start_date as start_date'
+                'bt.name as bet_type', 'b.selection_string', 'e.start_date as start_date', 'eg.type_code as event_type'
             ));
     }
 

@@ -26,6 +26,18 @@ class AccountTransactionResource extends AbstractEloquentResource {
 
     private $ticket;
 
+    private $runningBalance;
+
+    /**
+     * @param mixed $runningBalance
+     * @return $this
+     */
+    public function setRunningBalance($runningBalance)
+    {
+        $this->runningBalance = $runningBalance;
+        return $this;
+    }
+
     /**
      * @param mixed $bet
      * @return $this
@@ -46,12 +58,20 @@ class AccountTransactionResource extends AbstractEloquentResource {
         return $this;
     }
 
+
     public function toArray()
     {
         $array = parent::toArray();
 
-        $array['bet_id'] = $this->bet ? $this->bet->id : null;
-        $array['ticket_id'] = $this->ticket ? $this->ticket->id : null;
+        if ($this->bet) {
+            $array['bet'] = $this->bet->toArray();
+        }
+
+        if ($this->ticket) {
+            $array['ticket'] = $this->ticket->toArray();
+        }
+
+        $array['running_balance'] = $this->runningBalance;
 
         return $array;
     }

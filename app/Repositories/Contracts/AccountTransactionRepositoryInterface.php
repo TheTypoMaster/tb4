@@ -39,4 +39,6 @@ interface AccountTransactionRepositoryInterface {
     public function findForUserByTypesPaginated($user, array $types);
 
     public function getTransactionsForUserByDateAndType($user, Carbon $date, array $types);
+
+    public function findLosingBetTransactionsForUser($user);
 }
