@@ -21,6 +21,11 @@ class WithdrawalRequestResource extends AbstractEloquentResource {
         'paypalEmail' => 'paypalEmail'
     );
 
+    protected $types = array(
+        "id" => "int",
+        "amount" => "int",
+    );
+
     public function getPaypalEmail()
     {
         if( $this->model->paypal ) {

@@ -14,12 +14,22 @@ use TopBetta\Resources\AbstractEloquentResource;
 class LeaderboardResource extends AbstractEloquentResource {
 
     protected $attributes = array(
+        "id" => "id",
         "username" => "username",
         "currency" => 'currency',
         'turned_over' => 'turned_over',
         'rebuys' => 'rebuys',
         'topups' => 'topups',
         'qualified' => 'qualified',
+    );
+
+    protected $types = array(
+        "id" => "int",
+        "currency" => "int",
+        "turned_over" => "int",
+        "rebuys" => "int",
+        "topups" => "int",
+        "qualified" => "bool"
     );
 
     private $position = '-';

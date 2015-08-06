@@ -34,6 +34,16 @@ class BetResource extends AbstractEloquentResource {
         'eventType'        => 'eventType',
     );
 
+    protected $types = array(
+        "id"            => "int",
+        "amount"        => "int",
+        "selectionId"   => "int",
+        "marketId"      => "int",
+        "eventId"       => "int",
+        "competitionId" => "int",
+        "paid"          => "int"
+    );
+
 
     public function paid()
     {
