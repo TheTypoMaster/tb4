@@ -94,17 +94,31 @@ class TournamentService {
         //buyin to tournament
         $transactions = $this->buyInService->buyin($tournament, $user);
 
-        //create ticket
-        $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
-
-        //create leaderboard record
-        $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+        $ticket = $this->createTicketAndLeaderboardRecordForUser($tournament, $user);
 
         //create history record
         $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
 
         return $transactions;
     }
+
+    public function createTicketAndLeaderboardRecordForUser($tournament, $user)
+    {
+        //create ticket
+        $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+
+        //create leaderboard record
+        $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+
+        return $ticket;
+    }
+
+    public function getTournament($tournamentId)
+    {
+        return $this->tournamentRepository->find($tournamentId);
+    }
+
+
 
     public function removeUserFromTournament($tournamentId, $userId)
     {

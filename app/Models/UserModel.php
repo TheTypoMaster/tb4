@@ -38,7 +38,7 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
 
 	public function affiliate()
 	{
-		return $this->belongsTo('TopBetta\Models\AffiliatesModel', 'user_affiliate_id', 'affiliate_id');
+		return $this->belongsTo('TopBetta\Models\AffiliatesModel', 'affiliate_id', 'affiliate_id');
 	}
 
 	public function campaigns()

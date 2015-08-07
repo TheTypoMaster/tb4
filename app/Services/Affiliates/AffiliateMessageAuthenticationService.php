@@ -46,4 +46,5 @@ class AffiliateMessageAuthenticationService {
 
         return $this->authenticationService->createHashedMessage($input, $affiliate->affiliate_api_key);
     }
+
 }

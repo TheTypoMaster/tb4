@@ -15,8 +15,8 @@ class Kernel extends ConsoleKernel {
 		'TopBetta\Jobs\BetResultWatchdogCommand',
 		'TopBetta\Jobs\ChargeDormantAccounts',
 		'TopBetta\Jobs\DashboardPusher',
-        'TopBetta\Jobs\ProcessScheduledPayments'
-
+        'TopBetta\Jobs\ProcessScheduledPayments',
+        'TopBetta\Console\Commands\DevTools\CreateTestSport',
 	];
 
 	/**

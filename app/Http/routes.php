@@ -307,6 +307,11 @@ Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_l
 
 });
 
-Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links', 'middleware' => ['auth.token', 'destroy.session']), function() {
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links', 'middleware' => ['auth.token']), function() {
     Route::get('test', 'External\UserTokenController@test');
+
+});
+
+Route::group(array('prefix' => '/api/external/v1'), function() {
+    Route::post('test-entry', 'External\TestController@testEntry');
 });
