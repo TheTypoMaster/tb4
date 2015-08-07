@@ -10,11 +10,11 @@ namespace TopBetta\Services\Betting\Factories;
 
 
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
-use TopBetta\libraries\exotic\ExoticBet;
-use TopBetta\libraries\exotic\ExoticBetExacta;
-use TopBetta\libraries\exotic\ExoticBetFirstfour;
-use TopBetta\libraries\exotic\ExoticBetQuinella;
-use TopBetta\libraries\exotic\ExoticBetTrifecta;
+use TopBetta\Libraries\exotic\ExoticBet;
+use TopBetta\Libraries\exotic\ExoticBetExacta;
+use TopBetta\Libraries\exotic\ExoticBetFirstfour;
+use TopBetta\Libraries\exotic\ExoticBetQuinella;
+use TopBetta\Libraries\exotic\ExoticBetTrifecta;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
 class ExoticBetLibraryFactory {
