@@ -21,6 +21,7 @@ class BetResource extends AbstractEloquentResource {
         'selectionId'      => 'selection_id',
         'selectionName'    => 'selection_name',
         'selectionString'  => 'selection_string',
+        'selectionNumber'  => 'selection_number',
         'marketName'       => 'market_name',
         'marketId'         => 'market_id',
         'eventId'          => 'event_id',
@@ -32,6 +33,10 @@ class BetResource extends AbstractEloquentResource {
         'paid'             => 'won_amount',
         'date'             => 'start_date',
         'eventType'        => 'eventType',
+        'percentage'       => 'percentage',
+        'odds'             => 'odds',
+        'boxedFlag'        => 'boxed_flag',
+        'dividend'         => 'dividend',
     );
 
 
@@ -58,6 +63,24 @@ class BetResource extends AbstractEloquentResource {
     public function getEventType()
     {
         return $this->model->event_type ? : 'sport';
+    }
+
+    public function getOdds()
+    {
+        if ($this->isExotic()) {
+            return null;
+        }
+
+        return $this->betType == BetTypeRepositoryInterface::TYPE_WIN ? $this->win_odds : $this->place_odds;
+    }
+
+    public function getDividend()
+    {
+        if ($this->isExotic()) {
+            return null;
+        }
+
+        return $this->betType == BetTypeRepositoryInterface::TYPE_WIN ? $this->win_dividend : $this->place_dividend;
     }
 
     public function isExotic()
