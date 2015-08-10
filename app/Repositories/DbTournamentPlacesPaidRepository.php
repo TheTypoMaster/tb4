@@ -10,8 +10,10 @@ namespace TopBetta\Repositories;
 
 
 use TopBetta\Models\TournamentPlacesPaidModel;
+use TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface;
 
-class DbTournamentPlacesPaidRepository extends BaseEloquentRepository {
+class DbTournamentPlacesPaidRepository extends BaseEloquentRepository implements TournamentPlacesPaidRepositoryInterface
+{
     
     public function __construct(TournamentPlacesPaidModel $model)
     {

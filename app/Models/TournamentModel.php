@@ -37,6 +37,11 @@ class TournamentModel extends Eloquent {
 		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
 
+    public function prizeFormat()
+    {
+        return $this->belongsTo('TopBetta\Models\TournamentPrizeFormat', 'tournament_prize_format');
+    }
+
     public function prizePool()
     {
         $amount = $this->tickets->sum(function($v) {
