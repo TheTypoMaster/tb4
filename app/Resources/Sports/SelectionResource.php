@@ -20,6 +20,12 @@ class SelectionResource extends AbstractEloquentResource {
         'price' => 'price.win_odds',
     );
 
+    protected $types = array(
+        "id" => "int",
+        "line" => "int",
+        "price" => "float"
+    );
+
     protected $loadIfRelationExists = array(
         'team' => 'team',
         'player' => 'player',

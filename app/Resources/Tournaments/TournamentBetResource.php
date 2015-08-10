@@ -30,8 +30,14 @@ class TournamentBetResource extends AbstractEloquentResource
     );
 
     protected $types = array(
-        "id"       => "int",
-        "resulted" => "bool"
+        "id"          => "int",
+        "resulted"    => "bool",
+        "amount"      => "int",
+        "winAmount"   => "int",
+        "fixedOdds"   => "int",
+        "selectionId" => "int",
+        "marketId"    => "int",
+        "eventId"     => "int"
     );
 
 }

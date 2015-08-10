@@ -100,13 +100,13 @@ class RaceResultService {
         foreach($results as $result) {
             $resultArray = array(
                 "name" => $result->name,
-                "position" => $result->position,
-                "number" => $result->number,
-                "place_dividend" => $result->place_dividend
+                "position" => (int)$result->position,
+                "number" => (int)$result->number,
+                "place_dividend" => (float)$result->place_dividend
             );
 
             if( $result->position == 1 ) {
-                $resultArray['win_dividend'] = $result->win_dividend;
+                $resultArray['win_dividend'] = (float)$result->win_dividend;
             }
 
             $resultsArray[] = $resultArray;

@@ -22,6 +22,12 @@ class AccountTransactionResource extends AbstractEloquentResource {
         'amount' => 'amount'
     );
 
+    protected $types = array(
+        "id" => "int",
+        "amount" => "int",
+        "runningBalance" => "int"
+    );
+
     private $bet;
 
     private $ticket;
@@ -71,7 +77,7 @@ class AccountTransactionResource extends AbstractEloquentResource {
             $array['ticket'] = $this->ticket->toArray();
         }
 
-        $array['running_balance'] = $this->runningBalance;
+        $array['running_balance'] = (int)$this->runningBalance;
 
         return $array;
     }
