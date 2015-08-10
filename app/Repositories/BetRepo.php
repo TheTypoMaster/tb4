@@ -2,7 +2,7 @@
 
 namespace TopBetta\Repositories;
 
-use TopBetta\Libraries\exotic\ExoticBetbFactory;
+use TopBetta\Libraries\exotic\ExoticBetFactory;
 use TopBetta\Models\AccountBalance;
 use TopBetta\Models\Bet;
 use TopBetta\Models\BetResultStatus;
