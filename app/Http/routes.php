@@ -382,6 +382,11 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::post('user/remove-bet-limit', 'Frontend\UserBetLimitController@removeBetLimit');
         Route::get('user/bet-limit', 'Frontend\UserBetLimitController@getBetLimit');
     });
+    //create account
+    Route::post('registration/createfull', 'Frontend\UserRegistrationController@createFull');
+    //activation
+    Route::get('registration/activate/{activationHash}', 'Frontend\UserRegistrationController@activate');
+    Route::get('registration/resend-welcome-email/{userId}', 'Frontend\UserRegistrationController@resendWelcomeEmail');
 
     // --- AFFILIATE ROUTES ---
     Route::resource('affiliate.acl', 'Frontend\ACLController', array('only' => array('show')));
