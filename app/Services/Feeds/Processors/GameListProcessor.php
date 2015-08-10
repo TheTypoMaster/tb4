@@ -206,7 +206,7 @@ class GameListProcessor extends AbstractFeedProcessor {
             $compData['close_time'] = $eventDate;
             $compData['external_event_group_id'] = $externalEventGroupId;
             //create the comp
-            $this->competitionRepository->create($compData);
+            $competition = $this->competitionRepository->create($compData);
         }
 
         //update tournaments
