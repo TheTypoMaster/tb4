@@ -71,6 +71,10 @@ class BetResource extends AbstractEloquentResource {
             return null;
         }
 
+        if ($this->model->fixed_odds) {
+            return $this->model->fixed_odds;
+        }
+
         return $this->betType == BetTypeRepositoryInterface::TYPE_WIN ? $this->win_odds : $this->place_odds;
     }
 
@@ -78,6 +82,10 @@ class BetResource extends AbstractEloquentResource {
     {
         if ($this->isExotic()) {
             return null;
+        }
+
+        if ($this->model->fixed_odds) {
+            return $this->model->fixed_odds;
         }
 
         return $this->betType == BetTypeRepositoryInterface::TYPE_WIN ? $this->win_dividend : $this->place_dividend;
