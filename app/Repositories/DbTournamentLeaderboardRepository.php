@@ -8,9 +8,11 @@
 
 use TopBetta\Models\TournamentLeaderboardModel;
 use DB;
+use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
 
 
-class DbTournamentLeaderboardRepository extends BaseEloquentRepository{
+class DbTournamentLeaderboardRepository extends BaseEloquentRepository implements TournamentLeaderboardRepositoryInterface
+{
 
     protected $tournamentLeaderboard;
 

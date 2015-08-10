@@ -37,6 +37,15 @@ class TournamentModel extends Eloquent {
 		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
 
+    public function prizePool()
+    {
+        $amount = $this->tickets->sum(function($v) {
+            return $v->rebuy_count * $this->rebuy_buyin + $v->topup_count * $this->topup_buyin + $this->buy_in;
+        });
+
+        return max($amount, $this->minimum_prize_pool);
+    }
+
     public function calculateTournamentPrizePool($tournamentId) {
         $tournament = TournamentModel::find($tournamentId);
 
