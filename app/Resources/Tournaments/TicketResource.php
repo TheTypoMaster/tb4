@@ -41,7 +41,7 @@ class TicketResource extends AbstractEloquentResource {
 
     public function getAvailableCurrency()
     {
-        if( is_null($this->availableCurrency) ) {
+        if( is_null($this->availableCurrency) && $this->model->leaderboard ) {
             $this->availableCurrency = $this->model->leaderboard->currency - $this->model->bets->where('resulted_flag', false)->sum('bet_amount');
         }
 
@@ -60,7 +60,10 @@ class TicketResource extends AbstractEloquentResource {
 
     public function getQualified()
     {
-        if( ! $this->model->leaderboard ) dd($this->model);
+        if( ! $this->model->leaderboard ) {
+            return false;
+        }
+
         return $this->model->leaderboard->turned_over >= $this->model->leaderboard->balance_to_turnover;
     }
 

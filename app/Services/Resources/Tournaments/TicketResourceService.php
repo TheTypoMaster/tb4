@@ -70,7 +70,7 @@ class TicketResourceService {
 
         $tickets = new PaginatedEloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\TicketResource');
 
-        foreach($tickets as $ticket) {
+        foreach ($tickets as $ticket) {
             if( $ticket->getQualified() ) {
                 $ticket->setPosition(
                     $this->leaderboardService->getLeaderboardPositionForTicket($ticket)
