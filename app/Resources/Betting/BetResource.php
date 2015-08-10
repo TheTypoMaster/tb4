@@ -37,16 +37,22 @@ class BetResource extends AbstractEloquentResource {
         'odds'             => 'odds',
         'boxedFlag'        => 'boxed_flag',
         'dividend'         => 'dividend',
+        'isExotic'         => 'isExotic'
     );
 
     protected $types = array(
-        "id"            => "int",
-        "amount"        => "int",
-        "selectionId"   => "int",
-        "marketId"      => "int",
-        "eventId"       => "int",
-        "competitionId" => "int",
-        "paid"          => "int"
+        "id"              => "int",
+        "amount"          => "int",
+        "selectionId"     => "int",
+        "marketId"        => "int",
+        "eventId"         => "int",
+        "competitionId"   => "int",
+        "paid"            => "int",
+        "percentage"      => "float",
+        "selectionNumber" => "int",
+        "odds"            => "float",
+        "dividend"        => "float",
+        "boxedFlag"       => "bool",
     );
 
 
@@ -81,7 +87,7 @@ class BetResource extends AbstractEloquentResource {
             return null;
         }
 
-        if ($this->model->fixed_odds) {
+        if ($this->model->fixed_odds > 0) {
             return $this->model->fixed_odds;
         }
 
@@ -94,7 +100,7 @@ class BetResource extends AbstractEloquentResource {
             return null;
         }
 
-        if ($this->model->fixed_odds) {
+        if ($this->model->fixed_odds > 0) {
             return $this->model->fixed_odds;
         }
 
