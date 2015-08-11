@@ -56,11 +56,11 @@ class TicketsController extends Controller
         $user = Auth::user();
 
         if( $date = $request->get('date') ) {
-            return $this->response->success($this->ticketService->getTicketsForUserByDate($user->id, $date)->toArray());
+            return $this->response->success($this->ticketService->getTicketsForUserByDate($user->id, $date, $request->get('with'))->toArray());
         }
 
         try {
-            $tickets = $this->ticketService->getTicketsForUser($user->id, $request->get('type', 'all'));
+            $tickets = $this->ticketService->getTicketsForUser($user->id, $request->get('type', 'all'), $request->get('with'));
         } catch ( \InvalidArgumentException $e ) {
             return $this->response->failed($e->getMessage(), 400);
         }

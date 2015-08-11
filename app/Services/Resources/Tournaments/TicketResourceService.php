@@ -48,25 +48,37 @@ class TicketResourceService {
         return $this->createTicketCollection($tickets);
     }
 
-    public function getActiveTicketsForUser($user)
+    public function getActiveTicketsForUser($user, $with = null)
     {
         $tickets = $this->ticketRepository->getActiveTicketsForUser($user);
 
+        if ($with) {
+            $tickets->getCollection()->load($with);
+        }
+
         return $this->createTicketCollection($tickets);
     }
 
-    public function getTicketsForUserOnDate($user, Carbon $date)
+    public function getTicketsForUserOnDate($user, Carbon $date, $with = null)
     {
         $tickets = $this->ticketRepository->getTicketsForUserOnDate($user, $date);
 
+        if ($with) {
+            $tickets->getCollection()->load($with);
+        }
+
         return $this->createTicketCollection($tickets);
     }
 
-    public function getAllTicketsForUser($user)
+    public function getAllTicketsForUser($user, $with = null)
     {
         $tickets = $this->ticketRepository->getAllForUserPaginated($user);
 
         $tickets->getCollection()->load('leaderboard');
+
+        if ($with) {
+            $tickets->getCollection()->load($with);
+        }
 
         $tickets = new PaginatedEloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\TicketResource');
 

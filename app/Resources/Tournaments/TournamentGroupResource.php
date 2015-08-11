@@ -17,7 +17,7 @@ class TournamentGroupResource extends AbstractEloquentResource {
         'id' => 'id',
         'name' => 'group_name',
         'description' => 'description',
-        'ordering' => 'orderning'
+        'ordering' => 'ordering'
     );
 
     protected $loadIfRelationExists = array(

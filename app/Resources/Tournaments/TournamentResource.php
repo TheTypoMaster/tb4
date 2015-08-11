@@ -93,13 +93,24 @@ class TournamentResource extends AbstractEloquentResource {
     {
         $array = parent::toArray();
 
-        return array_merge($array, array(
+        $array = array_merge($array, array(
             'entrants' => $this->getEntrants(),
             'prize_pool' => $this->getPrizePool(),
-            'leaderboard' => $this->leaderboard,
-            'meetings' => array_map(function($v) { return $v->toArray(); }, $this->meetings),
-            'competitions' => array_map(function($v) { return $v->toArray(); }, $this->competitions),
         ));
+
+        if ($this->leaderboard) {
+            $array['leaderboard'] = $this->leaderboard;
+        }
+
+        if (count($this->meetings)) {
+            $array['meetings'] = array_map(function($v) { return $v->toArray(); }, $this->meetings);
+        }
+
+        if (count($this->competitions)) {
+            $array['competitions'] = array_map(function($v) { return $v->toArray(); }, $this->competitions);
+        }
+
+        return $array;
     }
 
 }
