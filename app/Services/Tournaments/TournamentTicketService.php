@@ -163,14 +163,14 @@ class TournamentTicketService {
         return $ticket->leaderboard->currency - $totalUnresulted;
     }
 
-    public function getTicketsForUser($user, $type = 'all')
+    public function getTicketsForUser($user, $type = 'all', $with = null)
     {
         switch($type)
         {
             case 'all':
-                return $this->ticketResourceService->getAllTicketsForUser($user);
+                return $this->ticketResourceService->getAllTicketsForUser($user, $with);
             case 'active':
-                return $this->ticketResourceService->getActiveTicketsForUser($user);
+                return $this->ticketResourceService->getActiveTicketsForUser($user, $with);
         }
 
         throw new \InvalidArgumentException("Type " . $type . " is invalid");
