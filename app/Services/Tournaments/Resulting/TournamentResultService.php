@@ -13,33 +13,36 @@ use Illuminate\Support\Collection;
 use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentLeaderboardService;
+use TopBetta\Services\Tournaments\TournamentPlacesPaidService;
 
 class TournamentResultService {
 
-    /**
-     * @var TournamentPlacesPaidRepositoryInterface
-     */
-    private $placesPaidRepository;
     /**
      * @var TournamentLeaderboardService
      */
     private $leaderboardService;
     /**
-     * @var TournamentLeaderboardRepositoryInterface
+     * @var TournamentPlacesPaidService
      */
-    private $leaderboardRepository;
+    private $placesPaidService;
+    /**
+     * @var TournamentTicketRepositoryInterface
+     */
+    private $ticketRepository;
 
     /**
      * @param TournamentLeaderboardService $leaderboardService
-     * @param TournamentPlacesPaidRepositoryInterface $placesPaidRepository
-     * @param TournamentLeaderboardRepositoryInterface $leaderboardRepository
+     * @param TournamentPlacesPaidService $placesPaidService
+     * @param TournamentTicketRepositoryInterface $ticketRepository
+     * @internal param TournamentLeaderboardRepositoryInterface $leaderboardRepository
      */
-    public function __construct(TournamentLeaderboardService $leaderboardService, TournamentPlacesPaidRepositoryInterface $placesPaidRepository, TournamentLeaderboardRepositoryInterface $leaderboardRepository)
+    public function __construct(TournamentLeaderboardService $leaderboardService, TournamentPlacesPaidService $placesPaidService, TournamentTicketRepositoryInterface $ticketRepository)
     {
-        $this->placesPaidRepository = $placesPaidRepository;
         $this->leaderboardService = $leaderboardService;
-        $this->leaderboardRepository = $leaderboardRepository;
+        $this->placesPaidService = $placesPaidService;
+        $this->ticketRepository = $ticketRepository;
     }
 
     public function getTournamentResults($tournament)
@@ -53,70 +56,77 @@ class TournamentResultService {
 
     public function getCashTournamentResults($tournament)
     {
-        $results = new Collection;
-
         $percentages = $this->getPayoutPercentages($tournament);
-
-        //return empty collection if now qualifiers
-        if (! $percentages) {
-            return $results;
-        }
 
         //get the tournament leaderboard
         $leaderboard = $this->leaderboardService->getLeaderboard($tournament->id, null, true);
 
-        for($rank = 1; $rank <= $percentages->places_paid; $rank += count($usersAtRank)) {
+        return $this->createCashResults($tournament, $percentages, $leaderboard, $tournament->prizePool());
+    }
+
+    public function getJackpotTournamentResults($tournament)
+    {
+        //get the tournament leaderboard
+        $leaderboard = $this->leaderboardService->getLeaderboard($tournament->id, null, true);
+
+        $jackpotTournamentCost = $tournament->parentTournament->buy_in + $tournament->parentTournament->entry_fee;
+
+        $placesPaid = floor($tournament->prizePool / $jackpotTournamentCost);
+
+        if ($placesPaid > $tournament->qualifiers->count()) {
+            $placesPaid = $tournament->qualifiers->count();
+        }
+    }
+
+    public function createJackpotResults($tournament, $leaderboard, $noTickets)
+    {
+        $results = new Collection;
+
+
+    }
+
+    public function createCashResults($tournament, $percentages, $leaderboard, $prizePool)
+    {
+        $results = new Collection;
+
+        for ($rank = 1; $rank <= $percentages->places_paid; $rank += count($usersAtRank)) {
             $percs = $percentages->pay_perc;
 
             //get the users at rank $rank
-            $usersAtRank = array_filter($leaderboard, function ($v) use ($rank) {return $v['rank'] == $rank;});
+            $usersAtRank = array_filter($leaderboard, function ($v) use ($rank) { return $v['rank'] == $rank; });
 
             //get the payout amount for each user at $rank
-            $amount = (array_sum(array_splice($percs, $rank - 1, count($usersAtRank)))/100) * $tournament->prizePool()/count($usersAtRank);
+            $amount = (array_sum(array_splice($percs, $rank - 1, count($usersAtRank)))/100) * $prizePool/count($usersAtRank);
 
             //create the results for each user
-            foreach ($usersAtRank as $leaderboard) {
-                $results->push($this->createTournamentResult($leaderboard['id'], $amount));
+            foreach ($usersAtRank as $leaderboardRecord) {
+                $results->push($this->createCashTournamentPrizeForTournamentUser($leaderboardRecord['id'], $tournament, $amount));
             }
         }
 
         return $results;
     }
 
-    public function getJackpotTournamentResults($tournament)
-    {}
-
-    public function createTournamentResult($leaderboardId, $amount = 0, $tournament = null)
+    public function createCashTournamentPrizeForTournamentUser($user, $tournament, $amount)
     {
-        return new TournamentResult(
-            $this->leaderboardRepository->find($leaderboardId),
-            $amount,
-            $tournament
-        );
+        return CashPrizeFactory::make(array(
+            "ticket" => $this->ticketRepository->getTicketByUserAndTournament($user, $tournament->id),
+            "amount" => $amount
+        ));
     }
 
     public function getPayoutPercentages($tournament)
     {
-        //get number of places paid
-        if ($tournament->prizeFormat->keyword == TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_ALL) {
-            $placesPaid = 1;
-        } else if ($tournament->prizeFormat->keyword == TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_TOP3) {
-            $placesPaid = 3;
-        } else {
-            $percentages = $this->placesPaidRepository->getByEntrants($tournament->tickets->count());
-            $placesPaid = (int)$percentages->places_paid;
+        switch ($tournament->prizeFormat->keyword) {
+            case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_ALL:
+                return $this->placesPaidService->getPercentagesForTournamentByPlacesPaid($tournament, 1);
+            case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_TOP3:
+                return $this->placesPaidService->getPercentagesForTournamentByPlacesPaid($tournament, 3);
+            case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_MULTIPLE:
+                return $this->placesPaidService->getPercentagesForTournamentByEntrants($tournament);
         }
 
-        //check we have enough qualifiers
-        if ($placesPaid > $tournament->qualifiers->count()) {
-            return $this->placesPaidRepository->getByPlacesPaid($tournament->qualifiers->count());
-        }
-
-        //get percentages
-        if (! $percentages) {
-            return $this->placesPaidRepository->getByPlacesPaid($placesPaid);
-        }
-
-        return $percentages;
+        throw new \InvalidArgumentException("Invalid tournament prize format");
     }
+
 }
