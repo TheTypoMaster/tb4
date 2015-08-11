@@ -241,7 +241,7 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
         return array (
             "external_id" => array_get($marketType, 'id', 0),
             "market_type_name" => array_get($marketType, 'name', null),
-            "market_type_description" => array_get($marketType, 'description', null),
+            "market_type_description" => array_get($marketType, 'description', ''),
         );
     }
 
