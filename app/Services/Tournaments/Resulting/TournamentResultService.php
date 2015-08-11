@@ -25,15 +25,21 @@ class TournamentResultService {
      * @var TournamentLeaderboardService
      */
     private $leaderboardService;
+    /**
+     * @var TournamentLeaderboardRepositoryInterface
+     */
+    private $leaderboardRepository;
 
     /**
      * @param TournamentLeaderboardService $leaderboardService
      * @param TournamentPlacesPaidRepositoryInterface $placesPaidRepository
+     * @param TournamentLeaderboardRepositoryInterface $leaderboardRepository
      */
-    public function __construct(TournamentLeaderboardService $leaderboardService, TournamentPlacesPaidRepositoryInterface $placesPaidRepository)
+    public function __construct(TournamentLeaderboardService $leaderboardService, TournamentPlacesPaidRepositoryInterface $placesPaidRepository, TournamentLeaderboardRepositoryInterface $leaderboardRepository)
     {
         $this->placesPaidRepository = $placesPaidRepository;
         $this->leaderboardService = $leaderboardService;
+        $this->leaderboardRepository = $leaderboardRepository;
     }
 
     public function getTournamentResults($tournament)
@@ -51,52 +57,64 @@ class TournamentResultService {
 
         $percentages = $this->getPayoutPercentages($tournament);
 
+        //return empty collection if now qualifiers
+        if (! $percentages) {
+            return $results;
+        }
+
+        //get the tournament leaderboard
         $leaderboard = $this->leaderboardService->getLeaderboard($tournament->id, null, true);
 
-        $rank = 1;
-
-        while($rank <= $percentages->places_paid) {
+        for($rank = 1; $rank <= $percentages->places_paid; $rank += count($usersAtRank)) {
             $percs = $percentages->pay_perc;
 
+            //get the users at rank $rank
             $usersAtRank = array_filter($leaderboard, function ($v) use ($rank) {return $v['rank'] == $rank;});
 
-            $amount = array_sum(array_splice($percs, $rank - 1, count($usersAtRank)))/100) * $tournament->prizePool()/count($usersAtRank);
+            //get the payout amount for each user at $rank
+            $amount = (array_sum(array_splice($percs, $rank - 1, count($usersAtRank)))/100) * $tournament->prizePool()/count($usersAtRank);
 
-            foreach ($usersAtRank as $ticket) {
-                $results->push(new TournamentResult($this->ticketRepository))
+            //create the results for each user
+            foreach ($usersAtRank as $leaderboard) {
+                $results->push($this->createTournamentResult($leaderboard['id'], $amount));
             }
         }
 
-        $leaderboard = $this->leaderboardService->getLeaderboard($tournament->id, null, true);
-
-
+        return $results;
     }
 
     public function getJackpotTournamentResults($tournament)
     {}
 
+    public function createTournamentResult($leaderboardId, $amount = 0, $tournament = null)
+    {
+        return new TournamentResult(
+            $this->leaderboardRepository->find($leaderboardId),
+            $amount,
+            $tournament
+        );
+    }
+
     public function getPayoutPercentages($tournament)
     {
-        $percentages = null;
-
         //get number of places paid
         if ($tournament->prizeFormat->keyword == TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_ALL) {
             $placesPaid = 1;
-        } else if ($tournament->prize->format->keyword == TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_TOP3) {
+        } else if ($tournament->prizeFormat->keyword == TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_TOP3) {
             $placesPaid = 3;
         } else {
             $percentages = $this->placesPaidRepository->getByEntrants($tournament->tickets->count());
-            $placesPaid = $percentages->places_paid;
+            $placesPaid = (int)$percentages->places_paid;
         }
 
         //check we have enough qualifiers
-        if ($placesPaid < $tournament->qualifiers->count()) {
-            $percentages = $this->placesPaidRepository->getByPlacesPaid($tournament->qualifiers->count());
+        if ($placesPaid > $tournament->qualifiers->count()) {
+            return $this->placesPaidRepository->getByPlacesPaid($tournament->qualifiers->count());
         }
 
         //get percentages
         if (! $percentages) {
-            $percentages = $this->placesPaidRepository->getByPlacesPaid($placesPaid);
+            return $this->placesPaidRepository->getByPlacesPaid($placesPaid);
         }
 
         return $percentages;

@@ -12,9 +12,9 @@ namespace TopBetta\Services\Tournaments\Resulting;
 class TournamentResult {
 
     /**
-     * @var \TopBetta\Models\TournamentTicketModel
+     * @var \TopBetta\Models\TournamentLeaderboardModel
      */
-    private $ticket;
+    private $leaderboard;
 
     /**
      * @var int
@@ -26,21 +26,28 @@ class TournamentResult {
      */
     private $jackpotTournament;
 
-    /**
-     * @return \TopBetta\Models\TournamentTicketModel
-     */
-    public function getTicket()
+    public function __construct($leaderboard, $amount = 0, $jackpotTournament = null)
     {
-        return $this->ticket;
+        $this->leaderboard = $leaderboard;
+        $this->amount = $amount;
+        $this->jackpotTournament = $jackpotTournament;
     }
 
     /**
-     * @param mixed $ticket
+     * @return \TopBetta\Models\TournamentLeaderboardModel
+     */
+    public function getLeaderboard()
+    {
+        return $this->leaderboard;
+    }
+
+    /**
+     * @param \TopBetta\Models\TournamentLeaderboardModel $leaderboard
      * @return $this
      */
-    public function setTicket($ticket)
+    public function setLeaderboard($leaderboard)
     {
-        $this->ticket = $ticket;
+        $this->leaderboard = $leaderboard;
         return $this;
     }
 
