@@ -115,10 +115,6 @@ class TournamentService {
 
     public function getVisibleTournaments($type = 'racing', $date = null)
     {
-        if( ! is_null($date) ) {
-            $date = Carbon::createFromFormat('Y-m-d', $date);
-        }
-
         switch($type)
         {
             case 'racing':
