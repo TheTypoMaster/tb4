@@ -9,22 +9,25 @@
 namespace TopBetta\Resources;
 
 
+use TopBetta\Services\Betting\EventService;
+
 class RaceResource extends AbstractEloquentResource {
 
     protected $attributes = array(
-        "id"              => 'id',
-        "name"            => 'name',
-        "start_date"      => 'start_date',
-        "number"          => 'number',
-        "description"     => 'description',
-        "class"           => 'class',
-        "distance"        => 'distance',
-        "status"          => 'eventstatus.name',
-        "weather"         => 'weather',
-        "track_condition" => 'track_condition',
-        "results"         => "results",
-        "exoticResults"   => "exoticResults",
-        "resultString"    => "resultString",
+        "id"                => 'id',
+        "name"              => 'name',
+        "start_date"        => 'start_date',
+        "number"            => 'number',
+        "description"       => 'description',
+        "class"             => 'class',
+        "distance"          => 'distance',
+        "status"            => 'eventstatus.name',
+        "weather"           => 'weather',
+        "track_condition"   => 'track_condition',
+        "results"           => "results",
+        "exoticResults"     => "exoticResults",
+        "resultString"      => "resultString",
+        "exoticBetsAllowed" => "exoticBetsAllowed",
     );
 
     protected $loadIfRelationExists = array(
@@ -88,6 +91,11 @@ class RaceResource extends AbstractEloquentResource {
     public function setResultString($resultString)
     {
         $this->resultString = $resultString;
+    }
+
+    public function exoticBetsAllowed()
+    {
+        return ! EventService::isEventInternational($this->model);
     }
 
 }
