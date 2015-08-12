@@ -11,7 +11,9 @@ namespace TopBetta\Services\Betting;
 use Log;
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
+use TopBetta\Services\Tournaments\Resulting\TournamentResulter;
 
 class EventBetResultingQueueService {
 
@@ -27,12 +29,26 @@ class EventBetResultingQueueService {
      * @var EventRepositoryInterface
      */
     private $eventRepositoryInterface;
+    /**
+     * @var TournamentRepositoryInterface
+     */
+    private $tournamentRepository;
+    /**
+     * @var TournamentResulter
+     */
+    private $tournamentResulter;
 
-    public function __construct(EventRepositoryInterface $eventRepositoryInterface, BetResultRepo $betResultRepo, TournamentBetResultService $tournamentBetResultService)
+    public function __construct(EventRepositoryInterface $eventRepositoryInterface,
+                                BetResultRepo $betResultRepo,
+                                TournamentBetResultService $tournamentBetResultService,
+                                TournamentRepositoryInterface $tournamentRepository,
+                                TournamentResulter $tournamentResulter)
     {
         $this->betResultRepo = $betResultRepo;
         $this->tournamentBetResultService = $tournamentBetResultService;
         $this->eventRepositoryInterface = $eventRepositoryInterface;
+        $this->tournamentRepository = $tournamentRepository;
+        $this->tournamentResulter = $tournamentResulter;
     }
 
     public function fire($job, $data)
@@ -47,6 +63,12 @@ class EventBetResultingQueueService {
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent(
             $this->eventRepositoryInterface->find($eventId)
         );
+
+        $tournaments = $this->tournamentRepository->getFinishedUnresultedTournaments();
+
+        foreach ($tournaments as $tournament) {
+            $this->tournamentResulter->resultTournament($tournament);
+        }
 
         return $job->delete();
     }

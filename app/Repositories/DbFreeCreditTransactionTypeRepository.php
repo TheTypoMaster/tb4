@@ -24,4 +24,9 @@ class DbFreeCreditTransactionTypeRepository extends BaseEloquentRepository imple
     {
         return $this->model->where('keyword', $name)->first()->id;
     }
+
+    public function getByName($name)
+    {
+        return $this->model->where('keyword', $name)->first()->id;
+    }
 }

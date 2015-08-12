@@ -117,6 +117,22 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
             ->paginate();
     }
 
+    public function getFinishedUnresultedTournaments()
+    {
+        return $this->model
+            ->join('tbdb_event_group as eg', 'eg.id', '=', 'tbdb_tournament.event_group_id')
+            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'eg.id')
+            ->leftJoin('tbdb_event as e', function($q) {
+                $q->on('e.id', '=', 'ege.event_id')
+                    ->on('e.paid_flag', '=', \DB::raw(0));
+            })
+            ->where('tbdb_tournament.cancelled_flag', false)
+            ->where('tbdb_tournament.paid_flag', false)
+            ->groupBy('tbdb_tournament.id')
+            ->havingRaw('COUNT(e.id) = 0')
+            ->get(array('tbdb_tournament.*'));
+    }
+
     public function setOrder(array $order)
     {
         $this->order = $order;
