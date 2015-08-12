@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Log;
 use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
+use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
 use TopBetta\Services\Betting\EventService;
 
 class TournamentBetService {
@@ -28,12 +29,17 @@ class TournamentBetService {
      * @var BetResultStatusRepositoryInterface
      */
     private $betResultStatusRepository;
+    /**
+     * @var TournamentBetResultService
+     */
+    private $resultService;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository)
+    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentBetResultService $resultService)
     {
         $this->betRepository = $betRepository;
         $this->eventService = $eventService;
         $this->betResultStatusRepository = $betResultStatusRepository;
+        $this->resultService = $resultService;
     }
 
     public function getBetsForUserInTournamentWhereEventClosed($user, $tournament)
@@ -59,5 +65,14 @@ class TournamentBetService {
         }
 
         return $bets;
+    }
+
+    public function refundBetsForEvent($eventId)
+    {
+        $bets = $this->betRepository->getBetsForEventByStatusIn($eventId, array($this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id));
+
+        foreach ($bets as $bet) {
+            $this->resultService->refundBet($bet);
+        }
     }
 }

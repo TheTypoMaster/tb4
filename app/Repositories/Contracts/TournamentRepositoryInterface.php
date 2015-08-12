@@ -19,4 +19,6 @@ interface TournamentRepositoryInterface
 
     public function getFinishedUnresultedTournaments();
 
+    public function getUnresultedTournamentsByCompetition($competition);
+
 }

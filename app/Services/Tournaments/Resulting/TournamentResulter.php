@@ -17,6 +17,11 @@ use TopBetta\Services\Accounting\FreeCreditTransactionService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentResultedException;
 use TopBetta\Services\Tournaments\TournamentService;
 
+/**
+ * Class TournamentResulter
+ * Pays out tournaments
+ * @package TopBetta\Services\Tournaments\Resulting
+ */
 class TournamentResulter {
 
     /**
@@ -49,10 +54,20 @@ class TournamentResulter {
         $this->tournamentService = $tournamentService;
     }
 
+    /**
+     * Get tournament results and payout
+     * @param $tournament
+     * @throws TournamentResultedException
+     */
     public function resultTournament($tournament)
     {
         if ($tournament->paid_flag) {
             throw new TournamentResultedException("Tournament " .$tournament->name . " is already resulted");
+        }
+
+        if (!$tournament->qualifiers->count()) {
+            $this->tournamentService->refundTournament($tournament);
+            return;
         }
 
         try {
@@ -62,7 +77,6 @@ class TournamentResulter {
             return;
         }
 
-
         foreach ($results as $result) {
             $this->payResult($result);
         }
@@ -70,6 +84,10 @@ class TournamentResulter {
         $this->tournamentService->setTournamentPaid($tournament);
     }
 
+    /**
+     * Payout a tournament result
+     * @param TournamentResult $result
+     */
     public function payResult(TournamentResult $result)
     {
         if ($result->getJackpotTicket() ) {
@@ -89,6 +107,10 @@ class TournamentResulter {
         }
     }
 
+    /**
+     * Pay out cash
+     * @param TournamentResult $result
+     */
     public function payCashResult(TournamentResult $result)
     {
         $transaction = $this->accountTransactionService->increaseAccountBalance(
@@ -102,6 +124,10 @@ class TournamentResulter {
         ));
     }
 
+    /**
+     * Payout free credit
+     * @param TournamentResult $result
+     */
     public function payFreeCreditResult(TournamentResult $result)
     {
         $transaction =$this->freeCreditTransactionService->increaseBalance(
@@ -115,6 +141,10 @@ class TournamentResulter {
         ));
     }
 
+    /**
+     * Give user tournament ticket
+     * @param TournamentResult $result
+     */
     public function payTournamentTicketResult(TournamentResult $result)
     {
         $this->tournamentService->createTicketAndLeaderboardForUser(

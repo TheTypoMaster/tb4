@@ -151,6 +151,30 @@ class TournamentService {
         ));
     }
 
+    public function refundAbandonedTournamentsForEvent($event)
+    {
+        $competition = $this->competitionRepository->getByEvent($event);
+
+        if ($this->competitionService->isAbandoned($competition)) {
+            $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($competition->id);
+
+            foreach ($tournaments as $tournament) {
+                $this->refundTournament($tournament);
+            }
+        }
+    }
+
+    public function refundTournament($tournament)
+    {
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->refundTicket($ticket);
+        }
+
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            "paid_flag" => true
+        ));
+    }
+
     public function createTournament($tournamentData)
     {
         //dates

@@ -8,6 +8,7 @@
 
 use Carbon\Carbon;
 use TopBetta\Models\TournamentModel;
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Validation\TournamentValidator;
 
@@ -131,6 +132,15 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
             ->groupBy('tbdb_tournament.id')
             ->havingRaw('COUNT(e.id) = 0')
             ->get(array('tbdb_tournament.*'));
+    }
+
+    public function getUnresultedTournamentsByCompetition($competition)
+    {
+        return $this->model
+            ->where('paid_flag', false)
+            ->where('cancelled_flag', false)
+            ->where('event_group_id', $competition)
+            ->get();
     }
 
     public function setOrder(array $order)

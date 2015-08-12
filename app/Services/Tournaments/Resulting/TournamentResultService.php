@@ -51,6 +51,11 @@ class TournamentResultService {
         $this->results = new Collection;
     }
 
+    /**
+     * Get Tournament results
+     * @param $tournament
+     * @return Collection
+     */
     public function getTournamentResults($tournament)
     {
         if ($tournament->jackpot_flag && $tournament->parent_tournament_id > 0) {
@@ -60,6 +65,11 @@ class TournamentResultService {
         return $this->getCashTournamentResults($tournament);
     }
 
+    /**
+     * Get results for a cash tournament
+     * @param $tournament
+     * @return Collection
+     */
     public function getCashTournamentResults($tournament)
     {
         $this->results = new Collection;
@@ -74,6 +84,11 @@ class TournamentResultService {
         return $this->results;
     }
 
+    /**
+     * Get result for a jackpot tournament
+     * @param $tournament
+     * @return Collection
+     */
     public function getJackpotTournamentResults($tournament)
     {
         $this->results = new Collection;
@@ -90,6 +105,12 @@ class TournamentResultService {
         return $this->results;
     }
 
+    /**
+     * Create results for remainder in jackpot tournaments
+     * @param $tournament
+     * @param $nextRank
+     * @param $leaderboard
+     */
     public function createRemainderResults($tournament, $nextRank, $leaderboard)
     {
         $jackpotTournamentCost = $tournament->parentTournament->buy_in + $tournament->parentTournament->entry_fee;
@@ -109,6 +130,11 @@ class TournamentResultService {
         }
     }
 
+    /**
+     * Get no of tickets paid for a jackpot tournament
+     * @param $tournament
+     * @return int
+     */
     public function getJackpotTournamentPlacesPaid($tournament)
     {
         $jackpotTournamentCost = $tournament->parentTournament->buy_in + $tournament->parentTournament->entry_fee;
@@ -122,6 +148,13 @@ class TournamentResultService {
         return (int) $placesPaid;
     }
 
+    /**
+     * Build jackpot tournament ticket results
+     * @param $tournament
+     * @param $leaderboard
+     * @param $noTickets
+     * @return int
+     */
     public function createJackpotResults($tournament, $leaderboard, $noTickets)
     {
         for ($rank = 1; $rank <= $noTickets; $rank += count($usersAtRank)) {
@@ -140,6 +173,14 @@ class TournamentResultService {
         return $rank;
     }
 
+    /**
+     * Build cash prize results
+     * @param $tournament
+     * @param $percentages
+     * @param $leaderboard
+     * @param $prizePool
+     * @return Collection
+     */
     public function createCashResults($tournament, $percentages, $leaderboard, $prizePool)
     {
         for ($rank = 1; $rank <= $percentages->places_paid; $rank += count($usersAtRank)) {
@@ -160,6 +201,13 @@ class TournamentResultService {
         return $this->results;
     }
 
+    /**
+     * Get result if exists or create and add cash amount
+     * @param $user
+     * @param $tournament
+     * @param $amount
+     * @return mixed|TournamentResult
+     */
     public function createCashTournamentPrizeForTournamentUser($user, $tournament, $amount)
     {
         $result = $this->getResult($user, $tournament);
@@ -173,6 +221,12 @@ class TournamentResultService {
         return $result;
     }
 
+    /**
+     * Get result if exists or create and set jackpot tournament
+     * @param $user
+     * @param $tournament
+     * @return mixed|TournamentResult
+     */
     public function createJackpotTournamentPrizeForTournamentUser($user, $tournament)
     {
         $result = $this->getResult($user ,$tournament);
@@ -182,6 +236,12 @@ class TournamentResultService {
         return $result;
     }
 
+    /**
+     * Get or create result from collection
+     * @param $user
+     * @param $tournament
+     * @return mixed|TournamentResult
+     */
     public function getResult($user, $tournament)
     {
         if (!$result = $this->results->get($user)) {
@@ -192,6 +252,11 @@ class TournamentResultService {
         return $result;
     }
 
+    /**
+     * Get the percentages for cash tournament multiple payout
+     * @param $tournament
+     * @return mixed
+     */
     public function getPayoutPercentages($tournament)
     {
         switch ($tournament->prizeFormat->keyword) {

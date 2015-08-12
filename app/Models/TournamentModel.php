@@ -39,7 +39,7 @@ class TournamentModel extends Eloquent {
 
     public function qualifiers()
     {
-        return $this->leaderboards()->whereRaw('balance_to_turnover <= turned_over');
+        return $this->leaderboards()->whereRaw('balance_to_turnover <= turned_over')->where('currency', '>', 0);
     }
 
     public function prizeFormat()
