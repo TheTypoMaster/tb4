@@ -21,6 +21,8 @@ class TournamentResult {
 
     private $jackpotTicket = null;
 
+    private $jackpotTicketExists = false;
+
     public function __construct(TournamentTicketModel $ticket)
     {
         $this->ticket = $ticket;
@@ -98,6 +100,33 @@ class TournamentResult {
         return $this;
     }
 
+    /**
+     * @return boolean
+     */
+    public function jackpotTicketExists()
+    {
+        return $this->jackpotTicketExists;
+    }
 
+    /**
+     * @param boolean $jackpotTicketExists
+     * @return $this
+     */
+    public function setJackpotTicketExists($jackpotTicketExists)
+    {
+        $this->jackpotTicketExists = $jackpotTicketExists;
+        return $this;
+    }
+
+    public function getTotalFreeCreditAmount()
+    {
+        $amount = $this->getFreeCreditAmount();
+
+        if ($this->jackpotTicketExists()) {
+            $amount += $this->jackpotTicket->buy_in + $this->jackpotTicket->entry_fee;
+        }
+
+        return $amount;
+    }
 
 }

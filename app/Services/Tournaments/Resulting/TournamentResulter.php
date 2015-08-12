@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\FreeCreditTransactionService;
+use TopBetta\Services\Tournaments\Email\TournamentEmailService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentResultedException;
 use TopBetta\Services\Tournaments\TournamentService;
 
@@ -44,14 +45,24 @@ class TournamentResulter {
      * @var TournamentService
      */
     private $tournamentService;
+    /**
+     * @var TournamentEmailService
+     */
+    private $emailService;
 
-    public function __construct(TournamentResultService $resultService, AccountTransactionService $accountTransactionService, FreeCreditTransactionService $freeCreditTransactionService, TournamentService $tournamentService, TournamentTicketRepositoryInterface $ticketRepository)
+    public function __construct(TournamentResultService $resultService,
+                                AccountTransactionService $accountTransactionService,
+                                FreeCreditTransactionService $freeCreditTransactionService,
+                                TournamentService $tournamentService,
+                                TournamentTicketRepositoryInterface $ticketRepository,
+                                TournamentEmailService $emailService)
     {
         $this->resultService = $resultService;
         $this->accountTransactionService = $accountTransactionService;
         $this->freeCreditTransactionService = $freeCreditTransactionService;
         $this->ticketRepository = $ticketRepository;
         $this->tournamentService = $tournamentService;
+        $this->emailService = $emailService;
     }
 
     /**
@@ -66,6 +77,7 @@ class TournamentResulter {
         }
 
         if (!$tournament->qualifiers->count()) {
+            \Log::info("Tournament " . $tournament->id . " has no qualifiers. Refunding.");
             $this->tournamentService->refundTournament($tournament);
             return;
         }
@@ -77,9 +89,16 @@ class TournamentResulter {
             return;
         }
 
+        \Log::info("RESULTING TOURNAMENT " . $tournament->id);
         foreach ($results as $result) {
             $this->payResult($result);
+
+            if ($tournament->email_flag) {
+                $this->emailService->sendWinnerNotification($result);
+            }
         }
+
+
 
         $this->tournamentService->setTournamentPaid($tournament);
     }
@@ -90,21 +109,22 @@ class TournamentResulter {
      */
     public function payResult(TournamentResult $result)
     {
-        if ($result->getJackpotTicket() ) {
-            if (! $ticket = $this->ticketRepository->getTicketByUserAndTournament($result->getTicket()->user->id, $result->getJackpotTicket()->id)) {
-                $this->payTournamentTicketResult($result);
-            } else {
-                $result->setAmount($result->getAmount() + $result->getJackpotTicket()->buy_in + $result->getJackpotTicket()->entry_fee);
-            }
+        \Log::info("TournamentResulter: Paying ticket " . $result->getTicket()->id);
+        if ($result->getJackpotTicket() && ! $result->jackpotTicketExists()) {
+            $this->payTournamentTicketResult($result);
         }
 
         if ($result->getAmount()) {
             $this->payCashResult($result);
         }
 
-        if ($result->getFreeCreditAmount()) {
+        if ($result->getTotalFreeCreditAmount()) {
             $this->payFreeCreditResult($result);
         }
+
+        $this->ticketRepository->updateWithId($result->getTicket()->id, array(
+            "resulted_flag" => true
+        ));
     }
 
     /**
@@ -132,7 +152,7 @@ class TournamentResulter {
     {
         $transaction =$this->freeCreditTransactionService->increaseBalance(
             $result->getTicket()->user->id,
-            $result->getAmount(),
+            $result->getTotalFreeCreditAmount(),
             FreeCreditTransactionTypeRepositoryInterface::TRANSACTION_TYPE_WIN
         );
 

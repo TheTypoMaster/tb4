@@ -13,6 +13,7 @@ use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
+use TopBetta\Services\Tournaments\Exceptions\TournamentResultedException;
 use TopBetta\Services\Tournaments\Resulting\TournamentResulter;
 
 class EventBetResultingQueueService {
@@ -67,7 +68,11 @@ class EventBetResultingQueueService {
         $tournaments = $this->tournamentRepository->getFinishedUnresultedTournaments();
 
         foreach ($tournaments as $tournament) {
-            $this->tournamentResulter->resultTournament($tournament);
+            try {
+                $this->tournamentResulter->resultTournament($tournament);
+            } catch (TournamentResultedException $e) {
+                \Log::error("Tournament " . $tournament->id . " is already resulted");
+            }
         }
 
         return $job->delete();

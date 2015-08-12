@@ -212,7 +212,7 @@ class TournamentResultService {
     {
         $result = $this->getResult($user, $tournament);
 
-        if ($tournament->free_credit_flag) {
+        if ($tournament->free_credit_flag || $tournament->jackpot_flag) {
             $result->setFreeCreditAmount($amount);
         } else {
             $result->setAmount($result->getAmount() + $amount);
@@ -232,6 +232,10 @@ class TournamentResultService {
         $result = $this->getResult($user ,$tournament);
 
         $result->setJackpotTicket($tournament->parentTournament);
+
+        if( $this->ticketRepository->getTicketByUserAndTournament($user, $tournament->id) ) {
+            $result->setJackpotTicketExists(true);
+        }
 
         return $result;
     }
