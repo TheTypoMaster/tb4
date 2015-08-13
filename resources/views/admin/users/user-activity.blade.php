@@ -9,7 +9,7 @@
 
 
             <p>
-                Required CSV Format: first name, last name, DOB <br/><small>e.g. John, Smith, 01/01/2001</small>
+                Required CSV Format: first name, last name, DOB, email (optional) <br/><small>e.g. John, Smith, 01/01/2001, john.smith@gmail.com</small>
             </p>
 
             @if( ( $invalidData = Session::get('invalidData', array()) ) &&  ! empty($invalidData) )

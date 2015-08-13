@@ -51,7 +51,7 @@ class UserActivityController extends Controller {
                 if( count($record) < 3 ) {
                     throw new InvalidFormatException($record, "Record could not be processed");
                 }
-                if ($userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record[0], $record[1], $record[2])) {
+                if ($userHistory = $this->userReportService->userTransactionHistoryByNameDOB($record[0], $record[1], $record[2], array_get($record, 3))) {
                     $data = array_merge($data, $userHistory);
                 }
             } catch (InvalidFormatException $e) {
