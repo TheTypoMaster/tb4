@@ -385,6 +385,11 @@ class UserAccountService {
         return $this->fullUser->getUserByNameAndDob($firstName, $lastName);
     }
 
+    public function findFullUserByEmail($email)
+    {
+        return $this->fullUser->getFullUserByEmail($email);
+    }
+
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)
     {
         $checkForName = $this->basicUser->getUserDetailsFromUsername($username);
