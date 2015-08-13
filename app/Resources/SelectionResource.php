@@ -9,6 +9,9 @@
 namespace TopBetta\Resources;
 
 
+use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
+
 class SelectionResource extends AbstractEloquentResource {
 
     protected $attributes = array(
@@ -19,13 +22,12 @@ class SelectionResource extends AbstractEloquentResource {
         'barrier'    => 'barrier',
         'handicap'   => 'handicap',
         'weight'     => 'weight',
-        'winOdds'   => 'winOdds',
-        'placeOdds' => 'placeOdds',
+        'prices'     => 'prices',
         'silk_id'    => 'silk_id',
     );
 
     protected $loadIfRelationExists = array(
-        'runner' => 'runner'
+        'runner' => 'runner',
     );
 
     protected $loadRelations = array(
@@ -38,6 +40,8 @@ class SelectionResource extends AbstractEloquentResource {
         'lastStarts'
     );
 
+    private $products = null;
+
     public function __construct($model)
     {
         $model->load($this->loadRelations);
@@ -49,6 +53,32 @@ class SelectionResource extends AbstractEloquentResource {
     public function runner()
     {
         return $this->item('runner', 'TopBetta\Resources\RunnerResource', $this->model->runner);
+    }
+
+    /**
+     * Hacky way to set prices in products
+     * @return mixed
+     */
+    public function prices()
+    {
+        return array(
+            array(
+                "product" => $this->products->get(BetTypeRepositoryInterface::TYPE_WIN)->productCode,
+                "bet_type" => BetTypeRepositoryInterface::TYPE_WIN,
+                "price" => $this->getWinOdds(),
+            ),
+            array(
+                "product" => $this->products->get(BetTypeRepositoryInterface::TYPE_PLACE)->productCode,
+                "bet_type" => BetTypeRepositoryInterface::TYPE_PLACE,
+                "price" => $this->getPlaceOdds(),
+            )
+        );
+    }
+
+    public function setProducts($products)
+    {
+        $this->products = $products;
+        $this->products->keyBy('betType');
     }
 
     public function getWinOdds()

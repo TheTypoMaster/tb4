@@ -297,6 +297,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\UserAuditRepositoryInterface',
             'TopBetta\Repositories\DbUserAuditRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface',
+            'TopBetta\Repositories\DbProductProviderMatchRepository'
+        );
     }
 
 } 

@@ -12,6 +12,7 @@ namespace TopBetta\Services\Resources;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\MeetingResource;
 
@@ -30,12 +31,17 @@ class MeetingResourceService {
      * @var SelectionResourceService
      */
     private $selectionService;
+    /**
+     * @var ProductProviderMatchRepositoryInterface
+     */
+    private $productProviderMatchRepository;
 
-    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceResourceService $raceService, SelectionResourceService $selectionService)
+    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceResourceService $raceService, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepository)
     {
         $this->competitionRepository = $competitionRepository;
         $this->raceService = $raceService;
         $this->selectionService = $selectionService;
+        $this->productProviderMatchRepository = $productProviderMatchRepository;
     }
 
     public function getMeetingsForDate($date, $type = null, $withRaces = false)
@@ -47,7 +53,15 @@ class MeetingResourceService {
             $withRaces
         );
 
-        return new EloquentResourceCollection($collection, $this->meetingResource);
+        $meetings = new EloquentResourceCollection($collection, $this->meetingResource);
+
+        if ($withRaces) {
+            foreach ($meetings as $meeting) {
+                $this->loadTotesForMeeting($meeting);
+            }
+        }
+
+        return $meetings;
     }
 
     public function getMeetingModel($id, $withRaces = false)
@@ -71,7 +85,24 @@ class MeetingResourceService {
 
         $model = new MeetingResource($model);
 
+        if ($withRaces) {
+            $this->loadTotesForMeeting($model);
+        }
+
         return $model;
+    }
+
+    protected function loadTotesForMeeting(MeetingResource $meeting)
+    {
+        $products = $this->productProviderMatchRepository->getProductAndBetTypeByCompetition($meeting->getModel());
+
+        $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
+
+        foreach ($meeting->races as $race) {
+            $race->setProducts($products);
+        }
+
+        return $meeting;
     }
 
 }

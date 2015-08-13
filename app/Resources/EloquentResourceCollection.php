@@ -49,6 +49,12 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         return $this;
     }
 
+    public function keyBy($key)
+    {
+        $this->collection = $this->collection->keyBy(function($v) use ($key) { return $v->{$key}; });
+        return $this;
+    }
+
     public function getIterator()
     {
         return $this->collection->getIterator();

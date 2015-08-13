@@ -37,9 +37,19 @@ class RaceResource extends AbstractEloquentResource {
 
     private $resultString = null;
 
+
     public function selections()
     {
-        return $this->collection('selections', 'TopBetta\Resources\SelectionResource', $this->model->markets->first()->selections);
+        $collection = $this->collection('selections', 'TopBetta\Resources\SelectionResource', $this->model->markets->first()->selections);
+
+        //inject products into selection so we can set tote types on prices
+        if (array_get($this->relations, 'products')) {
+            foreach ($collection as $selection) {
+                $selection->setProducts($this->relations['products']);
+            }
+        }
+
+        return $collection;
     }
 
     /**
@@ -88,6 +98,20 @@ class RaceResource extends AbstractEloquentResource {
     public function setResultString($resultString)
     {
         $this->resultString = $resultString;
+    }
+
+    public function setProducts($products)
+    {
+        $this->relations['products'] = $products;
+
+        if ($selections = array_get($this->relations, 'selections')) {
+            //inject products into selection so we can set tote types on prices
+            foreach ($selections as $selection) {
+                $selection->setProducts($this->relations['products']);
+            }
+        }
+
+        return $this;
     }
 
 }

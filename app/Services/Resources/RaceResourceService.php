@@ -12,6 +12,8 @@ namespace TopBetta\Services\Resources;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
+use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\RaceResource;
 
 class RaceResourceService {
@@ -24,12 +26,17 @@ class RaceResourceService {
      * @var EventModelRepositoryInterface
      */
     private $eventRepository;
+    /**
+     * @var ProductProviderMatchRepositoryInterface
+     */
+    private $productProviderMatchRepositoryInterface;
 
 
-    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionResourceService $selectionService)
+    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepositoryInterface)
     {
         $this->selectionService = $selectionService;
         $this->eventRepository = $eventRepository;
+        $this->productProviderMatchRepositoryInterface = $productProviderMatchRepositoryInterface;
     }
 
     public function getRaceWithSelections($raceId)
@@ -40,7 +47,20 @@ class RaceResourceService {
             throw new ModelNotFoundException;
         }
 
-        return new RaceResource($race);
+        $race = new RaceResource($race);
+
+        $this->loadTotesForRace($race);
+
+        return $race;
+    }
+
+    public function loadTotesForRace(RaceResource $race)
+    {
+        $products = $this->productProviderMatchRepositoryInterface->getProductAndBetTypeByCompetition($race->getModel()->competition->first());
+
+        $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
+
+        $race->setProducts($products);
     }
 
     public function isOpen($race)

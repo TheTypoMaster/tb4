@@ -67,6 +67,11 @@ abstract class AbstractEloquentResource implements ResourceInterface {
         return $this;
     }
 
+    public function getModel()
+    {
+        return $this->model;
+    }
+
     public function __get($name)
     {
         return $this->load($name);
