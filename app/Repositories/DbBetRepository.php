@@ -250,6 +250,8 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->leftJoin('tbdb_account_transaction as at', 'at.id', '=', 'b.result_transaction_id')
             ->join('tbdb_bet_selection as bs', 'bs.bet_id', '=', 'b.id')
             ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
+            ->leftJoin('tbdb_selection_price as sp', 'sp.selection_id', '=', 's.id')
+            ->leftJoin('tbdb_selection_result as sr', 'sr.selection_id', '=', 's.id')
             ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
             ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
             ->join('tbdb_event as e', 'e.id', '=', 'm.event_id')
@@ -260,7 +262,8 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->select(array(
                 'b.id', 'b.bet_amount', 'b.bet_freebet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status', 'at.amount as won_amount',
-                'bt.name as bet_type', 'b.selection_string', 'e.start_date as start_date', 'eg.type_code as event_type'
+                'bt.name as bet_type', 'b.selection_string', 'e.start_date as start_date', 'eg.type_code as event_type', 'sp.win_odds as win_odds', 'sp.place_odds as place_odds',
+                'sr.win_dividend', 'sr.place_dividend', 's.number as selection_number', 'b.boxed_flag', 'bs.fixed_odds', 'b.percentage as percentage'
             ));
     }
 

@@ -42,6 +42,25 @@ class TournamentResource extends AbstractEloquentResource {
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
     );
 
+    protected $types = array(
+        "id"               => "int",
+        "currency"         => "int",
+        "jackpot"          => "bool",
+        "buyin"            => "int",
+        "entryFee"         => "int",
+        "minimumPrizePool" => "int",
+        "paid"             => "bool",
+        "betLimitPerEvent" => "int",
+        "rebuys"           => "int",
+        'rebuyEntryFee'    => 'int',
+        'rebuyBuyin'       => 'int',
+        'rebuyCurrency'    => 'int',
+        'topups'           => 'int',
+        'topupEntryFee'    => 'int',
+        'topupBuyin'       => 'int',
+        'topupCurrency'    => 'int',
+    );
+
     private $entrants = null;
 
     private $prizePool = null;

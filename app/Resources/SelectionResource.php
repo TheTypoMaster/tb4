@@ -26,6 +26,15 @@ class SelectionResource extends AbstractEloquentResource {
         'silk_id'    => 'silk_id',
     );
 
+    protected $types = array(
+        "id" => "int",
+        "number" => "int",
+        "winOdds" => "float",
+        "placeOdds" => "float",
+        "silk_id" => "int",
+        "barrier" => "int",
+    );
+
     protected $loadIfRelationExists = array(
         'runner' => 'runner',
     );

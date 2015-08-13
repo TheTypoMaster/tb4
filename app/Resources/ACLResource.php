@@ -12,6 +12,7 @@ namespace TopBetta\Resources;
 class ACLResource extends AbstractEloquentResource {
 
     protected $attributes = array(
+        "id" => "id",
         'acl' => 'acl'
     );
 
