@@ -15,6 +15,8 @@ use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\RaceResource;
+use TopBetta\Services\Racing\RaceResultService;
+use TopBetta\Services\Resources\Betting\BetResourceService;
 
 class RaceResourceService {
 
@@ -30,18 +32,34 @@ class RaceResourceService {
      * @var ProductProviderMatchRepositoryInterface
      */
     private $productProviderMatchRepositoryInterface;
+	/**
+     * @var BetResourceService
+     */
+    private $betResourceService;
+    /**
+     * @var RaceResultService
+     */
+    private $resultService;
 
 
-    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepositoryInterface)
+    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepositoryInterface, BetResourceService $betResourceService, RaceResultService $resultService)
     {
         $this->selectionService = $selectionService;
         $this->eventRepository = $eventRepository;
         $this->productProviderMatchRepositoryInterface = $productProviderMatchRepositoryInterface;
+		$this->betResourceService = $betResourceService;
+        $this->resultService = $resultService;
     }
 
     public function getRaceWithSelections($raceId)
     {
         $race = $this->eventRepository->getEvent($raceId, true);
+
+        $race = new RaceResource($race);
+
+        $race->setRelation('bets', $this->betResourceService->getBetsByEventForAuthUser($raceId));
+
+        $this->resultService->loadResultForRace($race);
 
         if( ! $race ) {
             throw new ModelNotFoundException;

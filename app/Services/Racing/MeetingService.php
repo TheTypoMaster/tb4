@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Racing;
 
 use Carbon\Carbon;
+use TopBetta\Services\Betting\BetService;
 use TopBetta\Services\Resources\MeetingResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Resources\SelectionResourceService;
@@ -31,13 +32,22 @@ class MeetingService {
      * @var RaceResultService
      */
     private $resultService;
+    /**
+     * @var BetService
+     */
+    private $betService;
 
-    public function __construct(MeetingResourceService $meetingResourceService, RaceResourceService $raceResourceService, SelectionResourceService $selectionResourceService, RaceResultService $resultService)
+    public function __construct(MeetingResourceService $meetingResourceService,
+                                RaceResourceService $raceResourceService,
+                                SelectionResourceService $selectionResourceService,
+                                RaceResultService $resultService,
+                                BetService $betService)
     {
         $this->meetingResourceService = $meetingResourceService;
         $this->raceResourceService = $raceResourceService;
         $this->selectionResourceService = $selectionResourceService;
         $this->resultService = $resultService;
+        $this->betService = $betService;
     }
 
     public function getMeetingWithSelections($id, $raceId = null)
@@ -47,6 +57,12 @@ class MeetingService {
         if( ! $meeting->races->count() ) {
             return $meeting;
         }
+
+        $meeting->races->setRelations(
+            'bets',
+            'event_id',
+            $this->betService->getBetsByEventGroupForAuthUser($id)
+        );
 
         $this->resultService->loadResultsForRaces($meeting->races);
 
@@ -74,6 +90,13 @@ class MeetingService {
         foreach( $meetings as $meeting ) {
             if( $meeting->id == $selectedMeeting['data']->id ) {
                 $meeting->setRaces($selectedMeeting['data']->races);
+
+                $meeting->races->setRelations(
+                    'bets',
+                    'event_id',
+                    $this->betService->getBetsByEventGroupForAuthUser($meeting->id)
+                );
+
                 break;
             }
         }
@@ -94,6 +117,12 @@ class MeetingService {
         if( $withRaces ) {
             foreach($collection as $meeting) {
                 $this->resultService->loadResultsForRaces($meeting->races);
+
+                $meeting->races->setRelations(
+                    'bets',
+                    'event_id',
+                    $this->betService->getBetsByEventGroupForAuthUser($meeting->id)
+                );
             }
         }
 
@@ -102,7 +131,15 @@ class MeetingService {
 
     public function getMeeting($id, $withRaces = false)
     {
-        return $this->meetingResourceService->getMeeting($id, $withRaces);
+        $meeting = $this->meetingResourceService->getMeeting($id, $withRaces);
+
+        if( $withRaces ) {
+            $meeting->races->setRelations('bets', 'event_id', $this->betService->getBetsByEventGroupForAuthUser($meeting->id));
+            $this->resultService->loadResultsForRaces($meeting->races);
+        }
+
+        return $meeting;
+
     }
 
 }
