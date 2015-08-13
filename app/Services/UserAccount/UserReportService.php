@@ -33,7 +33,7 @@ class UserReportService {
         //get the user
         $user = $this->userAccountService->findUserByNameAndDob($firstName, $lastName, $dob);
 
-        if (!$user) {
+        if (!$user && $email) {
             $user = $this->userAccountService->findFullUserByEmail($email);
 
         }
