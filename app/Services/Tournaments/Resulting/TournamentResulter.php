@@ -98,8 +98,6 @@ class TournamentResulter {
             }
         }
 
-
-
         $this->tournamentService->setTournamentPaid($tournament);
     }
 
@@ -121,10 +119,6 @@ class TournamentResulter {
         if ($result->getTotalFreeCreditAmount()) {
             $this->payFreeCreditResult($result);
         }
-
-        $this->ticketRepository->updateWithId($result->getTicket()->id, array(
-            "resulted_flag" => true
-        ));
     }
 
     /**

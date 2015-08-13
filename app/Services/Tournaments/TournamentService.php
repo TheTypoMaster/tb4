@@ -149,6 +149,10 @@ class TournamentService {
         $this->tournamentRepository->updateWithId($tournament->id, array(
             'paid_flag' => true
         ));
+
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->setTicketPaid($ticket);
+        }
     }
 
     public function refundAbandonedTournamentsForEvent($event)
