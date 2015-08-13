@@ -23,6 +23,8 @@ class TournamentResult {
 
     private $jackpotTicketExists = false;
 
+    private $position;
+
     public function __construct(TournamentTicketModel $ticket)
     {
         $this->ticket = $ticket;
@@ -127,6 +129,24 @@ class TournamentResult {
         }
 
         return $amount;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param mixed $position
+     * @return $this
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+        return $this;
     }
 
 }

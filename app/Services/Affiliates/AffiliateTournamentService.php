@@ -10,12 +10,21 @@ namespace TopBetta\Services\Affiliates;
 
 
 use TopBetta\Repositories\Contracts\AffiliateEndpointRepositoryInterface;
+use TopBetta\Repositories\Contracts\AffiliateTypeRepositoryInterface;
 use TopBetta\Services\Affiliates\Exceptions\AffiliateMessageException;
 use TopBetta\Services\Affiliates\Exceptions\AffiliateResponseException;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Tournaments\TournamentService;
 
 class AffiliateTournamentService {
+
+    private static $externallyResulted = array(
+        AffiliateTypeRepositoryInterface::AFFILIATE_TYPE_TOURNAMENT_ONLY,
+    );
+
+    private static $externallyEntered = array(
+        AffiliateTypeRepositoryInterface::AFFILIATE_TYPE_TOURNAMENT_ONLY,
+    );
 
     /**
      * @var TournamentService
@@ -56,5 +65,10 @@ class AffiliateTournamentService {
         }
 
         return $this->tournamentService->createTicketAndLeaderboardRecordForUser($tournament, $user);
+    }
+
+    public function affiliateIsExternallyResulted($affiliate)
+    {
+        return in_array($affiliate->type->affiliate_type_name, self::$externallyResulted);
     }
 }

@@ -10,4 +10,6 @@ namespace TopBetta\Repositories\Contracts;
 interface AffiliateRepositoryInterface
 {
     public function getByCodeOrFail($code);
+
+    public function getAffiliatesInTournamentByTypes($tournament, $types);
 }
