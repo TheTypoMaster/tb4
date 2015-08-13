@@ -71,4 +71,9 @@ class AffiliateTournamentService {
     {
         return in_array($affiliate->type->affiliate_type_name, self::$externallyResulted);
     }
+
+    public function affiliateisExternallyEntered($affiliate)
+    {
+        return in_array($affiliate->type->affiliate_type_name, self::$externallyEntered);
+    }
 }

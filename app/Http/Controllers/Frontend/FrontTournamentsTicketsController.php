@@ -384,7 +384,7 @@ class FrontTournamentsTicketsController extends Controller {
 
                 $user = Auth::user();
 
-                if (! $user->affiliate) {
+                if (! $user->affiliate || $this->affiliateTournamentService->affiliateIsExternallyEntered($user->afiiliate)) {
 
                     $ticket = $l->query('saveTournamentTicket', $tournDetailsArray);
 
