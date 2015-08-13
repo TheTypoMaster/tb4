@@ -73,4 +73,12 @@ class DbUserTopbettaRepository extends BaseEloquentRepository implements UserTop
         return $model->first();
     }
 
+    public function getFullUserByEmail($email)
+    {
+        return $this->model
+            ->join('tbdb_users', 'tbdb_users.id', '=', 'tbdb_topbetta_user.user_id')
+            ->where('email', $email)
+            ->first(array('tbdb_topbetta_user.*'));
+    }
+
 }
