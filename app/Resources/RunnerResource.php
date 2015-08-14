@@ -15,7 +15,7 @@ class RunnerResource extends AbstractEloquentResource {
         "id"        => "id",
         "name"      =>'name',
         "owner"     => 'owner.name',
-        "trainer"   => 'owner.trainer',
+        "trainer"   => 'trainer.name',
         "colour"    =>'colour',
         "sex"       =>'sex',
         "foal_date" =>'foal_date',

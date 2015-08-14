@@ -16,6 +16,7 @@ class RaceResource extends AbstractEloquentResource {
     protected $attributes = array(
         "id"                => 'id',
         "name"              => 'name',
+        "type"              => "type",
         "start_date"        => 'start_date',
         "number"            => 'number',
         "description"       => 'description',
@@ -125,6 +126,11 @@ class RaceResource extends AbstractEloquentResource {
 	public function exoticBetsAllowed()
     {
         return ! EventService::isEventInternational($this->model);
+    }
+
+    public function getType()
+    {
+        return $this->model->competition->first()->type_code;
     }
 
 }
