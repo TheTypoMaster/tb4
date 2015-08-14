@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Betting\BetLimitValidation\Validators;
 
 
+use TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetFlexiLimitExceededException;
 use TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException;
 
 class ExoticRacingFlexiLimitValidator extends ExoticRacingBetLimitValidator implements BetLimitValidator {
@@ -25,7 +26,7 @@ class ExoticRacingFlexiLimitValidator extends ExoticRacingBetLimitValidator impl
         $bets = $this->getBetsWithMatchingSelection($betData);
 
         if ($bets->sum('percentage') + $betData['percentage'] > $limit) {
-            throw new BetLimitExceededException;
+            throw new BetFlexiLimitExceededException($limit);
         }
     }
 }

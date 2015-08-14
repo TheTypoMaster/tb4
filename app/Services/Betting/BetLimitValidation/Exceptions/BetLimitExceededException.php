@@ -9,6 +9,23 @@
 namespace TopBetta\Services\Betting\BetLimitValidation\Exceptions;
 
 
-class BetLimitExceededException extends \Exception {
+abstract class BetLimitExceededException extends \Exception
+{
+
+    /**
+     * @var int
+     */
+    protected $limit;
+
+    public function __construct($limit)
+    {
+        $this->limit = $limit;
+
+        $message = $this->constructMessage();
+
+        parent::__construct($message);
+    }
+
+    abstract public function constructMessage();
 
 }

@@ -17,7 +17,7 @@ class BetTypeModel extends Eloquent {
 
     public function isExotic()
     {
-        return in_array($this->keyword, array(
+        return in_array($this->name, array(
             BetTypeRepositoryInterface::TYPE_QUINELLA,
             BetTypeRepositoryInterface::TYPE_EXACTA,
             BetTypeRepositoryInterface::TYPE_TRIFECTA,

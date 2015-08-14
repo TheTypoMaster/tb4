@@ -389,8 +389,16 @@ class FrontBetsController extends Controller {
                 'amount' => $input['amount'],
                 'user' => Auth::user()->id,
                 'bet_type' => $this->betTypeRepository->find($input['type_id']),
+                'event' => $betData['race_id'],
                 'selections' => array(),
             );
+
+            $exoticClass = "\\TopBetta\\Libraries\\exotic\\ExoticBet" . ucfirst($betLimitData['bet_type']->name);
+            $exotic = new $exoticClass;
+            $exotic->selections = $input['selections'];
+            $exotic->betAmount = $input['amount'];
+
+            $betLimitData['percentage'] = $exotic->getFlexiPercentage();
 
             //check selections are not scratched.
 			foreach($input['selections'] as $position => $selections) {
@@ -459,7 +467,7 @@ class FrontBetsController extends Controller {
             try {
                 $this->betLimitValidationService->validateBet($betLimitData);
             } catch (TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException $e) {
-                $reason = Lang::get('bets.exceed_bet_limit_value_and_flexi', array('betValueLimit' => 100, 'flexiLimit' => 100));
+                $reason = $e->getMessage();
 
 				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $reason);
 				$errors++;
@@ -574,7 +582,7 @@ class FrontBetsController extends Controller {
                             try {
                                 $this->betLimitValidationService->validateBet($betLimitData);
                             } catch (TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException $e) {
-                                $messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => 100)));
+                                $messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => $e->getMessage());
                                 $errors++;
                                 return false;
                             }
@@ -706,6 +714,13 @@ class FrontBetsController extends Controller {
 
 					if ($input['source'] == 'sports') {
 
+                        $betLimitData = array(
+                            'amount' => $input['bets'][key($input['bets'])],
+                            'user' => Auth::user()->id,
+                            'bet_type' => $this->betTypeRepository->getBetTypeByName(BetTypeRepositoryInterface::TYPE_SPORT),
+                            'selections' => array(),
+                        );
+
 						//TODO: this approach is just finding event/market from a single bet selection - this is all we need today
 						$legacyData = $betModel -> getLegacySportsBetData(key($input['bets']));
 
@@ -747,14 +762,23 @@ class FrontBetsController extends Controller {
 									$betData['chkFreeBet'] = $input['use_free_credit'];
 
 							}
-							
-							$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'sports');
-							if ($exceedBetLimit['result']) {
-								$messages[] = array("bets" => $input['bets'], "type_id" => null, "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
-								$errors++;
 
+                            $betLimitData['selections'][] = array('selection' => $selectionModel->id, 'event' => $selectionModel->market->event->id);
+//							$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'sports');
+//							if ($exceedBetLimit['result']) {
+//								$messages[] = array("bets" => $input['bets'], "type_id" => null, "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
+//								$errors++;
+//
+//								return false;
+//							}
+
+                            try {
+                                $this->betLimitValidationService->validateBet($betLimitData);
+                            } catch (TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException $e) {
+                                $messages[] = array("bets" => $input['bets'], "type_id" => null, "success" => false, "error" => $e->getMessage());
+								$errors++;
 								return false;
-							}
+                            }
 
                             if( $this->selectionService->oddsChanged(key($input['bets']), $input['dividend'])) {
                                 $messages[] = array("id" => key($input['bets']), "error_code" => "SB01", "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.odds_changed'));

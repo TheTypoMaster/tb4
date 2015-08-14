@@ -53,7 +53,7 @@ class BetLimitValidationService {
             $validatorStack->push($this->container->make('TopBetta\Services\Betting\BetLimitValidation\Validators\ExoticRacingBetTypeLimitValidator'));
             $validatorStack->push($this->container->make('TopBetta\Services\Betting\BetLimitValidation\Validators\ExoticRacingFlexiLimitValidator'));
         } else if ($betType->name == BetTypeRepositoryInterface::TYPE_SPORT) {
-
+            $validatorStack->push($this->container->make('TopBetta\Services\Betting\BetLimitValidation\Validators\SportsBetTypeLimitValidator'));
         } else {
             $validatorStack->push($this->container->make('TopBetta\Services\Betting\BetLimitValidation\Validators\RacingBetTypeLimitValidator'));
         }

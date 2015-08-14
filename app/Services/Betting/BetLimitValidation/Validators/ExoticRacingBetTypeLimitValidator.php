@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Betting\BetLimitValidation\Validators;
 
 
+use TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetAmountLimitExceededException;
 use TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException;
 
 class ExoticRacingBetTypeLimitValidator extends ExoticRacingBetLimitValidator implements BetLimitValidator {
@@ -26,7 +27,7 @@ class ExoticRacingBetTypeLimitValidator extends ExoticRacingBetLimitValidator im
 
         //check we don't exceed bet limit
         if ($bets->sum('amount') + $betData['amount'] > $limit) {
-            throw new BetLimitExceededException;
+            throw new BetAmountLimitExceededException($limit);
         }
     }
 }

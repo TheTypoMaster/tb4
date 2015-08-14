@@ -14,14 +14,14 @@ abstract class ExoticRacingBetLimitValidator extends AbstractBetLimitValidator{
     public function getBetsWithMatchingSelection($betData)
     {
         //get bets by type
-        $bets = $this->getBetsByType($betData['bet_type']->id);
+        $bets = $this->betRepository->getBetsByTypeForEvent($betData['user'], $betData['event'], $betData['bet_type']->id);
 
         //filter bets to get only those on the same selections. To do this we filter the bet selection records by
         //checking if they exists in $betData['selections'] and then checking the number of filtered records is the
         //same as the number of unfiltered records.
         $bets = $bets->filter(function($v) use ($betData) {
             return $v->betselection->filter(function ($s) use ($betData) {
-                return in_array(array('selection_id' => $s->selection_id, 'position' => $s['position']), $betData['selections']);
+                return in_array(array('selection' => $s->selection_id, 'position' => $s['position']), $betData['selections']);
             })->count() == $v->betselection->count();
         });
 
