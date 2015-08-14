@@ -24,6 +24,7 @@ class SelectionResource extends AbstractEloquentResource {
         'weight'     => 'weight',
         'prices'     => 'prices',
         'silk_id'    => 'silk_id',
+        'form'       => 'form',
     );
 
     protected $types = array(
@@ -102,6 +103,11 @@ class SelectionResource extends AbstractEloquentResource {
         $price = $this->model->price ? $this->model->price->place_odds : null;
 
         return $price >= 1 ? $price : null;
+    }
+
+    public function getForm()
+    {
+        return $this->model->last_starts;
     }
 
     public function loadRelation($relation)
