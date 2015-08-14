@@ -46,10 +46,10 @@ class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementServic
 
         foreach($selections as $selection) {
             //win bet
-            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_WIN, $origin, array($selection), $freeCreditFlag);
+            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_WIN, $origin, array($selection), $freeCreditFlag)[0];
 
             //place bet
-            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_PLACE, $origin, array($selection), $freeCreditFlag);
+            $bets[] = parent::_placeBet($user, $amount, BetTypeRepositoryInterface::TYPE_PLACE, $origin, array($selection), $freeCreditFlag)[0];
         }
 
         return $bets;
