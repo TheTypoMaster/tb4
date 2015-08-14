@@ -17,9 +17,17 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\DashboardNotification\BetDashboardNotificationService;
 use TopBetta\Services\Betting\MarketService;
-
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface ;
+use TopBetta\Services\Betting\BetLimitValidation\BetLimitValidationService;
 
 class FrontBetsController extends Controller {
+
+    private $positionMap = array(
+        'first' => 1,
+        'second' => 2,
+        'third' => 3,
+        'fourth' => 4,
+    );
 
 	protected $betsource;
 	protected $betnotificationservice;
@@ -43,12 +51,20 @@ class FrontBetsController extends Controller {
      * @var MarketService
      */
     private $marketService;
+    /**
+     * @var BetTypeRepositoryInterface
+     */
+    private $betTypeRepository;
+    /**
+     * @var BetLimitValidationService
+     */
+    private $betLimitValidationService;
 
 
     public function __construct(BetSourceRepositoryInterface $betsource,
-
+                                BetTypeRepositoryInterface $betTypeRepository,
 								ExternalSourceBetNotificationService $betnotificationservice,
-
+                                BetLimitValidationService $betLimitValidationService,
 								SelectionService $selectionService,
                                 MarketService $marketService,
                                 BetRepositoryInterface $betRepository,
@@ -64,6 +80,8 @@ class FrontBetsController extends Controller {
         $this->dashboardNotificationService = $dashboardNotificationService;
 
         $this->marketService = $marketService;
+        $this->betTypeRepository = $betTypeRepository;
+        $this->betLimitValidationService = $betLimitValidationService;
     }
 
 	/**
@@ -367,8 +385,16 @@ class FrontBetsController extends Controller {
 
 			$betData = array('id' => $legacyData[0] -> meeting_id, 'race_id' => $legacyData[0] -> race_id, 'bet_type_id' => $input['type_id'], 'value' => $input['amount'], 'selection' => $input['selections'], 'pos' => $legacyData[0] -> number, 'bet_origin' => $input['source'], 'bet_product' => 5, 'flexi' => $input['flexi'], 'wager_id' => $legacyData[0] -> wager_id, 'bet_source_id' => $input['bet_source_id']);
 
-			//check selections are not scratched.
-			foreach($input['selections'] as $selections) {
+            $betLimitData = array(
+                'amount' => $input['amount'],
+                'user' => Auth::user()->id,
+                'bet_type' => $this->betTypeRepository->find($input['type_id']),
+                'selections' => array(),
+            );
+
+            //check selections are not scratched.
+			foreach($input['selections'] as $position => $selections) {
+
 				foreach($selections as $selection) {
 
                     $selectionModel = $this->selectionService->getSelection($selection);
@@ -392,6 +418,8 @@ class FrontBetsController extends Controller {
                         $errors++;
                         return false;
                     }
+
+                    $betLimitData['selections'][] = array('selection' => $selection, 'position' => count($input['selections']) == 1 ? 0 : $this->positionMap[$position]);
 				}
 			}
 
@@ -411,22 +439,34 @@ class FrontBetsController extends Controller {
 
 			}
 			
-			$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing');
-			if ($exceedBetLimit['result']) {
-				
-				$reason = Lang::get('bets.exceed_bet_limit_value_and_flexi', array('betValueLimit' => $exceedBetLimit['betValueLimit'], 'flexiLimit' => $exceedBetLimit['flexiLimit']));
-				
-				if ($exceedBetLimit['flexiExceeds'] && !$exceedBetLimit['betValueExceeds']) {
-					$reason = Lang::get('bets.exceed_bet_limit_flexi', array('flexiLimit' => $exceedBetLimit['flexiLimit']));
-				} else if(!$exceedBetLimit['flexiExceeds'] && $exceedBetLimit['betValueExceeds']) {
-					$reason = Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit']));
-				}
-				
+//			$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing');
+//			if ($exceedBetLimit['result']) {
+//
+//				$reason = Lang::get('bets.exceed_bet_limit_value_and_flexi', array('betValueLimit' => $exceedBetLimit['betValueLimit'], 'flexiLimit' => $exceedBetLimit['flexiLimit']));
+//
+//				if ($exceedBetLimit['flexiExceeds'] && !$exceedBetLimit['betValueExceeds']) {
+//					$reason = Lang::get('bets.exceed_bet_limit_flexi', array('flexiLimit' => $exceedBetLimit['flexiLimit']));
+//				} else if(!$exceedBetLimit['flexiExceeds'] && $exceedBetLimit['betValueExceeds']) {
+//					$reason = Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit']));
+//				}
+//
+//				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $reason);
+//				$errors++;
+//
+//				return false;
+//			}
+
+            try {
+                $this->betLimitValidationService->validateBet($betLimitData);
+            } catch (TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException $e) {
+                $reason = Lang::get('bets.exceed_bet_limit_value_and_flexi', array('betValueLimit' => 100, 'flexiLimit' => 100));
+
 				$messages[] = array("id" => $betData['selection'], "type_id" => $input['type_id'], "success" => false, "error" => $reason);
 				$errors++;
 
 				return false;
-			}			
+            }
+
 
 			$bet = $l -> query('saveRacingBet', $betData);
 
@@ -473,6 +513,12 @@ class FrontBetsController extends Controller {
 
 				// racing
 
+                $betLimitData = array(
+                    'amount' => $input['amount'],
+                    'user' => Auth::user()->id,
+                    'bet_type' => $this->betTypeRepository->find($input['type_id'])
+                );
+
 				foreach ($input['selections'] as $selection) {
 
                     $selectionModel = $this->selectionService->getSelection($selection);
@@ -489,6 +535,10 @@ class FrontBetsController extends Controller {
                         $errors++;
                         return false;
                     }
+
+                    $betLimitData['selections'] = array(
+                        array('selection' => $selection),
+                    );
 
 					// assemble bet data such as meeting_id, race_id etc
 					$legacyData = $betModel -> getLegacyBetData($selection);
@@ -513,13 +563,22 @@ class FrontBetsController extends Controller {
 
 							}
 							
-							$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing');
-							if ($exceedBetLimit['result']) {
-								$messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
-								$errors++;
+							//$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'racing');
+//							if ($exceedBetLimit['result']) {
+//								$messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));
+//								$errors++;
+//
+//								return false;
+//							}
 
-								return false;
-							}							
+                            try {
+                                $this->betLimitValidationService->validateBet($betLimitData);
+                            } catch (TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetLimitExceededException $e) {
+                                $messages[] = array("id" => $input['selections'][0], "type_id" => $input['type_id'], "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => 100)));
+                                $errors++;
+                                return false;
+                            }
+
 
 							$bet = $l -> query('saveBet', $betData);
 
