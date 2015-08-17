@@ -29,6 +29,6 @@ class DbProductProviderMatchRepository extends BaseEloquentRepository implements
             ->where('pd.country', $competition->country)
             ->where('pd.region', $competition->meeting_grade)
             ->where('pd.type_code', $competition->type_code)
-            ->get(array('ppm.provider_product_name as product_name', 'pd.bet_type as bet_type'));
+            ->get(array('ppm.provider_product_name as product_name', 'pd.bet_type as bet_type', 'ppm.id as id'));
     }
 }

@@ -73,11 +73,13 @@ class SelectionResource extends AbstractEloquentResource {
     {
         return array(
             array(
+                "product_id" => $this->products->get(BetTypeRepositoryInterface::TYPE_WIN)->id,
                 "product" => $this->products->get(BetTypeRepositoryInterface::TYPE_WIN)->productCode,
                 "bet_type" => BetTypeRepositoryInterface::TYPE_WIN,
                 "price" => $this->getWinOdds(),
             ),
             array(
+                "product_id" => $this->products->get(BetTypeRepositoryInterface::TYPE_PLACE)->id,
                 "product" => $this->products->get(BetTypeRepositoryInterface::TYPE_PLACE)->productCode,
                 "bet_type" => BetTypeRepositoryInterface::TYPE_PLACE,
                 "price" => $this->getPlaceOdds(),
