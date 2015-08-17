@@ -65,8 +65,6 @@ class RaceResourceService {
             throw new ModelNotFoundException;
         }
 
-        $race = new RaceResource($race);
-
         $this->loadTotesForRace($race);
 
         return $race;
