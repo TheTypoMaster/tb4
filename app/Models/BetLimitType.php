@@ -15,4 +15,9 @@ class BetLimitType extends \Eloquent
 	public function users() {
 		return $this->hasMany('BetLimitUser', 'bet_limit_type_id');
 	}
+
+    public function betType()
+    {
+        return $this->belongsTo('TopBetta\Models\BetTypeModel', 'value');
+    }
 }

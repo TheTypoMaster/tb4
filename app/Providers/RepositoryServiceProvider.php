@@ -257,6 +257,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\BetLimitTypeRepositoryInterface',
             'TopBetta\Repositories\DbBetLimitTypeRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SportMarketTypeDetailsRepositoryInterface',
+            'TopBetta\Repositories\DbSportMarketTypeDetailsRepository'
+        );
     }
 
 } 

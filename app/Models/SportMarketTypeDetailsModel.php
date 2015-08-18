@@ -8,6 +8,8 @@ class SportMarketTypeDetailsModel extends Model
 {
     protected $table = 'tb_sport_market_type_details';
 
+    protected $guarded = array();
+
     public function sport()
     {
         return $this->belongsTo('TopBetta\Models\SportModel', 'sport_id');
