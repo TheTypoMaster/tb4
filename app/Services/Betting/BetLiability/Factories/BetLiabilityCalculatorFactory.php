@@ -13,6 +13,10 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
 class BetLiabilityCalculatorFactory {
 
+    /**
+     * @param $betType
+     * @return \TopBetta\Services\Betting\BetLiability\LiabilityCalculator
+     */
     public static function make($betType)
     {
         switch ($betType) {

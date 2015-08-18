@@ -29,5 +29,6 @@ email: help@topbetta.com",
     "market_closed" => "Betting is closed on this market",
 
     'odds_changed' => "Odds for a selection have changed",
-	
+
+    "exceed_bet_limit_exposure" => "sorry, this bet currently exceeds our limit of $:exposure for this event. Try again with a lower stake"
 );

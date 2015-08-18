@@ -14,7 +14,7 @@ interface LiabilityCalculator {
     /**
      * Returns the max liability for a given bet
      * @param $betData
-     * @return int
+     * @return \Illuminate\Support\Collection
      */
     public function calculateLiability($betData);
 }

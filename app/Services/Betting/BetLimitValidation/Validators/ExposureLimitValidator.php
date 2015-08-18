@@ -12,6 +12,7 @@ namespace TopBetta\Services\Betting\BetLimitValidation\Validators;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetLiability\Factories\BetLiabilityCalculatorFactory;
 use TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetAmountLimitExceededException;
+use TopBetta\Services\Betting\BetLimitValidation\Exceptions\BetExposureLimitExceeedException;
 
 class ExposureLimitValidator extends AbstractBetLimitValidator implements BetLimitValidator
 {
@@ -31,7 +32,7 @@ class ExposureLimitValidator extends AbstractBetLimitValidator implements BetLim
 
         foreach ($liabilities as $event => $liability) {
             if ($liability > $limit) {
-                throw new BetAmountLimitExceededException($limit);
+                throw new BetExposureLimitExceeedException($limit);
             }
         }
 

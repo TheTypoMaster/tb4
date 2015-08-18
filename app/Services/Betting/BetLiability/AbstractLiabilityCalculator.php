@@ -104,8 +104,8 @@ abstract class AbstractLiabilityCalculator implements LiabilityCalculator {
     /**
      * Calculates the max liability for $selections
      * @param $market
-     * @param $selections
-     * @param $marketLiabilities
+     * @param $selections Collection
+     * @param $marketLiabilities Collection
      * @return int
      */
     protected function calculateMaxLiabilityForSelections($market, $selections, $marketLiabilities)
@@ -143,7 +143,7 @@ abstract class AbstractLiabilityCalculator implements LiabilityCalculator {
      * Gets bets for market. Filters current $this->bets if not null.
      * @param $market
      * @param $betData
-     * @return static
+     * @return Collection
      */
     protected function getBetsForMarket($market, $betData)
     {
