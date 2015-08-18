@@ -14,7 +14,7 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 class ProductResource extends AbstractEloquentResource {
 
     protected $attributes = array(
-        "id"          => "id",
+        "productId"   => "id",
         "betType"     => "betType",
         "productCode" => "product_name",
     );

@@ -128,4 +128,16 @@ class SelectionResource extends AbstractEloquentResource {
 
         return $this->relations[$relation];
     }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $array['win_tote'] = $this->getWinOdds();
+        $array['place_tote'] = $this->getPlaceOdds();
+        $array['win_fixed'] = null;
+        $array['place_fixed'] = null;
+
+        return $array;
+    }
 }
