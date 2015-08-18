@@ -31,12 +31,12 @@ class RacingBetTypeLimitValidator extends AbstractBetLimitValidator implements B
 
         //get the frequency of selection, used to calculate the total amount being bet on a selection
         //(stops placing multiple small bets on same selection at once)
-        $frequency = array_count_values($selections);
+        $frequency = array_count_values(array_map(function($v){return $v->id; }, $selections));
 
         foreach (array_unique($selections) as $selection) {
             //get the total amount bet on a selection + the amount to be bet
-            $amount = $frequency[$selection] * $betData['amount'] + $currentBets->filter(function($v) use ($selection) {
-                    return $v->selection_id == $selection;
+            $amount = $frequency[$selection->id] * $betData['amount'] + $currentBets->filter(function($v) use ($selection) {
+                    return $v->selection_id == $selection->id;
                 })->sum(function ($v) { return $v->bet_amount; });
 
             //check the limit

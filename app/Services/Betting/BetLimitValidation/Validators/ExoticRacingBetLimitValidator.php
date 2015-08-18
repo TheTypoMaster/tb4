@@ -21,7 +21,9 @@ abstract class ExoticRacingBetLimitValidator extends AbstractBetLimitValidator{
         //same as the number of unfiltered records.
         $bets = $bets->filter(function($v) use ($betData) {
             return $v->betselection->filter(function ($s) use ($betData) {
-                return in_array(array('selection' => $s->selection_id, 'position' => $s['position']), $betData['selections']);
+                return in_array(array('selection' => $s->selection_id, 'position' => $s['position']), array_map(function($v) {
+                    return array("selection" => $v['selection']->id, 'position' => $v['position']);
+                }, $betData['selections']));
             })->count() == $v->betselection->count();
         });
 

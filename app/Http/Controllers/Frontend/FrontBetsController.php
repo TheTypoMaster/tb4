@@ -427,7 +427,7 @@ class FrontBetsController extends Controller {
                         return false;
                     }
 
-                    $betLimitData['selections'][] = array('selection' => $selection, 'position' => count($input['selections']) == 1 ? 0 : $this->positionMap[$position]);
+                    $betLimitData['selections'][] = array('selection' => $selectionModel, 'position' => count($input['selections']) == 1 ? 0 : $this->positionMap[$position]);
 				}
 			}
 
@@ -545,7 +545,7 @@ class FrontBetsController extends Controller {
                     }
 
                     $betLimitData['selections'] = array(
-                        array('selection' => $selection),
+                        array('selection' => $selectionModel),
                     );
 
 					// assemble bet data such as meeting_id, race_id etc
@@ -763,7 +763,7 @@ class FrontBetsController extends Controller {
 
 							}
 
-                            $betLimitData['selections'][] = array('selection' => $selectionModel->id, 'event' => $selectionModel->market->event->id);
+                            $betLimitData['selections'][] = array('selection' => $selectionModel, 'event' => $selectionModel->market->event->id, 'dividend' => $input['dividend']);
 //							$exceedBetLimit = BetLimitRepo::checkExceedBetLimitForBetData($betData, 'sports');
 //							if ($exceedBetLimit['result']) {
 //								$messages[] = array("bets" => $input['bets'], "type_id" => null, "success" => false, "error" => Lang::get('bets.exceed_bet_limit_value', array('betValueLimit' => $exceedBetLimit['betValueLimit'])));

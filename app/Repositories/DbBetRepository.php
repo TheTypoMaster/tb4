@@ -123,12 +123,33 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->get();
     }
 
-    public function getBetsForUserByEvents($user, $events)
+    public function getBetsForUserByEvents($user, $events, $type = null)
     {
-        return $this->model
+        $model = $this->model
             ->where('user_id', $user)
             ->whereIn('event_id', $events)
-            ->with('betselection')
-            ->get();
+            ->with('betselection');
+
+        if ($type) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get();
+    }
+
+    public function getBetsForUserByMarket($user, $market, $type = null)
+    {
+        $model =  $this->model
+            ->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
+            ->join('tbdb_selection', 'tbdb_bet_selection.selection_id', '=', 'tbdb_selection.id')
+            ->where('tbdb_selection.market_id', $market)
+            ->where('user_id', $user)
+            ->groupBy('tbdb_bet.id');
+
+        if ($type) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get(array('tbdb_bet.*'));
     }
 }
