@@ -8,15 +8,11 @@
 		<div class='col-lg-6'>
 			<div class="form-group">
 				{!! Form::label('name', 'Name:') !!}
-				{!! Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) !!}
-			</div>				
-			<div class="form-group">
-				{!! Form::label('value', 'Value:') !!}
-				{!! Form::text('value', null, array('class' => 'form-control', 'placeholder' => 'Value')) !!}
-			</div>				
+				{!! Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name', 'disabled')) !!}
+			</div>
 			<div class="form-group">
 				{!! Form::label('default_amount', 'Default Amount:') !!}
-				{!! Form::text('default_amount', null, array('class' => 'form-control', 'placeholder' => 'Default Amount')) !!}
+				{!! Form::text('default_amount', $betlimit->default_amount/100, array('class' => 'form-control', 'placeholder' => 'Default Amount')) !!}
 			</div>				
 			<div class="form-group">
 				{!! Form::label('notes', 'Notes:') !!}
