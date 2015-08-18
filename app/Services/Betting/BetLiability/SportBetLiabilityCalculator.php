@@ -25,7 +25,7 @@ class SportBetLiabilityCalculator extends AbstractLiabilityCalculator {
 
      protected function getMaxWinners($market)
      {
-        return object_get($market->markettype->sportDetails($market->event->competition->first()->sport), 'max_winning_selections', 1);
+        return object_get($market->markettype->sportDetails($market->event->competition->first()->sport_id), 'max_winning_selections', 1);
      }
 }
 
