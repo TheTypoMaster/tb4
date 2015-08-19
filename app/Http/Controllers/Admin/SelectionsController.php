@@ -2,7 +2,9 @@
 
 
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\PlayersRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
 use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 use TopBetta\Repositories\DbSelectionRepository;
 use Request;
@@ -26,14 +28,26 @@ class SelectionsController extends Controller
      * @var PlayersRepositoryInterface
      */
     private $playersRepository;
+    /**
+     * @var MarketRepositoryInterface
+     */
+    private $marketRepository;
+    /**
+     * @var SelectionPriceRepositoryInterface
+     */
+    private $priceRepository;
 
     public function __construct(DbSelectionRepository $selectionsrepo,
                                 TeamRepositoryInterface $teamRepository,
-                                PlayersRepositoryInterface $playersRepository)
+                                PlayersRepositoryInterface $playersRepository,
+                                MarketRepositoryInterface $marketRepository,
+                                SelectionPriceRepositoryInterface $priceRepository)
 	{
 		$this->selectionsrepo = $selectionsrepo;
         $this->teamRepository = $teamRepository;
         $this->playersRepository = $playersRepository;
+        $this->marketRepository = $marketRepository;
+        $this->priceRepository = $priceRepository;
     }
 
 	/**
@@ -69,7 +83,19 @@ class SelectionsController extends Controller
 	 */
 	public function create()
 	{
-		//
+        $search = Request::get('q', '');
+        $marketId = Input::get('market', null);
+        $event = Input::get('event', null);
+
+        if( ! $marketId || ! $market = $this->marketRepository->find($marketId) ) {
+            return Redirect::back()->with(array('flash_message' => "Please specify market"));
+        }
+
+        $teams = array_merge(array(0 => ''), $this->teamRepository->findAll()->lists('name', 'id')->all());
+        $players = array_merge(array(0 => ''), $this->playersRepository->findAll()->lists('name', 'id')->all());
+
+
+        return View::make('admin.eventdata.selections.create', compact('search', 'market', 'event', 'teams', 'players'));
 	}
 
 	/**
@@ -79,7 +105,46 @@ class SelectionsController extends Controller
 	 */
 	public function store()
 	{
-		//
+        $search = Request::get('q', '');
+        $marketId = Input::get('market', null);
+        $event = Input::get('event', null);
+
+        if( ! $marketId || ! $market = $this->marketRepository->find($marketId) ) {
+            return Redirect::back()->with(array('flash_message' => "Please specify market"));
+        }
+
+        $selection = $this->selectionsrepo->create(Request::only(array(
+            'name', 'selection_status_id', 'display_flag'
+        )) + array('market_id' => $marketId));
+
+        $selection = $this->selectionsrepo->find($selection['id']);
+
+        if( $teams = Request::get('team') ) {
+            $teams = array_filter($teams, function($value) {
+                return $value != 0;
+            });
+        }
+
+        $selection->team()->attach($teams);
+
+        if( $players = Request::get('player')) {
+            $players = array_filter($players, function($value) {
+                return $value != 0;
+            });
+        }
+
+        $selection->player()->attach($players);
+
+        $this->priceRepository->create(array(
+            "selection_id" => $selection->id,
+            'win_odds' => Request::get('win_dividend', 0),
+            'place_odds' => Request::get('place_dividend', 0)
+        ));
+
+        return Redirect::route('admin.markets.index', array('q' => $search, 'event' => $event, 'market' => $marketId))
+            ->with(array('flash_message' => "Saved"));
+
+
 	}
 
 	/**

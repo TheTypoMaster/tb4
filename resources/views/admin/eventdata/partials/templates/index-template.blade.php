@@ -70,6 +70,9 @@
                         <td>{{ $model->created_at }}</td>
                         <td>{{ $model->updated_at }}</td>
                         <td>
+                            @if ( $createChildRoute )
+                                {!! link_to_route($createChildRoute['route'], 'Create' . $createChildRoute['name'], array('q' => $search, $createChildRoute['param'] => $model->id), array('class' => 'btn btn-primary') ) !!}
+                            @endif
                             <a href="{{ URL::route($editRoute, array($model->id, "q" => $search)) }}" class="btn btn-warning"><i class="glyphicon glyphicon-edit"></i> Edit</a>
 
                             {!! Form::open(array("method" => "DELETE", "route"=>array($deleteRoute, $model->id))) !!}
