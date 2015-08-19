@@ -32,6 +32,14 @@ class CompetitionModel extends Eloquent {
         return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
     }
 
+    /**
+     * Pseudonym for events due to events field on event_group table
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function competitionEvents() {
+        return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
+    }
+
     public function baseCompetition() {
         return $this->belongsTo('TopBetta\Models\BaseCompetitionModel', 'base_competition_id');
     }

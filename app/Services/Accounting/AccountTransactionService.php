@@ -7,6 +7,10 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Services\Resources\Accounting\AccountTransactionResourceService;
 use Validator;
 
 use TopBetta\Repositories\Contracts\BetOriginRepositoryInterface;
@@ -27,7 +31,33 @@ class AccountTransactionService {
          AccountTransactionTypeRepositoryInterface::TYPE_BANK_DEPOSIT,
          AccountTransactionTypeRepositoryInterface::TYPE_POLI_DEPOSIT,
          AccountTransactionTypeRepositoryInterface::TYPE_MONEYBOOKERS_DEPOSIT,
+         AccountTransactionTypeRepositoryInterface::TYPE_EWAY_RECURRING_DEPOSIT,
      );
+
+    public static $tournamentTransactions = array(
+        AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_WIN,
+        AccountTransactionTypeRepositoryInterface::TYPE_ENTRY,
+        AccountTransactionTypeRepositoryInterface::TYPE_BUY_IN,
+        AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REBUY_BUYIN,
+        AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REBUY_ENTRY,
+        AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_TOPUP_BUYIN,
+        AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_TOPUP_ENTRY,
+        AccountTransactionTypeRepositoryInterface::TYPE_TOURNAMENT_REFUND,
+        AccountTransactionTypeRepositoryInterface::TYPE_PROMO_TOURNAMENT_ENTRY,
+    );
+
+    public static $betRefundTransactions = array(
+        AccountTransactionTypeRepositoryInterface::TYPE_BET_REFUND,
+        AccountTransactionTypeRepositoryInterface::TYPE_BETWIN_CANCELLED,
+        AccountTransactionTypeRepositoryInterface::TYPE_BET_PARTIAL_REFUND,
+    );
+
+
+    public static $withdrawalTransactions = array(
+        AccountTransactionTypeRepositoryInterface::TYPE_WITHDRAWAL,
+    );
+
+
 
     protected $accounttransactions;
     protected $accounttransactiontypes;
@@ -42,13 +72,19 @@ class AccountTransactionService {
      */
     protected $betOrigins = array();
 
+    /**
+     * @var AccountTransactionResourceService
+     */
+    private $resourceService;
+
 
     public function __construct(AccountTransactionRepositoryInterface $accounttransactions,
                                 AccountTransactionTypeRepositoryInterface $accounttransactiontypes,
                                 UserRepositoryInterface $user,
                                 UserAccountService $useraccountservice,
                                 TokenAuthenticationService $authentication,
-                                BetOriginRepositoryInterface $betOriginRepository)
+                                BetOriginRepositoryInterface $betOriginRepository,
+                                AccountTransactionResourceService $resourceService)
     {
         $this->accounttransactions = $accounttransactions;
         $this->accounttransactiontypes = $accounttransactiontypes;
@@ -56,6 +92,7 @@ class AccountTransactionService {
         $this->authentication = $authentication;
         $this->useraccountservice = $useraccountservice;
         $this->betOriginRepository = $betOriginRepository;
+        $this->resourceService = $resourceService;
     }
 
     public function increaseAccountBalance($userID, $amount, $keyword, $giverId = -1, $desc = null, $transactionDate = null, $source = null){
@@ -408,6 +445,34 @@ class AccountTransactionService {
                 $this->getBetOriginId(BetOriginRepositoryInterface::ORIGIN_TOURNAMENT)
             )
         );
+    }
+
+    public function getUserTransactions($user, $type = 'all', $order = null)
+    {
+        if ($order) {
+            $this->resourceService->setOrder($order[0], array_get($order, 1));
+        }
+
+        switch ($type) {
+            case 'all':
+                return $this->resourceService->getAllTransactionsWithDetailsForUser($user);
+            case 'bets':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, array_merge(self::$betRefundTransactions, array(AccountTransactionTypeRepositoryInterface::TYPE_BET_ENTRY, AccountTransactionTypeRepositoryInterface::TYPE_BET_WIN)));
+            case 'tournaments':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, self::$tournamentTransactions);
+            case 'deposits':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, self::$depositTransactions);
+            case 'withdrawals':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, array(AccountTransactionTypeRepositoryInterface::TYPE_WITHDRAWAL));
+            case 'bet-winning':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, array(AccountTransactionTypeRepositoryInterface::TYPE_BET_WIN));
+            case 'bet-losing':
+                return $this->resourceService->getLosingBetTransactionsForUser($user);
+            case 'bet-refunded':
+                return $this->resourceService->getTransactionsForUserByTypeIn($user, self::$betRefundTransactions);
+        }
+
+        throw new \InvalidArgumentException("Invalid type " . $type);
     }
 
     /**

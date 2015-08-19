@@ -7,4 +7,6 @@ class WithdrawalPaypal extends \Eloquent {
     public static $rules = array();
     protected $table = 'tbdb_withdrawal_paypal';
 
+    public $timestamps = false;
+
 }

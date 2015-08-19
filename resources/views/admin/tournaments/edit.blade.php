@@ -104,6 +104,11 @@
                     </div>
 
                     <div class="form-group">
+                        {!! Form::label('tournament_groups', "Tournament Groups") !!}<br/>
+                        {!! Form::select('tournament_groups[]', $groups, $tournament->groups ? $tournament->groups->lists('id')->all() : null, array('class' => 'form-control group-multiselect', 'multiple' => 'multiple')) !!}
+                    </div>
+
+                    <div class="form-group">
                         {!! Form::label('free_credit_flag', "Free credit prize ") !!}
 
                         <label class="radio-inline">
@@ -457,6 +462,8 @@
             if($eventGroupId.val() != 0) {
                 $eventGroupId.change();
             }
+
+            $('.group-multiselect').multiselect();
 
             $('#tournament_buyin_id').change();
         })

@@ -19,4 +19,6 @@ interface MarketTypeRepositoryInterface  {
     public function getMarketTypeById($id);
 
     public function getMarketTypesIn($marketTypes, $orderByIn = true);
+
+    public function getAvailableMarketTypesForCompetition($competitionId);
 }

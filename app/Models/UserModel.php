@@ -51,9 +51,15 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
 		return $this->belongsToMany('TopBetta\Models\PromotionsModel', 'tb_promotios_users', 'user_id', 'promotion_id');
 	}
 
-	public function accountBalance()
+	public function accountBalance($transactionId = null)
 	{
-		return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
+		$relation = $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id');
+
+        if ($transactionId) {
+            $relation->where('id', '<=', $transactionId);
+        }
+
+        return $relation->sum('amount');
 	}
 
     public function depositLimit() {

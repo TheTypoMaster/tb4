@@ -1,4 +1,5 @@
-<?php namespace TopBetta\Repositories\Contracts; 
+<?php namespace TopBetta\Repositories\Contracts;
+use Carbon\Carbon;
 
 /**
  * Coded by Oliver Shanahan
@@ -16,5 +17,9 @@ interface TournamentRepositoryInterface
     public function tournamentOfTheDay($todVenue, $day = null);
 
     public function findCurrentJackpotTournamentsByType($type, $excludedTournaments = null);
+
+    public function getVisibleSportTournaments(Carbon $date = null);
+
+    public function getVisibleRacingTournaments(Carbon $date = null);
 
 }

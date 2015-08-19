@@ -72,4 +72,14 @@ class SelectionModel extends Eloquent{
         return $this->belongsTo('TopBetta\Models\RunnerModel', 'runner_id');
     }
 
+    public function form()
+    {
+        return $this->belongsTo('TopBetta\Models\RisaForm', 'runner_code', 'runner_code');
+    }
+
+    public function lastStarts()
+    {
+        return $this->hasMany('TopBetta\Models\LastStartsModel', 'runner_code', 'runner_code');
+    }
+
 } 
