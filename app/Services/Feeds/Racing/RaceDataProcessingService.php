@@ -586,13 +586,6 @@ class RaceDataProcessingService {
 				continue;
 			}
 
-			// see if we use this product
-			$saveThisProduct = $this->_canProductBeProcessed($price, $providerName, $price['RaceNo'], "Odds");
-			if (!$saveThisProduct) {
-				Log::debug($this->logprefix . 'Price data not used ' , $price);
-				continue;
-			}
-
 			// check if race exists in DB
 			$existingRaceDetails = $this->events->getEventDetailByExternalId($price['MeetingId'] . '_' . $price['RaceNo']);
 			if (!$existingRaceDetails) {
@@ -601,6 +594,13 @@ class RaceDataProcessingService {
 			}
 
 			$runnerCount = 1;
+
+            $betProduct = $this->betproduct->getProductByCode($price['PriceType']);
+            if (!$betProduct) {
+                Log::debug($this->logprefix . 'PriceType not found ' . $price['PriceType']);
+            }
+
+            Log::info($this->logprefix ."Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}");
 
 			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {
@@ -619,7 +619,7 @@ class RaceDataProcessingService {
 
 				}
 
-				$priceDetails = array();
+				$priceDetails = array("bet_product_id" => $betProduct->id);
 				$priceDetails['selection_id'] = $existingSelectionId;
 				switch ($price['BetType']) {
 					case "W":
@@ -632,7 +632,7 @@ class RaceDataProcessingService {
 						Log::debug($this->logprefix . 'Price BetType is invalid ', $price);
 						continue;
 				}
-				$this->prices->updateOrCreate($priceDetails, 'selection_id');
+				$this->prices->updateOrCreatePrice($priceDetails);
 				$runnerCount++;
 			}
 

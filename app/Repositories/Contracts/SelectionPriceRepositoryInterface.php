@@ -8,4 +8,18 @@
 
 interface SelectionPriceRepositoryInterface {
 
-} 
+    /**
+     * Create or update price based on selection and bet product
+     * @param array $priceData
+     * @return mixed
+     */
+    public function updateOrCreatePrice(array $priceData);
+
+    /**
+     * Gets price record by selection id and bet product id
+     * @param $selection
+     * @param $product
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getPriceForSelectionByProduct($selection, $product);
+}
