@@ -398,6 +398,7 @@ class RaceDataProcessingService {
 			$runnerDetails['trainer'] = array_get($runner, 'Trainer', '');
 			$runnerDetails['last_starts'] = array_get($runner, 'LastStarts', '');
 			$runnerDetails['silk_id'] = array_get($runner, 'SilkCode', '');
+            $runnerDetails['deductions'] = array_get($runner, 'Deductions', 0);
 
 			if (isset($runner['Scratched'])) {
 				($runner['Scratched'] == '1') ?	$runnerDetails['selection_status_id'] = '2' : $runnerDetails['selection_status_id'] = '1';
