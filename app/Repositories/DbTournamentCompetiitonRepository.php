@@ -23,7 +23,7 @@ class DbTournamentCompetiitonRepository extends BaseEloquentRepository implement
         return $this->model
             ->join('tbdb_event_group', 'tbdb_event_group.tournament_competition_id', '=', 'tbdb_tournament_competition.id')
             ->where('tournament_sport_id', $sportId)
-            ->where('close_time', '>=', Carbon::now())
+            ->where('start_date', '>=', Carbon::now())
             ->groupBy('tbdb_tournament_competition.id')
             ->orderBy('tbdb_tournament_competition.name', 'ASC')
             ->get(array('tbdb_tournament_competition.*'));
