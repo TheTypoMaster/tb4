@@ -11,6 +11,7 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -54,6 +55,10 @@ class RaceDataProcessingService {
      * @var RunnerRepositoryInterface
      */
     private $runnerRepository;
+    /**
+     * @var ProductProviderMatchRepositoryInterface
+     */
+    private $productProviderMatchRepository;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -72,7 +77,8 @@ class RaceDataProcessingService {
 								LastStartRepositoryInterface $laststarts,
 								SelectionPriceRepositoryInterface $prices,
                                 TournamentBetService $tournamentBetService,
-                                RunnerRepositoryInterface $runnerRepository){
+                                RunnerRepositoryInterface $runnerRepository,
+                                ProductProviderMatchRepositoryInterface $productProviderMatchRepository){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -91,6 +97,7 @@ class RaceDataProcessingService {
 		$this->logprefix = 'RaceDataProcessingService: ';
         $this->tournamentBetService = $tournamentBetService;
         $this->runnerRepository = $runnerRepository;
+        $this->productProviderMatchRepository = $productProviderMatchRepository;
     }
 
 
@@ -195,7 +202,9 @@ class RaceDataProcessingService {
 				if ($defaultTrack) $meetingDetails['track'] = $defaultTrack;
 			}
 
-			$this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
+			$competition = $this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
+
+            $this->attachDefaultProducts($this->competitions->find($competition['id']));
 
 			Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
 		}
@@ -676,5 +685,21 @@ class RaceDataProcessingService {
         }
         Log::info($this->logprefix ."Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
         return true;
+    }
+
+    private function attachDefaultProducts($competition)
+    {
+        //only attach if none exist
+        if ($competition->products->count()) {
+            return $competition;
+        }
+
+        $defaultProducts = $this->productProviderMatchRepository->getProductAndBetTypeByCompetition($competition);
+
+        foreach ($defaultProducts as $product) {
+            $competition->products()->attach(array($product->product_id => $product->bet_type_id));
+        }
+
+        return $competition;
     }
 }
