@@ -10,4 +10,6 @@
 interface BetProductRepositoryInterface {
 
     public function getProductByCode($productCode);
+
+    public function getProductsByCodes($productCodes);
 }

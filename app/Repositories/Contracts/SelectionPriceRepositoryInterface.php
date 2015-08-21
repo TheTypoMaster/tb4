@@ -8,6 +8,10 @@
 
 interface SelectionPriceRepositoryInterface {
 
+    const OVERRIDE_TYPE_PRICE = 'price';
+    const OVERRIDE_TYPE_PERCENTAGE = 'percentage';
+    const OVERRIDE_TYPE_PROMO = 'promo';
+
     /**
      * Create or update price based on selection and bet product
      * @param array $priceData

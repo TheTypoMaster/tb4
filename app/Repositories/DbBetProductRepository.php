@@ -57,5 +57,12 @@ class DbBetProductRepository extends BaseEloquentRepository implements BetProduc
             ->first(array('tbdb_bet_product.*'));
     }
 
+    public function getProductsByCodes($productCodes)
+    {
+        return $this->model
+            ->join('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'tbdb_bet_product.id')
+            ->whereIN('ppm.provider_product_name', $productCodes)
+            ->get(array('tbdb_bet_product.*'));
+    }
 
 }

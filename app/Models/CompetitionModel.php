@@ -57,4 +57,8 @@ class CompetitionModel extends Eloquent {
         return $this->belongsToMany('TopBetta\Models\MarketTypeModel', 'tbdb_event_group_market_type', 'event_group_id', 'market_type_id');
     }
 
+    public function products()
+    {
+        return $this->belongsToMany('TopBetta\Models\BetProductModel', 'tb_default_event_group_product', 'event_group_id', 'bet_product_id');
+    }
 }
