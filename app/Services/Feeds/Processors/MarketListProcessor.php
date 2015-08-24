@@ -66,7 +66,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
         }
 
         if($marketTypeName && $market){
-            Log::debug($this->logprefix."Market/Type - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", MarketTypeName: ".$data['MarketTypeName'].", MarketName: " . $data['MarketName'] . ", MarketStatus ".$data['MarketStatus']);
+            Log::debug($this->logprefix."Market/Type - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", MarketTypeName: ".$data['MarketTypeName'].", MarketName: " . $data['MarketName'] . ", MarketStatus ".array_get($data, 'MarketStatus', ''));
         }
 
         if( $market ) {
