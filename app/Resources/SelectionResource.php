@@ -25,6 +25,7 @@ class SelectionResource extends AbstractEloquentResource {
         'prices'     => 'prices',
         'silk_id'    => 'silk_id',
         'form'       => 'form',
+        'deductions' => 'deductions',
     );
 
     protected $types = array(
