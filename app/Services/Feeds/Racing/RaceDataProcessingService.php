@@ -689,6 +689,7 @@ class RaceDataProcessingService {
 
     private function attachDefaultProducts($competition)
     {
+        \Log::debug('DEBUG_COMPETITION: ' . $competition->id);
         //only attach if none exist
         if ($competition->products->count()) {
             return $competition;
@@ -697,7 +698,7 @@ class RaceDataProcessingService {
         $defaultProducts = $this->productProviderMatchRepository->getProductAndBetTypeByCompetition($competition);
 
         foreach ($defaultProducts as $product) {
-            $competition->products()->attach(array($product->product_id => $product->bet_type_id));
+            $competition->products()->attach(array($product->product_id => array('bet_type_id' => $product->bet_type_id)));
         }
 
         return $competition;
