@@ -59,6 +59,8 @@ class CompetitionModel extends Eloquent {
 
     public function products()
     {
-        return $this->belongsToMany('TopBetta\Models\BetProductModel', 'tb_default_event_group_product', 'event_group_id', 'bet_product_id');
+        return $this->belongsToMany('TopBetta\Models\BetProductModel', 'tb_default_event_group_product', 'event_group_id', 'bet_product_id')
+            ->join('tbdb_bet_type', 'tbdb_bet_type.id', '=', 'tb_default_event_group_product.bet_type_id')
+            ->select(array('tbdb_bet_product.*', 'tbdb_bet_type.name as bet_type'));
     }
 }
