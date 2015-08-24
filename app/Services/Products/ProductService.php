@@ -10,12 +10,22 @@ namespace TopBetta\Services\Products;
 
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 
 class ProductService {
+
+    private static $avaiableProductBetTypes = array(
+        BetTypeRepositoryInterface::TYPE_WIN,
+        BetTypeRepositoryInterface::TYPE_PLACE,
+        BetTypeRepositoryInterface::TYPE_QUINELLA,
+        BetTypeRepositoryInterface::TYPE_EXACTA,
+        BetTypeRepositoryInterface::TYPE_TRIFECTA,
+        BetTypeRepositoryInterface::TYPE_FIRSTFOUR,
+    );
 
     /**
      * @var BetProductRepositoryInterface
@@ -70,5 +80,40 @@ class ProductService {
         $betType = $this->betTypeRepository->getBetTypeByName($betType);
 
         return $this->userRepository->syncProductsForBetType($user, $totes->lists('id')->all(), $betType->id, $venue);
+    }
+
+    public function getAuthUserProductsForCompetition($competition)
+    {
+        //default products if there is no authorised user
+        if (!$user = \Auth::user()) {
+            return $competition->products;
+        }
+
+        $userProducts = $this->betProductRepository->getProductsForUser($user->id, $competition->venue_id);
+
+        $defaultProducts = $competition->products;
+
+        $products = new Collection;
+
+        foreach (self::$avaiableProductBetTypes as $betType) {
+            //filter by bet type
+            $betTypeProducts = $userProducts->where('bet_type', $betType);
+
+            //no user product exists so get default
+            if (! $betTypeProducts->count() ) {
+                $betTypeProducts = $defaultProducts->where('bet_type', $betType);
+            } else {
+                //user product exists so filter by venue
+                $venueProducts = $betTypeProducts->where('venue_id', $competition->venue_id);
+                if ($venueProducts->count()) { $betTypeProducts = $venueProducts; }
+            }
+
+            //push products onto collection
+            foreach ($betTypeProducts as $product) {
+                $products->push($product);
+            }
+        }
+
+        return $products;
     }
 }

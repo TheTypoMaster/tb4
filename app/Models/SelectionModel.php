@@ -28,6 +28,11 @@ class SelectionModel extends Eloquent{
         return $this->hasOne('TopBetta\Models\SelectionPricesModel', 'selection_id', 'id');
     }
 
+    public function prices()
+    {
+        return $this->hasMany('TopBetta\Models\SelectionPricesModel', 'selection_id', 'id');
+    }
+
     public function result()
     {
         return $this->hasOne('TopBetta\Models\SelectionResultModel', 'selection_id', 'id');

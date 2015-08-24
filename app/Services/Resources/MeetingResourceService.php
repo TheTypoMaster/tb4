@@ -15,6 +15,7 @@ use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\MeetingResource;
+use TopBetta\Services\Products\ProductService;
 
 class MeetingResourceService {
 
@@ -32,16 +33,16 @@ class MeetingResourceService {
      */
     private $selectionService;
     /**
-     * @var ProductProviderMatchRepositoryInterface
+     * @var ProductService
      */
-    private $productProviderMatchRepository;
+    private $productService;
 
-    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceResourceService $raceService, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepository)
+    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceResourceService $raceService, SelectionResourceService $selectionService, ProductService $productService)
     {
         $this->competitionRepository = $competitionRepository;
         $this->raceService = $raceService;
         $this->selectionService = $selectionService;
-        $this->productProviderMatchRepository = $productProviderMatchRepository;
+        $this->productService = $productService;
     }
 
     public function getMeetingsForDate($date, $type = null, $withRaces = false)
@@ -94,8 +95,8 @@ class MeetingResourceService {
 
     protected function loadTotesForMeeting(MeetingResource $meeting)
     {
-        $products = $meeting->getModel()->products;
-        dd($products);
+        $products = $this->productService->getAuthUserProductsForCompetition($meeting->getModel());
+
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
         foreach ($meeting->races as $race) {
