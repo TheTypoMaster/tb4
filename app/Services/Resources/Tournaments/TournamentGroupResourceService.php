@@ -35,6 +35,6 @@ class TournamentGroupResourceService {
     {
         $groups = $this->tournamentGroupRepository->getVisibleRacingTournamentGroupsWithTournaments($date);
 
-        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\tournamentGroupResource');
+        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
     }
 }
