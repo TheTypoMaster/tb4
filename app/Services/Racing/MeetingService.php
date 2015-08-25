@@ -9,6 +9,10 @@
 namespace TopBetta\Services\Racing;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\MeetingResource;
+use TopBetta\Resources\RaceResource;
 use TopBetta\Services\Betting\BetService;
 use TopBetta\Services\Resources\MeetingResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
@@ -140,6 +144,34 @@ class MeetingService {
 
         return $meeting;
 
+    }
+
+    public function getMeetingsByRaces($races, $selected = null)
+    {
+        $meetings = new EloquentResourceCollection(new Collection, 'TopBetta\Resources\MeetingResource');
+
+        $selectionsSet = false;
+
+        foreach ($races as $race) {
+            if (! $meeting = $meetings->get($race->competition->first()->id)) {
+                $meeting = new MeetingResource($race->competition->first());
+                $meeting->setRaces(new Collection);
+                $meetings->put($meeting->id, $meeting);
+            }
+
+            $meeting->races()->push($resource = new RaceResource($race));
+
+            if (($selected == $race->id) || (!$selectionsSet && $this->raceResourceService->isOpen($resource))) {
+                $resource->loadRelations('selections');
+                $selectionsSet = $race->id;
+            }
+        }
+
+        if (!$selectionsSet) {
+            $meetings->first()->races()->first()->loadRelations('selections');
+        }
+
+        return array("data" => $meetings, "selected_race" => $selectionsSet);
     }
 
 }

@@ -22,7 +22,7 @@ class TournamentModel extends Eloquent {
 	}
 	
 	public function eventGroup() {
-		return $this->belongsTo('TopBetta\Models\RaceMeeting', 'event_group_id');
+		return $this->belongsTo('TopBetta\Models\TournamentEventGroupModel', 'event_group_id');
 	}
 	
 	public function sport() {
