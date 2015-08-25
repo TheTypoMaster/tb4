@@ -146,7 +146,13 @@ class TournamentService {
             }
         }
 
-        return array('data' => $tournament, 'selected_event' => $events['selected_event']);
+        $data = array("data" => $tournament);
+
+        if ($selected = array_get($events, 'selected_race')) {
+            $data['selected_race'] = $selected;
+        }
+
+        return $data;
     }
 
     public function storeTournamentTicket($user, $tournamentId)

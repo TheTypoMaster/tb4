@@ -35,15 +35,19 @@ class TournamentEventService {
 
     public function getEventGroups($tournament, $eventId = null)
     {
-        if( $tournament->eventGroup()->first()->sport->isRacing() ) {
+        $data = array();
+
+        if( ! $tournament->eventGroup()->first()->sport || $tournament->eventGroup()->first()->sport->isRacing() ) {
             $eventGroup = $this->meetingService->getMeetingWithSelections($tournament->event_group_id, $eventId);
-            $selected = $eventGroup['selected_race'];
+            $data['selected_race'] = $eventGroup['selected_race'];
             $eventGroup = $eventGroup['data'];
         } else {
             $eventGroup = $this->competitionService->getCompetitionsWithEvents(array('competition_id' => $tournament->event_group_id))['data']->first();
             $selected = null;
         }
 
-        return array('data' => array($eventGroup), 'selected_event' => $selected);
+        $data['data'] = array($eventGroup);
+
+        return $data;
     }
 }
