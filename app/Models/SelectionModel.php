@@ -33,6 +33,11 @@ class SelectionModel extends Eloquent{
         return $this->hasMany('TopBetta\Models\SelectionPricesModel', 'selection_id', 'id');
     }
 
+    public function productPrice($id)
+    {
+        return $this->prices->where('bet_product_id', $id)->first();
+    }
+
     public function result()
     {
         return $this->hasOne('TopBetta\Models\SelectionResultModel', 'selection_id', 'id');
