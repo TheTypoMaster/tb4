@@ -99,7 +99,7 @@ class FrontBetsController extends Controller {
 				$odds = (float)$activeBet -> place_odds;
 				$dividend = (float)$activeBet -> place_dividend;
 
-			} elseif ($activeBet -> bet_type > 3) {
+			} elseif ($activeBet -> bet_type > 3 && $activeBet -> bet_type < 8) {
 
 				$exoticSelections = true;
 				$exoticBetTransaction = \TopBetta\Models\AccountBalance::find($activeBet -> bet_transaction_id);
@@ -149,7 +149,7 @@ class FrontBetsController extends Controller {
 				$odds = (float)$recentBet -> place_odds;
 				$dividend = (float)$recentBet -> place_dividend;
 
-			} elseif ($recentBet -> bet_type > 3) {
+			} elseif ($recentBet -> bet_type > 3 && $recentBet -> bet_type < 8) {
 
 				$exoticSelections = true;
 				$exoticBetTransaction = \TopBetta\Models\AccountBalance::find($recentBet -> bet_transaction_id);
@@ -519,7 +519,7 @@ class FrontBetsController extends Controller {
 								$errors++;
 
 								return false;
-							}							
+							}
 
 							$bet = $l -> query('saveBet', $betData);
 

@@ -80,6 +80,26 @@ class SelectionService {
 
         return $event->sport_id > 0;
 	}
+
+    public function selectionsBelongToSameEvent($selections)
+    {
+        $event = null;
+
+        foreach($selections as $selection) {
+
+            if( is_int($selection) ) {
+                $selection = $this->getSelection($selection);
+            }
+
+            if( is_null($event ) ) {
+                $event = $selection->market->event;
+            } else if( $event->id != $selection->market->event->id ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 	
     public function calculatePrice($selectionPrice, $overrideOdds, $overrideType)
     {

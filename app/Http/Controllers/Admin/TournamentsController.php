@@ -8,6 +8,7 @@ use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface;
 use TopBetta\Repositories\Contracts\TODRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCompetiitonRepository;
@@ -71,6 +72,10 @@ class TournamentsController extends Controller
      * @var MeetingVenueRepositoryInterface
      */
     private $meetingVenueRepository;
+    /**
+     * @var TournamentGroupRepositoryInterface
+     */
+    private $tournamentGroupRepository;
 
     /**
      * @param DbTournamentRepository $tournamentRepo
@@ -85,6 +90,7 @@ class TournamentsController extends Controller
      * @param TournamentAdminService $tournamentAdminService
      * @param MarketRepositoryInterface $marketRepository
      * @param MeetingVenueRepositoryInterface $meetingVenueRepository
+     * @param TournamentGroupRepositoryInterface $tournamentGroupRepository
      */
     public function __construct(DbTournamentRepository $tournamentRepo,
                                 DbSportsRepository $sportsrepo,
@@ -97,7 +103,8 @@ class TournamentsController extends Controller
                                 TournamentService $tournamentService,
                                 TournamentAdminService $tournamentAdminService,
                                 MarketRepositoryInterface $marketRepository,
-                                MeetingVenueRepositoryInterface $meetingVenueRepository )
+                                MeetingVenueRepositoryInterface $meetingVenueRepository,
+                                TournamentGroupRepositoryInterface $tournamentGroupRepository )
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -113,6 +120,7 @@ class TournamentsController extends Controller
         $this->tournamentAdminService = $tournamentAdminService;
         $this->marketRepository = $marketRepository;
         $this->meetingVenueRepository = $meetingVenueRepository;
+        $this->tournamentGroupRepository = $tournamentGroupRepository;
     }
 
 	/**
@@ -190,9 +198,11 @@ class TournamentsController extends Controller
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
+        $groups = $this->tournamentGroupRepository->findAll()->lists('group_name', 'id')->all();
+
         $venues = array("Select Meeting") + $this->meetingVenueRepository->findAll()->lists('name', 'id')->all();
 
-        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'venues'));
+        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'venues', 'groups'));
 	}
 
 	/**
@@ -331,7 +341,9 @@ class TournamentsController extends Controller
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
-        return View::make('admin.tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
+        $groups = $this->tournamentGroupRepository->findAll()->lists('group_name', 'id')->all();
+
+        return View::make('admin.tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'groups'));
 	}
 
 	/**

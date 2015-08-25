@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use TopBetta\Models\UserAudit;
 use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Exceptions\InvalidFormatException;
 use TopBetta\Services\UserAccount\Exceptions\AccountExistsException;
@@ -27,6 +28,8 @@ use TopBetta\Services\Validation\Exceptions\ValidationException;
  */
 class UserAccountService {
 
+    const BET_LIMIT_UPDATED = 'bet_limit_updated';
+    const BET_LIMIT_REQUESTED = 'bet_limit_requested';
     /**
      * @var UserRepositoryInterface
      */
@@ -43,6 +46,10 @@ class UserAccountService {
      * @var ThirdPartyEmailServiceInterface
      */
     private $emailService;
+    /**
+     * @var UserAuditService
+     */
+    private $auditService;
 
 
     /**
@@ -50,16 +57,19 @@ class UserAccountService {
      * @param UserRepositoryInterface $basicUser
      * @param UserTopBettaRepositoryInterface $fullUser
      * @param ThirdPartyEmailServiceInterface $emailService
+     * @param UserAuditService $auditService
      */
     function __construct(BetSourceRepositoryInterface $betsource,
                          UserRepositoryInterface $basicUser,
                          UserTopbettaRepositoryInterface $fullUser,
-                         ThirdPartyEmailServiceInterface $emailService)
+                         ThirdPartyEmailServiceInterface $emailService,
+                         UserAuditService $auditService)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
         $this->betsource = $betsource;
         $this->emailService = $emailService;
+        $this->auditService = $auditService;
     }
 
 

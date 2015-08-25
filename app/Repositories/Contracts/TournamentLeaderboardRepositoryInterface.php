@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
- * Date: 10/08/2015
- * Time: 3:48 PM
+ * Date: 30/07/2015
+ * Time: 12:31 PM
  */
 namespace TopBetta\Repositories\Contracts;
 
@@ -17,7 +17,9 @@ interface TournamentLeaderboardRepositoryInterface
      * @param bool $qualified
      * @return mixed
      */
-    public function getTournamentLeaderboard($tournamentID, $rebuyId = 0, $topupId = 0, $limit = 50, $qualified = false);
+    public function getTournamentLeaderboard($tournamentID, $limit = 50, $qualified = false);
+
+    public function getTournamentLeaderboardCollection($tournamentID, $limit = 50, $qualified = false);
 
     public function getAllLeaderboardRecordsForTournament($tournament);
 

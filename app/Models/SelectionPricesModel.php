@@ -22,4 +22,5 @@ class SelectionPricesModel extends Eloquent{
         return $this->belongsTo('TopBetta\Models\SelectionsModel', 'selection_id', 'id');
     }
 
+
 }

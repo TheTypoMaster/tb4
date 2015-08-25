@@ -69,4 +69,17 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
 
         return $model->get();
     }
+
+
+
+    public function getEvent($eventId, $withSelections = false)
+    {
+        $model = $this->model->where('id', $eventId)->with('eventstatus');
+
+        if( $withSelections ) {
+            $model->with('markets.selections');
+        }
+
+        return $model->first();
+    }
 }

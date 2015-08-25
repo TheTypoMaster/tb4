@@ -29,4 +29,18 @@ class DbTournamentTicketBuyInHistoryRepository extends BaseEloquentRepository im
     {
         return $this->model->where('tournament_ticket_id', $ticketId)->where('tournament_buyin_type_id', $typeId)->count();
     }
+
+    public function getByBuyinTransaction($transaction)
+    {
+        return $this->model
+            ->where('buyin_transaction_id', $transaction)
+            ->first();
+    }
+
+    public function getByEntryTransaction($transaction)
+    {
+        return $this->model
+            ->where('entry_transaction_id', $transaction)
+            ->first();
+    }
 }

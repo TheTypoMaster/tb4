@@ -9,4 +9,8 @@
 interface SelectionRepositoryInterface {
 
     public function getByExternalIds($externalSelectionId, $externalMarketId, $externalEventId);
+
+    public function getSelectionsForEvent($event);
+
+    public function getSelectionsForMarkets($markets);
 }

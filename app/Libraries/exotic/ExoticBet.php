@@ -14,6 +14,8 @@ abstract class ExoticBet
 	public $selections;
 	public $betAmount;
 
+    protected $positionSelectionCount;
+
 	public function getFlexiPercentage()
 	{
 		$flexi = null;
@@ -58,7 +60,7 @@ abstract class ExoticBet
 	 * 
 	 * @return boolean
 	 */
-	protected function isBoxed()
+	public function isBoxed()
 	{
 		$boxTest = $this->selections;
 		unset($boxTest['first']);
@@ -79,5 +81,12 @@ abstract class ExoticBet
 		}
 		return (int) $count;
 	}
+
+    public function getPositionSelectionCount()
+    {
+        return $this->positionSelectionCount;
+    }
+
+    abstract function getCombinationCount();
 
 }

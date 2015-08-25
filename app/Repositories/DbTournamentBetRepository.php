@@ -82,4 +82,43 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->get(array("tbdb_tournament_bet.*"));
     }
 
+    public function getBetsOnEventForTicket($ticket, $event)
+    {
+        return $this->model
+            ->join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+            ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
+            ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
+            ->join('tbdb_event as e', 'e.id', '=', 'm.event_id')
+            ->where('tbdb_tournament_bet.tournament_ticket_id', $ticket)
+            ->where('e.id', $event)
+            ->groupBy('tbdb_tournament_bet.id')
+            ->get(array('tbdb_tournament_bet.*'));
+    }
+
+    public function getBetsForUserTournament($user, $tournament)
+    {
+        return $this->getBetBuilder()
+            ->join('tbdb_tournament_ticket as tt', 'tt.id', '=', 'tb.tournament_ticket_id')
+            ->where('tt.user_id', $user)
+            ->where('tt.tournament_id', $tournament)
+            ->get();
+    }
+
+    protected function getBetBuilder()
+    {
+        return $this->model
+            ->from('tbdb_tournament_bet as tb')
+            ->join('tbdb_bet_type as bt', 'bt.id', '=', 'tb.bet_type_id')
+            ->join('tbdb_tournament_bet_selection as bs', 'bs.tournament_bet_id', '=', 'tb.id')
+            ->join('tbdb_selection as s ', 's.id', '=', 'bs.selection_id')
+            ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
+            ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
+            ->join('tbdb_event as e', 'e.id', '=', 'm.event_id')
+            ->groupBy('tb.id')
+            ->select(array(
+                'tb.id as id', 'tb.win_amount', 'tb.fixed_odds', 'tb.resulted_flag', 'tb.bet_amount', 's.id as selection_id', 'bt.name as bet_type',
+                's.name as selection_name', 'm.id as market_id', 'mt.name as market_type', 'e.id as event_id', 'e.name as event_name',
+            ));
+    }
+
 } 
