@@ -161,14 +161,16 @@ class MeetingService {
 
             $meeting->races()->push($resource = new RaceResource($race));
 
+            $this->raceResourceService->loadTotesForRace($resource);
+
             if (($selected == $race->id) || (!$selectionsSet && $this->raceResourceService->isOpen($resource))) {
-                $resource->loadRelations('selections');
+                $resource->loadRelation('selections');
                 $selectionsSet = $race->id;
             }
         }
 
         if (!$selectionsSet) {
-            $meetings->first()->races()->first()->loadRelations('selections');
+            $meetings->first()->races()->first()->loadRelation('selections');
         }
 
         return array("data" => $meetings, "selected_race" => $selectionsSet);

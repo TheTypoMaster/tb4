@@ -36,7 +36,7 @@ class TournamentEventService {
 
     public function getEventGroups($tournament, $eventId = null)
     {
-        if( ! ($sport = $tournament->eventGroup->events->competition->first()->sport) || $sport->isRacing() ) {
+        if( ! ($sport = $tournament->getModel()->eventGroup->events->first()->competition->first()->sport) || $sport->isRacing() ) {
             return $this->getMeetings($tournament, $eventId);
         } else {
             $eventGroup = $this->competitionService->getCompetitionsWithEvents(array('competition_id' => $tournament->event_group_id))['data']->first();
@@ -48,7 +48,7 @@ class TournamentEventService {
 
     public function getMeetings($tournament, $eventId = null)
     {
-        $races = $tournament->eventGroup->events
+        $races = $tournament->getModel()->eventGroup->events
             ->load('competition');
 
         return $this->meetingService->getMeetingsByRaces($races, $eventId);
