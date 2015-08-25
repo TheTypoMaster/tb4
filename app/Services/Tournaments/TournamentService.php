@@ -163,7 +163,7 @@ class TournamentService {
     /**
      * @param \TopBetta\Models\UserModel $user
      * @param \TopBetta\Models\TournamentModel $tournament
-     * @return array
+     * @return \TopBetta\Models\TournamentTicketModel
      * @throws Exceptions\TournamentBuyInException
      * @throws TournamentEntryException
      * @throws \Exception
@@ -199,7 +199,7 @@ class TournamentService {
         //create history record
         $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
 
-        return $transactions;
+        return $ticket;
     }
 
     public function removeUserFromTournament($tournamentId, $userId)
