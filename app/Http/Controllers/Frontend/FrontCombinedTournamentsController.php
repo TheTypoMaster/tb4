@@ -109,6 +109,7 @@ class FrontCombinedTournamentsController extends Controller {
                 if ($racing['success']) {
                     if (!$meetings) {
                         $meetings = $racing;
+                        $nextEvent = $meetings['result']['races'][0]['id'];
                     } else {
                         $meetings['result']['races'] = array_merge($racing['result']['races'], $meetings['result']['races']);
                     }
