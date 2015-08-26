@@ -12,4 +12,6 @@ namespace TopBetta\Services\Email;
 interface ThirdPartyEmailServiceInterface {
 
     public function addUserToContacts($user);
+
+    public function updateContact($oldEmail, $user);
 }

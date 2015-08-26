@@ -214,4 +214,11 @@ class TournamentTicketService {
             throw new TournamentEntryException("You already have a ticket for this tournament");
         }
     }
+
+    public function setTicketPaid($ticket)
+    {
+        $this->tournamentTicketRepository->updateWithId($ticket->id, array(
+            'resulted_flag' => true,
+        ));
+    }
 }

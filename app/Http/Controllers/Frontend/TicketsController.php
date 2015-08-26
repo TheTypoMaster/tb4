@@ -9,6 +9,7 @@ use Auth;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Resources\Tournaments\TicketResource;
 use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 use TopBetta\Services\Exceptions\UnauthorizedAccessException;
 use TopBetta\Services\Resources\Tournaments\TicketResourceService;
@@ -119,7 +120,7 @@ class TicketsController extends Controller
             return $this->response->failed("Unknown Error");
         }
 
-        return $this->response->success("Ticket Purchased");
+        return $this->response->success((new TicketResource($ticket))->toArray());
     }
 
     /**

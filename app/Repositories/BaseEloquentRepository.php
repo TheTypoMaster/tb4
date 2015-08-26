@@ -147,5 +147,11 @@ class BaseEloquentRepository {
         return $model->delete();
     }
 
+    public function setValidator($validator)
+    {
+        $this->validator = $validator;
+        return $this;
+    }
+
 
 } 

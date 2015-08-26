@@ -22,4 +22,8 @@ interface TournamentRepositoryInterface
 
     public function getVisibleRacingTournaments(Carbon $date = null);
 
+    public function getFinishedUnresultedTournaments();
+
+    public function getUnresultedTournamentsByCompetition($competition);
+
 }

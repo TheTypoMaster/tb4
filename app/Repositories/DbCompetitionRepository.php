@@ -277,4 +277,12 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
 
 
+    public function getByEvent($event)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
+            ->where('ege.event_id', $event)
+            ->first();
+    }
+
 } 

@@ -1,30 +1,46 @@
 <?php namespace TopBetta\Http\Controllers\Admin;
 
+use Input;
 use TopBetta\Http\Controllers\Controller;
 use Redirect;
 use TopBetta\Models\BetModel;
 use TopBetta\Facades\BetLimitRepo;
+use TopBetta\Repositories\Contracts\UserRepositoryInterface;
+use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Repositories\UserRepo;
 use TopBetta\Models\UserModel;
 use Request;
+use TopBetta\Services\Email\Exceptions\EmailRequestException;
+use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
+use TopBetta\Services\Validation\Exceptions\ValidationException;
 use View;
 
 class UsersController extends Controller
 {
 
 	/**
-	 * @var UserRepo
+	 * @var UserRepositoryInterface
 	 */
 	private $userRepo;
 	protected $user;
 	private $bet;
+    /**
+     * @var UserTopBettaRepositoryInterface
+     */
+    private $topbettaUserRepository;
+    /**
+     * @var ThirdPartyEmailServiceInterface
+     */
+    private $emailService;
 
-	public function __construct(UserModel $user, UserRepo $userRepo, BetModel $bet)
+    public function __construct(UserModel $user, UserRepositoryInterface $userRepo, BetModel $bet, UserTopBettaRepositoryInterface $topbettaUserRepository, ThirdPartyEmailServiceInterface $emailService)
 	{
 		$this->user = $user;
 		$this->bet = $bet;
 		$this->userRepo = $userRepo;
-	}
+        $this->topbettaUserRepository = $topbettaUserRepository;
+        $this->emailService = $emailService;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -37,7 +53,7 @@ class UsersController extends Controller
 		if ($search) {
 			$users = $this->userRepo->search($search);
 		} else {
-			$users = $this->userRepo->allUsers();
+			$users = $this->userRepo->findAllPaginated(array('topbettaUser'));
 		}
 
 		return View::make('admin.users.index')
@@ -94,16 +110,50 @@ class UsersController extends Controller
 						->with('active', 'profile');
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param $userId
+     * @return Response
+     */
 	public function update($userId)
 	{
+        $user = $this->userRepo->find($userId);
+
+        $oldEmail = $user->email;
+
+        if( Input::get('username') != $user->username && $this->userRepo->getUserByUsername(Input::get('username')) ) {
+            return Redirect::route('admin.users.edit', array($userId))
+                ->with('flash_message', 'username already exists');
+        }
+
+        if( Input::get('email') != $user->email && $this->userRepo->getUserByEmail(Input::get('email')) ) {
+            return Redirect::route('admin.users.edit', array($userId))
+                ->with('flash_message', 'email already exists');
+        }
+
+        $this->userRepo->updateWithId($userId, array(
+            "name"     => Input::get('name'),
+            "username" => Input::get('username'),
+            "email"    => Input::get('email')
+        ));
+
+        $this->topbettaUserRepository->updateWithId($user->topbettauser->id, array(
+            "first_name" => Input::get('first-name'),
+            "last_name"  => Input::get('last-name'),
+            "msisdn"     => Input::get('mobile'),
+        ));
+
+        try {
+            $this->emailService->updateContact($oldEmail, $user->fresh());
+        } catch ( EmailRequestException $e ) {
+            return Redirect::route('admin.users.edit', array($userId))
+                ->with(array('flash_message' => "Error updating Vision6 record"));
+        }
+
+
 		return Redirect::route('admin.users.edit', array($userId))
-						->with('flash_message', 'NOT IMPLEMENTED YET!');
+						->with('flash_message', 'Saved');
 	}
 
 	/**

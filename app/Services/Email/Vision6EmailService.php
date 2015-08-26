@@ -32,6 +32,20 @@ class Vision6EmailService implements ThirdPartyEmailServiceInterface {
         return $this->mailer->addAndUpdateContacts(array($contact));
     }
 
+    public function updateContact($oldEmail, $user)
+    {
+        $contact = $this->mailer->getContactsByEmail(array($oldEmail));
+
+        if( ! count($contact) ) {
+            return $this->addUserToContacts($user);
+        }
+
+        $newContact = $this->formatUserAsContact($user);
+        $newContact['id'] = $contact[0]['id'];
+
+        return $this->mailer->editContacts(array($newContact));
+    }
+
     private function formatUserAsContact($user)
     {
         $fields = Config::get(self::THIRD_PARTY_MAILER . '.data.fields');

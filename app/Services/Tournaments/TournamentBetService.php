@@ -13,6 +13,7 @@ use Log;
 use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
+use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
 use TopBetta\Services\Betting\EventService;
 use TopBetta\Services\Betting\Factories\BetPlacementFactory;
 use TopBetta\Services\Tournaments\Betting\Factories\TournamentBetPlacementFactory;
@@ -33,6 +34,10 @@ class TournamentBetService {
      */
     private $betResultStatusRepository;
     /**
+     * @var TournamentBetResultService
+     */
+    private $resultService;
+    /**
      * @var TournamentTicketService
      */
     private $ticketService;
@@ -41,11 +46,12 @@ class TournamentBetService {
      */
     private $betTypeRepository;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentTicketService $ticketService, BetTypeRepositoryInterface $betTypeRepository)
+    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentBetResultService $resultService, TournamentTicketService $ticketService, BetTypeRepositoryInterface $betTypeRepository)
     {
         $this->betRepository = $betRepository;
         $this->eventService = $eventService;
         $this->betResultStatusRepository = $betResultStatusRepository;
+        $this->resultService = $resultService;
         $this->ticketService = $ticketService;
         $this->betTypeRepository = $betTypeRepository;
     }
@@ -73,6 +79,15 @@ class TournamentBetService {
         }
 
         return $bets;
+    }
+
+    public function refundBetsForEvent($eventId)
+    {
+        $bets = $this->betRepository->getBetsForEventByStatusIn($eventId, array($this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id));
+
+        foreach ($bets as $bet) {
+            $this->resultService->refundBet($bet);
+        }
     }
 
     public function placeBet($bet)

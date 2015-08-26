@@ -10,7 +10,7 @@ namespace TopBetta\Services\Email\ThirdParty;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Toptippa\Services\Email\Exceptions\EmailRequestException;
+use TopBetta\Services\Email\Exceptions\EmailRequestException;
 
 class Vision6 extends AbstractThirdPartyEmailService {
 
@@ -53,15 +53,38 @@ class Vision6 extends AbstractThirdPartyEmailService {
         return $response['result'];
     }
 
+    public function editContacts($contacts)
+    {
+        $response = $this->sendRequest('editContacts', array(
+            $this->getListid(),
+            $contacts
+        ));
+
+        return $response['id'];
+    }
+
     public function getList(){return $this->list;}
 
-    public function getContactsByEmail($listId, $contactEmails)
+    public function getListId()
+    {
+        if( ! $this->list ) {
+            if( $listId = array_get($this->data, 'list_id', false) ) {
+                return $listId;
+            } else {
+                $this->list = $this->getListByName($this->data['list_name']);
+            }
+        }
+
+        return $this->list['id'];
+    }
+
+    public function getContactsByEmail($contactEmails)
     {
         $searchCriteria = array(
             array("Email", "in", implode(",", $contactEmails))
         );
 
-        return $this->searchContacts($listId, $searchCriteria);
+        return $this->searchContacts($this->getListId(), $searchCriteria);
     }
 
     public function getListByName($name)
@@ -121,6 +144,7 @@ class Vision6 extends AbstractThirdPartyEmailService {
         try {
             $response = $this->client->post(self::API_URL, array(
                 "json" => $payload,
+                "connect_timeout" => \Config::get('vision6.connection_timeout'),
             ));
         } catch(RequestException $e) {
             throw new EmailRequestException($e->getMessage());

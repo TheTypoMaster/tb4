@@ -103,9 +103,9 @@ class BetResultRepo
 	 */
 	public function resultAllBetsForEvent($eventId)
 	{
-		// we only want bets that are "unresulted" status id: 1
+		// we only want bets that are "unresulted" status id: 1 or partially refunded, status id: 3
 		$bets = Bet::where('event_id', $eventId)
-				->where('bet_result_status_id', 1)
+				->whereIn('bet_result_status_id', array(1,3))
 				->where('resulted_flag', 0)
 				->with('selections')
 				->get();

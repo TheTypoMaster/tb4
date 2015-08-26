@@ -68,7 +68,62 @@ class AdminFilter {
         }
 
         if ( ! Sentry::findUserById(Auth::user()->id)->hasAccess(self::ROUTE_PREFIX . '.' . $permission) ) {
-            App::abort(403, "Unauthorized action");
+
+            if( \Session::get("redirect") ) {
+                return \Redirect::to('/admin')
+                    ->with(array("flash_message" => "Access forbidden"));
+            }
+
+            return \Redirect::back()
+                ->with(array("flash_message" => "Access forbidden", "redirect" => true));
         }
+    }
+
+    public function getPermissionForRouteName($name, $prefix = self::ROUTE_PREFIX)
+    {
+        //get the route
+        if( preg_match('/^' . $prefix . '\.(.*)\.(index|create|edit|update|store|destroy)$/', $name, $matches) ) {
+            $resource = $matches[1];
+            $action = $matches[2];
+
+            //check each action
+            switch($action) {
+                case 'index':
+                case 'show':
+                    $permission = $resource . '.view';
+                    break;
+                case 'create':
+                case 'store':
+                    $permission = $resource . '.create';
+                    break;
+                case 'edit':
+                case 'update':
+                    $permission = $resource . '.edit';
+                    break;
+                case 'destroy':
+                    $permission = $resource . '.delete';
+                    break;
+                default:
+                    throw new \Exception("Unknown Route");
+            }
+
+            return $prefix . '.' . $permission;
+        }
+
+        throw new\Exception("No Matching Routes " . $name);
+    }
+
+    public function getPermissionForUri($uri)
+    {
+        //get the permission
+        $permission = array_where(Config::get('adminresources.custom_routes'), function($k, $v) use ($uri) {
+            return preg_match('/' . str_replace('/', '\/', $v['uri']) . '/', AdminFilter::ROUTE_PREFIX . '/' . $uri);
+        });
+
+        if ( empty($permission) ) {
+            throw new \Exception("Unknown Route");
+        }
+        //permission name
+        return array_values($permission)[0]['permission'];
     }
 }
