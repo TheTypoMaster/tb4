@@ -12,8 +12,10 @@ use Carbon;
 use Queue;
 use Config;
 
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
@@ -33,6 +35,14 @@ class RaceResulting {
      * @var BetResultService
      */
     private $betResultService;
+    /**
+     * @var BetTypeRepositoryInterface
+     */
+    private $betTypeRepository;
+    /**
+     * @var ResultPricesRepositoryInterface
+     */
+    private $resultPricesRepository;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -40,7 +50,9 @@ class RaceResulting {
                                 CompetitionRepositoryInterface $competitions,
                                 BetProductRepositoryInterface $betproducts,
                                 BetResultRepo $betresults,
-                                BetResultService $betResultService){
+                                BetResultService $betResultService,
+                                BetTypeRepositoryInterface $betTypeRepository,
+                                ResultPricesRepositoryInterface $resultPricesRepository){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -49,6 +61,8 @@ class RaceResulting {
         $this->betresults = $betresults;
         $this->betResultService = $betResultService;
         $this->logprefix = 'RaceResultService - Result Events: ';
+        $this->betTypeRepository = $betTypeRepository;
+        $this->resultPricesRepository = $resultPricesRepository;
     }
 
     public function ResultEvents($racingArray){
@@ -89,7 +103,7 @@ class RaceResulting {
             $log_msg_prefix = $this->logprefix. " MID:$meetingId, RN:$raceNo -";
 
             // check if this is a product we need to store in the DB
-            $productUsed = $this->_canProductBeProcessed($dataArray, $providerName, $raceNo, "Result");
+            $productUsed = $this->betproducts->getProductByCode($priceType);
 
             // dont process if TB does not use this
             if(!$productUsed) {
