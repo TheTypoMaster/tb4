@@ -42,7 +42,9 @@ class TournamentLeaderboardController extends Controller
             return $this->response->failed("Unknown error");
         }
 
-        return $this->response->success($leaderboard->toArray());
+        $leaderboard = $leaderboard->toArray();
+
+        return $this->response->success($leaderboard['data'], 200, array_except($leaderboard, 'data'));
     }
 
     /**
