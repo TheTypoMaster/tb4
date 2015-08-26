@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources\Tournaments;
 
 
 use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
+use TopBetta\Resources\PaginatedEloquentResourceCollection;
 use TopBetta\Resources\Tournaments\TournamentLeaderboard;
 
 class LeaderboardResourceService {
@@ -24,16 +25,43 @@ class LeaderboardResourceService {
         $this->leaderboardRepository = $leaderboardRepository;
     }
 
+    /**
+     * @param $tournamentId
+     * @param int $limit
+     * @param bool $onlyQualified
+     * @return PaginatedEloquentResourceCollection
+     */
     public function getTournamentLeaderboard($tournamentId, $limit = 50, $onlyQualified = false)
     {
-        $leaderboard = $this->leaderboardRepository->getTournamentLeaderboardCollection($tournamentId, $limit, true);
+        $leaderboard = $this->leaderboardRepository->getTournamentLeaderboardPaginated($tournamentId, $limit);
 
-        if (! $onlyQualified && $leaderboard->count() < $limit) {
-            $leaderboard = $leaderboard->merge(
-                $this->leaderboardRepository->getTournamentLeaderboardCollection($tournamentId, $limit - $leaderboard->count(), false)
-            );
+        $leaderboard = new PaginatedEloquentResourceCollection($leaderboard, 'TopBetta\Resources\Tournaments\LeaderboardResource');
+
+        return $this->assignPositions($leaderboard, $this->leaderboardRepository->getLeaderBoardPositionForUser($leaderboard->first()->user_id, $tournamentId));
+    }
+
+    protected function assignPositions($leaderboard, $startPosition = 1)
+    {
+        $position = $startPosition;
+        $lastCurrency = $leaderboard->first()->currency;
+        $index = $startPosition;
+
+        foreach ($leaderboard as $record) {
+            if( $record->currency != $lastCurrency ) {
+                $position = $index;
+            }
+
+            if( $record->qualified() ) {
+                $record->setPosition($position);
+            } else {
+                $record->setPosition('-');
+            }
+
+            $lastCurrency = $record->currency;
+
+            $index++;
         }
 
-        return new TournamentLeaderboard($leaderboard, 'TopBetta\Resources\Tournaments\LeaderboardResource');
+        return $leaderboard;
     }
 }

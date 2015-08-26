@@ -7,6 +7,8 @@
  */
 namespace TopBetta\Repositories\Contracts;
 
+use DB;
+
 interface TournamentLeaderboardRepositoryInterface
 {
     /**
@@ -30,4 +32,6 @@ interface TournamentLeaderboardRepositoryInterface
     public function getLeaderBoardPositionForUser($userId, $tournamentId, $qualified = true);
 
     public function getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified = true);
+
+    public function getTournamentLeaderboardPaginated($tournamentID, $limit = 50);
 }
