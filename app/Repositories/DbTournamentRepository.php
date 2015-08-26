@@ -122,8 +122,8 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
     public function getFinishedUnresultedTournaments()
     {
         return $this->model
-            ->join('tbdb_event_group as eg', 'eg.id', '=', 'tbdb_tournament.event_group_id')
-            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'eg.id')
+            ->join('tb_tournament_event_group as eg', 'eg.id', '=', 'tbdb_tournament.event_group_id')
+            ->join('tb_tournament_event_group_event as ege', 'ege.event_group_id', '=', 'eg.id')
             ->leftJoin('tbdb_event as e', function($q) {
                 $q->on('e.id', '=', 'ege.event_id')
                     ->on('e.paid_flag', '=', \DB::raw(0));
@@ -149,7 +149,7 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
         $model = $this->getVisibleTournamentBuilder($date);
 
         //join competition and sport and look for non racing sports
-        $model->join('tbdb_event_group as eg', 'eg.id', '=', 't.event_group_id')
+        $model->join('tb_tournament_event_group as eg', 'eg.id', '=', 't.event_group_id')
             ->join('tb_sports as s', 's.id', '=', 'eg.sport_id')
             ->whereNotIn('s.name', array(SportRepositoryInterface::SPORT_GALLOPING, SportRepositoryInterface::SPORT_GREYHOUNDS, SportRepositoryInterface::SPORT_HARNESS));
 
@@ -161,7 +161,7 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
         $model = $this->getVisibleTournamentBuilder($date);
 
         //join competition and sport and look for racing
-        $model->join('tbdb_event_group as eg', 'eg.id', '=', 't.event_group_id')
+        $model->join('tb_tournament_event_group as eg', 'eg.id', '=', 't.event_group_id')
             ->leftJoin('tb_sports as s', 's.id', '=', 'eg.sport_id')
             ->where(function($q) {
                 $q->whereIn('s.name', array(SportRepositoryInterface::SPORT_GALLOPING, SportRepositoryInterface::SPORT_GREYHOUNDS, SportRepositoryInterface::SPORT_HARNESS))
