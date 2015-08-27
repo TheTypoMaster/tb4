@@ -37,7 +37,11 @@ class LeaderboardResourceService {
 
         $leaderboard = new PaginatedEloquentResourceCollection($leaderboard, 'TopBetta\Resources\Tournaments\LeaderboardResource');
 
-        return $this->assignPositions($leaderboard, $this->leaderboardRepository->getLeaderBoardPositionForUser($leaderboard->first()->user_id, $tournamentId));
+        if ($leaderboard->count()) {
+            return $this->assignPositions($leaderboard, $this->leaderboardRepository->getLeaderBoardPositionForUser($leaderboard->first()->user_id, $tournamentId));
+        }
+
+        return $leaderboard;
     }
 
     protected function assignPositions($leaderboard, $startPosition = 1)
