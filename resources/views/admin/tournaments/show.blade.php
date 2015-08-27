@@ -7,7 +7,11 @@
                 <h2 class="col-lg-6">Tournament <small>{{ $tournament->name }}</small></h2>
             </div>
 
-            <h4>Entrants</h4>
+            <h4>
+                Entrants
+                {!! link_to('/admin/tournaments/download/entrants?tournament_id='.$tournament->id, "Download", array("class" => "btn btn-primary")) !!}
+            </h4>
+
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
