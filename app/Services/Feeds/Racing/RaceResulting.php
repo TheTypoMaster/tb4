@@ -242,31 +242,4 @@ class RaceResulting {
                     'status_code' => 200);
 
     }
-
-    private function _canProductBeProcessed($dataArray, $providerName, $raceNo, $type = null)
-    {
-        $productUsed = false;
-        $meetingId = $dataArray['MeetingId'];
-        $betType = $dataArray['BetType'];
-        $priceType = $dataArray['PriceType'];
-
-        // get meeting details
-        $meetingTypeCodeResult = $this->competitions->getMeetingDetails($meetingId);
-
-        if(!$meetingTypeCodeResult) return false;
-
-        $meetingTypeCode = $meetingTypeCodeResult['type_code'];
-        $meetingCountry = $meetingTypeCodeResult['country'];
-        $meetingGrade = $meetingTypeCodeResult['meeting_grade'];
-
-        // check if product is used
-        $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
-
-        if (!$productUsed) {
-            Log::debug($this->logprefix . "Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
-            return false;
-        }
-        Log::info($this->logprefix . "Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
-        return true;
-    }
 }

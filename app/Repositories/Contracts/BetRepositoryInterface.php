@@ -35,4 +35,8 @@ interface BetRepositoryInterface {
     public function getByEntryTransaction($transaction);
 
     public function findBets($bets);
+
+    public function getBetsForEventByStatus($event, $status, $type = null);
+
+    public function getBetsForEventByStatusAndProduct($event, $status, $type = null);
 }
