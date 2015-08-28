@@ -62,4 +62,9 @@ class PaginatedEloquentResourceCollection implements ResourceCollectionInterface
         return $this->collection->first();
     }
 
+    public function count()
+    {
+        return $this->collection->count();
+    }
+
 }
