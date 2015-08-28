@@ -111,6 +111,7 @@ class BetResultService {
     /**
      * results all unresulted bets for event
      * @param $event
+     * @param $product
      * @return bool
      * @throws \Exception
      */
@@ -118,16 +119,17 @@ class BetResultService {
     {
         //get bets to result
         if ( $this->eventService->isEventInterim($event) ) {
-            $bets = $this->betRepository->getBetsForEventByProductAndStatus(
+            $bets = $this->betRepository->getBetsForEventByStatusAndProduct(
                 $event->id,
                 $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
                 $product->id,
                 $this->betTypeRepository->getBetTypeByName(BetTypeRepositoryInterface::TYPE_WIN)->id
             );
         } else if ( $this->eventService->isEventPaying($event) ) {
-            $bets = $this->betRepository->getBetsForEventByProductAndStatus(
+            $bets = $this->betRepository->getBetsForEventByStatusAndProduct(
                 $event->id,
-                $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id
+                $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                 $product
             );
         } else {
             throw new \Exception("Event not paying or interim");
@@ -185,7 +187,7 @@ class BetResultService {
         $this->setBetResulted($bet);
 
         //send bet to risk
-        \TopBetta\RiskManagerAPI::sendBetResult($bet);
+        \TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
 
         //send bet to dashboard
         if( $transaction ) {
