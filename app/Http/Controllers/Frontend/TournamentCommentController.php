@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Resources\Tournaments\CommentResource;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Tournaments\TournamentCommentService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -81,7 +82,7 @@ class TournamentCommentController extends Controller
             return $this->response->failed("Unknown error");
         }
 
-        return $this->response->success("Comment saved");
+        return $this->response->success((new CommentResource($comment))->toArray());
     }
 
     /**
