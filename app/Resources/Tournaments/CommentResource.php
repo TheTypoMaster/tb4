@@ -16,9 +16,19 @@ class CommentResource extends AbstractEloquentResource
 
     protected $attributes = array(
         'id'           => 'id',
-        'username'     => 'user.username',
+        'username'     => 'username',
         'tournamentId' => 'tournament_id',
         'comment'      => 'comment',
-        'date'         => 'created_at',
+        'date'         => 'date',
     );
+
+    public function getUsername()
+    {
+        return $this->model->user ? $this->model->user->username : null;
+    }
+
+    public function getDate()
+    {
+        return $this->model->created_at->toDateTimeString();
+    }
 }
