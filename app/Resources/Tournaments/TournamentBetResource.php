@@ -40,4 +40,5 @@ class TournamentBetResource extends AbstractEloquentResource
         "eventId"     => "int"
     );
 
+
 }
