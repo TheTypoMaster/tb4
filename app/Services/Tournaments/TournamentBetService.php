@@ -15,6 +15,7 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 use TopBetta\Services\Betting\Factories\BetPlacementFactory;
+use TopBetta\Services\Resources\Tournaments\TournamentBetResourceService;
 use TopBetta\Services\Tournaments\Betting\Factories\TournamentBetPlacementFactory;
 use TopBetta\Services\Validation\TournamentBetValidator;
 
@@ -40,21 +41,26 @@ class TournamentBetService {
      * @var BetTypeRepositoryInterface
      */
     private $betTypeRepository;
+    /**
+     * @var TournamentBetResourceService
+     */
+    private $betResourceService;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentTicketService $ticketService, BetTypeRepositoryInterface $betTypeRepository)
+    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentTicketService $ticketService, BetTypeRepositoryInterface $betTypeRepository, TournamentBetResourceService $betResourceService)
     {
         $this->betRepository = $betRepository;
         $this->eventService = $eventService;
         $this->betResultStatusRepository = $betResultStatusRepository;
         $this->ticketService = $ticketService;
         $this->betTypeRepository = $betTypeRepository;
+        $this->betResourceService = $betResourceService;
     }
 
     public function getBetsForUserInTournamentWhereEventClosed($user, $tournament)
     {
         $statuses = $this->eventService->getClosedEventStatusIds();
 
-        return $this->betRepository->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
+        return $this->betResourceService->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
     }
 
     public function refundBetsForSelection($selection)
@@ -86,6 +92,7 @@ class TournamentBetService {
         $betType = $this->betTypeRepository->getBetTypeByName($bet['bet_type']);
 
         $placementService = TournamentBetPlacementFactory::make($betType->name);
+
         return $placementService->placeBet($ticket, $bet['selections'], $bet['amount'], $betType);
     }
 }
