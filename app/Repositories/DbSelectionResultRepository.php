@@ -45,4 +45,11 @@ class DbSelectionResultRepository extends BaseEloquentRepository implements Sele
     {
         return \DB::statement('DELETE sr.* FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id WHERE mk.id = '. $marketId);
     }
+
+    public function deleteResults($resultIds)
+    {
+        return $this->model
+            ->whereIn('id', $resultIds)
+            ->delete();
+    }
 } 

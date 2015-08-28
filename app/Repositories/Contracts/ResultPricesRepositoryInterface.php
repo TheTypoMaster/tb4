@@ -9,4 +9,7 @@ namespace TopBetta\Repositories\Contracts;
 
 interface ResultPricesRepositoryInterface
 {
+    public function deletePricesForResults($resultIds);
+
+    public function deleteExoticPricesForEventAndProduct($event, $product);
 }
