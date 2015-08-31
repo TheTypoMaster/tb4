@@ -15,6 +15,7 @@ class LeaderboardResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         "id" => "id",
+        "userId" => "user_id",
         "username" => "username",
         "currency" => 'currency',
         'turned_over' => 'turned_over',

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Resources\Tournaments\TournamentBetResourceService;
@@ -93,7 +94,7 @@ class TournamentBetsController extends Controller
             return $this->response->failed($e->getMessage());
         }
 
-        return $this->response->success("Bet placed");
+        return $this->response->success((new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource'))->toArray());
     }
 
     /**

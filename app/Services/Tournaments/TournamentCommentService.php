@@ -80,11 +80,13 @@ class TournamentCommentService {
             $comment = str_ireplace($word, str_repeat('*', strlen($word)), $comment);
         }
 
-        return $this->commentRepository->create(array(
+        $comment =  $this->commentRepository->create(array(
             "tournament_id" => $tournament->id,
             "user_id" => $user,
             "comment" => $comment,
         ));
+
+        return $this->commentRepository->find($comment['id']);
     }
 
     public function canComment($tournament)

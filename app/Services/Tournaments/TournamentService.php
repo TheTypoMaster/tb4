@@ -146,7 +146,13 @@ class TournamentService {
             }
         }
 
-        return array('data' => $tournament, 'selected_event' => $events['selected_event']);
+        $data = array("data" => $tournament);
+
+        if ($selected = array_get($events, 'selected_race')) {
+            $data['selected_race'] = $selected;
+        }
+
+        return $data;
     }
 
     public function storeTournamentTicket($user, $tournamentId)
@@ -163,7 +169,7 @@ class TournamentService {
     /**
      * @param \TopBetta\Models\UserModel $user
      * @param \TopBetta\Models\TournamentModel $tournament
-     * @return array
+     * @return \TopBetta\Models\TournamentTicketModel
      * @throws Exceptions\TournamentBuyInException
      * @throws TournamentEntryException
      * @throws \Exception
@@ -199,7 +205,7 @@ class TournamentService {
         //create history record
         $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
 
-        return $transactions;
+        return $ticket;
     }
 
     public function removeUserFromTournament($tournamentId, $userId)
