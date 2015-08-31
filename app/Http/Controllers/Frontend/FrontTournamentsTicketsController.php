@@ -12,6 +12,7 @@ use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 use TopBetta\Services\Tournaments\TournamentLeaderboardService;
 use Response;
 use TopBetta\Services\Tournaments\TournamentBuyInRulesService;
+use TopBetta\Services\Affiliates\AffiliateTournamentService;
 
 class FrontTournamentsTicketsController extends Controller {
 
@@ -35,13 +36,18 @@ class FrontTournamentsTicketsController extends Controller {
      * @var TournamentBuyInRulesService
      */
     private $tournamentBuyinRulesService;
+    /**
+     * @var AffiliateTournamentService
+     */
+    private $affiliateTournamentService;
 
 
     public function __construct(UserAccountService $userAccountService,
                                 TournamentDashboardNotificationService $tournamentDashboardNotificationService,
                                 TournamentBuyInService $tournamentService,
                                 TournamentLeaderboardService $leaderboardService,
-                                TournamentBuyInRulesService $tournamentBuyinRulesService)
+                                TournamentBuyInRulesService $tournamentBuyinRulesService,
+                                AffiliateTournamentService $affiliateTournamentService)
     {
 		$this -> beforeFilter('auth');
         $this->userAccountService = $userAccountService;
@@ -49,6 +55,7 @@ class FrontTournamentsTicketsController extends Controller {
         $this->tournamentService = $tournamentService;
         $this->leaderboardService = $leaderboardService;
         $this->tournamentBuyinRulesService = $tournamentBuyinRulesService;
+        $this->affiliateTournamentService = $affiliateTournamentService;
     }
 
 	public function nextToJump() {
@@ -374,41 +381,54 @@ class FrontTournamentsTicketsController extends Controller {
 				if (isset($tournaments['use_free_credit'])) {
 					$tournDetailsArray['chkFreeBet'] = $tournaments['use_free_credit'];
 				}
-				
-				$ticket = $l -> query('saveTournamentTicket', $tournDetailsArray);
-	
-				if ($ticket['status'] == 200) {
-                    //get the tournament
-                    $tournament = \TopBetta\Models\Tournament::find($tournamentId);
 
-                    //decrease turnover balance
-                    $this->userAccountService->decreaseBalanceToTurnOver(
-                        \Auth::user()->id,
-                        $tournament->buy_in + $tournament->entry_fee,
-                        true
-                    );
+                $user = Auth::user();
 
-                    //store buyin history record
-                    $this->tournamentService->createTournamentEntryHistoryRecord($ticket['ticket_id'], $ticket['transactions']['buyin_transaction'], $ticket['transactions']['entry_transaction']);
+                if (! $user->affiliate || $this->affiliateTournamentService->affiliateIsExternallyEntered($user->afiiliate)) {
 
-                    $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
+                    $ticket = $l->query('saveTournamentTicket', $tournDetailsArray);
 
-					$messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
-	
-				} elseif ($ticket['status'] == 401) {
-	
-					return Response::json(array("success" => false, "error" => "Please login first."), 401);
-	
-				} elseif ($ticket['status'] == 500) {
-	
-					$messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
-					$errors++;
-	
-				} else {
-	
-					return array("success" => false, "error" => $ticket, "status" => $ticket['status']);
-	
-				}
+                    if ($ticket['status'] == 200) {
+                        //get the tournament
+                        $tournament = \TopBetta\Models\Tournament::find($tournamentId);
+
+                        //decrease turnover balance
+                        $this->userAccountService->decreaseBalanceToTurnOver(
+                            \Auth::user()->id,
+                            $tournament->buy_in + $tournament->entry_fee,
+                            true
+                        );
+
+                        //store buyin history record
+                        $this->tournamentService->createTournamentEntryHistoryRecord($ticket['ticket_id'], $ticket['transactions']['buyin_transaction'], $ticket['transactions']['entry_transaction']);
+
+                        $this->tournamentDashboardNotificationService->notify(array("id" => $ticket['ticket_id'], "transactions" => $ticket['transactions'], "free-credit-transactions" => $ticket['free-credit-transactions']));
+
+                        $messages[] = array("id" => $tournamentId, "success" => true, "result" => $ticket['success']);
+
+                    } elseif ($ticket['status'] == 401) {
+
+                        return Response::json(array("success" => false, "error" => "Please login first."), 401);
+
+                    } elseif ($ticket['status'] == 500) {
+
+                        $messages[] = array("id" => $tournamentId, "success" => false, "error" => $ticket['error_msg']);
+                        $errors++;
+
+                    } else {
+
+                        return array("success" => false, "error" => $ticket, "status" => $ticket['status']);
+
+                    }
+                } else {
+                    try {
+                        $ticket = $this->affiliateTournamentService->enterUserInTournament($user, $tournamentId);
+                    } catch (TopBetta\Services\Tournaments\Exceptions\TournamentEntryException $e) {
+                        return array("succes" => false, "error" => $e->getMessage(), "status" => 500);
+                    }
+
+                    return array("succes" => true, "result" => "Tournament entered");
+                }
 			}else{
 				return Response::json(array("success" => false, "error" => \Lang::get('tournaments.existing_ticket')), 429);
 			}

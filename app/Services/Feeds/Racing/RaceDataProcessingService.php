@@ -377,7 +377,10 @@ class RaceDataProcessingService {
 
 
 			// if this event was abandoned - result bets
-			if ($raceDetails['event_status_id'] == 3) $this->betresultrepository->resultAllBetsForEvent($eventId);
+			if ($raceDetails['event_status_id'] == 3) {
+                $this->betresultrepository->resultAllBetsForEvent($eventId);
+                \Queue::push('TopBetta\Services\Tournaments\Queue\TournamentBetRefundQueueService', array("event_id" => $eventId), \Config::get('betresulting.queue'));
+            }
 
 			// N2J cache object check
 			$this->nexttojump->manageCache($existingRaceDetails, $raceDetails);

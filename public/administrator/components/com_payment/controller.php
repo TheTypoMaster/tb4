@@ -106,8 +106,9 @@ class PaymentController extends JController {
     	$err = array();
     	
     	$paramValues = array();
-    	$paramsPosted = JRequest::getVar( 'params', '', 'post');
+    	$paramsPosted = JRequest::getVar( 'params', '', 'post', 'STRING', JREQUEST_ALLOWRAW);
     	$postedValues = array();
+
     	foreach( $model->paramFields as $paramField )
     	{
     		$value = $postedValues[$paramField] = $paramsPosted[$paramField];

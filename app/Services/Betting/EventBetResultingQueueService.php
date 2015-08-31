@@ -12,8 +12,11 @@ use Log;
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
+use TopBetta\Services\Tournaments\Exceptions\TournamentResultedException;
+use TopBetta\Services\Tournaments\Resulting\TournamentResulter;
 
 class EventBetResultingQueueService {
 
@@ -41,14 +44,30 @@ class EventBetResultingQueueService {
      * @var EventService
      */
     private $eventService;
+    /**
+     * @var TournamentRepositoryInterface
+     */
+    private $tournamentRepository;
+    /**
+     * @var TournamentResulter
+     */
+    private $tournamentResulter;
 
-    public function __construct(EventRepositoryInterface $eventRepositoryInterface, TournamentBetResultService $tournamentBetResultService,  BetResultService $betResultService, BetProductRepositoryInterface $betProductRepository, EventService $eventService)
+    public function __construct(EventRepositoryInterface $eventRepositoryInterface, 
+                                TournamentBetResultService $tournamentBetResultService,  
+                                BetResultService $betResultService, 
+                                BetProductRepositoryInterface $betProductRepository, 
+                                EventService $eventService, 
+                                TournamentRepositoryInterface $tournamentRepository,
+                                TournamentResulter $tournamentResulter)
     {
         $this->tournamentBetResultService = $tournamentBetResultService;
         $this->eventRepositoryInterface = $eventRepositoryInterface;
         $this->betResultService = $betResultService;
         $this->betProductRepository = $betProductRepository;
         $this->eventService = $eventService;
+        $this->tournamentRepository = $tournamentRepository;
+        $this->tournamentResulter = $tournamentResulter;
     }
 
     public function fire($job, $data)
@@ -63,9 +82,19 @@ class EventBetResultingQueueService {
 
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
-        $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event);
+        $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
 
         $this->eventService->checkAndSetPaidStatus($event);
+
+        $tournaments = $this->tournamentRepository->getFinishedUnresultedTournaments();
+
+        foreach ($tournaments as $tournament) {
+            try {
+                $this->tournamentResulter->resultTournament($tournament);
+            } catch (TournamentResultedException $e) {
+                \Log::error("Tournament " . $tournament->id . " is already resulted");
+            }
+        }
 
         return $job->delete();
     }

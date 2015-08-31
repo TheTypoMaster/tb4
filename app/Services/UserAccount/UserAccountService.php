@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use TopBetta\Models\UserAudit;
 use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Exceptions\InvalidFormatException;
+use TopBetta\Services\UserAccount\Exceptions\AccountExistsException;
+use TopBetta\Services\Validation\TournamentUserValidator;
 use Validator;
 use Hash;
 use Mail;
@@ -395,86 +397,22 @@ class UserAccountService {
         return $this->fullUser->getUserByNameAndDob($firstName, $lastName);
     }
 
-    public function setBetLimit($user, $amount)
+    public function createTournamentAccount($input, $affiliate)
     {
-        $currentLimit = $user->topbettauser->bet_limit;
+        //check user does not exist first
+        $user = $this->basicUser->getUserByExternalIdAndAffiliate(array_get($input, 'external_unique_identifier'), $affiliate->affiliate_id);
 
-        if ($currentLimit < 0 || $amount <= $currentLimit) {
-            $this->updateBetLimitForUser($user, $amount);
-            return self::BET_LIMIT_UPDATED;
+        if ($user) {
+            throw new AccountExistsException;
         }
 
-        $this->updateRequestedBetLimitForuser($user, $amount);
-        return self::BET_LIMIT_REQUESTED;
-    }
+        $this->basicUser->setValidator(new TournamentUserValidator);
 
-    public function removeBetLimit($user)
-    {
-        if ($user->topbettauser->bet_limit < 0) {
-            throw new \InvalidArgumentException("Currently have no bet limit");
-        }
-
-        // -1 for no bet limit
-        $this->updateRequestedBetLimitForUser($user, -1);
-    }
-
-    public function updateBetLimitForUser($user, $amount)
-    {
-        $this->auditService->createAuditRecord($user, 'bet_limit', $user->topbettauser->bet_limit, $amount);
-
-        $data = array(
-            "bet_limit" => $amount
-        );
-
-        if ($user->topbettauser->requested_bet_limit) {
-            $this->sendBetLimitRequestCancelledEmail($user, $amount);
-            $data['requested_bet_limit'] = 0;
-        }
-
-        $this->fullUser->updateWithId($user->topbettauser->id, $data);
-    }
-
-    public function updateRequestedBetLimitForUser($user, $amount)
-    {
-        if ($amount == $user->topbettauser->requested_bet_limit) {
-            throw new \InvalidArgumentException("Bet limit already requested");
-        }
-
-        $this->auditService->createAuditRecord($user, 'requested_bet_limit', $user->topbettauser->requested_bet_limit, $amount);
-
-        $this->fullUser->updateWithId($user->topbettauser->id, array(
-            "requested_bet_limit" => $amount
+        return $this->basicUser->create(array(
+            "username" => array_get($input, "tournament_username"),
+            "external_user_id" => array_get($input, "external_unique_identifier"),
+            "affiliate_id" => $affiliate->affiliate_id
         ));
-
-        $this->sendBetLimitRequestedEmail($user, $amount);
-    }
-
-    public function sendBetLimitRequestedEmail($user, $amount)
-    {
-        try {
-            Mail::send('emails.bet-limit.limit-requested', compact('user', 'amount'), function ($message) {
-                $message->subject("Bet Limit Request")
-                    ->from(\Config::get('mail.from.address'), \Config::get('mail.from.name'))
-                    ->to(\Config::get('mail.from.address'), \Config::get('mail.from.name'));
-            });
-        } catch (\Exception $e) {
-            \Log::error("Error sending bet limit request email for user " . $user->id . " amount " . $amount);
-            \Log::error("UserAccountService: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
-        }
-    }
-
-    public function sendBetLimitRequestCancelledEmail($user, $amount)
-    {
-        try {
-            Mail::send('emails.bet-limit.limit-cancelled', compact('user', 'amount'), function ($message) {
-                $message->subject("Bet Limit Request")
-                    ->from(\Config::get('mail.from.address'), \Config::get('mail.from.name'))
-                    ->to(\Config::get('mail.from.address'), \Config::get('mail.from.name'));
-            });
-        } catch (\Exception $e) {
-            \Log::error("Error sending bet limit request cancelled email for user " . $user->id . " amount " . $amount);
-            \Log::error("UserAccountService: " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
-        }
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

@@ -138,7 +138,7 @@ class TournamentAdminService {
         }
 
         //create the promo transaction
-        $transaction = $this->accountTransactionService->increaseAccountBalance($user->id, $tournament->buy_in + $tournament->entry_fee, AccountTransactionTypeRepositoryInterface::TYPE_PROMO, Auth::user()->id);
+        $transaction = $this->accountTransactionService->increaseAccountBalance($user->id, $tournament->buy_in + $tournament->entry_fee, AccountTransactionTypeRepositoryInterface::TYPE_PROMO_TOURNAMENT_ENTRY, Auth::user()->id);
 
         if( ! $transaction ) {
             throw new TournamentEntryException("Error creating promo transaction");

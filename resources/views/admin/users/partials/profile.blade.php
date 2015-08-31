@@ -1,5 +1,5 @@
 <div class='col-lg-6'>
-	{!! Form::model($user, array('method' => 'PATCH', 'route' => array('admin.users.update', $user->id))) !!}
+	{!! Form::model($user, array('method' => 'PUT', 'route' => array('admin.users.update', $user->id))) !!}
 	<div class="form-group">
 		{!! Form::label('name', 'Name:') !!}
 		{!! Form::text('name', null, array('class' => 'form-control', 'placeholder' => 'Name')) !!}

@@ -17,7 +17,7 @@
                 <span class='pull-right'>{!! link_to_route('admin.promotions.index', 'Back to Promotions', array(), array('class' => 'btn btn-outline btn-warning')) !!}</span>
             </ul>
             <h4>Create Promotion</h4>
-            {!! Form::model($promotion, array('method' => 'PATCH', 'route' => array('admin.promotions.update', $promotion->pro_id, "q"=>$search))) !!}
+            {!! Form::model($promotion, array('method' => 'PUT', 'route' => array('admin.promotions.update', $promotion->pro_id, "q"=>$search))) !!}
             <div class='col-lg-6'>
 
                 <div class="form-group">

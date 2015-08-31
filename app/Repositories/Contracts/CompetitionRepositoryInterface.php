@@ -13,6 +13,8 @@ interface CompetitionRepositoryInterface {
 
     public function findAllSportsCompetitions($paged = null);
 
+    public function getByEvent($event);
+
     public function getVisibleCompetitions(Carbon $date = null);
 
     public function syncProductsForBetType(CompetitionModel $meeting, $productIds, $betTypeId);

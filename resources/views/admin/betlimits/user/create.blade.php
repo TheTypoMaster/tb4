@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		@include('admin.users.partials.header')
-		<h4>Add Bet Limit</h4>	
+
 		<div class='col-lg-6'>
 			{!! Form::open(array('route' => array('admin.users.bet-limits.store', $user->id))) !!}
 			<div class="form-group">
