@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Tournaments\Betting\Factories;
 
 
+use TopBetta\Models\BetProductModel;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
 class TournamentBetPlacementFactory {
@@ -17,16 +18,24 @@ class TournamentBetPlacementFactory {
      * @param $betType
      * @return \TopBetta\Services\Tournaments\Betting\BetPlacement\AbstractTournamentBetPlacementService
      */
-    public static function make($betType)
+    public static function make($betType, $winProduct = null, $placeProduct = null)
     {
         switch($betType) {
             case BetTypeRepositoryInterface::TYPE_WIN:
+                $service = \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service->setProduct(BetProductModel::findOrFail($winProduct))->setBetType($betType);
+                return $service;
             case BetTypeRepositoryInterface::TYPE_PLACE:
-                return \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service = \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service->setProduct(BetProductModel::findOrFail($placeProduct))->setBetType($betType);
+                return $service;
             case BetTypeRepositoryInterface::TYPE_EACHWAY:
-                return \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\RacingEachWayBetPlacementService');
+                $service = \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\RacingEachWayBetPlacementService');
+                $service->setWinProduct(BetProductModel::findOrFail($winProduct))->setBetType($betType)
+                    ->setPlaceProduct(BetProductModel::findOrFail($placeProduct));
+                return $service;
             case BetTypeRepositoryInterface::TYPE_SPORT:
-                return \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\SportBetPlacementService');
+                return \App::make('TopBetta\Services\Tournaments\Betting\BetPlacement\SportBetPlacementService')->setBetType($betType);
         }
 
         throw new \InvalidArgumentException("Invalid bet type");

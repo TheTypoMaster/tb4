@@ -85,7 +85,7 @@ class TournamentBetService {
 
         $betType = $this->betTypeRepository->getBetTypeByName($bet['bet_type']);
 
-        $placementService = TournamentBetPlacementFactory::make($betType->name);
+        $placementService = TournamentBetPlacementFactory::make($betType->name, array_get($bet, 'win_product'), array_get($bet, 'place_product'));
         return $placementService->placeBet($ticket, $bet['selections'], $bet['amount'], $betType);
     }
 }

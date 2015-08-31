@@ -18,7 +18,7 @@ class SportBetPlacementService extends SingleSelectionBetPlacementService {
         $bets = array();
 
         foreach($selections as $selection) {
-            $bets[] = parent::createBet($ticket, array($selection), $amount, $betType, array("fixed_odds" => $selection['dividend']));
+            $bets[] = parent::createBet($ticket, array($selection), $amount, $betType, array("fixed_odds" => $selection['win_dividend']));
         }
 
         return $bets;

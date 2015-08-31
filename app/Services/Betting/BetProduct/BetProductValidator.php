@@ -17,11 +17,11 @@ class BetProductValidator {
     /**
      * @var ProductService
      */
-    private $productService;
+    protected $productService;
 
-    private $userProducts;
+    protected $userProducts;
 
-    private $competition;
+    protected $competition;
 
     public function __construct(ProductService $productService)
     {
@@ -32,12 +32,12 @@ class BetProductValidator {
     {
         $validator = App::make('TopBetta\Services\Betting\BetProduct\BetProductValidator');
 
-        $validator->loadAuthUserCompetitionProducts($competition);
+        $validator->loadProducts($competition);
 
         return $validator;
     }
 
-    public function loadAuthUserCompetitionProducts($competition)
+    public function loadProducts($competition)
     {
         $this->competition = $competition;
 

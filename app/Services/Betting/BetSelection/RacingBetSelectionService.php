@@ -41,7 +41,7 @@ class RacingBetSelectionService extends AbstractBetSelectionService {
                 throw new BetSelectionException($selection, "Invalid dividend");
             }
 
-            if ($selection->productPrice($this->winProduct->id)->win_odds != $winDividend) {
+            if ((! $price = $selection->productPrice($this->winProduct->id)) || $price->win_odds != $winDividend) {
                 throw new BetSelectionException($selection, "Price has changed");
             }
         }
@@ -51,7 +51,7 @@ class RacingBetSelectionService extends AbstractBetSelectionService {
                 throw new BetSelectionException($selection, "Invalid dividend");
             }
 
-            if ($selection->productPrice($this->placeProduct->id)->place_odds != $placeDividend) {
+            if ((! $price = $selection->productPrice($this->placeProduct->id)) || $price->place_odds != $placeDividend) {
                 throw new BetSelectionException($selection, "Price has changed");
             }
         }
