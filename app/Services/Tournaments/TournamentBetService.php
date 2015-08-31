@@ -89,7 +89,7 @@ class TournamentBetService {
 
     public function refundBetsForEvent($eventId)
     {
-        $bets = $this->betRepository->getBetsForEventByStatusIn($eventId, array($this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id));
+        $bets = $this->betRepository->getBetsForEventByStatus($eventId, $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id);
 
         foreach ($bets as $bet) {
             $this->resultService->refundBet($bet);
