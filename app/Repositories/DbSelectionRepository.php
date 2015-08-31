@@ -238,4 +238,11 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
                 'player'
             ));
     }
+
+    public function getSelectionsByMarket($market)
+    {
+        return $this->model
+            ->where('market_id', $market)
+            ->get();
+    }
 } 
