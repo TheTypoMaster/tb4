@@ -45,4 +45,9 @@ class BetTypeMapper
 
         return $this->betTypeRepository->getBetTypeByName($this->mapping[$betType]);
     }
+
+    public function getBetTypeName($betType)
+    {
+        return array_get($this->mapping, $betType);
+    }
 }

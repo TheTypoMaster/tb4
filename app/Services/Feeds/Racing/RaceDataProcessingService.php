@@ -59,6 +59,10 @@ class RaceDataProcessingService {
      * @var ProductProviderMatchRepositoryInterface
      */
     private $productProviderMatchRepository;
+    /**
+     * @var BetTypeMapper
+     */
+    private $betTypeMapper;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -78,7 +82,8 @@ class RaceDataProcessingService {
 								SelectionPriceRepositoryInterface $prices,
                                 TournamentBetService $tournamentBetService,
                                 RunnerRepositoryInterface $runnerRepository,
-                                ProductProviderMatchRepositoryInterface $productProviderMatchRepository){
+                                ProductProviderMatchRepositoryInterface $productProviderMatchRepository,
+                                BetTypeMapper $betTypeMapper){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -98,6 +103,7 @@ class RaceDataProcessingService {
         $this->tournamentBetService = $tournamentBetService;
         $this->runnerRepository = $runnerRepository;
         $this->productProviderMatchRepository = $productProviderMatchRepository;
+        $this->betTypeMapper = $betTypeMapper;
     }
 
 
@@ -306,6 +312,21 @@ class RaceDataProcessingService {
 
 				$this->tournaments->updateOrCreate($tournament, 'id');
 			}
+
+            //set available products
+            $loadedProducts = $this->productProviderMatchRepository->findAll()->keyBy('provider_product_name');
+            $availableProducts = array();
+            if ($products = array_get($race, 'Products')) {
+                foreach ($products as $type => $productList) {
+                    $betType = $this->betTypeMapper->getBetTypeName($type);
+
+                    $availableProducts[$betType] = array_map(function ($v) use ($loadedProducts) {
+                        return $loadedProducts->get($v)->tb_product_id;
+                    }, $productList);
+                }
+            }
+
+            $raceDetails['available_products'] = json_encode($availableProducts);
 
 			if (isset($race['RaceStatus'])) {
 				//example true || paying(4) < selling(1)
