@@ -26,11 +26,16 @@ class RaceResultService {
      * @var SelectionResultRepositoryInterface
      */
     private $resultRepository;
+    /**
+     * @var SelectionResultRepositoryInterface
+     */
+    private $selectionResultRepository;
 
 
-    public function __construct(ResultPricesRepositoryInterface $resultRepository)
+    public function __construct(ResultPricesRepositoryInterface $resultRepository, SelectionResultRepositoryInterface $selectionResultRepository)
     {
         $this->resultRepository = $resultRepository;
+        $this->selectionResultRepository = $selectionResultRepository;
     }
 
     public function loadResultsForRaces($races)
@@ -67,7 +72,7 @@ class RaceResultService {
         $results = $this->resultRepository->getResultsForEvent($race->id);
 
         $results = array(
-            "result_string" => $this->getResultString($results),
+            "result_string" => $this->getResultString($race),
 
             "results" => $this->getPositionResult($results->filter(function ($v) {
                 return ! is_null($v->name);
@@ -81,14 +86,17 @@ class RaceResultService {
         return $results;
     }
 
-    public function getResultString($results)
+    public function getResultString($race)
     {
         $string = '';
         $prevPosition = 1;
 
-        foreach($results as $result) {
-            if( $results->first() != $result ) {
-                $string .= $result->position == $prevPosition ? ',' : '/';
+        //get the position results
+        $positionResults = $this->selectionResultRepository->getResultsForEvent($race->id);
+
+        foreach($positionResults as $result) {
+            if( $positionResults->first() != $result ) {
+                $string .= $result->position== $prevPosition ? ',' : '/';
             }
 
             $string .= $result->number;
@@ -106,7 +114,6 @@ class RaceResultService {
 
         foreach($results as $result) {
             $resultArray = array(
-                "name" => $result->name,
                 "position" => (int)$result->position,
                 "number" => (int)$result->number,
                 "product_id" => (int) $result->product_id,
