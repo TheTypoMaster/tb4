@@ -29,6 +29,7 @@ class RaceResource extends AbstractEloquentResource {
         "exoticResults"     => "exoticResults",
         "resultString"      => "resultString",
         "exoticBetsAllowed" => "exoticBetsAllowed",
+        "availableProducts" => "availableProducts",
     );
 
     protected $loadIfRelationExists = array(
@@ -133,4 +134,8 @@ class RaceResource extends AbstractEloquentResource {
         return $this->model->competition->first()->type_code;
     }
 
+    public function availableProducts()
+    {
+        return json_decode($this->model->available_products, true);
+    }
 }

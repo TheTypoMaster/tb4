@@ -10,9 +10,6 @@ namespace TopBetta\Services\Tournaments;
 
 
 use TopBetta\Services\Racing\MeetingService;
-use TopBetta\Services\Resources\MeetingResourceService;
-use TopBetta\Services\Resources\Sports\CompetitionResourceService;
-use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
 use TopBetta\Services\Sports\CompetitionService;
 
 class TournamentEventService {
@@ -27,7 +24,7 @@ class TournamentEventService {
      */
     private $competitionService;
 
-    public function __construct(MeetingService $meetingService, CompetitionService $competitionService)
+    public function __construct(TournamentMeetingService $meetingService, CompetitionService $competitionService)
     {
         $this->meetingService = $meetingService;
         $this->competitionService = $competitionService;
@@ -35,7 +32,7 @@ class TournamentEventService {
 
     public function getEventGroups($tournament, $eventId = null)
     {
-        if( $tournament->eventGroup()->first()->sport->isRacing() ) {
+        if( ! $tournament->eventGroup()->first()->sport || $tournament->eventGroup()->first()->sport->isRacing() ) {
             $eventGroup = $this->meetingService->getMeetingWithSelections($tournament->event_group_id, $eventId);
             $selected = $eventGroup['selected_race'];
             $eventGroup = $eventGroup['data'];

@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Racing;
 
+use App;
 use Carbon\Carbon;
 use TopBetta\Services\Betting\BetService;
 use TopBetta\Services\Resources\MeetingResourceService;
@@ -19,7 +20,7 @@ class MeetingService {
     /**
      * @var MeetingResourceService
      */
-    private $meetingResourceService;
+    protected $meetingResourceService;
     /**
      * @var RaceResourceService
      */
@@ -37,13 +38,13 @@ class MeetingService {
      */
     private $betService;
 
-    public function __construct(MeetingResourceService $meetingResourceService,
-                                RaceResourceService $raceResourceService,
+    public function __construct(RaceResourceService $raceResourceService,
                                 SelectionResourceService $selectionResourceService,
                                 RaceResultService $resultService,
                                 BetService $betService)
     {
-        $this->meetingResourceService = $meetingResourceService;
+        //set the meeting resource service to use
+        $this->setMeetingResourceService();
         $this->raceResourceService = $raceResourceService;
         $this->selectionResourceService = $selectionResourceService;
         $this->resultService = $resultService;
@@ -140,6 +141,16 @@ class MeetingService {
 
         return $meeting;
 
+    }
+
+    /**
+     * Injects the meeting resource service so we can override in inheritors if neccesary
+     * @return $this
+     */
+    public function setMeetingResourceService()
+    {
+        $this->meetingResourceService = App::make('TopBetta\Services\Resources\MeetingResourceService');
+        return $this;
     }
 
 }
