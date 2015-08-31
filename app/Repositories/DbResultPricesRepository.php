@@ -61,4 +61,14 @@ class DbResultPricesRepository extends BaseEloquentRepository implements ResultP
             ->where('bet_type_id', $betType)
             ->get();
     }
+
+    public function getResultsForEvent($event)
+    {
+        return $this->model
+            ->leftJoin('tbdb_selection_result', 'tbdb_selection_result.id', '=', 'tb_result_prices.selection_result_id')
+            ->leftJoin('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_selection_result.selection_id')
+            ->join('tbdb_bet_type', 'tbdb_bet_type.id', '=', 'tb_result_prices.bet_type_id')
+            ->where('event_id', $event)
+            ->get(array('tb_result_prices.*', 'tbdb_selection.*', 'tbdb_bet_type.name as bet_type'));
+    }
 }

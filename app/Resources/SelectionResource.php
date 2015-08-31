@@ -15,17 +15,18 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 class SelectionResource extends AbstractEloquentResource {
 
     protected $attributes = array(
-        'id'         => 'id',
-        'name'       => 'name',
-        'number'     => 'number',
-        'jockey'     => 'associate',
-        'barrier'    => 'barrier',
-        'handicap'   => 'handicap',
-        'weight'     => 'weight',
-        'prices'     => 'prices',
-        'silk_id'    => 'silk_id',
-        'form'       => 'form',
-        'deductions' => 'deductions',
+        'id'             => 'id',
+        'name'           => 'name',
+        'number'         => 'number',
+        'jockey'         => 'associate',
+        'barrier'        => 'barrier',
+        'handicap'       => 'handicap',
+        'weight'         => 'weight',
+        'prices'         => 'prices',
+        'silk_id'        => 'silk_id',
+        'form'           => 'form',
+        'winDeductions'  => 'win_deductions',
+        'placeDeduction' => 'place_deductions'
     );
 
     protected $types = array(

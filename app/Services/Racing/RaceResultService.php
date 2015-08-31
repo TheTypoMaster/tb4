@@ -10,6 +10,7 @@ namespace TopBetta\Services\Racing;
 
 
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
+use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 
 class RaceResultService {
@@ -27,7 +28,7 @@ class RaceResultService {
     private $resultRepository;
 
 
-    public function __construct(SelectionResultRepositoryInterface $resultRepository)
+    public function __construct(ResultPricesRepositoryInterface $resultRepository)
     {
         $this->resultRepository = $resultRepository;
     }
@@ -63,12 +64,18 @@ class RaceResultService {
 
     public function formatForResponse($race)
     {
-        $results = $this->resultRepository->getResultsForRace($race->id);
+        $results = $this->resultRepository->getResultsForEvent($race->id);
 
         $results = array(
             "result_string" => $this->getResultString($results),
-            "results" => $this->getPositionResult($results),
-            "exotic_results" => $this->getExoticResult($race)
+
+            "results" => $this->getPositionResult($results->filter(function ($v) {
+                return ! is_null($v->name);
+            })),
+
+            "exotic_results" => $this->getExoticResult($results->filter(function ($v) {
+                return is_null($v->name);
+            })),
         );
 
         return $results;
@@ -102,12 +109,10 @@ class RaceResultService {
                 "name" => $result->name,
                 "position" => (int)$result->position,
                 "number" => (int)$result->number,
-                "place_dividend" => (float)$result->place_dividend
+                "product_id" => (int) $result->product_id,
+                "bet_type" => $result->bet_type,
+                "dividend" => $result->dividend,
             );
-
-            if( $result->position == 1 ) {
-                $resultArray['win_dividend'] = (float)$result->win_dividend;
-            }
 
             $resultsArray[] = $resultArray;
         }
@@ -115,24 +120,20 @@ class RaceResultService {
         return $resultsArray;
     }
 
-    public function getExoticResult($race)
+    public function getExoticResult($results)
     {
         $exoticResults = array();
 
-        foreach(self::$exoticResultFields as $name => $field) {
+        foreach($results as $result) {
 
-            $results = unserialize($race->{$field});
-
-            if( $results ) {
-                foreach ($results as $selectionString => $dividend) {
-                    $exoticResults[] = array(
-                        "name"       => $name,
-                        "selections" => $selectionString,
-                        "dividend"   => $dividend,
-                    );
-                }
-            }
-        }
+            $exoticResults[] = array(
+                "name"       => $result->name,
+                "selections" => $result->result_string,
+                "dividend"   => $result->dividend,
+                "bet_type"   => $result->bet_type,
+                "product_id" => $result->product_id,
+            );
+       }
 
         return $exoticResults;
     }
