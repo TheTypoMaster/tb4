@@ -84,7 +84,7 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
             ->groupBy('tbdb_tournament_ticket.id')
             ->take($limit)
             ->with(array('bets', 'tournament'))
-            ->get(array('tbdb_tournament_ticket.*'))
+            ->get(array('tbdb_tournament_ticket.*', 'e.name as event_name', 'e.id as event_id', 'e.start_date as event_start_date', 'eg.name as event_group_name', 'eg.id as event_group_id'))
             ->load('leaderboard');
     }
 
