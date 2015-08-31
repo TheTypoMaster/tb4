@@ -15,7 +15,7 @@ class MarketResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         'id' => 'id',
-        'name' => 'marketType.name',
+        'name' => 'name',
         'line' => 'line',
         'status' => 'market_status'
     );
@@ -27,5 +27,10 @@ class MarketResource extends AbstractEloquentResource {
     public function selections()
     {
         return $this->collection('selections', 'TopBetta\Resources\Sports\SelectionResource', $this->model->selections);
+    }
+
+    public function getName()
+    {
+        return $this->model->name ? : $this->model->markettype->name;
     }
 }

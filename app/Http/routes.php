@@ -250,7 +250,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::resource('icons', 'Admin\IconController');
 
     //user activity
-    Route::post('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
+    Route::post('user-activity/download', 'Admin\UserActivityController@createUserActivity');
+    Route::get('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
     Route::resource('user-activity', 'Admin\UserActivityController');
 
     Route::get('sports-list', 'Admin\SportsController@getSports');

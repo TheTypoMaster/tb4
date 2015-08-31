@@ -117,10 +117,13 @@ class UserActivityService {
             //tournament data exists so get tournament data
             if ( $tournament ) {
                 $data = array_merge($data, array('', '', ''));
-                $data[] = $tournament->tournament->eventGroup->name;
 
-                if($tournament->tournament->eventGroup->sport) {
-                    $data[] = $tournament->tournament->eventGroup->sport->name;
+                if ($tournament->tournament->eventGroup) {
+                    $data[] = $tournament->tournament->eventGroup->name;
+
+                    if($tournament->tournament->eventGroup->sport) {
+                        $data[] = $tournament->tournament->eventGroup->sport->name;
+                    }
                 }
 
                 $data[] = $tournament->tournament->buy_in;
