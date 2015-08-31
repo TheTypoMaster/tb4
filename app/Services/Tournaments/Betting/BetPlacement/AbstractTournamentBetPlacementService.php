@@ -42,6 +42,10 @@ abstract class AbstractTournamentBetPlacementService {
      */
     private $ticketService;
 
+    protected $product;
+
+    protected $betType;
+
     public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService)
     {
         $this->betRepository = $betRepository;
@@ -57,11 +61,11 @@ abstract class AbstractTournamentBetPlacementService {
             throw new BetPlacementException("Insufficient funds");
         }
 
-        //validate tournament
-        $this->validateTournamentBet($ticket, $amount, $betType);
-
         //get and validate selections
         $selections = $this->selectionService->getAndValidateSelections($selections, $ticket->tournament);
+
+        //validate tournament
+        $this->validateTournamentBet($ticket, $amount, $betType, $selections);
 
         //check bet limit
         $this->checkBetLimit($ticket, array_unique(array_pluck($selections, 'selection')), $amount, $betType);
@@ -76,6 +80,7 @@ abstract class AbstractTournamentBetPlacementService {
             "tournament_ticket_id" => $ticket->id,
             "bet_type_id" => $betType->id,
             "bet_amount" => $amount,
+            "bet_product_id" => $this->product ? $this->product->id : 0,
         );
 
         //create bet
@@ -98,12 +103,28 @@ abstract class AbstractTournamentBetPlacementService {
         return $bet;
     }
 
-    public function validateTournamentBet($ticket, $amount, $betType)
+    public function validateTournamentBet($ticket, $amount, $betType, $selections)
     {
         //check betting closed
         if ($ticket->tournament->bettingClosed()) {
             throw new BetPlacementException("Betting closed for tournament " . $ticket->tournament->name);
         }
+    }
+
+    /**
+     * @param mixed $product
+     * @return $this
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    public function setBetType($betType)
+    {
+        $this->betType = $betType;
+        return $this;
     }
 
     abstract function getTotalAmountForBet($selections, $amount);
