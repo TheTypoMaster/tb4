@@ -13,7 +13,8 @@ class AddDeductionsToSelection extends Migration
     public function up()
     {
         Schema::table('tbdb_selection', function (Blueprint $table) {
-            $table->integer('deductions')->unisigned();
+            $table->integer('win_deductions')->unisigned();
+            $table->integer('place_deductions')->unisigned();
         });
     }
 
@@ -25,7 +26,8 @@ class AddDeductionsToSelection extends Migration
     public function down()
     {
         Schema::table('tbdb_selection', function (Blueprint $table) {
-            $table->dropColumn('deductions');
+            $table->dropColumn('win_deductions');
+            $table->dropColumn('place_deductions');
         });
     }
 }
