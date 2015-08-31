@@ -87,10 +87,10 @@ class RaceResulting {
 
         //delete wrong results
         $this->results->deleteResults($toDelete);
-        $this->resultPricesRepository->deletePricesForResult($toDelete);
+        $this->resultPricesRepository->deletePricesForResults($toDelete);
 
         //delete exotic results for product
-        return $this->resultPricesRepository->deleteExoticPricesForEventAndProduct($eventModel->id, $product);
+        return $this->resultPricesRepository->deleteExoticPricesForEventAndProduct($eventModel->id, $product->id);
     }
 
     public function ResultEvents($racingArray){
@@ -161,7 +161,7 @@ class RaceResulting {
 
             // remove existing results
             if (!$currentResults) {
-                $currentResults= $this->results->getResultFoReace($eventModel->id);
+                $currentResults= $this->results->getResultsForRace($eventModel->id);
             }
 
             // win and place bets results are stored with the selection record
@@ -191,7 +191,7 @@ class RaceResulting {
                     'dividend' => $payout / 100
                 );
 
-                if ($existingPrice = $this->resultPricesRepository->getByResultAndProduct($raceResultSave['id'], $productUsed->id)) {
+                if ($existingPrice = $this->resultPricesRepository->getByResultProductAndBetType($raceResultSave['id'], $productUsed->id, $betTypeModel->id)) {
                     $this->resultPricesRepository->updateWithId($existingPrice->id, $price);
                 } else {
                     $this->resultPricesRepository->create($price);
@@ -234,7 +234,7 @@ class RaceResulting {
 //            File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
             //$this->betresults->resultAllBetsForEvent($eventModel->id);
-            Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id, 'product_id' => $eventModel->id), Config::get('betresulting.queue'));
+            Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id, 'product_id' => $productUsed->id), Config::get('betresulting.queue'));
         }
 
         return array('error' => false,

@@ -10,7 +10,9 @@ namespace TopBetta\Services\Betting;
 
 use Log;
 use TopBetta\Repositories\BetResultRepo;
+use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
 
 class EventBetResultingQueueService {
@@ -27,26 +29,43 @@ class EventBetResultingQueueService {
      * @var EventRepositoryInterface
      */
     private $eventRepositoryInterface;
+    /**
+     * @var BetResultService
+     */
+    private $betResultService;
+    /**
+     * @var BetProductRepositoryInterface
+     */
+    private $betProductRepository;
+    /**
+     * @var EventService
+     */
+    private $eventService;
 
-    public function __construct(EventRepositoryInterface $eventRepositoryInterface, BetResultRepo $betResultRepo, TournamentBetResultService $tournamentBetResultService)
+    public function __construct(EventRepositoryInterface $eventRepositoryInterface, TournamentBetResultService $tournamentBetResultService,  BetResultService $betResultService, BetProductRepositoryInterface $betProductRepository, EventService $eventService)
     {
-        $this->betResultRepo = $betResultRepo;
         $this->tournamentBetResultService = $tournamentBetResultService;
         $this->eventRepositoryInterface = $eventRepositoryInterface;
+        $this->betResultService = $betResultService;
+        $this->betProductRepository = $betProductRepository;
+        $this->eventService = $eventService;
     }
 
     public function fire($job, $data)
     {
-        if( ! $eventId = array_get($data, 'event_id', null) ) {
-            Log::error("No event id specified");
+        if( (! $eventId = array_get($data, 'event_id', null)) || ! ($productId = array_get($data, 'product_id')) ) {
+            Log::error("Either event or product id was not specified");
             return false;
         }
 
-        $result = $this->betResultRepo->resultAllBetsForEvent($eventId);
+        $event = $this->eventRepositoryInterface->find($eventId);
+        $product = $this->betProductRepository->find($productId);
 
-        $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent(
-            $this->eventRepositoryInterface->find($eventId)
-        );
+        $result = $this->betResultService->resultBetsForEvent($event, $product);
+
+        $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event);
+
+        $this->eventService->checkAndSetPaidStatus($event);
 
         return $job->delete();
     }

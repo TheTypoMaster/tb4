@@ -301,6 +301,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface',
             'TopBetta\Repositories\DbProductProviderMatchRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface',
+            'TopBetta\Repositories\DbResultPricesRepository'
+        );
     }
 
 } 

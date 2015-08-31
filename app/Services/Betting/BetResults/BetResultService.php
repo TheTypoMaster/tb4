@@ -129,7 +129,7 @@ class BetResultService {
             $bets = $this->betRepository->getBetsForEventByStatusAndProduct(
                 $event->id,
                 $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
-                 $product
+                $product->id
             );
         } else {
             throw new \Exception("Event not paying or interim");

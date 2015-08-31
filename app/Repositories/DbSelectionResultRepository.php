@@ -52,4 +52,13 @@ class DbSelectionResultRepository extends BaseEloquentRepository implements Sele
             ->whereIn('id', $resultIds)
             ->delete();
     }
+
+    public function getResultsForEvent($eventId)
+    {
+        return $this->model
+            ->join('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_selection_result.selection_id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->where('event_id', $eventId)
+            ->get();
+    }
 } 

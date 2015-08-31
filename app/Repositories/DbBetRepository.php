@@ -96,8 +96,9 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     public function getBetsForEventByStatus($event, $status, $type = null)
     {
         $model =  $this->model
+            ->join('tbdb_bet_result_status', 'tbdb_bet_result_status.id', '=', 'tbdb_bet.bet_result_status_id')
             ->where('event_id', $event)
-            ->where('bet_result_status_id', $status);
+            ->where('tbdb_bet_result_status.name', $status);
 
         if( $type ) {
             $model->where('bet_type_id', $type);
@@ -106,11 +107,12 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         return $model->get();
     }
 
-    public function getBetsForEventByStatusAndProduct($event, $status, $type = null)
+    public function getBetsForEventByStatusAndProduct($event, $status, $product, $type = null)
     {
         $model =  $this->model
             ->where('event_id', $event)
-            ->where('bet_result_status_id', $status);
+            ->where('bet_result_status_id', $status)
+            ->where('bet_product_id', $product);
 
         if( $type ) {
             $model->where('bet_type_id', $type);

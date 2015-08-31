@@ -12,4 +12,8 @@ interface ResultPricesRepositoryInterface
     public function deletePricesForResults($resultIds);
 
     public function deleteExoticPricesForEventAndProduct($event, $product);
+
+    public function getPriceForResultByProductAndBetType($result, $product, $betType);
+
+    public function getPricesByProductAndBetType($product, $betType);
 }

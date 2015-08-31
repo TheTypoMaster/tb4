@@ -38,5 +38,5 @@ interface BetRepositoryInterface {
 
     public function getBetsForEventByStatus($event, $status, $type = null);
 
-    public function getBetsForEventByStatusAndProduct($event, $status, $type = null);
+    public function getBetsForEventByStatusAndProduct($event, $status, $product, $type = null);
 }
