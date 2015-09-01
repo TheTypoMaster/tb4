@@ -11,6 +11,7 @@ namespace TopBetta\Services\Tournaments;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Resources\MeetingResource;
 use TopBetta\Resources\Sports\CompetitionResource;
+use TopBetta\Services\Resources\Tournaments\LeaderboardResourceService;
 use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -82,6 +83,10 @@ class TournamentService {
      * @var TournamentTransactionService
      */
     private $tournamentTransactionService;
+    /**
+     * @var LeaderboardResourceService
+     */
+    private $leaderboardResourceService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -89,13 +94,15 @@ class TournamentService {
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
                                 TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
                                 TournamentBuyInService $buyInService,
-                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
+                                TournamentLeaderboardService $leaderboardService,
+                                TournamentTicketService $ticketService,
                                 EventModelRepositoryInterface $eventRepository,
                                 CompetitionService $competitionService,
                                 TournamentGroupService $tournamentGroupService,
                                 TournamentResourceService $tournamentResourceService,
                                 TournamentEventService $tournamentEventService ,
-                                TournamentTransactionService $tournamentTransactionService)
+                                TournamentTransactionService $tournamentTransactionService,
+                                LeaderboardResourceService $leaderboardResourceService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -111,6 +118,7 @@ class TournamentService {
         $this->tournamentResourceService = $tournamentResourceService;
         $this->tournamentEventService = $tournamentEventService;
         $this->tournamentTransactionService = $tournamentTransactionService;
+        $this->leaderboardResourceService = $leaderboardResourceService;
     }
 
     public function getVisibleTournaments($type = 'racing', $date = null)
@@ -133,7 +141,7 @@ class TournamentService {
     public function getTournamentWithEvents($id, $eventId = null)
     {
         $tournament = $this->tournamentResourceService->getTournament($id);
-        $tournament->setLeaderboard($this->leaderboardService->getLeaderboard($id));
+        $tournament->setLeaderboard($this->leaderboardResourceService->getTournamentLeaderboard($id)->getCollection());
 
         $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
 

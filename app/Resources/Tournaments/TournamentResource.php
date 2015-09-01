@@ -91,7 +91,7 @@ class TournamentResource extends AbstractEloquentResource {
 
     public function setLeaderboard($leaderboard)
     {
-        $this->leaderboard = $leaderboard;
+        $this->setRelation('leaderboard', $leaderboard);
         return $this;
     }
 
