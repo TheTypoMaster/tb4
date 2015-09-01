@@ -53,9 +53,11 @@ class RaceResourceService {
 
     public function getRaceWithSelections($raceId)
     {
-        $race = $this->eventRepository->getEvent($raceId, true);
+        $race = $this->eventRepository->getEvent($raceId);
 
         $race = new RaceResource($race);
+
+        $race->setSelections($this->selectionService->getSelectionsForRace($race->id));
 
         $race->setRelation('bets', $this->betResourceService->getBetsByEventForAuthUser($raceId));
 

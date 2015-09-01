@@ -70,13 +70,13 @@ class MeetingService {
 
             if ( ($raceId && $event->id == $raceId) || ( ! $raceId && $this->raceResourceService->isOpen($event)) ) {
 
-                $event->loadRelation('selections');
+                $event->setSelections($this->selectionResourceService->getSelectionsForRace($event->id));
 
                 return array("data" => $meeting, "selected_race" => $event->id);
             }
         }
 
-        $meeting->races->first()->loadRelation('selections');
+        $meeting->races->first()->setSelections($this->selectionResourceService->getSelectionsForRace($meeting->races->first()->id));
 
         return array("data" => $meeting, "selected_race" => $meeting->races->first()->id);
     }

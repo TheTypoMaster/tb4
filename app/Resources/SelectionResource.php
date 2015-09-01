@@ -8,7 +8,7 @@
 
 namespace TopBetta\Resources;
 
-
+use Config;
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
@@ -23,8 +23,9 @@ class SelectionResource extends AbstractEloquentResource {
         'handicap'   => 'handicap',
         'weight'     => 'weight',
         'prices'     => 'prices',
-        'silk_id'    => 'silk_id',
+        'silk'       => 'silk',
         'form'       => 'form',
+        'typeCode'   => 'type_code',
     );
 
     protected $types = array(
@@ -110,6 +111,16 @@ class SelectionResource extends AbstractEloquentResource {
     public function getForm()
     {
         return $this->model->last_starts;
+    }
+
+    public function getSilk()
+    {
+        if ($this->model->type_code == 'G') {
+            return Config::get('silks.greyhound_silk_path') . Config::get('silks.greyhound_silk_filename_prefix') .
+                $this->model->number . Config::get('silks.default_silk_file_extension');
+        }
+
+        return Config::get('silks.default_silk_path') . $this->model->silk_id . Config::get('silks.default_silk_file_extension');
     }
 
     public function loadRelation($relation)

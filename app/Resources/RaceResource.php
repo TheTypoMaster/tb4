@@ -56,6 +56,20 @@ class RaceResource extends AbstractEloquentResource {
         return $collection;
     }
 
+    public function setSelections($selections)
+    {
+        $this->relations['selections'] = $selections;
+
+        //inject products into selection so we can set tote types on prices
+        if (array_get($this->relations, 'products')) {
+            foreach ($this->relations['selections'] as $selection) {
+                $selection->setProducts($this->relations['products']);
+            }
+        }
+
+        return $this;
+    }
+
     public function bets()
     {
         return $this->collection('bets', 'TopBetta\Resources\BetResource', $this->model->bets);
