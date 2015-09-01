@@ -38,4 +38,11 @@ class TournamentBetResourceService {
         return new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource');
     }
 
+    public function findBets($bets)
+    {
+        $bets = $this->betRepository->findBets($bets);
+
+        return new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource');
+    }
+
 }
