@@ -409,6 +409,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('deposits', 'Frontend\DepositsController', array("only" => array('store')));
     Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController', array("only" => array('index', 'store', 'destroy')));
     Route::resource('eway-tokens', 'Frontend\EwayCreditCardController', array("only" => array('index', 'destroy')));
+
+
+    //CONTACT USE ENDPOINT
+    Route::post('contact-us', 'Frontend\ContactController@contactUs');
 });
 
 // new login/logout methods
