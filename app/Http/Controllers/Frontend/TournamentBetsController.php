@@ -94,7 +94,7 @@ class TournamentBetsController extends Controller
             return $this->response->failed($e->getMessage());
         }
 
-        return $this->response->success((new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource'))->toArray());
+        return $this->response->success($this->betResourceService->findBets(array_get($bets, 'id') ? array($bets['id']) : array_pluck($bets, 'id'))->toArray());
     }
 
     /**

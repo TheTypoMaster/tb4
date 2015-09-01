@@ -9,7 +9,7 @@
 namespace TopBetta\Services\Tournaments\Betting\BetPlacement;
 
 
-class SportBetPlacementService extends SingleSelectionBetPlacementService {
+class SportBetPlacementService extends AbstractTournamentBetPlacementService {
 
     protected $selectionServiceClass = 'TopBetta\Services\Betting\BetSelection\SportBetSelectionService';
 
@@ -22,5 +22,15 @@ class SportBetPlacementService extends SingleSelectionBetPlacementService {
         }
 
         return $bets;
+    }
+
+    public function checkBetLimit($ticket, $selections, $amount, $betType)
+    {
+        $this->betLimitService->checkSingeSelectionBetLimit($ticket, $selections, $amount);
+    }
+
+    public function getTotalAmountForBet($selections, $amount)
+    {
+        return count($selections) * $amount;
     }
 }
