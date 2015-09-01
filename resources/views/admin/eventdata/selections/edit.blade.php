@@ -11,7 +11,7 @@
         </ul>
 		<h4>Edit Selection</h4>
 		<div class='col-lg-6'>
-        	{!! Form::model($selection, array('method' => 'PATCH', 'route' => array('admin.selections.update', $selection->id, "q" => $search))) !!}
+        	{!! Form::model($selection, array('method' => 'PUT', 'route' => array('admin.selections.update', $selection->id, "q" => $search))) !!}
         	<div class="form-group">
                 {!! Form::label('id', 'Selection Id:') !!}
                 {!! Form::text('id', null, array('class' => 'form-control', 'placeholder' => $selection->id, 'disabled')) !!}

@@ -11,7 +11,7 @@
         </ul>
 		<h4>Edit Price</h4>
 		<div class='col-lg-6'>
-        	{!! Form::model($selectionprice, array('method' => 'PATCH', 'route' => array('admin.selectionprices.update', $selectionprice->id, "q" => $search, "market" => $market))) !!}
+        	{!! Form::model($selectionprice, array('method' => 'PUT', 'route' => array('admin.selectionprices.update', $selectionprice->id, "q" => $search, "market" => $market))) !!}
         	<div class="form-group">
                 {!! Form::label('id', 'Price Id:') !!}
                 {!! Form::text('id', null, array('class' => 'form-control', 'placeholder' => $selectionprice->id, 'disabled')) !!}

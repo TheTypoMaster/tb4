@@ -425,3 +425,19 @@ Route::group(array('prefix' => '/api/v2', 'after' => 'topbetta_secure_links'), f
     Route::get('authentication/token/login', 'Frontend\UserTokenController@tokenLogin');
 
 });
+
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links'), function() {
+
+    Route::post('registration/tournament/create', 'External\UserAccountController@createTournamentAccount');
+    Route::post('authentication/tournament/token/request', 'External\UserTokenController@requestToken');
+
+});
+
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links', 'middleware' => ['auth.token']), function() {
+    Route::get('test', 'External\UserTokenController@test');
+
+});
+
+Route::group(array('prefix' => '/api/external/v1'), function() {
+    Route::post('test-entry', 'External\TestController@testEntry');
+});

@@ -13,6 +13,7 @@ interface EventStatusRepositoryInterface {
     const STATUS_PAID = 'paid';
     const STATUS_INTERIM = 'interim';
     const STATUS_CLOSED = 'closed';
+    const STATUS_ABANDONED = 'abandoned';
 
     public function getByName($name);
 } 

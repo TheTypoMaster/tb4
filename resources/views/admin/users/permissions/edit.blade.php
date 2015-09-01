@@ -6,7 +6,6 @@
             @if( $user->topbettauser )
                 @include('admin.users.partials.header')
             @endif
-            <h4 class="page-header">Permissions</h4>
 
             {!! Form::model($user, array("route" => array("admin.user-permissions.update", $user->id), "method" => "PUT")) !!}
 

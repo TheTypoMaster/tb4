@@ -78,7 +78,7 @@ class UserFreeCreditService {
 
     }
 
-    public function increaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes = null)
+    public function increaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes = '')
     {
         return $this->freeCreditTransactionRepository->createTransaction($userId, $giverId, $amount, $transactionType, $notes);
     }

@@ -215,6 +215,22 @@ class TournamentService {
 
         return $ticket;
     }
+    
+    public function getTournament($tournamentId)
+    {
+        return $this->tournamentRepository->find($tournamentId);
+    }
+
+    public function createTicketAndLeaderboardRecordForUser($tournament, $user)
+    {
+        //create ticket
+        $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+
+        //create leaderboard record
+        $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+
+        return $ticket;
+    }
 
     public function removeUserFromTournament($tournamentId, $userId)
     {
@@ -245,6 +261,41 @@ class TournamentService {
         }
 
         return true;
+    }
+
+    public function setTournamentPaid($tournament)
+    {
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            'paid_flag' => true
+        ));
+
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->setTicketPaid($ticket);
+        }
+    }
+
+    public function refundAbandonedTournamentsForEvent($event)
+    {
+        $competition = $this->competitionRepository->getByEvent($event);
+
+        if ($this->competitionService->isAbandoned($competition)) {
+            $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($competition->id);
+
+            foreach ($tournaments as $tournament) {
+                $this->refundTournament($tournament);
+            }
+        }
+    }
+
+    public function refundTournament($tournament)
+    {
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->refundTicket($ticket);
+        }
+
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            "paid_flag" => true
+        ));
     }
 
     public function createTournament($tournamentData)

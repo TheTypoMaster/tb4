@@ -103,7 +103,7 @@ class TournamentLeaderboardService {
                 'id' => $record['id'],
                 'username' => $record['username'],
                 'currency' => $record['currency'],
-                'qualified' => $record['qualified'],
+                'qualified' => $record['qualified'] && $record['currency'],
                 'turned_over' => $record['turned_over'],
                 'rebuys' => $record['rebuys'],
                 'topups' => $record['topups'],
