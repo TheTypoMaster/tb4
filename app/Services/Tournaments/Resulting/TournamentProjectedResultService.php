@@ -46,10 +46,10 @@ class TournamentProjectedResultService {
     {
         $percentages = $this->getPayoutPercentages($tournament);
 
-        for ($i=0; $i < count($percentages); $i++) {
+        for ($i=0; $i < count($percentages->pay_perc); $i++) {
             $result = $tournament->free_credit_flag ?
-                $this->createFreeCreditResult($i+1, $percentages * $prizePool) :
-                $this->createCashResult($i+1, $percentages * $prizePool);
+                $this->createFreeCreditResult($i+1, $percentages->pay_perc[$i]/100 * $prizePool) :
+                $this->createCashResult($i+1, $percentages->pay_perc[$i]/100 * $prizePool);
         }
 
         return $this->results;
@@ -68,7 +68,7 @@ class TournamentProjectedResultService {
             $prizePool -= $ticketCost;
         }
 
-        if ($prizePool > 0 && !$tournament->buy_in > 0) {
+        if ($prizePool > 0 && $tournament->buy_in > 0) {
             $this->getRemainderResults($tournament, $prizePool, $placesPaid+1);
         }
 
@@ -105,9 +105,11 @@ class TournamentProjectedResultService {
     {
         if (! $result = $this->results->get($position) ) {
             $result = new TournamentResult();
-            $result->setAmount($amount);
+            $result->setPosition($position);
             $this->results->put($position, $result);
         }
+
+        $result->setAmount($amount);
 
         return $result;
     }
@@ -116,9 +118,11 @@ class TournamentProjectedResultService {
     {
         if (! $result = $this->results->get($position) ) {
             $result = new TournamentResult();
-            $result->setFreeCreditAmount($amount);
+            $result->setPosition($position);
             $this->results->put($position, $result);
         }
+
+        $result->setFreeCreditAmount($amount);
 
         return $result;
     }
@@ -127,9 +131,11 @@ class TournamentProjectedResultService {
     {
         if (! $result = $this->results->get($position) ) {
             $result = new TournamentResult();
-            $result->setJackpotTicket($tournament->parentTournament);
+            $result->setPosition($position);
             $this->results->put($position, $result);
         }
+
+        $result->setJackpotTicket($tournament->parentTournament);
 
         return $result;
     }

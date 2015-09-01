@@ -87,6 +87,10 @@ class TournamentService {
      * @var LeaderboardResourceService
      */
     private $leaderboardResourceService;
+    /**
+     * @var TournamentResultService
+     */
+    private $resultService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -102,7 +106,8 @@ class TournamentService {
                                 TournamentResourceService $tournamentResourceService,
                                 TournamentEventService $tournamentEventService ,
                                 TournamentTransactionService $tournamentTransactionService,
-                                LeaderboardResourceService $leaderboardResourceService)
+                                LeaderboardResourceService $leaderboardResourceService,
+                                TournamentResultService $resultService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -119,6 +124,7 @@ class TournamentService {
         $this->tournamentEventService = $tournamentEventService;
         $this->tournamentTransactionService = $tournamentTransactionService;
         $this->leaderboardResourceService = $leaderboardResourceService;
+        $this->resultService = $resultService;
     }
 
     public function getVisibleTournaments($type = 'racing', $date = null)
@@ -141,6 +147,9 @@ class TournamentService {
     public function getTournamentWithEvents($id, $eventId = null)
     {
         $tournament = $this->tournamentResourceService->getTournament($id);
+
+        $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->toArray());
+
         $tournament->setLeaderboard($this->leaderboardResourceService->getTournamentLeaderboard($id)->getCollection());
 
         $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
@@ -149,7 +158,6 @@ class TournamentService {
             if( $event instanceof MeetingResource ) {
                 $tournament->addMeeting($event);
             } else if ( $event instanceof CompetitionResource ) {
-
                 $tournament->addCompetition($event);
             }
         }

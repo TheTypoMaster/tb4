@@ -71,6 +71,8 @@ class TournamentResource extends AbstractEloquentResource {
 
     private $competitions = array();
 
+    private $results = null;
+
     public function getEntrants()
     {
         if( is_null($this->entrants) ) {
@@ -107,6 +109,11 @@ class TournamentResource extends AbstractEloquentResource {
         return $this;
     }
 
+    public function setResults($results)
+    {
+        $this->results = $results;
+    }
+
 
     public function toArray()
     {
@@ -115,6 +122,7 @@ class TournamentResource extends AbstractEloquentResource {
         $array = array_merge($array, array(
             'entrants' => $this->getEntrants(),
             'prize_pool' => $this->getPrizePool(),
+            'prizes' => $this->results
         ));
 
         if ($this->leaderboard) {
