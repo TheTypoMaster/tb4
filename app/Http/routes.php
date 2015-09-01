@@ -353,14 +353,16 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::group(array('before' => 'auth'), function() {
         Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
         Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
-        Route::resource('tournament-bets', 'Frontend\TournamentBetsController', array("only" => array('index')));
+        Route::resource('tournament-bets', 'Frontend\TournamentBetsController', array("only" => array('index', 'store')));
         Route::resource('tickets', 'Frontend\TicketsController', array("only" => array('index', 'store', 'show')));
         Route::post('comments', 'Frontend\TournamentCommentController@store');
+
+        //tournament rebuys and topups
+        Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
+        Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
     });
 
-    //tournament rebuys and topups
-    Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
-    Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
+
 
     //user tournament bets
     Route::resource('user.tournament.bets', 'Frontend\UserTournamentBetsController', array("only" => array('index')));
