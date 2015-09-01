@@ -148,7 +148,7 @@ class TournamentService {
     {
         $tournament = $this->tournamentResourceService->getTournament($id);
 
-        $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->toArray());
+        $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->values()->toArray());
 
         $tournament->setLeaderboard($this->leaderboardResourceService->getTournamentLeaderboard($id)->getCollection());
 
