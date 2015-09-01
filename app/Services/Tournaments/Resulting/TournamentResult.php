@@ -156,13 +156,14 @@ class TournamentResult implements Arrayable {
             "amount" => $this->getAmount(),
             "free_credit_amount" => $this->getFreeCreditAmount(),
             "jackpot_ticket" => $this->getJackpotTicket() ? $this->getJackpotTicket()->id : null,
+            "position" => $this->position,
         );
 
         if ($this->getTicket()) {
             $array['user_id'] = $this->getTicket()->user_id;
         }
 
-        return $array;
+        return array_values($array);
     }
 
 }
