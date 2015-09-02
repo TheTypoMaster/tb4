@@ -257,6 +257,25 @@ class TournamentsController extends Controller
         return View::make('admin.tournaments.show', compact('tournament'));
 	}
 
+    public function downloadEntrants()
+    {
+        $tournament = Request::get('tournament_id');
+
+        $tournament = $this->tournamentRepo->find($tournament)
+            ->load(array('tickets.user.topbettauser'));
+
+        //create csv
+        $filename = '/tmp/tournament_'.$tournament->id.'.csv';
+        $file = fopen($filename, 'w');
+        fputcsv($file, array("id", 'username', 'name', 'email', 'mobile'));
+        foreach ($tournament->tickets as $ticket) {
+            fputcsv($file, array($ticket->user->id, $ticket->user->username, $ticket->user->name, $ticket->user->email, $ticket->user->topbettauser->msisdn));
+        }
+
+        //download
+        return response()->download($filename)->deleteFileAfterSend(true);
+    }
+
 	/**
 	 * Show the form for editing the specified resource.
 	 *
