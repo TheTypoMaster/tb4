@@ -11,6 +11,8 @@ namespace TopBetta\Services\Racing;
 use App;
 use Carbon\Carbon;
 use TopBetta\Services\Betting\BetService;
+use TopBetta\Services\Resources\Cache\CachedMeetingResourceService;
+use TopBetta\Services\Resources\Cache\CachedSelectionResourceService;
 use TopBetta\Services\Resources\MeetingResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Resources\SelectionResourceService;
@@ -18,7 +20,7 @@ use TopBetta\Services\Resources\SelectionResourceService;
 class MeetingService {
 
     /**
-     * @var MeetingResourceService
+     * @var CachedMeetingResourceService
      */
     protected $meetingResourceService;
     /**
@@ -39,7 +41,7 @@ class MeetingService {
     private $betService;
 
     public function __construct(RaceResourceService $raceResourceService,
-                                SelectionResourceService $selectionResourceService,
+                                CachedSelectionResourceService $selectionResourceService,
                                 RaceResultService $resultService,
                                 BetService $betService)
     {
@@ -65,19 +67,17 @@ class MeetingService {
             $this->betService->getBetsByEventGroupForAuthUser($id)
         );
 
-        $this->resultService->loadResultsForRaces($meeting->races);
-
         foreach( $meeting->races as $event ) {
 
             if ( ($raceId && $event->id == $raceId) || ( ! $raceId && $this->raceResourceService->isOpen($event)) ) {
 
-                $event->loadRelation('selections');
+                $event->setSelections($this->selectionResourceService->getSelectionsForRace($event->id));
 
                 return array("data" => $meeting, "selected_race" => $event->id);
             }
         }
 
-        $meeting->races->first()->loadRelation('selections');
+        $meeting->races->first()->setSelections($this->selectionResourceService->getSelectionsForRace($meeting->races->first()->id));
 
         return array("data" => $meeting, "selected_race" => $meeting->races->first()->id);
     }
@@ -91,12 +91,6 @@ class MeetingService {
         foreach( $meetings as $meeting ) {
             if( $meeting->id == $selectedMeeting['data']->id ) {
                 $meeting->setRaces($selectedMeeting['data']->races);
-
-                $meeting->races->setRelations(
-                    'bets',
-                    'event_id',
-                    $this->betService->getBetsByEventGroupForAuthUser($meeting->id)
-                );
 
                 break;
             }
@@ -117,7 +111,6 @@ class MeetingService {
 
         if( $withRaces ) {
             foreach($collection as $meeting) {
-                $this->resultService->loadResultsForRaces($meeting->races);
 
                 $meeting->races->setRelations(
                     'bets',
@@ -136,7 +129,6 @@ class MeetingService {
 
         if( $withRaces ) {
             $meeting->races->setRelations('bets', 'event_id', $this->betService->getBetsByEventGroupForAuthUser($meeting->id));
-            $this->resultService->loadResultsForRaces($meeting->races);
         }
 
         return $meeting;
@@ -149,7 +141,7 @@ class MeetingService {
      */
     public function setMeetingResourceService()
     {
-        $this->meetingResourceService = App::make('TopBetta\Services\Resources\MeetingResourceService');
+        $this->meetingResourceService = App::make('TopBetta\Services\Resources\Cache\CachedMeetingResourceService');
         return $this;
     }
 

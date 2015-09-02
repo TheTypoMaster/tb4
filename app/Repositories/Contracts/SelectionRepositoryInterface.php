@@ -13,4 +13,6 @@ interface SelectionRepositoryInterface {
     public function getSelectionsForEvent($event);
 
     public function getSelectionsForMarkets($markets);
+
+    public function getSelectionsForRace($race);
 }

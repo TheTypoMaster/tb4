@@ -13,6 +13,7 @@ use Carbon;
 use Queue;
 use Config;
 
+use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -23,6 +24,7 @@ use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Services\Betting\BetResults\BetResultService;
+use TopBetta\Services\Racing\RaceResultService;
 
 class RaceResulting {
 
@@ -48,6 +50,14 @@ class RaceResulting {
      * @var BetTypeMapper
      */
     private $betTypeMapper;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
+    /**
+     * @var RaceResultService
+     */
+    private $resultService;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -56,6 +66,8 @@ class RaceResulting {
                                 BetProductRepositoryInterface $betproducts,
                                 BetResultRepo $betresults,
                                 BetResultService $betResultService,
+                                RaceRepository $raceRepository,
+                                RaceResultService $resultService,
                                 BetTypeMapper $betTypeMapper,
                                 ResultPricesRepositoryInterface $resultPricesRepository){
         $this->events = $events;
@@ -66,6 +78,8 @@ class RaceResulting {
         $this->betresults = $betresults;
         $this->betResultService = $betResultService;
         $this->logprefix = 'RaceResultService - Result Events: ';
+        $this->raceRepository = $raceRepository;
+        $this->resultService = $resultService;
         $this->resultPricesRepository = $resultPricesRepository;
         $this->betTypeMapper = $betTypeMapper;
     }
@@ -221,7 +235,16 @@ class RaceResulting {
                 ));
             }
 
+
+
         }
+
+        //update results in cache
+        $this->raceRepository->makeCacheResource($eventModel);
+        $race = $this->raceRepository->getRace($eventModel->id);
+        $this->resultService->loadResultForRace($race, true);
+        $this->raceRepository->save($race);
+
         /*
          * result BETS
          */

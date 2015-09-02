@@ -267,11 +267,11 @@ class TournamentResultService {
     {
         switch ($tournament->prizeFormat->keyword) {
             case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_ALL:
-                return $this->placesPaidService->getPercentagesForTournamentByPlacesPaid($tournament, 1);
+                return $this->placesPaidService->getPercentagesForTournamentByQualifiers($tournament, 1);
             case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_TOP3:
-                return $this->placesPaidService->getPercentagesForTournamentByPlacesPaid($tournament, 3);
+                return $this->placesPaidService->getPercentagesForTournamentByQualifiers($tournament, 3);
             case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_MULTIPLE:
-                return $this->placesPaidService->getPercentagesForTournamentByEntrants($tournament);
+                return $this->placesPaidService->getPercentagesForTournamentByQualifiers($tournament);
         }
 
         throw new \InvalidArgumentException("Invalid tournament prize format");

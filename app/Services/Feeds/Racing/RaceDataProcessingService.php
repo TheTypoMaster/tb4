@@ -11,6 +11,9 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Repositories\Cache\MeetingRepository;
+use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Cache\RacingSelectionRepository;
 use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBetService;
@@ -64,11 +67,11 @@ class RaceDataProcessingService {
      */
     private $betTypeMapper;
 
-    public function __construct(EventRepositoryInterface $events,
-                                SelectionRepositoryInterface $selections,
+    public function __construct(RaceRepository $events,
+                                RacingSelectionRepository $selections,
 								SelectionPriceRepositoryInterface $prices,
                                 SelectionResultRepositoryInterface $results,
-                                CompetitionRepositoryInterface $competitions,
+                                MeetingRepository $competitions,
 								DataValueRepositoryInterface $datavalues,
 								TournamentRepositoryInterface $tournaments,
 								NextToJumpCacheService $nexttojump,
@@ -368,12 +371,13 @@ class RaceDataProcessingService {
 
 			$eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
 
+			$event = $this->events->getEventModelFromExternalId($raceDetails['external_event_id']);
+            $eventId = $event->id;
+
 			// add pivot table record if this is a newly added race
-			if(!$existingRaceDetails){
-				Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
-				$competitionModel = $this->competitions->find($existingMeetingDetails['id']);
-				$competitionModel->events()->attach($eventId);
-			}
+            Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
+            $competitionModel = $this->competitions->find($existingMeetingDetails['id']);
+            $this->events->addModelToCompetition($event, $competitionModel);
 
 
 			// if this event was abandoned - result bets
@@ -473,9 +477,6 @@ class RaceDataProcessingService {
 			// get the runner id and update the wager_id...?
 			$runnerId = $this->selections->getSeletcionIdByExternalId($existingRaceDetails['external_event_id'].'_'.$runner['RunnerNo']);
 			$selectionUpdate = array('id' => $runnerId, 'wager_id' => $runnerId);
-			$this->selections->updateOrCreate($selectionUpdate, 'id');
-
-			Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 			// form
 			if(array_get($runner, 'Results') != '0(0-0-0)' && array_get($runner, 'Results') != NULL){
@@ -574,6 +575,10 @@ class RaceDataProcessingService {
 
 				}
 			}
+
+            $this->selections->updateOrCreate($selectionUpdate, 'id');
+
+            Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 		}
 

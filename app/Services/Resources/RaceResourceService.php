@@ -53,9 +53,11 @@ class RaceResourceService {
 
     public function getRaceWithSelections($raceId)
     {
-        $race = $this->eventRepository->getEvent($raceId, true);
+        $race = $this->eventRepository->getEvent($raceId);
 
         $race = new RaceResource($race);
+
+        $race->setSelections($this->selectionService->getSelectionsForRace($race->id));
 
         $race->setRelation('bets', $this->betResourceService->getBetsByEventForAuthUser($raceId));
 
@@ -68,6 +70,13 @@ class RaceResourceService {
         $this->loadTotesForRace($race);
 
         return $race;
+    }
+
+    public function getRacesForMeeting($meetingId)
+    {
+        $races = $this->eventRepository->getEventsForCompetition($meetingId);
+
+        return new EloquentResourceCollection($races, 'TopBetta\Resources\RaceResource');
     }
 
     public function loadTotesForRace(RaceResource $race)

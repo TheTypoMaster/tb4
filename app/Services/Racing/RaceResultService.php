@@ -47,9 +47,9 @@ class RaceResultService {
         return $races;
     }
 
-    public function loadResultForRace($race)
+    public function loadResultForRace($race, $forceLoad = false)
     {
-        if( $this->raceHasResults($race) ) {
+        if( $forceLoad || $this->raceHasResults($race) ) {
             $results = $this->formatForResponse($race);
 
             $race->setResultString($results['result_string']);

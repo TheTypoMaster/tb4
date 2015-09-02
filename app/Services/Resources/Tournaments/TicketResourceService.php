@@ -45,7 +45,7 @@ class TicketResourceService {
     {
         $tickets = $this->ticketRepository->nextToJumpTicketsForUser($user);
 
-        return $this->createTicketCollection($tickets);
+        return $this->createNextToJumpCollection($tickets);
     }
 
     public function getActiveTicketsForUser($user, $with = null)
@@ -126,4 +126,20 @@ class TicketResourceService {
 
         return $tickets;
     }
+
+    protected function createNextToJumpCollection($tickets)
+    {
+        $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\NextToJumpTicketResource');
+
+        foreach($tickets as $ticket) {
+            if( $ticket->getQualified() ) {
+                $ticket->setPosition(
+                    $this->leaderboardService->getLeaderboardPositionForTicket($ticket)
+                );
+            }
+        }
+
+        return $tickets;
+    }
+
 }

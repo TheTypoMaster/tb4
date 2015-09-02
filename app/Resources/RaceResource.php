@@ -9,6 +9,7 @@
 namespace TopBetta\Resources;
 
 
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 
 class RaceResource extends AbstractEloquentResource {
@@ -25,9 +26,6 @@ class RaceResource extends AbstractEloquentResource {
         "status"            => 'eventstatus.name',
         "weather"           => 'weather',
         "track_condition"   => 'track_condition',
-        "results"           => "results",
-        "exoticResults"     => "exoticResults",
-        "resultString"      => "resultString",
         "exoticBetsAllowed" => "exoticBetsAllowed",
         "availableProducts" => "availableProducts",
     );
@@ -55,6 +53,20 @@ class RaceResource extends AbstractEloquentResource {
         }
 
         return $collection;
+    }
+
+    public function setSelections($selections)
+    {
+        $this->relations['selections'] = $selections;
+
+        //inject products into selection so we can set tote types on prices
+        if (array_get($this->relations, 'products')) {
+            foreach ($this->relations['selections'] as $selection) {
+                $selection->setProducts($this->relations['products']);
+            }
+        }
+
+        return $this;
     }
 
     public function bets()
@@ -132,6 +144,30 @@ class RaceResource extends AbstractEloquentResource {
     public function getType()
     {
         return $this->model->competition->first()->type_code;
+    }
+
+    public function getEventstatus()
+    {
+        return $this->model->eventstatus;
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        if( $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM ||
+            $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING ||
+            $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID
+        ) {
+
+            $array["results"] = $this->getResults();
+            $array["exoticResults"] = $this->getExoticResults();
+            $array["resultString"] = $this->getResultString();
+
+        }
+
+        return $array;
+
     }
 
     public function availableProducts()
