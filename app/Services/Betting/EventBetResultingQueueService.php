@@ -11,6 +11,7 @@ namespace TopBetta\Services\Betting;
 use Log;
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\BetResultService;
@@ -77,19 +78,23 @@ class EventBetResultingQueueService {
             return false;
         }
 
-        $event = $this->eventRepositoryInterface->find($eventId);
+        $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType');
         $product = $this->betProductRepository->find($productId);
 
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
 
-        //result fixed odds products
-        $fixedProducts = $this->betProductRepository->getFixedOddsProducts();
+        if ($event->resultPrices->filter(function ($v) { return $v->betType->name == BetTypeRepositoryInterface::TYPE_WIN;})->count() &&
+            $event->resultPrices->filter(function ($v) { return $v->betType->name == BetTypeRepositoryInterface::TYPE_PLACE;})->count()
+        ) {
+            //result fixed odds products
+            $fixedProducts = $this->betProductRepository->getFixedOddsProducts();
 
-        foreach ($fixedProducts as $fixedProduct) {
-            $result = $this->betResultService->resultBetsForEvent($event, $fixedProduct);
-            $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $fixedProduct);
+            foreach ($fixedProducts as $fixedProduct) {
+                $result = $this->betResultService->resultBetsForEvent($event, $fixedProduct);
+                $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $fixedProduct);
+            }
         }
 
         $this->eventService->checkAndSetPaidStatus($event);

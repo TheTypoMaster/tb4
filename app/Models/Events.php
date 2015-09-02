@@ -27,4 +27,9 @@ class Events extends Eloquent {
         return $this->belongsToMany('\TopBetta\Models\TeamModel', 'tb_team_tbdb_event', 'tbdb_event_id', 'tb_team_id')->withPivot('team_position');
     }
 
+    public function resultPrices()
+    {
+        return $this->hasMany('TopBetta\Models\ResultPriceModel', 'event_id');
+    }
+
 }
