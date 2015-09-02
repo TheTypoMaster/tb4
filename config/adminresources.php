@@ -35,6 +35,7 @@ return array(
         array("display_name" => "Promotions", "name" => "promotions"),
         array("display_name" => "Free Credit Management", "name" => "free-credit-management"),
         array("display_name" => "Tournament Groups", "name" => "tournament-groups"),
+        array("display_name" => "User Activity", "name" => "user-activity"),
     ),
 
     //custom permissions. Permissions which do not fit the resource category
@@ -43,6 +44,7 @@ return array(
         array("name" => "add_users_to_tournament", "display_name" => "Add users to tournaments"),
         array("name" => "tournament_settings", "display_name" => "Tournament Settings"),
         array("name" => "remove_users_from_tournament", "display_name" => "Remove users from tournaments"),
+        array("name" => "get_user_activity", "display_name" => "Download user activity report"),
     ),
 
     // non resource routes. Mapping for uri to permissions.
@@ -55,7 +57,8 @@ return array(
         array('uri' => 'tournament-settings', "permission" => "tournament_settings"),
         array('uri' => "tournaments/remove/{tournamentId}/{userId}", "remove_users_from_tournament"),
         array('uri' => 'tournaments/cancel/{tournamentId}', "permission" => 'tournaments.delete'),
-
+        array('uri' => 'user-activity/download', "permission" => "get_user_activity"),
+        array('uri' => 'tournaments/download/entrants', 'permission' => 'tournaments.view'),
     ),
 
     // --- SIDEBAR NAVIGATION MENU ---

@@ -89,7 +89,7 @@ class TournamentBetService {
 
     public function refundBetsForEvent($eventId)
     {
-        $bets = $this->betRepository->getBetsForEventByStatusIn($eventId, array($this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id));
+        $bets = $this->betRepository->getBetsForEventByStatus($eventId, $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id);
 
         foreach ($bets as $bet) {
             $this->resultService->refundBet($bet);
@@ -106,8 +106,7 @@ class TournamentBetService {
 
         $betType = $this->betTypeRepository->getBetTypeByName($bet['bet_type']);
 
-        $placementService = TournamentBetPlacementFactory::make($betType->name);
-
+        $placementService = TournamentBetPlacementFactory::make($betType->name, array_get($bet, 'win_product'), array_get($bet, 'place_product'));
         return $placementService->placeBet($ticket, $bet['selections'], $bet['amount'], $betType);
     }
 }

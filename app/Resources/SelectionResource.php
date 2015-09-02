@@ -15,30 +15,31 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 class SelectionResource extends AbstractEloquentResource {
 
     protected $attributes = array(
-        'id'         => 'id',
-        'name'       => 'name',
-        'number'     => 'number',
-        'jockey'     => 'associate',
-        'barrier'    => 'barrier',
-        'handicap'   => 'handicap',
-        'weight'     => 'weight',
-        'prices'     => 'prices',
-        'silk'       => 'silk',
-        'form'       => 'form',
-        'typeCode'   => 'type_code',
+        'id'             => 'id',
+        'name'           => 'name',
+        'number'         => 'number',
+        'jockey'         => 'associate',
+        'barrier'        => 'barrier',
+        'handicap'       => 'handicap',
+        'weight'         => 'weight',
+        'prices'         => 'prices',
+        'silk'           => 'silk',
+        'form'           => 'form',
+        'winDeductions'  => 'win_deductions',
+        'placeDeduction' => 'place_deductions',
+        'typeCode'       => 'type_code',
     );
 
     protected $types = array(
         "id" => "int",
         "number" => "int",
-        "winOdds" => "float",
-        "placeOdds" => "float",
         "silk_id" => "int",
         "barrier" => "int",
     );
 
     protected $loadIfRelationExists = array(
         'runner' => 'runner',
+        'prices' => 'prices',
     );
 
     protected $loadRelations = array(
@@ -72,40 +73,12 @@ class SelectionResource extends AbstractEloquentResource {
      */
     public function prices()
     {
-        return array(
-            array(
-                "product_id" => $this->products->get(BetTypeRepositoryInterface::TYPE_WIN)->id,
-                "product" => $this->products->get(BetTypeRepositoryInterface::TYPE_WIN)->productCode,
-                "bet_type" => BetTypeRepositoryInterface::TYPE_WIN,
-                "price" => $this->getWinOdds(),
-            ),
-            array(
-                "product_id" => $this->products->get(BetTypeRepositoryInterface::TYPE_PLACE)->id,
-                "product" => $this->products->get(BetTypeRepositoryInterface::TYPE_PLACE)->productCode,
-                "bet_type" => BetTypeRepositoryInterface::TYPE_PLACE,
-                "price" => $this->getPlaceOdds(),
-            )
-        );
+        return $this->collection('prices', 'TopBetta\Resources\PriceResource', $this->model->prices);
     }
 
     public function setProducts($products)
     {
         $this->products = $products;
-        $this->products->keyBy('betType');
-    }
-
-    public function getWinOdds()
-    {
-        $price = $this->model->price ? $this->model->price->win_odds : 0;
-
-        return $price >= 1 ? $price : null;
-    }
-
-    public function getPlaceOdds()
-    {
-        $price = $this->model->price ? $this->model->price->place_odds : null;
-
-        return $price >= 1 ? $price : null;
     }
 
     public function getForm()
@@ -113,11 +86,54 @@ class SelectionResource extends AbstractEloquentResource {
         return $this->model->last_starts;
     }
 
+    /**
+     * Gets the displayed betType price for the runner (fixed or tote)
+     * @param $betType 'win' | 'place'
+     * @param bool $fixed
+     * @return mixed
+     */
+    public function getBetTypePrice($betType, $fixed = false)
+    {
+        $product = $this->getBetTypeProduct($betType, $fixed);
+
+        if (!$product) {
+            return null;
+        }
+
+        $price = $this->prices->filter(function ($v) use ($product) {
+           return  $v->productId == $product->id;
+        })->first();
+
+        if ($price) {
+            $price =  $price->{'get' . ucfirst($betType) . 'Odds'}();
+            return $price >= 1 ? $price : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the product for the given betType
+     * @param $betType String
+     * @param bool $fixed
+     * @return mixed
+     */
+    public function getBetTypeProduct($betType, $fixed = false)
+    {
+        if ($this->products) {
+            return $this->products->filter(function ($v) use ($betType, $fixed) {
+                return $v->betType == $betType && $v->fixed === $fixed;
+            })->first();
+        }
+
+        return null;
+    }
+
     public function getSilk()
     {
         if ($this->model->type_code == 'G') {
             return Config::get('silks.greyhound_silk_path') . Config::get('silks.greyhound_silk_filename_prefix') .
-                $this->model->number . Config::get('silks.default_silk_file_extension');
+            $this->model->number . Config::get('silks.default_silk_file_extension');
         }
 
         return Config::get('silks.default_silk_path') . $this->model->silk_id . Config::get('silks.default_silk_file_extension');
@@ -144,10 +160,10 @@ class SelectionResource extends AbstractEloquentResource {
     {
         $array = parent::toArray();
 
-        $array['win_tote'] = $this->getWinOdds();
-        $array['place_tote'] = $this->getPlaceOdds();
-        $array['win_fixed'] = null;
-        $array['place_fixed'] = null;
+        $array['win_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN);
+        $array['place_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE);
+        $array['win_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN, true);
+        $array['place_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE, true);
 
         return $array;
     }

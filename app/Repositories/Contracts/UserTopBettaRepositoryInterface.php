@@ -14,4 +14,6 @@ interface UserTopBettaRepositoryInterface {
     public function updateFreeCreditWinsToTurnOver($userId, $amount);
 
     public function findByUserId($userId);
+
+    public function getFullUserByEmail($email);
 }

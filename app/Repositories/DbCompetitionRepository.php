@@ -275,7 +275,29 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get(array('eg.*'));
     }
 
+    public function syncProductsForBetType(CompetitionModel $meeting, $productIds, $betTypeId)
+    {
+        $products = $meeting->products()->where('bet_type_id', $betTypeId)->get();
 
+        $toRemove = array_diff($products->lists('id')->all(), $productIds);
+        $toAttach = array_diff($productIds, $products->lists('id')->all());
+
+        if ($toRemove) {
+            $meeting->products()->newPivotStatement()->whereIn('bet_product_id', $toRemove)
+                ->where('bet_type_id', $betTypeId)->delete();
+        }
+
+        if ($toAttach) {
+            $meeting->products()
+                ->attach(array_combine(
+                    $toAttach,
+                    array_fill(0, count($toAttach), array("bet_type_id" => $betTypeId))
+                ));
+        }
+
+
+        return $meeting;
+    }
 
     public function getByEvent($event)
     {

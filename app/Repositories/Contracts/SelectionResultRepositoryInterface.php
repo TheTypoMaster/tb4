@@ -8,4 +8,5 @@
 
 interface SelectionResultRepositoryInterface {
 
-} 
+    public function deleteResults($resultIds);
+}

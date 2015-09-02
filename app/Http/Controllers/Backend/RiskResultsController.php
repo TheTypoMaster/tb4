@@ -4,7 +4,10 @@ use TopBetta\Http\Controllers\Controller;
 use TopBetta\Http\Controllers\Backend\RiskRaceStatusController;
 
 use Illuminate\Support\Facades\Input;
+use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\BetResultService;
+use TopBetta\Services\Racing\RaceResultService;
 
 
 class RiskResultsController extends Controller
@@ -17,11 +20,26 @@ class RiskResultsController extends Controller
      * @var RiskRaceStatusController
      */
     private $riskRaceStatusController;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
+    /**
+     * @var RaceResultService
+     */
+    private $resultService;
+    /**
+     * @var EventRepositoryInterface
+     */
+    private $eventRepository;
 
-    public function __construct(BetResultService $betResultService, RiskRaceStatusController $riskRaceStatusController )
+    public function __construct(BetResultService $betResultService, RiskRaceStatusController $riskRaceStatusController, RaceRepository $raceRepository, RaceResultService $resultService, EventRepositoryInterface $eventRepository )
     {
         $this->betResultService = $betResultService;
         $this->riskRaceStatusController = $riskRaceStatusController;
+        $this->raceRepository = $raceRepository;
+        $this->resultService = $resultService;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -41,6 +59,13 @@ class RiskResultsController extends Controller
         }
 
         $errors = $this->updateRaceResults($input, $input['race_id']);
+
+        $eventModel = $this->eventRepository->find($input['race_id']);
+        //update results in cache
+        $this->raceRepository->makeCacheResource($eventModel);
+        $race = $this->raceRepository->getRace($eventModel->id);
+        $this->resultService->loadResultForRace($race, true);
+        $this->raceRepository->save($race);
 
         if (count($errors)) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id'], "messages" => $errors);

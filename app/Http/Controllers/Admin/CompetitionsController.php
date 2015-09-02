@@ -42,6 +42,12 @@ class CompetitionsController extends CrudResourceController
 
     protected $editView = 'admin.eventdata.competitions.edit';
 
+    protected $createChildRoute = array(
+        "route" => 'admin.events.create',
+        'param' => 'competition_id',
+        'name' => 'Event'
+    );
+
     private $baseCompetitionRepository;
 
 
@@ -131,6 +137,34 @@ class CompetitionsController extends CrudResourceController
                 'type'  => 'datetime'
             ),
         );
+    }
+
+    public function update($id, $extraData = array())
+    {
+        $baseCompetition = \App::make('TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface')->find(Input::get('base_competition_id'));
+
+        if( ! $baseCompetition ) {
+            return Redirect::back()
+                ->withInput()->with(array('flash_message' => 'please specify base competition'));
+        }
+
+        $data = array('sport_id' => $baseCompetition->sport_id);
+
+        return parent::update($id, $data);
+    }
+
+    public function store($extraData = array())
+    {
+        $baseCompetition = \App::make('TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface')->find(Input::get('base_competition_id'));
+
+        if( ! $baseCompetition ) {
+            return Redirect::back()
+                ->withInput()->with(array('flash_message' => 'please specify base competition'));
+        }
+
+        $data = array('sport_id' => $baseCompetition->sport_id);
+
+        return parent::store($data);
     }
 
     public function getBySport($id)

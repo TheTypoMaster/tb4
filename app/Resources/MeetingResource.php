@@ -31,9 +31,12 @@ class MeetingResource extends AbstractEloquentResource {
         'competitionEvents' => 'races'
     );
 
+    /**
+     * @return EloquentResourceCollection
+     */
     public function races()
     {
-        return $this->collection('races', 'TopBetta\Resources\RaceResource', $this->model->competitionEvents);
+        return $this->collection('races', 'TopBetta\Resources\RaceResource', 'competitionEvents');
     }
 
     public function setRaces($races)

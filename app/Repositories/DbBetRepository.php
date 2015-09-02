@@ -96,8 +96,23 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     public function getBetsForEventByStatus($event, $status, $type = null)
     {
         $model =  $this->model
+            ->join('tbdb_bet_result_status', 'tbdb_bet_result_status.id', '=', 'tbdb_bet.bet_result_status_id')
             ->where('event_id', $event)
-            ->where('bet_result_status_id', $status);
+            ->where('tbdb_bet_result_status.name', $status);
+
+        if( $type ) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get();
+    }
+
+    public function getBetsForEventByStatusAndProduct($event, $status, $product, $type = null)
+    {
+        $model =  $this->model
+            ->where('event_id', $event)
+            ->where('bet_result_status_id', $status)
+            ->where('bet_product_id', $product);
 
         if( $type ) {
             $model->where('bet_type_id', $type);
@@ -253,6 +268,8 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     {
         return $this->model
             ->from('tbdb_bet as b')
+            ->join('tbdb_bet_product as bp', 'bp.id', '=', 'b.bet_product_id')
+            ->join('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
             ->join('tbdb_bet_type as bt', 'bt.id', '=', 'b.bet_type_id')
             ->join('tbdb_bet_result_status as brs', 'brs.id', '=', 'b.bet_result_status_id')
             ->leftJoin('tbdb_account_transaction as at', 'at.id', '=', 'b.result_transaction_id')
@@ -271,7 +288,8 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
                 'b.id', 'b.bet_amount', 'b.bet_freebet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status', 'at.amount as won_amount',
                 'bt.name as bet_type', 'b.selection_string', 'e.start_date as start_date', 'eg.type_code as event_type', 'sp.win_odds as win_odds', 'sp.place_odds as place_odds',
-                'sr.win_dividend', 'sr.place_dividend', 's.number as selection_number', 'b.boxed_flag', 'bs.fixed_odds', 'b.percentage as percentage'
+                'sr.win_dividend', 'sr.place_dividend', 's.number as selection_number', 'b.boxed_flag', 'bs.fixed_odds', 'b.percentage as percentage', 'bp.is_fixed_odds as fixed',
+                'ppm.provider_product_name', 'bp.id as product_id',
             ));
     }
 

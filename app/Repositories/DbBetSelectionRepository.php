@@ -13,7 +13,7 @@ use TopBetta\Models\BetSelection;
 use TopBetta\Models\BetSelectionModel;
 use TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface;
 
-class DbBetSelectionRepository implements BetSelectionRepositoryInterface
+class DbBetSelectionRepository extends BaseEloquentRepository implements BetSelectionRepositoryInterface
 {
 
     private static $selectionPositionTemplate = array(

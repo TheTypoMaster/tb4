@@ -44,7 +44,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->get(array("tbdb_tournament_bet.*"));
     }
 
-    public function getBetsForEventByStatusIn($eventId, $status, $betType = null)
+    public function getBetsForEventByStatusIn($eventId, $status, $product, $betType = null)
     {
         $model = $this->model
             ->join('tbdb_tournament_bet_selection', 'tbdb_tournament_bet_selection.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
@@ -52,7 +52,26 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
             ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
             ->where('tbdb_event.id', '=', $eventId)
-            ->where('tbdb_tournament_bet.bet_result_status_id', $status);
+            ->where('tbdb_tournament_bet.bet_result_status_id', $status)
+            ->where('tbdb_tournament_bet.bet_product_id', $product);
+
+        if( $betType ) {
+            $model->where('tbdb_tournament_bet.bet_type_id', $betType);
+        }
+
+        return $model->get(array('tbdb_tournament_bet.*'));
+    }
+
+    public function getBetsForEventByStatus($eventId, $status, $betType = null)
+    {
+        $model = $this->model
+            ->join('tbdb_tournament_bet_selection', 'tbdb_tournament_bet_selection.tournament_bet_id', '=', 'tbdb_tournament_bet.id')
+            ->join('tbdb_selection', 'tbdb_tournament_bet_selection.selection_id', '=', 'tbdb_selection.id')
+            ->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+            ->join('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_bet_result_status', 'tbdb_bet_result_status.id', '=', 'tbdb_tournament_bet.bet_result_status_id')
+            ->where('tbdb_event.id', '=', $eventId)
+            ->where('tbdb_bet_result_status.name', $status);
 
         if( $betType ) {
             $model->where('tbdb_tournament_bet.bet_type_id', $betType);

@@ -51,6 +51,11 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::put('risk-show-competition/{competition}', 'Backend\RiskCompetitionController@showCompetition');
     Route::put('risk-hide-competition/{competition}', 'Backend\RiskCompetitionController@hideCompetition');
 
+    Route::post('meeting-products', 'Backend\ProductController@setMeetingProducts');
+    Route::post('user-products', 'Backend\ProductController@setUserProducts');
+
+    Route::post('override-price', 'Backend\PricesController@override');
+
 });
 
 
@@ -228,6 +233,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/remove/{tournamentId}/{userId}', 'Admin\TournamentsController@removeUserFromTournament');
     Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
+    Route::get('tournaments/download/entrants', 'Admin\tournamentsController@downloadEntrants');
 
     //tournament groups
     Route::resource('tournament-groups', 'Admin\TournamentGroupController');
@@ -245,7 +251,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::resource('icons', 'Admin\IconController');
 
     //user activity
-    Route::post('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
+    Route::post('user-activity/download', 'Admin\UserActivityController@createUserActivity');
+    Route::get('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
     Route::resource('user-activity', 'Admin\UserActivityController');
 
     Route::get('sports-list', 'Admin\SportsController@getSports');

@@ -3,6 +3,8 @@
 use TopBetta\Http\Controllers\Controller;
 
 use Request;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use TopBetta\Repositories\DbMarketRepository;
 use View;
 use Redirect;
@@ -15,11 +17,21 @@ class MarketsController extends Controller
 	 * @var DbMarketRepository
 	 */
 	private $marketsrepo;
+    /**
+     * @var MarketTypeRepositoryInterface
+     */
+    private $marketTypeRepository;
+    /**
+     * @var EventRepositoryInterface
+     */
+    private $eventRepository;
 
-	public function __construct(DbMarketRepository $marketsrepo)
+    public function __construct(DbMarketRepository $marketsrepo, MarketTypeRepositoryInterface $marketTypeRepository, EventRepositoryInterface $eventRepository)
 	{
 		$this->marketsrepo = $marketsrepo;
-	}
+        $this->marketTypeRepository = $marketTypeRepository;
+        $this->eventRepository = $eventRepository;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -49,7 +61,22 @@ class MarketsController extends Controller
 	 */
 	public function create()
 	{
-		//
+        $search = Request::get('q', '');
+
+        if( ! $event = Request::get('event_id', null) ) {
+            return Redirect::back()
+                ->with(array('flash_message' => "Please specify event"));
+        }
+
+        if( ! $event = $this->eventRepository->find($event) ) {
+            return Redirect::back()
+                ->with(array('flash_message' => "Please specify event"));
+        }
+
+        $marketTypes = $this->marketTypeRepository->findAll();
+
+        return View::make('admin.eventdata.markets.create', compact('search', 'event', 'marketTypes'));
+
 	}
 
 	/**
@@ -59,7 +86,22 @@ class MarketsController extends Controller
 	 */
 	public function store()
 	{
-		//
+        $search = Request::get('q', '');
+
+        if( ! $event = Request::get('event_id', null) ) {
+            return Redirect::back()
+                ->with(array('flash_message' => "Please specify event"));
+        }
+
+        if( ! $event = $this->eventRepository->find($event) ) {
+            return Redirect::back()
+                ->with(array('flash_message' => "Please specify event"));
+        }
+
+        $market = $this->marketsrepo->create(Request::except(array('_method', '_token', 'q')));
+
+        return Redirect::route('admin.events.index', array('q' => $search))
+            ->with(array('flash_message' => "Success"));
 	}
 
 	/**

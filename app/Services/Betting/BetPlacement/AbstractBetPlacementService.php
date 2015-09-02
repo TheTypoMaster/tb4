@@ -46,6 +46,12 @@ abstract class AbstractBetPlacementService {
      * @var BetLimitService
      */
     protected $betLimitService;
+    /**
+     * @var String
+     */
+    protected $betType;
+
+    protected $product;
 
     public function __construct(AbstractBetSelectionService $betSelectionService,
                                 BetTransactionService $betTransactionService,
@@ -114,13 +120,14 @@ abstract class AbstractBetPlacementService {
         try {
             $bet = $this->createBet($user, $transactions, $type, $origin, $selections);
         } catch (\Exception $e) {
-            Log::error("BET PLACEMENT ERROR : " . $e->getMessage() );
+            Log::error("BET PLACEMENT ERROR : " . $e->getMessage());
             $this->betTransactionService->refund($user, array_get($transactions, 'account.amount', 0), array_get($user, array_get($transactions,'free_credit.amount', 0)));
             throw new BetPlacementException("Error storing bet");
         }
 
         //create selections
         try {
+            $bet['bet_type'] = $this->betType;
             $betSelections = $this->betSelectionService->createSelections($bet, $selections);
         } catch (\Exception $e) {
             Log::error("BET SELECTION ERROR : " . $e->getMessage() );
@@ -154,7 +161,7 @@ abstract class AbstractBetPlacementService {
 
             //what to do here?
             'bet_origin_id' => $origin,
-            'bet_product_id' => $origin,
+            'bet_product_id' => $this->product ? $this->product->id : $origin,
 
             'bet_transaction_id' => array_get($transactions, 'account.id', 0),
             'bet_freebet_transaction_id' => array_get($transactions, 'free_credit.id', 0),
@@ -184,6 +191,26 @@ abstract class AbstractBetPlacementService {
     public function validateBet($user, $amount, $type, $selections)
     {
         $this->checkBetLimit($user, $amount, $type, $selections);
+    }
+
+    /**
+     * @param String $betType
+     * @return $this
+     */
+    public function setBetType($betType)
+    {
+        $this->betType = $betType;
+        return $this;
+    }
+
+    /**
+     * @param mixed $product
+     * @return $this
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+        return $this;
     }
 
     /**

@@ -15,6 +15,8 @@ use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\MeetingResource;
+use TopBetta\Services\Products\ProductService;
+use TopBetta\Services\Racing\RaceResultService;
 
 class MeetingResourceService {
 
@@ -32,16 +34,17 @@ class MeetingResourceService {
      */
     private $selectionService;
     /**
-     * @var ProductProviderMatchRepositoryInterface
+     * @var ProductService
      */
-    private $productProviderMatchRepository;
+    private $productService;
 
-    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceResourceService $raceService, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepository)
+    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceResourceService $raceService, SelectionResourceService $selectionService, ProductService $productService, RaceResultService $resultService)
     {
         $this->competitionRepository = $competitionRepository;
         $this->raceService = $raceService;
         $this->selectionService = $selectionService;
-        $this->productProviderMatchRepository = $productProviderMatchRepository;
+        $this->productService = $productService;
+        $this->resultService = $resultService;
     }
 
     public function getMeetingsForDate($date, $type = null, $withRaces = false)
@@ -57,6 +60,7 @@ class MeetingResourceService {
 
         if ($withRaces) {
             foreach ($meetings as $meeting) {
+                $this->resultService->loadResultsForRaces($meeting->races);
                 $this->loadTotesForMeeting($meeting);
             }
         }
@@ -73,6 +77,7 @@ class MeetingResourceService {
         }
 
         if( $withRaces ) {
+
             $model->load(array('competitionEvents', 'competitionEvents.eventstatus'));
         }
 
@@ -86,19 +91,22 @@ class MeetingResourceService {
         $model = new MeetingResource($model);
 
         if ($withRaces) {
+
+            $this->resultService->loadResultsForRaces($model->races);
             $this->loadTotesForMeeting($model);
         }
 
         return $model;
     }
 
-    protected function loadTotesForMeeting(MeetingResource $meeting)
+    public function loadTotesForMeeting(MeetingResource $meeting)
     {
-        $products = $this->productProviderMatchRepository->getProductAndBetTypeByCompetition($meeting->getModel());
+        $products = $this->productService->getAuthUserProductsForCompetition($meeting->getModel());
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
         foreach ($meeting->races as $race) {
+
             $race->setProducts($products);
         }
 

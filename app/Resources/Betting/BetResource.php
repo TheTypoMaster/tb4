@@ -37,7 +37,11 @@ class BetResource extends AbstractEloquentResource {
         'odds'             => 'odds',
         'boxedFlag'        => 'boxed_flag',
         'dividend'         => 'dividend',
-        'isExotic'         => 'isExotic'
+        'isExotic'         => 'isExotic',
+        'isFixed'          => 'isFixed',
+        'deductions'       => 'deductions',
+        'productId'        => 'product_id',
+        'productCode'      => 'provider_product_name',
     );
 
     protected $types = array(
@@ -53,7 +57,10 @@ class BetResource extends AbstractEloquentResource {
         "odds"            => "float",
         "dividend"        => "float",
         "boxedFlag"       => "bool",
+        "isFixed"         => "bool",
     );
+
+    protected $deductions = 0;
 
 
     public function paid()
@@ -115,5 +122,28 @@ class BetResource extends AbstractEloquentResource {
             BetTypeRepositoryInterface::TYPE_TRIFECTA,
             BetTypeRepositoryInterface::TYPE_FIRSTFOUR
         ));
+    }
+
+    public function isFixed()
+    {
+        return $this->model->fixed;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeductions()
+    {
+        return $this->deductions;
+    }
+
+    protected function initialize()
+    {
+        parent::initialize();
+
+        if ($this->isFixed() && in_array($this->betType, [BetTypeRepositoryInterface::TYPE_WIN, BetTypeRepositoryInterface::TYPE_PLACE])) {
+            $service = \App::make('TopBetta\Services\Betting\SelectionService');
+            $this->deductions = $service->totalDeduction($this->marketId, $this->betType);
+        }
     }
 }

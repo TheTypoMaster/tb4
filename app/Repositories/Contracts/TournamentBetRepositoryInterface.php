@@ -17,7 +17,7 @@ interface TournamentBetRepositoryInterface
 
     public function getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $eventStatuses);
 
-    public function getBetsForEventByStatusIn($eventId, $status, $betType = null);
+    public function getBetsForEventByStatusIn($eventId, $status, $product, $betType = null);
 
     public function getBetsForSelection($selectionId);
 
@@ -26,4 +26,6 @@ interface TournamentBetRepositoryInterface
     public function getBetsOnEventForTicket($ticket, $event);
 
     public function getBetsForUserTournament($user, $tournament);
+
+    public function getBetsForEventByStatus($eventId, $status, $betType = null);
 }

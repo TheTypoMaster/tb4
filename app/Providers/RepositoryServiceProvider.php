@@ -318,6 +318,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbProductProviderMatchRepository'
         );
         $this->app->bind(
+            'TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface',
+            'TopBetta\Repositories\DbResultPricesRepository'
+        );
+        $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface',
             'TopBetta\Repositories\DbTournamentPlacesPaidRepository'
         );

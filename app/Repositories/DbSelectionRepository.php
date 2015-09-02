@@ -192,6 +192,11 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
 		return $selection;
 	}
 
+    public function getSelectionByExternalId($externalId){
+        return $this->model->where('external_selection_id', $externalId)
+            ->first();
+    }
+
     public function getAllSelectionsForMarket($marketId)
     {
         return $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
@@ -257,5 +262,12 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
                 'lastStarts'
             ))
             ->get(array('tbdb_selection.*', 'tbdb_event_group.type_code as type_code'));
+    }
+
+    public function getSelectionsByMarket($market)
+    {
+        return $this->model
+            ->where('market_id', $market)
+            ->get();
     }
 } 
