@@ -29,6 +29,7 @@ class RaceResource extends AbstractEloquentResource {
         "exoticResults"     => "exoticResults",
         "resultString"      => "resultString",
         "exoticBetsAllowed" => "exoticBetsAllowed",
+        "displayedResults"  => "displayedResults",
     );
 
     protected $loadIfRelationExists = array(
@@ -145,6 +146,19 @@ class RaceResource extends AbstractEloquentResource {
     public function getType()
     {
         return $this->model->competition->first()->type_code;
+    }
+
+    public function getDisplayedResults()
+    {
+        if (!array_get($this->relations, 'products')) {
+            return array();
+        }
+
+        $products = array_map(function ($q) {return array('product_id' => $q['product_id'], 'bet_type' => $q['bet_type']);}, $this->relations['products']->toArray());
+        return array_filter($this->results, function ($v) use ($products) {
+            $result =  array('product_id' => $v['product_id'], 'bet_type' => $v['bet_type']);
+            return in_array($result, $products);
+        });
     }
 
 }
