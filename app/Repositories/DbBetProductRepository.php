@@ -77,4 +77,11 @@ class DbBetProductRepository extends BaseEloquentRepository implements BetProduc
             ->orderBy('venue_id', 'DESC')
             ->get(array('tbdb_bet_product.*', 'tbdb_bet_type.name as bet_type', 'tb_user_products.venue_id as venue_id'));
     }
+
+    public function getFixedOddsProducts()
+    {
+        return $this->model
+            ->where('is_fixed_odds', true)
+            ->get();
+    }
 }

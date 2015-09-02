@@ -84,6 +84,14 @@ class EventBetResultingQueueService {
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
 
+        //result fixed odds products
+        $fixedProducts = $this->betProductRepository->getFixedOddsProducts();
+
+        foreach ($fixedProducts as $fixedProduct) {
+            $result = $this->betResultService->resultBetsForEvent($event, $fixedProduct);
+            $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $fixedProduct);
+        }
+
         $this->eventService->checkAndSetPaidStatus($event);
 
         $tournaments = $this->tournamentRepository->getFinishedUnresultedTournaments();

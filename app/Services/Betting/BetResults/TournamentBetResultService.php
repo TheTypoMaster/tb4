@@ -71,6 +71,7 @@ class TournamentBetResultService {
      */
     public function resultAllBetsForEvent($event, $product)
     {
+        \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
         $interim = $this->eventService->isEventInterim($event);
 
         $betType = null;
