@@ -27,7 +27,13 @@ class CachedSelectionResourceService extends CachedResourceService {
 
     public function getSelectionsForRace($race)
     {
-        return $this->selectionRepository->getSelectionsForRace($race);
+        $selections = $this->selectionRepository->getSelectionsForRace($race);
+
+        if (!$selections) {
+            return $this->resourceService->getSelectionsForRace($race);
+        }
+
+        return $selections;
     }
 
 }

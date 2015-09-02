@@ -9,6 +9,7 @@
 namespace TopBetta\Resources;
 
 
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 
 class RaceResource extends AbstractEloquentResource {
@@ -25,9 +26,6 @@ class RaceResource extends AbstractEloquentResource {
         "status"            => 'eventstatus.name',
         "weather"           => 'weather',
         "track_condition"   => 'track_condition',
-        "results"           => "results",
-        "exoticResults"     => "exoticResults",
-        "resultString"      => "resultString",
         "exoticBetsAllowed" => "exoticBetsAllowed",
     );
 
@@ -150,6 +148,25 @@ class RaceResource extends AbstractEloquentResource {
     public function getEventstatus()
     {
         return $this->model->eventstatus;
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        if( $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM ||
+            $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING ||
+            $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID
+        ) {
+
+            $array["results"] = $this->getResults();
+            $array["exoticResults"] = $this->getExoticResults();
+            $array["resultString"] = $this->getResultString();
+
+        }
+
+        return $array;
+
     }
 
 }

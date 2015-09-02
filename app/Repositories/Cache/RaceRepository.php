@@ -23,6 +23,10 @@ class RaceRepository extends CachedResourceRepository {
         'eventstatus'
     );
 
+    protected $collectionKeys = array(
+        self::COLLECTION_MEETING_RACES
+    );
+
     public function __construct(EventRepositoryInterface $repository)
     {
         $this->repository = $repository;
@@ -30,7 +34,12 @@ class RaceRepository extends CachedResourceRepository {
 
     public function getRacesForMeeting($meetingId)
     {
-        return $this->get($this->cachePrefix . $meetingId);
+        return $this->get($this->cachePrefix . '_meeting_' . $meetingId);
+    }
+
+    public function getRace($raceId)
+    {
+        return $this->get($this->cachePrefix . $raceId);
     }
 
     public function addModelToCompetition($model, $competition)
@@ -44,10 +53,42 @@ class RaceRepository extends CachedResourceRepository {
         return $model;
     }
 
+    public function put($key, $model, $time)
+    {
+        $oldRace = $this->get($key);
+
+        //make sure we dont remove race results on update
+        if ($oldRace && $oldRace->getResults() && ! $model->getResults()) {
+            $model->setResultString($oldRace->getResultString());
+            $model->setResults($oldRace->getResults());
+            $model->setExoticResults($oldRace->getExoticResults());
+        }
+
+        return parent::put($key, $model, $time);
+    }
+
+    public function putInCollection($collection, $key, $model)
+    {
+        $oldRace = $collection->get($key);
+
+        //make sure we dont remove race results on update
+        if ($oldRace && $oldRace->getResults() && ! $model->getResults()) {
+            $model->setResultString($oldRace->getResultString());
+            $model->setResults($oldRace->getResults());
+            $model->setExoticResults($oldRace->getExoticResults());
+        }
+
+        return parent::putInCollection($collection, $key, $model);
+    }
+
+
     protected function getCollectionCacheKey($keyTemplate, $model)
     {
         switch($keyTemplate) {
             case self::COLLECTION_MEETING_RACES:
+                if (!$model->getModel()->competition->first()) {
+                    return null;
+                }
                 return $this->cachePrefix . '_meeting_' . $model->getModel()->competition->first()->id;
         }
 

@@ -48,6 +48,18 @@ abstract class CachedResourceRepository {
         return Cache::get($key);
     }
 
+    public function put($key, $model, $time)
+    {
+        Cache::put($key, $model, $time);
+        return $this;
+    }
+
+    public function putInCollection($collection, $key, $model)
+    {
+        $collection->put($key, $model);
+        return $this;
+    }
+
     public function create($data, $relations = array())
     {
         $model = $this->repository->createAndReturnModel($data);
@@ -75,12 +87,24 @@ abstract class CachedResourceRepository {
 
         if ($this->storeIndividualResource) {
             \Log::debug(get_class($this) . "Putting object in cache KEY " . $this->cachePrefix . $model->id . ' TIME ' . $this->getModelCacheTime($model));
-            Cache::put($this->cachePrefix . $model->id, $resource, $this->getModelCacheTime($model));
+            $this->put($this->cachePrefix . $model->id, $resource, $this->getModelCacheTime($model));
         }
 
         $this->addToCollections($resource, $relations);
 
         return $model;
+    }
+
+    public function save($resource)
+    {
+        if ($this->storeIndividualResource) {
+            \Log::debug(get_class($this) . "Putting object in cache KEY " . $this->cachePrefix . $resource->id . ' TIME ' . $this->getModelCacheTime($resource));
+            $this->put($this->cachePrefix . $resource->id, $resource, $this->getModelCacheTime($resource));
+        }
+
+        $this->addToCollections($resource);
+
+        return $this;
     }
 
     protected function addToCollections($resource, $relations = array())
@@ -94,11 +118,15 @@ abstract class CachedResourceRepository {
     {
         $key = $this->getCollectionCacheKey($collectionKey, $resource);
 
+        if (!$key) {
+            return $this;
+        }
+
         if (!$collection = Cache::get($key)) {
             $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
         }
 
-        $collection->put($resource->id, $resource);
+        $this->putInCollection($collection, $resource->id, $resource);
 
         \Log::debug(get_class($this) . "Putting object in cache collection KEY " . $key . ' TIME ' . $this->getCollectionCacheTime($collectionKey, $resource));
         Cache::put($key, $collection, $this->getCollectionCacheTime($collectionKey, $resource));

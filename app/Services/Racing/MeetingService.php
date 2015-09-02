@@ -66,8 +66,6 @@ class MeetingService {
             $this->betService->getBetsByEventGroupForAuthUser($id)
         );
 
-        $this->resultService->loadResultsForRaces($meeting->races);
-
         foreach( $meeting->races as $event ) {
 
             if ( ($raceId && $event->id == $raceId) || ( ! $raceId && $this->raceResourceService->isOpen($event)) ) {
@@ -112,7 +110,6 @@ class MeetingService {
 
         if( $withRaces ) {
             foreach($collection as $meeting) {
-                $this->resultService->loadResultsForRaces($meeting->races);
 
                 $meeting->races->setRelations(
                     'bets',
@@ -131,7 +128,6 @@ class MeetingService {
 
         if( $withRaces ) {
             $meeting->races->setRelations('bets', 'event_id', $this->betService->getBetsByEventGroupForAuthUser($meeting->id));
-            $this->resultService->loadResultsForRaces($meeting->races);
         }
 
         return $meeting;
