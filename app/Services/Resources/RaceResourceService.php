@@ -72,6 +72,13 @@ class RaceResourceService {
         return $race;
     }
 
+    public function getRacesForMeeting($meetingId)
+    {
+        $races = $this->eventRepository->getEventsForCompetition($meetingId);
+
+        return new EloquentResourceCollection($races, 'TopBetta\Resources\RaceResource');
+    }
+
     public function loadTotesForRace(RaceResource $race)
     {
         $products = $this->productProviderMatchRepositoryInterface->getProductAndBetTypeByCompetition($race->getModel()->competition->first());

@@ -147,4 +147,9 @@ class RaceResource extends AbstractEloquentResource {
         return $this->model->competition->first()->type_code;
     }
 
+    public function getEventstatus()
+    {
+        return $this->model->eventstatus;
+    }
+
 }

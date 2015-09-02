@@ -99,6 +99,10 @@ abstract class AbstractEloquentResource implements ResourceInterface {
     protected function collection($name, $class, $collection)
     {
         if( ! array_get($this->relations, $name) ) {
+            if (is_string($collection)) {
+                $collection = object_get($this->model->load($collection), $collection);
+            }
+
             $this->relations[$name] = new EloquentResourceCollection($collection, $class);
         }
 

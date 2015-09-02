@@ -99,6 +99,12 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 		return $eventId;
 	}
 
+    public function getEventModelFromExternalId($externalEventId)
+    {
+        return $this->model->where('external_event_id', $externalEventId)
+            ->first();
+    }
+
     public function getEventWithStatusByEventId($eventId)
     {
         $eventDetails = $this->model->with('eventstatus')->where('id', $eventId)
@@ -196,6 +202,13 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
             ->get(array('e.*'));
 
         return $this->model->hydrate($model);
+    }
+
+    public function addModelToCompetition($model, $competition)
+    {
+        $model->competition()->attach($competition->id);
+
+        return $model;
     }
 
 

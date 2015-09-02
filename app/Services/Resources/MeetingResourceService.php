@@ -92,13 +92,14 @@ class MeetingResourceService {
         return $model;
     }
 
-    protected function loadTotesForMeeting(MeetingResource $meeting)
+    public function loadTotesForMeeting(MeetingResource $meeting)
     {
         $products = $this->productProviderMatchRepository->getProductAndBetTypeByCompetition($meeting->getModel());
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
         foreach ($meeting->races as $race) {
+
             $race->setProducts($products);
         }
 

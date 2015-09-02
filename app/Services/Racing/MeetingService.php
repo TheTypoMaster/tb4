@@ -10,6 +10,7 @@ namespace TopBetta\Services\Racing;
 
 use Carbon\Carbon;
 use TopBetta\Services\Betting\BetService;
+use TopBetta\Services\Resources\Cache\CachedMeetingResourceService;
 use TopBetta\Services\Resources\MeetingResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Resources\SelectionResourceService;
@@ -17,7 +18,7 @@ use TopBetta\Services\Resources\SelectionResourceService;
 class MeetingService {
 
     /**
-     * @var MeetingResourceService
+     * @var CachedMeetingResourceService
      */
     private $meetingResourceService;
     /**
@@ -37,7 +38,7 @@ class MeetingService {
      */
     private $betService;
 
-    public function __construct(MeetingResourceService $meetingResourceService,
+    public function __construct(CachedMeetingResourceService $meetingResourceService,
                                 RaceResourceService $raceResourceService,
                                 SelectionResourceService $selectionResourceService,
                                 RaceResultService $resultService,

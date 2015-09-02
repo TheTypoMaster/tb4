@@ -11,6 +11,8 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Repositories\Cache\MeetingRepository;
+use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -55,11 +57,11 @@ class RaceDataProcessingService {
      */
     private $runnerRepository;
 
-    public function __construct(EventRepositoryInterface $events,
+    public function __construct(RaceRepository $events,
                                 SelectionRepositoryInterface $selections,
 								SelectionPriceRepositoryInterface $prices,
                                 SelectionResultRepositoryInterface $results,
-                                CompetitionRepositoryInterface $competitions,
+                                MeetingRepository $competitions,
 								DataValueRepositoryInterface $datavalues,
 								TournamentRepositoryInterface $tournaments,
 								NextToJumpCacheService $nexttojump,
@@ -336,14 +338,14 @@ class RaceDataProcessingService {
 
 			Log::info($this->logprefix. 'Race Saved - '.$raceDetails['external_event_id']);
 
-			$eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
+
+			$event = $this->events->getEventModelFromExternalId($raceDetails['external_event_id']);
+            $eventId = $event->id;
 
 			// add pivot table record if this is a newly added race
-			if(!$existingRaceDetails){
-				Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
-				$competitionModel = $this->competitions->find($existingMeetingDetails['id']);
-				$competitionModel->events()->attach($eventId);
-			}
+            Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
+            $competitionModel = $this->competitions->find($existingMeetingDetails['id']);
+            $this->events->addModelToCompetition($event, $competitionModel);
 
 
 			// if this event was abandoned - result bets
