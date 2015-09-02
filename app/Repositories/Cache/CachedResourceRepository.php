@@ -27,6 +27,8 @@ abstract class CachedResourceRepository {
 
     protected $relationsToLoad = array();
 
+    protected $storeIndividualResource = true;
+
     public function __call($method, $arguments)
     {
         return call_user_func_array(array($this->repository, $method), $arguments);
@@ -71,8 +73,10 @@ abstract class CachedResourceRepository {
     {
         $resource = $this->createResource($model);
 
-        \Log::debug(get_class($this) . "Putting object in cache KEY " . $this->cachePrefix . $model->id . ' TIME ' . $this->getModelCacheTime($model));
-        Cache::put($this->cachePrefix . $model->id, $resource, $this->getModelCacheTime($model));
+        if ($this->storeIndividualResource) {
+            \Log::debug(get_class($this) . "Putting object in cache KEY " . $this->cachePrefix . $model->id . ' TIME ' . $this->getModelCacheTime($model));
+            Cache::put($this->cachePrefix . $model->id, $resource, $this->getModelCacheTime($model));
+        }
 
         $this->addToCollections($resource, $relations);
 

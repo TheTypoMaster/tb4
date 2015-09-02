@@ -11,6 +11,7 @@ namespace TopBetta\Services\Racing;
 use Carbon\Carbon;
 use TopBetta\Services\Betting\BetService;
 use TopBetta\Services\Resources\Cache\CachedMeetingResourceService;
+use TopBetta\Services\Resources\Cache\CachedSelectionResourceService;
 use TopBetta\Services\Resources\MeetingResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Resources\SelectionResourceService;
@@ -40,7 +41,7 @@ class MeetingService {
 
     public function __construct(CachedMeetingResourceService $meetingResourceService,
                                 RaceResourceService $raceResourceService,
-                                SelectionResourceService $selectionResourceService,
+                                CachedSelectionResourceService $selectionResourceService,
                                 RaceResultService $resultService,
                                 BetService $betService)
     {
@@ -91,12 +92,6 @@ class MeetingService {
         foreach( $meetings as $meeting ) {
             if( $meeting->id == $selectedMeeting['data']->id ) {
                 $meeting->setRaces($selectedMeeting['data']->races);
-
-                $meeting->races->setRelations(
-                    'bets',
-                    'event_id',
-                    $this->betService->getBetsByEventGroupForAuthUser($meeting->id)
-                );
 
                 break;
             }

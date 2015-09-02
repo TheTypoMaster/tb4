@@ -48,7 +48,7 @@ class RaceRepository extends CachedResourceRepository {
     {
         switch($keyTemplate) {
             case self::COLLECTION_MEETING_RACES:
-                return $this->cachePrefix . $model->competition->first()->id;
+                return $this->cachePrefix . '_meeting_' . $model->getModel()->competition->first()->id;
         }
 
         throw new \InvalidArgumentException("invalid key");

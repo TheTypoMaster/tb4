@@ -13,6 +13,7 @@ use Carbon;
 
 use TopBetta\Repositories\Cache\MeetingRepository;
 use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Cache\RacingSelectionRepository;
 use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -58,7 +59,7 @@ class RaceDataProcessingService {
     private $runnerRepository;
 
     public function __construct(RaceRepository $events,
-                                SelectionRepositoryInterface $selections,
+                                RacingSelectionRepository $selections,
 								SelectionPriceRepositoryInterface $prices,
                                 SelectionResultRepositoryInterface $results,
                                 MeetingRepository $competitions,
@@ -443,9 +444,6 @@ class RaceDataProcessingService {
 			// get the runner id and update the wager_id...?
 			$runnerId = $this->selections->getSeletcionIdByExternalId($existingRaceDetails['external_event_id'].'_'.$runner['RunnerNo']);
 			$selectionUpdate = array('id' => $runnerId, 'wager_id' => $runnerId);
-			$this->selections->updateOrCreate($selectionUpdate, 'id');
-
-			Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 			// form
 			if(array_get($runner, 'Results') != '0(0-0-0)' && array_get($runner, 'Results') != NULL){
@@ -544,6 +542,10 @@ class RaceDataProcessingService {
 
 				}
 			}
+
+            $this->selections->updateOrCreate($selectionUpdate, 'id');
+
+            Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 		}
 
