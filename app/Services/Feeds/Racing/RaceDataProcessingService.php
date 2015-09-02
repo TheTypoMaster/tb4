@@ -213,7 +213,7 @@ class RaceDataProcessingService {
 
 			$competition = $this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
 
-            $this->attachDefaultProducts($this->competitions->find($competition['id']));
+            $this->attachDefaultProducts($competition);
 
 			Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
 		}
@@ -675,6 +675,8 @@ class RaceDataProcessingService {
 				$this->prices->updateOrCreatePrice($priceDetails);
 				$runnerCount++;
 			}
+
+            $this->selections->makeCacheResource($this->selections->getSelectionByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount));
 
 		}
 		return "Price(s) Processed";
