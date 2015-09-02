@@ -68,14 +68,8 @@ class AdminFilter {
         }
 
         if ( ! Sentry::findUserById(Auth::user()->id)->hasAccess(self::ROUTE_PREFIX . '.' . $permission) ) {
-
-            if( \Session::get("redirect") ) {
-                return \Redirect::to('/admin')
-                    ->with(array("flash_message" => "Access forbidden"));
-            }
-
-            return \Redirect::back()
-                ->with(array("flash_message" => "Access forbidden", "redirect" => true));
+            return \Redirect::to('/admin/dashboard')
+                ->with(array("flash_message" => "Access forbidden"));
         }
     }
 

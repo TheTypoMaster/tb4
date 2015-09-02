@@ -9,4 +9,9 @@
  
 interface BetRepositoryInterface {
 
+    public function getBetsForSelectionsByBetType($user, $selections, $betType);
+
+    public function getBetsForUserByEvents($user, $events, $type=null);
+
+    public function getBetsForUserByMarket($user, $market, $type=null);
 }

@@ -185,7 +185,7 @@ Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), fun
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
 
     Route::resource('account-transactions', 'Admin\AccountTransactionsController');
-    Route::resource('bet-limits', 'Admin\BetlimitsController');
+    Route::resource('bet-limits', 'Admin\BetLimitsController');
     Route::resource('bets', 'Admin\BetsController');
     Route::resource('competitions', 'Admin\CompetitionsController');
     Route::resource('dashboard', 'Admin\DashboardController');
@@ -250,6 +250,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::get('sports-list', 'Admin\SportsController@getSports');
     Route::get('sports/{sportId}/competitions', 'Admin\CompetitionsController@getBySport');
+
+    //market type details
+    Route::resource("market-type-details", 'Admin\SportMarketTypeDetailsController');
 
 });
 

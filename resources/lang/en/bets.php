@@ -29,5 +29,6 @@ email: help@topbetta.com",
     "market_closed" => "Betting is closed on this market",
 
     'odds_changed' => "Odds for a selection have changed",
-	
+
+    "exceed_bet_limit_exposure" => "Sorry, the bet you’ve tried to place exceeds our limit for this event, try again at a lower stake or contact 1300 886 503."
 );
