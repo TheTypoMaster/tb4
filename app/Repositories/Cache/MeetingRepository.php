@@ -39,6 +39,9 @@ class MeetingRepository extends CachedResourceRepository {
     {
         switch($keyTemplate) {
             case self::COLLECTION_KEY_MEETING_DATE:
+                if (!$model->start_date){
+                    return null;
+                }
                 return 'meetings_' . Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date)->toDateString();
         }
 
@@ -50,9 +53,9 @@ class MeetingRepository extends CachedResourceRepository {
         switch ($collectionKey) {
             case self::COLLECTION_KEY_MEETING_DATE:
                 if (!$date=$model->start_date) {
-                    $date = Carbon::now();
+                    $date = Carbon::now()->toDateTimeString();
                 }
-                return Carbon::createFromFormat('Y-m-d H:i:s', $date->toDateTimeString())->startOfDay()->addDays(2)->diffInMinutes();
+                return Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay()->addDays(2)->diffInMinutes();
         }
 
         throw new \InvalidArgumentException("invalid key");

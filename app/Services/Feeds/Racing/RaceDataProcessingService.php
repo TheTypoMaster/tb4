@@ -673,10 +673,11 @@ class RaceDataProcessingService {
 						continue;
 				}
 				$this->prices->updateOrCreatePrice($priceDetails);
+                $this->selections->makeCacheResource($this->selections->getSelectionByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount));
 				$runnerCount++;
 			}
 
-            $this->selections->makeCacheResource($this->selections->getSelectionByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount));
+
 
 		}
 		return "Price(s) Processed";
