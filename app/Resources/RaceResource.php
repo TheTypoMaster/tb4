@@ -29,6 +29,7 @@ class RaceResource extends AbstractEloquentResource {
         "exoticBetsAllowed" => "exoticBetsAllowed",
         "availableProducts" => "availableProducts",
         "displayedResults"  => "displayedResults",
+        "displayedExoticResults" => "displayedExoticResults",
     );
 
     protected $loadIfRelationExists = array(
@@ -149,12 +150,22 @@ class RaceResource extends AbstractEloquentResource {
 
     public function getDisplayedResults()
     {
+        return $this->filterResultsByProducts($this->getResults());
+    }
+
+    public function getDisplayedExoticResults()
+    {
+        return $this->filterResultsByProducts($this->getExoticResults());
+    }
+
+    protected function filterResultsByProducts($results)
+    {
         if (!array_get($this->relations, 'products')) {
             return array();
         }
 
         $products = array_map(function ($q) {return array('product_id' => $q['product_id'], 'bet_type' => $q['bet_type']);}, $this->relations['products']->toArray());
-        return array_filter($this->results, function ($v) use ($products) {
+        return array_filter($results, function ($v) use ($products) {
             $result =  array('product_id' => $v['product_id'], 'bet_type' => $v['bet_type']);
             return in_array($result, $products);
         });
@@ -173,15 +184,12 @@ class RaceResource extends AbstractEloquentResource {
             $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING ||
             $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID
         ) {
-
             $array["results"] = $this->getResults();
             $array["exoticResults"] = $this->getExoticResults();
             $array["resultString"] = $this->getResultString();
-
         }
 
         return $array;
-
     }
 
     public function availableProducts()
