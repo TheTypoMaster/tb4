@@ -152,4 +152,5 @@ class SelectionService {
         throw new \InvalidArgumentException("SelectionService: Invalid deduction type " . $betType);
     }
 
+
 }

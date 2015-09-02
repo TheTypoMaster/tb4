@@ -78,9 +78,11 @@ class EventBetResultingQueueService {
             return false;
         }
 
+
         $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType');
         $product = $this->betProductRepository->find($productId);
 
+        \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
@@ -92,6 +94,7 @@ class EventBetResultingQueueService {
             $fixedProducts = $this->betProductRepository->getFixedOddsProducts();
 
             foreach ($fixedProducts as $fixedProduct) {
+                \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $fixedProduct->id);
                 $result = $this->betResultService->resultBetsForEvent($event, $fixedProduct);
                 $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $fixedProduct);
             }
