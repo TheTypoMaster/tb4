@@ -9,16 +9,17 @@
 namespace TopBetta\Services\Sports;
 
 use Carbon\Carbon;
+use TopBetta\Services\Resources\Cache\Sports\CachedSportResourceService;
 use TopBetta\Services\Resources\Sports\SportResourceService;
 
 class SportsService {
 
     /**
-     * @var SportResourceService
+     * @var CachedSportResourceService
      */
     private $sportResourceService;
 
-    public function __construct(SportResourceService $sportResourceService)
+    public function __construct(CachedSportResourceService $sportResourceService)
     {
         $this->sportResourceService = $sportResourceService;
     }

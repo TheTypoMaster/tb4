@@ -29,18 +29,11 @@ abstract class CachedResourceRepository {
 
     protected $storeIndividualResource = true;
 
+    protected $cacheForever = false;
+
     public function __call($method, $arguments)
     {
         return call_user_func_array(array($this->repository, $method), $arguments);
-    }
-
-    public function find($id)
-    {
-        if ($resource = Cache::get($this->cachePrefix . $id)) {
-            return $resource;
-        }
-
-        return $this->createResource($this->repository->find($id));
     }
 
     public function get($key)
@@ -50,8 +43,18 @@ abstract class CachedResourceRepository {
 
     public function put($key, $model, $time)
     {
-        Cache::put($key, $model, $time);
+        if ($this->cacheForever) {
+            Cache::forever($key, $model);
+        } else {
+            Cache::put($key, $model, $time);
+        }
+
         return $this;
+    }
+
+    public function forever($key, $model)
+    {
+        Cache::forever($key, $model);
     }
 
     public function putInCollection($collection, $key, $model)
@@ -60,28 +63,28 @@ abstract class CachedResourceRepository {
         return $this;
     }
 
-    public function create($data, $relations = array())
+    public function create($data)
     {
         $model = $this->repository->createAndReturnModel($data);
 
-        return $this->makeCacheResource($model, $relations);
+        return $this->makeCacheResource($model);
     }
 
-    public function updateWithId($id, $data, $relations = array())
+    public function updateWithId($id, $data)
     {
         $model = $this->repository->updateWithIdAndReturnModel($id, $data);
 
-        return $this->makeCacheResource($model, $relations);
+        return $this->makeCacheResource($model);
     }
 
-    public function updateOrCreate($data, $criteria, $relations = array())
+    public function updateOrCreate($data, $criteria)
     {
         $model = $this->repository->updateOrCreateAndReturnModel($data, $criteria);
 
-        return $this->makeCacheResource($model, $relations);
+        return $this->makeCacheResource($model);
     }
 
-    public function makeCacheResource($model, $relations = array())
+    public function makeCacheResource($model)
     {
         $resource = $this->createResource($model);
 
@@ -90,7 +93,7 @@ abstract class CachedResourceRepository {
             $this->put($this->cachePrefix . $model->id, $resource, $this->getModelCacheTime($model));
         }
 
-        $this->addToCollections($resource, $relations);
+        $this->addToCollections($resource);
 
         return $model;
     }
@@ -107,7 +110,7 @@ abstract class CachedResourceRepository {
         return $this;
     }
 
-    protected function addToCollections($resource, $relations = array())
+    protected function addToCollections($resource)
     {
         foreach ($this->collectionKeys as $collectionKey) {
             $this->addToCollection($resource, $collectionKey, $relations = array());

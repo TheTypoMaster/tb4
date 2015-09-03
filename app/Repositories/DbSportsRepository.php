@@ -6,10 +6,13 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Models\SportModel;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
+use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
 class DbSportsRepository extends BaseEloquentRepository implements SportRepositoryInterface{
+    use SportsResourceRepositoryTrait;
 
     protected $sports;
 
@@ -55,6 +58,16 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
         if(!$sports) return null;
 
         return $sports->toArray();
+    }
+
+    public function getVisibleSportsAndBaseCompetitions()
+    {
+        $model =  $this->getVisibleSportsEventBuilder()
+             ->where('e.start_date', '>=', Carbon::now())
+            ->groupBy('bc.id')
+            ->get(array('tb_sports.*', 'bc.id as base_competition_id'));
+
+        return $this->model->hydrate($model);
     }
 
 } 
