@@ -136,7 +136,13 @@ class SelectionResource extends AbstractEloquentResource {
             $this->model->number . Config::get('silks.default_silk_file_extension');
         }
 
-        return Config::get('silks.default_silk_path') . $this->model->silk_id . Config::get('silks.default_silk_file_extension');
+        $silk = $this->model->silk_id;
+
+        if(!$silk) {
+            $silk = Config::get('silks.default_silk_filename');
+        }
+
+        return Config::get('silks.default_silk_path') . $silk . Config::get('silks.default_silk_file_extension');
     }
 
     public function loadRelation($relation)
