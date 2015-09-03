@@ -135,7 +135,7 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function getSilk()
     {
-        if ($this->model->type_code == 'G') {
+        if ($this->getTypeCode() == 'G') {
             return Config::get('silks.greyhound_silk_path') . Config::get('silks.greyhound_silk_filename_prefix') .
             $this->model->number . Config::get('silks.default_silk_file_extension');
         }
