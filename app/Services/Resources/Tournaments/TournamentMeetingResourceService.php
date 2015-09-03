@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Resources\Tournaments;
 
 
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\MeetingResource;
 use TopBetta\Services\Resources\MeetingResourceService;
 
@@ -16,7 +17,7 @@ class TournamentMeetingResourceService extends MeetingResourceService {
 
     public function loadTotesForMeeting(MeetingResource $meetingResource)
     {
-        $products = $meetingResource->getModel()->products;
+        $products = new EloquentResourceCollection($meetingResource->getModel()->products, 'TopBetta\Resources\ProductResource');
 
         foreach ($meetingResource->races as $race) {
             $race->setProducts($products);
