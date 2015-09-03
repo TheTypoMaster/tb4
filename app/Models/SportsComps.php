@@ -25,6 +25,14 @@ class SportsComps extends \Eloquent {
     	return SportsComps::where('name', '=', $compName) -> value('id');
     }
 
+    public function products()
+    {
+        return $this->belongsToMany('TopBetta\Models\BetProductModel', 'tb_default_event_group_product', 'event_group_id', 'bet_product_id')
+            ->join('tbdb_bet_type', 'tbdb_bet_type.id', '=', 'tb_default_event_group_product.bet_type_id')
+            ->join('tb_product_provider_match', 'tb_product_provider_match.tb_product_id', '=', 'tbdb_bet_product.id')
+            ->select(array('tbdb_bet_product.*', 'tbdb_bet_type.name as bet_type', 'tb_product_provider_match.provider_product_name as product_code'));
+    }
+
    public function getCompsSorted ($date = NULL, $sid = NULL){
     	//construct the date query string
     	$dateQuery = $this->mkDateQuery($date, 'eg.close_time');
