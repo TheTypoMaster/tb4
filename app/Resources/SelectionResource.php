@@ -27,7 +27,7 @@ class SelectionResource extends AbstractEloquentResource {
         'form'           => 'form',
         'winDeductions'  => 'win_deductions',
         'placeDeduction' => 'place_deductions',
-        'typeCode'       => 'type_code',
+        'typeCode'       => 'typeCode',
     );
 
     protected $types = array(
@@ -53,6 +53,8 @@ class SelectionResource extends AbstractEloquentResource {
     );
 
     private $products = null;
+
+    private $typeCode = null;
 
     public function __construct($model)
     {
@@ -160,6 +162,32 @@ class SelectionResource extends AbstractEloquentResource {
         }
 
         return $this->relations[$relation];
+    }
+
+    /**
+     * @return null
+     */
+    public function getTypeCode()
+    {
+        return $this->typeCode;
+    }
+
+    /**
+     * @param null $typeCode
+     * @return $this
+     */
+    public function setTypeCode($typeCode)
+    {
+        $this->typeCode = $typeCode;
+        return $this;
+    }
+
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $tempModel = clone $this->model;
+        $this->setTypeCode($tempModel->market->event->competition->first()->type_code);
     }
 
     public function toArray()

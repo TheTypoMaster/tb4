@@ -69,6 +69,6 @@ class DbResultPricesRepository extends BaseEloquentRepository implements ResultP
             ->leftJoin('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_selection_result.selection_id')
             ->join('tbdb_bet_type', 'tbdb_bet_type.id', '=', 'tb_result_prices.bet_type_id')
             ->where('event_id', $event)
-            ->get(array('tb_result_prices.*', 'tbdb_selection.*', 'tbdb_bet_type.name as bet_type', 'tbdb_selection_result.position'));
+            ->get(array('tb_result_prices.*', 'tbdb_selection.*', 'tbdb_bet_type.name as bet_type', 'tbdb_selection_result.position', 'tbdb_selection.id as selection_id'));
     }
 }

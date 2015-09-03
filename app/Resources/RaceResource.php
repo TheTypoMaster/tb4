@@ -9,6 +9,7 @@
 namespace TopBetta\Resources;
 
 
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 
@@ -150,7 +151,9 @@ class RaceResource extends AbstractEloquentResource {
 
     public function getDisplayedResults()
     {
-        return array_values($this->filterResultsByProducts($this->getResults()));
+        $results = $this->filterResultsByProducts($this->getResults());
+
+        return array_values($this->mergeSelectionPositionResults($results));
     }
 
     public function getDisplayedExoticResults()
@@ -165,10 +168,32 @@ class RaceResource extends AbstractEloquentResource {
         }
 
         $products = array_map(function ($q) {return array('product_id' => $q['product_id'], 'bet_type' => $q['bet_type']);}, $this->relations['products']->toArray());
+
         return array_filter($results, function ($v) use ($products) {
             $result =  array('product_id' => $v['product_id'], 'bet_type' => $v['bet_type']);
             return in_array($result, $products);
         });
+
+    }
+
+    protected function mergeSelectionPositionResults($results)
+    {
+        $mergedResults = array();
+
+        //hack for waiting for cache data
+        if (count($results) && isset(reset($results)['selection_id'])) {
+
+            foreach ($results as $result) {
+                if (!$resultPrice = array_get($mergedResults, $result['selection_id'])) {
+                    $resultPrice = array_except($result, array('bet_type', 'dividend'));
+                }
+
+                $resultPrice[$result['bet_type'] == BetTypeRepositoryInterface::TYPE_WIN ? 'win_dividend' : 'place_dividend'] = $result['dividend'];
+                $mergedResults[$result['selection_id']]                                                                       = $resultPrice;
+            }
+        }
+
+        return $mergedResults;
     }
 
     public function getEventstatus()

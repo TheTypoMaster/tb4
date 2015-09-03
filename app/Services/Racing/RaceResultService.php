@@ -119,6 +119,8 @@ class RaceResultService {
                 "product_id" => (int) $result->product_id,
                 "bet_type" => $result->bet_type,
                 "dividend" => $result->dividend,
+                "name" => $result->name,
+                'selection_id' => (int)$result->selection_id
             );
 
             $resultsArray[] = $resultArray;
