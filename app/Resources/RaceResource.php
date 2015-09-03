@@ -150,12 +150,12 @@ class RaceResource extends AbstractEloquentResource {
 
     public function getDisplayedResults()
     {
-        return $this->filterResultsByProducts($this->getResults());
+        return array_values($this->filterResultsByProducts($this->getResults()));
     }
 
     public function getDisplayedExoticResults()
     {
-        return $this->filterResultsByProducts($this->getExoticResults());
+        return array_values($this->filterResultsByProducts($this->getExoticResults()));
     }
 
     protected function filterResultsByProducts($results)
