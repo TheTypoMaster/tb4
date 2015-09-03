@@ -81,7 +81,7 @@ class RaceResourceService {
 
     public function loadTotesForRace(RaceResource $race)
     {
-        $products = $race->getModel()->competition->first()->products;
+        $products = $this->productService->getAuthUserProductsForCompetition($race->getModel()->competition->first());
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
