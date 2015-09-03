@@ -27,14 +27,17 @@ class BetPlacementFactory
         switch ($type) {
             case BetTypeRepositoryInterface::TYPE_WIN:
                 $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service->setBetType($type);
                 $service->setProduct(BetProductModel::findorFail($winProduct));
                 break;
             case BetTypeRepositoryInterface::TYPE_PLACE:
                 $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service->setBetType($type);
                 $service->setProduct(BetProductModel::findOrFail($placeProduct));
                 break;
             case BetTypeRepositoryInterface::TYPE_EACHWAY:
                 $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingEachWayBetPlacementService');
+                $service->setBetType($type);
                 $service->setWinProduct(BetProductModel::findOrFail($winProduct));
                 $service->setPlaceProduct(BetProductModel::findOrFail($placeProduct));
                 break;
@@ -43,6 +46,7 @@ class BetPlacementFactory
             case BetTypeRepositoryInterface::TYPE_TRIFECTA:
             case BetTypeRepositoryInterface::TYPE_FIRSTFOUR:
                 $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingExoticBetPlacementService');
+                $service->setBetType($type);
                 $service->setProduct(BetProductModel::findOrFail($winProduct));
                 break;
             case BetTypeRepositoryInterface::TYPE_SPORT:
@@ -64,7 +68,7 @@ class BetPlacementFactory
                 throw new \Exception;
         }
 
-        $service->setBetType($type);
+
 
         return $service;
     }
