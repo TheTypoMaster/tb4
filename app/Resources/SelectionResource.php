@@ -28,6 +28,7 @@ class SelectionResource extends AbstractEloquentResource {
         'winDeductions'  => 'win_deductions',
         'placeDeduction' => 'place_deductions',
         'typeCode'       => 'typeCode',
+        'selectionStatus' => 'selectionstatus.keyword',
     );
 
     protected $types = array(
@@ -44,12 +45,13 @@ class SelectionResource extends AbstractEloquentResource {
 
     protected $loadRelations = array(
         'result',
-        'price',
+        'prices',
         'runner',
         'runner.owner',
         'runner.trainer',
         'form',
-        'lastStarts'
+        'lastStarts',
+        'selectionstatus',
     );
 
     private $products = null;

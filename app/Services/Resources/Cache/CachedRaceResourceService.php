@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources\Cache;
 
 
 use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Services\Resources\Betting\BetResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
 
 class CachedRaceResourceService extends CachedResourceService {
@@ -18,11 +19,21 @@ class CachedRaceResourceService extends CachedResourceService {
      * @var RaceRepository
      */
     private $raceRepository;
+    /**
+     * @var CachedSelectionResourceService
+     */
+    private $selectionResourceService;
+    /**
+     * @var BetResourceService
+     */
+    private $betResourceService;
 
-    public function __construct(RaceResourceService $resourceService, RaceRepository $raceRepository)
+    public function __construct(RaceResourceService $resourceService, RaceRepository $raceRepository, CachedSelectionResourceService $selectionResourceService, BetResourceService $betResourceService)
     {
         $this->resourceService = $resourceService;
         $this->raceRepository = $raceRepository;
+        $this->selectionResourceService = $selectionResourceService;
+        $this->betResourceService = $betResourceService;
     }
 
     public function getRacesForMeeting($meetingId)
@@ -34,6 +45,23 @@ class CachedRaceResourceService extends CachedResourceService {
         }
 
         return $races;
+    }
+
+    public function getRaceWithSelections($raceId)
+    {
+        $race = $this->raceRepository->getRace($raceId);
+
+        if (!$race) {
+            return $this->resourceService->getRaceWithSelections($raceId);
+        }
+
+        $race->setSelections($this->selectionResourceService->getSelectionsForRace($race->id));
+
+        $race->setRelation('bets', $this->betResourceService->getBetsByEventForAuthUser($raceId));
+
+        $this->loadTotesForRace($race);
+
+        return $race;
     }
 
 
