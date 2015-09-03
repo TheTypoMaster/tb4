@@ -63,7 +63,11 @@ class MeetingRepository extends CachedResourceRepository {
 
     protected function getModelCacheTime($model)
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date)->startOfDay()->addDays(2)->diffInMinutes();
+        if (!$date=$model->start_date) {
+            $date = Carbon::now()->toDateTimeString();
+        }
+
+        return Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay()->addDays(2)->diffInMinutes();
     }
 
    protected function getModelKey($model)
