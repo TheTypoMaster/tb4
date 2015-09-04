@@ -33,6 +33,17 @@ class CachedEventResourceService extends CachedResourceService {
         $this->marketRepository = $marketRepository;
     }
 
+    public function nextToJump()
+    {
+        $nextToJump = $this->eventRepository->nextToJump();
+
+        if (!$nextToJump) {
+            return $this->resourceService->nextToJump();
+        }
+
+        return $nextToJump;
+    }
+
     public function getEventsForCompetition($competitionId)
     {
         return $this->eventRepository->getEventsForCompetition($competitionId);

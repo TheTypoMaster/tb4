@@ -23,9 +23,14 @@ class EventRepository extends CachedResourceRepository {
 
     protected $resourceClass = 'TopBetta\Resources\Sports\EventResource';
 
+    protected $nextToJumpResource = 'TopBetta\Resources\Sports\NextToJumpResource';
+
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
     protected $competitionEventsTag = array("competition", "events");
+
+    protected $nextToJumpTags = array("events", "n2j");
+
     /**
      * @var
      */
@@ -47,6 +52,11 @@ class EventRepository extends CachedResourceRepository {
         return Cache::tags($this->competitionEventsTag)->get($this->cachePrefix . 'competition_' . $id);
     }
 
+    public function nextToJump()
+    {
+        return Cache::tags($this->nextToJumpTags)->get($this->cachePrefix . 'n2j');
+    }
+
     public function updateEvents()
     {
         $events = $this->repository->getVisibleEvents();
@@ -65,6 +75,13 @@ class EventRepository extends CachedResourceRepository {
         foreach ($competitionCollections as $key => $collection) {
             Cache::tags($this->competitionEventsTag)->forever($this->cachePrefix . 'competition_' . $key, $collection);
         }
+    }
+
+    public function updateNextToJump()
+    {
+        $events = $this->repository->getNextToJumpSports();
+
+        Cache::tags($this->nextToJumpTags)->forever($this->cachePrefix . 'n2j', new EloquentResourceCollection($events, $this->nextToJumpResource));
     }
 
 

@@ -45,6 +45,17 @@ class CompetitionRepository extends CachedResourceRepository {
         return Cache::tags($this->baseCompetitionCollectionTag)->get($this->cachePrefix . 'base_competition_' . $baseCompetition);
     }
 
+    public function findOrGetFromDb($id)
+    {
+        $competition = $this->getCompetition($id);
+
+        if (!$competition) {
+            return $this->repository->find($id);
+        }
+
+        return $competition;
+    }
+
     public function updateVisibleCompetitionsForBaseCompetition()
     {
         $competitions = $this->repository->getVisibleCompetitions();
