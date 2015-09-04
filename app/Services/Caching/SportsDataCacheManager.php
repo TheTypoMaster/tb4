@@ -11,6 +11,8 @@ namespace TopBetta\Services\Caching;
 
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\Sports\CompetitionRepository;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
+use TopBetta\Repositories\Cache\Sports\MarketRepository;
 use TopBetta\Repositories\Cache\Sports\SportRepository;
 
 class SportsDataCacheManager {
@@ -23,17 +25,29 @@ class SportsDataCacheManager {
      * @var CompetitionRepository
      */
     private $competitionRepository;
+    /**
+     * @var EventRepository
+     */
+    private $eventRepository;
+    /**
+     * @var MarketRepository
+     */
+    private $marketRepository;
 
-    public function __construct(SportRepository $sportRepository, CompetitionRepository $competitionRepository)
+    public function __construct(SportRepository $sportRepository, CompetitionRepository $competitionRepository, EventRepository $eventRepository, MarketRepository $marketRepository)
     {
         $this->sportRepository = $sportRepository;
         $this->competitionRepository = $competitionRepository;
+        $this->eventRepository = $eventRepository;
+        $this->marketRepository = $marketRepository;
     }
 
     public function updateCache()
     {
         $this->sportRepository->updateVisibleSportsAndBaseCompetitions();
         $this->competitionRepository->updateVisibleCompetitionsForBaseCompetition();
+        $this->eventRepository->updateEvents();
+        $this->marketRepository->updateMarketsAndSelections();
     }
 
 }

@@ -17,10 +17,15 @@ class EventResourceService {
      * @var EventRepositoryInterface
      */
     private $eventRepository;
+    /**
+     * @var MarketResourceService
+     */
+    private $marketResourceService;
 
-    public function __construct(EventRepositoryInterface $eventRepository)
+    public function __construct(EventRepositoryInterface $eventRepository, MarketResourceService $marketResourceService)
     {
         $this->eventRepository = $eventRepository;
+        $this->marketResourceService = $marketResourceService;
     }
 
     public function nextToJump()
@@ -35,5 +40,18 @@ class EventResourceService {
         $events = $this->eventRepository->getEventsForCompetition($competitionId);
 
         return new EloquentResourceCollection($events, 'TopBetta\Resources\Sports\EventResource');
+    }
+
+    public function getEventsForCompetitionWithFilteredMarkets($competitionId, $types)
+    {
+        $events = $this->eventRepository->getEventsForCompetition($competitionId);
+
+        $markets = $this->marketResourceService->getFilteredMarketsWithSelectionsForEvents($events->lists('id')->all(), $types);
+
+        $events = new EloquentResourceCollection($events, 'TopBetta\Resources\Sports\EventResource');
+
+        $events->setRelations('markets', 'event_id', $markets);
+
+        return $events;
     }
 }

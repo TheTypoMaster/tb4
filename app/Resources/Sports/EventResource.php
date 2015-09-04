@@ -20,6 +20,6 @@ class EventResource extends AbstractEloquentResource {
 
     public function markets()
     {
-        return $this->collection('markets', 'TopBetta\Resources\MarketResource', $this->model->markets);
+        return $this->collection('markets', 'TopBetta\Resources\MarketResource', 'markets');
     }
 }

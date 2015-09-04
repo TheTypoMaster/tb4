@@ -12,6 +12,7 @@ namespace TopBetta\Services\Sports;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Services\Markets\MarketOrderingService;
+use TopBetta\Services\Resources\Cache\Sports\CachedMarketResourceService;
 use TopBetta\Services\Resources\Sports\MarketTypeResourceService;
 use TopBetta\Services\Resources\Sports\SelectionResourceService;
 use TopBetta\Services\Resources\Sports\MarketResourceService;
@@ -39,7 +40,7 @@ class MarketService {
      */
     private $marketTypeResourceService;
 
-    public function __construct(MarketResourceService $marketResourceService, MarketOrderingService $marketOrderingService, CompetitionRepositoryInterface $competitionRepository, SelectionResourceService $selectionResourceService, MarketTypeResourceService $marketTypeResourceService)
+    public function __construct(CachedMarketResourceService $marketResourceService, MarketOrderingService $marketOrderingService, CompetitionRepositoryInterface $competitionRepository, SelectionResourceService $selectionResourceService, MarketTypeResourceService $marketTypeResourceService)
     {
         $this->marketResourceService = $marketResourceService;
         $this->marketOrderingService = $marketOrderingService;

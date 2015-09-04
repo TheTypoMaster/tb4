@@ -211,7 +211,18 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $model;
     }
 
+    public function getVisibleEVents()
+    {
+        $builder = $this->getVisibleSportsEventBuilder();
 
+        $model = $builder
+            ->where('e.start_date', '>=', Carbon::now())
+            ->groupBy('e.id')
+            ->orderBy('e.start_date')
+            ->get(array('e.*'));
+
+        return $this->model->hydrate($model);
+    }
 
 
 }

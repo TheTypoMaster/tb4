@@ -26,7 +26,7 @@ class MarketResource extends AbstractEloquentResource {
 
     public function selections()
     {
-        return $this->collection('selections', 'TopBetta\Resources\Sports\SelectionResource', $this->model->selections);
+        return $this->collection('selections', 'TopBetta\Resources\Sports\SelectionResource', 'selections');
     }
 
     public function getName()

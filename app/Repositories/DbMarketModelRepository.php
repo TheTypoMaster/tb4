@@ -40,6 +40,20 @@ class DbMarketModelRepository implements MarketModelRepositoryInterface
         return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections', 'selections.price'));
     }
 
+    public function getMarketsForEvents($events, $types = null)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->whereIn('e.id', $events)
+            ->groupBy('m.id');
+
+        if( $types ) {
+            $builder->whereIn('m.market_type_id', $types)
+                ->orderBy(DB::raw("FIELD(m.market_type_id," . implode(",", $types) . ")"));
+        }
+
+        return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections'));
+    }
+
     public function getMarketsForEvent($event)
     {
         $builder = $this->getVisibleSportsEventBuilder()
@@ -47,5 +61,14 @@ class DbMarketModelRepository implements MarketModelRepositoryInterface
             ->groupBy('m.id');
 
         return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections'));
+    }
+
+    public function getVisibleMarketsWithSelections()
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->groupBy('s.id')
+            ->select(array('m.*', 's.id as selection_id'));
+
+        return $this->model->hydrate($builder->get())->load(array('markettype'));
     }
 }
