@@ -81,6 +81,7 @@ abstract class CachedResourceRepository {
         return $this->makeCacheResource($model, $relations);
     }
 
+
     public function makeCacheResource($model, $relations = array())
     {
         $resource = $this->createResource($model);
