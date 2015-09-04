@@ -121,15 +121,15 @@ class EwayCreditCardController extends Controller {
             //delete the token
             $paymentToken = PaymentEwayTokens::where("cc_token", "=", $id)->first();
 
-            if( $paymentToken->scheduledPayments ) {
-                return array("success" => false, "error" => "Card is linked to recurring payments. Please cancel these first before removing card");
+            if( $paymentToken->scheduledPayments->count() ) {
+                return $this->response->failed("Card is linked to recurring payments. Please cancel these first before removing card", 400);
             }
 
             $paymentToken->delete();
 
-            return array('success' => true, 'result' => array());
+            return $this->response->success("Card removed");
         } else {
-            return array('success' => false, 'error' => "Token not found");
+            return $this->response->failed("Card not found", 404);
         }
 	}
 
