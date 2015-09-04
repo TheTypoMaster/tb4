@@ -50,6 +50,9 @@ class FrontUsersPoliDepositController extends Controller {
 			return $this->response->failed(array(), 400, null, "No Amount Specified");
 		}
 
+        //default currency code to AUD
+        $data['CurrencyCode'] =  array_get($data, 'CurrencyCode', 'AUD');
+
 		//create the transaction in the database
 		$poliTransaction = $this->poliTransactionService->createTransaction($user->id, $amount, array_get($data, 'CurrencyCode', 'AUD'));
 
@@ -69,7 +72,7 @@ class FrontUsersPoliDepositController extends Controller {
 		}
 
 		//unsuccessful so init failed
-		$this->poliTransactionService->initializationFailed($poliTransaction['id'], $responseArray['errorCode']);
+		$this->poliTransactionService->initializationFailed($poliTransaction['id'], $responseArray['ErrorCode']);
 		return $this->response->failed($responseArray, $response->getStatusCode());
 	}
 
@@ -111,14 +114,16 @@ class FrontUsersPoliDepositController extends Controller {
 		$response = $this->_getTransactionDetailsAndUpdate($token);
 
 		if( $response ) {
-			if(PoliTransactionService::statusIsTerminal($response['TransactionStatusCode'])) {
-				return Redirect::to(Config::get("poli.frontendReturnUrl").$response['TransactionStatusCode']);
-			}
+            $status = PoliTransactionService::simplifyTransactionStatus($response['TransactionStatusCode']);
 
-			return Redirect::to(Config::get("poli.frontendReturnUrl")."pending");
+            if ($status == 'failed') {
+                \Log::error("PoliTransaction: Failed. error_code " . $response['ErrorCode']);
+                $status .= '/' . snake_case(camel_case($response['ErrorMessage']));
+            }
+			return Redirect::to(Config::get("poli.frontendReturnUrl").$status);
 		}
 
-		return Redirect::to(Config::get("poli.frontendReturnUrl")."failed");
+		return Redirect::to(Config::get("poli.frontendReturnUrl")."failed/transaction_not_found");
 	}
 
 
@@ -172,10 +177,11 @@ class FrontUsersPoliDepositController extends Controller {
 		if( $transactionRefNo = array_get($responseArray, 'TransactionRefNo', false) ) {
 			try {
 				//update the transaction & add funds if completed.
-				$poliTransaction = $this->poliTransactionService->updateTransactionTokenAndStatus(
+				$poliTransaction = $this->poliTransactionService->updateTransactionTokenStatusAndAmount(
 					$transactionRefNo,
 					$token,
 					$responseArray['TransactionStatusCode'],
+                    $responseArray['AmountPaid'],
 					$responseArray['ErrorCode']
 				);
 			} catch (TransactionNotFoundException $e) {
