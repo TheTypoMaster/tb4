@@ -43,7 +43,7 @@ class FrontUsersPoliDepositController extends Controller {
 	 */
 	public function index($id = false)
 	{
-		$data = Input::get();
+		$data = \Input::all();
 		$user = Auth::user();
 
 		if(! ( $amount = array_get($data, 'Amount', 0) ) ) {
