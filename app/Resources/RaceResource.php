@@ -18,6 +18,7 @@ class RaceResource extends AbstractEloquentResource {
     protected $attributes = array(
         "id"                => 'id',
         "name"              => 'name',
+        'meetingName'       => 'meetingName',
         "type"              => "type",
         "start_date"        => 'start_date',
         "number"            => 'number',
@@ -43,6 +44,7 @@ class RaceResource extends AbstractEloquentResource {
 
     private $resultString = null;
 
+    private $meetingName;
 
     public function selections()
     {
@@ -161,6 +163,14 @@ class RaceResource extends AbstractEloquentResource {
         return array_values($this->filterResultsByProducts($this->getExoticResults()));
     }
 
+    /**
+     * @return mixed
+     */
+    public function getMeetingName()
+    {
+        return $this->meetingName;
+    }
+
     protected function filterResultsByProducts($results)
     {
         if (!array_get($this->relations, 'products')) {
@@ -220,5 +230,14 @@ class RaceResource extends AbstractEloquentResource {
     public function availableProducts()
     {
         return json_decode($this->model->available_products, true);
+    }
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $tempModel = clone $this->model;
+
+        $this->meetingName = $tempModel->competition->first()->name;
     }
 }
