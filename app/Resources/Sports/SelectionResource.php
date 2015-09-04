@@ -17,13 +17,15 @@ class SelectionResource extends AbstractEloquentResource {
         'id' => 'id',
         'name' => 'name',
         'line' => 'price.line',
-        'price' => 'price.win_odds',
+        'price' => 'price',
+        'won'   => 'won',
     );
 
     protected $types = array(
         "id" => "int",
         "line" => "int",
-        "price" => "float"
+        "price" => "float",
+        "won" => "bool",
     );
 
     protected $loadIfRelationExists = array(
@@ -39,5 +41,23 @@ class SelectionResource extends AbstractEloquentResource {
     public function player()
     {
         return $this->item('player', 'TopBetta\Resources\Sports\PlayerResource', $this->model->player->first());
+    }
+
+    public function getWon()
+    {
+        return ! is_null($this->model->result);
+    }
+
+    public function getPrice()
+    {
+        if ($this->model->price->override_type == 'percentage') {
+            return bcmul(2 - $this->model->price->override_odds, $this->model->price->win_odds, 2);
+        } else if ($this->model->price->override_type == 'promo') {
+            return $this->model->price->override_odds;
+        } else if ($this->model->price->override_type == 'price') {
+            return min($this->model->price->win_odds, $this->model->price->override_odds);
+        }
+
+        return $this->model->price->win_odds;
     }
 }
