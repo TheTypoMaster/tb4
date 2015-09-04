@@ -43,7 +43,7 @@ class RacingSelectionRepository extends CachedResourceRepository
             if ($selection = $selections->getDictionary()[$selectionId]) {
                 $selection->getModel()->load('prices');
                 $this->putInCollection($selections, $selection->id, $selection);
-                \Cache::put($this->cachePrefix . '_race_' . $race->id, $selections, $this->getRaceCollectionTime($race));
+                \Cache::put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
             }
         }
     }
