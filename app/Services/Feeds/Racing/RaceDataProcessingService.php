@@ -376,7 +376,7 @@ class RaceDataProcessingService {
 
 			// add pivot table record if this is a newly added race
             Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
-            $competitionModel = $this->competitions->find($existingMeetingDetails['id']);
+            $competitionModel = $this->competitions->getMeeting($existingMeetingDetails['id']);
             $this->events->addModelToCompetition($event, $competitionModel);
 
 

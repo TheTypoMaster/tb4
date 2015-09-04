@@ -11,7 +11,7 @@ namespace TopBetta\Resources\Sports;
 
 use TopBetta\Resources\AbstractEloquentResource;
 
-class CompetitionResource extends AbstractEloquentResource {
+class CompetitionResource extends IconResource{
 
     protected $attributes = array(
         "id" => "id",
@@ -25,14 +25,17 @@ class CompetitionResource extends AbstractEloquentResource {
         return $this->collection('events', 'TopBetta\Resources\Sports\EventResource', $this->model->event);
     }
 
-    public function icon()
+    public function loadIcon()
     {
         if( $this->model->icon ) {
-            return $this->model->icon;
+            $this->icon = $this->model->icon;
+            return $this;
         }
 
-        return $this->model->baseCompetition->defaultEventGroupIcon ?
+        $this->icon = $this->model->baseCompetition->defaultEventGroupIcon ?
             $this->model->baseCompetition->defaultEventGroupIcon->icon_url :
             null;
+
+        return $this;
     }
 }

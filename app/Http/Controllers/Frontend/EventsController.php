@@ -10,6 +10,7 @@ namespace TopBetta\Http\Controllers\Frontend;
 
 use App;
 use Illuminate\Http\Request;
+use TopBetta\Services\Resources\Cache\Sports\CachedEventResourceService;
 use TopBetta\Services\Resources\Sports\EventResourceService;
 use TopBetta\Services\Sports\CompetitionService;
 use TopBetta\Services\Sports\EventService;
@@ -21,7 +22,7 @@ class EventsController extends AbstractResourceController{
         return App::make('TopBetta\Repositories\Contracts\EventRepositoryInterface');
     }
 
-    public function nextToJump(EventResourceService $eventResourceService)
+    public function nextToJump(CachedEventResourceService $eventResourceService)
     {
         $nextToJump = $eventResourceService->nextToJump();
 
