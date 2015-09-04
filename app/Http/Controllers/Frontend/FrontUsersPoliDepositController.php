@@ -104,7 +104,7 @@ class FrontUsersPoliDepositController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id, $token)
+	public function show($id = false, $token = false)
 	{
 		$token = \Input::get("token", null);
 
