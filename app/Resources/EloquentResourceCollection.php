@@ -55,6 +55,12 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         return $this;
     }
 
+    public function values()
+    {
+        $this->collection = $this->collection->values();
+        return $this;
+    }
+
     public function getIterator()
     {
         return $this->collection->getIterator();

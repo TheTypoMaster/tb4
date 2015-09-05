@@ -64,7 +64,7 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function runner()
     {
-        return $this->item('runner', 'TopBetta\Resources\RunnerResource', $this->model->runner);
+        return $this->item('runner', 'TopBetta\Resources\RunnerResource', 'runner');
     }
 
     /**
@@ -73,7 +73,16 @@ class SelectionResource extends AbstractEloquentResource {
      */
     public function prices()
     {
-        return $this->collection('prices', 'TopBetta\Resources\PriceResource', $this->model->prices);
+        return $this->collection('prices', 'TopBetta\Resources\PriceResource', 'prices');
+    }
+
+    public function addPrice($price)
+    {
+        $prices = $this->prices()->keyBy('id');
+
+        $prices->put($price->id, new PriceResource($price));
+
+        $this->relations['prices'] = $prices->values();
     }
 
     public function setProducts($products)

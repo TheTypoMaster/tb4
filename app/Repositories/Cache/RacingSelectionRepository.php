@@ -37,11 +37,11 @@ class RacingSelectionRepository extends CachedResourceRepository
         return $this->get($this->cachePrefix . '_race_' . $raceId);
     }
 
-    public function updatePricesForSelectionInRace($selectionId, $race)
+    public function updatePricesForSelectionInRace($selectionId, $race, $price)
     {
         if ($selections = $this->getSelectionsForRace($race['id'])) {
             if ($selection = $selections->getDictionary()[$selectionId]) {
-                $selection->getModel()->load('prices');
+                $selection->addPrice($price);
                 $this->putInCollection($selections, $selection->id, $selection);
                 \Cache::put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
             }
