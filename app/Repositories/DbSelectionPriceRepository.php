@@ -103,7 +103,7 @@ class DbSelectionPriceRepository extends BaseEloquentRepository implements Selec
             return $product;
         }
 
-        return $this->create($priceData);
+        return $this->createAndReturnModel($priceData);
     }
 
     /**

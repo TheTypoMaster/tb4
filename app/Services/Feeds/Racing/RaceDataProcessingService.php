@@ -672,8 +672,10 @@ class RaceDataProcessingService {
 						Log::debug($this->logprefix . 'Price BetType is invalid ', $price);
 						continue;
 				}
-				$this->prices->updateOrCreatePrice($priceDetails);
-                $this->selections->makeCacheResource($this->selections->getSelectionByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount));
+				$priceModel = $this->prices->updateOrCreatePrice($priceDetails);
+
+                $this->selections->updatePricesForSelectionInRace($existingSelectionId, $existingRaceDetails, $priceModel);
+
 				$runnerCount++;
 			}
 

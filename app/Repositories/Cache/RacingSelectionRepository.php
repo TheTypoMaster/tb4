@@ -37,6 +37,22 @@ class RacingSelectionRepository extends CachedResourceRepository
         return $this->get($this->cachePrefix . '_race_' . $raceId);
     }
 
+    public function updatePricesForSelectionInRace($selectionId, $race, $price)
+    {
+        if ($selections = $this->getSelectionsForRace($race['id'])) {
+            if ($selection = $selections->getDictionary()[$selectionId]) {
+                $selection->addPrice($price);
+                $this->putInCollection($selections, $selection->id, $selection);
+                \Cache::put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
+            }
+        }
+    }
+
+    protected function getRaceCollectionTime($race)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $race['start_date'])->startOfDay()->addDays(2)->diffInMinutes();
+    }
+
     protected function getCollectionCacheKey($keyTemplate, $model)
     {
         switch ($keyTemplate) {
