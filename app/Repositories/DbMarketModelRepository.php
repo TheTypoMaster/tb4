@@ -68,4 +68,12 @@ class DbMarketModelRepository extends BaseEloquentRepository implements MarketMo
 
         return $this->model->hydrate($builder->get())->load(array('markettype'));
     }
+
+    public function getMarketByExternalIds($externalMarketId, $externalEventId)
+    {
+        return $this->model
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first()->toArray();
+    }
 }
