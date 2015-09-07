@@ -9,6 +9,10 @@
 namespace TopBetta\Services\Feeds\Processors;
 
 use Log;
+use TopBetta\Repositories\Cache\Sports\BaseCompetitionRepository;
+use TopBetta\Repositories\Cache\Sports\CompetitionRepository;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
+use TopBetta\Repositories\Cache\Sports\SportRepository;
 use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRegionRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -53,10 +57,10 @@ class GameListProcessor extends AbstractFeedProcessor {
      */
     private $teamProcessor;
 
-    public function __construct(EventRepositoryInterface $eventRepository,
-                                CompetitionRepositoryInterface $competitionRepository,
-                                BaseCompetitionRepositoryInterface $baseCompetitionRepository,
-                                SportRepositoryInterface $sportRepository,
+    public function __construct(EventRepository $eventRepository,
+                                CompetitionRepository $competitionRepository,
+                                BaseCompetitionRepository $baseCompetitionRepository,
+                                SportRepository $sportRepository,
                                 CompetitionRegionRepositoryInterface $regionRepository,
                                 TournamentCompetitionRepositoryInterface $tournamentCompetitionRepository,
                                 TournamentRepositoryInterface $tournaments,
