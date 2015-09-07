@@ -19,16 +19,23 @@ class CachedCompetitionResourceService extends CachedResourceService {
      * @var CompetitionRepository
      */
     private $competitionRepository;
+    /**
+     * @var CachedEventResourceService
+     */
+    private $eventResourceService;
 
-    public function __construct(CompetitionResourceService $resourceService, CompetitionRepository $competitionRepository)
+    public function __construct(CompetitionResourceService $resourceService, CompetitionRepository $competitionRepository, CachedEventResourceService $eventResourceService)
     {
         $this->resourceService = $resourceService;
         $this->competitionRepository = $competitionRepository;
+        $this->eventResourceService = $eventResourceService;
     }
 
     public function getVisibleCompetitionsByBaseCompetition($baseCompetition)
     {
-        return $this->competitionRepository->getVisibleCompetitionByBaseCompetition($baseCompetition);
+        $competitions = $this->competitionRepository->getVisibleCompetitionByBaseCompetition($baseCompetition);
+
+        return $this->filterCompetitions($competitions);
     }
 
     public function getCompetitionResource($id)
@@ -40,5 +47,14 @@ class CachedCompetitionResourceService extends CachedResourceService {
         }
 
         return $competition;
+    }
+
+    public function filterCompetitions($competitions)
+    {
+        return $competitions->filter(function ($v) {
+            $events = $this->eventResourceService->getEventsForCompetition($v->id);
+
+            return (bool) ($events->count() && $v->display_flag);
+        });
     }
 }

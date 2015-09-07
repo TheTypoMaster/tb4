@@ -22,8 +22,27 @@ class BaseCompetitionRepository extends CachedResourceRepository {
 
     protected $cacheForever = true;
 
-    public function __construct(BaseCompetitionRepositoryInterface $repository)
+    protected $tags = array("sports", "baseCompetitions");
+
+    /**
+     * @var SportRepository
+     */
+    private $sportRepository;
+
+    public function __construct(BaseCompetitionRepositoryInterface $repository, SportRepository $sportRepository)
     {
         $this->repository = $repository;
+        $this->sportRepository = $sportRepository;
+    }
+
+    public function makeCacheResource($model)
+    {
+        parent::makeCacheResource($model);
+
+        $resource = $this->createResource($model);
+
+        $this->sportRepository->addBaseCompetition($resource);
+
+        return $model;
     }
 }

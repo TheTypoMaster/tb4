@@ -13,13 +13,10 @@ use TopBetta\Models\MarketModel;
 use TopBetta\Repositories\Contracts\MarketModelRepositoryInterface;
 use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
-class DbMarketModelRepository implements MarketModelRepositoryInterface
+class DbMarketModelRepository extends BaseEloquentRepository implements MarketModelRepositoryInterface
 {
     use SportsResourceRepositoryTrait;
-    /**
-     * @var MarketModel
-     */
-    private $model;
+
 
     public function __construct(MarketModel $model)
     {

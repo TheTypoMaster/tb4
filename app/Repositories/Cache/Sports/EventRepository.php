@@ -21,13 +21,19 @@ class EventRepository extends CachedResourceRepository {
 
     const CACHE_KEY_PREFIX = 'events_';
 
+    const COLLECTION_COMPETITION_EVENTS = 0;
+
     protected $resourceClass = 'TopBetta\Resources\Sports\EventResource';
 
     protected $nextToJumpResource = 'TopBetta\Resources\Sports\NextToJumpResource';
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
-    protected $competitionEventsTag = array("competition", "events");
+    protected $collectionKeys = array(
+        self::COLLECTION_COMPETITION_EVENTS,
+    );
+
+    protected $tags = array("sports", "events");
 
     protected $nextToJumpTags = array("events", "n2j");
 
@@ -49,32 +55,12 @@ class EventRepository extends CachedResourceRepository {
 
     public function getEventsForCompetition($id)
     {
-        return Cache::tags($this->competitionEventsTag)->get($this->cachePrefix . 'competition_' . $id);
+        return $this->get($this->cachePrefix . 'competition_' . $id);
     }
 
     public function nextToJump()
     {
         return Cache::tags($this->nextToJumpTags)->get($this->cachePrefix . 'n2j');
-    }
-
-    public function updateEvents()
-    {
-        $events = $this->repository->getVisibleEvents();
-
-        Cache::tags($this->competitionEventsTag)->flush();
-        $competitionCollections = array();
-        foreach ($events as $event) {
-            if (!$competitionEvents = array_get($competitionCollections, $event->getModel()->competition->first()->id)) {
-                $competitionEvents = new EloquentResourceCollection(new Collection(), $this->resourceClass);
-            }
-
-            $this->putInCollection($competitionEvents, $event->id, $this->createResource($event));
-            $competitionCollections[$event->getModel()->competition->first()->id] = $competitionEvents;
-        }
-
-        foreach ($competitionCollections as $key => $collection) {
-            Cache::tags($this->competitionEventsTag)->forever($this->cachePrefix . 'competition_' . $key, $collection);
-        }
     }
 
     public function updateNextToJump()
@@ -84,6 +70,40 @@ class EventRepository extends CachedResourceRepository {
         Cache::tags($this->nextToJumpTags)->forever($this->cachePrefix . 'n2j', new EloquentResourceCollection($events, $this->nextToJumpResource));
     }
 
+    public function addModelToCompetition($model, $competition)
+    {
+        if (!$model->competition->first()) {
+            $this->repository->addModelToCompetition($model, $competition);
+        }
+
+        $this->addToCollection($this->createResource($model), self::COLLECTION_COMPETITION_EVENTS);
+
+        return $model;
+    }
+
+
+    protected function getCollectionCacheKey($keyTemplate, $model)
+    {
+        switch ($keyTemplate) {
+            case self::COLLECTION_COMPETITION_EVENTS:
+                if (!$model->getModel()->competition->first()) {
+                    return null;
+                }
+                return $this->cachePrefix .'competition_'.$model->getModel()->competition->first()->id;
+        }
+
+        throw new \InvalidArgumentException("invalid key" . $keyTemplate);
+    }
+
+    protected function getCollectionCacheTime($collectionKey, $model)
+    {
+        switch ($collectionKey) {
+            case self::COLLECTION_COMPETITION_EVENTS:
+                return $this->getModelCacheTime($model);
+        }
+
+        throw new \InvalidArgumentException("invalid key" . $collectionKey);
+    }
 
     protected function getModelCacheTime($model)
     {

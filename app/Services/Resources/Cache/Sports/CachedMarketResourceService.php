@@ -9,8 +9,11 @@
 namespace TopBetta\Services\Resources\Cache\Sports;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\Sports\MarketRepository;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\Cache\CachedResourceService;
+
 use TopBetta\Services\Resources\Sports\MarketResourceService;
 
 
@@ -20,17 +23,49 @@ class CachedMarketResourceService extends CachedResourceService  {
      * @var MarketRepository
      */
     private $marketRepository;
+    /**
+     * @var CachedSelectionResourceService
+     */
+    private $selectionResourceService;
 
-    public function __construct(MarketResourceService $resourceService, MarketRepository $marketRepository)
+    public function __construct(MarketResourceService $resourceService, MarketRepository $marketRepository, CachedSelectionResourceService $selectionResourceService)
     {
         $this->resourceService = $resourceService;
         $this->marketRepository = $marketRepository;
+        $this->selectionResourceService = $selectionResourceService;
     }
 
     public function getAllMarketsForEvent($event)
     {
-        return $this->marketRepository->getMarketsForEvent($event);
+        $markets = $this->marketRepository->getMarketsForEvent($event);
+
+        if (!$markets) {
+            return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\MarketResource');
+        }
+
+        foreach ($markets as $market) {
+            $market->setRelation('selections', $this->selectionResourceService->filterSelections($market->selections));
+        }
+
+        return $this->filterMarkets($markets);
+
     }
 
+    public function getFilteredMarketsForEvent($event, $types)
+    {
 
+    }
+
+    protected function filterMarkets($markets)
+    {
+        return $markets->filter(function ($v) {
+            if ($v->market_status == 'D' || $v->market_status == 'S') { return false; }
+
+            $selections = $v->selections;
+
+            if (!$selections->count()) {return false;}
+
+            return (bool) $v->display_flag;
+        });
+    }
 }

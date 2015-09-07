@@ -9,6 +9,7 @@
 namespace TopBetta\Repositories\Cache\Sports;
 
 use Cache;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -23,43 +24,41 @@ class MarketTypeRepository extends CachedResourceRepository {
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
-    protected $marketTypesCollectionTags = array('competition', 'marketTypes');
+    protected $tags = array('sports', 'marketTypes');
 
     protected $storeIndividual = false;
-    /**
-     * @var
-     */
-    private $competitionRepository;
 
-    public function __construct(MarketTypeRepositoryInterface $repository, CompetitionRepositoryInterface $competitionRepository)
+
+    public function __construct(MarketTypeRepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->competitionRepository = $competitionRepository;
     }
 
     public function getMarketTypesForCompetition($competition)
     {
-        return Cache::tags($this->marketTypesCollectionTags)->get($this->cachePrefix . 'competition_' . $competition);
+        return $this->get($this->cachePrefix.'competition_'.$competition);
     }
 
-    public function updateMarketTypes()
+    public function addMarketTypeToCompetition($competition, $marketType)
     {
-        $competitions = $this->competitionRepository->getVisibleCompetitions();
+        $collection = $this->getMarketTypesForCompetition($competition->id);
 
-        $marketTypes = $this->repository->getAvailableMarketTypesForCompetitions($competitions->lists('id')->all());
-
-        $typesCollections = array();
-        foreach ($marketTypes as $marketType) {
-            if (!$collection = array_get($typesCollections, $marketType->competition_id)) {
-                $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
-            }
-
-            $collection->push($this->createResource($marketType));
-            $typesCollections[$marketType->competition_id] = $collection;
+        if (!$collection) {
+            $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
         }
 
-        foreach ($typesCollections as $key=>$collection) {
-            Cache::tags($this->marketTypesCollectionTags)->forever($this->cachePrefix . 'competition_' . $key, $collection);
-        }
+        $this->putInCollection($collection, $marketType->id, $this->createResource($marketType));
+
+        Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $collection, $this->getCompetitionCacheTime($competition));
     }
+
+    protected function getCompetitionCacheTime($model)
+    {
+        if (!$date=$model->close_time) {
+            $date = Carbon::now()->toDateTimeString();
+        }
+
+        return Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay()->addDays(2)->diffInMinutes();
+    }
+
 }

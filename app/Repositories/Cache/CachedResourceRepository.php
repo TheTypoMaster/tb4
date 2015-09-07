@@ -31,6 +31,8 @@ abstract class CachedResourceRepository {
 
     protected $cacheForever = false;
 
+    protected $tags = array();
+
     public function __call($method, $arguments)
     {
         return call_user_func_array(array($this->repository, $method), $arguments);
@@ -38,15 +40,15 @@ abstract class CachedResourceRepository {
 
     public function get($key)
     {
-        return Cache::get($key);
+        return Cache::tags($this->tags)->get($key);
     }
 
     public function put($key, $model, $time)
     {
         if ($this->cacheForever) {
-            Cache::forever($key, $model);
+            Cache::tags($this->tags)->forever($key, $model);
         } else {
-            Cache::put($key, $model, $time);
+            Cache::tags($this->tags)->put($key, $model, $time);
         }
 
         return $this;
@@ -54,7 +56,7 @@ abstract class CachedResourceRepository {
 
     public function forever($key, $model)
     {
-        Cache::forever($key, $model);
+        Cache::tags($this->tags)->forever($key, $model);
     }
 
     public function putInCollection($collection, $key, $model)
@@ -125,14 +127,19 @@ abstract class CachedResourceRepository {
             return $this;
         }
 
-        if (!$collection = Cache::get($key)) {
+        if (!$collection = Cache::tags($this->tags)->get($key)) {
             $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
         }
 
         $this->putInCollection($collection, $resource->id, $resource);
 
         \Log::debug(get_class($this) . "Putting object in cache collection KEY " . $key . ' TIME ' . $this->getCollectionCacheTime($collectionKey, $resource));
-        Cache::put($key, $collection, $this->getCollectionCacheTime($collectionKey, $resource));
+
+        if ($this->cacheForever) {
+            Cache::tags($this->tags)->forever($key, $collection);
+        } else {
+            Cache::tags($this->tags)->put($key, $collection, $this->getCollectionCacheTime($collectionKey, $resource));
+        }
 
         return $this;
     }

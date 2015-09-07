@@ -21,13 +21,19 @@ class MarketRepository extends CachedResourceRepository {
 
     const CACHE_KEY_PREFIX = 'markets_';
 
+    const COLLECTION_EVENT_MARKETS = 0;
+
     protected $resourceClass = 'TopBetta\Resources\Sports\MarketResource';
 
     protected $selectionResourceClass = 'TopBetta\Resources\Sports\SelectionResource';
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
-    protected $marketCollectionTags = array('event', 'markets');
+    protected $tags = array("sports", "markets");
+
+    protected $collectionKeys = array(
+        self::COLLECTION_EVENT_MARKETS,
+    );
 
     protected $storeIndividual = false;
 
@@ -35,16 +41,21 @@ class MarketRepository extends CachedResourceRepository {
      * @var SelectionRepositoryInterface
      */
     private $selectionRepository;
+    /**
+     * @var MarketTypeRepository
+     */
+    private $marketTypeRepository;
 
-    public function __construct(MarketModelRepositoryInterface $repository, SelectionRepositoryInterface $selectionRepository)
+    public function __construct(MarketModelRepositoryInterface $repository, SelectionRepositoryInterface $selectionRepository, MarketTypeRepository $marketTypeRepository)
     {
         $this->repository = $repository;
         $this->selectionRepository = $selectionRepository;
+        $this->marketTypeRepository = $marketTypeRepository;
     }
 
     public function getMarketsForEvent($event)
     {
-        return Cache::tags($this->marketCollectionTags)->get($this->cachePrefix . 'event_' . $event);
+        return $this->get($this->cachePrefix . 'event_' . $event);
     }
 
     public function getFilteredMarketsForEvent($event, $types)
@@ -56,54 +67,60 @@ class MarketRepository extends CachedResourceRepository {
         return $filteredMarkets;
     }
 
-
-    public function updateMarketsAndSelections()
+    public function makeCacheResource($model)
     {
-        $markets = $this->repository->getVisibleMarketsWithSelections();
+        $model = parent::makeCacheResource($model);
 
-        $selections = $this->selectionRepository->findIn($markets->lists('selection_id')->all())->load(array('team', 'player', 'price', 'result'));
+        $competition = $model->event->competition->first();
 
-        $markets = $this->createCollectionAndAttachSelections($markets->unique('id'), $selections);
-
-        $collections = $this->createEventCollections($markets);
-
-        $this->storeEventCollections($collections);
-    }
-
-    protected function createCollectionAndAttachSelections($markets, $selections)
-    {
-        $markets = new EloquentResourceCollection($markets, $this->resourceClass);
-
-        $selections = new EloquentResourceCollection($selections, $this->selectionResourceClass);
-
-        $markets->setRelations('selections', 'market_id', $selections);
-
-        return $markets;
-    }
-
-    protected function createEventCollections($markets)
-    {
-        $eventCollections = array();
-
-        foreach ($markets as $market) {
-            if (!$eventCollection = array_get($eventCollections, $market->event_id)) {
-                $eventCollection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
-            }
-
-            $eventCollection->push($market);
-            $eventCollections[$market->event_id] = $eventCollection;
+        if ($competition) {
+            $this->marketTypeRepository->addMarketTypeToCompetition($competition, $model->markettype);
         }
 
-        return $eventCollections;
+        return $model;
     }
 
-    protected function storeEventCollections($collections)
+    public function addSelection($selection)
     {
-        Cache::tags($this->marketCollectionTags)->flush();
+        $tempSelection = clone $selection;
 
-        foreach ($collections as $key => $collection) {
-            Cache::tags($this->marketCollectionTags)->forever($this->cachePrefix . 'event_' . $key, $collection);
+        $markets = $this->getMarketsForEvent($tempSelection->getModel()->market->event->id);
+
+        $market = $markets->get($selection->market_id);
+
+        if ($market) {
+            $market->addSelection($selection);
+            $this->save($market);
         }
+    }
+
+    protected function createResource($model)
+    {
+        $resource = parent::createResource($model);
+
+        $resource->setRelation('selections', new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\SelectionResource'));
+
+        return $resource;
+    }
+
+    protected function getCollectionCacheKey($keyTemplate, $model)
+    {
+        switch ($keyTemplate) {
+            case self::COLLECTION_EVENT_MARKETS:
+                return $this->cachePrefix . 'event_' . $model->event->id;
+        }
+
+        throw new \InvalidArgumentException("invalid key" . $keyTemplate);
+    }
+
+    protected function getCollectionCacheTime($collectionKey, $model)
+    {
+        switch ($collectionKey) {
+            case self::COLLECTION_EVENT_MARKETS:
+                return $this->getModelCacheTime($model);
+        }
+
+        throw new \InvalidArgumentException("invalid key" . $collectionKey);
     }
 
     protected function getModelCacheTime($model)

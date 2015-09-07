@@ -33,4 +33,13 @@ class MarketResource extends AbstractEloquentResource {
     {
         return $this->model->name ? : $this->model->markettype->name;
     }
+
+    public function addSelection($selection)
+    {
+        $selections = $this->selections->keyBy('id');
+
+        $selections->put($selection->id, $selection);
+
+        $this->relations['selections'] = $selections->values();
+    }
 }

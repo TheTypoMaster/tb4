@@ -19,47 +19,19 @@ use TopBetta\Repositories\Cache\Sports\SportRepository;
 class SportsDataCacheManager {
 
     /**
-     * @var SportRepository
-     */
-    private $sportRepository;
-    /**
-     * @var CompetitionRepository
-     */
-    private $competitionRepository;
-    /**
      * @var EventRepository
      */
     private $eventRepository;
-    /**
-     * @var MarketRepository
-     */
-    private $marketRepository;
-    /**
-     * @var MarketTypeRepository
-     */
-    private $marketTypeRepository;
 
-    public function __construct(SportRepository $sportRepository,
-                                CompetitionRepository $competitionRepository,
-                                EventRepository $eventRepository,
-                                MarketRepository $marketRepository,
-                                MarketTypeRepository $marketTypeRepository)
+    public function __construct(EventRepository $eventRepository)
     {
-        $this->sportRepository = $sportRepository;
-        $this->competitionRepository = $competitionRepository;
         $this->eventRepository = $eventRepository;
-        $this->marketRepository = $marketRepository;
-        $this->marketTypeRepository = $marketTypeRepository;
     }
 
     public function updateCache()
     {
-        $this->sportRepository->updateVisibleSportsAndBaseCompetitions();
-        $this->competitionRepository->updateVisibleCompetitionsForBaseCompetition();
-        $this->eventRepository->updateEvents();
         $this->eventRepository->updateNextToJump();
-        $this->marketRepository->updateMarketsAndSelections();
-        $this->marketTypeRepository->updateMarketTypes();
+
     }
 
 }

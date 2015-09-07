@@ -9,6 +9,7 @@
 namespace TopBetta\Repositories\Cache\Sports;
 
 use Cache;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
@@ -18,11 +19,19 @@ class SportRepository extends CachedResourceRepository {
 
     const CACHE_KEY_PREFIX = 'sports_';
 
+    const COLLECTION_ALL_SPORTS = 0;
+
     protected $resourceClass = 'TopBetta\Resources\Sports\SportResource';
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
+    protected $tags = array("sports", "sport");
+
     protected $allSportsCollectionKey;
+
+    protected $collectionKeys = array(
+        self::COLLECTION_ALL_SPORTS,
+    );
 
     protected $cacheForever = true;
     /**
@@ -42,18 +51,37 @@ class SportRepository extends CachedResourceRepository {
         return $this->get($this->allSportsCollectionKey);
     }
 
-    public function updateVisibleSportsAndBaseCompetitions()
+    public function addBaseCompetition($resource)
     {
-        $sports = $this->repository->getVisibleSportsAndBaseCompetitions();
+        $sports = $this->getVisibleSportsAndBaseCompetitions();
 
-        $baseCompetitions = $this->baseCompetitionRepository->findIn($sports->lists('base_competition_id')->all());
+        $sport = $sports->get($resource->sport_id);
 
-        $sports = new EloquentResourceCollection($sports->unique('id'), 'TopBetta\Resources\Sports\SportResource');
-        $baseCompetitions = new EloquentResourceCollection($baseCompetitions, 'TopBetta\Resources\Sports\BaseCompetitionResource');
-
-        $sports->setRelations('baseCompetitions', 'sport_id', $baseCompetitions);
-
-        $this->put($this->allSportsCollectionKey, $sports, null);
+        if ($sport) {
+            $sport->addBaseCompetition($resource);
+            $this->save($sport);
+        }
     }
+
+    protected function createResource($model)
+    {
+        $resource = parent::createResource($model);
+
+        $resource->setRelation('baseCompetitions', new EloquentResourceCollection(new Collection(), 'TopBetta\Resource\Sports\BaseCompetitionResource'));
+
+        return $resource;
+    }
+
+
+    protected function getCollectionCacheKey($keyTemplate, $model)
+    {
+        switch ($keyTemplate) {
+            case self::COLLECTION_ALL_SPORTS:
+                return $this->cachePrefix . 'all';
+        }
+
+        throw new \InvalidArgumentException("Invalid key " . $keyTemplate);
+    }
+
 
 }

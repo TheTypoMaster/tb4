@@ -17,11 +17,22 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
      */
     protected $collection;
 
+    /**
+     * @var
+     */
+    private $class;
+
     public function __construct(Collection $collection, $class)
     {
         $this->collection = $collection->map(function($model) use ($class) {
             return new $class($model);
         });
+        $this->class = $class;
+    }
+
+    public function getClass()
+    {
+        return $this->class;
     }
 
     public function setRelations($relationName, $key, $relations)
@@ -55,6 +66,20 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         return $this;
     }
 
+    public function filter(\Closure $callback)
+    {
+        return $this->newCollection(
+            $this->collection->filter($callback)
+        );
+    }
+
+    public function map(\Closure $callback)
+    {
+        return $this->newCollection(
+            $this->collection->map($callback)
+        );
+    }
+
     public function getIterator()
     {
         return $this->collection->getIterator();
@@ -69,6 +94,27 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
     {
         return $this->collection->toJson($options);
     }
+
+    public function newCollection($collection)
+    {
+        $newCollection = new EloquentResourceCollection(new Collection(), $this->class);
+
+        $newCollection->setCollection($collection);
+
+        return $newCollection;
+    }
+
+    /**
+     * @param Collection $collection
+     * @return $this
+     */
+    public function setCollection($collection)
+    {
+        $this->collection = $collection;
+        return $this;
+    }
+
+
 
     public function __call($name, $arguments)
     {

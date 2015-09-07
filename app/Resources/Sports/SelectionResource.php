@@ -50,6 +50,10 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function getPrice()
     {
+        if (!$this->model->price) {
+            return 0;
+        }
+
         if ($this->model->price->override_type == 'percentage') {
             return bcmul(2 - $this->model->price->override_odds, $this->model->price->win_odds, 2);
         } else if ($this->model->price->override_type == 'promo') {

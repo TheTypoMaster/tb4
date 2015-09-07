@@ -21,7 +21,7 @@ class SportResource extends IconResource {
 
     public function baseCompetitions()
     {
-        return $this->collection('baseCompetitions', 'TopBetta\Resources\Sports\BaseCompetitionResource', $this->model->baseCompetitions);
+        return $this->collection('baseCompetitions', 'TopBetta\Resources\Sports\BaseCompetitionResource', 'baseCompetitions');
     }
 
     public function loadIcon()
@@ -30,4 +30,12 @@ class SportResource extends IconResource {
         return $this;
     }
 
+    public function addBaseCompetition($resource)
+    {
+        $baseCompetitions = $this->baseCompetitions()->keyBy('id');
+
+        $baseCompetitions->put($resource->id, $resource);
+
+        $this->relations['baseCompetitions'] = $baseCompetitions->values();
+    }
 }

@@ -19,11 +19,17 @@ class CompetitionRepository extends CachedResourceRepository {
 
     const CACHE_KEY_PREFIX = 'competitions_';
 
+    const COLLECTION_COMPETITION_BASE_COMPETITION = 0;
+
     protected $resourceClass = 'TopBetta\Resources\Sports\CompetitionResource';
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
-    protected $baseCompetitionCollectionTag = array('baseCompetitions', 'competitions');
+    protected $collectionKeys = array(
+        self::COLLECTION_COMPETITION_BASE_COMPETITION,
+    );
+
+    protected $tags = array("sports", "competitions");
 
     public function __construct(CompetitionRepositoryInterface $repository)
     {
@@ -32,7 +38,7 @@ class CompetitionRepository extends CachedResourceRepository {
 
     public function getCompetitionsForBaseCompetition($id)
     {
-        return Cache::tags($this->baseCompetitionCollectionTag)->get($this->cachePrefix . 'base_competition_' . $id);
+        return $this->get($this->cachePrefix . 'base_competition_' . $id);
     }
 
     public function getCompetition($id)
@@ -42,7 +48,13 @@ class CompetitionRepository extends CachedResourceRepository {
 
     public function getVisibleCompetitionByBaseCompetition($baseCompetition)
     {
-        return Cache::tags($this->baseCompetitionCollectionTag)->get($this->cachePrefix . 'base_competition_' . $baseCompetition);
+        $competitions = $this->get($this->cachePrefix . 'base_competition_' . $baseCompetition);
+
+        if (!$competitions) {
+            return new EloquentResourceCollection(new Collection(), $this->resourceClass);
+        }
+
+        return $competitions;
     }
 
     public function findOrGetFromDb($id)
@@ -56,32 +68,29 @@ class CompetitionRepository extends CachedResourceRepository {
         return $competition;
     }
 
-    public function updateVisibleCompetitionsForBaseCompetition()
+    protected function getCollectionCacheKey($keyTemplate, $model)
     {
-        $competitions = $this->repository->getVisibleCompetitions();
-
-        $collections = array();
-
-        foreach ($competitions as $competition) {
-            if (!$collection = array_get($collections, $competition->base_competition_id)) {
-                $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
-            }
-
-            $collection->push($this->createResource($competition));
-            $collections[$competition->base_competition_id] = $collection;
+        switch ($keyTemplate) {
+            case self::COLLECTION_COMPETITION_BASE_COMPETITION:
+                return $this->cachePrefix . 'base_competition_' . $model->base_competition_id;
         }
 
-        //flush old competitions
-        Cache::tags($this->baseCompetitionCollectionTag)->flush();
+        throw new \InvalidArgumentException("invalid key " . $keyTemplate);
+    }
 
-        foreach ($collections as $key => $collection) {
-            Cache::tags($this->baseCompetitionCollectionTag)->forever($this->cachePrefix . 'base_competition_' . $key, $collection);
+    protected function getCollectionCacheTime($collectionKey, $model)
+    {
+        switch ($collectionKey) {
+            case self::COLLECTION_COMPETITION_BASE_COMPETITION:
+                return $this->getModelCacheTime($model);
         }
+
+        throw new \InvalidArgumentException("invalid key " . $collectionKey);
     }
 
     protected function getModelCacheTime($model)
     {
-        if (!$date=$model->start_date) {
+        if (!$date=$model->close_time) {
             $date = Carbon::now()->toDateTimeString();
         }
 

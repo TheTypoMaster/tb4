@@ -21,15 +21,15 @@ class CachedSportResourceService extends CachedResourceService {
      */
     private $sportRepository;
     /**
-     * @var CompetitionRepository
+     * @var CachedCompetitionResourceService
      */
-    private $competitionRepository;
+    private $competitionResourceService;
 
-    public function __construct(SportResourceService $resourceService, SportRepository $sportRepository, CompetitionRepository $competitionRepository)
+    public function __construct(SportResourceService $resourceService, SportRepository $sportRepository, CachedCompetitionResourceService $competitionResourceService)
     {
         $this->resourceService = $resourceService;
         $this->sportRepository = $sportRepository;
-        $this->competitionRepository = $competitionRepository;
+        $this->competitionResourceService = $competitionResourceService;
     }
 
     public function getVisibleSportsWithCompetitions($date = null)
@@ -42,7 +42,24 @@ class CachedSportResourceService extends CachedResourceService {
 
         $sports = $this->attachCompetitions($sports);
 
-        return $sports;
+        return $this->filterSports($sports);
+    }
+
+    public function filterSports($sports)
+    {
+        $sports = $sports->map(function ($v) {
+            $v->setRelation('baseCompetitions', $v->baseCompetitions->filter(function ($q) {
+                $competitions = $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($q->id);
+
+                return (bool) ($competitions->count() && $q->display_flag);
+            }));
+
+            return $v;
+        });
+
+        return $sports->filter(function ($v) {
+            return (bool) ($v->baseCompetitions->count() && $v->display_flag);
+        });
     }
 
 
@@ -50,7 +67,7 @@ class CachedSportResourceService extends CachedResourceService {
     {
         foreach($sports as $sport) {
             foreach ($sport->baseCompetitions as $baseCompetition) {
-                $baseCompetition->setRelation('competitions', $this->competitionRepository->getCompetitionsForBaseCompetition($baseCompetition->id));
+                $baseCompetition->setRelation('competitions', $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($baseCompetition->id));
             }
         }
 
