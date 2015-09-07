@@ -238,6 +238,6 @@ class RaceResource extends AbstractEloquentResource {
 
         $tempModel = clone $this->model;
 
-        $this->meetingName = $tempModel->competition->first()->name;
+        $this->meetingName = $tempModel->competition->first() ? $tempModel->competition->first()->name : null;
     }
 }
