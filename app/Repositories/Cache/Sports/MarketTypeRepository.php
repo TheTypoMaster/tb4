@@ -52,6 +52,13 @@ class MarketTypeRepository extends CachedResourceRepository {
         Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $collection, $this->getCompetitionCacheTime($competition));
     }
 
+    public function storeMarketTypesForCompetition($types, $competition)
+    {
+        $marketTypes = new EloquentResourceCollection($types, $this->resourceClass);
+
+        \Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $marketTypes, $this->getCompetitionCacheTime($competition));
+    }
+
     protected function getCompetitionCacheTime($model)
     {
         if (!$date=$model->close_time) {

@@ -67,6 +67,19 @@ class MarketRepository extends CachedResourceRepository {
         return $filteredMarkets;
     }
 
+    public function storeMarketsForEvent($markets, $event)
+    {
+        $marketResources = new EloquentResourceCollection($markets, $this->resourceClass);
+
+        if ($markets->first()) {
+            \Cache::tags($this->tags)->put($this->cachePrefix.'event_'.$event->id, $marketResources, $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketResources->first()));
+
+            $types = $markets->load('markettype')->pluck('markettype');
+
+            $this->marketTypeRepository->storeMarketTypesForCompetition($types, $event->competition->first());
+        }
+    }
+
     public function makeCacheResource($model)
     {
         $model = parent::makeCacheResource($model);
