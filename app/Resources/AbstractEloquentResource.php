@@ -86,6 +86,10 @@ abstract class AbstractEloquentResource implements ResourceInterface {
     {
         if( ! array_get($this->relations, $name) ) {
 
+            if (is_string($model)) {
+                $model = object_get($this->model->load($model), $model);
+            }
+
             if( ! $model ) {
                 return null;
             }
