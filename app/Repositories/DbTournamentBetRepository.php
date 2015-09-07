@@ -123,6 +123,13 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->get();
     }
 
+    public function findBets($bets)
+    {
+        return $this->getBetBuilder()
+            ->whereIn('tb.id', $bets)
+            ->get();
+    }
+
     protected function getBetBuilder()
     {
         return $this->model

@@ -108,9 +108,9 @@ class TicketsController extends Controller
         try {
             $ticket = $this->tournamentService->storeTournamentTicket(Auth::user(), $tournament);
         } catch (TournamentBuyInException $e) {
-            return $this->response->failed($e->getMessage());
+            return $this->response->failed($e->getMessage(), 400);
         } catch (TournamentEntryException $e) {
-            return $this->response->failed($e->getMessage());
+            return $this->response->failed($e->getMessage(), 400);
         } catch (BetLimitExceededException $e) {
             return $this->response->failed($e->getMessage(), 400);
         } catch (ModelNotFoundException $e) {

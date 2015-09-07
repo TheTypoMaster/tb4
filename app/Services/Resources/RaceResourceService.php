@@ -15,6 +15,7 @@ use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\RaceResource;
+use TopBetta\Services\Products\ProductService;
 use TopBetta\Services\Racing\RaceResultService;
 use TopBetta\Services\Resources\Betting\BetResourceService;
 
@@ -40,15 +41,20 @@ class RaceResourceService {
      * @var RaceResultService
      */
     private $resultService;
+    /**
+     * @var ProductService
+     */
+    private $productService;
 
 
-    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepositoryInterface, BetResourceService $betResourceService, RaceResultService $resultService)
+    public function __construct(EventModelRepositoryInterface $eventRepository, SelectionResourceService $selectionService, ProductProviderMatchRepositoryInterface $productProviderMatchRepositoryInterface, BetResourceService $betResourceService, RaceResultService $resultService, ProductService $productService)
     {
         $this->selectionService = $selectionService;
         $this->eventRepository = $eventRepository;
         $this->productProviderMatchRepositoryInterface = $productProviderMatchRepositoryInterface;
 		$this->betResourceService = $betResourceService;
         $this->resultService = $resultService;
+        $this->productService = $productService;
     }
 
     public function getRaceWithSelections($raceId)
@@ -81,7 +87,7 @@ class RaceResourceService {
 
     public function loadTotesForRace(RaceResource $race)
     {
-        $products = $race->getModel()->competition->first()->products;
+        $products = $this->productService->getAuthUserProductsForCompetition($race->getModel()->competition->first());
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 

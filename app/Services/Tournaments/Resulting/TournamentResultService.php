@@ -76,6 +76,10 @@ class TournamentResultService {
 
         $percentages = $this->getPayoutPercentages($tournament);
 
+        if (!$percentages) {
+            return $this->results;
+        }
+
         //get the tournament leaderboard
         $leaderboard = $this->leaderboardService->getLeaderboard($tournament->id, null, true);
 

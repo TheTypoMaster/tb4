@@ -27,7 +27,8 @@ class SelectionResource extends AbstractEloquentResource {
         'form'           => 'form',
         'winDeductions'  => 'win_deductions',
         'placeDeduction' => 'place_deductions',
-        'typeCode'       => 'type_code',
+        'typeCode'       => 'typeCode',
+        'selectionStatus' => 'selectionstatus.keyword',
     );
 
     protected $types = array(
@@ -44,15 +45,18 @@ class SelectionResource extends AbstractEloquentResource {
 
     protected $loadRelations = array(
         'result',
-        'price',
+        'prices',
         'runner',
         'runner.owner',
         'runner.trainer',
         'form',
-        'lastStarts'
+        'lastStarts',
+        'selectionstatus',
     );
 
     private $products = null;
+
+    private $typeCode = null;
 
     public function __construct($model)
     {
@@ -131,12 +135,18 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function getSilk()
     {
-        if ($this->model->type_code == 'G') {
+        if ($this->getTypeCode() == 'G') {
             return Config::get('silks.greyhound_silk_path') . Config::get('silks.greyhound_silk_filename_prefix') .
             $this->model->number . Config::get('silks.default_silk_file_extension');
         }
 
-        return Config::get('silks.default_silk_path') . $this->model->silk_id . Config::get('silks.default_silk_file_extension');
+        $silk = $this->model->silk_id;
+
+        if(!$silk) {
+            $silk = Config::get('silks.default_silk_filename');
+        }
+
+        return Config::get('silks.default_silk_path') . $silk . Config::get('silks.default_silk_file_extension');
     }
 
     public function loadRelation($relation)
@@ -154,6 +164,32 @@ class SelectionResource extends AbstractEloquentResource {
         }
 
         return $this->relations[$relation];
+    }
+
+    /**
+     * @return null
+     */
+    public function getTypeCode()
+    {
+        return $this->typeCode;
+    }
+
+    /**
+     * @param null $typeCode
+     * @return $this
+     */
+    public function setTypeCode($typeCode)
+    {
+        $this->typeCode = $typeCode;
+        return $this;
+    }
+
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $tempModel = clone $this->model;
+        $this->setTypeCode($tempModel->market->event->competition->first()->type_code);
     }
 
     public function toArray()

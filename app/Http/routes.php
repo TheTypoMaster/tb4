@@ -363,11 +363,13 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::resource('tournament-bets', 'Frontend\TournamentBetsController', array("only" => array('index', 'store')));
         Route::resource('tickets', 'Frontend\TicketsController', array("only" => array('index', 'store', 'show')));
         Route::post('comments', 'Frontend\TournamentCommentController@store');
+
+        //tournament rebuys and topups
+        Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
+        Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
     });
 
-    //tournament rebuys and topups
-    Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
-    Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
+
 
     //user tournament bets
     Route::resource('user.tournament.bets', 'Frontend\UserTournamentBetsController', array("only" => array('index')));
@@ -414,6 +416,11 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('deposits', 'Frontend\DepositsController', array("only" => array('store')));
     Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController', array("only" => array('index', 'store', 'destroy')));
     Route::resource('eway-tokens', 'Frontend\EwayCreditCardController', array("only" => array('index', 'destroy')));
+    Route::resource('poli-deposit', 'Frontend\FrontUsersPoliDepositController');
+
+
+    //CONTACT USE ENDPOINT
+    Route::post('contact-us', 'Frontend\ContactController@contactUs');
 });
 
 // new login/logout methods

@@ -9,6 +9,7 @@
 namespace TopBetta\Resources;
 
 
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Services\Betting\EventService;
 
@@ -17,6 +18,7 @@ class RaceResource extends AbstractEloquentResource {
     protected $attributes = array(
         "id"                => 'id',
         "name"              => 'name',
+        'meetingName'       => 'meetingName',
         "type"              => "type",
         "start_date"        => 'start_date',
         "number"            => 'number',
@@ -28,6 +30,8 @@ class RaceResource extends AbstractEloquentResource {
         "track_condition"   => 'track_condition',
         "exoticBetsAllowed" => "exoticBetsAllowed",
         "availableProducts" => "availableProducts",
+        "displayedResults"  => "displayedResults",
+        "displayedExoticResults" => "displayedExoticResults",
     );
 
     protected $loadIfRelationExists = array(
@@ -40,6 +44,7 @@ class RaceResource extends AbstractEloquentResource {
 
     private $resultString = null;
 
+    private $meetingName;
 
     public function selections()
     {
@@ -146,6 +151,61 @@ class RaceResource extends AbstractEloquentResource {
         return $this->model->competition->first()->type_code;
     }
 
+    public function getDisplayedResults()
+    {
+        $results = $this->filterResultsByProducts($this->getResults());
+
+        return array_values($this->mergeSelectionPositionResults($results));
+    }
+
+    public function getDisplayedExoticResults()
+    {
+        return array_values($this->filterResultsByProducts($this->getExoticResults()));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMeetingName()
+    {
+        return $this->meetingName;
+    }
+
+    protected function filterResultsByProducts($results)
+    {
+        if (!array_get($this->relations, 'products')) {
+            return array();
+        }
+
+        $products = array_map(function ($q) {return array('product_id' => $q['product_id'], 'bet_type' => $q['bet_type']);}, $this->relations['products']->toArray());
+
+        return array_filter($results, function ($v) use ($products) {
+            $result =  array('product_id' => $v['product_id'], 'bet_type' => $v['bet_type']);
+            return in_array($result, $products);
+        });
+
+    }
+
+    protected function mergeSelectionPositionResults($results)
+    {
+        $mergedResults = array();
+
+        //hack for waiting for cache data
+        if (count($results) && isset(reset($results)['selection_id'])) {
+
+            foreach ($results as $result) {
+                if (!$resultPrice = array_get($mergedResults, $result['selection_id'])) {
+                    $resultPrice = array_except($result, array('bet_type', 'dividend'));
+                }
+
+                $resultPrice[$result['bet_type'] == BetTypeRepositoryInterface::TYPE_WIN ? 'win_dividend' : 'place_dividend'] = $result['dividend'];
+                $mergedResults[$result['selection_id']]                                                                       = $resultPrice;
+            }
+        }
+
+        return $mergedResults;
+    }
+
     public function getEventstatus()
     {
         return $this->model->eventstatus;
@@ -159,19 +219,25 @@ class RaceResource extends AbstractEloquentResource {
             $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING ||
             $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID
         ) {
-
             $array["results"] = $this->getResults();
             $array["exoticResults"] = $this->getExoticResults();
             $array["resultString"] = $this->getResultString();
-
         }
 
         return $array;
-
     }
 
     public function availableProducts()
     {
         return json_decode($this->model->available_products, true);
+    }
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $tempModel = clone $this->model;
+
+        $this->meetingName = $tempModel->competition->first() ? $tempModel->competition->first()->name : null;
     }
 }

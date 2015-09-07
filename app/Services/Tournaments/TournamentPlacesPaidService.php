@@ -44,7 +44,7 @@ class TournamentPlacesPaidService {
         $percentages = $this->placesPaidRepository->getByPlacesPaid($placesPaid);
 
         if (!$percentages) {
-            throw new \Exception;
+            return null;
         }
 
         return $percentages;
