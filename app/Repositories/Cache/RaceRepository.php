@@ -27,6 +27,8 @@ class RaceRepository extends CachedResourceRepository {
         self::COLLECTION_MEETING_RACES
     );
 
+    protected $tags = array("racing", "races");
+
     public function __construct(EventRepositoryInterface $repository)
     {
         $this->repository = $repository;

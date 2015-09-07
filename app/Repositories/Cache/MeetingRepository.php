@@ -25,6 +25,8 @@ class MeetingRepository extends CachedResourceRepository {
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
+    protected $tags = array("racing", "meetings");
+
     public function __construct(CompetitionRepositoryInterface $repository)
     {
         $this->repository = $repository;

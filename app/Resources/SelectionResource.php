@@ -22,7 +22,6 @@ class SelectionResource extends AbstractEloquentResource {
         'barrier'        => 'barrier',
         'handicap'       => 'handicap',
         'weight'         => 'weight',
-        'prices'         => 'prices',
         'silk'           => 'silk',
         'form'           => 'form',
         'winDeductions'  => 'win_deductions',

@@ -23,6 +23,8 @@ class RacingSelectionRepository extends CachedResourceRepository
 
     protected $storeIndividualResource = false;
 
+    protected $tags = array("racing", "selections");
+
     protected $collectionKeys = array(
         self::COLLECTION_RACES_SELECTIONS,
     );
@@ -43,7 +45,7 @@ class RacingSelectionRepository extends CachedResourceRepository
             if ($selection = $selections->getDictionary()[$selectionId]) {
                 $selection->addPrice($price);
                 $this->putInCollection($selections, $selection->id, $selection);
-                \Cache::put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
+                \Cache::tags($this->tags)->put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
             }
         }
     }
