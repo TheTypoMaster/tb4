@@ -275,7 +275,10 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->leftJoin('tbdb_account_transaction as at', 'at.id', '=', 'b.result_transaction_id')
             ->join('tbdb_bet_selection as bs', 'bs.bet_id', '=', 'b.id')
             ->join('tbdb_selection as s', 's.id', '=', 'bs.selection_id')
-            ->leftJoin('tbdb_selection_price as sp', 'sp.selection_id', '=', 's.id')
+            ->leftJoin('tbdb_selection_price as sp', function ($q) {
+                $q->on('sp.selection_id', '=', 's.id')
+                    ->on('sp.bet_product_id', '=', 'b.bet_product_id');
+            })
             ->leftJoin('tbdb_selection_result as sr', 'sr.selection_id', '=', 's.id')
             ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
             ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
