@@ -21,6 +21,7 @@ class MarketResource extends AbstractEloquentResource {
         'line' => 'line',
         'market_status' => 'market_status',
         "display_flag" => "display_flag",
+        "market_type_id" => "market_type_id",
     );
 
     protected $loadIfRelationExists = array(

@@ -26,4 +26,17 @@ class SportsController extends AbstractResourceController {
 
         return $this->apiResponse->success($sports->toArray());
     }
+
+    public function getVisibleSportsWithSelectedCompetition(SportsService $sportService, Request $request)
+    {
+        $competition = $request->get('competition_id');
+
+        if (!$competition) {
+            return $this->apiResponse->failed("No competition specified", 400);
+        }
+
+        $sports = $sportService->getVisibleSportsWithCompetitionAndEvent($competition);
+
+        return $this->apiResponse->success($sports['data']->toArray(), 200, array_except($sports, 'data'));
+    }
 }

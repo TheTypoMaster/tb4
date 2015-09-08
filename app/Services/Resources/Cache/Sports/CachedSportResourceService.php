@@ -45,13 +45,22 @@ class CachedSportResourceService extends CachedResourceService {
         return $this->filterSports($sports);
     }
 
-    public function filterSports($sports)
+    public function getVisibleSports($competition)
+    {
+        $sports = $this->sportRepository->getVisibleSportsAndBaseCompetitions();
+
+        return $this->filterSports($sports, $competition);
+    }
+
+    public function filterSports($sports, $attachedCompetitionId = null)
     {
 
-        $sports = $sports->map(function ($v) {
-            $v->setRelation('baseCompetitions', $v->baseCompetitions->filter(function ($q) {
+        $sports = $sports->map(function ($v) use ($attachedCompetitionId) {
+            $v->setRelation('baseCompetitions', $v->baseCompetitions->filter(function ($q) use ($attachedCompetitionId) {
+                $competitions = !$attachedCompetitionId ? $q->competitions :
+                    $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($q->id, $attachedCompetitionId);
 
-                return (bool) ($q->competitions->count() && $q->display_flag);
+                return (bool) ($competitions->count() && $q->display_flag);
             }));
 
             return $v;

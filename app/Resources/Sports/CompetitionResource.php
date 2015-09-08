@@ -21,6 +21,7 @@ class CompetitionResource extends IconResource{
         "startDate" => "start_date",
         "icon" => "icon",
         "display_flag" => "display_flag",
+        "base_competition_id" => "base_competition_id",
     );
 
     public function events()
