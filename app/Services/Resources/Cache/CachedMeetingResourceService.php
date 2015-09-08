@@ -36,7 +36,7 @@ class CachedMeetingResourceService extends CachedResourceService {
         $meetings = $this->meetingRepository->getSmallMeetings($date);
 
         if (!$meetings) {
-            return $this->resourceService->getSmallMeetings();
+            return $this->resourceService->getSmallMeetings($date);
         }
 
         return $meetings;
