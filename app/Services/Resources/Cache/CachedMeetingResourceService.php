@@ -54,6 +54,10 @@ class CachedMeetingResourceService extends CachedResourceService {
     {
         $model = $this->meetingRepository->getMeeting($id);
 
+        if (!$model) {
+            return $this->resourceService->getMeeting($id, $withRaces);
+        }
+
         if ($withRaces) {
 
             $model->setRelation('races', $this->raceResourceService->getRacesForMeeting($model->id));
