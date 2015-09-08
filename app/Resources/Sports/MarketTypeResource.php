@@ -13,7 +13,7 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class MarketTypeResource extends AbstractEloquentResource {
 
-    protected static $modelClass = 'TopBetta\Models\MarektTypeModel';
+    protected static $modelClass = 'TopBetta\Models\MarketTypeModel';
 
     protected $attributes = array(
         'id' => 'id',

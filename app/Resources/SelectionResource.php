@@ -166,7 +166,7 @@ class SelectionResource extends AbstractEloquentResource {
 
         if( $relation == 'runner' ) {
 
-            if( data_get($this->model, 'form') ) {
+            if( $this->model->form && is_object($this->model->form) ) {
                 $this->relations[$relation]->setForm(data_get($this->model, 'form'));
             }
 
