@@ -37,10 +37,14 @@ class RunnerResource extends AbstractEloquentResource {
         return array_merge($array, $this->getForm());
     }
 
-//    public static function createResourceFromArray($array, $class = null)
-//    {
-//        parent::createResourceFromArray($array);
-//    }
+    public static function createResourceFromArray($array, $class = null)
+    {
+        $resource = parent::createResourceFromArray($array);
+
+        $resource->setLastStartsArray(array_get($array, 'last_starts'));
+
+        return $resource;
+    }
 
     /**
      * @return mixed
@@ -113,6 +117,12 @@ class RunnerResource extends AbstractEloquentResource {
     public function getLastStarts()
     {
         return count($this->lastStarts) ? $this->lastStarts : array_get($this->model, 'lastStarts', array());
+    }
+
+    public function setLastStartsArray($lastStarts)
+    {
+        $this->lastStarts = $lastStarts;
+        return $this;
     }
 
     /**

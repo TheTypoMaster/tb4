@@ -10,7 +10,9 @@ namespace TopBetta\Repositories\Cache;
 
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
+use TopBetta\Resources\EloquentResourceCollection;
 
 class RacingSelectionRepository extends CachedResourceRepository
 {
