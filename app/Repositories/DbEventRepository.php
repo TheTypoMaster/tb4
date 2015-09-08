@@ -208,6 +208,9 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     {
         $model->competition()->attach($competition->id);
 
+        //load the relationship
+        $model->load('competition');
+
         return $model;
     }
 
