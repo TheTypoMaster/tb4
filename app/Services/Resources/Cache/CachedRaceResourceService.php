@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources\Cache;
 
 
 use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\Betting\BetResourceService;
 use TopBetta\Services\Resources\RaceResourceService;
 

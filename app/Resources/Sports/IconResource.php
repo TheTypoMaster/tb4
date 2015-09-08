@@ -13,12 +13,17 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 abstract class IconResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\IconModel';
+
     protected $icon;
 
-    public function __construct($model)
+    public function __construct($model = null)
     {
-        parent::__construct($model);
-        $this->loadIcon();
+        if ($model) {
+            parent::__construct($model);
+            $this->loadIcon();
+        }
+
     }
 
     /**

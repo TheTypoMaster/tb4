@@ -52,7 +52,7 @@ class MeetingsController extends Controller
             true
         );
 
-        return $this->response->success($meetings->toArray());
+        return $this->response->success(is_array($meetings) ? $meetings : $meetings->toArray());
     }
 
 

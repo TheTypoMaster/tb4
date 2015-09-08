@@ -38,7 +38,7 @@ class CompetitionRepository extends CachedResourceRepository {
 
     public function getCompetitionsForBaseCompetition($id)
     {
-        return $this->get($this->cachePrefix . 'base_competition_' . $id);
+        return $this->getCollection($this->cachePrefix . 'base_competition_' . $id);
     }
 
     public function getCompetition($id)
@@ -48,7 +48,7 @@ class CompetitionRepository extends CachedResourceRepository {
 
     public function getVisibleCompetitionByBaseCompetition($baseCompetition)
     {
-        $competitions = $this->get($this->cachePrefix . 'base_competition_' . $baseCompetition);
+        $competitions = $this->getCollection($this->cachePrefix . 'base_competition_' . $baseCompetition);
 
         if (!$competitions) {
             return new EloquentResourceCollection(new Collection(), $this->resourceClass);

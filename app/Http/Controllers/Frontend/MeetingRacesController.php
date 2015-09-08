@@ -43,7 +43,7 @@ class MeetingRacesController extends Controller
             return $this->response->failed(array(), 404, "Meeting not found");
         }
 
-        return $this->response->success($meeting->toArray());
+        return $this->response->success(is_array($meeting) ? $meeting : $meeting->toArray());
     }
 
         /**

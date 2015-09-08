@@ -47,11 +47,11 @@ class CachedSportResourceService extends CachedResourceService {
 
     public function filterSports($sports)
     {
+
         $sports = $sports->map(function ($v) {
             $v->setRelation('baseCompetitions', $v->baseCompetitions->filter(function ($q) {
-                $competitions = $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($q->id);
 
-                return (bool) ($competitions->count() && $q->display_flag);
+                return (bool) ($q->competitions->count() && $q->display_flag);
             }));
 
             return $v;

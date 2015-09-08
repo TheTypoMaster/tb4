@@ -55,7 +55,7 @@ class MarketRepository extends CachedResourceRepository {
 
     public function getMarketsForEvent($event)
     {
-        return $this->get($this->cachePrefix . 'event_' . $event);
+        return $this->getCollection($this->cachePrefix . 'event_' . $event);
     }
 
     public function getFilteredMarketsForEvent($event, $types)
@@ -72,7 +72,7 @@ class MarketRepository extends CachedResourceRepository {
         $marketResources = new EloquentResourceCollection($markets, $this->resourceClass);
 
         if ($markets->first()) {
-            \Cache::tags($this->tags)->put($this->cachePrefix.'event_'.$event->id, $marketResources, $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketResources->first()));
+            \Cache::tags($this->tags)->put($this->cachePrefix.'event_'.$event->id, $marketResources->toArray(), $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketResources->first()));
 
             $types = $markets->load('markettype')->pluck('markettype');
 
@@ -102,6 +102,7 @@ class MarketRepository extends CachedResourceRepository {
         $market = $markets->get($selection->market_id);
 
         if ($market) {
+            $market->getModel()->event = $tempSelection->getModel()->market->event;
             $market->addSelection($selection);
             $this->save($market);
         }

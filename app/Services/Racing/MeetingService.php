@@ -75,6 +75,7 @@ class MeetingService {
 
                 return array("data" => $meeting, "selected_race" => $event->id);
             }
+
         }
 
         $meeting->races->first()->setSelections($this->selectionResourceService->getSelectionsForRace($meeting->races->first()->id));

@@ -14,6 +14,8 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
 class SelectionResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\SelectionModel';
+
     protected $attributes = array(
         'id'             => 'id',
         'name'           => 'name',
@@ -57,12 +59,13 @@ class SelectionResource extends AbstractEloquentResource {
 
     private $typeCode = null;
 
-    public function __construct($model)
+    public function __construct($model = null)
     {
-        $model->load($this->loadRelations);
+        if ($model) {
+            $model->load($this->loadRelations);
+        }
 
         parent::__construct($model);
-
     }
 
     public function runner()
@@ -162,12 +165,13 @@ class SelectionResource extends AbstractEloquentResource {
         parent::loadRelation($relation);
 
         if( $relation == 'runner' ) {
-            if( $this->model->form ) {
-                $this->relations[$relation]->setForm($this->model->form);
+
+            if( data_get($this->model, 'form') ) {
+                $this->relations[$relation]->setForm(data_get($this->model, 'form'));
             }
 
-            if( $this->model->lastStarts ) {
-                $this->relations[$relation]->setLastStarts($this->model->lastStarts);
+            if( data_get($this->model, 'lastStarts') ) {
+                $this->relations[$relation]->setLastStarts(data_get($this->model, 'lastStarts'));
             }
         }
 

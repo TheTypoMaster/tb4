@@ -82,6 +82,13 @@ class ProductService {
         return $this->userRepository->syncProductsForBetType($user, $totes->lists('id')->all(), $betType->id, $venue);
     }
 
+    public function getAuthUserProductsForCompetitionId($id)
+    {
+        $competition = $this->competitionRepository->find($id);
+
+        return $this->getAuthUserProductsForCompetition($competition);
+    }
+
     public function getAuthUserProductsForCompetition($competition)
     {
         //default products if there is no authorised user

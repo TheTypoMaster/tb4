@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class RunnerModel extends Model
 {
     protected $table = 'tb_runners';
-
-    protected $fillable = array(
-        'external_runner_id', 'owner_id', 'trainer_id', 'name', 'colour', 'sex', 'age', 'foal_date', 'sire', 'dam', 'type'
-    );
+    protected $guarded = array();
+//    protected $fillable = array(
+//        'external_runner_id', 'owner_id', 'trainer_id', 'name', 'colour', 'sex', 'age', 'foal_date', 'sire', 'dam', 'type'
+//    );
 
     public function selections()
     {

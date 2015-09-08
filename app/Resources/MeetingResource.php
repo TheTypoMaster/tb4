@@ -31,6 +31,8 @@ class MeetingResource extends AbstractEloquentResource {
         'competitionEvents' => 'races'
     );
 
+    protected static $modelClass = 'TopBetta\Models\CompetitionModel';
+
     /**
      * @return EloquentResourceCollection
      */

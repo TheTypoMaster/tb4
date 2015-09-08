@@ -13,10 +13,13 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class MarketTypeResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\MarektTypeModel';
+
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
         'icon' => 'icon',
+        "display_flag" => "display_flag",
     );
 
     public function icon()

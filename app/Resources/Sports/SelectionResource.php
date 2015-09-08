@@ -13,12 +13,16 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class SelectionResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\SelectionModel';
+
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
         'line' => 'price.line',
         'price' => 'price',
         'won'   => 'won',
+        "display_flag" => "display_flag",
+        "selection_status_id" => "selection_status_id",
     );
 
     protected $types = array(
@@ -32,6 +36,7 @@ class SelectionResource extends AbstractEloquentResource {
         'team' => 'team',
         'player' => 'player',
     );
+
 
     public function team()
     {
@@ -52,6 +57,10 @@ class SelectionResource extends AbstractEloquentResource {
     {
         if (!$this->model->price) {
             return 0;
+        }
+
+        if (!is_object($this->model->price)) {
+            return $this->model->price;
         }
 
         if ($this->model->price->override_type == 'percentage') {

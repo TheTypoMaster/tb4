@@ -13,10 +13,17 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class SportResource extends IconResource {
 
+    protected static $modelClass = 'TopBetta\Models\SportModel';
+
     protected $attributes = array(
         "id" => "id",
         "name" => "name",
         "icon" => "icon",
+        "display_flag" => "display_flag",
+    );
+
+    protected $loadIfRelationExists = array(
+        'base_competitions' => 'baseCompetitions'
     );
 
     public function baseCompetitions()

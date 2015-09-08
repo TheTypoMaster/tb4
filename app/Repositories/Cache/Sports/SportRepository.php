@@ -48,7 +48,7 @@ class SportRepository extends CachedResourceRepository {
 
     public function getVisibleSportsAndBaseCompetitions()
     {
-        return $this->get($this->allSportsCollectionKey);
+        return $this->getCollection($this->allSportsCollectionKey);
     }
 
     public function addBaseCompetition($resource)

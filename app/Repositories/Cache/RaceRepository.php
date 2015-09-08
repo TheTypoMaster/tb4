@@ -36,7 +36,7 @@ class RaceRepository extends CachedResourceRepository {
 
     public function getRacesForMeeting($meetingId)
     {
-        return $this->get($this->cachePrefix . '_meeting_' . $meetingId);
+        return $this->getCollection($this->cachePrefix . '_meeting_' . $meetingId);
     }
 
     public function getRace($raceId)
@@ -69,18 +69,22 @@ class RaceRepository extends CachedResourceRepository {
         return parent::put($key, $model, $time);
     }
 
-    public function putInCollection($collection, $key, $model)
+    public function addToCollection($resource, $collectionKey)
     {
-        $oldRace = $collection->get($key);
+        $collection = $this->getCollection($this->getCollectionCacheKey($collectionKey, $resource));
 
-        //make sure we dont remove race results on update
-        if ($oldRace && $oldRace->getResults() && ! $model->getResults()) {
-            $model->setResultString($oldRace->getResultString());
-            $model->setResults($oldRace->getResults());
-            $model->setExoticResults($oldRace->getExoticResults());
+        if ($collection) {
+            $oldRace = $collection->get($resource->id);
+
+            //make sure we dont remove race results on update
+            if ($oldRace && $oldRace->getResults() && ! $resource->getResults()) {
+                $resource->setResultString($oldRace->getResultString());
+                $resource->setResults($oldRace->getResults());
+                $resource->setExoticResults($oldRace->getExoticResults());
+            }
         }
 
-        return parent::putInCollection($collection, $key, $model);
+        return parent::addToCollection($resource, $collectionKey);
     }
 
 

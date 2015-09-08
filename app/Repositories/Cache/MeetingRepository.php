@@ -34,16 +34,12 @@ class MeetingRepository extends CachedResourceRepository {
 
     public function getMeetingsForDate(Carbon $date)
     {
-        return $this->get($this->cachePrefix . $date->toDateString());
+        return $this->getCollection($this->cachePrefix . $date->toDateString());
     }
 
     public function getMeeting($id)
     {
-        if ($meeting = $this->get($this->cachePrefix . $id)) {
-            return $meeting;
-        }
-
-        return $this->createResource($this->repository->find($id));
+        return $this->get($this->cachePrefix . $id);
     }
 
     protected function getCollectionCacheKey($keyTemplate, $model)

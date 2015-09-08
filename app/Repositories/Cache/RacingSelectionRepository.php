@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
 class RacingSelectionRepository extends CachedResourceRepository
 {
+    protected static $modelClass = 'TopBetta\Models\SelectionModel';
 
     const COLLECTION_RACES_SELECTIONS = 0;
 
@@ -36,7 +37,7 @@ class RacingSelectionRepository extends CachedResourceRepository
 
     public function getSelectionsForRace($raceId)
     {
-        return $this->get($this->cachePrefix . '_race_' . $raceId);
+        return $this->getCollection($this->cachePrefix . '_race_' . $raceId);
     }
 
     public function updatePricesForSelectionInRace($selectionId, $race, $price)
@@ -45,7 +46,7 @@ class RacingSelectionRepository extends CachedResourceRepository
             if ($selection = $selections->getDictionary()[$selectionId]) {
                 $selection->addPrice($price);
                 $this->putInCollection($selections, $selection->id, $selection);
-                \Cache::tags($this->tags)->put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
+                \Cache::tags($this->tags)->put($this->cachePrefix . '_race_' . $race['id'], $selections->toArray(), $this->getRaceCollectionTime($race));
             }
         }
     }

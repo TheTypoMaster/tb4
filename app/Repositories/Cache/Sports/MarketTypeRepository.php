@@ -36,7 +36,7 @@ class MarketTypeRepository extends CachedResourceRepository {
 
     public function getMarketTypesForCompetition($competition)
     {
-        return $this->get($this->cachePrefix.'competition_'.$competition);
+        return $this->getCollection($this->cachePrefix.'competition_'.$competition);
     }
 
     public function addMarketTypeToCompetition($competition, $marketType)
@@ -47,16 +47,16 @@ class MarketTypeRepository extends CachedResourceRepository {
             $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
         }
 
-        $this->putInCollection($collection, $marketType->id, $this->createResource($marketType));
+        $collection->put($marketType->id, $this->createResource($marketType));
 
-        Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $collection, $this->getCompetitionCacheTime($competition));
+        Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $collection->toArray(), $this->getCompetitionCacheTime($competition));
     }
 
     public function storeMarketTypesForCompetition($types, $competition)
     {
         $marketTypes = new EloquentResourceCollection($types, $this->resourceClass);
 
-        \Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $marketTypes, $this->getCompetitionCacheTime($competition));
+        \Cache::tags($this->tags)->put($this->cachePrefix.'competition_'.$competition->id, $marketTypes->toArray(), $this->getCompetitionCacheTime($competition));
     }
 
     protected function getCompetitionCacheTime($model)

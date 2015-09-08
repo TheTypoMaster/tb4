@@ -15,6 +15,8 @@ use TopBetta\Services\Betting\EventService;
 
 class RaceResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\EventModel';
+
     protected $attributes = array(
         "id"                => 'id',
         "name"              => 'name',
@@ -25,7 +27,7 @@ class RaceResource extends AbstractEloquentResource {
         "description"       => 'description',
         "class"             => 'class',
         "distance"          => 'distance',
-        "status"            => 'eventstatus.name',
+        "status"            => 'eventstatus.keyword',
         "weather"           => 'weather',
         "track_condition"   => 'track_condition',
         "exoticBetsAllowed" => "exoticBetsAllowed",
@@ -35,7 +37,7 @@ class RaceResource extends AbstractEloquentResource {
     );
 
     protected $loadIfRelationExists = array(
-        'markets.0.selections' => 'selections'
+        'markets.0.selections' => 'selections',
     );
 
     private $results = array();
@@ -143,12 +145,16 @@ class RaceResource extends AbstractEloquentResource {
 
 	public function exoticBetsAllowed()
     {
-        return ! EventService::isEventInternational($this->model);
+        if (!$this->model->exotic_bets_allowed) {
+            return ! EventService::isEventInternational($this->model);
+        }
+
+        return $this->model->exotic_bets_allowed;
     }
 
     public function getType()
     {
-        return $this->model->competition->first()->type_code;
+        return $this->model->type ? : $this->model->competition->first()->type_code;
     }
 
     public function getDisplayedResults()
@@ -215,13 +221,13 @@ class RaceResource extends AbstractEloquentResource {
     {
         $array = parent::toArray();
 
-        if( $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM ||
-            $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING ||
-            $this->model->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID
+        if( $this->status == EventStatusRepositoryInterface::STATUS_INTERIM ||
+            $this->status == EventStatusRepositoryInterface::STATUS_PAYING ||
+            $this->status == EventStatusRepositoryInterface::STATUS_PAID
         ) {
             $array["results"] = $this->getResults();
-            $array["exoticResults"] = $this->getExoticResults();
-            $array["resultString"] = $this->getResultString();
+            $array["exotic_results"] = $this->getExoticResults();
+            $array["result_string"] = $this->getResultString();
         }
 
         return $array;
@@ -229,7 +235,7 @@ class RaceResource extends AbstractEloquentResource {
 
     public function availableProducts()
     {
-        return json_decode($this->model->available_products, true);
+        return !is_array($this->model->available_products) ? json_decode($this->model->available_products, true) : $this->model->available_products;
     }
 
     public function initialize()
@@ -239,5 +245,16 @@ class RaceResource extends AbstractEloquentResource {
         $tempModel = clone $this->model;
 
         $this->meetingName = $tempModel->competition->first() ? $tempModel->competition->first()->name : null;
+    }
+
+    public static function createResourceFromArray($array, $class = null)
+    {
+        $resource = parent::createResourceFromArray($array);
+
+        $resource->setResults(array_get($array, 'results', array()));
+        $resource->setExoticResults(array_get($array, 'exotic_results', array()));
+        $resource->setResultString(array_get($array, 'result_string'));
+
+        return $resource;
     }
 }

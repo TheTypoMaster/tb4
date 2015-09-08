@@ -96,6 +96,6 @@ class RaceResourceService {
 
     public function isOpen($race)
     {
-        return $race->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_SELLING;
+        return $race->status == EventStatusRepositoryInterface::STATUS_SELLING;
     }
 }

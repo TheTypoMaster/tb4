@@ -41,6 +41,7 @@ class CachedMeetingResourceService extends CachedResourceService {
 
         if ($withRaces) {
             foreach ($meetings as $meeting) {
+
                 $meeting->setRelation('races', $this->raceResourceService->getRacesForMeeting($meeting->id));
                 $this->loadTotesForMeeting($meeting);
             }
@@ -54,7 +55,9 @@ class CachedMeetingResourceService extends CachedResourceService {
         $model = $this->meetingRepository->getMeeting($id);
 
         if ($withRaces) {
+
             $model->setRelation('races', $this->raceResourceService->getRacesForMeeting($model->id));
+
             $this->loadTotesForMeeting($model);
         }
 

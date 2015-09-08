@@ -30,6 +30,17 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         $this->class = $class;
     }
 
+    public static function createFromArray($array, $class)
+    {
+        $collection = new EloquentResourceCollection(new Collection(), $class);
+
+        foreach ($array as $modelArray) {
+            $collection->push($class::createResourceFromArray($modelArray, $class));
+        }
+
+        return $collection;
+    }
+
     public function getClass()
     {
         return $this->class;

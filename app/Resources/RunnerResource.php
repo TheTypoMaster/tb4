@@ -11,6 +11,8 @@ namespace TopBetta\Resources;
 
 class RunnerResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\RunnerModel';
+
     protected $attributes = array(
         "id"        => "id",
         "name"      =>'name',
@@ -32,15 +34,49 @@ class RunnerResource extends AbstractEloquentResource {
     {
         $array = parent::toArray();
 
-        return array_merge($array, $this->form);
+        return array_merge($array, $this->getForm());
     }
+
+//    public static function createResourceFromArray($array, $class = null)
+//    {
+//        parent::createResourceFromArray($array);
+//    }
 
     /**
      * @return mixed
      */
     public function getForm()
     {
+        if (!count($this->form)) {
+            return $this->getFormFromModel();
+        }
+
         return $this->form;
+    }
+    
+    public function getFormFromModel()
+    {
+        return array(
+            'age'            => $this->model->age,
+            'colour'         => $this->model->colour,
+            'sex'            => $this->model->sex,
+            'career'         => $this->model->career,
+            'distance'       => $this->model->distance,
+            'track'          => $this->model->track,
+            'track_distance' => $this->model->track_distanc,
+            'first_up'       => $this->model->first_up,
+            'second_up'      => $this->model->second_up,
+            'good'           => $this->model->good,
+            'firm'           => $this->model->firm_,
+            'soft'           => $this->model->soft,
+            'synthetic'      => $this->model->synthetic,
+            'wet'            => $this->model->wet,
+            'nonwet'         => $this->model->nonwet,
+            'night'          => $this->model->night,
+            'jumps'          => $this->model->jumps,
+            'season'         => $this->model->season,
+            'heavy'          => $this->model->heavy,
+        );
     }
 
     /**
@@ -76,7 +112,7 @@ class RunnerResource extends AbstractEloquentResource {
      */
     public function getLastStarts()
     {
-        return $this->lastStarts;
+        return count($this->lastStarts) ? $this->lastStarts : array_get($this->model, 'lastStarts', array());
     }
 
     /**

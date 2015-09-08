@@ -13,9 +13,12 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class EventResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\EventModel';
+
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
+        "display_flag" => "display_flag",
     );
 
     public function markets()

@@ -40,7 +40,28 @@ abstract class CachedResourceRepository {
 
     public function get($key)
     {
-        return Cache::tags($this->tags)->get($key);
+        $item = Cache::tags($this->tags)->get($key);
+
+        if ($item) {
+            return $this->createResourceFromArray($item);
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param $key
+     * @return EloquentResourceCollection
+     */
+    public function getCollection($key)
+    {
+        $collection = Cache::tags($this->tags)->get($key);
+
+        if ($collection) {
+            return $this->createCollectionFromArray($collection);
+        }
+
+        return $collection;
     }
 
     public function put($key, $model, $time)
@@ -59,9 +80,9 @@ abstract class CachedResourceRepository {
         Cache::tags($this->tags)->forever($key, $model);
     }
 
-    public function putInCollection($collection, $key, $model)
+    public function putInCollection(&$collection, $key, $model)
     {
-        $collection->put($key, $model);
+        $collection[$key] = $model->toArray();
         return $this;
     }
 
@@ -92,7 +113,7 @@ abstract class CachedResourceRepository {
 
         if ($this->storeIndividualResource) {
             \Log::debug(get_class($this) . "Putting object in cache KEY " . $this->cachePrefix . $model->id . ' TIME ' . $this->getModelCacheTime($model));
-            $this->put($this->cachePrefix . $model->id, $resource, $this->getModelCacheTime($model));
+            $this->put($this->cachePrefix . $model->id, $resource->toArray(), $this->getModelCacheTime($model));
         }
 
         $this->addToCollections($resource);
@@ -104,7 +125,7 @@ abstract class CachedResourceRepository {
     {
         if ($this->storeIndividualResource) {
             \Log::debug(get_class($this) . "Putting object in cache KEY " . $this->cachePrefix . $resource->id . ' TIME ' . $this->getModelCacheTime($resource));
-            $this->put($this->cachePrefix . $resource->id, $resource, $this->getModelCacheTime($resource));
+            $this->put($this->cachePrefix . $resource->id, $resource->toArray(), $this->getModelCacheTime($resource));
         }
 
         $this->addToCollections($resource);
@@ -127,18 +148,18 @@ abstract class CachedResourceRepository {
             return $this;
         }
 
-        if (!$collection = Cache::tags($this->tags)->get($key)) {
+        if (!$collection = $this->getCollection($key)) {
             $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
         }
 
-        $this->putInCollection($collection, $resource->id, $resource);
+        $collection->put($resource->id, $resource);
 
         \Log::debug(get_class($this) . "Putting object in cache collection KEY " . $key . ' TIME ' . $this->getCollectionCacheTime($collectionKey, $resource));
 
         if ($this->cacheForever) {
-            Cache::tags($this->tags)->forever($key, $collection);
+            Cache::tags($this->tags)->forever($key, $collection->toArray());
         } else {
-            Cache::tags($this->tags)->put($key, $collection, $this->getCollectionCacheTime($collectionKey, $resource));
+            Cache::tags($this->tags)->put($key, $collection->toArray(), $this->getCollectionCacheTime($collectionKey, $resource));
         }
 
         return $this;
@@ -162,6 +183,17 @@ abstract class CachedResourceRepository {
     protected function createResource($model)
     {
         return new $this->resourceClass($model->load($this->relationsToLoad));
+    }
+
+    protected function createResourceFromArray($array)
+    {
+        $class = $this->resourceClass;
+        return $class::createResourceFromArray($array);
+    }
+
+    protected function createCollectionFromArray($array)
+    {
+        return EloquentResourceCollection::createFromArray($array, $this->resourceClass)->keyBy('id');
     }
 
 

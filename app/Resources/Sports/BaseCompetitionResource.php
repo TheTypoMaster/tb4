@@ -13,15 +13,18 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class BaseCompetitionResource extends IconResource {
 
+    protected static $modelClass = 'TopBetta\Models\BaseCompetitionModel';
+
     protected $attributes = array(
         "id" => "id",
         "name" => "name",
-        "icon" =>  "icon"
+        "icon" =>  "icon",
+        "display_flag" => "display_flag",
     );
 
     public function competitions()
     {
-        return $this->collection('competitions', 'TopBetta\Resources\Sports\CompetitionResource', $this->model->competitions);
+        return $this->collection('competitions', 'TopBetta\Resources\Sports\CompetitionResource', 'competitions');
     }
 
     public function loadIcon()

@@ -12,6 +12,8 @@ namespace TopBetta\Resources;
 class PriceResource extends AbstractEloquentResource
 {
 
+    protected static $modelClass = 'TopBetta\Models\SelectionPricesModel';
+
     protected $attributes = array(
         "id"        => "id",
         "winOdds"   => "winOdds",

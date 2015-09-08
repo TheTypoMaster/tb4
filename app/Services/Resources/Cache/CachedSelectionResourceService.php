@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources\Cache;
 
 
 use TopBetta\Repositories\Cache\RacingSelectionRepository;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\SelectionResourceService;
 
 class CachedSelectionResourceService extends CachedResourceService {

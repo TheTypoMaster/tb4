@@ -13,11 +13,14 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class MarketResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\MarketModel';
+
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
         'line' => 'line',
-        'status' => 'market_status'
+        'market_status' => 'market_status',
+        "display_flag" => "display_flag",
     );
 
     protected $loadIfRelationExists = array(
