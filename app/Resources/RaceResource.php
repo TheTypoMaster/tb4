@@ -48,6 +48,8 @@ class RaceResource extends AbstractEloquentResource {
 
     private $meetingName;
 
+    protected $includeFullResults = true;
+
     public function selections()
     {
         $collection = $this->collection('selections', 'TopBetta\Resources\SelectionResource', $this->model->markets->first()->selections);
@@ -159,14 +161,23 @@ class RaceResource extends AbstractEloquentResource {
 
     public function getDisplayedResults()
     {
-        $results = $this->filterResultsByProducts($this->getResults());
+        if (!$this->model->displayed_results) {
+            $results = $this->filterResultsByProducts($this->getResults());
 
-        return array_values($this->mergeSelectionPositionResults($results));
+            return array_values($this->mergeSelectionPositionResults($results));
+        }
+
+        return $this->model->displayed_results;
     }
 
     public function getDisplayedExoticResults()
     {
-        return array_values($this->filterResultsByProducts($this->getExoticResults()));
+        if (!$this->model->displayed_exotic_results) {
+            return array_values($this->filterResultsByProducts($this->getExoticResults()));
+        }
+
+        return $this->model->displayed_exotic_results;
+
     }
 
     /**
@@ -221,9 +232,9 @@ class RaceResource extends AbstractEloquentResource {
     {
         $array = parent::toArray();
 
-        if( $this->status == EventStatusRepositoryInterface::STATUS_INTERIM ||
+        if($this->includeFullResults && ($this->status == EventStatusRepositoryInterface::STATUS_INTERIM ||
             $this->status == EventStatusRepositoryInterface::STATUS_PAYING ||
-            $this->status == EventStatusRepositoryInterface::STATUS_PAID
+            $this->status == EventStatusRepositoryInterface::STATUS_PAID)
         ) {
             $array["results"] = $this->getResults();
             $array["exotic_results"] = $this->getExoticResults();

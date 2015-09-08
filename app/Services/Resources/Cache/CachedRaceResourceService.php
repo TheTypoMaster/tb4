@@ -37,6 +37,19 @@ class CachedRaceResourceService extends CachedResourceService {
         $this->betResourceService = $betResourceService;
     }
 
+    public function getRace($id)
+    {
+        $race = $this->raceRepository->getRace($id);
+
+        if (!$race) {
+            return $this->resourceService->getRace($id);
+        }
+
+        $this->loadTotesForRace($race);
+
+        return $race;
+    }
+
     public function getRacesForMeeting($meetingId)
     {
         $races = $this->raceRepository->getRacesForMeeting($meetingId);

@@ -47,6 +47,25 @@ class MeetingResourceService {
         $this->resultService = $resultService;
     }
 
+    public function getSmallMeetings($date, $type = null, $withRaces = false)
+    {
+        $collection = $this->competitionRepository->getRacingCompetitionsByDate(
+            $date,
+            $type,
+            $withRaces
+        );
+
+        $meetings = new EloquentResourceCollection($collection, 'TopBetta\Resources\SmallMeetingResource');
+
+        if ($withRaces) {
+            foreach ($meetings as $meeting) {
+                $this->resultService->loadResultsForRaces($meeting->races);
+            }
+        }
+
+        return $meetings;
+    }
+
     public function getMeetingsForDate($date, $type = null, $withRaces = false)
     {
 

@@ -53,6 +53,13 @@ class MeetingService {
         $this->betService = $betService;
     }
 
+    public function getSmallMeetingsWithRaces($date = null)
+    {
+        $date = $date ? Carbon::createFromFormat('Y-m-d', $date) : Carbon::now();
+
+        return $this->meetingResourceService->getSmallMeetings($date);
+    }
+
     public function getMeetingWithSelections($id, $raceId = null)
     {
         $meeting = $this->meetingResourceService->getMeeting($id, true);

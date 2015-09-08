@@ -53,12 +53,12 @@ abstract class CachedResourceRepository {
      * @param $key
      * @return EloquentResourceCollection
      */
-    public function getCollection($key)
+    public function getCollection($key, $resource = null)
     {
         $collection = Cache::tags($this->tags)->get($key);
 
         if ($collection) {
-            return $this->createCollectionFromArray($collection);
+            return $this->createCollectionFromArray($collection, $resource);
         }
 
         return $collection;
@@ -191,9 +191,9 @@ abstract class CachedResourceRepository {
         return $class::createResourceFromArray($array);
     }
 
-    protected function createCollectionFromArray($array)
+    protected function createCollectionFromArray($array, $resource = null)
     {
-        return EloquentResourceCollection::createFromArray($array, $this->resourceClass)->keyBy('id');
+        return EloquentResourceCollection::createFromArray($array, $resource ? : $this->resourceClass)->keyBy('id');
     }
 
 

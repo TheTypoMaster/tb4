@@ -10,6 +10,7 @@ namespace TopBetta\Repositories\Cache;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Resources\SmallRaceResource;
 
 class RaceRepository extends CachedResourceRepository {
 
@@ -28,10 +29,15 @@ class RaceRepository extends CachedResourceRepository {
     );
 
     protected $tags = array("racing", "races");
+    /**
+     * @var MeetingRepository
+     */
+    private $meetingRepository;
 
-    public function __construct(EventRepositoryInterface $repository)
+    public function __construct(EventRepositoryInterface $repository, MeetingRepository $meetingRepository)
     {
         $this->repository = $repository;
+        $this->meetingRepository = $meetingRepository;
     }
 
     public function getRacesForMeeting($meetingId)
@@ -48,11 +54,42 @@ class RaceRepository extends CachedResourceRepository {
     {
         if (!$model->competition->first()) {
             $this->repository->addModelToCompetition($model, $competition);
+
+            $resource = $this->createSmallRaceResource($model);
+            $this->meetingRepository->addSmallRace($resource, $model->competition->first());
         }
 
         $this->addToCollection($this->createResource($model), self::COLLECTION_MEETING_RACES);
 
         return $model;
+    }
+
+    public function makeCacheResource($model)
+    {
+        $model = parent::makeCacheResource($model);
+
+        if ($model->competition->first()) {
+            $resource = $this->createSmallRaceResource($model);
+
+            $this->meetingRepository->addSmallRace($resource, $model->competition->first());
+        }
+
+        return $model;
+    }
+
+    public function save($resource)
+    {
+        parent::save($resource);
+
+        $model = $resource->getModel();
+
+        if ($model->competition->first()) {
+            $resource = $this->createSmallRaceResource($model);
+
+            $this->meetingRepository->addSmallRace($resource, $model->competition->first());
+        }
+
+        return $this;
     }
 
     public function put($key, $model, $time)
@@ -119,5 +156,21 @@ class RaceRepository extends CachedResourceRepository {
     protected function getModelKey($model)
     {
         return $this->cachePrefix . '_' . $model->id;
+    }
+
+    protected function createSmallRaceResource($model)
+    {
+        $resource = new SmallRaceResource($model);
+
+        $oldRace = $this->get($this->cachePrefix . $model->id);
+
+        //make sure we dont remove race results on update
+        if ($oldRace && $oldRace->getResults() && ! $resource->getResults()) {
+            $resource->setResultString($oldRace->getResultString());
+            $resource->setResults($oldRace->getResults());
+            $resource->setExoticResults($oldRace->getExoticResults());
+        }
+
+        return $resource;
     }
 }

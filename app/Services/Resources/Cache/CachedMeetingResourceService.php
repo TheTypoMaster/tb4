@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Resources\Cache;
 
 use App;
+use Carbon\Carbon;
 use TopBetta\Repositories\Cache\MeetingRepository;
 use TopBetta\Services\Resources\MeetingResourceService;
 
@@ -28,6 +29,17 @@ class CachedMeetingResourceService extends CachedResourceService {
         $this->meetingRepository = $meetingRepository;
         $this->resourceService = $resourceService;
         $this->raceResourceService = $raceResourceService;
+    }
+
+    public function getSmallMeetings(Carbon $date)
+    {
+        $meetings = $this->meetingRepository->getSmallMeetings($date);
+
+        if (!$meetings) {
+            return $this->resourceService->getSmallMeetings();
+        }
+
+        return $meetings;
     }
 
     public function getMeetingsForDate($date, $type = null, $withRaces = false)

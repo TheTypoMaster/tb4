@@ -2,57 +2,36 @@
 
 namespace TopBetta\Http\Controllers\Frontend;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
-use TopBetta\Services\Racing\MeetingService;
+use TopBetta\Services\Resources\Cache\CachedRaceResourceService;
+use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Response\ApiResponse;
 
-class MeetingsController extends Controller
+class RaceController extends Controller
 {
-    /**
-     * @var MeetingService
-     */
-    private $meetingService;
+
     /**
      * @var ApiResponse
      */
     private $response;
 
-    public function __construct(MeetingService $meetingService, ApiResponse $response)
+    public function __construct(ApiResponse $response)
     {
-        $this->meetingService = $meetingService;
         $this->response = $response;
     }
-
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
-     * @return ApiResponse
+     * @return Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $meetings = $this->meetingService->getMeetingsForDate(
-            $request->get('date', null),
-            $request->get('type', null)
-        );
-
-        return $this->response->success($meetings->toArray());
+        //
     }
-
-    public function getMeetingsWithRaces(Request $request)
-    {
-        $meetings = $this->meetingService->getSmallMeetingsWithRaces(
-            $request->get('date', null)
-        );
-
-        return $this->response->success(is_array($meetings) ? $meetings : $meetings->toArray());
-    }
-
 
     /**
      * Show the form for creating a new resource.
@@ -80,17 +59,18 @@ class MeetingsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id, CachedRaceResourceService $raceResourceService)
     {
         try {
-            $meeting = $this->meetingService->getMeeting($id);
-        } catch ( ModelNotFoundException $e ) {
-            return $this->response->failed(array(), 404, "Meeting not found");
+            $race = $raceResourceService->getRace($id);
+        } catch (ModelNotFoundException $e) {
+            return $this->response->failed("Race not found", 404);
+        } catch (\Exception $e) {
+            \Log::error('RaceContrller: ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown Error");
         }
 
-        return $this->response->success(
-            $meeting->toArray()
-        );
+        return $this->response->success($race->toArray());
     }
 
     /**

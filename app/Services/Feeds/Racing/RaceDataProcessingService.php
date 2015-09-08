@@ -640,7 +640,7 @@ class RaceDataProcessingService {
                 Log::debug($this->logprefix . 'PriceType not found ' . $price['PriceType']);
             }
 
-            Log::info($this->logprefix ."Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}");
+            Log::info($this->logprefix ."Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
 
 			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {

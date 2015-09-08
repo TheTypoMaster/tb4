@@ -57,6 +57,17 @@ class RaceResourceService {
         $this->productService = $productService;
     }
 
+    public function getRace($id)
+    {
+        $race = $this->eventRepository->find($id);
+
+        $race = new RaceResource($race);
+
+        $this->loadTotesForRace($race);
+
+        return $race;
+    }
+
     public function getRaceWithSelections($raceId)
     {
         $race = $this->eventRepository->getEvent($raceId);

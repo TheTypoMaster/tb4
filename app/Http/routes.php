@@ -322,6 +322,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('combined/meeting/races/selections', 'Frontend\MeetingRaceSelectionsController@index');
     Route::get('combined/meetings/races/selections', 'Frontend\MeetingRaceSelectionsController@getMeetingsWithSelectionsForMeeting');
     Route::get('combined/race/selections', 'Frontend\RaceSelectionsController@index');
+    Route::get('races/{id}', 'Frontend\RaceController@show');
 
     // --- N2J ---
     Route::get('/racing/next-to-jump', 'Frontend\FrontRacesController@nextToJump');

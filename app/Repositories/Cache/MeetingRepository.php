@@ -10,15 +10,17 @@ namespace TopBetta\Repositories\Cache;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Resources\SmallMeetingResource;
 
 class MeetingRepository extends CachedResourceRepository {
 
     const COLLECTION_KEY_MEETING_DATE = 0;
+    const COLLECTION_SMALL_MEETINGS_RACES_DATE = 1;
 
     const CACHE_KEY_PREFIX = 'meetings_';
 
     protected $collectionKeys = array(
-        self::COLLECTION_KEY_MEETING_DATE
+        self::COLLECTION_KEY_MEETING_DATE,
     );
 
     protected $resourceClass = 'TopBetta\Resources\MeetingResource';
@@ -42,6 +44,38 @@ class MeetingRepository extends CachedResourceRepository {
         return $this->get($this->cachePrefix . $id);
     }
 
+    public function getSmallMeetings(Carbon $date)
+    {
+        return $this->getCollection($this->cachePrefix . 'small_' . $date->toDateString(), 'TopBetta\Resources\SmallMeetingResource');
+    }
+
+    public function makeCacheResource($model)
+    {
+        $model = parent::makeCacheResource($model);
+
+        $resource = $this->createSmallMeeting($model);
+
+        $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
+
+        return $model;
+    }
+
+    public function addSmallRace($resource, $meetingModel)
+    {
+        $meetings = $this->getSmallMeetings(Carbon::createFromFormat('Y-m-d H:i:s', $meetingModel->start_date));
+
+        //check meeting exists
+        if ($meetings && $meeting = $meetings->get($meetingModel->id)) {
+            $races = $meeting->races->keyBy('id');
+
+            $races->put($resource->id, $resource);
+
+            $meeting->setRelation('races', $races->values());
+
+            $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
+        }
+    }
+
     protected function getCollectionCacheKey($keyTemplate, $model)
     {
         switch($keyTemplate) {
@@ -50,6 +84,11 @@ class MeetingRepository extends CachedResourceRepository {
                     return null;
                 }
                 return 'meetings_' . Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date)->toDateString();
+            case self::COLLECTION_SMALL_MEETINGS_RACES_DATE:
+                if (!$model->start_date){
+                    return null;
+                }
+                return 'meetings_small_' . Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date)->toDateString();
         }
 
         throw new \InvalidArgumentException("invalid key");
@@ -59,6 +98,7 @@ class MeetingRepository extends CachedResourceRepository {
     {
         switch ($collectionKey) {
             case self::COLLECTION_KEY_MEETING_DATE:
+            case self::COLLECTION_SMALL_MEETINGS_RACES_DATE:
                 if (!$date=$model->start_date) {
                     $date = Carbon::now()->toDateTimeString();
                 }
@@ -81,4 +121,9 @@ class MeetingRepository extends CachedResourceRepository {
    {
        return self::CACHE_KEY_PREFIX . '_' . $model->id;
    }
+
+    protected function createSmallMeeting($model)
+    {
+        return new SmallMeetingResource($model);
+    }
 }

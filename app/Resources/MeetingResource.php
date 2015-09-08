@@ -28,7 +28,8 @@ class MeetingResource extends AbstractEloquentResource {
     );
 
     protected $loadIfRelationExists = array(
-        'competitionEvents' => 'races'
+        'competitionEvents' => 'races',
+        'races'             => 'races',
     );
 
     protected static $modelClass = 'TopBetta\Models\CompetitionModel';
