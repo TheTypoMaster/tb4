@@ -60,10 +60,10 @@ class RaceRepository extends CachedResourceRepository {
         $oldRace = $this->get($key);
 
         //make sure we dont remove race results on update
-        if ($oldRace && $oldRace->getResults() && ! $model->getResults()) {
-            $model->setResultString($oldRace->getResultString());
-            $model->setResults($oldRace->getResults());
-            $model->setExoticResults($oldRace->getExoticResults());
+        if ($oldRace && $oldRace->getResults() && ! array_get($model, 'results')) {
+            $model['result_string'] = $oldRace->getResultString();
+            $model['results'] = $oldRace->getResults();
+            $model['exotic_results'] = $oldRace->getExoticResults();
         }
 
         return parent::put($key, $model, $time);
