@@ -40,12 +40,12 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function team()
     {
-        return $this->item('team', 'TopBetta\Resources\Sports\TeamResource', $this->model->team->first());
+        return $this->item('team', 'TopBetta\Resources\Sports\TeamResource', 'team');
     }
 
     public function player()
     {
-        return $this->item('player', 'TopBetta\Resources\Sports\PlayerResource', $this->model->player->first());
+        return $this->item('player', 'TopBetta\Resources\Sports\PlayerResource', 'player');
     }
 
     public function getWon()
