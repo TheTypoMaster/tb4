@@ -29,7 +29,7 @@ class ExoticBetTypeDividendService extends AbstractBetTypeDividendService {
             $result = explode('/', $dividend->result_string);
 
             //boxed so just check selections contained in $result
-            if( $bet->boxed_flag && count(array_intersect($bet->selection->lists('number')->all(), $result)) == count($bet->selection->lists('number')->all())) {
+            if( $bet->boxed_flag && count(array_intersect($result, $bet->selection->lists('number')->all())) == count($result)) {
                 $totalDividend += $dividend->dividend;
             } else {
                 $hasSelections = true;
