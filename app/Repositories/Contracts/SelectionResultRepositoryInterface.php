@@ -9,4 +9,8 @@
 interface SelectionResultRepositoryInterface {
 
     public function deleteResults($resultIds);
+
+    public function getResultsForEvent($eventId);
+
+    public function getResultsForEventByPosition($eventId, $position);
 }

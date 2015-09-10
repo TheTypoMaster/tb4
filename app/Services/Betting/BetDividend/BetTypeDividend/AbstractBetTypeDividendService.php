@@ -10,6 +10,7 @@ namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 
 use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 use TopBetta\Services\Betting\SelectionService;
 
 abstract class AbstractBetTypeDividendService {
@@ -22,11 +23,16 @@ abstract class AbstractBetTypeDividendService {
      * @var ResultPricesRepositoryInterface
      */
     protected $resultPricesRepository;
+    /**
+     * @var SelectionResultRepositoryInterface
+     */
+    protected $resultRepository;
 
-    public function __construct(SelectionService $selectionService, ResultPricesRepositoryInterface $resultPricesRepository)
+    public function __construct(SelectionService $selectionService, ResultPricesRepositoryInterface $resultPricesRepository, SelectionResultRepositoryInterface $resultRepository)
     {
         $this->selectionService = $selectionService;
         $this->resultPricesRepository = $resultPricesRepository;
+        $this->resultRepository = $resultRepository;
     }
 
     /**

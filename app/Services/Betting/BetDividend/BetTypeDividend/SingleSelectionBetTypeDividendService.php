@@ -42,6 +42,11 @@ class SingleSelectionBetTypeDividendService extends AbstractBetTypeDividendServi
         //hack for tournament fixed odds stored differently
         $odds = $bet->betselection->first()->fixed_odds ? : $bet->fixed_odds;
 
-        return $odds - ($deductions/100) * $odds;
+        $odds =  $odds - ($deductions/100) * $odds;
+
+        //check for dead heats
+        $runnersInPosition = $this->resultRepository->getResultsForEventByPosition($bet->event_id, $bet->selection->first()->result->position)->count();
+
+        return $odds/$runnersInPosition;
     }
 }
