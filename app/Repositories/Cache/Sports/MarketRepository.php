@@ -209,7 +209,7 @@ class MarketRepository extends CachedResourceRepository {
         }
     }
 
-    protected function addToCollection($resource, $collectionKey)
+    protected function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
         $key = $this->getCollectionCacheKey($collectionKey, $resource);
 
