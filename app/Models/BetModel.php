@@ -77,7 +77,7 @@ class BetModel extends Eloquent {
 
     public function event()
     {
-        return $this->belongsTo('TopBetta\Models\BetModel', 'event_id');
+        return $this->belongsTo('TopBetta\Models\EventModel', 'event_id');
     }
 
 
