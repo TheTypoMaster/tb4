@@ -75,6 +75,11 @@ class BetModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'refund_transaction_id');
     }
 
+    public function event()
+    {
+        return $this->belongsTo('TopBetta\Models\BetModel', 'event_id');
+    }
+
 
 
 }
