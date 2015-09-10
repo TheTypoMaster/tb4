@@ -269,7 +269,7 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
         return $this->model
             ->from('tbdb_bet as b')
             ->join('tbdb_bet_product as bp', 'bp.id', '=', 'b.bet_product_id')
-            ->join('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
+            ->leftJoin('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
             ->join('tbdb_bet_type as bt', 'bt.id', '=', 'b.bet_type_id')
             ->join('tbdb_bet_result_status as brs', 'brs.id', '=', 'b.bet_result_status_id')
             ->leftJoin('tbdb_account_transaction as at', 'at.id', '=', 'b.result_transaction_id')
