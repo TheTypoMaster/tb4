@@ -57,7 +57,7 @@ class SportsService {
                 if ($baseCompetition = $sport->baseCompetitions->keyBy('id')->get($competition->base_competition_id)) {
                     $collection = new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\CompetitionResource');
                     $collection->push($competition);
-                    $baseCompetition->setRelation('compeititions', $collection);
+                    $baseCompetition->setRelation('competitions', $collection);
                     $sport->addBaseCompetition($baseCompetition);
                     break;
                 }
