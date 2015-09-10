@@ -52,7 +52,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
         $eventId = array_get($data, 'GameId', false);
         //get the event
         if (! $event = $this->modelContainer->getEvent($eventId)) {
-            if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
+            if ( ! $event = $this->eventRepository->getEventModelFromExternalId($eventId) ) {
                 Log::error($this->logprefix."Event not found, external id: " . $eventId);
                 return 0;
             }
