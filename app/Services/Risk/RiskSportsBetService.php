@@ -51,14 +51,14 @@ class RiskSportsBetService extends AbstractRiskBetService {
                 //'bet_selection_dividend' => '', // is this fixed odds
 
                 // Option Data - selection record
-                'option_id' => $selection->selection_id,
+                'option_id' => $selection->external_selection_id,
                 'option_name' => $selectionDetails->name,
                 'option_odds' => $selection->fixed_odds * 100,  // is this fixed odds
                 'option_line' => $selectionDetails->price->line,
                 // 'option_bet_limit' => '', // ?
 
                 // Market Data - market recors
-                'market_id' => $selectionDetails->market_id,
+                'market_id' => $selectionDetails->external_market_id,
                 'market_status' => $selectionDetails->market_status,
                 //   'market_line' => '',
 
@@ -67,17 +67,17 @@ class RiskSportsBetService extends AbstractRiskBetService {
                 'market_name' => $selectionDetails->market->marketType->name,
 
                 // Event Data
-                'event_id' => $selectionDetails->market->event_id,
+                'event_id' => $selectionDetails->market->event->external_event_id,
                 'event_name' => $selectionDetails->market->event->name,
                 'event_start_time' => Carbon::createFromFormat('Y-m-d H:i:s', $selectionDetails->market->event->start_date)->toDateTimeString(),
 
                 // Competition Data
-                'competition_id' => $selectionDetails->market->event->competition->first()->id,
+                'competition_id' => $selectionDetails->market->event->competition->first()->external_event_group_id,
                 'competition_name' => $selectionDetails->market->event->competition->first()->name,
                 'competition_start_time' => Carbon::createFromFormat('Y-m-d H:i:s', $selectionDetails->market->event->competition->first()->start_date)->toDateTimeString(),
 
                 // Sport Data
-                'sport_id' => $selectionDetails->market->event->competition->first()->sport->id,
+                'sport_id' => $selectionDetails->market->event->competition->first()->sport->external_sport_id,
                 'sport_name' => $selectionDetails->market->event->competition->first()->sport->name,
             );
         }

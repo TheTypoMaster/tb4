@@ -36,7 +36,7 @@ class RiskExoticBetService extends AbstractRiskBetService {
 
         $riskBet = array(
             'ReferenceId' => $bet->id,
-            'EventId' => $bet->event_id,
+            'EventId' => $bet->event->external_event_id,
             'BetDate' => $bet->created_at,
             'ClientId' => $bet->user->id,
             'ClientUsername' => $bet->user->username,
