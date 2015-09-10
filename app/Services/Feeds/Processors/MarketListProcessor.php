@@ -51,10 +51,15 @@ class MarketListProcessor extends AbstractFeedProcessor {
 
         $eventId = array_get($data, 'GameId', false);
         //get the event
-        if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
-            Log::error($this->logprefix."Event not found, external id: " . $eventId);
-            return 0;
+        if (! $event = $this->modelContainer->getEvent($eventId)) {
+            if ( ! $event = $this->eventRepository->getEventDetails($eventId) ) {
+                Log::error($this->logprefix."Event not found, external id: " . $eventId);
+                return 0;
+            }
+
+            $this->modelContainer->addEvent($event, $eventId);
         }
+
 
         //process market type
         $marketType = null;
@@ -65,7 +70,9 @@ class MarketListProcessor extends AbstractFeedProcessor {
         //process market
         $market = null;
         if( $marketType ) {
-            $market = $this->processMarket($marketType['id'], $event['EventId'], $data);
+            $market = $this->processMarket($marketType['id'], $event, $data);
+            $market->markettype = $marketType;
+            $this->modelContainer->addMarket($market, $market->external_market_id);
         }
 
         if($marketTypeName && $market){
@@ -95,7 +102,15 @@ class MarketListProcessor extends AbstractFeedProcessor {
             "status_flag" => 1,
         );
 
-        return $this->marketTypeRepository->updateOrCreate($data, 'name');
+        if ($marketType = $this->modelContainer->getMarketType($marketTypeId)) {
+            $marketType = $this->marketTypeRepository->update($marketType, $data);
+        } else {
+            $marketType = $this->marketTypeRepository->updateOrCreate($data, 'name');
+        }
+
+        $this->modelContainer->addMarketType($marketType, $marketTypeId);
+
+        return $marketType;
     }
 
     private function processMarket($marketType, $event, $data)
@@ -107,7 +122,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
             "market_type_id" => $marketType,
             "external_market_id" => $data['MarketId'],
             "external_event_id" => $data['GameId'],
-            "event_id" => $event,
+            "event_id" => $event->id,
             "period" => array_get($data, 'Period', null),
             "market_status" => array_get($data, 'MarketStatus', ''),
             "name" => array_get($data, "MarketName"),
@@ -115,7 +130,16 @@ class MarketListProcessor extends AbstractFeedProcessor {
 
         $marketData = array_merge($marketData, $this->processExtraMarketData($data));
 
-        return $this->marketRepository->updateOrCreate($marketData, 'external_market_id');
+        if ($market = $this->modelContainer->getMarket($data['MarketId'])) {
+            $market = $this->marketRepository->update($market, $marketData);
+        } else {
+            $market = $this->marketRepository->updateOrCreate($marketData, 'external_market_id');
+        }
+
+        $market->event = $event;
+        $this->modelContainer->addMarket($market, $data['MarketId']);
+
+        return $market;
     }
 
     private function processExtraMarketData($data)
