@@ -156,7 +156,7 @@ class RaceResource extends AbstractEloquentResource {
 
     public function getType()
     {
-        return $this->model->type ? : $this->model->competition->first()->type_code;
+        return $this->model->type ? : $this->model->competition->first() ? $this->model->competition->first()->type_code : null;
     }
 
     public function getDisplayedResults()

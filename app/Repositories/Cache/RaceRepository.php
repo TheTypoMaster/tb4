@@ -54,21 +54,17 @@ class RaceRepository extends CachedResourceRepository {
     {
         if (!$model->competition->first()) {
             $this->repository->addModelToCompetition($model, $competition);
-
-            $resource = $this->createSmallRaceResource($model);
-            $this->meetingRepository->addSmallRace($resource, $model->competition->first());
+            $this->makeCacheResource($model);
         }
-
-        $this->addToCollection($this->createResource($model), self::COLLECTION_MEETING_RACES);
 
         return $model;
     }
 
     public function makeCacheResource($model)
     {
-        $model = parent::makeCacheResource($model);
-
         if ($model->competition->first()) {
+            $model = parent::makeCacheResource($model);
+
             $resource = $this->createSmallRaceResource($model);
 
             $this->meetingRepository->addSmallRace($resource, $model->competition->first());

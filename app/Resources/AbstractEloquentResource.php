@@ -118,7 +118,9 @@ abstract class AbstractEloquentResource implements ResourceInterface {
     protected function item($name, $class, $model)
     {
         if( ! array_get($this->relations, $name) ) {
+
             $array = object_get($this->model, $name) ? : object_get($this->model, snake_case($name));
+
             if (is_array($array)) {
                 $this->relations[$name] = $class::createResourceFromArray($array, $class);
                 return $this->relations[$name];
@@ -126,6 +128,10 @@ abstract class AbstractEloquentResource implements ResourceInterface {
 
             if (is_string($model)) {
                 $model = object_get($this->model, $model);
+
+                if ($model instanceof Collection) {
+                    $model = $model->first();
+                }
             }
 
             if( ! $model ) {
