@@ -43,12 +43,7 @@ class CachedMarketResourceService extends CachedResourceService  {
             return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\MarketResource');
         }
 
-        foreach ($markets as $market) {
-            $market->setRelation('selections', $this->selectionResourceService->filterSelections($market->selections));
-        }
-
-        return $this->filterMarkets($markets);
-
+        return $markets;
     }
 
     public function getFilteredMarketsForEvent($event, $types)

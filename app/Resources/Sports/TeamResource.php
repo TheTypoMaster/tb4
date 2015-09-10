@@ -26,4 +26,25 @@ class TeamResource extends AbstractEloquentResource {
     {
         return $this->model->icon ? $this->model->icon->icon_url : null;
     }
+
+    public function getPositition()
+    {
+        if (!$this->model->position) {
+            return object_get($this->model, 'pivot.team_position');
+        }
+
+        return $this->model->position;
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        if ($position = $this->getPositition()) {
+            $array['position'] = $position;
+        }
+
+        return $array;
+    }
+
 }

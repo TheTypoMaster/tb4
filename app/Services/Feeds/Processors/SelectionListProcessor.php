@@ -10,6 +10,7 @@ namespace TopBetta\Services\Feeds\Processors;
 
 use Carbon\Carbon;
 use Log;
+use TopBetta\Models\TeamModel;
 use TopBetta\Repositories\Cache\Sports\EventRepository;
 use TopBetta\Repositories\Cache\Sports\MarketRepository;
 use TopBetta\Repositories\Cache\Sports\SelectionRepository;
@@ -70,7 +71,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         }
 
         //get the market
-        if ( ! $market = $this->marketRepository->getMarketByExternalIds($marketId, $eventId) ) {
+        if ( ! $market = $this->marketRepository->getMarketModelByExternalIds($marketId, $eventId) ) {
             Log::error($this->logprefix."Market $marketId does not exist");
             return 0;
         }
@@ -79,18 +80,21 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
         //process selection
         $selection = $this->processSelection($market['id'], $data);
+        $selection->market = $market;
 
         //process odds
         if($selection) {
             //process price
             if(Carbon::now('Australia/Sydney') < $event['StartDate']) {
-                $this->processSelectionPrice($selection['id'], $data);
+                $selection->price = $this->processSelectionPrice($selection['id'], $data);
             }
 
             //process line for market
             if($line = array_get($data, 'Line', 0) ) {
                 $this->processMarketLine($market['id'], $line);
             }
+
+            $this->selectionRepository->addSelectionToMarket($selection, $market, $event['EventId'], $event['StartDate']);
 
             return $selection['id'];
         }
@@ -120,7 +124,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         }
 
         //check if selection already exists
-        if ($selection = $this->selectionRepository->getByExternalIds($data['SelectionNo'], $data['MarketId'], $data['GameId']) ) {
+        if ($selection = $this->selectionRepository->getModelByExternalIds($data['SelectionNo'], $data['MarketId'], $data['GameId']) ) {
             $this->selectionRepository->updateWithId($selection['id'], $selectionData);
         } else {
             //create it otherwise
@@ -128,7 +132,14 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         }
 
         if( $competitorId = array_get($data, 'CompetitorId', null) ) {
-            $this->competitorService->addCompetitorToSelection($selection['id'], $competitorId);
+            $competitor = $this->competitorService->addCompetitorToSelection($selection['id'], $competitorId);
+
+            if ($competitor instanceof TeamModel) {
+                $selection->team = $competitor;
+            } else {
+                $selection->player = $competitor;
+            }
+
         }
 
         return $selection;
@@ -143,7 +154,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
             "line" => array_get($data, 'Line', 0)
         );
 
-        return $this->selectionPricesRepository->updateOrCreate($priceData, "selection_id");
+        return $this->selectionPricesRepository->updateOrCreateAndReturnModel($priceData, "selection_id");
     }
 
     private function processMarketLine($marketId, $line)

@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Feeds\Processors;
 
 use Log;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 
 class TeamProcessor extends AbstractFeedProcessor {
@@ -22,11 +23,18 @@ class TeamProcessor extends AbstractFeedProcessor {
      */
     private $playerProcessor;
 
-    public function __construct(TeamRepositoryInterface $teamRepository, PlayerProcessor $playerProcessor)
+    private $event = null;
+    /**
+     * @var EventRepositoryInterface
+     */
+    private $eventRepositoryInterface;
+
+    public function __construct(TeamRepositoryInterface $teamRepository, PlayerProcessor $playerProcessor, EventRepositoryInterface $eventRepositoryInterface)
     {
         $this->teamRepository = $teamRepository;
         $this->playerProcessor = $playerProcessor;
         $this->logprefix = 'SportsFeedService - TeamProcessor: ';
+        $this->eventRepositoryInterface = $eventRepositoryInterface;
     }
 
     public function process($team)
@@ -70,7 +78,19 @@ class TeamProcessor extends AbstractFeedProcessor {
             $ids = array_filter($playerIds, function ($value) { return $value > 0; });
 
             $this->teamRepository->addPlayers($teamId, $ids);
+
+            $this->eventRepositoryInterface->addTeamPlayers($this->event, $teamId, $ids);
         }
+    }
+
+    /**
+     * @param null $event
+     * @return $this
+     */
+    public function setEvent($event)
+    {
+        $this->event = $event;
+        return $this;
     }
 
 }

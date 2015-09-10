@@ -20,10 +20,22 @@ class PlayerResource extends AbstractEloquentResource {
         'name' => 'name',
         'icon' => 'icon',
         "display_flag" => "display_flag",
+        "teamId" => "teamId",
     );
 
     public function icon()
     {
         return $this->model->icon ? $this->model->icon->icon_url : null;
+    }
+
+    public function setTeamId($id)
+    {
+        $this->model->team_id = $id;
+        return $this;
+    }
+
+    public function getTeamId()
+    {
+        return $this->model->team_id;
     }
 }

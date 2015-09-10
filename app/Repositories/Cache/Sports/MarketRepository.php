@@ -35,7 +35,7 @@ class MarketRepository extends CachedResourceRepository {
         self::COLLECTION_EVENT_MARKETS,
     );
 
-    protected $storeIndividual = false;
+    protected $storeIndividualResource = false;
 
     /**
      * @var SelectionRepositoryInterface
@@ -45,17 +45,27 @@ class MarketRepository extends CachedResourceRepository {
      * @var MarketTypeRepository
      */
     private $marketTypeRepository;
+    /**
+     * @var EventRepository
+     */
+    private $eventRepository;
 
-    public function __construct(MarketModelRepositoryInterface $repository, SelectionRepositoryInterface $selectionRepository, MarketTypeRepository $marketTypeRepository)
+    public function __construct(MarketModelRepositoryInterface $repository, SelectionRepositoryInterface $selectionRepository, MarketTypeRepository $marketTypeRepository, EventRepository $eventRepository)
     {
         $this->repository = $repository;
         $this->selectionRepository = $selectionRepository;
         $this->marketTypeRepository = $marketTypeRepository;
+        $this->eventRepository = $eventRepository;
     }
 
     public function getMarketsForEvent($event)
     {
         return $this->getCollection($this->cachePrefix . 'event_' . $event);
+    }
+
+    public function getMarketsForEventAsArray($event)
+    {
+        return Cache::tags($this->tags)->get($this->cachePrefix . 'event_' . $event);
     }
 
     public function getFilteredMarketsForEvent($event, $types)
@@ -71,8 +81,16 @@ class MarketRepository extends CachedResourceRepository {
     {
         $marketResources = new EloquentResourceCollection($markets, $this->resourceClass);
 
-        if ($markets->first()) {
-            \Cache::tags($this->tags)->put($this->cachePrefix.'event_'.$event->id, $marketResources->toArray(), $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketResources->first()));
+        $marketResources = $marketResources->filter(function ($v) {
+            $v->setRelation('selections', $v->selections->filter(function ($q) {
+                return $this->canStoreSelection($q);
+            }));
+
+            return $this->canStoreMarket($v) && $v->selections->count();
+        });
+
+        if ($marketResources->first()) {
+            \Cache::tags($this->tags)->put($this->cachePrefix.'event_'.$event->id, $marketResources->toKeyedArray(), $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketResources->first()));
 
             $types = $markets->load('markettype')->pluck('markettype');
 
@@ -80,32 +98,140 @@ class MarketRepository extends CachedResourceRepository {
         }
     }
 
+    public function canStoreSelection($resource)
+    {
+        return $resource->selection_status_id == 1 && $resource->getPrice() > 1;
+    }
+
     public function makeCacheResource($model)
     {
-        $model = parent::makeCacheResource($model);
 
-        $competition = $model->event->competition->first();
+        if ($this->canStoreMarket($model)) {
+            $markets = $this->getMarketsForEventAsArray($model->event_id);
 
-        if ($competition) {
-            $this->marketTypeRepository->addMarketTypeToCompetition($competition, $model->markettype);
+            if ($markets && $market = array_get($markets, $model->id)) {
+                $markets[$model->id] = $this->createResource($model)->toArray();
+                Cache::tags($this->tags)->put($this->cachePrefix .'event_' . $model->event_id, $markets, $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $model));
+            }
+
+            $competition = $model->event->competition->first();
+
+            if ($competition) {
+                $this->marketTypeRepository->addMarketTypeToCompetition($competition, $model->markettype);
+            }
+        } else {
+            $this->removeMarketIfExists($model);
         }
 
         return $model;
     }
 
-    public function addSelection($selection)
+    public function removeMarketIfExists($marketModel)
     {
-        $tempSelection = clone $selection;
+        $markets = $this->getMarketsForEventAsArray($marketModel->event_id);
 
-        $markets = $this->getMarketsForEvent($tempSelection->getModel()->market->event->id);
-
-        $market = $markets->get($selection->market_id);
-
-        if ($market) {
-            $market->getModel()->event = $tempSelection->getModel()->market->event;
-            $market->addSelection($selection);
-            $this->save($market);
+        if (!$markets) {
+            return;
         }
+
+        if (!$market = array_get($markets, $marketModel->id)) {
+            return;
+        }
+
+        unset($markets[$marketModel->id]);
+
+        if(!count($markets)) {
+            Cache::forget($this->cachePrefix .'event_' . $marketModel->event_id);
+        }
+
+        Cache::tags($this->tags)->put($this->cachePrefix .'event_' . $marketModel->event_id, $markets, $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketModel));
+    }
+
+    public function canStoreMarket($model)
+    {
+        return ($model->market_status != 'D' && $model->market_status != 'S') && (bool)$model->display_flag;
+    }
+
+    public function addSelectionToMarket($selection, $marketModel, $eventId, $eventDate)
+    {
+        if ($this->canStoreMarket($marketModel)) {
+
+            $markets = $this->getMarketsForEventAsArray($eventId);
+
+            if (!$markets) {
+                $markets = array();
+            }
+
+            if (!$market = array_get($markets, $selection->market_id)) {
+                $markets[$marketModel->id] = $this->createResource($marketModel)->toArray();
+                $market = $markets[$marketModel->id];
+                $this->makeCacheResource($marketModel);
+            }
+
+
+            if (!array_get($market, 'selections')) {
+                $market['selections'] = array();
+            }
+
+            $market['selections'][$selection->id] = $selection->toArray();
+            $markets[$selection->market_id] = $market;
+
+            Cache::tags($this->tags)->put($this->cachePrefix .'event_' . $eventId, $markets, Carbon::createFromFormat('Y-m-d H:i:s', $eventDate)->startOfDay()->addDays(2)->diffInMinutes());
+
+        }
+    }
+
+    public function removeSelectionFromMarket($selection, $marketModel, $eventId, $eventDate)
+    {
+        if ($this->canStoreMarket($marketModel)) {
+
+            $markets = $this->getMarketsForEventAsArray($eventId);
+
+            if (!$markets) {
+                return;
+            }
+
+            if (!$market = array_get($markets, $selection->market_id)) {
+                return;
+            }
+
+            unset($market['selections'][$selection->id]);
+
+            if(!count($market['selections'])) {
+                unset($markets[$marketModel->id]);
+            }
+
+            if(!count($markets)) {
+                $markets = null;
+            }
+
+            Cache::tags($this->tags)->put($this->cachePrefix .'event_' . $eventId, $markets, Carbon::createFromFormat('Y-m-d H:i:s', $eventDate)->startOfDay()->addDays(2)->diffInMinutes());
+        }
+    }
+
+    protected function addToCollection($resource, $collectionKey)
+    {
+        $key = $this->getCollectionCacheKey($collectionKey, $resource);
+
+        if (!$key) {
+            return $this;
+        }
+
+        if (!$collection = $this->getCollection($key)) {
+            $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+        }
+
+        $collection->put($resource->id, $resource);
+
+        \Log::debug(get_class($this) . "Putting object in cache collection KEY " . $key . ' TIME ' . $this->getCollectionCacheTime($collectionKey, $resource));
+
+        if ($this->cacheForever) {
+            Cache::tags($this->tags)->forever($key, $collection->toKeyedArray());
+        } else {
+            Cache::tags($this->tags)->put($key, $collection->toKeyedArray(), $this->getCollectionCacheTime($collectionKey, $resource));
+        }
+
+        return $this;
     }
 
     protected function createResource($model)
@@ -121,7 +247,7 @@ class MarketRepository extends CachedResourceRepository {
     {
         switch ($keyTemplate) {
             case self::COLLECTION_EVENT_MARKETS:
-                return $this->cachePrefix . 'event_' . $model->event->id;
+                return $this->cachePrefix . 'event_' . $model->getModel()->event->id;
         }
 
         throw new \InvalidArgumentException("invalid key" . $keyTemplate);

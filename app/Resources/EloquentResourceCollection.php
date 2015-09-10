@@ -107,6 +107,11 @@ class EloquentResourceCollection implements ResourceCollectionInterface {
         return $this->collection->values()->toArray();
     }
 
+    public function toKeyedArray()
+    {
+        return $this->collection->toArray();
+    }
+
     public function toJson($options = 0)
     {
         return $this->collection->toJson($options);

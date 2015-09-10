@@ -225,4 +225,19 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     }
 
 
+    public function addTeamPlayers($event, $team, $players)
+    {
+        $teamPlayers = $event->teamPlayers;
+
+        $playersToInsert = array_diff($players, $teamPlayers->lists('player_id')->all());
+
+        $playersToInsert = array_map(function ($v) use ($team, $event) {
+            return array('player_id' => $v, "team_id" => $team, 'event_id' => $event->id, 'created_at' => Carbon::now()->toDateTimeString(), 'updated_at' => Carbon::now()->toDateTimeString());
+        }, $playersToInsert);
+
+        $event->teamPlayers()->insert($playersToInsert);
+
+        return $this;
+    }
+
 }

@@ -21,4 +21,11 @@ class PlayerModel extends Eloquent {
     {
         return $this->morphToMany('TopBetta\Models\SelectionModel', 'competitor', 'tb_selection_competitor', 'competitor_id', 'selection_id');
     }
+
+    public function eventTeam($eventId)
+    {
+        return $this->belongsToMany('TopBetta\Models\TeamModel', 'tb_event_team_player', 'player_id', 'team_id')
+            ->where('event_id', $eventId)
+            ->first();
+    }
 }
