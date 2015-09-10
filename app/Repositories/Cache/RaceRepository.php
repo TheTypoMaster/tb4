@@ -80,9 +80,9 @@ class RaceRepository extends CachedResourceRepository {
         $model = $resource->getModel();
 
         if ($model->competition->first()) {
-            $resource = $this->createSmallRaceResource($model);
+            $smallResource = $this->createSmallRaceResource($model);
 
-            $this->meetingRepository->addSmallRace($resource, $model->competition->first());
+            $this->meetingRepository->addSmallRace($smallResource, $model->competition->first());
         }
 
         return $this;
@@ -102,7 +102,7 @@ class RaceRepository extends CachedResourceRepository {
         return parent::put($key, $model, $time);
     }
 
-    public function addToCollection($resource, $collectionKey)
+    public function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
         $collection = $this->getCollection($this->getCollectionCacheKey($collectionKey, $resource));
 

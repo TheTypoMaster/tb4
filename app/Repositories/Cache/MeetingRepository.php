@@ -55,6 +55,12 @@ class MeetingRepository extends CachedResourceRepository {
 
         $resource = $this->createSmallMeeting($model);
 
+        $meetings = $this->getSmallMeetings(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+
+        if ($meetings && $meeting = $meetings->get($model->id)) {
+            $resource->setRelation('races', $meeting->races);
+        }
+
         $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
 
         return $model;
@@ -66,13 +72,14 @@ class MeetingRepository extends CachedResourceRepository {
 
         //check meeting exists
         if ($meetings && $meeting = $meetings->get($meetingModel->id)) {
+
             $races = $meeting->races->keyBy('id');
 
             $races->put($resource->id, $resource);
 
             $meeting->setRelation('races', $races->values());
 
-            $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
+            $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
         }
     }
 
