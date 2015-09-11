@@ -41,7 +41,7 @@ class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
             'ClientId' => $bet->user->id,
             'ClientUsername' => $bet->user->username,
             'Btag' => $bet->user->topbettauser->btag,
-            'Amount' => $bet->amount,
+            'Amount' => $bet->bet_amount,
             'FreeCredit' => $bet->bet_freebet_flag,
             'FreeBetAmount' => $bet->bet_freebet_amount,
             'Type' => 'racing',
