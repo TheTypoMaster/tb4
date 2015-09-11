@@ -80,18 +80,9 @@ class BetDashboardNotificationQueueService extends AbstractTransactionDashboardN
 
         $bet = $this->betRepository->getBetWithSelectionsAndEventDetailsByBetId($data['id']);
 
-		switch ($bet['bet_origin_id']){
-			case "1":
-				$betType = 'tournament';
-				break;
-			case '2':
-				$betType = 'racing';
-				break;
-			case '3':
-				$betType = 'sports';
-				break;
-			default:
-				$betType = '';
+        $betType = 'racing';
+		if (array_get($bet, 'type.name') == 'sport'){
+			$betType = 'sports';
 		}
 
 		$payload = array(

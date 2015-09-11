@@ -66,6 +66,7 @@ abstract class AbstractBetPlacementService {
         $this->betTransactionService = $betTransactionService;
         $this->riskBetService = $riskBetService;
         $this->betLimitService = $betLimitService;
+        $this->betDashboardNotificationService = \App::make('TopBetta\Services\DashboardNotification\BetDashboardNotificationService');
     }
 
     /**
@@ -138,7 +139,25 @@ abstract class AbstractBetPlacementService {
         //send bet to risk
         $this->riskBetService->sendBet($bet['id']);
 
+        //dashboard notfication
+        $this->notifyDashboard($bet, $transactions);
+
         return $bet;
+    }
+
+    public function notifyDashboard($bet, $transactions)
+    {
+        $payload = array('id' => $bet['id']);
+
+        if ($transaction = array_get($transactions, 'account')) {
+            $payload['transactions'] = array($transaction['id']);
+        }
+
+        if ($transaction = array_get($transactions, 'free_credit')) {
+            $payload['free-credit-transactions'] = array($transaction['id']);
+        }
+
+        return $this->betDashboardNotificationService->notify($payload);
     }
 
     /**
