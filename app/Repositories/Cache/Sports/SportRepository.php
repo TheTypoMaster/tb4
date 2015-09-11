@@ -46,32 +46,10 @@ class SportRepository extends CachedResourceRepository {
         $this->allSportsCollectionKey = self::CACHE_KEY_PREFIX . 'all';
     }
 
-    public function getVisibleSportsAndBaseCompetitions()
+    public function getVisibleSports()
     {
         return $this->getCollection($this->allSportsCollectionKey);
     }
-
-    public function addBaseCompetition($resource)
-    {
-        $sports = $this->getVisibleSportsAndBaseCompetitions();
-
-        $sport = $sports->get($resource->sport_id);
-
-        if ($sport) {
-            $sport->addBaseCompetition($resource);
-            $this->save($sport);
-        }
-    }
-
-    protected function createResource($model)
-    {
-        $resource = parent::createResource($model);
-
-        $resource->setRelation('baseCompetitions', new EloquentResourceCollection(new Collection(), 'TopBetta\Resource\Sports\BaseCompetitionResource'));
-
-        return $resource;
-    }
-
 
     protected function getCollectionCacheKey($keyTemplate, $model)
     {
