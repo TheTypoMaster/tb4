@@ -9,4 +9,6 @@
 interface CompetitionRepositoryInterface {
 
     public function findAllSportsCompetitions($paged = null);
+
+    public function getByEvent($event);
 } 

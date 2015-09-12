@@ -100,16 +100,23 @@ class TournamentService {
         //buyin to tournament
         $transactions = $this->buyInService->buyin($tournament, $user);
 
+        $ticket = $this->createTicketAndLeaderboardForUser($tournament, $user);
+
+        //create history record
+        $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        return $transactions;
+    }
+
+    public function createTicketAndLeaderboardForUser($tournament, $user)
+    {
         //create ticket
         $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
 
         //create leaderboard record
         $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
 
-        //create history record
-        $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
-
-        return $transactions;
+        return $ticket;
     }
 
     public function removeUserFromTournament($tournamentId, $userId)
@@ -141,6 +148,41 @@ class TournamentService {
         }
 
         return true;
+    }
+
+    public function setTournamentPaid($tournament)
+    {
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            'paid_flag' => true
+        ));
+
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->setTicketPaid($ticket);
+        }
+    }
+
+    public function refundAbandonedTournamentsForEvent($event)
+    {
+        $competition = $this->competitionRepository->getByEvent($event);
+
+        if ($this->competitionService->isAbandoned($competition)) {
+            $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($competition->id);
+
+            foreach ($tournaments as $tournament) {
+                $this->refundTournament($tournament);
+            }
+        }
+    }
+
+    public function refundTournament($tournament)
+    {
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->refundTicket($ticket);
+        }
+
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            "paid_flag" => true
+        ));
     }
 
     public function createTournament($tournamentData)

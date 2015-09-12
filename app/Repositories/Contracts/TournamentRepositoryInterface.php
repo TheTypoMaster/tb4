@@ -17,4 +17,8 @@ interface TournamentRepositoryInterface
 
     public function findCurrentJackpotTournamentsByType($type, $excludedTournaments = null);
 
+    public function getFinishedUnresultedTournaments();
+
+    public function getUnresultedTournamentsByCompetition($competition);
+
 }

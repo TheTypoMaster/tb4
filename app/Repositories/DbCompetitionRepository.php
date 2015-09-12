@@ -199,6 +199,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
+
     public function getRacingCompetitionsByDate(Carbon $date, $type = null, $withRaces = false)
     {
         $model = $this->model->where('sport_id', '<=', 3)
@@ -220,6 +221,12 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
-
+    public function getByEvent($event)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
+            ->where('ege.event_id', $event)
+            ->first();
+    }
 
 } 

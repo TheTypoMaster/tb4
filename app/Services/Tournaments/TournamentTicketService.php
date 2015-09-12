@@ -128,4 +128,11 @@ class TournamentTicketService {
 
         return $ticket->delete();
     }
+
+    public function setTicketPaid($ticket)
+    {
+        $this->tournamentTicketRepository->updateWithId($ticket->id, array(
+            'resulted_flag' => true,
+        ));
+    }
 }
