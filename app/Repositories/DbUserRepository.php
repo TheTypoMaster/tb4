@@ -167,4 +167,12 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
             ->paginate();
     }
 
+    public function getUserByExternalIdAndAffiliate($externalId, $affiliate)
+    {
+        return $this->model
+            ->where('external_user_id', $externalId)
+            ->where('affiliate_id', $affiliate)
+            ->first();
+    }
+
 }

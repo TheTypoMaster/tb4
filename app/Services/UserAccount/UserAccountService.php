@@ -9,6 +9,8 @@
 use Carbon\Carbon;
 use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Exceptions\InvalidFormatException;
+use TopBetta\Services\UserAccount\Exceptions\AccountExistsException;
+use TopBetta\Services\Validation\TournamentUserValidator;
 use Validator;
 use Hash;
 use Mail;
@@ -385,9 +387,28 @@ class UserAccountService {
         return $this->fullUser->getUserByNameAndDob($firstName, $lastName);
     }
 
+
     public function findFullUserByEmail($email)
     {
         return $this->fullUser->getFullUserByEmail($email);
+	}
+	
+    public function createTournamentAccount($input, $affiliate)
+    {
+        //check user does not exist first
+        $user = $this->basicUser->getUserByExternalIdAndAffiliate(array_get($input, 'external_unique_identifier'), $affiliate->affiliate_id);
+
+        if ($user) {
+            throw new AccountExistsException;
+        }
+
+        $this->basicUser->setValidator(new TournamentUserValidator);
+
+        return $this->basicUser->create(array(
+            "username" => array_get($input, "tournament_username"),
+            "external_user_id" => array_get($input, "external_unique_identifier"),
+            "affiliate_id" => $affiliate->affiliate_id
+        ));
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

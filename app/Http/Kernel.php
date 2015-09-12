@@ -28,6 +28,7 @@ class Kernel extends HttpKernel {
 		'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
 		'guest' => 'TopBetta\Http\Middleware\RedirectIfAuthenticated',
         'destroy.session' => 'TopBetta\Http\Middleware\DestroySession',
+        "auth.token" => 'TopBetta\Http\Middleware\ExternalTokenAuthentication',
 	];
 
 }
