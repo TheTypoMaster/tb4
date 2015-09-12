@@ -8,12 +8,13 @@
 
 namespace TopBetta\Services\Tournaments\Resulting;
 
-
+use TopBetta\Jobs\AffiliateTournamentResultNotifier;
 use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Services\Accounting\AccountTransactionService;
 use TopBetta\Services\Accounting\FreeCreditTransactionService;
+use TopBetta\Services\Affiliates\AffiliateTournamentService;
 use TopBetta\Services\Tournaments\Email\TournamentEmailService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentResultedException;
 use TopBetta\Services\Tournaments\TournamentService;
@@ -49,13 +50,17 @@ class TournamentResulter {
      * @var TournamentEmailService
      */
     private $emailService;
+    /**
+     * @var AffiliateTournamentService
+     */
+    private $affiliateTournamentService;
 
     public function __construct(TournamentResultService $resultService,
                                 AccountTransactionService $accountTransactionService,
                                 FreeCreditTransactionService $freeCreditTransactionService,
                                 TournamentService $tournamentService,
                                 TournamentTicketRepositoryInterface $ticketRepository,
-                                TournamentEmailService $emailService)
+                                TournamentEmailService $emailService, AffiliateTournamentService $affiliateTournamentService)
     {
         $this->resultService = $resultService;
         $this->accountTransactionService = $accountTransactionService;
@@ -63,6 +68,7 @@ class TournamentResulter {
         $this->ticketRepository = $ticketRepository;
         $this->tournamentService = $tournamentService;
         $this->emailService = $emailService;
+        $this->affiliateTournamentService = $affiliateTournamentService;
     }
 
     /**
@@ -91,12 +97,19 @@ class TournamentResulter {
 
         \Log::info("RESULTING TOURNAMENT " . $tournament->id);
         foreach ($results as $result) {
-            $this->payResult($result);
 
-            if ($tournament->email_flag) {
-                $this->emailService->sendWinnerNotification($result);
+            //only result if user is not a tournament affiliate user
+            if  (!$result->getTicket()->user->affiliate || !$this->affiliateTournamentService->affiliateIsExternallyResulted($result->getTicket()->user->affiliate)) {
+                $this->payResult($result);
+
+                if ($tournament->email_flag) {
+                    $this->emailService->sendWinnerNotification($result);
+                }
             }
         }
+
+        //send affiliate results
+        \Bus::dispatch(new AffiliateTournamentResultNotifier($tournament));
 
         $this->tournamentService->setTournamentPaid($tournament);
     }

@@ -25,7 +25,7 @@ class MessageAuthenticationService {
 
     public function createMessageToBeHashed($input, $secret)
     {
-        $message = implode('', $input);
+        $message = implode('',  array_flatten($input));
 
         return $message . $secret;
     }

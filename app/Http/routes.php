@@ -420,8 +420,15 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController');
     Route::resource('eway-tokens', 'Frontend\EwayCreditCardController');
 
+});
+    
+Route::group(array('prefix' => '/api/external/v1', 'after' => 'topbetta_secure_links', 'middleware' => ['auth.token']), function() {
+    Route::get('test', 'External\UserTokenController@test');
 
+});
 
+Route::group(array('prefix' => '/api/external/v1'), function() {
+    Route::post('test-entry', 'External\TestController@testEntry');
 });
 
 // new login/logout methods

@@ -166,7 +166,8 @@ class TournamentResultService {
             }
 
             foreach ($usersAtRank as $leaderboardRecord) {
-                $this->createJackpotTournamentPrizeForTournamentUser($leaderboardRecord['id'], $tournament);
+                $result = $this->createJackpotTournamentPrizeForTournamentUser($leaderboardRecord['id'], $tournament);
+                $result->setPosition($rank);
             }
         }
 
@@ -194,7 +195,8 @@ class TournamentResultService {
 
             //create the results for each user
             foreach ($usersAtRank as $leaderboardRecord) {
-                $this->createCashTournamentPrizeForTournamentUser($leaderboardRecord['id'], $tournament, $amount);
+                $result = $this->createCashTournamentPrizeForTournamentUser($leaderboardRecord['id'], $tournament, $amount);
+                $result->setPosition($rank);
             }
         }
 
