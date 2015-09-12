@@ -61,6 +61,10 @@ class TournamentService {
      * @var CompetitionService
      */
     private $competitionService;
+    /**
+     * @var TournamentGroupService
+     */
+    private $tournamentGroupService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -70,7 +74,8 @@ class TournamentService {
                                 TournamentBuyInService $buyInService,
                                 TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
                                 EventModelRepositoryInterface $eventRepository,
-                                CompetitionService $competitionService)
+                                CompetitionService $competitionService,
+                                TournamentGroupService $tournamentGroupService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -82,6 +87,7 @@ class TournamentService {
         $this->ticketService = $ticketService;
         $this->eventRepository = $eventRepository;
         $this->competitionService = $competitionService;
+        $this->tournamentGroupService = $tournamentGroupService;
     }
 
     /**
@@ -238,6 +244,7 @@ class TournamentService {
                 'tournament_topup_buyin_id',
                 'tournament_rebuy_buyin_id',
                 'tournament_labels',
+                'tournament_groups',
                 'rebuy_end_after',
                 'topup_end_after',
                 'topup_start_after',
@@ -261,6 +268,13 @@ class TournamentService {
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
         }
+
+        //add groups
+        if( $groups = array_get($tournamentData, 'tournament_groups') ) {
+            $tournament->groups()->sync($groups);
+        }
+
+        $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
 
         return $tournament;
     }
@@ -345,6 +359,7 @@ class TournamentService {
             'tournament_topup_buyin_id',
             'tournament_rebuy_buyin_id',
             'tournament_labels',
+            'tournament_groups',
         )));
 
         $tournament = $this->tournamentRepository->find($id);
@@ -353,6 +368,13 @@ class TournamentService {
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
         }
+
+        //add groups
+        if( $groups = array_get($tournamentData, 'tournament_groups') ) {
+            $tournament->groups()->sync($groups);
+        }
+
+        $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
 
         return $tournament;
     }

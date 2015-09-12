@@ -33,6 +33,11 @@ class TournamentModel extends Eloquent {
         return $this->hasMany('TopBetta\Models\TournamentTicketModel', 'tournament_id');
     }
 
+    public function groups()
+    {
+        return $this->belongsToMany('TopBetta\Models\TournamentGroupModel', 'tb_tournament_group_tournament', 'tournament_id', 'tournament_group_id');
+    }
+
   	public function leaderboards() {
 		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}

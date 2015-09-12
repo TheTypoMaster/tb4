@@ -230,6 +230,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
     Route::get('tournaments/download/entrants', 'Admin\TournamentsController@downloadEntrants');
 
+    //tournament groups
+    Route::resource('tournament-groups', 'Admin\TournamentGroupController');
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
