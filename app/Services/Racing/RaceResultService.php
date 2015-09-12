@@ -9,9 +9,10 @@
 namespace TopBetta\Services\Racing;
 
 
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 
-class RaceResultService extends RacingResourceService {
+class RaceResultService {
 
     private static $exoticResultFields = array(
         "quinella" => "quinella_dividend",
@@ -29,6 +30,35 @@ class RaceResultService extends RacingResourceService {
     public function __construct(SelectionResultRepositoryInterface $resultRepository)
     {
         $this->resultRepository = $resultRepository;
+    }
+
+    public function loadResultsForRaces($races)
+    {
+        foreach($races as $race) {
+            $this->loadResultForRace($race);
+        }
+
+        return $races;
+    }
+
+    public function loadResultForRace($race)
+    {
+        if( $this->raceHasResults($race) ) {
+            $results = $this->formatForResponse($race);
+
+            $race->setResultString($results['result_string']);
+            $race->setResults($results['results']);
+            $race->setExoticResults($results['exotic_results']);
+        }
+
+        return $race;
+    }
+
+    public function raceHasResults($race)
+    {
+        return $race->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM ||
+        $race->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING ||
+        $race->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID;
     }
 
     public function formatForResponse($race)
@@ -70,13 +100,13 @@ class RaceResultService extends RacingResourceService {
         foreach($results as $result) {
             $resultArray = array(
                 "name" => $result->name,
-                "position" => $result->position,
-                "number" => $result->number,
-                "place_dividend" => $result->place_dividend
+                "position" => (int)$result->position,
+                "number" => (int)$result->number,
+                "place_dividend" => (float)$result->place_dividend
             );
 
             if( $result->position == 1 ) {
-                $resultArray['win_dividend'] = $result->win_dividend;
+                $resultArray['win_dividend'] = (float)$result->win_dividend;
             }
 
             $resultsArray[] = $resultArray;

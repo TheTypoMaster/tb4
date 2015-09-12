@@ -115,6 +115,42 @@ class BaseEloquentRepository {
     {
         $this->validator = $validator;
         return $this;
+	}
+	
+    /**
+     * @return null
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param null $order
+     */
+    public function setOrder($order)
+    {
+        //do some validation on order
+        if( ! is_array($order) ) {
+            throw new \InvalidArgumentException("Order must be an array");
+        }
+
+        if( ! array_get($order, 0) ) {
+            throw new \InvalidArgumentException("Order field not found");
+        }
+
+        if( ! array_get($order, 1) ) {
+            $order[1] = 'ASC';
+        }
+
+        $this->order = $order;
+    }
+
+    public function deleteById($id)
+    {
+        $model = $this->model->findOrFail($id);
+
+        return $model->delete();
     }
 
 

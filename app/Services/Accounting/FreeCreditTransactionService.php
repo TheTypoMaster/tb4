@@ -15,28 +15,33 @@ use TopBetta\Repositories\Contracts\FreeCreditTransactionTypeRepositoryInterface
 class FreeCreditTransactionService {
 
     /**
-     * @var FreeCreditTransactionTypeRepositoryInterface
-     */
-    private $freeCreditTransactionTypeRepository;
-    /**
      * @var FreeCreditTransactionRepositoryInterface
      */
     private $freeCreditTransactionRepository;
+    /**
+     * @var FreeCreditTransactionTypeRepositoryInterface
+     */
+    private $freeCreditTransactionTypeRepository;
 
-    public function __construct(FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository, FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository)
+    public function __construct(FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository, FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository)
     {
+        $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;
         $this->freeCreditTransactionTypeRepository = $freeCreditTransactionTypeRepository;
-        $this->freeCreditTransactionRepository     = $freeCreditTransactionRepository;
     }
 
-    public function increaseBalance($userId, $amount, $transactionType, $giverId = -1, $notes = '')
+    public function increaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes = null)
     {
-        $type = $this->freeCreditTransactionTypeRepository->getByName($transactionType);
+        $transactionType = $this->freeCreditTransactionTypeRepository->getByName($transactionType);
 
-        if (! $notes) {
-            $notes = $type->description;
+        if( ! $notes ) {
+            $notes = $transactionType->description;
         }
 
-        return $this->freeCreditTransactionRepository->createTransaction($userId, $giverId, $amount, $type->id, $notes);
+        return $this->freeCreditTransactionRepository->createTransaction($userId, $giverId, $amount, $transactionType->id, $notes);
+    }
+
+    public function decreaseFreeCreditBalance($userId, $giverId, $amount, $transactionType, $notes = null)
+    {
+        return $this->increaseFreeCreditBalance($userId, $giverId, -$amount, $transactionType, $notes);
     }
 }

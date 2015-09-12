@@ -8,4 +8,7 @@
 
 interface EventRepositoryInterface {
 
-} 
+    public function getNextToJumpSports($number = 10);
+
+    public function getEventsForCompetition($competitionId);
+}

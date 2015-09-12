@@ -9,8 +9,10 @@
 use Carbon\Carbon;
 use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
 class DbCompetitionRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
+    use SportsResourceRepositoryTrait;
 
     protected $competitions;
 
@@ -227,6 +229,59 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
             ->where('ege.event_id', $event)
             ->first();
+    }
+
+    public function getVisibleCompetitionByBaseCompetition($baseCompetition)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->where('eg.base_competition_id', $baseCompetition)
+            ->where('e.start_date', '>=', Carbon::now())
+            ->groupBy('eg.id')
+            ->orderBy('start_date');
+
+        return $this->model->hydrate($builder->get(array('eg.*')))->load(array('icon', 'baseCompetition.defaultEventGroupIcon'));
+    }
+
+    public function getVisibleCompetitions(Carbon $date = null)
+    {
+        $model = $this->model
+            ->from('tbdb_event_group as eg')
+            ->join('tb_base_competition as bc', 'bc.id', '=', 'eg.base_competition_id')
+            ->join('tb_sports', 'tb_sports.id', '=', 'bc.sport_id')
+            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'eg.id')
+            ->join('tbdb_event as e', 'e.id', '=', 'ege.event_id')
+            ->join('tbdb_market as m', 'm.event_id', '=', 'e.id')
+            ->join('tbdb_selection as s', 's.market_id', '=', 'm.id')
+            ->join('tbdb_selection_price as sp', 'sp.selection_id', '=', 's.id')
+            ->where('tb_sports.display_flag', true)
+            ->where('bc.display_flag', true)
+            ->where('eg.display_flag', true)
+            ->where('e.display_flag', true)
+            ->where('m.display_flag', true)
+            ->whereNotIn('m.market_status', array('D', 'S'))
+            ->where(function($q) {
+                $q
+                    ->where(function($p) {
+                        $p->where('sp.win_odds', '>', '1')->whereNull('sp.override_type');
+                    })
+                    ->orWhere(function($p) {
+                        $p->where('sp.override_odds', '>', 1)->where('sp.override_type', '=', 'price');
+                    })
+                    ->orWhere(function($p) {
+                        $p->where(\DB::raw('sp.override_odds * sp.win_odds'), '>', '1')->where('sp.override_type', 'percentage');
+                    });
+            })
+            ->where('s.selection_status_id', 1)
+            ->groupBy('eg.id')
+            ->with(array('baseCompetition', 'baseCompetition.sport', 'icon', 'baseCompetition.defaultEventGroupIcon', 'baseCompetition.sport.icon', 'baseCompetition.icon', 'baseCompetition.sport.defaultCompetitionIcon'));
+
+        if( $date ) {
+            $model->where('e.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('e.start_date', '<=', $date->endOfDay()->toDateTimeString());
+        } else {
+            $model->where('e.start_date', '>=', Carbon::now());
+        }
+
+        return $model->get(array('eg.*'));
     }
 
 } 

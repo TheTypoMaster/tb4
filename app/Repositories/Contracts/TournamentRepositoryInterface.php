@@ -1,4 +1,5 @@
-<?php namespace TopBetta\Repositories\Contracts; 
+<?php namespace TopBetta\Repositories\Contracts;
+use Carbon\Carbon;
 
 /**
  * Coded by Oliver Shanahan
@@ -20,5 +21,9 @@ interface TournamentRepositoryInterface
     public function getFinishedUnresultedTournaments();
 
     public function getUnresultedTournamentsByCompetition($competition);
+
+    public function getVisibleSportTournaments(Carbon $date = null);
+
+    public function getVisibleRacingTournaments(Carbon $date = null);
 
 }

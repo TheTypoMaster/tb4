@@ -34,7 +34,8 @@ class UserFreeCreditService {
 
 
     public function __construct(UserRepositoryInterface $userRepository,
-                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository, FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository)
+                                FreeCreditTransactionRepositoryInterface $freeCreditTransactionRepository,
+                                FreeCreditTransactionTypeRepositoryInterface $freeCreditTransactionTypeRepository)
     {
         $this->userRepository = $userRepository;
         $this->freeCreditTransactionRepository = $freeCreditTransactionRepository;

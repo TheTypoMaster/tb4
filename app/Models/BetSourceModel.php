@@ -1,8 +1,8 @@
 <?php namespace TopBetta\Models;
 
-use Eloquent;
+use Illuminate\Database\Eloquent\Model;
 
-class BetSourceModel extends Eloquent {
+class BetSourceModel extends Model {
 	protected $table = 'tb_bet_source';
 	protected $guarded = array();
 

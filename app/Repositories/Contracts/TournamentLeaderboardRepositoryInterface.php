@@ -17,7 +17,9 @@ interface TournamentLeaderboardRepositoryInterface
      * @param bool $qualified
      * @return mixed
      */
-    public function getTournamentLeaderboard($tournamentID, $rebuyId = 0, $topupId = 0, $limit = 50, $qualified = false);
+    public function getTournamentLeaderboard($tournamentID, $limit = 50, $qualified = false);
+
+    public function getTournamentLeaderboardCollection($tournamentID, $limit = 50, $qualified = false);
 
     public function getAllLeaderboardRecordsForTournament($tournament);
 

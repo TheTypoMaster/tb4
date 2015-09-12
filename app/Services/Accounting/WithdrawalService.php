@@ -11,6 +11,8 @@ namespace TopBetta\Services\Accounting;
 use Mail;
 use TopBetta\Repositories\Contracts\ConfigurationRepositoryInterface;
 use TopBetta\Repositories\Contracts\WithdrawalRequestRepositoryInterface;
+use TopBetta\Services\Accounting\Withdrawals\Factories\WithdrawalRequestServiceFactory;
+use TopBetta\Services\Resources\Accounting\WithdrawalRequestResourceService;
 
 class WithdrawalService {
 
@@ -26,11 +28,27 @@ class WithdrawalService {
      * @var ConfigurationRepositoryInterface
      */
     private $configurationRepository;
+    /**
+     * @var WithdrawalRequestResourceService
+     */
+    private $resourceService;
 
-    public function __construct(WithdrawalRequestRepositoryInterface $withdrawalRequestRepository, ConfigurationRepositoryInterface $configurationRepository)
+    public function __construct(WithdrawalRequestRepositoryInterface $withdrawalRequestRepository, ConfigurationRepositoryInterface $configurationRepository, WithdrawalRequestResourceService $resourceService)
     {
         $this->withdrawalRequestRepository = $withdrawalRequestRepository;
         $this->configurationRepository = $configurationRepository;
+        $this->resourceService = $resourceService;
+    }
+
+    public function processWithdrawalRequest($user, $request, $type)
+    {
+        $service = WithdrawalRequestServiceFactory::make($type);
+
+        $withdrawal = $service->processRequest($user, $request);
+
+        $this->sendRequestEmail($withdrawal['id']);
+
+        return $this->resourceService->findRequest($withdrawal['id']);
     }
 
     /**
@@ -51,6 +69,11 @@ class WithdrawalService {
     public function sendDenialEmail($withdrawalId)
     {
         return $this->sendWithdrawalProcessedEmail($withdrawalId, 'withdrawal_denial_email');
+    }
+
+    public function sendRequestEmail($withdrawalId)
+    {
+        return $this->sendWithdrawalProcessedEmail($withdrawalId, 'withdrawal_notify_email');
     }
 
     public function sendWithdrawalProcessedEmail($withdrawalId, $withdrawalName)
