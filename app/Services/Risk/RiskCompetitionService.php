@@ -44,10 +44,12 @@ class RiskCompetitionService {
         $competition = $this->competitionRepository->setDisplayFlagForCompetition($competitionId, $displayFlag);
 
         //get events explicitly using get() as events seems to be already be an attribute on Eloquent Models
-        $events = $competition->events()->get();
+        //$events = $competition->events()->get();
+        $events = $this->competitionRepository->getDisplayedEventsForCompetition($competitionId);
+
         foreach($events as $event)
         {
-            $this->eventRepository->setDisplayFlagForEvent($event->id, $displayFlag);
+            $this->eventRepository->setDisplayFlagForEvent($event->external_event_id, $displayFlag);
         }
 
         return $competition;
