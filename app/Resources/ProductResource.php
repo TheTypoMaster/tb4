@@ -15,27 +15,14 @@ class ProductResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         "productId"   => "id",
-        "betType"     => "betType",
-        "productCode" => "product_name",
+        "betType"     => "bet_type",
+        "productCode" => "product_code",
+        "productName" => "name",
+        "fixed"       => "is_fixed_odds",
     );
 
-    public function getBetType()
-    {
-        switch ($this->model->bet_type) {
-            case 'W':
-                return BetTypeRepositoryInterface::TYPE_WIN;
-            case 'P':
-                return BetTypeRepositoryInterface::TYPE_PLACE;
-            case 'Q':
-                return BetTypeRepositoryInterface::TYPE_QUINELLA;
-            case 'E':
-                return BetTypeRepositoryInterface::TYPE_EXACTA;
-            case 'T':
-                return BetTypeRepositoryInterface::TYPE_TRIFECTA;
-            case 'FF':
-                return BetTypeRepositoryInterface::TYPE_FIRSTFOUR;
-        }
-
-        return null;
-    }
+    protected $types = array(
+        "id" => "int",
+        "fixed" => "bool",
+    );
 }

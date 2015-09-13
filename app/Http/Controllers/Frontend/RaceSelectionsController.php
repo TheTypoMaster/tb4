@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
-use TopBetta\Services\Resources\RaceResourceService;
+use TopBetta\Services\Resources\Cache\CachedRaceResourceService;
 use TopBetta\Services\Response\ApiResponse;
 
 class RaceSelectionsController extends Controller
 {
     /**
-     * @var RaceResourceService
+     * @var CachedRaceResourceService
      */
     private $raceService;
     /**
@@ -21,7 +21,7 @@ class RaceSelectionsController extends Controller
      */
     private $response;
 
-    public function __construct(RaceResourceService $raceService , ApiResponse $response)
+    public function __construct(CachedRaceResourceService $raceService , ApiResponse $response)
     {
         $this->raceService = $raceService;
         $this->response = $response;

@@ -46,13 +46,11 @@ class MeetingsController extends Controller
 
     public function getMeetingsWithRaces(Request $request)
     {
-        $meetings = $this->meetingService->getMeetingsForDate(
-            $request->get('date', null),
-            $request->get('type', null),
-            true
+        $meetings = $this->meetingService->getSmallMeetingsWithRaces(
+            $request->get('date', null)
         );
 
-        return $this->response->success($meetings->toArray());
+        return $this->response->success(is_array($meetings) ? $meetings : $meetings->toArray());
     }
 
 

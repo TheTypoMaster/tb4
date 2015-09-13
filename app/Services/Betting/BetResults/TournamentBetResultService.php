@@ -69,8 +69,9 @@ class TournamentBetResultService {
      * @return array
      * @throws \Exception
      */
-    public function resultAllBetsForEvent($event)
+    public function resultAllBetsForEvent($event, $product)
     {
+        \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
         $interim = $this->eventService->isEventInterim($event);
 
         $betType = null;
@@ -86,18 +87,12 @@ class TournamentBetResultService {
         $bets = $this->betRepositoryInterface->getBetsForEventByStatusIn(
             $event->id,
             $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+            $product->id,
             $betType ? $betType->id : null
         );
 
         //result all bets
-        $results = $this->resultBets($bets, $interim);
-
-        //set paid flag if paying results
-        if( ! $interim ) {
-            $this->eventService->setEventPaid($event);
-        }
-
-        return $results;
+        return $this->resultBets($bets, $interim);
     }
 
     public function refundBetsForMarket($market)

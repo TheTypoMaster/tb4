@@ -9,10 +9,12 @@
 namespace TopBetta\Services\Betting\Factories;
 
 use App;
+use TopBetta\Models\BetProductModel;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetPlacement\AbstractBetPlacementService;
 
-class BetPlacementFactory {
+class BetPlacementFactory
+{
 
     /**
      * Create the bet placement service based on bet type
@@ -20,22 +22,36 @@ class BetPlacementFactory {
      * @return AbstractBetPlacementService
      * @throws \Exception
      */
-    public static function make($type)
+    public static function make($type, $winProduct = null, $placeProduct = null)
     {
-        switch($type)
-        {
+        switch ($type) {
             case BetTypeRepositoryInterface::TYPE_WIN:
+                $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service->setBetType($type);
+                $service->setProduct(BetProductModel::findorFail($winProduct));
+                break;
             case BetTypeRepositoryInterface::TYPE_PLACE:
-                return App::make('TopBetta\Services\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingWinPlaceBetPlacementService');
+                $service->setBetType($type);
+                $service->setProduct(BetProductModel::findOrFail($placeProduct));
+                break;
             case BetTypeRepositoryInterface::TYPE_EACHWAY:
-                return App::make('TopBetta\Services\Betting\BetPlacement\RacingEachWayBetPlacementService');
+                $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingEachWayBetPlacementService');
+                $service->setBetType($type);
+                $service->setWinProduct(BetProductModel::findOrFail($winProduct));
+                $service->setPlaceProduct(BetProductModel::findOrFail($placeProduct));
+                break;
             case BetTypeRepositoryInterface::TYPE_QUINELLA:
             case BetTypeRepositoryInterface::TYPE_EXACTA:
             case BetTypeRepositoryInterface::TYPE_TRIFECTA:
             case BetTypeRepositoryInterface::TYPE_FIRSTFOUR:
-                return App::make('TopBetta\Services\Betting\BetPlacement\RacingExoticBetPlacementService');
+                $service = App::make('TopBetta\Services\Betting\BetPlacement\RacingExoticBetPlacementService');
+                $service->setBetType($type);
+                $service->setProduct(BetProductModel::findOrFail($winProduct));
+                break;
             case BetTypeRepositoryInterface::TYPE_SPORT:
-                return App::make('TopBetta\Services\Betting\BetPlacement\SportBetPlacementService');
+                $service = App::make('TopBetta\Services\Betting\BetPlacement\SportBetPlacementService');
+                break;
             case BetTypeRepositoryInterface::TYPE_TWO_LEG_MULTI:
             case BetTypeRepositoryInterface::TYPE_THREE_LEG_MULTI:
             case BetTypeRepositoryInterface::TYPE_FOUR_LEG_MULTI:
@@ -51,5 +67,10 @@ class BetPlacementFactory {
                 //TODO: BETTER EXCEPTION
                 throw new \Exception;
         }
+
+
+
+        return $service;
     }
 }
+

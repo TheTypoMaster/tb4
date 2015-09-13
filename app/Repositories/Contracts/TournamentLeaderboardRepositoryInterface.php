@@ -2,10 +2,12 @@
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
- * Date: 10/08/2015
- * Time: 3:48 PM
+ * Date: 30/07/2015
+ * Time: 12:31 PM
  */
 namespace TopBetta\Repositories\Contracts;
+
+use DB;
 
 interface TournamentLeaderboardRepositoryInterface
 {
@@ -30,4 +32,6 @@ interface TournamentLeaderboardRepositoryInterface
     public function getLeaderBoardPositionForUser($userId, $tournamentId, $qualified = true);
 
     public function getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified = true);
+
+    public function getTournamentLeaderboardPaginated($tournamentID, $limit = 50);
 }

@@ -48,7 +48,6 @@ class TournamentLeaderboard extends EloquentLeaderboardCollection {
                 $record->setPosition('-');
             }
 
-
             $lastCurrency = $record->currency;
 
             $index++;

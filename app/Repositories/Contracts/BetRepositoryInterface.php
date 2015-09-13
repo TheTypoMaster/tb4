@@ -39,5 +39,8 @@ interface BetRepositoryInterface {
     public function getByEntryTransaction($transaction);
 
     public function findBets($bets);
->>>>>>> Thomas/feature/TBL-533/TBL-836#ChangesToMarketTypeNameHandling
+
+    public function getBetsForEventByStatus($event, $status, $type = null);
+
+    public function getBetsForEventByStatusAndProduct($event, $status, $product, $type = null);
 }

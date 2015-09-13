@@ -10,6 +10,9 @@ namespace TopBetta\Services\Feeds\Processors;
 
 use Carbon\Carbon;
 use Log;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
+use TopBetta\Repositories\Cache\Sports\MarketRepository;
+use TopBetta\Repositories\Cache\Sports\SelectionRepository;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
@@ -39,9 +42,9 @@ class SelectionListProcessor extends AbstractFeedProcessor {
      */
     private $competitorService;
 
-    public function __construct(MarketRepositoryInterface $marketRepository,
-                                SelectionRepositoryInterface $selectionRepository,
-                                EventRepositoryInterface $eventRepository,
+    public function __construct(MarketRepository $marketRepository,
+                                SelectionRepository $selectionRepository,
+                                EventRepository $eventRepository,
                                 DbSelectionPriceRepository $selectionPricesRepository,
                                 CompetitorService $competitorService)
     {

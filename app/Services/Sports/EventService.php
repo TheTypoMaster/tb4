@@ -11,29 +11,37 @@ namespace TopBetta\Services\Sports;
 
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Services\Markets\MarketOrderingService;
+use TopBetta\Services\Resources\Cache\Sports\CachedEventResourceService;
 use TopBetta\Services\Resources\Sports\CompetitionResourceService;
 use TopBetta\Services\Resources\Sports\EventResourceService;
+use TopBetta\Services\Resources\Sports\MarketResourceService;
 
 class EventService {
 
     /**
-     * @var EventResourceService
+     * @var CachedEventResourceService
      */
     private $eventResourceService;
-    /**
-     * @var MarketService
-     */
-    private $marketService;
     /**
      * @var CompetitionResourceService
      */
     private $competitionResourceService;
+    /**
+     * @var MarketOrderingService
+     */
+    private $marketOrderingService;
+    /**
+     * @var MarketResourceService
+     */
+    private $marketResourceService;
 
-    public function __construct(EventResourceService $eventResourceService, MarketService $marketService, CompetitionResourceService $competitionResourceService)
+    public function __construct(CachedEventResourceService $eventResourceService, CompetitionResourceService $competitionResourceService, MarketOrderingService $marketOrderingService, MarketResourceService $marketResourceService)
     {
         $this->eventResourceService = $eventResourceService;
-        $this->marketService = $marketService;
         $this->competitionResourceService = $competitionResourceService;
+        $this->marketOrderingService = $marketOrderingService;
+        $this->marketResourceService = $marketResourceService;
     }
 
     public function getEventsForCompetitionOrBaseCompetition(array $criteria, $types = null)
@@ -61,24 +69,12 @@ class EventService {
 
     public function getEventsForCompetitionWithFilteredMarkets($competition, $types = null)
     {
-        //get events
-        $events = $this->eventResourceService->getEventsForCompetition($competition->id);
-
-        //get markets
-        $markets = $this->marketService->getFilteredMarketsForCompetition($competition, $types);
-
-        //create empty collections for each event
-        $events->each(function($event) {
-            $event->setRelation('markets', new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\MarketResource'));
-        });
-
-        //get dictionary
-        $dictionary = $events->getDictionary();
-
-        foreach($markets as $market) {
-            //push each relation onto correct model relation
-            $dictionary[$market->event_id]->markets->push($market);
+        if( ! $types ) {
+            $types = $this->marketOrderingService->getMarketTypeIds($competition->base_competition_id);
         }
+
+        //get events
+        $events = $this->eventResourceService->getEventsForCompetitionWithFilteredMarkets($competition->id, $types);
 
         return $events;
     }

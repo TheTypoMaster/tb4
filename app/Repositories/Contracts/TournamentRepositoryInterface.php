@@ -18,12 +18,12 @@ interface TournamentRepositoryInterface
 
     public function findCurrentJackpotTournamentsByType($type, $excludedTournaments = null);
 
-    public function getFinishedUnresultedTournaments();
-
-    public function getUnresultedTournamentsByCompetition($competition);
-
     public function getVisibleSportTournaments(Carbon $date = null);
 
     public function getVisibleRacingTournaments(Carbon $date = null);
+	
+	public function getFinishedUnresultedTournaments();
+
+    public function getUnresultedTournamentsByCompetition($competition);
 
 }

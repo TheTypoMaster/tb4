@@ -9,6 +9,7 @@ use Auth;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Resources\Tournaments\TicketResource;
 use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
 use TopBetta\Services\Exceptions\UnauthorizedAccessException;
 use TopBetta\Services\Resources\Tournaments\TicketResourceService;
@@ -107,9 +108,9 @@ class TicketsController extends Controller
         try {
             $ticket = $this->tournamentService->storeTournamentTicket(Auth::user(), $tournament);
         } catch (TournamentBuyInException $e) {
-            return $this->response->failed($e->getMessage());
+            return $this->response->failed($e->getMessage(), 400);
         } catch (TournamentEntryException $e) {
-            return $this->response->failed($e->getMessage());
+            return $this->response->failed($e->getMessage(), 400);
         } catch (BetLimitExceededException $e) {
             return $this->response->failed($e->getMessage(), 400);
         } catch (ModelNotFoundException $e) {
@@ -119,7 +120,7 @@ class TicketsController extends Controller
             return $this->response->failed("Unknown Error");
         }
 
-        return $this->response->success("Ticket Purchased");
+        return $this->response->success((new TicketResource($ticket))->toArray());
     }
 
     /**

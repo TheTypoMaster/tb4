@@ -11,28 +11,35 @@ namespace TopBetta\Resources\Sports;
 
 use TopBetta\Resources\AbstractEloquentResource;
 
-class CompetitionResource extends AbstractEloquentResource {
+class CompetitionResource extends IconResource{
+
+    protected static $modelClass = 'TopBetta\Models\CompetitionModel';
 
     protected $attributes = array(
         "id" => "id",
         "name" => "name",
         "startDate" => "start_date",
         "icon" => "icon",
+        "display_flag" => "display_flag",
+        "base_competition_id" => "base_competition_id",
     );
 
     public function events()
     {
-        return $this->collection('events', 'TopBetta\Resources\Sports\EventResource', $this->model->event);
+        return $this->collection('events', 'TopBetta\Resources\Sports\EventResource', 'events');
     }
 
-    public function icon()
+    public function loadIcon()
     {
         if( $this->model->icon ) {
-            return $this->model->icon;
+            $this->icon = $this->model->icon;
+            return $this;
         }
 
-        return $this->model->baseCompetition->defaultEventGroupIcon ?
+        $this->icon = $this->model->baseCompetition->defaultEventGroupIcon ?
             $this->model->baseCompetition->defaultEventGroupIcon->icon_url :
             null;
+
+        return $this;
     }
 }

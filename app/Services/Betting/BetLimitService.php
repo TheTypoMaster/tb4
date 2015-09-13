@@ -10,6 +10,7 @@ namespace TopBetta\Services\Betting;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface;
+use TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetLimitRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetLimitTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
@@ -167,7 +168,11 @@ class BetLimitService {
         $transactions = $this->accountTransactionRepository->getTransactionsForUserByDateAndType(
             $user->id,
             Carbon::now(),
-            array_merge(AccountTransactionService::$betTransactions, AccountTransactionService::$tournamentTransactions)
+            array_merge(
+                AccountTransactionService::$betRefundTransactions,
+                array(AccountTransactionTypeRepositoryInterface::TYPE_BET_ENTRY, AccountTransactionTypeRepositoryInterface::TYPE_BET_WIN),
+                AccountTransactionService::$tournamentTransactions
+            )
         );
 
         $transactionTotal = $transactions->sum(function($v) { return $v->amount; });

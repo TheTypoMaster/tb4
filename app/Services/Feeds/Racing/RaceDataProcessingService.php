@@ -11,6 +11,10 @@ use Log;
 use File;
 use Carbon;
 
+use TopBetta\Repositories\Cache\MeetingRepository;
+use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Cache\RacingSelectionRepository;
+use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentBetService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -54,12 +58,20 @@ class RaceDataProcessingService {
      * @var RunnerRepositoryInterface
      */
     private $runnerRepository;
+    /**
+     * @var ProductProviderMatchRepositoryInterface
+     */
+    private $productProviderMatchRepository;
+    /**
+     * @var BetTypeMapper
+     */
+    private $betTypeMapper;
 
-    public function __construct(EventRepositoryInterface $events,
-                                SelectionRepositoryInterface $selections,
+    public function __construct(RaceRepository $events,
+                                RacingSelectionRepository $selections,
 								SelectionPriceRepositoryInterface $prices,
                                 SelectionResultRepositoryInterface $results,
-                                CompetitionRepositoryInterface $competitions,
+                                MeetingRepository $competitions,
 								DataValueRepositoryInterface $datavalues,
 								TournamentRepositoryInterface $tournaments,
 								NextToJumpCacheService $nexttojump,
@@ -72,7 +84,9 @@ class RaceDataProcessingService {
 								LastStartRepositoryInterface $laststarts,
 								SelectionPriceRepositoryInterface $prices,
                                 TournamentBetService $tournamentBetService,
-                                RunnerRepositoryInterface $runnerRepository){
+                                RunnerRepositoryInterface $runnerRepository,
+                                ProductProviderMatchRepositoryInterface $productProviderMatchRepository,
+                                BetTypeMapper $betTypeMapper){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -91,6 +105,8 @@ class RaceDataProcessingService {
 		$this->logprefix = 'RaceDataProcessingService: ';
         $this->tournamentBetService = $tournamentBetService;
         $this->runnerRepository = $runnerRepository;
+        $this->productProviderMatchRepository = $productProviderMatchRepository;
+        $this->betTypeMapper = $betTypeMapper;
     }
 
 
@@ -195,7 +211,9 @@ class RaceDataProcessingService {
 				if ($defaultTrack) $meetingDetails['track'] = $defaultTrack;
 			}
 
-			$this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
+			$competition = $this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
+
+            $this->attachDefaultProducts($competition);
 
 			Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
 		}
@@ -298,6 +316,21 @@ class RaceDataProcessingService {
 				$this->tournaments->updateOrCreate($tournament, 'id');
 			}
 
+            //set available products
+            $loadedProducts = $this->productProviderMatchRepository->findAll()->keyBy('provider_product_name');
+            $availableProducts = array();
+            if ($products = array_get($race, 'Products')) {
+                foreach ($products as $type => $productList) {
+                    $betType = $this->betTypeMapper->getBetTypeName($type);
+
+                    $availableProducts[$betType] = array_map(function ($v) use ($loadedProducts) {
+                        return $loadedProducts->get($v)->tb_product_id;
+                    }, $productList);
+                }
+            }
+
+            $raceDetails['available_products'] = json_encode($availableProducts);
+
 			if (isset($race['RaceStatus'])) {
 				//example true || paying(4) < selling(1)
 				if(!$existingRaceDetails || $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']]){
@@ -338,12 +371,13 @@ class RaceDataProcessingService {
 
 			$eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
 
+			$event = $this->events->getEventModelFromExternalId($raceDetails['external_event_id']);
+            $eventId = $event->id;
+
 			// add pivot table record if this is a newly added race
-			if(!$existingRaceDetails){
-				Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
-				$competitionModel = $this->competitions->find($existingMeetingDetails['id']);
-				$competitionModel->events()->attach($eventId);
-			}
+            Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
+            $competitionModel = $this->competitions->getMeeting($existingMeetingDetails['id']);
+            $this->events->addModelToCompetition($event, $competitionModel);
 
 
 			// if this event was abandoned - result bets
@@ -401,6 +435,8 @@ class RaceDataProcessingService {
 			$runnerDetails['trainer'] = array_get($runner, 'Trainer', '');
 			$runnerDetails['last_starts'] = array_get($runner, 'LastStarts', '');
 			$runnerDetails['silk_id'] = array_get($runner, 'SilkCode', '');
+            $runnerDetails['win_deductions'] = array_get($runner, 'WinDeductions', 0);
+            $runnerDetails['place_deductions'] = array_get($runner, 'PlaceDeductions', 0);
 
 			if (isset($runner['Scratched'])) {
 				($runner['Scratched'] == '1') ?	$runnerDetails['selection_status_id'] = '2' : $runnerDetails['selection_status_id'] = '1';
@@ -441,9 +477,6 @@ class RaceDataProcessingService {
 			// get the runner id and update the wager_id...?
 			$runnerId = $this->selections->getSeletcionIdByExternalId($existingRaceDetails['external_event_id'].'_'.$runner['RunnerNo']);
 			$selectionUpdate = array('id' => $runnerId, 'wager_id' => $runnerId);
-			$this->selections->updateOrCreate($selectionUpdate, 'id');
-
-			Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
 			// form
 			if(array_get($runner, 'Results') != '0(0-0-0)' && array_get($runner, 'Results') != NULL){
@@ -543,6 +576,10 @@ class RaceDataProcessingService {
 				}
 			}
 
+            $this->selections->updateOrCreate($selectionUpdate, 'id');
+
+            Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
+
 		}
 
 		// refund bets on scratched runners
@@ -589,13 +626,6 @@ class RaceDataProcessingService {
 				continue;
 			}
 
-			// see if we use this product
-			$saveThisProduct = $this->_canProductBeProcessed($price, $providerName, $price['RaceNo'], "Odds");
-			if (!$saveThisProduct) {
-				Log::debug($this->logprefix . 'Price data not used ' , $price);
-				continue;
-			}
-
 			// check if race exists in DB
 			$existingRaceDetails = $this->events->getEventDetailByExternalId($price['MeetingId'] . '_' . $price['RaceNo']);
 			if (!$existingRaceDetails) {
@@ -604,6 +634,13 @@ class RaceDataProcessingService {
 			}
 
 			$runnerCount = 1;
+
+            $betProduct = $this->betproduct->getProductByCode($price['PriceType']);
+            if (!$betProduct) {
+                Log::debug($this->logprefix . 'PriceType not found ' . $price['PriceType']);
+            }
+
+            Log::info($this->logprefix ."Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
 
 			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {
@@ -622,7 +659,7 @@ class RaceDataProcessingService {
 
 				}
 
-				$priceDetails = array();
+				$priceDetails = array("bet_product_id" => $betProduct->id);
 				$priceDetails['selection_id'] = $existingSelectionId;
 				switch ($price['BetType']) {
 					case "W":
@@ -635,9 +672,14 @@ class RaceDataProcessingService {
 						Log::debug($this->logprefix . 'Price BetType is invalid ', $price);
 						continue;
 				}
-				$this->prices->updateOrCreate($priceDetails, 'selection_id');
+				$priceModel = $this->prices->updateOrCreatePrice($priceDetails);
+
+                $this->selections->updatePricesForSelectionInRace($existingSelectionId, $existingRaceDetails, $priceModel);
+
 				$runnerCount++;
 			}
+
+
 
 		}
 		return "Price(s) Processed";
@@ -678,5 +720,22 @@ class RaceDataProcessingService {
         }
         Log::info($this->logprefix ."Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
         return true;
+    }
+
+    private function attachDefaultProducts($competition)
+    {
+        \Log::debug('DEBUG_COMPETITION: ' . $competition->id);
+        //only attach if none exist
+        if ($competition->products->count()) {
+            return $competition;
+        }
+
+        $defaultProducts = $this->productProviderMatchRepository->getProductAndBetTypeByCompetition($competition);
+
+        foreach ($defaultProducts as $product) {
+            $competition->products()->attach(array($product->product_id => array('bet_type_id' => $product->bet_type_id)));
+        }
+
+        return $competition;
     }
 }

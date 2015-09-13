@@ -13,10 +13,13 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class TeamResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\TeamModel';
+
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
         'icon' => 'icon',
+        "display_flag" => "display_flag",
     );
 
     public function icon()

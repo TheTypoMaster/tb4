@@ -19,9 +19,8 @@ class BetTypeDividendServiceFactory {
 
             case BetTypeRepositoryInterface::TYPE_WIN:
             case BetTypeRepositoryInterface::TYPE_SPORT:
-                return App::make('TopBetta\Services\Betting\BetDividend\BetTypeDividend\WinBetTypeDividendService');
             case BetTypeRepositoryInterface::TYPE_PLACE:
-                return App::make('TopBetta\Services\Betting\BetDividend\BetTypeDividend\PlaceBetTypeDividendService');
+            return App::make('TopBetta\Services\Betting\BetDividend\BetTypeDividend\SingleSelectionBetTypeDividendService');
             case BetTypeRepositoryInterface::TYPE_QUINELLA:
             case BetTypeRepositoryInterface::TYPE_EXACTA:
             case BetTypeRepositoryInterface::TYPE_TRIFECTA:

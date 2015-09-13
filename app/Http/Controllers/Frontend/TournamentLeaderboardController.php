@@ -36,13 +36,15 @@ class TournamentLeaderboardController extends Controller
     public function index($id, Request $request)
     {
         try {
-            $leaderboard = $this->leaderboardResourceService->getTournamentLeaderboard($id, $request->get('limit', 50), $request->get('only_qualified', false));
+            $leaderboard = $this->leaderboardResourceService->getTournamentLeaderboard($id, $request->get('per_page', 50), $request->get('only_qualified', false));
         } catch (\Exception $e) {
             \Log::error(self::LOG_PREFIX . ':' . $e->getMessage() . 'PHP_EOL' . $e->getTraceAsString());
             return $this->response->failed("Unknown error");
         }
 
-        return $this->response->success($leaderboard->toArray());
+        $leaderboard = $leaderboard->toArray();
+
+        return $this->response->success($leaderboard['data'], 200, array_except($leaderboard, 'data'));
     }
 
     /**

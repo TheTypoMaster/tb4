@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources;
 
 
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
+use TopBetta\Resources\EloquentResourceCollection;
 
 class SelectionResourceService {
 
@@ -34,5 +35,12 @@ class SelectionResourceService {
             'form',
             'lastStarts'
         );
+    }
+
+    public function getSelectionsForRace($race)
+    {
+        $selections = $this->selectionRepositoryInterface->getSelectionsForRace($race);
+
+        return new EloquentResourceCollection($selections, 'TopBetta\Resources\SelectionResource');
     }
 }

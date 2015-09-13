@@ -14,6 +14,8 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class NextToJumpResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\EventModel';
+
     protected $attributes = array(
         "eventId" => "id",
         "competitionId" => "competition_id",

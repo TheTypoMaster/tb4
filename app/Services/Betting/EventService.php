@@ -6,8 +6,11 @@
  * Time: 11:15 AM
  */
 
+use TopBetta\Repositories\Contracts\BetRepositoryInterface;
+use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 
 class EventService {
 
@@ -26,15 +29,27 @@ class EventService {
      * @var EventRepositoryInterface
      */
     private $eventRepository;
+    /**
+     * @var BetRepositoryInterface
+     */
+    private $betRepository;
+    /**
+     * @var TournamentBetRepositoryInterface
+     */
+    private $tournamentBetRepository;
 
     /**
      * @param EventStatusRepositoryInterface $eventStatusRepository
      * @param EventRepositoryInterface $eventRepository
+     * @param BetRepositoryInterface $betRepository
+     * @param TournamentBetRepositoryInterface $tournamentBetRepository
      */
-    public function __construct(EventStatusRepositoryInterface $eventStatusRepository, EventRepositoryInterface $eventRepository)
+    public function __construct(EventStatusRepositoryInterface $eventStatusRepository, EventRepositoryInterface $eventRepository, BetRepositoryInterface $betRepository, TournamentBetRepositoryInterface $tournamentBetRepository)
     {
         $this->eventStatusRepository = $eventStatusRepository;
         $this->eventRepository = $eventRepository;
+        $this->betRepository = $betRepository;
+        $this->tournamentBetRepository = $tournamentBetRepository;
     }
 
     public function isSelectionEventAvailableForBetting($selection)
@@ -85,5 +100,16 @@ class EventService {
         return $this->eventRepository->updateWithId($event->id, array(
             "event_status_id" => $this->eventStatusRepository->getByName(EventStatusRepositoryInterface::STATUS_PAYING)->id,
         ));
+    }
+
+    public function checkAndSetPaidStatus($event)
+    {
+        if ( ! $this->betRepository->getBetsForEventByStatus($event->id, BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->count() &&
+            ! $this->tournamentBetRepository->getBetsForEventByStatus($event->id, BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->count()
+        ) {
+            $this->setEventPaid($event);
+        }
+
+        return $this;
     }
 }

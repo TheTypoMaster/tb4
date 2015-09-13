@@ -43,7 +43,22 @@ class TournamentModel extends Eloquent {
 		return $this->hasMany('TopBetta\Models\TournamentLeaderboard', 'tournament_id');
 	}
 
-    public function qualifiers()
+    public function competition()
+    {
+        return $this->belongsTo('TopBetta\Models\CompetitionModel', 'event_group_id');
+    }
+
+    public function bettingClosed()
+    {
+        return $this->cancelled_flag || ($this->betting_closed_on_first_match_flag && Carbon::now() > $this->betting_closed_date);
+    }
+
+    public function entryClosed()
+    {
+        return $this->bettingClosed() || $this->end_date < Carbon::now() || ($this->entries_close && $this->entries_close != '0000-00-00 00:00:00' && $this->entries_close < Carbon::now());
+    }
+	
+	public function qualifiers()
     {
         return $this->leaderboards()->whereRaw('balance_to_turnover <= turned_over')->where('currency', '>', 0);
     }
@@ -60,21 +75,6 @@ class TournamentModel extends Eloquent {
         });
 
         return max($amount, $this->minimum_prize_pool);
-	}
-	
-    public function competition()
-    {
-        return $this->belongsTo('TopBetta\Models\CompetitionModel', 'event_group_id');
-    }
-
-    public function bettingClosed()
-    {
-        return $this->cancelled_flag || ($this->betting_closed_on_first_match_flag && Carbon::now() > $this->betting_closed_date);
-    }
-
-    public function entryClosed()
-    {
-        return $this->bettingClosed() || $this->end_date < Carbon::now() || ($this->entries_close && $this->entries_close != '0000-00-00 00:00:00' && $this->entries_close < Carbon::now());
     }
 
     public function calculateTournamentPrizePool($tournamentId) {

@@ -9,6 +9,9 @@
 namespace TopBetta\Services\Feeds\Processors;
 
 use Log;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
+use TopBetta\Repositories\Cache\Sports\MarketRepository;
+use TopBetta\Repositories\Cache\Sports\MarketTypeRepository;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
@@ -28,9 +31,9 @@ class MarketListProcessor extends AbstractFeedProcessor {
      */
     private $marketRepository;
 
-    public function __construct(EventRepositoryInterface $eventRepository,
-                                MarketTypeRepositoryInterface $marketTypeRepository,
-                                MarketRepositoryInterface $marketRepository)
+    public function __construct(EventRepository $eventRepository,
+                                MarketTypeRepository $marketTypeRepository,
+                                MarketRepository $marketRepository)
     {
         $this->marketTypeRepository = $marketTypeRepository;
         $this->eventRepository = $eventRepository;

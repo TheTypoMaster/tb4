@@ -42,7 +42,7 @@ class TicketResource extends AbstractEloquentResource {
     public function getAvailableCurrency()
     {
         if( is_null($this->availableCurrency) && $this->model->leaderboard ) {
-            $this->availableCurrency = $this->model->leaderboard->currency - $this->model->bets->where('resulted_flag', false)->sum('bet_amount');
+            $this->availableCurrency = $this->model->leaderboard->currency - $this->model->bets->whereLoose('resulted_flag', false)->sum('bet_amount');
         }
 
         return $this->availableCurrency;

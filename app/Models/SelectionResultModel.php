@@ -19,6 +19,6 @@ class SelectionResultModel extends Eloquent {
      */
     public function selection()
     {
-        return $this->belongsTo('TopBetta\Models\SelectionsModel', 'selection_id', 'id');
+        return $this->belongsTo('TopBetta\Models\SelectionModel', 'selection_id', 'id');
     }
 } 

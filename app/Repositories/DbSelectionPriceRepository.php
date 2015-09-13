@@ -90,4 +90,33 @@ class DbSelectionPriceRepository extends BaseEloquentRepository implements Selec
             ->first();
 
     }
+
+    /**
+     * Create or update price based on selection and bet product
+     * @param array $priceData
+     * @return mixed
+     */
+    public function updateOrCreatePrice(array $priceData)
+    {
+        if ($product = $this->getPriceForSelectionByProduct($priceData['selection_id'], $priceData['bet_product_id'])) {
+            $product->update($priceData);
+            return $product;
+        }
+
+        return $this->createAndReturnModel($priceData);
+    }
+
+    /**
+     * Gets price record by selection id and bet product id
+     * @param $selection
+     * @param $product
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getPriceForSelectionByProduct($selection, $product)
+    {
+        return $this->model
+            ->where('selection_id', $selection)
+            ->where('bet_product_id', $product)
+            ->first();
+    }
 }

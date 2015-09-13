@@ -155,6 +155,11 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
     public function validate()
     {}
 
+    public function products()
+    {
+        return $this->belongsToMany('TopBetta\Models\BetProductModel', 'tb_user_products', 'user_id', 'bet_product_id');
+    }
+
 
     public function whereNotInRelationship($relationship, $closure)
     {

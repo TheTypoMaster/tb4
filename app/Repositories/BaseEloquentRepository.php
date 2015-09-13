@@ -69,6 +69,33 @@ class BaseEloquentRepository {
 		return $model->update($data);
 	}
 
+    /**
+     * Update record and return model
+     * @param $id
+     * @param $data
+     * @return mixed
+     */
+    public function updateWithIdAndReturnModel($id, $data)
+    {
+        $model = $this->model->findOrFail($id);
+        $model->update($data);
+
+        return $model;
+    }
+
+    /**
+     * Create record and return model
+     * @param $data
+     * @return mixed
+     */
+    public function createAndReturnModel($data)
+    {
+        $this->validate($data);
+        $model =  $this->model->create($data);
+
+        return $model;
+    }
+
 	/**
 	 * Create
 	 * @param $data
@@ -101,6 +128,25 @@ class BaseEloquentRepository {
         if (! $resource->save()) return false;
 
         return $resource->toArray();
+    }
+
+    public function updateOrCreateAndReturnModel($input, $key = 'id')
+    {
+        // Instantiate new OR existing object
+        if (! empty($input[$key])){
+            $resource = $this->model->firstOrNew(array($key => $input[$key]));
+        }
+        else{
+            $resource = $this->model; // Use a clone to prevent overwriting the same object in case of recursion
+        }
+
+        // Fill object with user input using Mass Assignment
+        $resource->fill($input);
+
+        // Save data to db
+        if (! $resource->save()) return false;
+
+        return $resource;
     }
 
 	public function validate($input) {

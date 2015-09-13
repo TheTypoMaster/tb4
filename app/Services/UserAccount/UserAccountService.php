@@ -479,12 +479,7 @@ class UserAccountService {
         }
     }
 
-    public function findFullUserByEmail($email)
-    {
-        return $this->fullUser->getFullUserByEmail($email);
-	}
-	
-    public function createTournamentAccount($input, $affiliate)
+	public function createTournamentAccount($input, $affiliate)
     {
         //check user does not exist first
         $user = $this->basicUser->getUserByExternalIdAndAffiliate(array_get($input, 'external_unique_identifier'), $affiliate->affiliate_id);
@@ -500,6 +495,11 @@ class UserAccountService {
             "external_user_id" => array_get($input, "external_unique_identifier"),
             "affiliate_id" => $affiliate->affiliate_id
         ));
+    }
+
+	public function findFullUserByEmail($email)
+    {
+        return $this->fullUser->getFullUserByEmail($email);
     }
 
     private function _generateUniqueUserNameFromBase($username, $autoGenerate, $count = 0)

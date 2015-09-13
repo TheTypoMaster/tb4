@@ -16,7 +16,7 @@ class SportBetSelectionService extends AbstractBetSelectionService {
     /**
      * @inheritdoc
      */
-    public function validateSelection($selection, $dividend = 0)
+    public function validateSelection($selection, $winDividend = 0, $placeDividend = 0)
     {
         //check selections is valid sports selection
         if ( ! $this->selectionService->isSelectionSports($selection->id) ) {
@@ -24,12 +24,12 @@ class SportBetSelectionService extends AbstractBetSelectionService {
         }
 
         //make sure dividend is given
-        if ( ! $dividend ) {
+        if ( ! $winDividend ) {
             throw new BetSelectionException($selection, 'invalid dividend');
         }
 
         //check odds haven't changed
-        if( $this->selectionService->oddsChanged($selection->id, $dividend) ) {
+        if( $this->selectionService->oddsChanged($selection->id, $winDividend) ) {
             throw new BetSelectionException($selection, 'odds have changed');
         }
 
@@ -43,7 +43,7 @@ class SportBetSelectionService extends AbstractBetSelectionService {
     {
         //add the fixed odds
         $data = array(
-            'fixed_odds' => $selection['dividend']
+            'fixed_odds' => $selection['win_dividend']
         );
 
         return parent::createSelection($bet, $selection, $data);
