@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Models\Events;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
@@ -167,6 +168,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return null;
     }
 
+    public function addEventModelToCompetition($event, $competition)
+    {
+        if (!$event->competitions()->find($competition->id)) {
+            return $event->competitions()->attach($competition->id);
+        }
+
+        return null;
+    }
+
     public function getNextToJumpSports($number = 10)
     {
         $builder = $this->getVisibleSportsEventBuilder();
@@ -206,10 +216,13 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
     public function addModelToCompetition($model, $competition)
     {
-        $model->competition()->attach($competition->id);
+        if (!$model->competition->first()) {
+            $model->competition()->attach($competition->id);
 
-        //load the relationship
-        $model->load('competition');
+            //load the relationship
+            $model->competition = new Collection();
+            $model->competition->push($competition);
+        }
 
         return $model;
     }

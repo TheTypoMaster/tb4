@@ -66,7 +66,7 @@ class BaseEloquentRepository {
 	 */
 	public function updateWithId($id, $data) {
 		$model = $this->model->findOrFail($id);
-		return $model->update($data);
+		return $this->update($model, $data);
 	}
 
     /**
@@ -78,14 +78,18 @@ class BaseEloquentRepository {
     public function updateWithIdAndReturnModel($id, $data)
     {
         $model = $this->model->findOrFail($id);
-        $model->update($data);
+        $this->update($model, $data);
 
         return $model;
     }
 
     public function update($model, $data)
     {
-        $model->update($data);
+        foreach ($data as $key => $value) {
+            $model->{$key} = $value;
+        }
+
+        $model->save();
 
         return $model;
     }

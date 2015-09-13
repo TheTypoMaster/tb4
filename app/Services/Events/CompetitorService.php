@@ -60,7 +60,7 @@ class CompetitorService {
 
     public function addCompetitorModelToSelection($selection, $competitor)
     {
-        if (in_array($selection->id, $competitor->selections->lists('id')->all())) {
+        if (!in_array((int)$selection->id, $competitor->selections->lists('id')->all())) {
             $competitor->selections()->attach($selection->id);
         }
 
