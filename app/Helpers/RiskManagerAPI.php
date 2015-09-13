@@ -1,7 +1,7 @@
 <?php namespace TopBetta\Helpers;
 
 use TopBetta\Models\BetResultStatus;
-use Illuminate\Support\Facades\Config;
+use Config;
 
 class RiskManagerAPI
 {
@@ -76,6 +76,53 @@ class RiskManagerAPI
         } else {
             return false;
         }
+    }
+
+    public function sendRaceStatus($raceData)
+    {
+        // we only want to send to risk manager for production
+        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+            return false;
+        }
+
+        // send bet to risk manager
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
+                                            Config::get('riskmanager.RISK_RACE_DATA_URI'),
+                                            'POST',
+                                            json_encode($raceData));
+
+        $response = json_decode($responseJSON);
+
+        if (!$response) {
+            return false;
+        }
+
+        if ($response->status == 200) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public function sendResultData($resultsData)
+    {
+        // we only want to send to risk manager for production
+        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+            return false;
+        }
+
+
+    }
+
+    public function sendFixedOddsData($fixedOddsData)
+    {
+        // we only want to send to risk manager for production
+        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+            return false;
+        }
+
+
     }
 
 }

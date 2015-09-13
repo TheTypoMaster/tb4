@@ -35,6 +35,8 @@ use TopBetta\Repositories\BetRepo;
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Repositories\RisaFormRepository;
 
+use TopBetta\Helpers\RiskManagerAPI;
+
 class RaceDataProcessingService {
 
     protected $events;
@@ -67,6 +69,8 @@ class RaceDataProcessingService {
      */
     private $betTypeMapper;
 
+    private $riskhelper;
+
     public function __construct(RaceRepository $events,
                                 RacingSelectionRepository $selections,
 								SelectionPriceRepositoryInterface $prices,
@@ -86,7 +90,8 @@ class RaceDataProcessingService {
                                 TournamentBetService $tournamentBetService,
                                 RunnerRepositoryInterface $runnerRepository,
                                 ProductProviderMatchRepositoryInterface $productProviderMatchRepository,
-                                BetTypeMapper $betTypeMapper){
+                                BetTypeMapper $betTypeMapper,
+                                RiskManagerAPI $riskhelper){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -107,6 +112,7 @@ class RaceDataProcessingService {
         $this->runnerRepository = $runnerRepository;
         $this->productProviderMatchRepository = $productProviderMatchRepository;
         $this->betTypeMapper = $betTypeMapper;
+        $this->riskhelper = $riskhelper;
     }
 
 
@@ -369,7 +375,14 @@ class RaceDataProcessingService {
 
 			Log::info($this->logprefix. 'Race Saved - '.$raceDetails['external_event_id']);
 
-			$eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
+            // push race status update to risk manager only if the race already exists and the status changes
+            if($existingRaceDetails && $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']])
+            {
+                // TODO: add notification
+                $this->riskhelper->sendRaceStatus($raceDetails);
+            }
+
+			// $eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
 
 			$event = $this->events->getEventModelFromExternalId($raceDetails['external_event_id']);
             $eventId = $event->id;
