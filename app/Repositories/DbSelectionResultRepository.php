@@ -23,6 +23,17 @@ class DbSelectionResultRepository extends BaseEloquentRepository implements Sele
         return $this->model->where('selection_id', $selectionId)->first();
     }
 
+    public function getResultsForRace($raceId)
+    {
+        return $this->model
+            ->join('tbdb_selection', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->where('tbdb_event.id', '=', $raceId)
+            ->orderBy('tbdb_selection_result.position')
+            ->get(array('tbdb_selection_result.*', 'tbdb_selection.name', 'tbdb_selection.number'));
+    }
+
     public function deleteResultsForRaceId($raceId) {
 
         //$this->model->join
@@ -33,5 +44,32 @@ class DbSelectionResultRepository extends BaseEloquentRepository implements Sele
     public function deleteResultsForMarket($marketId)
     {
         return \DB::statement('DELETE sr.* FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id WHERE mk.id = '. $marketId);
+    }
+
+    public function deleteResults($resultIds)
+    {
+        return $this->model
+            ->whereIn('id', $resultIds)
+            ->delete();
+    }
+
+    public function getResultsForEvent($eventId)
+    {
+        return $this->model
+            ->join('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_selection_result.selection_id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->where('event_id', $eventId)
+            ->orderBy('position')
+            ->get();
+    }
+
+    public function getResultsForEventByPosition($eventId, $position)
+    {
+        return $this->model
+            ->join('tbdb_selection', 'tbdb_selection.id', '=', 'tbdb_selection_result.selection_id')
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->where('event_id', $eventId)
+            ->where('position', $position)
+            ->get();
     }
 } 

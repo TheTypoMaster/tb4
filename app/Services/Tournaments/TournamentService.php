@@ -8,6 +8,12 @@
 
 namespace TopBetta\Services\Tournaments;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Resources\MeetingResource;
+use TopBetta\Resources\Sports\CompetitionResource;
+use TopBetta\Services\Resources\Tournaments\LeaderboardResourceService;
+use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
+use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use Log;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
@@ -61,6 +67,30 @@ class TournamentService {
      * @var CompetitionService
      */
     private $competitionService;
+    /**
+     * @var TournamentGroupService
+     */
+    private $tournamentGroupService;
+    /**
+     * @var TournamentResourceService
+     */
+    private $tournamentResourceService;
+    /**
+     * @var TournamentEventService
+     */
+    private $tournamentEventService;
+    /**
+     * @var TournamentTransactionService
+     */
+    private $tournamentTransactionService;
+    /**
+     * @var LeaderboardResourceService
+     */
+    private $leaderboardResourceService;
+    /**
+     * @var TournamentResultService
+     */
+    private $resultService;
 
     public function __construct(DbTournamentRepository $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
@@ -68,9 +98,16 @@ class TournamentService {
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
                                 TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
                                 TournamentBuyInService $buyInService,
-                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
+                                TournamentLeaderboardService $leaderboardService,
+                                TournamentTicketService $ticketService,
                                 EventModelRepositoryInterface $eventRepository,
-                                CompetitionService $competitionService)
+                                CompetitionService $competitionService,
+                                TournamentGroupService $tournamentGroupService,
+                                TournamentResourceService $tournamentResourceService,
+                                TournamentEventService $tournamentEventService ,
+                                TournamentTransactionService $tournamentTransactionService,
+                                LeaderboardResourceService $leaderboardResourceService,
+                                TournamentResultService $resultService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -82,29 +119,129 @@ class TournamentService {
         $this->ticketService = $ticketService;
         $this->eventRepository = $eventRepository;
         $this->competitionService = $competitionService;
+        $this->tournamentGroupService = $tournamentGroupService;
+        $this->tournamentResourceService = $tournamentResourceService;
+        $this->tournamentEventService = $tournamentEventService;
+        $this->tournamentTransactionService = $tournamentTransactionService;
+        $this->leaderboardResourceService = $leaderboardResourceService;
+        $this->resultService = $resultService;
+    }
+
+    public function getVisibleTournaments($type = 'racing', $date = null)
+    {
+        if( ! is_null($date) ) {
+            $date = Carbon::createFromFormat('Y-m-d', $date);
+        }
+
+        switch($type)
+        {
+            case 'racing':
+                return $this->tournamentResourceService->getVisibleRacingTournaments($date);
+            case 'sport':
+                return $this->tournamentResourceService->getVisibleSportTournaments($date);
+        }
+
+        throw new \InvalidArgumentException("Type " . $type . " is invalid");
+    }
+
+    public function getTournamentWithEvents($id, $eventId = null)
+    {
+        $tournament = $this->tournamentResourceService->getTournament($id);
+
+        $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->values()->toArray());
+
+        $tournament->setLeaderboard($this->leaderboardResourceService->getTournamentLeaderboard($id)->getCollection());
+
+        $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
+
+        foreach($events['data'] as $event) {
+            if( $event instanceof MeetingResource ) {
+                $tournament->addMeeting($event);
+            } else if ( $event instanceof CompetitionResource ) {
+                $tournament->addCompetition($event);
+            }
+        }
+
+        $data = array("data" => $tournament);
+
+        if ($selected = array_get($events, 'selected_race')) {
+            $data['selected_race'] = $selected;
+        }
+
+        return $data;
+    }
+
+    public function storeTournamentTicket($user, $tournamentId)
+    {
+        $tournament = $this->tournamentRepository->find($tournamentId);
+
+        if (! $tournament) {
+            throw new ModelNotFoundException("Tournament not found");
+        }
+
+        return $this->enterUserInTournament($user, $tournament);
     }
 
     /**
      * @param \TopBetta\Models\UserModel $user
      * @param \TopBetta\Models\TournamentModel $tournament
-     * @return array
+     * @return \TopBetta\Models\TournamentTicketModel
+     * @throws Exceptions\TournamentBuyInException
+     * @throws TournamentEntryException
+     * @throws \Exception
      */
     public function enterUserInTournament($user, $tournament)
     {
+        if( is_int($tournament) ) {
+            $tournament = $this->tournamentRepository->find($tournament);
+        }
+
+        //validate ticket
+        $this->ticketService->validateForCreation($user, $tournament);
+
         //buyin to tournament
         $transactions = $this->buyInService->buyin($tournament, $user);
 
+        try {
+            //create ticket
+            $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
+        } catch (TournamentEntryException $e) {
+            $this->tournamentTransactionService->createRefundTransaction($user->id, $tournament->buy_in + $tournament->entry_fee);
+            throw $e;
+        }
+
+        try {
+            //create leaderboard record
+            $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
+        } catch (TournamentEntryException $e) {
+            $this->ticketService->refundTicket($ticket);
+            throw $e;
+        }
+
+        //create history record
+        $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
+
+        return $ticket;
+    }
+
+	public function createTicketAndLeaderboardRecordForUser($tournament, $user)
+    {
         //create ticket
         $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
 
         //create leaderboard record
         $leaderboard = $this->leaderboardService->createLeaderboardRecordForUser($tournament, $user);
 
-        //create history record
-        $this->buyInService->createTournamentEntryHistoryRecord($ticket['id'], $transactions['buyin_transaction']['id'], $transactions['entry_transaction']['id']);
-
-        return $transactions;
+        return $ticket;
     }
+
+    
+    public function getTournament($tournamentId)
+    {
+        return $this->tournamentRepository->find($tournamentId);
+    }
+
+
 
     public function removeUserFromTournament($tournamentId, $userId)
     {
@@ -135,6 +272,41 @@ class TournamentService {
         }
 
         return true;
+    }
+
+    public function setTournamentPaid($tournament)
+    {
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            'paid_flag' => true
+        ));
+
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->setTicketPaid($ticket);
+        }
+    }
+
+    public function refundAbandonedTournamentsForEvent($event)
+    {
+        $competition = $this->competitionRepository->getByEvent($event);
+
+        if ($this->competitionService->isAbandoned($competition)) {
+            $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($competition->id);
+
+            foreach ($tournaments as $tournament) {
+                $this->refundTournament($tournament);
+            }
+        }
+    }
+
+    public function refundTournament($tournament)
+    {
+        foreach ($tournament->tickets as $ticket) {
+            $this->ticketService->refundTicket($ticket);
+        }
+
+        $this->tournamentRepository->updateWithId($tournament->id, array(
+            "paid_flag" => true
+        ));
     }
 
     public function createTournament($tournamentData)
@@ -238,6 +410,7 @@ class TournamentService {
                 'tournament_topup_buyin_id',
                 'tournament_rebuy_buyin_id',
                 'tournament_labels',
+                'tournament_groups',
                 'rebuy_end_after',
                 'topup_end_after',
                 'topup_start_after',
@@ -261,6 +434,13 @@ class TournamentService {
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
         }
+
+        //add groups
+        if( $groups = array_get($tournamentData, 'tournament_groups') ) {
+            $tournament->groups()->sync($groups);
+        }
+
+        $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
 
         return $tournament;
     }
@@ -345,6 +525,7 @@ class TournamentService {
             'tournament_topup_buyin_id',
             'tournament_rebuy_buyin_id',
             'tournament_labels',
+            'tournament_groups',
         )));
 
         $tournament = $this->tournamentRepository->find($id);
@@ -353,6 +534,13 @@ class TournamentService {
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
         }
+
+        //add groups
+        if( $groups = array_get($tournamentData, 'tournament_groups') ) {
+            $tournament->groups()->sync($groups);
+        }
+
+        $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
 
         return $tournament;
     }

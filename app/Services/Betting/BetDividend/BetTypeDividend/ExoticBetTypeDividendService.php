@@ -13,34 +13,24 @@ use TopBetta\Services\Betting\EventService;
 class ExoticBetTypeDividendService extends AbstractBetTypeDividendService {
 
     /**
-     * @var EventService
-     */
-    private $eventService;
-
-    public function __construct(EventService $eventService)
-    {
-        $this->eventService = $eventService;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getResultedDividendForBet($bet)
     {
         $totalDividend = 0;
-        $dividends = $this->eventService->getExoticDividendsForEventByType($bet->selection->first()->market->event, $bet->type->name);
+        $dividends = $this->resultPricesRepository->getPricesByProductEventAndBetType($bet->bet_product_id, $bet->event_id, $bet->bet_type_id);
 
         if ( ! $dividends ) {
             return 0;
         }
 
         //check each dividend
-        foreach($dividends as $positionString => $dividend) {
-            $result = explode('/', $positionString);
+        foreach($dividends as $dividend) {
+            $result = explode('/', $dividend->result_string);
 
             //boxed so just check selections contained in $result
-            if( $bet->boxed_flag && count(array_intersect($bet->selection->lists('number')->all(), $result)) == count($bet->selection->lists('number')->all())) {
-                $totalDividend += $dividend;
+            if( $bet->boxed_flag && count(array_intersect($result, $bet->selection->lists('number')->all())) == count($result)) {
+                $totalDividend += $dividend->dividend;
             } else {
                 $hasSelections = true;
                 //check we have a selection in each position
@@ -59,7 +49,7 @@ class ExoticBetTypeDividendService extends AbstractBetTypeDividendService {
 
                 //exotic is winning so add dividend
                 if( $hasSelections ) {
-                    $totalDividend += $dividend;
+                    $totalDividend += $dividend->dividend;
                 }
 
             }

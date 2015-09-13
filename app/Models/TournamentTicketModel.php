@@ -22,4 +22,10 @@ class TournamentTicketModel extends Eloquent {
     {
         return $this->hasMany('TopBetta\Models\TournamentBetModel', 'tournament_ticket_id');
     }
+
+    public function leaderboard()
+    {
+        return $this->hasOne('TopBetta\Models\TournamentLeaderboardModel', 'tournament_id', 'tournament_id')
+            ->where('user_id', $this->user_id);
+    }
 }

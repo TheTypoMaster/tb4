@@ -12,4 +12,8 @@ interface TournamentTicketBuyInHistoryRepositoryInterface
     public function getByTicketAndType($ticketId, $typeId);
 
     public function getTotalByTicketAndType($ticketId, $typeId);
+
+    public function getByBuyinTransaction($transaction);
+
+    public function getByEntryTransaction($transaction);
 }

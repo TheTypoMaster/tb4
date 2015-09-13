@@ -29,4 +29,9 @@ class SportModel extends Eloquent {
         return in_array($this->name, array('galloping', 'harness', 'greyhounds'));
     }
 
+    public function baseCompetitions()
+    {
+        return $this->hasMany('TopBetta\Models\BaseCompetitionModel', 'sport_id');
+}
+
 }

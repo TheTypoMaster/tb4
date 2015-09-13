@@ -6,10 +6,15 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Models\Events;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
 class DbEventRepository extends BaseEloquentRepository implements EventRepositoryInterface{
+
+    use SportsResourceRepositoryTrait;
 
     protected $events;
 
@@ -95,6 +100,12 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 		return $eventId;
 	}
 
+    public function getEventModelFromExternalId($externalEventId)
+    {
+        return $this->model->where('external_event_id', $externalEventId)
+            ->first();
+    }
+
     public function getEventWithStatusByEventId($eventId)
     {
         $eventDetails = $this->model->with('eventstatus')->where('id', $eventId)
@@ -157,5 +168,92 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return null;
     }
 
+    public function addEventModelToCompetition($event, $competition)
+    {
+        if (!$event->competitions()->find($competition->id)) {
+            return $event->competitions()->attach($competition->id);
+        }
+
+        return null;
+    }
+
+    public function getNextToJumpSports($number = 10)
+    {
+        $builder = $this->getVisibleSportsEventBuilder();
+
+        $model = $builder
+            ->where('e.start_date', '>=', Carbon::now())
+            ->groupBy('e.id')
+            ->orderBy('e.start_date')
+            ->take($number)
+            ->get(array(
+                'e.id as id',
+                'e.name as name',
+                'eg.id as competition_id',
+                'eg.name as competition_name',
+                'bc.id as base_competition_id',
+                'bc.name as base_competition_name',
+                'tb_sports.id as sport_id',
+                'tb_sports.name as sport_name',
+                'e.start_date as start_date',
+            ));
+
+        return $this->model->hydrate($model);
+    }
+
+    public function getEventsForCompetition($competitionId)
+    {
+        $builder = $this->getVisibleSportsEventBuilder();
+
+        $model = $builder
+            ->where('ege.event_group_id', $competitionId)
+            ->groupBy('e.id')
+            ->orderBy('e.start_date')
+            ->get(array('e.*'));
+
+        return $this->model->hydrate($model);
+    }
+
+    public function addModelToCompetition($model, $competition)
+    {
+        if (!$model->competition->first()) {
+            $model->competition()->attach($competition->id);
+
+            //load the relationship
+            $model->competition = new Collection();
+            $model->competition->push($competition);
+        }
+
+        return $model;
+    }
+
+    public function getVisibleEVents()
+    {
+        $builder = $this->getVisibleSportsEventBuilder();
+
+        $model = $builder
+            ->where('e.start_date', '>=', Carbon::now())
+            ->groupBy('e.id')
+            ->orderBy('e.start_date')
+            ->get(array('e.*'));
+
+        return $this->model->hydrate($model);
+    }
+
+
+    public function addTeamPlayers($event, $team, $players)
+    {
+        $teamPlayers = $event->teamPlayers;
+
+        $playersToInsert = array_diff($players, $teamPlayers->lists('player_id')->all());
+
+        $playersToInsert = array_map(function ($v) use ($team, $event) {
+            return array('player_id' => $v, "team_id" => $team, 'event_id' => $event->id, 'created_at' => Carbon::now()->toDateTimeString(), 'updated_at' => Carbon::now()->toDateTimeString());
+        }, $playersToInsert);
+
+        $event->teamPlayers()->insert($playersToInsert);
+
+        return $this;
+    }
 
 }

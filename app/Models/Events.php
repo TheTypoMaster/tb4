@@ -27,4 +27,18 @@ class Events extends Eloquent {
         return $this->belongsToMany('\TopBetta\Models\TeamModel', 'tb_team_tbdb_event', 'tbdb_event_id', 'tb_team_id')->withPivot('team_position');
     }
 
+    public function competition(){
+        return $this->belongsToMany('\TopBetta\Models\SportsComps', 'tbdb_event_group_event', 'event_id', 'event_group_id');
+    }
+
+    public function resultPrices()
+    {
+        return $this->hasMany('TopBetta\Models\ResultPriceModel', 'event_id');
+    }
+
+    public function teamPlayers()
+    {
+        return $this->hasMany('TopBetta\Models\EventTeamPlayerModel', 'event_id');
+    }
+
 }

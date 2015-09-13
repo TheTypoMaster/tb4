@@ -38,8 +38,14 @@ class PlayerProcessor extends AbstractFeedProcessor {
             "name" => array_get($data, "FirstName", "") . " " . array_get($data, "LastName", ""),
             "short_name" => array_get($data, "Name", ""),            
         );
-        
-        $player = $this->playerRepository->updateOrCreate($data, "external_player_id");
+
+        if ($player = $this->modelContainer->getPlayer($externalId)) {
+            $player = $this->playerRepository->update($player, $externalId);
+        } else {
+            $player = $this->playerRepository->updateOrCreateAndReturnModel($data, "external_player_id");
+        }
+
+        $this->modelContainer->addPlayer($player, $externalId);
 
         if( $player ) {
             return $player['id'];

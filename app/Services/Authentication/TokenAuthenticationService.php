@@ -10,13 +10,16 @@ use App;
 use Hash;
 use Auth;
 use Carbon\Carbon;
-use Regulus\ActivityLog\Activity;
+use Regulus\ActivityLog\Models\Activity;
 
 use TopBetta\Repositories\Contracts\BetSourceRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTokenRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 
+use TopBetta\Services\Authentication\Exceptions\InvalidTokenException;
+use TopBetta\Services\Authentication\Exceptions\TokenGenerationException;
+use TopBetta\Services\UserAccount\Exceptions\UserNotFoundException;
 use TopBetta\Services\UserAccount\UserAccountService;
 
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -103,6 +106,32 @@ class TokenAuthenticationService {
         return array('token' => $newToken);
     }
 
+    public function processTokenRequestNoValidation($username)
+    {
+        $bettingUserDetails = $this->user->getUserDetailsFromUsername($username);
+
+        if(!$bettingUserDetails) {
+            throw new UserNotFoundException;
+        }
+
+        // generate token
+        $newToken = $this->_genreateToken();
+
+        if(!$newToken) {
+            throw new TokenGenerationException;
+        }
+
+        // token expiry - TODO move to a database field
+        $expiry = Carbon::now('Australia/Sydney')->addMinute();
+
+        // store token
+        if(!$this->_storeToken($bettingUserDetails['id'], $newToken, $expiry)) {
+            throw new TokenGenerationException;
+        }
+
+        return $newToken;
+    }
+
     /**
      * Public method that attemps to log a user in with a token
      *
@@ -174,7 +203,70 @@ class TokenAuthenticationService {
         //return Auth::user();
     }
 
+    public function tokenLoginExternal($input)
+    {
 
+        // get token, username and source and validate
+        $rules = array(
+            'tournament_username' => 'required',
+            'token' => 'required'
+        );
+
+        $validated = $this->_validateParams($input, $rules);
+
+        // get betting account user details
+        $bettingUserDetails = $this->user->getUserDetailsFromUsername($input['tournament_username']);
+        if(!$bettingUserDetails) {
+            throw new UserNotFoundException;
+        }
+
+        // get token record for the username
+        $tokenRecord = $this->usertoken->getTokenRecordByUserId($bettingUserDetails['id']);
+
+        // if there is no current token in the database
+        if(!$tokenRecord) {
+            throw new InvalidTokenException("No token found for user");
+        }
+
+        // compare the token
+        if($tokenRecord['token'] != $input['token']) {
+            throw new InvalidTokenException("Token does not match");
+        }
+
+        // make sure the token has not expired
+        if($tokenRecord['expiry'] < Carbon::now('Australia/Sydney')) {
+            throw new InvalidTokenException("Token has expired");
+        }
+
+        // get an instance of the user
+        $user = $this->user->find($bettingUserDetails['id']);
+
+        // log betting user In
+        Auth::login($user);
+
+        $this->usertoken->updateWithId($tokenRecord['id'], array(
+            'expiry' => Carbon::now(),
+        ));
+
+        // get both user model details
+        $userBasic = Auth::user()->toArray();
+        $userFull = $this->usertopbetta->getUserDetailsFromUserId($userBasic['id']);
+
+        if (Auth::check()) {
+            // record the logout to the activity table
+            Activity::log([
+                'contentId'   => Auth::user()->id,
+                'contentType' => 'User',
+                'action'      => 'Token Log In',
+                'description' => 'User logged into TopBetta',
+                'details'     => 'Username: '.Auth::user()->username,
+                //'updated'     => $id ? true : false,
+            ]);
+        }
+
+        // return user and topbetta_user model
+        return array_merge($userBasic, $userFull ? : array());
+    }
 
 
     /**

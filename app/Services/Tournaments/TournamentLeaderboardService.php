@@ -83,15 +83,12 @@ class TournamentLeaderboardService {
 
     public function getLeaderboard($tournamentId, $limit = 50, $onlyQualified = false)
     {
-        $rebuyId = $this->buyInTypeRepository->getIdByKeyword(TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_REBUY);
-        $topupId = $this->buyInTypeRepository->getIdByKeyword(TournamentBuyInTypeRepositoryInterface::TOURNAMENT_BUYIN_TYPE_TOPUP);
-
-        $leaderboard = $this->leaderboardRepository->getTournamentLeaderboard($tournamentId, $rebuyId, $topupId, $limit, true);
+        $leaderboard = $this->leaderboardRepository->getTournamentLeaderboard($tournamentId, $limit, true);
 
         if( ! $onlyQualified && count($leaderboard) < $limit) {
             $leaderboard = array_merge(
                 $leaderboard,
-                $this->leaderboardRepository->getTournamentLeaderboard($tournamentId, $rebuyId, $topupId, $limit, false)
+                $this->leaderboardRepository->getTournamentLeaderboard($tournamentId, $limit, false)
             );
         }
 
@@ -106,7 +103,7 @@ class TournamentLeaderboardService {
                 'id' => $record['id'],
                 'username' => $record['username'],
                 'currency' => $record['currency'],
-                'qualified' => $record['qualified'],
+                'qualified' => $record['qualified'] && $record['currency'],
                 'turned_over' => $record['turned_over'],
                 'rebuys' => $record['rebuys'],
                 'topups' => $record['topups'],
@@ -141,6 +138,11 @@ class TournamentLeaderboardService {
         }
 
         return array('leaderboard' => $leaderboardRecord, "position" => $position);
+    }
+
+    public function getLeaderboardPositionForTicket($ticket)
+    {
+        return $this->leaderboardRepository->getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($ticket->tournament_id, $ticket->leaderboard->currency)->count() + 1;
     }
 
     public function increaseCurrencyForUserTournament($user, $tournament, $amount)

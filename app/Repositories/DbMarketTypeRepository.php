@@ -11,8 +11,11 @@ namespace TopBetta\Repositories;
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use TopBetta\Models\MarketTypeModel;
 use DB;
+use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
 class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTypeRepositoryInterface {
+
+    use SportsResourceRepositoryTrait;
 
     protected $order;
 
@@ -82,5 +85,25 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
             ->where('tbdb_event_group_event.event_group_id', $competitionId)
             ->groupBy('tbdb_market_type.id')
             ->get(array("tbdb_market_type.*"));
+    }
+
+    public function getAvailableMarketTypesForCompetition($competitionId)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
+            ->where('eg.id', $competitionId)
+            ->groupBy('mt.id');
+
+        return $this->model->hydrate($builder->get(array('mt.*')))->load('icon');
+    }
+
+    public function getAvailableMarketTypesForCompetitions($competitions)
+    {
+        $builder = $this->getVisibleSportsEventBuilder()
+            ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
+            ->whereIn('eg.id', $competitions)
+            ->groupBy('m.id');
+
+        return $this->model->hydrate($builder->get(array('mt.*', 'eg.id as competition_id')))->load('icon');
     }
 }

@@ -35,6 +35,8 @@ return array(
         array("display_name" => "Promotions", "name" => "promotions"),
         array("display_name" => "Free Credit Management", "name" => "free-credit-management"),
         array("display_name" => "User Activity", "name" => "user-activity"),
+        array("display_name" => "Market Type Details", "name" => "market-type-details"),
+        array("display_name" => "Tournament Groups", "name" => "tournament-groups"),
     ),
 
     //custom permissions. Permissions which do not fit the resource category
@@ -57,6 +59,7 @@ return array(
         array('uri' => "tournaments/remove/{tournamentId}/{userId}", "remove_users_from_tournament"),
         array('uri' => 'tournaments/cancel/{tournamentId}', "permission" => 'tournaments.delete'),
         array('uri' => 'user-activity/download', "permission" => "get_user_activity"),
+        array('uri' => 'tournaments/download/entrants', 'permission' => 'tournaments.view'),
     ),
 
     // --- SIDEBAR NAVIGATION MENU ---
@@ -66,7 +69,10 @@ return array(
             array("name" => "Users", "route" => "admin.users.index"),
             array("name" => "User Activity Report", "route" => "admin.user-activity.index"),
         )),
-        array("name" => "Bets", "fa-icon" => "fa-list", "route" => "admin.bets.index"),
+        array("name" =>"Bets", "fa-icon" => "fa-list", 'children' => array(
+            array("name" => "Bets", "fa-icon" => "fa-list", "route" => "admin.bets.index"),
+            array("name" => "Bet Limits", "fa-icon" => "fa-list", "route" => "admin.bet-limits.index"),
+        )),
         array("name" => "Payments", "fa-icon" => "fa-money", "children" => array(
             array("name" => "Withdrawal Requests", "route" => "admin.withdrawals.index"),
             array("name" => "Account Transactions", "route" => "admin.account-transactions.index"),
@@ -93,6 +99,7 @@ return array(
             array("name" => "Selections", "route" => "admin.selections.index"),
             array("name" => "Prices", "route" => "admin.selectionprices.index"),
             array("name" => "Icons", "route" => "admin.icons.index"),
+            array("name" => "Market Type Details", "route" => "admin.market-type-details.index"),
         )),
         array("name" => "Promotions", "fa-icon" => "fa-money", "route" => "admin.promotions.index"),
         array("name" => "Settings", "fa-icon" => "fa-cogs", "route" => "admin.settings.index"),

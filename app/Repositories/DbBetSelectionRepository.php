@@ -10,9 +10,10 @@ namespace TopBetta\Repositories;
 
 
 use TopBetta\Models\BetSelection;
+use TopBetta\Models\BetSelectionModel;
 use TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface;
 
-class DbBetSelectionRepository implements BetSelectionRepositoryInterface
+class DbBetSelectionRepository extends BaseEloquentRepository implements BetSelectionRepositoryInterface
 {
 
     private static $selectionPositionTemplate = array(
@@ -25,6 +26,11 @@ class DbBetSelectionRepository implements BetSelectionRepositoryInterface
     private static $selectionBoxedTemplate = array(
         "first"     => array()
     );
+
+    public function __construct(BetSelectionModel $betSelectionModel)
+    {
+        $this->model = $betSelectionModel;
+    }
 
     /**
      * Static function for retrieving an array of selections for an exotic bet

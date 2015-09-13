@@ -100,8 +100,9 @@ class RaceSelection extends \Eloquent {
         public static function getByEventIdAndRunnerNumber($eventId, $runnerNumber)
         {
             return static::where('tbdb_selection.number', $runnerNumber)
-                            ->where('tbdb_market.event_id', $eventId)
+                            ->where('tbdb_event.external_event_id', $eventId)
                             ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+                            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event.id')
                             ->take(1)
                             ->select('tbdb_selection.*')
                             ->get();

@@ -8,6 +8,7 @@ use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface;
 use TopBetta\Repositories\Contracts\TODRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBuyInRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentLabelsRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentPrizeFormatRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCompetiitonRepository;
@@ -71,6 +72,10 @@ class TournamentsController extends Controller
      * @var MeetingVenueRepositoryInterface
      */
     private $meetingVenueRepository;
+    /**
+     * @var TournamentGroupRepositoryInterface
+     */
+    private $tournamentGroupRepository;
 
     /**
      * @param DbTournamentRepository $tournamentRepo
@@ -85,6 +90,7 @@ class TournamentsController extends Controller
      * @param TournamentAdminService $tournamentAdminService
      * @param MarketRepositoryInterface $marketRepository
      * @param MeetingVenueRepositoryInterface $meetingVenueRepository
+     * @param TournamentGroupRepositoryInterface $tournamentGroupRepository
      */
     public function __construct(DbTournamentRepository $tournamentRepo,
                                 DbSportsRepository $sportsrepo,
@@ -97,7 +103,8 @@ class TournamentsController extends Controller
                                 TournamentService $tournamentService,
                                 TournamentAdminService $tournamentAdminService,
                                 MarketRepositoryInterface $marketRepository,
-                                MeetingVenueRepositoryInterface $meetingVenueRepository )
+                                MeetingVenueRepositoryInterface $meetingVenueRepository,
+                                TournamentGroupRepositoryInterface $tournamentGroupRepository )
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -113,6 +120,7 @@ class TournamentsController extends Controller
         $this->tournamentAdminService = $tournamentAdminService;
         $this->marketRepository = $marketRepository;
         $this->meetingVenueRepository = $meetingVenueRepository;
+        $this->tournamentGroupRepository = $tournamentGroupRepository;
     }
 
 	/**
@@ -190,9 +198,11 @@ class TournamentsController extends Controller
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
+        $groups = $this->tournamentGroupRepository->findAll()->lists('group_name', 'id')->all();
+
         $venues = array("Select Meeting") + $this->meetingVenueRepository->findAll()->lists('name', 'id')->all();
 
-        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'venues'));
+        return View::make('admin.tournaments.create', compact('sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'venues', 'groups'));
 	}
 
 	/**
@@ -256,6 +266,25 @@ class TournamentsController extends Controller
 
         return View::make('admin.tournaments.show', compact('tournament'));
 	}
+
+    public function downloadEntrants()
+    {
+        $tournament = Request::get('tournament_id');
+
+        $tournament = $this->tournamentRepo->find($tournament)
+            ->load(array('tickets.user.topbettauser'));
+
+        //create csv
+        $filename = '/tmp/tournament_'.$tournament->id.'.csv';
+        $file = fopen($filename, 'w');
+        fputcsv($file, array("id", 'username', 'name', 'email', 'mobile'));
+        foreach ($tournament->tickets as $ticket) {
+            fputcsv($file, array($ticket->user->id, $ticket->user->username, $ticket->user->name, $ticket->user->email, $ticket->user->topbettauser->msisdn));
+        }
+
+        //download
+        return response()->download($filename)->deleteFileAfterSend(true);
+    }
 
 	/**
 	 * Show the form for editing the specified resource.
@@ -331,7 +360,9 @@ class TournamentsController extends Controller
         //get prize formats
         $prizeFormats = $this->prizeFormatRepository->findAll()->lists('name', 'id')->all();
 
-        return View::make('admin.tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups'));
+        $groups = $this->tournamentGroupRepository->findAll()->lists('group_name', 'id')->all();
+
+        return View::make('admin.tournaments.edit', compact('tournament', 'parentTournaments', 'sports', 'buyins', 'tod', 'labels', 'prizeFormats', 'competitions', 'eventGroups', 'groups'));
 	}
 
 	/**
