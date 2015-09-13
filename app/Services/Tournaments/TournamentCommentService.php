@@ -82,7 +82,7 @@ class TournamentCommentService {
 
         $comment =  $this->commentRepository->create(array(
             "tournament_id" => $tournament->id,
-            "user_id" => $user,
+            "user_id" => $user->id,
             "comment" => $comment,
         ));
 

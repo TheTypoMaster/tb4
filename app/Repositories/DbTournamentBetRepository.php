@@ -44,7 +44,16 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->get(array("tbdb_tournament_bet.*"));
     }
 
-    public function getBetsForEventByStatusIn($eventId, $status, $product, $betType = null)
+    public function getBetResourcesForUserInTournamentWhereEventStatusIn($user, $tournament, $eventStatuses)
+    {
+        return $this->getBetBuilder()
+            ->join('tbdb_tournament_ticket', 'tbdb_tournament_ticket.id', '=', 'tb.tournament_ticket_id')
+            ->where('tbdb_tournament_ticket.tournament_id', $tournament)
+            ->whereIn('e.event_status_id', $eventStatuses)
+            ->get(array("tbdb_tournament_bet.*"));
+    }
+
+    public function getBetsForEventByStatusIn($eventId, $status, $betType = null)
     {
         $model = $this->model
             ->join('tbdb_tournament_bet_selection', 'tbdb_tournament_bet_selection.tournament_bet_id', '=', 'tbdb_tournament_bet.id')

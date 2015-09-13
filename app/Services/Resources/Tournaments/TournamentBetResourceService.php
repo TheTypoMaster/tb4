@@ -33,7 +33,7 @@ class TournamentBetResourceService {
 
     public function getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses)
     {
-        $bets = $this->betRepository->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
+        $bets = $this->betRepository->getBetResourcesForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
 
         return new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource');
     }
