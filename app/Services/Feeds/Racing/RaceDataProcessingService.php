@@ -379,7 +379,7 @@ class RaceDataProcessingService {
             if($existingRaceDetails && $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']])
             {
                 // TODO: add notification
-                $this->riskhelper->sendRaceStatus($raceDetails);
+                $this->riskhelper->sendRaceStatus($race);
             }
 
 			// $eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
