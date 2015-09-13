@@ -99,7 +99,7 @@ class RiskManagerAPI
         }
 
         Log::debug('RiskManagerAPI (sendRaceStatus): Response - '.print_r($response,true));
-        if ($response->status == 200) {
+        if ($response->http_status_code == 200) {
             return true;
         } else {
             return false;
