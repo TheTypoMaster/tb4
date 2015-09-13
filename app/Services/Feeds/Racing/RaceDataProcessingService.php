@@ -379,6 +379,7 @@ class RaceDataProcessingService {
             if($existingRaceDetails && $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']])
             {
                 Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
+                $race['status_id'] = $raceDetails['event_status_id'];
                 // TODO: add notification
                 $this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
             }
