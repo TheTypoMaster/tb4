@@ -12,6 +12,7 @@ namespace TopBetta\Services\Tournaments;
 use Carbon\Carbon;
 use TopBetta\Models\TournamentModel;
 use TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface;
+use TopBetta\Services\Resources\Tournaments\TournamentGroupResourceService;
 
 class TournamentGroupService {
 
@@ -19,10 +20,15 @@ class TournamentGroupService {
      * @var TournamentGroupRepositoryInterface
      */
     private $tournamentGroupRepository;
+    /**
+     * @var TournamentGroupResourceService
+     */
+    private $tournamentGroupResourceService;
 
-    public function __construct(TournamentGroupRepositoryInterface $tournamentGroupRepository)
+    public function __construct(TournamentGroupRepositoryInterface $tournamentGroupRepository, TournamentGroupResourceService $tournamentGroupResourceService)
     {
         $this->tournamentGroupRepository = $tournamentGroupRepository;
+        $this->tournamentGroupResourceService = $tournamentGroupResourceService;
     }
 
     /**
@@ -70,9 +76,9 @@ class TournamentGroupService {
         switch($type)
         {
             case 'racing':
-                return $this->tournamentGroupRepository->getVisibleRacingTournamentGroupsWithTournaments($date);
+                return $this->tournamentGroupResourceService->getVisibleRacingTournamentGroupsWithTournaments($date);
             case 'sport':
-                return $this->tournamentGroupRepository->getVisibleSportTournamentGroupsWithTournaments($date);
+                return $this->tournamentGroupResourceService->getVisibleSportTournamentGroupsWithTournaments($date);
         }
 
         throw new \InvalidArgumentException("Type " . $type . " is not available");
