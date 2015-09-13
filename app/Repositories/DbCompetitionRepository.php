@@ -83,7 +83,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
     public function setDisplayFlagForCompetition($competitionId, $displayFlag)
     {
-        $competition = $this->model->find($competitionId);
+        $competition = $this->model->where('external_event_group_id', $competitionId);
 
         $competition->display_flag = $displayFlag;
 
