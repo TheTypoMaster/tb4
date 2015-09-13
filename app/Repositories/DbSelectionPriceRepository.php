@@ -119,4 +119,9 @@ class DbSelectionPriceRepository extends BaseEloquentRepository implements Selec
             ->where('bet_product_id', $product)
             ->first();
     }
+
+    public function getPriceForSelection($selection)
+    {
+        return $this->model->where('selection_id', $selection)->first();
+    }
 }

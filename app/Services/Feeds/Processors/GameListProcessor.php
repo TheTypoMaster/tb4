@@ -86,28 +86,30 @@ class GameListProcessor extends AbstractFeedProcessor {
         }
 
         //process sport
-        if( $sport = array_get($data, 'Sport', null) ) {
-            $sport = $this->processSport($sport);
+        if( ($sportName = array_get($data, 'Sport', null)) && ! ($sport = $this->modelContainer->getSport($sportName))) {
+            $sport = $this->processSport($sportName);
+            $this->modelContainer->addSport($sport, $sportName);
         }
 
         //process region
-        if( $region = array_get($data, 'Region', null) ) {
-            $region = $this->processRegion($region);
+        if( ($regionName = array_get($data, 'Region', null)) && ! ($region = $this->modelContainer->getRegion($regionName)) ) {
+            $region = $this->processRegion($regionName);
+            $this->modelContainer->addRegion($region, $regionName);
         }
 
         //process base competition and competition
         $baseCompetition = null;
         $competition = null;
         if( $baseCompetition = array_get($data, 'CompetitionId', null) ) {
-            $baseCompetition = $this->processBaseCompetition($baseCompetition, array_get($data, 'League', ''), array_get($sport, 'id', null), array_get($region, 'id', null));
-            $competition = $this->processCompetition($data, array_get($baseCompetition, 'id', null), array_get($sport, 'id', null));
+            $baseCompetition = $this->processBaseCompetition($baseCompetition, array_get($data, 'League', ''), $sport, array_get($region, 'id', null));
+            $competition = $this->processCompetition($data, $baseCompetition, $sport);
         }
 
         //process event
         $event = $this->processEvent($externalId, array_get($data, 'EventName', null), array_get($data, 'EventTime'), $competition);
 
         //process teams
-        $this->teamProcessor->setEvent($event);
+        $this->teamProcessor->setModelContainer($this->modelContainer)->setEvent($event);
         $teams = $this->teamProcessor->processArray(array_get($data, 'Teams', array()));
         if( $event ) {
             $this->processEventTeams($event['id'], $teams, array_get($data, 'Teams', array()));
@@ -126,7 +128,7 @@ class GameListProcessor extends AbstractFeedProcessor {
     {
         Log::info($this->logprefix."Processing Region: $region");
 
-        return $this->regionRepository->updateOrCreate(array("name" => $region), "name");
+        return $this->regionRepository->updateOrCreateAndReturnModel(array("name" => $region), "name");
     }
 
     private function processBaseCompetition($baseCompetition, $competitionName, $sport, $region)
@@ -138,7 +140,7 @@ class GameListProcessor extends AbstractFeedProcessor {
 
         //set the sport
         if ( $sport ) {
-            $data['sport_id'] = $sport;
+            $data['sport_id'] = $sport->id;
         }
 
         //set the region
@@ -146,7 +148,15 @@ class GameListProcessor extends AbstractFeedProcessor {
             $data['region_id'] = $region;
         }
 
-        return $this->baseCompetitionRepository->updateOrCreate($data, "external_base_competition_id");
+        if ($baseCompetitionModel = $this->modelContainer->getBaseCompetition($baseCompetition)) {
+            $baseCompetitionModel = $this->baseCompetitionRepository->update($baseCompetitionModel, $data);
+        } else {
+            $baseCompetitionModel = $this->baseCompetitionRepository->updateOrCreate($data, "external_base_competition_id");
+        }
+        $baseCompetitionModel->sport = $sport;
+        $this->modelContainer->addBaseCompetition($baseCompetitionModel, $baseCompetition);
+
+        return $baseCompetitionModel;
     }
 
     private function processCompetition($data, $baseCompetition, $sport)
@@ -159,13 +169,13 @@ class GameListProcessor extends AbstractFeedProcessor {
 
         //set the base competition
         if( $baseCompetition ) {
-            $compData['base_competition_id'] = $baseCompetition;
+            $compData['base_competition_id'] = $baseCompetition->id;
         }
 
         //set the sport
         if( $sport ) {
-            $compData['sport_id'] = $sport;
-            $tournCompData['tournament_sport_id'] = $sport;
+            $compData['sport_id'] = $sport->id;
+            $tournCompData['tournament_sport_id'] = $sport->id;
         }
 
         //create the tournament comp and attach to competition
@@ -186,7 +196,9 @@ class GameListProcessor extends AbstractFeedProcessor {
         //update start and close times
         $currentCloseTime = null;
         $eventDate = array_get($data, 'EventTime', null);
-        if( $competition = $this->competitionRepository->getCompetitionByExternalId($externalEventGroupId) ) {
+
+
+        if( ($competition = $this->modelContainer->getCompetition($externalEventGroupId)) || ($competition = $this->competitionRepository->getCompetitionByExternalId($externalEventGroupId)) ) {
             if ($eventDate && $competition['start_date'] > $eventDate) {
                 $compData['start_date'] = $eventDate;
             }
@@ -195,7 +207,9 @@ class GameListProcessor extends AbstractFeedProcessor {
                 $compData['close_time'] = $eventDate;
             }
             //update competition
-            $this->competitionRepository->updateWithId($competition['id'], $compData);
+            $competition = $this->competitionRepository->update($competition, $compData);
+            $competition->baseCompetition = $baseCompetition;
+            $this->modelContainer->addCompetition($competition, $competition->external_event_group_id);
         } else if ( array_get($data, 'Type', null) == 'update' && ($competition = $this->competitionRepository->findByName($competitionName)) ) {
             if ($eventDate && $competition['start_date'] > $eventDate) {
                 $compData['start_date'] = $eventDate;
@@ -205,13 +219,17 @@ class GameListProcessor extends AbstractFeedProcessor {
                 $compData['close_time'] = $eventDate;
             }
             //update competition
-            $this->competitionRepository->updateWithId($competition['id'], $compData);
+            $competition = $this->competitionRepository->update($competition, $compData);
+            $competition->baseCompetition = $baseCompetition;
+            $this->modelContainer->addCompetition($competition, $competition->external_event_group_id);
         } else {
             $compData['start_date'] = $eventDate;
             $compData['close_time'] = $eventDate;
             $compData['external_event_group_id'] = $externalEventGroupId;
             //create the comp
             $competition = $this->competitionRepository->create($compData);
+            $competition->baseCompetition = $baseCompetition;
+            $this->modelContainer->addCompetition($competition, $competition->external_event_group_id);
         }
 
         //update tournaments
@@ -234,10 +252,16 @@ class GameListProcessor extends AbstractFeedProcessor {
         }
 
         //create the event
-        $event = $this->eventRepository->updateOrCreate($data, "external_event_id");
+        if ($event = $this->modelContainer->getEvent($externalId)) {
+            $event = $this->eventRepository->update($event, $data);
+        } else {
+            $event = $this->eventRepository->updateOrCreate($data, "external_event_id");
+        }
+
+        $this->modelContainer->addEvent($event, $event->external_event_id);
 
         if( array_get($event, 'id', null) && $competition ) {
-            $this->eventRepository->addToCompetition($event['id'], $competition['id']);
+            $this->eventRepository->addModelToCompetition($event, $competition);
         }
 
         return $event;

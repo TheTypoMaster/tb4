@@ -9,7 +9,14 @@
 namespace TopBetta\Services\Feeds\Processors;
 
 
+use TopBetta\Services\Feeds\SportsCollectionContainer;
+
 abstract class AbstractFeedProcessor {
+
+    /**
+     * @var SportsCollectionContainer
+     */
+    protected $modelContainer;
 
     /**
      * processes data
@@ -32,5 +39,23 @@ abstract class AbstractFeedProcessor {
         }
 
         return $objects;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getModelContainer()
+    {
+        return $this->modelContainer;
+    }
+
+    /**
+     * @param mixed $modelContainer
+     * @return $this
+     */
+    public function setModelContainer($modelContainer)
+    {
+        $this->modelContainer = $modelContainer;
+        return $this;
     }
 }
