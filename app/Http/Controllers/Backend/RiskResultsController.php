@@ -54,7 +54,7 @@ class RiskResultsController extends Controller
             $input = Input::json()->all();
         }
 
-        if (!isset($input['race_id']) || !\TopBetta\Models\RaceEvent::find($input['race_id'])) {
+        if (!isset($input['race_id']) || !\TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
         }
 
@@ -115,7 +115,7 @@ class RiskResultsController extends Controller
 
     private static function saveExoticResults($raceResult, $raceId)
     {
-        $event = \TopBetta\Models\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId);
 
         if (!$event) {
             return false;

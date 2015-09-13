@@ -185,13 +185,13 @@ class RaceResult extends Eloquent {
 
     static public function deleteResultsForRaceId($raceId) {
 
-        return \DB::statement('DELETE sr.* FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id INNER JOIN tbdb_event as e on e.id = mk.event_id WHERE e.id = '. $raceId);
+        return \DB::statement('DELETE sr.* FROM tbdb_selection_result as sr INNER JOIN tbdb_selection as s on s.id = selection_id INNER JOIN tbdb_market as mk on mk.id = s.market_id INNER JOIN tbdb_event as e on e.id = mk.event_id WHERE e.external_event_id = '. $raceId);
 
     }
     
     static public function deleteExoticResultsForRaceId($raceId)
     {
-        $event = \TopBetta\Models\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId);
 
         if (!$event) {
             return false;
