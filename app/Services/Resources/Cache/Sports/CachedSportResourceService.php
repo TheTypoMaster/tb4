@@ -24,12 +24,17 @@ class CachedSportResourceService extends CachedResourceService {
      * @var CachedCompetitionResourceService
      */
     private $competitionResourceService;
+    /**
+     * @var CachedBaseCompetitionResourceService
+     */
+    private $baseCompetitionResourceService;
 
-    public function __construct(SportResourceService $resourceService, SportRepository $sportRepository, CachedCompetitionResourceService $competitionResourceService)
+    public function __construct(SportResourceService $resourceService, SportRepository $sportRepository, CachedCompetitionResourceService $competitionResourceService, CachedBaseCompetitionResourceService $baseCompetitionResourceService)
     {
         $this->resourceService = $resourceService;
         $this->sportRepository = $sportRepository;
         $this->competitionResourceService = $competitionResourceService;
+        $this->baseCompetitionResourceService = $baseCompetitionResourceService;
     }
 
     public function getVisibleSportsWithCompetitions($date = null)
@@ -38,36 +43,36 @@ class CachedSportResourceService extends CachedResourceService {
             return $this->resourceService->getVisibleSportsWithCompetitions($date);
         }
 
-        $sports = $this->sportRepository->getVisibleSportsAndBaseCompetitions();
+        $sports = $this->sportRepository->getVisibleSports();
 
         $sports = $this->attachCompetitions($sports);
 
         return $this->filterSports($sports);
     }
 
-    public function getVisibleSports($competition)
+    public function getVisibleSportsWithSelectedCompetition($competition)
     {
-        $sports = $this->sportRepository->getVisibleSportsAndBaseCompetitions();
+        $sports = $this->sportRepository->getVisibleSports();
 
         return $this->filterSports($sports, $competition);
     }
 
-    public function filterSports($sports, $attachedCompetitionId = null)
+    public function getVisibleSports($sportId = null)
     {
+        $sports = $this->sportRepository->getVisibleSports();
 
-        $sports = $sports->map(function ($v) use ($attachedCompetitionId) {
-            $v->setRelation('baseCompetitions', $v->baseCompetitions->filter(function ($q) use ($attachedCompetitionId) {
-                $competitions = !$attachedCompetitionId ? $q->competitions :
-                    $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($q->id, $attachedCompetitionId);
+        return $this->filterSports($sports, $sportId);
+    }
 
-                return (bool) ($competitions->count() && $q->display_flag);
-            }));
+    public function filterSports($sports, $sportId = null)
+    {
+        return $sports->filter(function ($v) use ($sportId) {
+            if ($v->id == $sportId) {
+                return true;
+            }
 
-            return $v;
-        });
-
-        return $sports->filter(function ($v) {
-            return (bool) ($v->baseCompetitions->count() && $v->display_flag);
+            $baseCompetitions = $this->baseCompetitionResourceService->getBaseCompetitionForSport($v->id);
+            return (bool) ($baseCompetitions->count() > 0 && $v->display_flag);
         });
     }
 
