@@ -647,6 +647,7 @@ class RaceDataProcessingService {
 
 				// ignore odds of 0
 				if($runnerOdds == '0'){
+                    $runnerCount++;
 					continue;
 				}
 

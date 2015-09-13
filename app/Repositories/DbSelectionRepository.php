@@ -168,6 +168,15 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return null;
     }
 
+    public function getModelByExternalIds($externalSelectionId, $externalMarketId, $externalEventId)
+    {
+        return $this->model
+            ->where('external_selection_id', $externalSelectionId)
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first();
+    }
+
     public function getByExternalIdsAndName($externalMarketId, $externalEventId, $name)
     {
         $selection = $this->model

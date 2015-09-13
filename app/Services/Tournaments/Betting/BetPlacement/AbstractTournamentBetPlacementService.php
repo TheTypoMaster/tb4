@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Tournaments\Betting\BetPlacement;
 
 
+use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
@@ -45,13 +46,18 @@ abstract class AbstractTournamentBetPlacementService {
     protected $product;
 
     protected $betType;
+    /**
+     * @var BetResultStatusRepositoryInterface
+     */
+    private $betResultStatusRepository;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService)
+    public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService, BetResultStatusRepositoryInterface $betResultStatusRepository)
     {
         $this->betRepository = $betRepository;
         $this->selectionService = new TournamentBetSelectionService(\App::make($this->selectionServiceClass));
         $this->betLimitService = $betLimitService;
         $this->ticketService = $ticketService;
+        $this->betResultStatusRepository = $betResultStatusRepository;
     }
 
     public function placeBet($ticket, $selections, $amount, $betType)
@@ -81,6 +87,7 @@ abstract class AbstractTournamentBetPlacementService {
             "bet_type_id" => $betType->id,
             "bet_amount" => $amount,
             "bet_product_id" => $this->product ? $this->product->id : 0,
+            "bet_result_status_id" => $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
         );
 
         //create bet

@@ -57,4 +57,13 @@ class CompetitorService {
         return $competitor;
 
     }
+
+    public function addCompetitorModelToSelection($selection, $competitor)
+    {
+        if (in_array($selection->id, $competitor->selections->lists('id')->all())) {
+            $competitor->selections()->attach($selection->id);
+        }
+
+        return $competitor;
+    }
 }

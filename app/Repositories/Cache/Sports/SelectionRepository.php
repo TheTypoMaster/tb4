@@ -20,7 +20,7 @@ class SelectionRepository extends CachedResourceRepository {
 
     protected $resourceClass = 'TopBetta\Resources\Sports\SelectionResource';
 
-    protected $relationsToLoad = array('price', 'result');
+    //protected $relationsToLoad = array('price', 'result');
     /**
      * @var
      */
@@ -34,10 +34,29 @@ class SelectionRepository extends CachedResourceRepository {
 
     public function makeCacheResource($model)
     {
-        $resource = $this->createResource($model);
-
-        $this->marketRepository->addSelection($resource);
+//        $resource = $this->createResource($model);
+//
+//        $this->marketRepository->addSelection($resource);
 
         return $model;
+    }
+
+    public function addSelectionToMarket($model, $market, $eventId, $eventStartDate)
+    {
+        $resource = $this->createResource($model);
+
+        if ($this->canStoreSelection($resource)) {
+            $this->marketRepository->addSelectionToMarket($resource, $market, $eventId, $eventStartDate);
+        } else {
+            $this->marketRepository->removeSelectionFromMarket($resource, $market, $eventId, $eventStartDate);
+        }
+
+
+        return $model;
+    }
+
+    public function canStoreSelection($resource)
+    {
+        return $resource->selection_status_id == 1 && $resource->getPrice() > 1;
     }
 }

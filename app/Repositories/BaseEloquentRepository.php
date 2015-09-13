@@ -83,6 +83,14 @@ class BaseEloquentRepository {
         return $model;
     }
 
+    public function update($model, $data)
+    {
+        $model->update($data);
+
+        return $model;
+    }
+
+
     /**
      * Create record and return model
      * @param $data

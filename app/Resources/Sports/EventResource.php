@@ -25,4 +25,9 @@ class EventResource extends AbstractEloquentResource {
     {
         return $this->collection('markets', 'TopBetta\Resources\MarketResource', 'markets');
     }
+
+    public function teams()
+    {
+        return $this->collection('teams', 'TopBetta\Resources\Sports\TeamResource', 'teams');
+    }
 }

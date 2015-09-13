@@ -107,7 +107,8 @@ class GameListProcessor extends AbstractFeedProcessor {
         $event = $this->processEvent($externalId, array_get($data, 'EventName', null), array_get($data, 'EventTime'), $competition);
 
         //process teams
-        $teams = $this->teamProcessor->processArray(array_get($data, 'Teams', array()), $event['id']);
+        $this->teamProcessor->setEvent($event);
+        $teams = $this->teamProcessor->processArray(array_get($data, 'Teams', array()));
         if( $event ) {
             $this->processEventTeams($event['id'], $teams, array_get($data, 'Teams', array()));
         }
