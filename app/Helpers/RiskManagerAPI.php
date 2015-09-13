@@ -2,6 +2,7 @@
 
 use TopBetta\Models\BetResultStatus;
 use Config;
+use Log;
 
 class RiskManagerAPI
 {
@@ -97,6 +98,7 @@ class RiskManagerAPI
             return false;
         }
 
+        Log::debug('RiskManagerAPI (sendRaceStatus): Response - '.print_r($response,true));
         if ($response->status == 200) {
             return true;
         } else {
