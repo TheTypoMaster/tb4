@@ -37,6 +37,10 @@ class LeaderboardResource extends AbstractEloquentResource {
 
     public function qualified()
     {
+        if (isset($this->model->qualified)) {
+            return $this->model->qualified;
+        }
+
         return $this->model->turned_over >= $this->model->balance_to_turnover;
     }
 
@@ -44,6 +48,44 @@ class LeaderboardResource extends AbstractEloquentResource {
     {
         $this->position = $position;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPosition()
+    {
+        if ($this->model->position) {
+            return $this->model->position;
+        }
+
+        return $this->position;
+    }
+
+    /**
+     * Compare currency and qualifed with leaderboard record
+     * @param LeaderboardResource $leaderboardResource
+     * @return int
+     */
+    public function compare(LeaderboardResource $leaderboardResource)
+    {
+        if (!$this->qualified() && !$leaderboardResource->qualified()) {
+            return 0;
+        }
+
+        if ($this->qualified() && !$leaderboardResource->qualified()) {
+            return 1;
+        }
+
+        if (!$this->qualified() && $leaderboardResource->qualified()) {
+            return -1;
+        }
+
+        if ($this->currency == $leaderboardResource->currency) {
+            return 0;
+        }
+
+        return $this->currency > $leaderboardResource->currency ? 1 : -1;
     }
 
     public function toArray()

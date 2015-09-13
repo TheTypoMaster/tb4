@@ -27,13 +27,32 @@ class PaginatedEloquentResourceCollection implements ResourceCollectionInterface
      * @param $collection LengthAwarePaginator
      * @param $class
      */
-    public function __construct($collection, $class)
+    public function __construct($collection = null, $class = null)
     {
-        $this->collection = new EloquentResourceCollection($collection->getCollection(), $class);
-        $this->total = $collection->total();
-        $this->perPage = $collection->perPage();
-        $this->lastPage = $collection->lastPage();
-        $this->currentPage = $collection->currentPage();
+        if ($collection) {
+            $this->collection = new EloquentResourceCollection($collection->getCollection(), $class);
+            $this->total = $collection->total();
+            $this->perPage = $collection->perPage();
+            $this->lastPage = $collection->lastPage();
+            $this->currentPage = $collection->currentPage();
+        }
+    }
+
+    public static function makeFromEloquentResourceCollection($collection, $limit, $offset)
+    {
+        $paginatedCollection = new static;
+
+        if (!$collection->slice($offset * $limit, $limit)) {
+            throw new \InvalidArgumentException("Invalid page");
+        }
+
+        $paginatedCollection->setCollection($collection->slice($offset * $limit, $limit));
+        $paginatedCollection->setCurrentPage($offset)
+            ->setPerPage($limit)
+            ->setTotal($collection->count())
+            ->setLastPage(ceil($collection->count() / $limit));
+
+        return $paginatedCollection;
     }
 
     public function toArray()
@@ -71,5 +90,90 @@ class PaginatedEloquentResourceCollection implements ResourceCollectionInterface
     {
         return $this->collection;
     }
+
+    /**
+     * @param EloquentResourceCollection $collection
+     * @return $this
+     */
+    public function setCollection($collection)
+    {
+        $this->collection = $collection;
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getTotal()
+    {
+        return $this->total;
+    }
+
+    /**
+     * @param int $total
+     * @return $this
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPerPage()
+    {
+        return $this->perPage;
+    }
+
+    /**
+     * @param int $perPage
+     * @return $this
+     */
+    public function setPerPage($perPage)
+    {
+        $this->perPage = $perPage;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLastPage()
+    {
+        return $this->lastPage;
+    }
+
+    /**
+     * @param int $lastPage
+     * @return $this
+     */
+    public function setLastPage($lastPage)
+    {
+        $this->lastPage = $lastPage;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentPage()
+    {
+        return $this->currentPage;
+    }
+
+    /**
+     * @param int $currentPage
+     * @return $this
+     */
+    public function setCurrentPage($currentPage)
+    {
+        $this->currentPage = $currentPage;
+        return $this;
+    }
+
+
 
 }

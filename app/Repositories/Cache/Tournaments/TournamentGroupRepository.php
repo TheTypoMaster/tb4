@@ -18,13 +18,17 @@ class TournamentGroupRepository extends CachedResourceRepository {
 
     const COLLECTION_ALL_TOURNAMENT_GROUPS = 0;
 
-    protected $resourceClass = 'TopBetta\Resources\Sports\SportResource';
+    protected $resourceClass = 'TopBetta\Resources\Tournaments\TournamentGroupResource';
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
     protected $tags = array("tournaments", "tournament_groups");
 
     protected $storeIndividualResource = false;
+
+    protected $collectionKey = array(
+        self::COLLECTION_ALL_TOURNAMENT_GROUPS,
+    );
 
     public function __construct(DbTournamentGroupRepository $repository)
     {
