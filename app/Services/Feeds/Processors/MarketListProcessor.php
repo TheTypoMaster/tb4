@@ -9,6 +9,9 @@
 namespace TopBetta\Services\Feeds\Processors;
 
 use Log;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
+use TopBetta\Repositories\Cache\Sports\MarketRepository;
+use TopBetta\Repositories\Cache\Sports\MarketTypeRepository;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
@@ -28,9 +31,9 @@ class MarketListProcessor extends AbstractFeedProcessor {
      */
     private $marketRepository;
 
-    public function __construct(EventRepositoryInterface $eventRepository,
-                                MarketTypeRepositoryInterface $marketTypeRepository,
-                                MarketRepositoryInterface $marketRepository)
+    public function __construct(EventRepository $eventRepository,
+                                MarketTypeRepository $marketTypeRepository,
+                                MarketRepository $marketRepository)
     {
         $this->marketTypeRepository = $marketTypeRepository;
         $this->eventRepository = $eventRepository;
@@ -53,10 +56,9 @@ class MarketListProcessor extends AbstractFeedProcessor {
             return 0;
         }
 
-
         //process market type
         $marketType = null;
-        if( $marketTypeName = array_get($data, 'BetTypeName', null) ) {
+        if( $marketTypeName = array_get($data, 'MarketTypeName', null) ) {
             $marketType = $this->processMarketType($marketTypeId, $marketTypeName, array_get($data, 'Period', null));
         }
 
@@ -66,13 +68,14 @@ class MarketListProcessor extends AbstractFeedProcessor {
             $market = $this->processMarket($marketType['id'], $event['EventId'], $data);
         }
 
+        if($marketTypeName && $market){
+            Log::debug($this->logprefix."Market/Type - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", MarketTypeName: ".$data['MarketTypeName'].", MarketName: " . $data['MarketName'] . ", MarketStatus ".array_get($data, 'MarketStatus', ''));
+        }
+
         if( $market ) {
             return $market['id'];
         }
 
-        if($marketTypeName && $market){
-            Log::debug($this->logprefix."Market/Type - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", MarketTypeName: ".$data['BetTypeName'].", MarketStatus ".$data['MarketStatus']);
-        }
         return 0;
     }
 
@@ -107,6 +110,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
             "event_id" => $event,
             "period" => array_get($data, 'Period', null),
             "market_status" => array_get($data, 'MarketStatus', ''),
+            "name" => array_get($data, "MarketName"),
         );
 
         $marketData = array_merge($marketData, $this->processExtraMarketData($data));

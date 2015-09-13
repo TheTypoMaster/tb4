@@ -8,6 +8,7 @@
  */
 
 use Eloquent;
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 
 class BetModel extends Eloquent {
 
@@ -49,6 +50,11 @@ class BetModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\BetSourceModel', 'bet_source_id');
     }
 
+    public function product()
+    {
+        return $this->belongsTo('TopBetta\Models\BetProductModel', 'bet_product_id');
+    }
+
     public function result()
     {
         return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'result_transaction_id');
@@ -67,6 +73,16 @@ class BetModel extends Eloquent {
     public function refund()
     {
         return $this->belongsTo('TopBetta\Models\AccountTransactionModel', 'refund_transaction_id');
+    }
+
+    public function event()
+    {
+        return $this->belongsTo('TopBetta\Models\EventModel', 'event_id');
+    }
+
+    public function productProviderMatch()
+    {
+        return $this->belongsTo('TopBetta\Models\ProductProviderMatch', 'bet_product_id', 'tb_product_id');
     }
 
 }

@@ -11,6 +11,7 @@ namespace TopBetta\Services\Events;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 
@@ -62,5 +63,20 @@ class CompetitionService {
             "type_code" => $typeCode,
             "meeting_code" => strtoupper(str_replace(" ", "", $venue->name)) . '-' . $typeCode . '-' . $startDate->toDateString()
         ));
+    }
+
+    public function isAbandoned($competition)
+    {
+        $events = $competition->events()->get()->load('eventstatus');
+
+        $abandonedEvents = $events->filter(function ($v) {
+            return $v->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_ABANDONED;
+        });
+
+        if ($events->count() / 2 < $abandonedEvents->count()) {
+            return true;
+        }
+
+        return false;
     }
 }

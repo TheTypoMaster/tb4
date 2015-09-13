@@ -15,6 +15,7 @@ use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketBuyInHistoryRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
+use TopBetta\Services\Betting\BetLimitService;
 use TopBetta\Services\DashboardNotification\TournamentDashboardNotificationService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 
@@ -53,6 +54,10 @@ class TournamentBuyInService
      * @var TournamentDashboardNotificationService
      */
     private $dashboardNotificationService;
+    /**
+     * @var BetLimitService
+     */
+    private $betLimitService;
 
     public function __construct(TournamentBuyInTypeRepositoryInterface $buyInTypeRepository,
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
@@ -61,7 +66,8 @@ class TournamentBuyInService
                                 TournamentTicketRepositoryInterface $ticketRepository,
                                 DbTournamentLeaderboardRepository $leaderboardRepository,
                                 TournamentLeaderboardService $leaderboardService,
-                                TournamentDashboardNotificationService $dashboardNotificationService)
+                                TournamentDashboardNotificationService $dashboardNotificationService,
+                                BetLimitService $betLimitService)
     {
 
         $this->buyInTypeRepository          = $buyInTypeRepository;
@@ -72,6 +78,7 @@ class TournamentBuyInService
         $this->tournamentTransactionService = $tournamentTransactionService;
         $this->leaderboardService = $leaderboardService;
         $this->dashboardNotificationService = $dashboardNotificationService;
+        $this->betLimitService = $betLimitService;
     }
 
     public function ticketBelongsToUser($ticketId, $userId)
@@ -246,9 +253,13 @@ class TournamentBuyInService
      */
     public function buyin($tournament, $user)
     {
+        //check funds
         if( $tournament->buy_in + $tournament->entry_fee > $user->accountBalance() ) {
             throw new TournamentBuyInException("Insufficient Funds");
         }
+
+        //check daily limit
+        $this->betLimitService->checkUserDailyBetLimit($user, $tournament->buy_in + $tournament->entry_fee);
 
         $transactions = $this->tournamentTransactionService->createTournamentBuyInTransactions($user->id, $tournament->buy_in, $tournament->entry_fee);
 

@@ -36,6 +36,7 @@ return array(
         array("display_name" => "Free Credit Management", "name" => "free-credit-management"),
         array("display_name" => "User Activity", "name" => "user-activity"),
         array("display_name" => "Market Type Details", "name" => "market-type-details"),
+        array("display_name" => "Tournament Groups", "name" => "tournament-groups"),
     ),
 
     //custom permissions. Permissions which do not fit the resource category

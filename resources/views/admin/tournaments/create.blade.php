@@ -109,6 +109,11 @@
                     </div>
 
                     <div class="form-group">
+                        {!! Form::label('tournament_groups', "Tournament Groups") !!} <br/>
+                        {!! Form::select('tournament_groups[]', $groups, null, array('class' => 'form-control group-multiselect', 'multiple' => 'multiple')) !!}
+                    </div>
+
+                    <div class="form-group">
                         {!! Form::label('free_credit_flag', "Free credit prize ") !!}
 
                         <label class="radio-inline">
@@ -485,6 +490,7 @@
             $('.sport-multiselect').multiselect(config);
             $('.event-multiselect').multiselect(config);
             $('.competition-multiselect').multiselect(config);
+            $('.group-multiselect').multiselect(config);
 
             //trigger the change event on load
             var $tournamentSportId = $('#tournament_sport_id');

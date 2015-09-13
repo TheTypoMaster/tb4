@@ -48,10 +48,11 @@ class DbPoliTransactionRepository extends BaseEloquentRepository implements Poli
      * Updates the transaction status and sets any error codes
      * @param $poliTransaction
      * @param $transactionStatus
+     * @param $amount
      * @param int $errorCode
      * @return mixed
      */
-    public function updateStatus($poliTransaction, $transactionStatus, $errorCode = 0){
+    public function updateStatusAndAmount($poliTransaction, $transactionStatus, $amount, $errorCode = 0){
 
         $poliTransaction->status = $transactionStatus;
 

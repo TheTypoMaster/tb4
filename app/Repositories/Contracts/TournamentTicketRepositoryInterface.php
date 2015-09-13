@@ -7,6 +7,8 @@
  */
 namespace TopBetta\Repositories\Contracts;
 
+use TopBetta\Repositories\Carbon;
+
 interface TournamentTicketRepositoryInterface
 {
     /**
@@ -18,4 +20,16 @@ interface TournamentTicketRepositoryInterface
     public function getWithUserAndTournament($ticketId);
 
     public function getTicketByUserAndTournament($userId, $tournamentId);
+
+    public function getRecentAndActiveTicketsForUserWithTournament($user);
+
+    public function nextToJumpTicketsForUser($user, $limit = 10);
+
+    public function getActiveTicketsForUser($user);
+
+    public function getTicketsForUserOnDate($user, \Carbon\Carbon $date);
+
+    public function getAllForUserPaginated($user);
+
+    public function getByResultTransaction($transaction);
 }

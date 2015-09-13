@@ -28,6 +28,16 @@ class SelectionModel extends Eloquent{
         return $this->hasOne('TopBetta\Models\SelectionPricesModel', 'selection_id', 'id');
     }
 
+    public function prices()
+    {
+        return $this->hasMany('TopBetta\Models\SelectionPricesModel', 'selection_id', 'id');
+    }
+
+    public function productPrice($id)
+    {
+        return $this->prices->where('bet_product_id', $id)->first();
+    }
+
     public function result()
     {
         return $this->hasOne('TopBetta\Models\SelectionResultModel', 'selection_id', 'id');
@@ -79,7 +89,7 @@ class SelectionModel extends Eloquent{
 
     public function lastStarts()
     {
-        return $this->belongsTo('TopBetta\Models\LastStartsModel', 'runner_code', 'runner_code');
+        return $this->hasMany('TopBetta\Models\LastStartsModel', 'runner_code', 'runner_code');
     }
 
 } 

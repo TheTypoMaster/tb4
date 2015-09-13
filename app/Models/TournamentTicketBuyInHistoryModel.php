@@ -10,4 +10,9 @@ class TournamentTicketBuyInHistoryModel extends Eloquent {
 	protected $guarded = array();
 
 	public static $rules = array();
+
+    public function ticket()
+    {
+        return $this->belongsTo('TopBetta\Models\TournamentTicketModel', 'tournament_ticket_id');
+    }
 }

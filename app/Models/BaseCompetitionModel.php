@@ -31,4 +31,9 @@ class BaseCompetitionModel extends Eloquent {
     {
         return $this->belongsTo('TopBetta\Models\SportModel');
     }
+
+    public function competitions()
+    {
+        return $this->hasMany('TopBetta\Models\CompetitionModel', 'base_competition_id');
+    }
 }

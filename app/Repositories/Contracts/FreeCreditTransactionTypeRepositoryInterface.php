@@ -28,4 +28,6 @@ interface FreeCreditTransactionTypeRepositoryInterface
     const TRANSACTION_TYPE_FREE_BET_PARTIAL_REFUND = "freebetpartialrefund";
 
     public function getIdByName($name);
+
+    public function getByName($name);
 }

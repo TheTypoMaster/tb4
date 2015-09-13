@@ -2,38 +2,109 @@
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
- * Date: 6/07/2015
- * Time: 10:35 AM
+ * Date: 13/07/2015
+ * Time: 1:27 PM
  */
 
 namespace TopBetta\Services\Racing;
 
-
+use App;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Services\Betting\BetService;
+use TopBetta\Services\Resources\Cache\CachedMeetingResourceService;
+use TopBetta\Services\Resources\Cache\CachedSelectionResourceService;
+use TopBetta\Services\Resources\MeetingResourceService;
+use TopBetta\Services\Resources\RaceResourceService;
+use TopBetta\Services\Resources\SelectionResourceService;
 
-class MeetingService extends RacingResourceService {
-
+class MeetingService {
 
     /**
-     * @var CompetitionRepositoryInterface
+     * @var CachedMeetingResourceService
      */
-    private $competitionRepository;
+    protected $meetingResourceService;
     /**
-     * @var RaceService
+     * @var RaceResourceService
      */
-    private $raceService;
+    private $raceResourceService;
     /**
-     * @var SelectionService
+     * @var SelectionResourceService
      */
-    private $selectionService;
+    private $selectionResourceService;
+    /**
+     * @var RaceResultService
+     */
+    private $resultService;
+    /**
+     * @var BetService
+     */
+    private $betService;
 
-    public function __construct(CompetitionRepositoryInterface $competitionRepository, RaceService $raceService, SelectionService $selectionService)
+    public function __construct(RaceResourceService $raceResourceService,
+                                CachedSelectionResourceService $selectionResourceService,
+                                RaceResultService $resultService,
+                                BetService $betService)
     {
-        $this->competitionRepository = $competitionRepository;
-        $this->raceService = $raceService;
-        $this->selectionService = $selectionService;
+        //set the meeting resource service to use
+        $this->setMeetingResourceService();
+        $this->raceResourceService = $raceResourceService;
+        $this->selectionResourceService = $selectionResourceService;
+        $this->resultService = $resultService;
+        $this->betService = $betService;
+    }
+
+    public function getSmallMeetingsWithRaces($date = null)
+    {
+        $date = $date ? Carbon::createFromFormat('Y-m-d', $date) : Carbon::now();
+
+        return $this->meetingResourceService->getSmallMeetings($date);
+    }
+
+    public function getMeetingWithSelections($id, $raceId = null)
+    {
+        $meeting = $this->meetingResourceService->getMeeting($id, true);
+
+        if( ! $meeting->races->count() ) {
+            return $meeting;
+        }
+
+        $meeting->races->setRelations(
+            'bets',
+            'event_id',
+            $this->betService->getBetsByEventGroupForAuthUser($id)
+        );
+
+        foreach( $meeting->races as $event ) {
+
+            if ( ($raceId && $event->id == $raceId) || ( ! $raceId && $this->raceResourceService->isOpen($event)) ) {
+
+                $event->setSelections($this->selectionResourceService->getSelectionsForRace($event->id));
+
+                return array("data" => $meeting, "selected_race" => $event->id);
+            }
+
+        }
+
+        $meeting->races->first()->setSelections($this->selectionResourceService->getSelectionsForRace($meeting->races->first()->id));
+
+        return array("data" => $meeting, "selected_race" => $meeting->races->first()->id);
+    }
+
+    public function getMeetingsWithSelectionForMeeting($meetingId, $raceId = null)
+    {
+        $selectedMeeting = $this->getMeetingWithSelections($meetingId, $raceId);
+
+        $meetings = $this->getMeetingsForDate($selectedMeeting['data']->getStartDate()->toDateString());
+
+        foreach( $meetings as $meeting ) {
+            if( $meeting->id == $selectedMeeting['data']->id ) {
+                $meeting->setRaces($selectedMeeting['data']->races);
+
+                break;
+            }
+        }
+
+        return array( "data" => $meetings, "selected_race" => $selectedMeeting['selected_race']);
     }
 
     public function getMeetingsForDate($date, $type = null, $withRaces = false, $withRunners = false)
@@ -44,72 +115,42 @@ class MeetingService extends RacingResourceService {
             $date = Carbon::createFromFormat('Y-m-d', $date);
         }
 
-        return $this->competitionRepository->getRacingCompetitionsByDate(
-            $date,
-            $type,
-            $withRaces
-        );
+        $collection = $this->meetingResourceService->getMeetingsForDate($date, $type, $withRaces);
+
+        if( $withRaces ) {
+            foreach($collection as $meeting) {
+
+                $meeting->races->setRelations(
+                    'bets',
+                    'event_id',
+                    $this->betService->getBetsByEventGroupForAuthUser($meeting->id)
+                );
+            }
+        }
+
+        return $collection;
     }
 
     public function getMeeting($id, $withRaces = false)
     {
-        $model = $this->competitionRepository->find($id);
-
-        if( ! $model ) {
-            throw new ModelNotFoundException;
-        }
+        $meeting = $this->meetingResourceService->getMeeting($id, $withRaces);
 
         if( $withRaces ) {
-            $model->load('competitionEvents');
+            $meeting->races->setRelations('bets', 'event_id', $this->betService->getBetsByEventGroupForAuthUser($meeting->id));
         }
-
-        return $model;
-    }
-
-    public function getMeetingWithSelections($id, $raceId = null)
-    {
-        $meeting = $this->getMeeting($id, true);
-
-        foreach( $meeting->competitionEvents as $event ) {
-
-            if ( ($raceId && $event->id == $raceId) || ( ! $raceId && $this->raceService->isOpen($event)) ) {
-                $event->load(array('markets.selections') + array_map(function($q) {
-                        return 'markets.selections.'.$q;
-                    }, $this->selectionService->getDefaultRelations()));
-
-                return $meeting;
-            }
-        }
-
-        $meeting->competionsEvents->first()->load(array('market.selections') + array_map(function($q) {
-                return 'market.selections.'.$q;
-            }, $this->selectionService->getDefaultRelations()));
 
         return $meeting;
+
     }
 
-    public function formatForResponse($meeting)
+    /**
+     * Injects the meeting resource service so we can override in inheritors if neccesary
+     * @return $this
+     */
+    public function setMeetingResourceService()
     {
-        $response = array(
-            "id" => $meeting->id,
-            "name" => $meeting->name,
-            "description" => $meeting->description,
-            "state" => $meeting->state,
-            "track" => $meeting->track,
-            "weather" => $meeting->weather,
-            "type" => $meeting->type_code,
-            "start_date" => $meeting->start_date,
-            "country" => $meeting->coutnry,
-            "grade" => $meeting->meeting_grade,
-            "rail_position" => $meeting->rail_position
-        );
-
-        if( isset($meeting->competitionEvents) ) {
-            $response['races'] = $this->raceService->formatCollectionsForResponse($meeting->competitionEvents);
-        }
-
-        return $response;
+        $this->meetingResourceService = App::make('TopBetta\Services\Resources\Cache\CachedMeetingResourceService');
+        return $this;
     }
-
 
 }

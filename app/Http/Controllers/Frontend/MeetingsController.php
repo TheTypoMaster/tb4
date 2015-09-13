@@ -38,14 +38,21 @@ class MeetingsController extends Controller
     {
         $meetings = $this->meetingService->getMeetingsForDate(
             $request->get('date', null),
-            $request->get('type', null),
-            in_array('races', $request->get('with', array()))
+            $request->get('type', null)
         );
 
-        return $this->response->success(
-            $this->meetingService->formatCollectionsForResponse($meetings)
-        );
+        return $this->response->success($meetings->toArray());
     }
+
+    public function getMeetingsWithRaces(Request $request)
+    {
+        $meetings = $this->meetingService->getSmallMeetingsWithRaces(
+            $request->get('date', null)
+        );
+
+        return $this->response->success(is_array($meetings) ? $meetings : $meetings->toArray());
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -82,7 +89,7 @@ class MeetingsController extends Controller
         }
 
         return $this->response->success(
-            $this->meetingService->formatForResponse($meeting)
+            $meeting->toArray()
         );
     }
 

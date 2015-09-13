@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Feeds;
 
+use TopBetta\Services\Caching\SportsDataCacheManager;
 use TopBetta\Services\Feeds\Processors\GameListProcessor;
 use TopBetta\Services\Feeds\Processors\MarketListProcessor;
 use TopBetta\Services\Feeds\Processors\ResultListProcessor;
@@ -31,16 +32,22 @@ class SportsFeedService {
      * @var ResultListProcessor
      */
     private $resultListProcessor;
+    /**
+     * @var SportsDataCacheManager
+     */
+    private $cacheManager;
 
     public function __construct(GameListProcessor $gameListProcessor,
                                 MarketListProcessor $marketListProcessor,
                                 SelectionListProcessor $selectionListProcessor,
-                                ResultListProcessor $resultListProcessor)
+                                ResultListProcessor $resultListProcessor,
+                                SportsDataCacheManager $cacheManager)
     {
         $this->gameListProcessor = $gameListProcessor;
         $this->marketListProcessor = $marketListProcessor;
         $this->selectionListProcessor = $selectionListProcessor;
         $this->resultListProcessor = $resultListProcessor;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -56,5 +63,7 @@ class SportsFeedService {
         $this->selectionListProcessor->processArray(array_get($data, 'SelectionList', array()));
 
         $this->resultListProcessor->processArray(array_get($data, 'ResultList', array()));
+
+        $this->cacheManager->updateCache();
     }
 }

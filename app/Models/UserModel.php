@@ -38,7 +38,7 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
 
 	public function affiliate()
 	{
-		return $this->belongsTo('TopBetta\Models\AffiliatesModel', 'user_affiliate_id', 'affiliate_id');
+		return $this->belongsTo('TopBetta\Models\AffiliatesModel', 'affiliate_id', 'affiliate_id');
 	}
 
 	public function campaigns()
@@ -51,9 +51,15 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
 		return $this->belongsToMany('TopBetta\Models\PromotionsModel', 'tb_promotios_users', 'user_id', 'promotion_id');
 	}
 
-	public function accountBalance()
+	public function accountBalance($transactionId = null)
 	{
-		return $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id')->sum('amount');
+		$relation = $this->hasMany('TopBetta\Models\AccountTransactionModel', 'recipient_id');
+
+        if ($transactionId) {
+            $relation->where('id', '<=', $transactionId);
+        }
+
+        return $relation->sum('amount');
 	}
 
     public function depositLimit() {
@@ -141,6 +147,17 @@ class UserModel extends SentryUserModel implements AuthenticatableContract, CanR
     public function ewayTokens()
     {
         return $this->hasMany('TopBetta\Models\PaymentEwayTokens', 'user_id');
+    }
+
+    /**
+     * Override Sentry Validation
+     */
+    public function validate()
+    {}
+
+    public function products()
+    {
+        return $this->belongsToMany('TopBetta\Models\BetProductModel', 'tb_user_products', 'user_id', 'bet_product_id');
     }
 
 
