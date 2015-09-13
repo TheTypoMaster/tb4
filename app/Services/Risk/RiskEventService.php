@@ -33,7 +33,7 @@ class RiskEventService {
     {
         $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 1);
 
-        $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->id, 1);
+        $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->external_event_id, 1);
 
         //reload the competition to save the changes
         $event->load('competition');
@@ -45,7 +45,7 @@ class RiskEventService {
     {
         $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 0);
 
-        $competitionId = $event->competition->first()->id;
+        $competitionId = $event->competition->first()->external_event_id;
         if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
             $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
         }
