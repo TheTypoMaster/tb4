@@ -43,10 +43,15 @@ class SportsFeedService {
                                 ResultListProcessor $resultListProcessor,
                                 SportsDataCacheManager $cacheManager)
     {
+        $container = new SportsCollectionContainer;
         $this->gameListProcessor = $gameListProcessor;
+        $this->gameListProcessor->setModelContainer($container);
         $this->marketListProcessor = $marketListProcessor;
+        $this->marketListProcessor->setModelContainer($container);
         $this->selectionListProcessor = $selectionListProcessor;
+        $this->selectionListProcessor->setModelContainer($container);
         $this->resultListProcessor = $resultListProcessor;
+        $this->resultListProcessor->setModelContainer($container);
         $this->cacheManager = $cacheManager;
     }
 
@@ -57,6 +62,8 @@ class SportsFeedService {
     public function processSportsFeed($data)
     {
         $this->gameListProcessor->processArray(array_get($data, 'GameList', array()));
+
+        file_put_contents('/tmp/game-queries.log', print_r(\DB::getQueryLog(), true));
 
         $this->marketListProcessor->processArray(array_get($data, 'MarketList', array()));
 
