@@ -23,7 +23,7 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
     {
         // $event = $this->model->findOrFail($eventId);
 
-        $event = $this->model->where('external_event_id', $eventId);
+        $event = $this->model->where('external_event_id', $eventId)->first();
 
         if(!$event) Throw new ModelNotFoundException;
 
