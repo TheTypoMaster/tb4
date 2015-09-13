@@ -62,6 +62,15 @@ class DbResultPricesRepository extends BaseEloquentRepository implements ResultP
             ->get();
     }
 
+    public function getPricesByProductEventAndBetType($product, $event, $betType)
+    {
+        return $this->model
+            ->where('product_id', $product)
+            ->where('bet_type_id', $betType)
+            ->where('event_id', $event)
+            ->get();
+    }
+
     public function getResultsForEvent($event)
     {
         return $this->model

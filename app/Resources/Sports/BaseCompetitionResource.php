@@ -20,6 +20,7 @@ class BaseCompetitionResource extends IconResource {
         "name" => "name",
         "icon" =>  "icon",
         "display_flag" => "display_flag",
+        "sport_id" => "sport_id",
     );
 
     public function competitions()
