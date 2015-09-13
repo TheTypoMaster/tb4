@@ -72,7 +72,7 @@ class RiskRaceStatusController extends Controller
     public function updateRaceStatus($status, $raceId)
     {
         $eventStatus = \TopBetta\Models\RaceEventStatus::where('keyword', $status)->value('id');
-        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId);
+        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
         if ($eventStatus && $event) {
 
             $this->raceRepository->updateWithId($raceId, array("event_status_id" => $eventStatus));
