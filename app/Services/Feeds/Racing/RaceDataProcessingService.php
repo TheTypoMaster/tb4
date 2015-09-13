@@ -378,6 +378,7 @@ class RaceDataProcessingService {
             // push race status update to risk manager only if the race already exists and the status changes
             if($existingRaceDetails && $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']])
             {
+                Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
                 // TODO: add notification
                 $this->riskhelper->sendRaceStatus($race);
             }
