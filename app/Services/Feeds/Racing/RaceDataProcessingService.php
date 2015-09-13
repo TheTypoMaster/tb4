@@ -380,7 +380,7 @@ class RaceDataProcessingService {
             {
                 Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
                 // TODO: add notification
-                $this->riskhelper->sendRaceStatus($race);
+                $this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
             }
 
 			// $eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
