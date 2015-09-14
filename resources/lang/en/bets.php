@@ -35,7 +35,7 @@ email: help@topbetta.com",
     'odds_changed' => "Odds for a selection have changed",
 
 
-    "exceed_bet_limit_exposure" => "Sorry, the bet you’ve tried to place exceeds our limit for this event, try again at a lower stake or contact 1300 886 503."
+    "exceed_bet_limit_exposure" => "Sorry, the bet you’ve tried to place exceeds our limit for this event, try again at a lower stake or contact 1300 886 503.",
 
     "bet_limit_updated" => "Bet limit has been updated",
 
