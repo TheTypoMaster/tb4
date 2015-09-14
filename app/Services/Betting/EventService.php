@@ -104,12 +104,14 @@ class EventService {
 
     public function checkAndSetPaidStatus($event)
     {
+        $betsPaid = false;
         if ( ! $this->betRepository->getBetsForEventByStatus($event->id, BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->count() &&
             ! $this->tournamentBetRepository->getBetsForEventByStatus($event->id, BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->count()
         ) {
             $this->setEventPaid($event);
+            $betsPaid = true;
         }
 
-        return $this;
+        return $betsPaid;
     }
 }

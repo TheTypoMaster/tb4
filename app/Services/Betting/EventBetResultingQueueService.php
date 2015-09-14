@@ -118,7 +118,7 @@ class EventBetResultingQueueService {
             }
         }
 
-        $this->eventService->checkAndSetPaidStatus($event);
+        $eventPaid = $this->eventService->checkAndSetPaidStatus($event);
 
         $tournaments = $this->tournamentRepository->getFinishedUnresultedTournaments();
 
@@ -130,17 +130,21 @@ class EventBetResultingQueueService {
             }
         }
 
-        // push result status update to Risk
-        $riskPayload = array('MeetingId' => str_replace('_'.$event->number, '', $event->external_event_id),
-            'RaceNo' => $event->number,
-            'status_id' => 4);
+        // Push paid status to RISK if all bets have been paid out
+        if ($eventPaid){
+            // push result status update to Risk
+            $riskPayload = array('MeetingId' => str_replace('_'.$event->number, '', $event->external_event_id),
+                'RaceNo' => $event->number,
+                'status_id' => 4);
 
-        try{
-            \Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk', $riskPayload);
-            $this->riskapi->sendRaceStatus(array('RaceStatusUpdate' => $riskPayload));
-        }catch (\Exception $e ){
-            \Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
+            try{
+                \Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk', $riskPayload);
+                $this->riskapi->sendRaceStatus(array('RaceStatusUpdate' => $riskPayload));
+            }catch (\Exception $e ){
+                \Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
+            }
         }
+
 
         return $job->delete();
     }
