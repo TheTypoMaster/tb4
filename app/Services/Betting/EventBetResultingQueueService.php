@@ -101,6 +101,7 @@ class EventBetResultingQueueService {
         $product = $this->betProductRepository->find($productId);
 
         \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
+        \Log::info("EVENT MODEL " . print_r($event,true));
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
