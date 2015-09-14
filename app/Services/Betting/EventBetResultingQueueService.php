@@ -97,7 +97,7 @@ class EventBetResultingQueueService {
         }
 
 
-        $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType.competition');
+        $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType', 'competition');
         $product = $this->betProductRepository->find($productId);
 
         \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
