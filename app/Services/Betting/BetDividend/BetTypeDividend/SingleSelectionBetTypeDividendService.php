@@ -20,7 +20,14 @@ class SingleSelectionBetTypeDividendService extends AbstractBetTypeDividendServi
     public function getResultedDividendForBet($bet)
     {
         if( $bet->selection->first()->result ) {
-            if( $this->selectionService->isSelectionSports($bet->selection->first()->id) || $bet->product->is_fixed_odds ) {
+
+            if ($this->selectionService->isSelectionSports($bet->selection->first()->id)) {
+                //hack for tournament fixed odds stored differently
+                $odds = $bet->betselection->first()->fixed_odds ? : $bet->fixed_odds;
+                return $odds;
+            }
+
+            if( $bet->product->is_fixed_odds ) {
                 return $this->calculateFixedOddsDividend($bet);
             }
 

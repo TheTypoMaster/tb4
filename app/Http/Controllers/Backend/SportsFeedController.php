@@ -31,6 +31,7 @@ class SportsFeedController extends Controller {
 
     public function store()
     {
+        die('x');
         $data = Input::json()->all();
 
         //log the payload

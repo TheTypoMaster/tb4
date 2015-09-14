@@ -155,7 +155,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
 		$this->app->bind(
 			'TopBetta\Repositories\Contracts\TournamentRepositoryInterface',
-			'TopBetta\Repositories\DbTournamentRepository'
+			'TopBetta\Repositories\Cache\Tournaments\TournamentRepository'
 		);
 		$this->app->bind(
 			'TopBetta\Repositories\Contracts\LastStartRepositoryInterface',
@@ -199,11 +199,11 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentRepositoryInterface',
-            'TopBetta\Repositories\DbTournamentRepository'
+            'TopBetta\Repositories\Cache\Tournaments\TournamentRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface',
-            'TopBetta\Repositories\DbTournamentTicketRepository'
+            'TopBetta\Repositories\Cache\Tournaments\TournamentTicketRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\BetTypeRepositoryInterface',
@@ -287,7 +287,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface',
-            'TopBetta\Repositories\DbTournamentGroupRepository'
+            'TopBetta\Repositories\Cache\Tournaments\TournamentGroupRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface',

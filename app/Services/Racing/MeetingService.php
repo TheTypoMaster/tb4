@@ -65,7 +65,7 @@ class MeetingService {
         $meeting = $this->meetingResourceService->getMeeting($id, true);
 
         if( ! $meeting->races->count() ) {
-            return $meeting;
+            return array("data" => $meeting, "selected_race" => 0);
         }
 
         $meeting->races->setRelations(

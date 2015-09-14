@@ -13,6 +13,8 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class LeaderboardResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\TournamentLeaderboardModel';
+
     protected $attributes = array(
         "id" => "id",
         "userId" => "user_id",

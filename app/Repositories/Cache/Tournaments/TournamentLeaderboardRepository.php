@@ -96,14 +96,15 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
             $leaderboard = new EloquentResourceCollection(new Collection(), $this->resourceClass);
         }
 
-        if($leaderboardRecord = $leaderboard->get($key)) {
-            $leaderboard->forget($key);
-        }
-
         $leaderboard = $this->insertLeaderboardRecord($resource, $leaderboard);
 
         $this->put($key, $leaderboard->toArray(), $this->getCollectionCacheKey(self::COLLECTION_TOURNAMENT_LEADERBOARD, $resource));
 
+    }
+
+    protected function getPosition($previousRecord, $record, $totalPosition = 1)
+    {
+        return $previousRecord ? $previousRecord->compare($record) == 0 ? $previousRecord->getPosition() : $previousRecord->getPosition() + $totalPosition : 1;
     }
 
     /**
@@ -114,31 +115,64 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
      */
     protected function insertLeaderboardRecord($record, $leaderboard)
     {
-        if (!$record->qualified()) {
-            $leaderboard->push($record);
-            return $leaderboard;
-        }
-
         $newLeaderboard = new EloquentResourceCollection(new Collection(), $this->resourceClass);
 
-        $position = 0;
-        $positionSum = 0;
-        foreach ($leaderboard as $leaderboardRecord) {
-            if ($record->compare($leaderboardRecord) == 0) {
-                $position = $leaderboardRecord->getPosition();
-            } else if ($leaderboard->compare($leaderboardRecord) > 0) {
-                $record->setPosition($position ? : $leaderboardRecord->getPosition());
-                $newLeaderboard->push($record);
-                $positionSum = 1;
-            }
+        $previousRecord = null;
+        $inserted = false;
+        $totalPosition = 1;
+        foreach ($leaderboard as $key=>$leaderboardRecord) {
 
-            if ($leaderboardRecord->qualified()) {
-                $leaderboardRecord->setPosition($leaderboardRecord->getPosition() + $positionSum);
+            if ($leaderboardRecord->id != $record->id) {
+                if ($record->compare($leaderboardRecord) > 0 && !$inserted) {
+                    $record->setPosition($this->getPosition($previousRecord, $record, $totalPosition));
+                    $newLeaderboard->push($record);
+
+                    if ($previousRecord && $previousRecord->compare($record) == 0) {
+                        $totalPosition++;
+                    } else {
+                        $totalPosition = 1;
+                    }
+
+                    $previousRecord = $record;
+                    $inserted = true;
+                }
+
+                if ($leaderboardRecord->qualified()) {
+                    $leaderboardRecord->setPosition($this->getPosition($previousRecord, $record, $totalPosition));
+                }
+
+                $newLeaderboard->push($leaderboardRecord);
+
+                if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
+                    $totalPosition++;
+                } else {
+                    $totalPosition = 1;
+                }
+
+                $previousRecord = $leaderboardRecord;
             }
-            $newLeaderboard->push($leaderboardRecord);
+        }
+
+        if (!$record->qualified()) {
+            $newLeaderboard->push($record);
         }
 
         return $newLeaderboard;
+    }
+
+    public function removeRecord($record, $leaderboard)
+    {
+        $recordKey = null;
+        foreach ($leaderboard as $key=>$leaderboardRecord) {
+            if ($leaderboardRecord->id == $record->id) {
+                $recordKey = $key;
+                break;
+            }
+        }
+
+        $leaderboard->forget($recordKey);
+
+        return $leaderboard;
     }
 
     public function getCollectionCacheTime($collectionKey, $model)
@@ -159,5 +193,10 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         }
 
         throw new \InvalidArgumentException("Invalid collection key " . $collectionKey);
+    }
+
+    protected function createCollectionFromArray($array, $resource = null)
+    {
+        return EloquentResourceCollection::createFromArray($array, $resource ? : $this->resourceClass);
     }
 }

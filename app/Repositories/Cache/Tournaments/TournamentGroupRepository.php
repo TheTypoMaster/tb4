@@ -10,9 +10,12 @@ namespace TopBetta\Repositories\Cache\Tournaments;
 
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface;
 use TopBetta\Repositories\DbTournamentGroupRepository;
+use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\Tournaments\TournamentResource;
 
 class TournamentGroupRepository extends CachedResourceRepository implements TournamentGroupRepositoryInterface {
 
@@ -27,6 +30,8 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
     protected $tags = array("tournaments", "tournament_groups");
 
     protected $storeIndividualResource = false;
+
+    protected $cacheForever = true;
 
     protected $collectionKey = array(
         self::COLLECTION_ALL_TOURNAMENT_GROUPS,
@@ -83,21 +88,27 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
         $this->repository->addTournamentToGroups($tournament, $groups);
 
         if ($tournament->start_date >= Carbon::now()) {
-            $existingGroups = $this->getTournamentGroups();
-
-            foreach ($tournament->groups as $group) {
-                $existingGroup = $existingGroups->get($group->id);
-
-                if (!$existingGroup) {
-                    $existingGroup = $this->createResource($group);
-                    $existingGroups->put($group->id, $existingGroup);
-                }
-
-                $existingGroup->tournaments->put($tournament->id, $tournament);
-            }
-
-            \Cache::tags($this->tags)->forever($this->cachePrefix . 'all', $existingGroups);
+            $this->updateTournamentResource(new TournamentResource($tournament));
         }
+    }
+
+    public function updateTournamentResource($tournament)
+    {
+        $existingGroups = $this->getTournamentGroups();
+
+        foreach ($tournament->getModel()->groups as $group) {
+            $existingGroup = $existingGroups->get($group->id);
+
+            if (!$existingGroup) {
+                $existingGroup = $this->createResource($group);
+                $existingGroup->setRelation('tournaments', new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Tournaments\TournamentResource'));
+                $existingGroups->put($group->id, $existingGroup);
+            }
+            $existingGroup->setRelation('tournaments', $existingGroup->tournaments->keyBy('id'));
+            $existingGroup->tournaments->put($tournament->id, $tournament);
+        }
+
+        $this->put($this->cachePrefix . 'all', $existingGroups->toArray(), null);
     }
 
     public function removeTournamentFromGroups($tournament)
@@ -108,11 +119,14 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
             $existingGroup = $existingGroups->get($group->id);
 
             if ($existingGroup) {
-                $existingGroup->tournaments->forget($tournament->id);
+                $existingGroup->setRelation(
+                    'tournaments',
+                    $existingGroup->tournaments->keyBy('id')->forget($tournament->id)
+                );
             }
         }
 
-        \Cache::tags($this->tags)->forever($this->cachePrefix . 'all', $existingGroups);
+        $this->put($this->cachePrefix . 'all', $existingGroups->toArray(), null);
     }
 
 

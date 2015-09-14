@@ -61,7 +61,7 @@ abstract class CachedResourceRepository {
             return $this->createCollectionFromArray($collection, $resource);
         }
 
-        return $collection;
+        return new EloquentResourceCollection(new Collection(), $this->resourceClass);
     }
 
     public function put($key, $model, $time)
