@@ -81,6 +81,7 @@ class RiskManagerAPI
 
     public function sendRaceStatus($raceData)
     {
+        Log::debug('RiskManagerAPI (sendRaceStatus): Race Status Payload', $raceData);
         // we only want to send to risk manager for production
         if (app()->environment() != Config::get('riskmanager.productionHost')) {
             return false;
