@@ -91,4 +91,11 @@ class DbTournamentGroupRepository extends BaseEloquentRepository implements Tour
     {
         return $this->model->where('group_name', 'LIKE', "%$term%")->paginate();
     }
+
+    public function addTournamentToGroups($tournament, $groups)
+    {
+        $tournament->groups()->sync($groups);
+
+        return $tournament;
+    }
 }

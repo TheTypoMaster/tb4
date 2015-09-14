@@ -13,10 +13,12 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
+use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\PaginatedEloquentResourceCollection;
 
-class TournamentLeaderboardRepository extends CachedResourceRepository {
+class TournamentLeaderboardRepository extends CachedResourceRepository implements TournamentLeaderboardRepositoryInterface
+{
 
     const CACHE_KEY_PREFIX = 'tournament_leaderboard_';
 
@@ -34,12 +36,12 @@ class TournamentLeaderboardRepository extends CachedResourceRepository {
         self::COLLECTION_TOURNAMENT_LEADERBOARD
     );
 
-    public function __construct(TournamentLeaderboardRepositoryInterface $repository)
+    public function __construct(DbTournamentLeaderboardRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    public function getTournamentLeaderboarPaginated($tournament, $limit)
+    public function getTournamentLeaderboardPaginated($tournament, $limit = 50)
     {
         $leaderboard = $this->getCollection($this->cachePrefix . $tournament);
 
@@ -48,7 +50,43 @@ class TournamentLeaderboardRepository extends CachedResourceRepository {
         return PaginatedEloquentResourceCollection::makeFromEloquentResourceCollection($leaderboard, $limit, $page);
     }
 
-    public function addToCollection($resource, $collectionKey)
+    public function getTournamentLeaderboard($tournamentID, $limit = 50, $qualified = false)
+    {
+        return $this->repository->getTournamentLeaderboard($tournamentID, $limit, $qualified);
+    }
+
+    public function getTournamentLeaderboardCollection($tournamentID, $limit = 50, $qualified = false)
+    {
+        return $this->repository->getTournamentLeaderboardCollection($tournamentID, $limit, $qualified);
+    }
+
+    public function getAllLeaderboardRecordsForTournament($tournament)
+    {
+        return $this->repository->getAllLeaderboardRecordsForTournament($tournament);
+    }
+
+    public function getLeaderboardRecordForUserInTournament($userId, $tournamentId)
+    {
+        return $this->repository->getLeaderboardRecordForUserInTournament($userId, $tournamentId);
+    }
+
+    public function updateLeaderboardRecordForUserInTournament($userId, $tournamentId, $turnover, $currency)
+    {
+        return $this->repository->updateLeaderboardRecordForUserInTournament($userId, $tournamentId, $turnover, $currency);
+    }
+
+    public function getLeaderBoardPositionForUser($userId, $tournamentId, $qualified = true)
+    {
+        return $this->repository->getLeaderBoardPositionForUser($userId, $tournamentId, $qualified);
+    }
+
+    public function getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified = true)
+    {
+        return $this->repository->getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified);
+    }
+
+
+    public function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
         $key = $this->getCollectionCacheKey($collectionKey, $resource);
 

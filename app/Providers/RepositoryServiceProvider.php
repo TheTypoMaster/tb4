@@ -291,7 +291,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface',
-            'TopBetta\Repositories\DbTournamentLeaderboardRepository'
+            'TopBetta\Repositories\Cache\Tournaments\TournamentLeaderboardRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentCommentRepositoryInterface',

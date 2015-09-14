@@ -434,7 +434,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $tournament->groups()->sync($groups);
+            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);

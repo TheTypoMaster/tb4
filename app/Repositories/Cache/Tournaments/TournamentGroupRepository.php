@@ -9,10 +9,12 @@
 namespace TopBetta\Repositories\Cache\Tournaments;
 
 
+use Carbon\Carbon;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
+use TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface;
 use TopBetta\Repositories\DbTournamentGroupRepository;
 
-class TournamentGroupRepository extends CachedResourceRepository {
+class TournamentGroupRepository extends CachedResourceRepository implements TournamentGroupRepositoryInterface {
 
     const CACHE_KEY_PREFIX = 'tournament_groups_';
 
@@ -35,6 +37,38 @@ class TournamentGroupRepository extends CachedResourceRepository {
         $this->repository = $repository;
     }
 
+    public function getVisibleSportTournamentGroupsWithTournaments(Carbon $date = null)
+    {
+        return $this->getTournamentGroups()->filter(function ($v) {
+            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
+                return $q->type == 'sport';
+            }));
+
+            return $v->tournaments->count() > 0;
+        });
+    }
+
+    public function getVisibleRacingTournamentGroupsWithTournaments(Carbon $date = null)
+    {
+        return $this->getTournamentGroups()->filter(function ($v) {
+            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
+                return $q->type == 'racing';
+            }));
+
+            return $v->tournaments->count() > 0;
+        });
+    }
+
+    public function getByName($name)
+    {
+        return $this->repository->getByName($name);
+    }
+
+    public function search($term)
+    {
+        return $this->repository->search($term);
+    }
+
     public function getTournamentGroups()
     {
         return $this->getCollection($this->cachePrefix . 'all');
@@ -42,14 +76,45 @@ class TournamentGroupRepository extends CachedResourceRepository {
 
     public function addTournamentToGroups($tournament, $groups)
     {
+        if ($tournament->groups->count()) {
+            $this->removeTournamentFromGroups($tournament);
+        }
+
         $this->repository->addTournamentToGroups($tournament, $groups);
 
+        if ($tournament->start_date >= Carbon::now()) {
+            $existingGroups = $this->getTournamentGroups();
+
+            foreach ($tournament->groups as $group) {
+                $existingGroup = $existingGroups->get($group->id);
+
+                if (!$existingGroup) {
+                    $existingGroup = $this->createResource($group);
+                    $existingGroups->put($group->id, $existingGroup);
+                }
+
+                $existingGroup->tournaments->put($tournament->id, $tournament);
+            }
+
+            \Cache::tags($this->tags)->forever($this->cachePrefix . 'all', $existingGroups);
+        }
+    }
+
+    public function removeTournamentFromGroups($tournament)
+    {
         $existingGroups = $this->getTournamentGroups();
 
         foreach ($tournament->groups as $group) {
+            $existingGroup = $existingGroups->get($group->id);
 
+            if ($existingGroup) {
+                $existingGroup->tournaments->forget($tournament->id);
+            }
         }
+
+        \Cache::tags($this->tags)->forever($this->cachePrefix . 'all', $existingGroups);
     }
+
 
     protected function getCollectionCacheKey($keyTemplate, $model)
     {

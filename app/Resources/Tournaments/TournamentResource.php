@@ -40,6 +40,7 @@ class TournamentResource extends AbstractEloquentResource {
         'topup_end'             => 'topup_end',
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
+        'type'                  => 'type'
     );
 
     protected $types = array(
@@ -114,6 +115,12 @@ class TournamentResource extends AbstractEloquentResource {
         $this->results = $results;
     }
 
+    public function intialize()
+    {
+        parent::initialize();
+
+        $this->setType($this->model->eventGroup->sport_id > '3' ? 'sport' : 'racing');
+    }
 
     public function toArray()
     {
