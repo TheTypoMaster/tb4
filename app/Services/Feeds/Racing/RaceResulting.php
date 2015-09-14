@@ -26,6 +26,8 @@ use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Services\Racing\RaceResultService;
 
+use TopBetta\Helpers\RiskManagerAPI;
+
 class RaceResulting {
 
     protected $events;
@@ -59,6 +61,8 @@ class RaceResulting {
      */
     private $resultService;
 
+    private $riskhelper;
+
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
                                 SelectionResultRepositoryInterface $results,
@@ -69,7 +73,8 @@ class RaceResulting {
                                 RaceRepository $raceRepository,
                                 RaceResultService $resultService,
                                 BetTypeMapper $betTypeMapper,
-                                ResultPricesRepositoryInterface $resultPricesRepository){
+                                ResultPricesRepositoryInterface $resultPricesRepository,
+                                RiskManagerAPI $riskhelper){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -82,6 +87,7 @@ class RaceResulting {
         $this->resultService = $resultService;
         $this->resultPricesRepository = $resultPricesRepository;
         $this->betTypeMapper = $betTypeMapper;
+        $this->riskhelper = $riskhelper;
     }
 
     public function deleteWrongResults($results, $eventModel, $product)
@@ -211,6 +217,24 @@ class RaceResulting {
                     $this->resultPricesRepository->create($price);
                 }
 
+                $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
+                                            'external_selection_id' => $selectionModel->external_selection_id,
+                                            'number' => $selectionModel->number,
+                                            'position' => $placeNo,
+                                            'product_name' => $productUsed->name,
+                                            'bet_type_name' => $betTypeModel->name,
+                                            'dividend' => $payout / 100);
+
+                // push result update to Risk...
+                Log::debug($this->logprefix. 'Pushing W/P results details to Risk', $riskResultsPayload);
+                // TODO: add notification
+                try{
+                    $this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
+                }catch (Exception $e){
+                    Log::error($this->logprefix. 'Pushing W/P results details to Risk Failed'. print_r($e->getMessage(), true));
+                }
+
+
                 Log::debug($log_msg_prefix . " Result Saved {$raceResultSave['id']} - BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
 
             // Exotic results are stored with the event record
@@ -233,6 +257,22 @@ class RaceResulting {
                     'dividend' => $payout/100,
                     'result_string' => str_replace('-', '/', $selection),
                 ));
+
+                $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
+                                            'external_selection_id' => $selectionModel->external_selection_id,
+                                            'product_name' => $productUsed->name,
+                                            'bet_type_name' => $betTypeModel->name,
+                                            'dividend' => $payout / 100,
+                                            'result_string' => str_replace('-', '/', $selection));
+
+                // push result update to Risk...
+                Log::debug($this->logprefix. 'Pushing Exotic results details to Risk', $riskResultsPayload);
+                // TODO: add notification
+                try{
+                    $this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
+                }catch (Exception $e){
+                    Log::error($this->logprefix. 'Pushing Exotic results details to Risk Failed'. print_r($e->getMessage(), true));
+                }
             }
 
 

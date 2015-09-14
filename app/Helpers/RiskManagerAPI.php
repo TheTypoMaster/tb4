@@ -114,6 +114,24 @@ class RiskManagerAPI
             return false;
         }
 
+        // send bet to risk manager
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
+            Config::get('riskmanager.RISK_RACE_DATA_URI'),
+            'POST',
+            json_encode($resultsData));
+
+        $response = json_decode($responseJSON);
+
+        if (!$response) {
+            return false;
+        }
+
+        Log::debug('RiskManagerAPI (sendResultData): Response - '.print_r($response,true));
+        if ($response->http_status_code == 200) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
