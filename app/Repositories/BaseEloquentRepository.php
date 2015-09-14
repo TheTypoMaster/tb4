@@ -92,7 +92,8 @@ class BaseEloquentRepository {
      */
     public function updateWithExternalIdAndReturnModel($id, $data, $key = 'id')
     {
-        $model = $this->model->where($key, $id);
+        $model = $this->model->where($key, $id)->first();
+
         $this->update($model, $data);
 
         return $model;
