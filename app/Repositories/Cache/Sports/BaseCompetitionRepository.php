@@ -16,6 +16,8 @@ class BaseCompetitionRepository extends CachedResourceRepository {
 
     const CACHE_KEY_PREFIX = 'base_competitions_';
 
+    const COLLECTION_BASE_COMPETITIONS_SPORT = 0;
+
     protected $resourceClass = 'TopBetta\Resources\Sports\BaseCompetitionResource';
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
@@ -23,6 +25,10 @@ class BaseCompetitionRepository extends CachedResourceRepository {
     protected $cacheForever = true;
 
     protected $tags = array("sports", "baseCompetitions");
+
+    protected $collectionKeys = array(
+        self::COLLECTION_BASE_COMPETITIONS_SPORT,
+    );
 
     /**
      * @var SportRepository
@@ -35,14 +41,25 @@ class BaseCompetitionRepository extends CachedResourceRepository {
         $this->sportRepository = $sportRepository;
     }
 
-    public function makeCacheResource($model)
+    public function getBaseCompetition($id)
     {
-        parent::makeCacheResource($model);
-
-        $resource = $this->createResource($model);
-
-        $this->sportRepository->addBaseCompetition($resource);
-
-        return $model;
+        return $this->get($this->cachePrefix . $id);
     }
+
+    public function getBaseCompetitionsBySport($sport)
+    {
+        return $this->getCollection($this->cachePrefix . 'sport_' . $sport);
+    }
+
+    public function getCollectionCacheKey($key, $model)
+    {
+        switch ($key) {
+            case self::COLLECTION_BASE_COMPETITIONS_SPORT:
+                return $this->cachePrefix . 'sport_' . $model->sport_id;
+        }
+
+        throw new \InvalidArgumentException("Invalid key " . $key);
+    }
+
+
 }

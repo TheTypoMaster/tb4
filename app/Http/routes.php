@@ -330,6 +330,8 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('/racing/fast-bet', 'Frontend\FrontRacesController@fastBetEvents');
 
     // --- SPORTS ROUTES ---
+    Route::get('visible-sports', 'Frontend\SportsController@getVisibleSports');
+    Route::get('sport/competitions', 'Frontend\CompetitionsController@getCompetitionsForSport');
     Route::get('combined/sports/competitions', 'Frontend\SportsController@getVisibleSportsWithCompetitions');
     Route::get('combined/sports/competition/events', 'Frontend\SportsController@getVisibleSportsWithSelectedCompetition');
     Route::get('combined/events/markets/selections', 'Frontend\EventsController@getEventsForCompetition');

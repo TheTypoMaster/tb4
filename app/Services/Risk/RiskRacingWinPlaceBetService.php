@@ -42,7 +42,7 @@ class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
             'BetList' => array(
                 'BetType' => $bet->type->name,
                 'PriceType' => $bet->product->name,
-                'Selection' => $bet->betselection->first()->selection_id,
+                'Selection' => $bet->selection->first()->external_selection_id,
                 'Position' => $bet->betselection->first()->position
             )
         );
