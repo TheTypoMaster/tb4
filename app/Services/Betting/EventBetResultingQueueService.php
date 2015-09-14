@@ -9,15 +9,19 @@
 namespace TopBetta\Services\Betting;
 
 use Log;
+use Pheanstalk\Exception;
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentResultedException;
 use TopBetta\Services\Tournaments\Resulting\TournamentResulter;
+
+use TopBetta\Helpers\RiskManagerAPI;
 
 class EventBetResultingQueueService {
 
@@ -54,13 +58,25 @@ class EventBetResultingQueueService {
      */
     private $tournamentResulter;
 
+    /**
+     * @var CompetitionRepositoryInterface
+     */
+    private $competition;
+
+    /**
+     * @var RiskManagerAPI
+     */
+    private $riskapi;
+
     public function __construct(EventRepositoryInterface $eventRepositoryInterface, 
                                 TournamentBetResultService $tournamentBetResultService,  
                                 BetResultService $betResultService, 
                                 BetProductRepositoryInterface $betProductRepository, 
                                 EventService $eventService, 
                                 TournamentRepositoryInterface $tournamentRepository,
-                                TournamentResulter $tournamentResulter)
+                                TournamentResulter $tournamentResulter,
+                                CompetitionRepositoryInterface $competition,
+                                RiskManagerAPI $riskapi)
     {
         $this->tournamentBetResultService = $tournamentBetResultService;
         $this->eventRepositoryInterface = $eventRepositoryInterface;
@@ -69,6 +85,8 @@ class EventBetResultingQueueService {
         $this->eventService = $eventService;
         $this->tournamentRepository = $tournamentRepository;
         $this->tournamentResulter = $tournamentResulter;
+        $this->competition = $competition;
+        $this->riskapi = $riskapi;
     }
 
     public function fire($job, $data)
@@ -110,6 +128,17 @@ class EventBetResultingQueueService {
             } catch (TournamentResultedException $e) {
                 \Log::error("Tournament " . $tournament->id . " is already resulted");
             }
+        }
+
+        // push result status update to Risk
+        $riskPayload = array('MeetingId' => $event->competition->external_event_group_id,
+            'RaceNo' => $event->number,
+            'status_id' => 4);
+
+        try{
+            $this->riskapi->sendRaceStatus($riskPayload);
+        }catch (\Exception $e ){
+            \Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
         }
 
         return $job->delete();
