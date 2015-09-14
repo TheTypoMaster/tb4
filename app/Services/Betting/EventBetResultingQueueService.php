@@ -97,7 +97,7 @@ class EventBetResultingQueueService {
         }
 
 
-        $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType', 'competition');
+        $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType');
         $product = $this->betProductRepository->find($productId);
 
         \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
@@ -132,7 +132,7 @@ class EventBetResultingQueueService {
         }
 
         // push result status update to Risk
-        $riskPayload = array('MeetingId' => $event->competition->external_event_group_id,
+        $riskPayload = array('MeetingId' => $event->external_event_id.'_'.$event->number,
             'RaceNo' => $event->number,
             'status_id' => 4);
 
