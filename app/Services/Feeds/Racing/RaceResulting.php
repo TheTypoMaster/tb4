@@ -221,7 +221,7 @@ class RaceResulting {
                                             'external_selection_id' => $selectionModel->external_selection_id,
                                             'number' => $selectionModel->number,
                                             'position' => $placeNo,
-                                            'product_name' => $productUsed->name,
+                                            'product_name' => $dataArray ['PriceType'],
                                             'bet_type_name' => $betTypeModel->name,
                                             'dividend' => $payout / 100);
 
@@ -260,7 +260,7 @@ class RaceResulting {
 
                 $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
                                             'external_selection_id' => $selectionModel->external_selection_id,
-                                            'product_name' => $productUsed->name,
+                                            'product_name' => $dataArray ['PriceType'],
                                             'bet_type_name' => $betTypeModel->name,
                                             'dividend' => $payout / 100,
                                             'result_string' => str_replace('-', '/', $selection));
