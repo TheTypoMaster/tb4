@@ -219,6 +219,7 @@ class RaceResulting {
 
                 $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
                                             'external_selection_id' => $selectionModel->external_selection_id,
+                                            'position' => $placeNo,
                                             'product_name' => $productUsed->name,
                                             'bet_type_name' => $betTypeModel->name,
                                             'dividend' => $payout / 100);
