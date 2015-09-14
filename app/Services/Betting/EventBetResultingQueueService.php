@@ -131,7 +131,7 @@ class EventBetResultingQueueService {
         }
 
         // Push paid status to RISK if all bets have been paid out and the event status is paid!
-        if ($eventPaid && $event->event_status_id){
+        if ($eventPaid && $event->event_status_id == 4){
             // push result status update to Risk
             $riskPayload = array('MeetingId' => str_replace('_'.$event->number, '', $event->external_event_id),
                             'RaceNo' => $event->number,
