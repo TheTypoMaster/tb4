@@ -137,7 +137,7 @@ class EventBetResultingQueueService {
 
         try{
             \Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk', $riskPayload);
-            $this->riskapi->sendRaceStatus(array('RaceResults' => $riskPayload));
+            $this->riskapi->sendRaceStatus(array('RaceStatusUpdate' => $riskPayload));
         }catch (\Exception $e ){
             \Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
         }
