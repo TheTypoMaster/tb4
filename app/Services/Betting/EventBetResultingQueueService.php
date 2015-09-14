@@ -100,7 +100,7 @@ class EventBetResultingQueueService {
         $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType');
         $product = $this->betProductRepository->find($productId);
 
-        \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
+        Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
@@ -112,7 +112,7 @@ class EventBetResultingQueueService {
             $fixedProducts = $this->betProductRepository->getFixedOddsProducts();
 
             foreach ($fixedProducts as $fixedProduct) {
-                \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $fixedProduct->id);
+                Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $fixedProduct->id);
                 $result = $this->betResultService->resultBetsForEvent($event, $fixedProduct);
                 $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $fixedProduct);
             }
@@ -126,22 +126,21 @@ class EventBetResultingQueueService {
             try {
                 $this->tournamentResulter->resultTournament($tournament);
             } catch (TournamentResultedException $e) {
-                \Log::error("Tournament " . $tournament->id . " is already resulted");
+                Log::error("Tournament " . $tournament->id . " is already resulted");
             }
         }
 
-        // Push paid status to RISK if all bets have been paid out
-        if ($eventPaid){
+        // Push paid status to RISK if all bets have been paid out and the event status is paid!
+        if ($eventPaid && $event->event_status_id){
             // push result status update to Risk
             $riskPayload = array('MeetingId' => str_replace('_'.$event->number, '', $event->external_event_id),
-                'RaceNo' => $event->number,
-                'status_id' => 4);
-
+                            'RaceNo' => $event->number,
+                            'status_id' => 4);
+            Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk - Events Status : '. $event->event_status_id, $riskPayload );
             try{
-                \Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk', $riskPayload);
                 $this->riskapi->sendRaceStatus(array('RaceStatusUpdate' => $riskPayload));
             }catch (\Exception $e ){
-                \Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
+                Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
             }
         }
 
