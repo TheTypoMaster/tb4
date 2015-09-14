@@ -83,9 +83,10 @@ class RiskManagerAPI
     {
         Log::debug('RiskManagerAPI (sendRaceStatus): Race Status Payload', $raceData);
         // we only want to send to risk manager for production
-        if (app()->environment() != Config::get('riskmanager.productionHost')) {
-            return false;
-        }
+//        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+//            Log::debug('RiskManagerAPI (sendRaceStatus): App env not va', $raceData);
+//            return false;
+//        }
 
         // send bet to risk manager
         $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
