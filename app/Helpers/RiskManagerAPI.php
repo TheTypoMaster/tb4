@@ -116,7 +116,7 @@ class RiskManagerAPI
 
         // send bet to risk manager
         $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
-            Config::get('riskmanager.RISK_RACE_RESULT_DATA_URI'),
+            Config::get('riskmanager.RISK_RACE_DATA_URI'),
             'POST',
             json_encode($resultsData));
 
