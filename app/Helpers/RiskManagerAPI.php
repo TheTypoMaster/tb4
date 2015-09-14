@@ -95,6 +95,7 @@ class RiskManagerAPI
         $response = json_decode($responseJSON);
 
         if (!$response) {
+            Log::debug('RiskManagerAPI (sendRaceStatus): No response from Risk API');
             return false;
         }
 
