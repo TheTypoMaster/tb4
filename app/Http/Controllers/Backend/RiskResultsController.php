@@ -64,8 +64,9 @@ class RiskResultsController extends Controller
 
         $errors = $this->updateRaceResults($input, $input['race_id']);
 
-        //$eventModel = $this->eventRepository->find($input['race_id']);
-        $eventModel = \TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])->first();
+        $eventId = \TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])->pluck('id');
+
+        $eventModel = $this->eventRepository->find($eventId);
         //update results in cache
         $this->raceRepository->makeCacheResource($eventModel);
         $race = $this->raceRepository->getRace($eventModel->id);
