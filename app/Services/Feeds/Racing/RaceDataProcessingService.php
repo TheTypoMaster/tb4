@@ -316,7 +316,7 @@ class RaceDataProcessingService {
 						$tournament['end_date'] = $race['JumpTime'];
 					}
 				}
-				Log::debug('RaceDataProcessingService: Tournament Update - ', $tournament);
+				// Log::debug('RaceDataProcessingService: Tournament Update - ', $tournament);
 				unset($tournament['created_at'], $tournament['updated_at']);
 
 				$this->tournaments->updateOrCreate($tournament, 'id');
@@ -373,7 +373,7 @@ class RaceDataProcessingService {
 
 			$this->events->updateOrCreate($raceDetails, 'external_event_id');
 
-			Log::info($this->logprefix. 'Race Saved - '.$raceDetails['external_event_id']);
+			Log::info($this->logprefix. 'Race Saved - '.$raceDetails['external_event_id'] .', Status - '.$raceDetails['event_status_id']);
 
             // push race status update to risk manager only if the race already exists and the status changes
             if($existingRaceDetails && $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']])
