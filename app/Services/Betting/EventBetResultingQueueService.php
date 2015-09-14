@@ -101,7 +101,6 @@ class EventBetResultingQueueService {
         $product = $this->betProductRepository->find($productId);
 
         \Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
-        \Log::info("EVENT MODEL " . print_r($event,true));
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);
@@ -137,6 +136,7 @@ class EventBetResultingQueueService {
             'status_id' => 4);
 
         try{
+            \Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk', $riskPayload);
             $this->riskapi->sendRaceStatus($riskPayload);
         }catch (\Exception $e ){
             \Log::error('EventBetResultingQueueService (fire): Failed to push PAID status to risk', $riskPayload);
