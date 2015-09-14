@@ -105,7 +105,7 @@ abstract class CachedResourceRepository {
         if($key == 'id'){
             $model = $this->repository->updateWithIdAndReturnModel($id, $data);
         } else {
-            $model = $this->repository->updateWithIdAndReturnModel($id, $data, $key);
+            $model = $this->repository->updateWithExternalIdAndReturnModel($id, $data, $key);
         }
 
 
