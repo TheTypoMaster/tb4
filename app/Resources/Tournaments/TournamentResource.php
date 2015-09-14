@@ -40,6 +40,7 @@ class TournamentResource extends AbstractEloquentResource {
         'topup_end'             => 'topup_end',
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
+        'tournamentPrizeFormat' => 'tournament_prize_format',
     );
 
     protected $types = array(
@@ -72,6 +73,8 @@ class TournamentResource extends AbstractEloquentResource {
     private $competitions = array();
 
     private $results = null;
+
+    private $prizeFormat;
 
     public function getEntrants()
     {
@@ -114,6 +117,34 @@ class TournamentResource extends AbstractEloquentResource {
         $this->results = $results;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getTournamentPrizeFormat()
+    {
+        if ($this->prizeFormat) {
+            return $this->prizeFormat;
+        }
+
+        return $this->model->prizeFormat;
+    }
+
+    /**
+     * @param mixed $prizeFormat
+     * @return $this
+     */
+    public function setPrizeFormat($prizeFormat)
+    {
+        $this->prizeFormat = $prizeFormat;
+        return $this;
+    }
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->setPrizeFormat($this->model->prizeFormat->name);
+    }
 
     public function toArray()
     {
