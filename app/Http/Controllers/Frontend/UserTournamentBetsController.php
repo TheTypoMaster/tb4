@@ -33,7 +33,7 @@ class UserTournamentBetsController extends Controller {
 	{
         $bets = $this->tournamentBetService->getBetsForUserInTournamentWhereEventClosed($id, $tournamentId);
 
-        return $this->response->success($bets);
+        return $this->response->success($bets->toArray());
 	}
 
 
