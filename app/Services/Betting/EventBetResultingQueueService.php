@@ -131,7 +131,7 @@ class EventBetResultingQueueService {
         }
 
         // push result status update to Risk
-        $riskPayload = array('MeetingId' => $event->external_event_id,
+        $riskPayload = array('MeetingId' => str_replace('_'.$event->number, '', $event->external_event_id),
             'RaceNo' => $event->number,
             'status_id' => 4);
 
