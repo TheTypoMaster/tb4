@@ -38,4 +38,14 @@ class EventModel extends Eloquent {
         return $this->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAYING || $this->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_PAID;
     }
 
+    public function teams()
+    {
+        return $this->belongsToMany('\TopBetta\Models\TeamModel', 'tb_team_tbdb_event', 'tbdb_event_id', 'tb_team_id')->withPivot('team_position');
+    }
+
+    public function teamPlayers()
+    {
+        return $this->hasMany('TopBetta\Models\EventTeamPlayerModel', 'event_id');
+    }
+
 }

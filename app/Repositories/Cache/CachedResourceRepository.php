@@ -93,6 +93,13 @@ abstract class CachedResourceRepository {
         return $this->makeCacheResource($model);
     }
 
+    public function update($model, $data)
+    {
+        $model = $this->repository->update($model, $data);
+
+        return $this->makeCacheResource($model);
+    }
+
     public function updateWithId($id, $data)
     {
         $model = $this->repository->updateWithIdAndReturnModel($id, $data);
@@ -140,7 +147,7 @@ abstract class CachedResourceRepository {
         }
     }
 
-    protected function addToCollection($resource, $collectionKey)
+    protected function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
         $key = $this->getCollectionCacheKey($collectionKey, $resource);
 
@@ -148,8 +155,8 @@ abstract class CachedResourceRepository {
             return $this;
         }
 
-        if (!$collection = $this->getCollection($key)) {
-            $collection = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+        if (!$collection = $this->getCollection($key, $resourceClass)) {
+            $collection = new EloquentResourceCollection(new Collection(), $resourceClass ? : $this->resourceClass);
         }
 
         $collection->put($resource->id, $resource);

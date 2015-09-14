@@ -9,6 +9,8 @@
 namespace TopBetta\Repositories\Cache\Sports;
 
 
+use Carbon\Carbon;
+use TopBetta\Models\SelectionModel;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
@@ -20,7 +22,9 @@ class SelectionRepository extends CachedResourceRepository {
 
     protected $resourceClass = 'TopBetta\Resources\Sports\SelectionResource';
 
-    protected $relationsToLoad = array('price', 'result');
+    protected $cachePrefix = 'selections_';
+
+    //protected $relationsToLoad = array('price', 'result');
     /**
      * @var
      */
@@ -32,12 +36,44 @@ class SelectionRepository extends CachedResourceRepository {
         $this->marketRepository = $marketRepository;
     }
 
+    public function getModelByExternalIds($selectionNo, $marketId, $gameId)
+    {
+        $data = \Cache::tags($this->tags)->get($this->cachePrefix . $selectionNo . '_' . $marketId . '_' . $gameId);
+
+        if (!$data) {
+            return $this->repository->getModelByExternalIds($selectionNo, $marketId, $gameId);
+        }
+
+        $model = new SelectionModel($data);
+        $model->syncOriginal();
+        $model->exists = true;
+
+        return $model;
+    }
+
     public function makeCacheResource($model)
+    {
+        \Cache::tags($this->tags)->put($this->cachePrefix . $model->external_selection_id . '_' . $model->external_market_id . '_' . $model->external_event_id, $model->toArray(), Carbon::now()->addDays(2)->diffInMinutes());
+
+        return $model;
+    }
+
+    public function addSelectionToMarket($model, $market, $eventId, $eventStartDate)
     {
         $resource = $this->createResource($model);
 
-        $this->marketRepository->addSelection($resource);
+        if ($this->canStoreSelection($resource)) {
+            $this->marketRepository->addSelectionToMarket($resource, $market, $eventId, $eventStartDate);
+        } else {
+            $this->marketRepository->removeSelectionFromMarket($resource, $market, $eventId, $eventStartDate);
+        }
+
 
         return $model;
+    }
+
+    public function canStoreSelection($resource)
+    {
+        return $resource->selection_status_id == 1 && $resource->getPrice() > 1;
     }
 }

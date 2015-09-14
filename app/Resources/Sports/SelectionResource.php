@@ -50,7 +50,20 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function getWon()
     {
-        return ! is_null($this->model->result);
+        if (is_null($this->model->won)) {
+            return ! is_null($this->model->result);
+        }
+        return $this->model->won;
+    }
+
+    public function loadRelation($relation)
+    {
+        parent::loadRelation($relation);
+
+        if ($relation == 'player' && $this->relations['player'] && is_null($this->relations['player']->getTeamId())) {
+            $team = $this->relations['player']->getModel()->eventTeam($this->model->market->event_id);
+            $this->relations['player']->setTeamId($team ? $team->id : 0);
+        }
     }
 
     public function getPrice()

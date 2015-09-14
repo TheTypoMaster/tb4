@@ -7,6 +7,7 @@
  */
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Models\Events;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
@@ -167,6 +168,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return null;
     }
 
+    public function addEventModelToCompetition($event, $competition)
+    {
+        if (!$event->competitions()->find($competition->id)) {
+            return $event->competitions()->attach($competition->id);
+        }
+
+        return null;
+    }
+
     public function getNextToJumpSports($number = 10)
     {
         $builder = $this->getVisibleSportsEventBuilder();
@@ -206,10 +216,13 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
     public function addModelToCompetition($model, $competition)
     {
-        $model->competition()->attach($competition->id);
+        if (!$model->competition->first()) {
+            $model->competition()->attach($competition->id);
 
-        //load the relationship
-        $model->load('competition');
+            //load the relationship
+            $model->competition = new Collection();
+            $model->competition->push($competition);
+        }
 
         return $model;
     }
@@ -227,5 +240,20 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $this->model->hydrate($model);
     }
 
+
+    public function addTeamPlayers($event, $team, $players)
+    {
+        $teamPlayers = $event->teamPlayers;
+
+        $playersToInsert = array_diff($players, $teamPlayers->lists('player_id')->all());
+
+        $playersToInsert = array_map(function ($v) use ($team, $event) {
+            return array('player_id' => $v, "team_id" => $team, 'event_id' => $event->id, 'created_at' => Carbon::now()->toDateTimeString(), 'updated_at' => Carbon::now()->toDateTimeString());
+        }, $playersToInsert);
+
+        $event->teamPlayers()->insert($playersToInsert);
+
+        return $this;
+    }
 
 }
