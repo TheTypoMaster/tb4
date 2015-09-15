@@ -7,9 +7,6 @@
  * Project: tb4
  */
 
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\ServerErrorResponseException as GuzzleException;
-use Guzzle\Http\Exception\CurlException as GuzzleCurlException;
 use Config;
 use Log;
 
@@ -20,7 +17,7 @@ class RiskManagerPushAPIService
     {
 
         // send bet to risk manager
-        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
+        $responseJSON = \TopBetta\Helpers\CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
             Config::get('riskmanager.RISK_RACE_DATA_URI'),
             'POST',
             json_encode($data));
