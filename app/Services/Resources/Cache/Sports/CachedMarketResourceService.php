@@ -17,7 +17,8 @@ use TopBetta\Services\Resources\Cache\CachedResourceService;
 use TopBetta\Services\Resources\Sports\MarketResourceService;
 
 
-class CachedMarketResourceService extends CachedResourceService  {
+class CachedMarketResourceService extends CachedResourceService
+{
 
     /**
      * @var MarketRepository
@@ -30,8 +31,8 @@ class CachedMarketResourceService extends CachedResourceService  {
 
     public function __construct(MarketResourceService $resourceService, MarketRepository $marketRepository, CachedSelectionResourceService $selectionResourceService)
     {
-        $this->resourceService = $resourceService;
-        $this->marketRepository = $marketRepository;
+        $this->resourceService          = $resourceService;
+        $this->marketRepository         = $marketRepository;
         $this->selectionResourceService = $selectionResourceService;
     }
 
@@ -44,23 +45,5 @@ class CachedMarketResourceService extends CachedResourceService  {
         }
 
         return $markets;
-    }
-
-    public function getFilteredMarketsForEvent($event, $types)
-    {
-
-    }
-
-    protected function filterMarkets($markets)
-    {
-        return $markets->filter(function ($v) {
-            if ($v->market_status == 'D' || $v->market_status == 'S') { return false; }
-
-            $selections = $v->selections;
-
-            if (!$selections->count()) {return false;}
-
-            return (bool) $v->display_flag;
-        });
     }
 }

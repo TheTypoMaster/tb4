@@ -95,6 +95,8 @@ class MarketRepository extends CachedResourceRepository {
         });
 
         if ($marketResources->first()) {
+            $this->eventRepository->addVisibleResource($event);
+
             \Cache::tags($this->tags)->put($this->cachePrefix.'event_'.$event->id, $marketResources->toKeyedArray(), $this->getCollectionCacheTime(self::COLLECTION_EVENT_MARKETS, $marketResources->first()));
 
             $types = $markets->load('markettype')->pluck('markettype');
@@ -146,6 +148,7 @@ class MarketRepository extends CachedResourceRepository {
         unset($markets[$marketModel->id]);
 
         if(!count($markets)) {
+            $this->eventRepository->removeVisibleResource($market->event);
             Cache::forget($this->cachePrefix .'event_' . $marketModel->event_id);
         }
 
@@ -171,6 +174,7 @@ class MarketRepository extends CachedResourceRepository {
                 $markets[$marketModel->id] = $this->createResource($marketModel)->toArray();
                 $market = $markets[$marketModel->id];
                 $this->makeCacheResource($marketModel);
+                $this->eventRepository->addVisibleResource($market->event);
             }
 
 
@@ -208,6 +212,7 @@ class MarketRepository extends CachedResourceRepository {
 
             if(!count($markets)) {
                 $markets = null;
+                $this->eventRepository->removeVisibleResource($marketModel->event);
             }
 
             Cache::tags($this->tags)->put($this->cachePrefix .'event_' . $eventId, $markets, Carbon::createFromFormat('Y-m-d H:i:s', $eventDate)->startOfDay()->addDays(2)->diffInMinutes());

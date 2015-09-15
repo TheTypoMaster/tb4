@@ -49,15 +49,9 @@ class CachedSportResourceService extends CachedResourceService {
 
         $sports = $this->attachCompetitions($sports);
 
-        return $this->filterSports($sports);
+        return $sports;
     }
 
-    public function getVisibleSportsWithSelectedCompetition($competition)
-    {
-        $sports = $this->sportRepository->getVisibleSports();
-
-        return $this->filterSports($sports, $competition);
-    }
 
     public function getVisibleSports($sportId = null)
     {
@@ -67,20 +61,9 @@ class CachedSportResourceService extends CachedResourceService {
             return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\SportResource');
         }
 
-        return $this->filterSports($sports, $sportId);
+        return $sports;
     }
 
-    public function filterSports($sports, $sportId = null)
-    {
-        return $sports->filter(function ($v) use ($sportId) {
-            if ($v->id == $sportId) {
-                return true;
-            }
-
-            $baseCompetitions = $this->baseCompetitionResourceService->getBaseCompetitionsArrayForSport($v->id);
-            return (bool) (count($baseCompetitions) > 0 && $v->display_flag);
-        });
-    }
 
 
     protected function attachCompetitions($sports)
