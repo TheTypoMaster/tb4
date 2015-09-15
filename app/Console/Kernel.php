@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel {
         'TopBetta\Jobs\ProcessScheduledPayments',
         'TopBetta\Console\Commands\DevTools\PopulateSportsCache',
         'TopBetta\Console\Commands\DevTools\PopulateRacingCache',
-        //'TopBetta\Console\Commands\DevTools\CreateTestSport',
+        'TopBetta\Console\Commands\NextToJump\ManageSportsNextToJump',
 	];
 
 	/**
