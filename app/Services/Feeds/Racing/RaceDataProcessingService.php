@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Log;
 use File;
 use Carbon;
+use Queue;
 
 use TopBetta\Repositories\Cache\MeetingRepository;
 use TopBetta\Repositories\Cache\RaceRepository;
@@ -381,7 +382,8 @@ class RaceDataProcessingService {
                 Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
                 $race['status_id'] = $raceDetails['event_status_id'];
                 // TODO: add notification
-                $this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
+                Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceStatusUpdate' => $race), 'risk-results-queue');
+                //$this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
             }
 
 			// $eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
