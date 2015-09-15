@@ -65,7 +65,13 @@ class MarketRepository extends CachedResourceRepository {
 
     public function getMarketsForEvent($event)
     {
-        return $this->getCollection($this->cachePrefix . 'event_' . $event);
+        $markets = $this->getCollection($this->cachePrefix . 'event_' . $event);
+
+        if (!$markets) {
+            return new EloquentResourceCollection(new Collection(), $this->resourceClass);
+        }
+
+        return $markets;
     }
 
     public function getMarketsForEventAsArray($event)
@@ -77,6 +83,9 @@ class MarketRepository extends CachedResourceRepository {
     {
         $markets = $this->getMarketsForEvent($event);
 
+        if (!$markets) {
+            return new EloquentResourceCollection(new Collection(), $this->resourceClass);
+        }
         $filteredMarkets = $markets->filter(function ($v) use ($types) {return in_array($v->market_type_id, $types);});
 
         return $filteredMarkets;
@@ -148,7 +157,7 @@ class MarketRepository extends CachedResourceRepository {
         unset($markets[$marketModel->id]);
 
         if(!count($markets)) {
-            $this->eventRepository->removeVisibleResource($market->event);
+            $this->eventRepository->removeVisibleResource($marketModel->event);
             Cache::forget($this->cachePrefix .'event_' . $marketModel->event_id);
         }
 
@@ -174,7 +183,7 @@ class MarketRepository extends CachedResourceRepository {
                 $markets[$marketModel->id] = $this->createResource($marketModel)->toArray();
                 $market = $markets[$marketModel->id];
                 $this->makeCacheResource($marketModel);
-                $this->eventRepository->addVisibleResource($market->event);
+                $this->eventRepository->addVisibleResource($marketModel->event);
             }
 
 
