@@ -190,7 +190,7 @@ Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), fun
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
 
     Route::resource('account-transactions', 'Admin\AccountTransactionsController');
-    Route::resource('bet-limits', 'Admin\BetlimitsController');
+    Route::resource('bet-limits', 'Admin\BetLimitsController');
     Route::resource('bets', 'Admin\BetsController');
     Route::resource('competitions', 'Admin\CompetitionsController');
     Route::resource('dashboard', 'Admin\DashboardController');
@@ -233,7 +233,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/remove/{tournamentId}/{userId}', 'Admin\TournamentsController@removeUserFromTournament');
     Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
-    Route::get('tournaments/download/entrants', 'Admin\tournamentsController@downloadEntrants');
+    Route::get('tournaments/download/entrants', 'Admin\TournamentsController@downloadEntrants');
 
     //tournament groups
     Route::resource('tournament-groups', 'Admin\TournamentGroupController');
@@ -257,6 +257,9 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     Route::get('sports-list', 'Admin\SportsController@getSports');
     Route::get('sports/{sportId}/competitions', 'Admin\CompetitionsController@getBySport');
+
+    //market type details
+    Route::resource("market-type-details", 'Admin\SportMarketTypeDetailsController');
 
 });
 
@@ -426,7 +429,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     //CONTACT USE ENDPOINT
     Route::post('contact-us', 'Frontend\ContactController@contactUs');
 });
-
+    
 // new login/logout methods
 Route::group(array('prefix' => '/api/v2', 'after' => 'topbetta_secure_links'), function() {
 

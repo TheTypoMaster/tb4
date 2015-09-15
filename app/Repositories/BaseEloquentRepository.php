@@ -169,6 +169,12 @@ class BaseEloquentRepository {
 		return $this->validator ? $this->validator->validateForUpdate($input) : true;
 	}
 
+    public function setValidator($validator)
+    {
+        $this->validator = $validator;
+        return $this;
+	}
+	
     /**
      * @return null
      */
@@ -203,12 +209,6 @@ class BaseEloquentRepository {
         $model = $this->model->findOrFail($id);
 
         return $model->delete();
-    }
-
-    public function setValidator($validator)
-    {
-        $this->validator = $validator;
-        return $this;
     }
 
 

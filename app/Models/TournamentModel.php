@@ -57,8 +57,8 @@ class TournamentModel extends Eloquent {
     {
         return $this->bettingClosed() || $this->end_date < Carbon::now() || ($this->entries_close && $this->entries_close != '0000-00-00 00:00:00' && $this->entries_close < Carbon::now());
     }
-
-    public function qualifiers()
+	
+	public function qualifiers()
     {
         return $this->leaderboards()->whereRaw('balance_to_turnover <= turned_over')->where('currency', '>', 0);
     }

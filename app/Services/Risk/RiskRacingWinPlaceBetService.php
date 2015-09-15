@@ -11,6 +11,7 @@ namespace TopBetta\Services\Risk;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\UserRepositoryInterface;
 use TopBetta\Helpers\RiskManagerAPI;
+use TopBetta\Services\Feeds\Racing\BetTypeMapper;
 use User;
 
 class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
@@ -19,10 +20,15 @@ class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
      * @var BetRepositoryInterface
      */
     private $betRepository;
+    /**
+     * @var BetTypeMapper
+     */
+    private $betTypeMapper;
 
-    public function __construct(BetRepositoryInterface $betRepository)
+    public function __construct(BetRepositoryInterface $betRepository, BetTypeMapper $betTypeMapper)
     {
         $this->betRepository = $betRepository;
+        $this->betTypeMapper = $betTypeMapper;
     }
 
     public function sendBet($bet)
@@ -31,17 +37,17 @@ class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
 
         $riskBet = array(
             'ReferenceId' => $bet['id'],
-            'BetDate' => $bet['created_at'],
+            'BetDate' => is_string($bet->created_at) ? $bet->created_at : $bet->created_at->toDateTimeString(),
             'ClientId' => $bet->user->id,
             'ClientUsername' => $bet->user->username,
             'Btag' => $bet->user->topbettauser->btag,
-            'Amount' => $bet->amount,
+            'Amount' => $bet->bet_amount,
             'FreeCredit' => $bet->bet_freebet_flag,
             'FreeBetAmount' => $bet->bet_freebet_amount,
             'Type' => 'racing',
             'BetList' => array(
-                'BetType' => $bet->type->name,
-                'PriceType' => $bet->product->name,
+                'BetType' => $this->betTypeMapper->getBetTypeShort($bet->type->name),
+                'PriceType' => $bet->productProviderMatch ? $bet->productProviderMatch->provider_product_name : null,
                 'Selection' => $bet->selection->first()->external_selection_id,
                 'Position' => $bet->betselection->first()->position
             )

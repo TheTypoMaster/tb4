@@ -51,14 +51,14 @@ class TournamentBetService {
      */
     private $betResourceService;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentTicketService $ticketService, BetTypeRepositoryInterface $betTypeRepository, TournamentBetResourceService $betResourceService, TournamentBetResultService $resultService)
+    public function __construct(TournamentBetRepositoryInterface $betRepository, EventService $eventService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentTicketService $ticketService, BetTypeRepositoryInterface $betTypeRepository, TournamentBetResultService $resultService,  TournamentBetResourceService $betResourceService)
     {
         $this->betRepository = $betRepository;
         $this->eventService = $eventService;
         $this->betResultStatusRepository = $betResultStatusRepository;
-        $this->resultService = $resultService;
         $this->ticketService = $ticketService;
         $this->betTypeRepository = $betTypeRepository;
+		$this->resultService = $resultService;
         $this->betResourceService = $betResourceService;
     }
 

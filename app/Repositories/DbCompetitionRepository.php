@@ -78,12 +78,17 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
     public function getDisplayedEventsForCompetition($competitionId)
     {
-        return $this->model->find($competitionId)->events()->where("display_flag", "=", "1")->get();
+        //return $this->model->find($competitionId)->events()->where("display_flag", "=", "1")->get();
+        return $this->model->where('external_event_group_id', $competitionId)
+            ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->where("tbdb_event.display_flag", "=", "1")
+            ->get();
     }
 
     public function setDisplayFlagForCompetition($competitionId, $displayFlag)
     {
-        $competition = $this->model->find($competitionId);
+        $competition = $this->model->where('external_event_group_id', $competitionId)->first();
 
         $competition->display_flag = $displayFlag;
 
@@ -201,6 +206,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
+
     public function getRacingCompetitionsByDate(Carbon $date, $type = null, $withRaces = false)
     {
         $model = $this->model->where('sport_id', '<=', 3)
@@ -220,6 +226,14 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         }
 
         return $model->get();
+    }
+
+    public function getByEvent($event)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
+            ->where('ege.event_id', $event)
+            ->first();
     }
 
     public function getVisibleCompetitionByBaseCompetition($baseCompetition)
@@ -298,13 +312,4 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
         return $meeting;
     }
-
-    public function getByEvent($event)
-    {
-        return $this->model
-            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
-            ->where('ege.event_id', $event)
-            ->first();
-    }
-
 } 

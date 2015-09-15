@@ -255,14 +255,6 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->whereIn('b.id', $bets)
             ->get();
     }
-	
-	public function getBetsForUserByEvents($user, $events)
-    {
-        return $this->model
-            ->where('user_id', $user)
-            ->whereIn('event_id', $events)
-            ->get();
-    }
 
     protected function getBetBuilder()
     {
@@ -297,4 +289,55 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     }
 
 
+
+    public function getBetsForSelectionsByBetType($user, $selections, $betType)
+    {
+        return $this->model
+            ->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
+            ->whereIn('selection_id', $selections)
+            ->where('bet_type_id', $betType)
+            ->where('user_id', $user)
+            ->groupBy('tbdb_bet.id')
+            ->get(array('tbdb_bet.*', 'selection_id'));
+    }
+
+    public function getBetsByTypeForEvent($user, $event, $type)
+    {
+        return $this->model
+            ->where('bet_type_id', $type)
+            ->where('user_id', $user)
+            ->where('event_id', $event)
+            ->with('betselection')
+            ->get();
+    }
+
+    public function getBetsForUserByEvents($user, $events, $type = null)
+    {
+        $model = $this->model
+            ->where('user_id', $user)
+            ->whereIn('event_id', $events)
+            ->with('betselection');
+
+        if ($type) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get();
+    }
+
+    public function getBetsForUserByMarket($user, $market, $type = null)
+    {
+        $model =  $this->model
+            ->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
+            ->join('tbdb_selection', 'tbdb_bet_selection.selection_id', '=', 'tbdb_selection.id')
+            ->where('tbdb_selection.market_id', $market)
+            ->where('user_id', $user)
+            ->groupBy('tbdb_bet.id');
+
+        if ($type) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get(array('tbdb_bet.*'));
+    }
 }

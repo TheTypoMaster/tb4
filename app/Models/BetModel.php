@@ -80,6 +80,9 @@ class BetModel extends Eloquent {
         return $this->belongsTo('TopBetta\Models\EventModel', 'event_id');
     }
 
-
+    public function productProviderMatch()
+    {
+        return $this->belongsTo('TopBetta\Models\ProductProviderMatch', 'bet_product_id', 'tb_product_id');
+    }
 
 }

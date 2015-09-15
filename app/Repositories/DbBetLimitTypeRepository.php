@@ -24,4 +24,17 @@ class DbBetLimitTypeRepository extends BaseEloquentRepository implements BetLimi
     {
         return $this->model->where('name', $name)->get();
     }
+
+    public function getLimitForUser($user, $betType, $limitType)
+    {
+        return $this->model
+            ->leftJoin('tbdb_bet_limit_users as blu', function($q) use ($user) {
+                $q->on('blu.bet_limit_type_id', '=', 'tbdb_bet_limit_types.id')
+                    ->on('blu.user_id','=', \DB::raw($user));
+            })
+            ->where('tbdb_bet_limit_types.value', $betType)
+            ->where('name', $limitType)
+            ->orderBy('blu.amount')
+            ->first();
+    }
 }

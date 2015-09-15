@@ -18,7 +18,7 @@ class ExoticBetTypeDividendService extends AbstractBetTypeDividendService {
     public function getResultedDividendForBet($bet)
     {
         $totalDividend = 0;
-        $dividends = $this->resultPricesRepository->getPricesByProductAndBetType($bet->bet_product_id, $bet->bet_type_id);
+        $dividends = $this->resultPricesRepository->getPricesByProductEventAndBetType($bet->bet_product_id, $bet->event_id, $bet->bet_type_id);
 
         if ( ! $dividends ) {
             return 0;

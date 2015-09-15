@@ -4,6 +4,9 @@ namespace TopBetta\Http\Controllers\Admin;
 
 use TopBetta\Http\Controllers\Controller;
 
+use Validator;
+use Redirect;
+use Illuminate\Http\Request;
 use TopBetta\Models\BetLimitType as BetLimit;
 use View;
 
@@ -28,7 +31,7 @@ class BetLimitsController extends Controller {
      */
     public function index()
     {
-        $betlimits = $this->betlimit->all();
+        $betlimits = $this->betlimit->whereNotIn('name', array('default', 'default_flexi', 'default_sport'))->get();
 
         return View::make('admin.betlimits.types.index', compact('betlimits'));
     }
@@ -94,7 +97,7 @@ class BetLimitsController extends Controller {
             return Redirect::route('betlimits.index');
         }
 
-        return View::make('betlimits.types.edit', compact('betlimit'));
+        return View::make('admin.betlimits.types.edit', compact('betlimit'));
     }
 
     /**
@@ -103,20 +106,21 @@ class BetLimitsController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
-        $input = array_except(Input::all(), '_method');
+        $input = array_except($request->all(), '_method');
         $validation = Validator::make($input, Betlimit::$rules);
 
         if ($validation->passes())
         {
+            $input['default_amount'] *= 100;
             $betlimit = $this->betlimit->find($id);
             $betlimit->update($input);
 
-            return Redirect::route('betlimits.show', $id);
+            return Redirect::route('admin.bet-limits.index', $id);
         }
 
-        return Redirect::route('betlimits.edit', $id)
+        return Redirect::route('admin.bet-limits.edit', $id)
             ->withInput()
             ->withErrors($validation)
             ->with('message', 'There were validation errors.');

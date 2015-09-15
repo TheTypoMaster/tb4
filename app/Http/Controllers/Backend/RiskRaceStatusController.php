@@ -66,13 +66,13 @@ class RiskRaceStatusController extends Controller
 
     private static function updateOverrideStart($raceId, $enabled = false)
     {
-        return \TopBetta\Models\RaceEvent::where('id', $raceId)->update(array('override_start' => $enabled));
+        return \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->update(array('override_start' => $enabled));
     }
 
     public function updateRaceStatus($status, $raceId)
     {
         $eventStatus = \TopBetta\Models\RaceEventStatus::where('keyword', $status)->value('id');
-        $event = \TopBetta\Models\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
         if ($eventStatus && $event) {
 
             $this->raceRepository->updateWithId($raceId, array("event_status_id" => $eventStatus));

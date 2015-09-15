@@ -223,13 +223,8 @@ class TournamentService {
 
         return $ticket;
     }
-    
-    public function getTournament($tournamentId)
-    {
-        return $this->tournamentRepository->find($tournamentId);
-    }
 
-    public function createTicketAndLeaderboardRecordForUser($tournament, $user)
+	public function createTicketAndLeaderboardRecordForUser($tournament, $user)
     {
         //create ticket
         $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
@@ -239,6 +234,14 @@ class TournamentService {
 
         return $ticket;
     }
+
+    
+    public function getTournament($tournamentId)
+    {
+        return $this->tournamentRepository->find($tournamentId);
+    }
+
+
 
     public function removeUserFromTournament($tournamentId, $userId)
     {

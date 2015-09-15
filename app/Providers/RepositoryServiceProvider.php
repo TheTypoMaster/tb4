@@ -253,23 +253,7 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface',
             'TopBetta\Repositories\DbMeetingVenueRepository'
         );
-        $this->app->bind(
-            'TopBetta\Repositories\Contracts\AffiliateRepositoryInterface',
-            'TopBetta\Repositories\DbAffiliateRepository'
-        );
-        $this->app->bind(
-            'TopBetta\Repositories\Contracts\AffiliateTypeRepositoryInterface',
-            'TopBetta\Repositories\DbAffiliateTypeRepository'
-        );
-        $this->app->bind(
-            'TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface',
-            'TopBetta\Repositories\DbTournamentPlacesPaidRepository'
-        );
 		$this->app->bind(
-            'TopBetta\Repositories\Contracts\AffiliateEndpointRepositoryInterface',
-            'TopBetta\Repositories\DbAffiliateEndpointRepository'
-        );
-		 $this->app->bind(
             'TopBetta\Repositories\Contracts\BetSelectionRepositoryInterface',
             'TopBetta\Repositories\DbBetSelectionRepository'
         );
@@ -286,8 +270,36 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\DbMarketModelRepository'
 		);
         $this->app->bind(
+            'TopBetta\Repositories\Contracts\BetLimitTypeRepositoryInterface',
+            'TopBetta\Repositories\DbBetLimitTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\SportMarketTypeDetailsRepositoryInterface',
+            'TopBetta\Repositories\DbSportMarketTypeDetailsRepository'
+		);
+		$this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface',
             'TopBetta\Repositories\DbTournamentGroupRepository'
+		);
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\AffiliateRepositoryInterface',
+            'TopBetta\Repositories\DbAffiliateRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\AffiliateTypeRepositoryInterface',
+            'TopBetta\Repositories\DbAffiliateTypeRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentLeaderboardRepository'
+        );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface',
+            'TopBetta\Repositories\DbTournamentPlacesPaidRepository'
+        );
+		$this->app->bind(
+            'TopBetta\Repositories\Contracts\AffiliateEndpointRepositoryInterface',
+            'TopBetta\Repositories\DbAffiliateEndpointRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface',
@@ -324,7 +336,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         $this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface',
             'TopBetta\Repositories\DbTournamentPlacesPaidRepository'
-        );
+		);
     }
 
 } 
