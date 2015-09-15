@@ -60,7 +60,7 @@ class MeetingRepository extends CachedResourceRepository {
 
         $resource = $this->createSmallMeeting($model);
 
-        $meetings = $this->getSmallMeetings(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+        $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
 
         if ($meetings && $meeting = $meetings->get($model->id)) {
             $resource->setRelation('races', $meeting->races);
