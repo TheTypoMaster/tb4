@@ -43,6 +43,17 @@ class CachedBaseCompetitionResourceService {
         return $this->filter($baseCompetitions);
     }
 
+    public function getBaseCompetitionsArrayForSport($sport)
+    {
+        $baseCompetitions = $this->baseCompetitionRepository->getBaseCompetitionsArrayBySport($sport);
+
+        if (!$baseCompetitions) {
+            return array();
+        }
+
+        return $this->filterArray($baseCompetitions);
+    }
+
     public function getBaseCompetitionsForSportWithCompetitions($sport, $competition = null)
     {
         $baseCompetitions = $this->baseCompetitionRepository->getBaseCompetitionsBySport($sport);
@@ -65,12 +76,21 @@ class CachedBaseCompetitionResourceService {
         return $this->baseCompetitionRepository->getBaseCompetition($competition->base_competition_id);
     }
 
+    public function filterArray($baseCompetitions)
+    {
+        return array_filter($baseCompetitions, function($v) {
+            $competitions = $this->competitionResourceService->getVisibleCompetitionsArrayByBaseCompetition($v['id']);
+
+            return (bool) (count($competitions) > 0 && $v['display_flag']);
+        });
+    }
+
     public function filter($baseCompetitions)
     {
         return $baseCompetitions->filter(function($v) {
-            $competitions = $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($v->id);
+            $competitions = $this->competitionResourceService->getVisibleCompetitionsArrayByBaseCompetition($v->id);
 
-            return (bool) ($competitions->count() > 0 && $v->display_flag);
+            return (bool) (count($competitions) > 0 && $v->display_flag);
         });
     }
 

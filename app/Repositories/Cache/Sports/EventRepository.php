@@ -58,6 +58,11 @@ class EventRepository extends CachedResourceRepository {
         return $this->getCollection($this->cachePrefix . 'competition_' . $id);
     }
 
+    public function getEventsArrayForCompetition($id)
+    {
+        return \Cache::tags($this->tags)->get($this->cachePrefix . 'competition_' . $id);
+    }
+
     public function nextToJump()
     {
         return Cache::tags($this->nextToJumpTags)->get($this->cachePrefix . 'n2j');

@@ -51,6 +51,11 @@ class BaseCompetitionRepository extends CachedResourceRepository {
         return $this->getCollection($this->cachePrefix . 'sport_' . $sport);
     }
 
+    public function getBaseCompetitionsArrayBySport($sport)
+    {
+        return \Cache::tags($this->tags)->get($this->cachePrefix . 'sport_' . $sport);
+    }
+
     public function getCollectionCacheKey($key, $model)
     {
         switch ($key) {
