@@ -59,18 +59,7 @@ class CachedEventResourceService extends CachedResourceService {
             return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\EventResource');
         }
 
-        return $this->filterEvents($events);
-    }
-
-    public function getEventsArrayForCompetition($competitionId)
-    {
-        $events = $this->eventRepository->getEventsArrayForCompetition($competitionId);
-
-        if (!$events) {
-            return array();
-        }
-
-        return $this->filterEventsArray($events);
+        return $events;
     }
 
     public function getEventsForCompetitionWithFilteredMarkets($competition, $types)
@@ -88,21 +77,4 @@ class CachedEventResourceService extends CachedResourceService {
         return $events;
     }
 
-    public function filterEvents($events)
-    {
-        return $events->filter(function ($v) {
-            $markets = $this->marketRepository->getMarketsArrayForEvent($v->id);
-
-            return (bool) (count($markets) && $v->display_flag);
-        });
-    }
-
-    public function filterEventsArray($events)
-    {
-        return array_filter($events, function ($v) {
-            $markets = $this->marketRepository->getMarketsArrayForEvent($v['id']);
-
-            return (bool) (count($markets) && $v['display_flag']);
-        });
-    }
 }
