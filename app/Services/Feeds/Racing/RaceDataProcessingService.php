@@ -382,8 +382,8 @@ class RaceDataProcessingService {
                 Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
                 $race['status_id'] = $raceDetails['event_status_id'];
                 // TODO: add notification
-                Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceStatusUpdate' => $race), 'risk-results-queue');
-                //$this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
+                //Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceStatusUpdate' => $race), 'risk-results-queue');
+                $this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
             }
 
 			// $eventId = $this->events->getEventIdFromExternalId($raceDetails['external_event_id']);
