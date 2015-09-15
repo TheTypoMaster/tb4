@@ -58,6 +58,11 @@ class MarketRepository extends CachedResourceRepository {
         $this->eventRepository = $eventRepository;
     }
 
+    public function getMarketsArrayForEvent($event)
+    {
+        return Cache::tags($this->tags)->get($this->cachePrefix . 'event_' . $event);
+    }
+
     public function getMarketsForEvent($event)
     {
         return $this->getCollection($this->cachePrefix . 'event_' . $event);

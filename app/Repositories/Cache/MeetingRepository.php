@@ -46,7 +46,7 @@ class MeetingRepository extends CachedResourceRepository {
 
     public function getSmallMeetings(Carbon $date)
     {
-        return $this->getCollection($this->cachePrefix . 'small_' . $date->toDateString(), 'TopBetta\Resources\SmallMeetingResource');
+        return \Cache::tags($this->tags)->get($this->cachePrefix . 'small_' . $date->toDateString());
     }
 
     public function makeCacheResource($model)

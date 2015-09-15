@@ -62,6 +62,17 @@ class CachedEventResourceService extends CachedResourceService {
         return $this->filterEvents($events);
     }
 
+    public function getEventsArrayForCompetition($competitionId)
+    {
+        $events = $this->eventRepository->getEventsArrayForCompetition($competitionId);
+
+        if (!$events) {
+            return array();
+        }
+
+        return $this->filterEventsArray($events);
+    }
+
     public function getEventsForCompetitionWithFilteredMarkets($competition, $types)
     {
         $events = $this->getEventsForCompetition($competition);
@@ -80,9 +91,18 @@ class CachedEventResourceService extends CachedResourceService {
     public function filterEvents($events)
     {
         return $events->filter(function ($v) {
-            $markets = $this->marketResourceService->getAllMarketsForEvent($v->id);
+            $markets = $this->marketRepository->getMarketsArrayForEvent($v->id);
 
-            return (bool) ($markets->count() && $v->display_flag);
+            return (bool) (count($markets) && $v->display_flag);
+        });
+    }
+
+    public function filterEventsArray($events)
+    {
+        return array_filter($events, function ($v) {
+            $markets = $this->marketRepository->getMarketsArrayForEvent($v['id']);
+
+            return (bool) (count($markets) && $v['display_flag']);
         });
     }
 }
