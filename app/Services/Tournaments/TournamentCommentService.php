@@ -125,6 +125,7 @@ class TournamentCommentService {
             $comment_trans['buy_in'] = $tournament->buy_in;
             $comment_trans['entry_fee'] = $tournament->entry_fee;
             $comment_trans['created_date'] = $comment->created_date;
+            $comment_trans['visible'] = $comment->visible;
             $comment_trans['comment'] = $comment->comment;
             array_push($comment_list, $comment_trans);
         }

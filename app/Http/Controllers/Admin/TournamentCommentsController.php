@@ -54,7 +54,8 @@ class TournamentCommentsController extends Controller
         $comment = new TournamentCommentModel();
         $comment::create(['tournament_id' => Input::get('tournament'),
                           'user_id' => Auth::user()->id,
-                          'comment' => Input::get('new_comment')]);
+                          'comment' => Input::get('new_comment'),
+                          'visible' => 1]);
 
         //get tournament list
 
@@ -108,5 +109,9 @@ class TournamentCommentsController extends Controller
         $comment->delete();
 
         return redirect()->action('Admin\TournamentCommentsController@index');
+    }
+
+    public function filter() {
+
     }
 }

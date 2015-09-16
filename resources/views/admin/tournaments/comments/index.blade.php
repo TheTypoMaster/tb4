@@ -6,7 +6,22 @@
             <div class="row page-header">
 
             </div>
-            <div class="row pull-right" style="margin-right: 60px; margin-bottom: 20px;">
+
+            <div class="row">
+            <div class="pull-right" style="margin-right: 60px; margin-bottom: 20px;">
+                {!! Form::open(['url' => 'admin/tournament-comments/filter']) !!}
+                {!! Form::label('tournament_id', 'Tournament ID.: ') !!}
+                {!! Form::input('text', 'tournament_id', '') !!}
+                {!! Form::label('username', 'Username: ', '') !!}
+                {!! Form::input('text', 'username', '') !!}
+                {!! Form::label('visible', 'Visible Only: ') !!}
+                {!! Form::checkbox('visible', 1, false) !!}
+                {!! Form::submit('Filter', ['class' => 'btn btn-primary']) !!}
+                {!! Form::close() !!}
+            </div>
+            </div>
+            <div class="row">
+            <div class="pull-right" style="margin-right: 60px; margin-bottom: 20px;">
                 {!! Form::open(['url' => 'admin/tournament-comments/store']) !!}
                 {!! Form::label('new_comment', 'Add Comment: ') !!}
                 {!! Form::input('text', 'new_comment', '') !!}
@@ -14,6 +29,7 @@
                 {!! Form::submit('Add', ['class' => 'btn btn-primary']) !!}
                 {!! Form::close() !!}
             </div>
+                </div>
             <div class="row">
                 <table class="table">
                     <tr>
@@ -37,7 +53,12 @@
                             <td>{{$comment['buy_in']}}</td>
                             <td>{{$comment['entry_fee']}}</td>
                             <td>{{$comment['created_date']}}</td>
-                            <td>Visible</td>
+                            @if($comment['visible'] == 0)
+                                <td>No</td>
+
+                            @else
+                                <td>Yes</td>
+                                @endif
                             <td>{{$comment['comment']}}</td>
                             <td>{!! link_to('admin/tournament-comments/delete/'.$comment['id'], 'Delete', array('class' =>'btn btn-primary')) !!}</td>
                         </tr>
