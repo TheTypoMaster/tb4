@@ -694,17 +694,17 @@ class RaceDataProcessingService {
 
                 $priceModel = $this->prices->getPriceForSelectionByProduct($existingSelection->id, $betProduct->id);
 
-                if ($priceModel) {
+                if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
+                    $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
                 } else {
-                    $priceModel = $this->prices->create($priceDetails);
+                    $newPriceModel = $this->prices->create($priceDetails);
+                    $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
                 }
 
-                $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
 
 				$runnerCount++;
 			}
-
 
 
 		}

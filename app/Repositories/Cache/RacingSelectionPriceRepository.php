@@ -22,6 +22,7 @@ class RacingSelectionPriceRepository extends CachedResourceRepository {
 
     protected $tags = array("racing", "selection_prices");
 
+
     public function __construct(SelectionPriceRepositoryInterface $repository)
     {
         $this->repository = $repository;
