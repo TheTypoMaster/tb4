@@ -755,7 +755,7 @@ class TournamentService {
         $tournaments = $this->tournamentRepository->getTournamentList();
         foreach($tournaments as $tournament) {
             $tournament_transaction = array();
-            $tournament_list[$tournament->id] = $tournament->name;
+            $tournament_list[$tournament->id] = '(#' . $tournament->id . ')' . $tournament->name;
         }
         return $tournament_list;
     }

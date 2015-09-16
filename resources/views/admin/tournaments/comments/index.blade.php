@@ -8,9 +8,9 @@
             </div>
             <div class="row pull-right" style="margin-right: 60px; margin-bottom: 20px;">
                 {!! Form::open(['url' => 'admin/tournament-comments/store']) !!}
-                {!! Form::select('tournament', $tournament_list) !!}
                 {!! Form::label('new_comment', 'Add Comment: ') !!}
                 {!! Form::input('text', 'new_comment', '') !!}
+                {!! Form::select('tournament', $tournament_list) !!}
                 {!! Form::submit('Add', ['class' => 'btn btn-primary']) !!}
                 {!! Form::close() !!}
             </div>
@@ -19,7 +19,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Username</th>
-                        <th>Tournament</th>
+                        <th>Tournament Id</th>
+                        <th>Tournament Name</th>
+                        <th>Buy In</th>
+                        <th>Entry Fee</th>
                         <th>Time of Comment</th>
                         <th>Visible</th>
                         <th>Comment</th>
@@ -29,7 +32,10 @@
                         <tr>
                             <td>{{$comment['id']}}</td>
                             <td>{{$comment['username']}}</td>
-                            <td>{{$comment['tournament']}}</td>
+                            <td>{{$comment['tournament_id']}}</td>
+                            <td>{{$comment['tournament_name']}}</td>
+                            <td>{{$comment['buy_in']}}</td>
+                            <td>{{$comment['entry_fee']}}</td>
                             <td>{{$comment['created_date']}}</td>
                             <td>Visible</td>
                             <td>{{$comment['comment']}}</td>

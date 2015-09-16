@@ -117,9 +117,13 @@ class TournamentCommentService {
         $comment_list = array();
         foreach($comments as $comment) {
             $comment_trans = array();
+            $tournament = TournamentModel::where('id', $comment->tournament_id)->first();
             $comment_trans['id'] = $comment->id;
             $comment_trans['username'] = UserModel::where('id', $comment->user_id)->first()->name;
-            $comment_trans['tournament'] = TournamentModel::where('id', $comment->tournament_id)->first()->name;
+            $comment_trans['tournament_id'] = $tournament->id;
+            $comment_trans['tournament_name'] = $tournament->name;
+            $comment_trans['buy_in'] = $tournament->buy_in;
+            $comment_trans['entry_fee'] = $tournament->entry_fee;
             $comment_trans['created_date'] = $comment->created_date;
             $comment_trans['comment'] = $comment->comment;
             array_push($comment_list, $comment_trans);

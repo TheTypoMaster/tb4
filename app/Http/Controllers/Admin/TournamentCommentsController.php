@@ -52,7 +52,7 @@ class TournamentCommentsController extends Controller
     public function store()
     {
         $comment = new TournamentCommentModel();
-        $comment::create(['tournament_id' => 1,
+        $comment::create(['tournament_id' => Input::get('tournament'),
                           'user_id' => Auth::user()->id,
                           'comment' => Input::get('new_comment')]);
 
