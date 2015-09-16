@@ -10,6 +10,8 @@ class TournamentCommentModel extends Model
 
     protected $guarded = array();
 
+    protected $fillable = ['tournament_id', 'user_id', 'comment'];
+
     public function tournament()
     {
         return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');

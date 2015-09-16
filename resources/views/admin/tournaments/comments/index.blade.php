@@ -6,6 +6,13 @@
             <div class="row page-header">
 
             </div>
+            <div class="row pull-right" style="margin-right: 60px; margin-bottom: 20px;">
+                {!! Form::open(['url' => 'admin/tournament-comments/store']) !!}
+                {!! Form::label('new_comment', 'Add Comment: ') !!}
+                {!! Form::input('text', 'new_comment', '') !!}
+                {!! Form::submit('Add', ['class' => 'btn btn-primary']) !!}
+                {!! Form::close() !!}
+            </div>
             <div class="row">
                 <table class="table">
                     <tr>

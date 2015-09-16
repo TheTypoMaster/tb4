@@ -4,10 +4,13 @@ namespace TopBetta\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\TournamentCommentModel;
 use TopBetta\Services\Tournaments\TournamentCommentService;
+use Sentry;
 
 class TournamentCommentsController extends Controller
 {
@@ -33,7 +36,7 @@ class TournamentCommentsController extends Controller
      */
     public function create()
     {
-        //
+        return 'new comment';
     }
 
     /**
@@ -42,9 +45,13 @@ class TournamentCommentsController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $comment = new TournamentCommentModel();
+        $comment::create(['tournament_id' => 1,
+                          'user_id' => Auth::user()->id,
+                          'comment' => Input::get('new_comment')]);
+        return redirect()->action('Admin\TournamentCommentsController@index');
     }
 
     /**
