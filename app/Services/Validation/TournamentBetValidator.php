@@ -16,8 +16,6 @@ class TournamentBetValidator extends Validator {
         'bet_type' => 'required',
         'selections' => 'required',
         'ticket_id' => 'required',
-        'win_product' => 'required_without:place_product',
-        'place_product' => 'required_without:win_product',
     );
 
     protected $createRules = array();
