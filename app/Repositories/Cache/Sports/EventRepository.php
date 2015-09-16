@@ -77,7 +77,7 @@ class EventRepository extends CachedSportResourceRepository {
         $changes = $this->repository->addTeamsToModel($model, $teams);
 
         if (count($changes)) {
-            $this->makeCacheResource($model);
+            $this->makeCacheResource($model->load('teams'));
         }
 
         return $model;
