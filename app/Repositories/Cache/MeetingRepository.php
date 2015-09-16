@@ -67,7 +67,7 @@ class MeetingRepository extends CachedResourceRepository {
                 $resource->setRelation('races', $meeting->races);
             }
 
-            \Log::debug("MeetingRepository (makeCacheResource): Adding small meetings " . $model->start_date . " count " . $resource->count());
+            \Log::debug("MeetingRepository (makeCacheResource): Adding small meetings " . $model->start_date . " count " . $meetings->count());
             $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
         }
 
