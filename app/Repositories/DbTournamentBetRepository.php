@@ -157,7 +157,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->join('tbdb_event as e', 'e.id', '=', 'm.event_id')
             ->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'e.id')
             ->join('tbdb_event_group as eg', 'eg.id', '=', 'ege.event_group_id')
-            ->join('tbdb_bet_product as bp', 'bp.id', '=', 'tb.bet_product_id')
+            ->leftJoin('tbdb_bet_product as bp', 'bp.id', '=', 'tb.bet_product_id')
             ->leftJoin('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
             ->groupBy('tb.id')
             ->select(array(
