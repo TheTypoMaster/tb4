@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Models\SelectionModel;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\PriceResource;
 
 class RacingSelectionRepository extends CachedResourceRepository
 {
@@ -36,6 +37,15 @@ class RacingSelectionRepository extends CachedResourceRepository
     public function __construct(SelectionRepositoryInterface $repository)
     {
         $this->repository = $repository;
+    }
+
+    public function update($model, $data)
+    {
+        if ($model->isDirty()) {
+            $model = parent::update($model, $data);
+        }
+
+        return $model;
     }
 
     public function getSelectionByExternalId($selectionId)
@@ -67,15 +77,63 @@ class RacingSelectionRepository extends CachedResourceRepository
         return $this->getCollection($this->cachePrefix . '_race_' . $raceId);
     }
 
+    public function getSelectionsArrayForRace($raceId)
+    {
+        return \Cache::tags($this->tags)->get($this->cachePrefix . '_race_' . $raceId);
+    }
+
     public function updatePricesForSelectionInRace($selectionId, $race, $price)
     {
-        if ($selections = $this->getSelectionsForRace($race['id'])) {
-            if ($selection = $selections->getDictionary()[$selectionId]) {
-                $selection->addPrice($price);
-                $selections->put($selection->id, $selection);
-                \Cache::tags($this->tags)->put($this->cachePrefix . '_race_' . $race['id'], $selections->toArray(), $this->getRaceCollectionTime($race));
+        if ($selections = $this->getSelectionsArrayForRace($race['id'])) {
+            if ($selection = array_get($selections, $selectionId)) {
+
+                if (!array_get($selection, 'prices')) {
+                    $selection['prices'] = array();
+                }
+
+                $priceKey = null;
+                foreach ($selection['prices'] as $key=>$selectionPrice) {
+                    if ($selectionPrice['id'] == $price->id) {
+                        $priceKey = $key;
+                        break;
+                    }
+                }
+
+                if ($priceKey) {
+                    $selection['prices'][$priceKey] = $this->createPriceResource($price)->toArray();
+                } else {
+                    $selection['prices'][] = $this->createPriceResource($price)->toArray();
+                }
+
+                $selections[$selection['id']] = $selection;
+                \Cache::tags($this->tags)->put($this->cachePrefix . '_race_' . $race['id'], $selections, $this->getRaceCollectionTime($race));
             }
         }
+    }
+
+    protected function addToCollection($resource, $collectionKey, $resourceClass = null)
+    {
+        $key = $this->getCollectionCacheKey($collectionKey, $resource);
+
+        if (!$key) {
+            return $this;
+        }
+
+        if (!$collection = $this->getCollection($key, $resourceClass)) {
+            $collection = new EloquentResourceCollection(new Collection(), $resourceClass ? : $this->resourceClass);
+        }
+
+        $collection->put($resource->id, $resource);
+
+        \Log::debug(get_class($this) . "Putting object in cache collection KEY " . $key . ' TIME ' . $this->getCollectionCacheTime($collectionKey, $resource));
+
+        if ($this->cacheForever) {
+            \Cache::tags($this->tags)->forever($key, $collection->toKeyedArray());
+        } else {
+            \Cache::tags($this->tags)->put($key, $collection->toKeyedArray(), $this->getCollectionCacheTime($collectionKey, $resource));
+        }
+
+        return $this;
     }
 
     protected function getRaceCollectionTime($race)
@@ -101,5 +159,10 @@ class RacingSelectionRepository extends CachedResourceRepository
         }
 
         throw new \InvalidArgumentException("invalid key");
+    }
+
+    protected function createPriceResource($price)
+    {
+        return new PriceResource($price);
     }
 }
