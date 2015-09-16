@@ -157,6 +157,12 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $event->teams()->sync($teams);
     }
 
+    public function addTeamsToModel($event, array $teams)
+    {
+        return $event->teams()->sync($teams);
+    }
+
+
     public function addToCompetition($eventId, $competitionId)
     {
         $event = $this->model->find($eventId);

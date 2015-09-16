@@ -53,4 +53,9 @@ class TournamentBetModel extends Eloquent {
     {
         return $this->hasMany('TopBetta\Models\TournamentBetSelectionModel', 'tournament_bet_id', 'id');
     }
+
+    public function product()
+    {
+        return $this->belongsTo('TopBetta\Models\BetProductModel', 'bet_product_id');
+    }
 } 

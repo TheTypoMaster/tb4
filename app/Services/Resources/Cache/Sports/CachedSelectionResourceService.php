@@ -19,10 +19,4 @@ class CachedSelectionResourceService extends CachedResourceService {
         $this->resourceService = $resourceService;
     }
 
-    public function filterSelections($selections)
-    {
-        return $selections->filter(function ($v) {
-            return $v->getPrice() > 1 && $v->selection_status_id == 1;
-        });
-    }
 }

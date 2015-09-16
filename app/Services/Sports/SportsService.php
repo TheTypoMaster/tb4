@@ -56,7 +56,7 @@ class SportsService {
 
     public function getVisibleSportsWithCompetitionAndEvent($competition)
     {
-        $sports = $this->sportResourceService->getVisibleSportsWithSelectedCompetition($competition);
+        $sports = $this->sportResourceService->getVisibleSports($competition);
 
         $competitionData = $this->competitionService->getCompetitionsWithEvents(array("competition_id" => $competition));
         $competition = array_get($competitionData, 'data');

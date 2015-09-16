@@ -35,7 +35,7 @@ class CachedCompetitionResourceService extends CachedResourceService {
     {
         $competitions = $this->competitionRepository->getVisibleCompetitionByBaseCompetition($baseCompetition);
 
-        return $this->filterCompetitions($competitions, $competitionEvents);
+        return $competitions;
     }
 
     public function getCompetitionResource($id)
@@ -49,16 +49,4 @@ class CachedCompetitionResourceService extends CachedResourceService {
         return $competition;
     }
 
-    public function filterCompetitions($competitions, $competitionEvents)
-    {
-        return $competitions->filter(function ($v) use ($competitionEvents) {
-            if ($v->id == $competitionEvents) {
-                return true;
-            }
-
-            $events = $this->eventResourceService->getEventsForCompetition($v->id);
-
-            return (bool) ($events->count() && $v->display_flag);
-        });
-    }
 }

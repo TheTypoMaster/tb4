@@ -59,7 +59,7 @@ class CachedEventResourceService extends CachedResourceService {
             return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\EventResource');
         }
 
-        return $this->filterEvents($events);
+        return $events;
     }
 
     public function getEventsForCompetitionWithFilteredMarkets($competition, $types)
@@ -77,12 +77,4 @@ class CachedEventResourceService extends CachedResourceService {
         return $events;
     }
 
-    public function filterEvents($events)
-    {
-        return $events->filter(function ($v) {
-            $markets = $this->marketResourceService->getAllMarketsForEvent($v->id);
-
-            return (bool) ($markets->count() && $v->display_flag);
-        });
-    }
 }

@@ -83,6 +83,22 @@ class BaseEloquentRepository {
         return $model;
     }
 
+    /**
+     * Update record and return model
+     * @param $id
+     * @param $data
+     * @param string $key
+     * @return mixed
+     */
+    public function updateWithExternalIdAndReturnModel($id, $data, $key = 'id')
+    {
+        $model = $this->model->where($key, $id)->first();
+
+        $this->update($model, $data);
+
+        return $model;
+    }
+
     public function update($model, $data)
     {
         foreach ($data as $key => $value) {
