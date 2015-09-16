@@ -149,9 +149,9 @@ class TournamentProjectedResultService {
     {
         switch ($tournament->prizeFormat->keyword) {
             case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_ALL:
-                return $this->placesPaidService->getPercentagesByPlacesPaid($tournament, 1);
+                return $this->placesPaidService->getPercentagesByPlacesPaid(1);
             case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_TOP3:
-                return $this->placesPaidService->getPercentagesByPlacesPaid($tournament, 3);
+                return $this->placesPaidService->getPercentagesByPlacesPaid(3);
             case TournamentPrizeFormatRepositoryInterface::PRIZE_FORMAT_MULTIPLE:
                 return $this->placesPaidService->getPercentagesForTournamentByEntrants($tournament);
         }
