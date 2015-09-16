@@ -744,4 +744,19 @@ class TournamentService {
 
         return $automated_text;
     }
+
+    /**
+     * get tournament list start from today
+     * used for drop down list in template
+     * @return mixed
+     */
+    public function getTournamentsFromToday() {
+        $tournament_list = array();
+        $tournaments = $this->tournamentRepository->getTournamentList();
+        foreach($tournaments as $tournament) {
+            $tournament_transaction = array();
+            $tournament_list[$tournament->id] = $tournament->name;
+        }
+        return $tournament_list;
+    }
 }

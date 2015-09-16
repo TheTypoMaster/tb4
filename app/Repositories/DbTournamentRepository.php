@@ -192,4 +192,14 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
         return $model;
     }
 
+    /**
+     * get tournaments that start from today
+     * used for drop down list in template
+     * @return mixed
+     */
+    public function getTournamentList() {
+        $tournament_list = $this->model->fromToday()->get();
+        return $tournament_list;
+    }
+
 } 

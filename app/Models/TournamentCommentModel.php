@@ -2,6 +2,7 @@
 
 namespace TopBetta\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class TournamentCommentModel extends Model

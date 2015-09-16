@@ -11,12 +11,14 @@ use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\TournamentCommentModel;
 use TopBetta\Services\Tournaments\TournamentCommentService;
 use Sentry;
+use TopBetta\Services\Tournaments\TournamentService;
 
 class TournamentCommentsController extends Controller
 {
 
-    public function __construct(TournamentCommentService $commentService) {
+    public function __construct(TournamentCommentService $commentService, TournamentService $tournamentService) {
         $this->commentService = $commentService;
+        $this->tournamentService = $tournamentService;
     }
     /**
      * Display a listing of the resource.
@@ -26,7 +28,9 @@ class TournamentCommentsController extends Controller
     public function index()
     {
         $comments = $this->commentService->getAllComments();
-        return view('admin.tournaments.comments.index')->with('comments', $comments);
+        $tournament_list = $this->tournamentService->getTournamentsFromToday();
+//        dd($tournament_list);
+        return view('admin.tournaments.comments.index')->with(['comments' => $comments, 'tournament_list' => $tournament_list]);
     }
 
     /**
@@ -51,6 +55,10 @@ class TournamentCommentsController extends Controller
         $comment::create(['tournament_id' => 1,
                           'user_id' => Auth::user()->id,
                           'comment' => Input::get('new_comment')]);
+
+        //get tournament list
+
+
         return redirect()->action('Admin\TournamentCommentsController@index');
     }
 

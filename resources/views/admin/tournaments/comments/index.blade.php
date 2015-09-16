@@ -8,6 +8,7 @@
             </div>
             <div class="row pull-right" style="margin-right: 60px; margin-bottom: 20px;">
                 {!! Form::open(['url' => 'admin/tournament-comments/store']) !!}
+                {!! Form::select('tournament', $tournament_list) !!}
                 {!! Form::label('new_comment', 'Add Comment: ') !!}
                 {!! Form::input('text', 'new_comment', '') !!}
                 {!! Form::submit('Add', ['class' => 'btn btn-primary']) !!}
