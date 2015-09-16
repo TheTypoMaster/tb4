@@ -58,15 +58,17 @@ class MeetingRepository extends CachedResourceRepository {
     {
         $model = parent::makeCacheResource($model);
 
-        $resource = $this->createSmallMeeting($model);
+        if ($model->start_date) {
+            $resource = $this->createSmallMeeting($model);
 
-        $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+            $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
 
-        if ($meetings && $meeting = $meetings->get($model->id)) {
-            $resource->setRelation('races', $meeting->races);
+            if ($meetings && $meeting = $meetings->get($model->id)) {
+                $resource->setRelation('races', $meeting->races);
+            }
+
+            $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
         }
-
-        $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
 
         return $model;
     }
