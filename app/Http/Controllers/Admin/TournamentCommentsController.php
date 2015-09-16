@@ -6,9 +6,14 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Services\Tournaments\TournamentCommentService;
 
 class TournamentCommentsController extends Controller
 {
+
+    public function __construct(TournamentCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,8 +21,8 @@ class TournamentCommentsController extends Controller
      */
     public function index()
     {
-        //
-        return view('admin.tournaments.comments.index');
+        $comments = $this->commentService->getAllComments();
+        return view('admin.tournaments.comments.index')->with('comments', $comments);
     }
 
     /**
