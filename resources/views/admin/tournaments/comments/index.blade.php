@@ -25,7 +25,7 @@
                             <td>{{$comment['created_date']}}</td>
                             <td>Visible</td>
                             <td>{{$comment['comment']}}</td>
-                            <td>Action</td>
+                            <td>{!! link_to('admin/tournament-comments/delete/'.$comment['id'], 'Delete', array('class' =>'btn btn-primary')) !!}</td>
                         </tr>
                     @endforeach
                 </table>

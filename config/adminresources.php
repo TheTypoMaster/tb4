@@ -61,6 +61,7 @@ return array(
         array('uri' => 'user-activity/download', "permission" => "get_user_activity"),
         array('uri' => 'tournaments/download/entrants', 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments", 'permission' => 'tournaments.view'),
+        array("uri" => "tournament-comments/delete/{id}", 'permission' => 'tournaments.view'),
     ),
 
     // --- SIDEBAR NAVIGATION MENU ---

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Models\TournamentCommentModel;
 use TopBetta\Services\Tournaments\TournamentCommentService;
 
 class TournamentCommentsController extends Controller
@@ -88,6 +89,9 @@ class TournamentCommentsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comment = TournamentCommentModel::findOrFail($id);
+        $comment->delete();
+
+        return redirect()->action('Admin\TournamentCommentsController@index');
     }
 }

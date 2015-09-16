@@ -237,10 +237,12 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     //tournament comments routes
     Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
+    Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
 
 
     //tournament groups
     Route::resource('tournament-groups', 'Admin\TournamentGroupController');
+
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');

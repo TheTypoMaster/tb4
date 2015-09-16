@@ -109,7 +109,7 @@ class TournamentCommentService {
     }
 
     /**
-     * get all the comments in database
+     * get all the comments collections and transact them to array
      * @return mixed
      */
     public function getAllComments() {
