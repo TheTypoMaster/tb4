@@ -62,7 +62,7 @@ class RacePriceProcessingService {
                             'OddString' => 'required');
 			$validator = Validator::make($price, $rules);
 			if ($validator->fails()) {
-				Log::debug($this->logprefix . '(_processPriceData): Price data incomplete - ' . $validator->messages());
+				Log::debug($this->logprefix . '(_processPriceData): Price data incomplete - ' . $validator->messages(). ' - '.$price);
 				continue;
 			}
 
