@@ -73,6 +73,11 @@ class BetResource extends AbstractEloquentResource {
         return ! $this->isexotic() ? $this->model->selection_name : null;
     }
 
+    public function selectionNumber()
+    {
+        return ! $this->isexotic() ? $this->model->selection_number : null;
+    }
+
     public function selectionId()
     {
         return ! $this->isExotic() ? $this->model->selection_id : null;
