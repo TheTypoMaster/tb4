@@ -119,6 +119,11 @@ abstract class CachedResourceRepository {
         return $this->makeCacheResource($model);
     }
 
+    public function delete($model)
+    {
+        return $this->repository->delete($model);
+    }
+
     public function makeCacheResource($model)
     {
         $resource = $this->createResource($model);

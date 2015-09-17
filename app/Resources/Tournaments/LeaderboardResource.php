@@ -32,7 +32,8 @@ class LeaderboardResource extends AbstractEloquentResource {
         "turned_over" => "int",
         "rebuys" => "int",
         "topups" => "int",
-        "qualified" => "bool"
+        "qualified" => "bool",
+        "userId" => "int",
     );
 
     private $position = '-';
@@ -90,11 +91,20 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this->currency > $leaderboardResource->currency ? 1 : -1;
     }
 
+    public function intialize()
+    {
+        parent::initialize();
+
+        if (!$this->model->username) {
+            $this->model->username = $this->model->user->username;
+        }
+    }
+
     public function toArray()
     {
         $array = parent::toArray();
 
-        $array['position'] = $this->position;
+        $array['position'] = $this->getPosition();
 
         return $array;
     }

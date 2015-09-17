@@ -157,6 +157,10 @@ class TournamentResource extends AbstractEloquentResource {
      */
     public function getTournamentPrizeFormat()
     {
+        if (object_get($this->model, 'tournament_prize_format') && !is_numeric($this->model->tournament_prize_format)) {
+            return $this->model->tournament_prize_format;
+        }
+
         if ($this->prizeFormat) {
             return $this->prizeFormat;
         }

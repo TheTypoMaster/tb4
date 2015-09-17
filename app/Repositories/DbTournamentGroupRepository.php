@@ -94,8 +94,6 @@ class DbTournamentGroupRepository extends BaseEloquentRepository implements Tour
 
     public function addTournamentToGroups($tournament, $groups)
     {
-        $tournament->groups()->sync($groups);
-
-        return $tournament;
+        return $tournament->groups()->sync($groups);
     }
 }

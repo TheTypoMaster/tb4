@@ -45,9 +45,45 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
     {
         $leaderboard = $this->getCollection($this->cachePrefix . $tournament);
 
+        if (!$leaderboard->count()) {
+            return $this->repository->getTournamentLeaderboardPaginated($tournament, $limit);
+        }
+
         $page = \Request::get('page', 0);
 
         return PaginatedEloquentResourceCollection::makeFromEloquentResourceCollection($leaderboard, $limit, $page);
+    }
+
+    public function insertLeaderboard($tournament, $leaderboard)
+    {
+        $newLeaderboard = new EloquentResourceCollection($leaderboard, $this->resourceClass);
+        $positionLeaderboard = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+
+        $position = 0;
+        $positionCount = 1;
+        $previousRecord = null;
+        foreach ($newLeaderboard as $key=>$leaderboardRecord) {
+
+            if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
+                $positionCount++;
+            } else {
+                $position += $positionCount;
+                $positionCount = 1;
+            }
+
+            if ($leaderboardRecord->qualified()) {
+                $leaderboardRecord->setPosition($position);
+            }
+
+            $positionLeaderboard->push($leaderboardRecord);
+            $previousRecord = $leaderboardRecord;
+        }
+
+        $this->put(
+            $this->cachePrefix . $tournament->id,
+            $positionLeaderboard->toArray(),
+            Carbon::createFromFormat('Y-m-d H:i:s', $tournament->end_date)->addDays(2)->diffInMinutes()
+        );
     }
 
     public function getTournamentLeaderboard($tournamentID, $limit = 50, $qualified = false)
@@ -102,9 +138,21 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
     }
 
-    protected function getPosition($previousRecord, $record, $totalPosition = 1)
+    public function delete($model)
     {
-        return $previousRecord ? $previousRecord->compare($record) == 0 ? $previousRecord->getPosition() : $previousRecord->getPosition() + $totalPosition : 1;
+        $leaderboard = $this->getCollection($this->cachePrefix . $model->tournament_id);
+
+        if ($leaderboard) {
+            $leaderboard = $this->removeRecord($model, $leaderboard);
+
+            $this->put(
+                $this->cachePrefix . $model->tournament_id,
+                $leaderboard->toArray(),
+                Carbon::createFromFormat('Y-m-d H:i:s', $model->tournament->end_date)->addDays(2)->diffInMinutes()
+            );
+        }
+
+        return parent::delete($model);
     }
 
     /**
@@ -119,36 +167,42 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
         $previousRecord = null;
         $inserted = false;
-        $totalPosition = 1;
+        $positionCount = 1;
+        $position = 0;
         foreach ($leaderboard as $key=>$leaderboardRecord) {
 
             if ($leaderboardRecord->id != $record->id) {
-                if ($record->compare($leaderboardRecord) > 0 && !$inserted) {
-                    $record->setPosition($this->getPosition($previousRecord, $record, $totalPosition));
-                    $newLeaderboard->push($record);
 
-                    if ($previousRecord && $previousRecord->compare($record) == 0) {
-                        $totalPosition++;
+                if ($record->compare($leaderboardRecord) > 0 && !$inserted) {
+
+                    if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
+                        $positionCount++;
                     } else {
-                        $totalPosition = 1;
+                        $position += $positionCount;
+                        $positionCount = 1;
                     }
 
+                    if ($record->qualified()) {
+                        $record->setPosition($position);
+                    }
+
+                    $newLeaderboard->push($record);
                     $previousRecord = $record;
                     $inserted = true;
                 }
 
+                if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
+                    $positionCount++;
+                } else {
+                    $position += $positionCount;
+                    $positionCount = 1;
+                }
+
                 if ($leaderboardRecord->qualified()) {
-                    $leaderboardRecord->setPosition($this->getPosition($previousRecord, $record, $totalPosition));
+                    $leaderboardRecord->setPosition($position);
                 }
 
                 $newLeaderboard->push($leaderboardRecord);
-
-                if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
-                    $totalPosition++;
-                } else {
-                    $totalPosition = 1;
-                }
-
                 $previousRecord = $leaderboardRecord;
             }
         }
@@ -163,16 +217,32 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
     public function removeRecord($record, $leaderboard)
     {
         $recordKey = null;
+
+        $newLeaderboard = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+
+        $position = 0;
+        $positionCount = 1;
+        $previousRecord = null;
         foreach ($leaderboard as $key=>$leaderboardRecord) {
-            if ($leaderboardRecord->id == $record->id) {
-                $recordKey = $key;
-                break;
+            if ($leaderboardRecord->id != $record->id) {
+
+                if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
+                    $positionCount++;
+                } else {
+                    $position += $positionCount;
+                    $positionCount = 1;
+                }
+
+                if ($leaderboardRecord->qualified()) {
+                    $leaderboardRecord->setPosition($position);
+                }
+
+                $newLeaderboard->push($leaderboardRecord);
+                $previousRecord = $leaderboardRecord;
             }
         }
 
-        $leaderboard->forget($recordKey);
-
-        return $leaderboard;
+        return $newLeaderboard;
     }
 
     public function getCollectionCacheTime($collectionKey, $model)

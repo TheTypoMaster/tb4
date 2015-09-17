@@ -81,13 +81,13 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
 
     public function addTournamentToGroups($tournament, $groups)
     {
-        if ($tournament->groups->count()) {
-            $this->removeTournamentFromGroups($tournament);
+        $changes = $this->repository->addTournamentToGroups($tournament, $groups);
+        if (count(array_get($changes, 'detached'))) {
+            $this->removeTournamentFromGroupsArray($tournament, $changes['detatched']);
         }
 
-        $this->repository->addTournamentToGroups($tournament, $groups);
-
-        if ($tournament->start_date >= Carbon::now()) {
+        if ($tournament->start_date >= Carbon::now()->startofDay()) {
+            $tournament->load('groups');
             $this->updateTournamentResource(new TournamentResource($tournament));
         }
     }
@@ -124,6 +124,37 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
                     $existingGroup->tournaments->keyBy('id')->forget($tournament->id)
                 );
             }
+
+            if ($existingGroup->count()) {
+                $existingGroups->put($group->id, $existingGroup);
+            } else {
+                $existingGroups->forget($group->id);
+            }
+        }
+
+        $this->put($this->cachePrefix . 'all', $existingGroups->toArray(), null);
+    }
+
+    public function removeTournamentFromGroupsArray($tournament, $groupIds)
+    {
+        $existingGroups = $this->getTournamentGroups();
+
+        foreach ($groupIds as $group) {
+            $existingGroup = $existingGroups->get($group);
+
+            if ($existingGroup) {
+                $existingGroup->setRelation(
+                    'tournaments',
+                    $existingGroup->tournaments->keyBy('id')->forget($tournament->id)
+                );
+            }
+
+            if ($existingGroup->count()) {
+                $existingGroups->put($group, $existingGroup);
+            } else {
+                $existingGroups->forget($group);
+            }
+
         }
 
         $this->put($this->cachePrefix . 'all', $existingGroups->toArray(), null);

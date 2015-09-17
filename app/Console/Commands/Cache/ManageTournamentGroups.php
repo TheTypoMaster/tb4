@@ -2,7 +2,10 @@
 
 namespace TopBetta\Console\Commands\Cache;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use TopBetta\Repositories\Cache\Tournaments\TournamentGroupRepository;
+use TopBetta\Repositories\DbTournamentRepository;
 
 class ManageTournamentGroups extends Command
 {
@@ -11,23 +14,28 @@ class ManageTournamentGroups extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $name = 'topbetta:manage-tournament-groups';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description.';
+    protected $description = 'Removes old tournaments from visible tournament groups.';
+    /**
+     * @var TournamentGroupRepository
+     */
+    private $groupRepository;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(TournamentGroupRepository $groupRepository)
     {
         parent::__construct();
+        $this->groupRepository = $groupRepository;
     }
 
     /**
@@ -37,6 +45,15 @@ class ManageTournamentGroups extends Command
      */
     public function handle()
     {
-        //
+        $groups = $this->groupRepository->getTournamentGroups();
+
+        foreach ($groups as $group) {
+            foreach ($group->tournaments as $tournament) {
+                if ($tournament->end_date <= Carbon::now()->startOfDay()) {
+                    $this->groupRepository->removeTournamentFromGroups($tournament->getModel());
+                }
+            }
+        }
+
     }
 }

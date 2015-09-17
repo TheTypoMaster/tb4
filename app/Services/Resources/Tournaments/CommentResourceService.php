@@ -28,6 +28,10 @@ class CommentResourceService {
     {
         $comments = $this->commentRepository->getCommentsForTournament($tournament, $limit);
 
+        if ($comments instanceof PaginatedEloquentResourceCollection) {
+            return $comments;
+        }
+
         return new PaginatedEloquentResourceCollection($comments, 'TopBetta\Resources\Tournaments\CommentResource');
     }
 }

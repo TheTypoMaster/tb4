@@ -157,7 +157,7 @@ class TournamentLeaderboardService {
     {
         $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($userId, $tournament->id);
 
-        return $leaderboard->delete();
+        return $this->leaderboardRepository->delete($leaderboard);
     }
 
     public function increaseTurnedOver($tournamentId, $userId, $amount)
