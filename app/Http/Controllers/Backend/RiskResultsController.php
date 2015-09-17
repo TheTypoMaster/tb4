@@ -33,7 +33,11 @@ class RiskResultsController extends Controller
      */
     private $eventRepository;
 
-    public function __construct(BetResultService $betResultService, RiskRaceStatusController $riskRaceStatusController, RaceRepository $raceRepository, RaceResultService $resultService, EventRepositoryInterface $eventRepository )
+    public function __construct(BetResultService $betResultService,
+                                RiskRaceStatusController $riskRaceStatusController,
+                                RaceRepository $raceRepository,
+                                RaceResultService $resultService,
+                                EventRepositoryInterface $eventRepository )
     {
         $this->betResultService = $betResultService;
         $this->riskRaceStatusController = $riskRaceStatusController;
@@ -54,13 +58,15 @@ class RiskResultsController extends Controller
             $input = Input::json()->all();
         }
 
-        if (!isset($input['race_id']) || !\TopBetta\Models\RaceEvent::find($input['race_id'])) {
+        if (!isset($input['race_id']) || !\TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])->first()) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
         }
 
         $errors = $this->updateRaceResults($input, $input['race_id']);
 
-        $eventModel = $this->eventRepository->find($input['race_id']);
+        $eventId = \TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])->pluck('id');
+
+        $eventModel = $this->eventRepository->find($eventId);
         //update results in cache
         $this->raceRepository->makeCacheResource($eventModel);
         $race = $this->raceRepository->getRace($eventModel->id);
@@ -115,7 +121,7 @@ class RiskResultsController extends Controller
 
     private static function saveExoticResults($raceResult, $raceId)
     {
-        $event = \TopBetta\Models\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
 
         if (!$event) {
             return false;

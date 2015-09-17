@@ -160,5 +160,16 @@ class TournamentLeaderboardService {
         return $leaderboard->delete();
     }
 
+    public function increaseTurnedOver($tournamentId, $userId, $amount)
+    {
+        $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($userId, $tournamentId);
+
+        $this->leaderboardRepository->update($leaderboard, array(
+            "turned_over" => $leaderboard->turned_over + $amount,
+        ));
+
+        return $this;
+    }
+
 
 }

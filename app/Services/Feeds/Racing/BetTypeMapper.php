@@ -50,4 +50,11 @@ class BetTypeMapper
     {
         return array_get($this->mapping, $betType);
     }
+
+    public function getBetTypeShort($typeName)
+    {
+        $reverseMapping = array_flip($this->mapping);
+
+        return array_get($reverseMapping, $typeName);
+    }
 }

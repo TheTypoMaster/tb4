@@ -9,12 +9,14 @@
 namespace TopBetta\Services\Tournaments\Betting\BetPlacement;
 
 
+use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Betting\Factories\BetSelectionFactory;
 use TopBetta\Services\Tournaments\Betting\TournamentBetLimitService;
 use TopBetta\Services\Tournaments\TournamentBetSelectionService;
+use TopBetta\Services\Tournaments\TournamentLeaderboardService;
 use TopBetta\Services\Tournaments\TournamentTicketService;
 
 abstract class AbstractTournamentBetPlacementService {
@@ -45,13 +47,23 @@ abstract class AbstractTournamentBetPlacementService {
     protected $product;
 
     protected $betType;
+    /**
+     * @var BetResultStatusRepositoryInterface
+     */
+    private $betResultStatusRepository;
+    /**
+     * @var TournamentLeaderboardService
+     */
+    private $leaderboardService;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService)
+    public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentLeaderboardService $leaderboardService)
     {
         $this->betRepository = $betRepository;
         $this->selectionService = new TournamentBetSelectionService(\App::make($this->selectionServiceClass));
         $this->betLimitService = $betLimitService;
         $this->ticketService = $ticketService;
+        $this->betResultStatusRepository = $betResultStatusRepository;
+        $this->leaderboardService = $leaderboardService;
     }
 
     public function placeBet($ticket, $selections, $amount, $betType)
@@ -81,6 +93,7 @@ abstract class AbstractTournamentBetPlacementService {
             "bet_type_id" => $betType->id,
             "bet_amount" => $amount,
             "bet_product_id" => $this->product ? $this->product->id : 0,
+            "bet_result_status_id" => $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
         );
 
         //create bet
@@ -99,6 +112,8 @@ abstract class AbstractTournamentBetPlacementService {
             $this->betRepository->deleteById($bet['id']);
             throw new BetSelectionException(null, "Error creating bet selections");
         }
+
+        $this->leaderboardService->increaseTurnedOver($ticket->tournament_id, $ticket->user_id, $amount);
 
         return $bet;
     }

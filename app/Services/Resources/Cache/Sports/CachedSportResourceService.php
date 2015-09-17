@@ -9,8 +9,10 @@
 namespace TopBetta\Services\Resources\Cache\Sports;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\Sports\CompetitionRepository;
 use TopBetta\Repositories\Cache\Sports\SportRepository;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\Cache\CachedResourceService;
 use TopBetta\Services\Resources\Sports\SportResourceService;
 
@@ -24,12 +26,17 @@ class CachedSportResourceService extends CachedResourceService {
      * @var CachedCompetitionResourceService
      */
     private $competitionResourceService;
+    /**
+     * @var CachedBaseCompetitionResourceService
+     */
+    private $baseCompetitionResourceService;
 
-    public function __construct(SportResourceService $resourceService, SportRepository $sportRepository, CachedCompetitionResourceService $competitionResourceService)
+    public function __construct(SportResourceService $resourceService, SportRepository $sportRepository, CachedCompetitionResourceService $competitionResourceService, CachedBaseCompetitionResourceService $baseCompetitionResourceService)
     {
         $this->resourceService = $resourceService;
         $this->sportRepository = $sportRepository;
         $this->competitionResourceService = $competitionResourceService;
+        $this->baseCompetitionResourceService = $baseCompetitionResourceService;
     }
 
     public function getVisibleSportsWithCompetitions($date = null)
@@ -38,38 +45,25 @@ class CachedSportResourceService extends CachedResourceService {
             return $this->resourceService->getVisibleSportsWithCompetitions($date);
         }
 
-        $sports = $this->sportRepository->getVisibleSportsAndBaseCompetitions();
+        $sports = $this->sportRepository->getVisibleSports();
 
         $sports = $this->attachCompetitions($sports);
 
-        return $this->filterSports($sports);
+        return $sports;
     }
 
-    public function getVisibleSports($competition)
+
+    public function getVisibleSports($sportId = null)
     {
-        $sports = $this->sportRepository->getVisibleSportsAndBaseCompetitions();
+        $sports = $this->sportRepository->getVisibleSports();
 
-        return $this->filterSports($sports, $competition);
+        if (!$sports) {
+            return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\SportResource');
+        }
+
+        return $sports;
     }
 
-    public function filterSports($sports, $attachedCompetitionId = null)
-    {
-
-        $sports = $sports->map(function ($v) use ($attachedCompetitionId) {
-            $v->setRelation('baseCompetitions', $v->baseCompetitions->filter(function ($q) use ($attachedCompetitionId) {
-                $competitions = !$attachedCompetitionId ? $q->competitions :
-                    $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($q->id, $attachedCompetitionId);
-
-                return (bool) ($competitions->count() && $q->display_flag);
-            }));
-
-            return $v;
-        });
-
-        return $sports->filter(function ($v) {
-            return (bool) ($v->baseCompetitions->count() && $v->display_flag);
-        });
-    }
 
 
     protected function attachCompetitions($sports)

@@ -20,6 +20,12 @@ class BaseCompetitionResource extends IconResource {
         "name" => "name",
         "icon" =>  "icon",
         "display_flag" => "display_flag",
+        "sport_id" => "sport_id",
+    );
+
+    protected $types = array(
+        "id" => "int",
+        "sport_id" => "int",
     );
 
     public function competitions()

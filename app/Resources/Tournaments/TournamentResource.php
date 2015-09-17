@@ -42,6 +42,7 @@ class TournamentResource extends AbstractEloquentResource {
         'topup_end'             => 'topup_end',
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
+        'tournamentPrizeFormat' => 'tournament_prize_format',
         'type'                  => 'type',
         'entrants'              => 'entrants',
         'event_group_id'        => 'event_group_id'
@@ -80,6 +81,8 @@ class TournamentResource extends AbstractEloquentResource {
     private $results = null;
 
     private $type;
+
+    private $prizeFormat;
 
     public function getEntrants()
     {
@@ -150,6 +153,28 @@ class TournamentResource extends AbstractEloquentResource {
     }
 
     /**
+     * @return mixed
+     */
+    public function getTournamentPrizeFormat()
+    {
+        if ($this->prizeFormat) {
+            return $this->prizeFormat;
+        }
+
+        return $this->model->prizeFormat;
+    }
+
+    /**
+     * @param mixed $prizeFormat
+     * @return $this
+     */
+    public function setPrizeFormat($prizeFormat)
+    {
+        $this->prizeFormat = $prizeFormat;
+        return $this;
+    }
+
+    /**
      * @param mixed $type
      * @return $this
      */
@@ -175,6 +200,8 @@ class TournamentResource extends AbstractEloquentResource {
 
         $this->setType($this->model->eventGroup->sport_id > 3 ? 'sport' : 'racing');
 
+        $this->setPrizeFormat($this->model->prizeFormat->name);
+        
         $resultService = \App::make('TopBetta\Services\Tournaments\TournamentResultService');
         $this->setResults($resultService->getTournamentResults($this->model)->values());
     }

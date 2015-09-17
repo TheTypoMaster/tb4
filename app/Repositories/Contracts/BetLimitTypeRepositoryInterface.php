@@ -17,4 +17,6 @@ interface BetLimitTypeRepositoryInterface
     const BET_LIMIT_SPORT          = 'bet_sports';
 
     public function getByName($name);
+
+    public function getLimitForUser($user, $betType, $limitType);
 }

@@ -10,6 +10,7 @@ namespace TopBetta\Http\Controllers\Frontend;
 
 use App;
 use Illuminate\Http\Request;
+use TopBetta\Services\Resources\Cache\Sports\CachedSportResourceService;
 use TopBetta\Services\Sports\SportsService;
 
 
@@ -22,7 +23,13 @@ class SportsController extends AbstractResourceController {
 
     public function getVisibleSportsWithCompetitions(SportsService $sportService, Request $request)
     {
-        $sports = $sportService->getVisibleSportsWithCompetitions($request->get('date', null));
+        $sport = $request->get('sport_id');
+
+        if(!$sport) {
+            return $this->apiResponse->failed("No sport specified", 400);
+        }
+
+        $sports = $sportService->getSportsWithCompetitionsForSport($sport);
 
         return $this->apiResponse->success($sports->toArray());
     }
@@ -35,8 +42,17 @@ class SportsController extends AbstractResourceController {
             return $this->apiResponse->failed("No competition specified", 400);
         }
 
-        $sports = $sportService->getVisibleSportsWithCompetitionAndEvent($competition);
+        $sports = $sportService->getSportsWithCompetitionsAndEventForCompetition($competition);
 
-        return $this->apiResponse->success($sports['data']->toArray(), 200, array_except($sports, 'data'));
+        return $this->apiResponse->success($sports->toArray(), 200);
     }
+
+    public function getVisibleSports(CachedSportResourceService $sportsService)
+    {
+        $sports = $sportsService->getVisibleSports();
+
+        return $this->apiResponse->success($sports->toArray());
+    }
+
+
 }

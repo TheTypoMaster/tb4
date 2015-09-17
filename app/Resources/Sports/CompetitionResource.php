@@ -24,6 +24,11 @@ class CompetitionResource extends IconResource{
         "base_competition_id" => "base_competition_id",
     );
 
+    protected $types = array(
+        "id" => "int",
+        "base_competition_id" => "int",
+    );
+
     public function events()
     {
         return $this->collection('events', 'TopBetta\Resources\Sports\EventResource', 'events');

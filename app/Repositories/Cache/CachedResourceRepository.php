@@ -100,9 +100,14 @@ abstract class CachedResourceRepository {
         return $this->makeCacheResource($model);
     }
 
-    public function updateWithId($id, $data)
+    public function updateWithId($id, $data, $key = 'id')
     {
-        $model = $this->repository->updateWithIdAndReturnModel($id, $data);
+        if($key == 'id'){
+            $model = $this->repository->updateWithIdAndReturnModel($id, $data);
+        } else {
+            $model = $this->repository->updateWithExternalIdAndReturnModel($id, $data, $key);
+        }
+
 
         return $this->makeCacheResource($model);
     }

@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Betting\BetDividend\BetTypeDividend;
 
 
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
 use TopBetta\Services\Betting\SelectionService;
 
@@ -44,6 +45,10 @@ class SingleSelectionBetTypeDividendService extends AbstractBetTypeDividendServi
 
     public function calculateFixedOddsDividend($bet)
     {
+        if ($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN && $bet->selection->first()->result->position > 1) {
+            return 0;
+        }
+
         $deductions = $this->selectionService->totalDeduction($bet->selection->first()->market_id, $bet->type->name);
 
         //hack for tournament fixed odds stored differently

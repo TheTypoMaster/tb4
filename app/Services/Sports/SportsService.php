@@ -11,8 +11,8 @@ namespace TopBetta\Services\Sports;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Services\Resources\Cache\Sports\CachedBaseCompetitionResourceService;
 use TopBetta\Services\Resources\Cache\Sports\CachedSportResourceService;
-use TopBetta\Services\Resources\Sports\SportResourceService;
 
 class SportsService {
 
@@ -24,11 +24,23 @@ class SportsService {
      * @var CompetitionService
      */
     private $competitionService;
+    /**
+     * @var CachedBaseCompetitionResourceService
+     */
+    private $baseCompetitionResourceService;
+    /**
+     * @var EventService
+     */
+    private $eventService;
 
-    public function __construct(CachedSportResourceService $sportResourceService, CompetitionService $competitionService)
+
+    public function __construct(CachedSportResourceService $sportResourceService, CompetitionService $competitionService, CachedBaseCompetitionResourceService $baseCompetitionResourceService, EventService $eventService)
     {
         $this->sportResourceService = $sportResourceService;
         $this->competitionService = $competitionService;
+        $this->baseCompetitionResourceService = $baseCompetitionResourceService;
+
+        $this->eventService = $eventService;
     }
 
     public function getVisibleSportsWithCompetitions($date = null)
@@ -65,5 +77,46 @@ class SportsService {
         }
 
         return array("data" => $sports, "selected_competition" => array_get($competitionData, "selected_competition"));
+    }
+
+    public function getSportsWithCompetitionsForSport($sport)
+    {
+        $sports = $this->sportResourceService->getVisibleSports($sport);
+
+        if ($sportResource = array_get($sports->getDictionary(), $sport)) {
+            $baseCompetitions = $this->baseCompetitionResourceService->getBaseCompetitionsForSportWithCompetitions($sport);
+            $sportResource->setRelation('baseCompetitions', $baseCompetitions);
+        }
+
+        return $sports;
+    }
+
+    public function getSportsWithCompetitionsAndEventForCompetition($competition)
+    {
+        $baseComp = $this->baseCompetitionResourceService->getBaseCompetitionForCompetitionId($competition);
+
+        $sports = $this->sportResourceService->getVisibleSports($baseComp->sport_id);
+
+        if ($sportResource = array_get($sports->getDictionary(), $baseComp->sport_id)) {
+            $baseCompetitions = $this->baseCompetitionResourceService->getBaseCompetitionsForSportWithCompetitions($baseComp->sport_id, $competition);
+
+            if ($baseCompetition = array_get($baseCompetitions->getDictionary(), $baseComp->id)) {
+                $competitions = $baseCompetition->competitions->keyBy('id');
+                $comp = $competitions->get($competition);
+
+                $comp->setRelation('events', $this->eventService->getEventsForCompetitionWithFilteredMarkets($comp));
+
+                $baseCompetition->setRelation('competitions', $competitions->values());
+            }
+
+            $sportResource->setRelation('baseCompetitions', $baseCompetitions);
+        }
+
+        return $sports;
+    }
+
+    public function attachBaseCompetitionsForSport($sportsCollection, $sport, $competition = null)
+    {
+
     }
 }

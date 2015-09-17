@@ -255,21 +255,13 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
             ->whereIn('b.id', $bets)
             ->get();
     }
-	
-	public function getBetsForUserByEvents($user, $events)
-    {
-        return $this->model
-            ->where('user_id', $user)
-            ->whereIn('event_id', $events)
-            ->get();
-    }
 
     protected function getBetBuilder()
     {
         return $this->model
             ->from('tbdb_bet as b')
             ->join('tbdb_bet_product as bp', 'bp.id', '=', 'b.bet_product_id')
-            ->join('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
+            ->leftJoin('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
             ->join('tbdb_bet_type as bt', 'bt.id', '=', 'b.bet_type_id')
             ->join('tbdb_bet_result_status as brs', 'brs.id', '=', 'b.bet_result_status_id')
             ->leftJoin('tbdb_account_transaction as at', 'at.id', '=', 'b.result_transaction_id')
@@ -297,4 +289,55 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     }
 
 
+
+    public function getBetsForSelectionsByBetType($user, $selections, $betType)
+    {
+        return $this->model
+            ->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
+            ->whereIn('selection_id', $selections)
+            ->where('bet_type_id', $betType)
+            ->where('user_id', $user)
+            ->groupBy('tbdb_bet.id')
+            ->get(array('tbdb_bet.*', 'selection_id'));
+    }
+
+    public function getBetsByTypeForEvent($user, $event, $type)
+    {
+        return $this->model
+            ->where('bet_type_id', $type)
+            ->where('user_id', $user)
+            ->where('event_id', $event)
+            ->with('betselection')
+            ->get();
+    }
+
+    public function getBetsForUserByEvents($user, $events, $type = null)
+    {
+        $model = $this->model
+            ->where('user_id', $user)
+            ->whereIn('event_id', $events)
+            ->with('betselection');
+
+        if ($type) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get();
+    }
+
+    public function getBetsForUserByMarket($user, $market, $type = null)
+    {
+        $model =  $this->model
+            ->join('tbdb_bet_selection', 'tbdb_bet_selection.bet_id', '=', 'tbdb_bet.id')
+            ->join('tbdb_selection', 'tbdb_bet_selection.selection_id', '=', 'tbdb_selection.id')
+            ->where('tbdb_selection.market_id', $market)
+            ->where('user_id', $user)
+            ->groupBy('tbdb_bet.id');
+
+        if ($type) {
+            $model->where('bet_type_id', $type);
+        }
+
+        return $model->get(array('tbdb_bet.*'));
+    }
 }
