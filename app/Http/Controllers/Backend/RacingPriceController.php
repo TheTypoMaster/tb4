@@ -26,7 +26,7 @@ class RacingPriceController extends Controller {
 
 	private $response;
 
-	function __construct(RaceDataProcessingService $dataprocessing,
+	function __construct(RacePriceProcessingService $dataprocessing,
 						 ApiResponse $response)
 	{
 		$this->dataprocessing = $dataprocessing;
