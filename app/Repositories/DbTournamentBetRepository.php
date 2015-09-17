@@ -49,6 +49,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
         return $this->getBetBuilder()
             ->join('tbdb_tournament_ticket', 'tbdb_tournament_ticket.id', '=', 'tb.tournament_ticket_id')
             ->where('tbdb_tournament_ticket.tournament_id', $tournament)
+            ->where('tbdb_tournament_ticket.user_id', $user)
             ->whereIn('e.event_status_id', $eventStatuses)
             ->get(array("tbdb_tournament_bet.*"));
     }
