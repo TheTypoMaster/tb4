@@ -88,15 +88,6 @@ class TournamentResource extends AbstractEloquentResource {
         return $this->entrants;
     }
 
-    public function getTournamentType()
-    {
-        if( is_null($this->entrants) ) {
-            $this->entrants = $this->model->tickets->count();
-        }
-
-        return $this->entrants;
-    }
-
     public function getPrizePool()
     {
         if( is_null($this->prizePool) ) {
