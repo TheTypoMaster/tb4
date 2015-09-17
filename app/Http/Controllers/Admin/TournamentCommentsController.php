@@ -97,6 +97,16 @@ class TournamentCommentsController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $comment = TournamentCommentModel::findOrFail($id);
+        if($comment->visible == 0) {
+            $comment->visible = 1;
+        } else if($comment->visible == 1) {
+            $comment->visible = 0;
+        }
+
+        $comment->update();
+
+        return redirect()->action('Admin\TournamentCommentsController@index');
     }
 
     /**

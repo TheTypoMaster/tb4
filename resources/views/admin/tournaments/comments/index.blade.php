@@ -28,7 +28,7 @@
                 {!! Form::close() !!}
             </div>
                 </div>
-            <div class="row">
+            <div class="row" style="margin-right: 20px;">
                 <table class="table">
                     <tr>
                         <th>ID</th>
@@ -40,7 +40,8 @@
                         <th>Time of Comment</th>
                         <th>Visible</th>
                         <th>Comment</th>
-                        <th>Action</th>
+                        <th>Delete</th>
+                        <th>Block</th>
                     </tr>
                     @foreach($comments as $key => $comment)
                         <tr class="list">
@@ -59,6 +60,7 @@
                                 @endif
                             <td>{{$comment['comment']}}</td>
                             <td>{!! link_to('admin/tournament-comments/delete/'.$comment['id'], 'Delete', array('class' =>'btn btn-primary')) !!}</td>
+                            <td>{!! link_to('admin/tournament-comments/block/'.$comment['id'], 'Change', array('class' =>'btn btn-primary')) !!}</td>
                         </tr>
                     @endforeach
                 </table>
