@@ -42,14 +42,44 @@ class RacePriceProcessingService {
         $this->logprefix = 'RacePriceProcessingService ';
     }
 
+    /**
+     * Pass payload to correct method for processing
+     *
+     * @param $data
+     * @return string|void
+     */
+    public function processRacingData($data){
+        //\Log::info(print_r($data,true));
+        //Log::debug('Processing Payload');
+        foreach ($data as $key => $racingData) {
+
+            switch ($key) {
+                case 'MeetingList':
+                    return $this->_processMeetingData(($racingData));
+                    break;
+                case 'RaceList':
+                    return $this->_processRaceData(($racingData));
+                    break;
+                case 'RunnerList':
+                    return $this->_processRunnerData(($racingData));
+                    break;
+                case 'PriceList':
+                    return $this->_processPriceData(($racingData));
+                    break;
+            }
+
+        }
+    }
+
 	/**
 	 * Process price data
 	 *
 	 * @param $prices
 	 * @return string
 	 */
-	public function processPriceData($prices){
+	private function _processPriceData($prices){
 
+        Log::debug($this->logprefix . '(_processPriceData): ', $prices);
 		foreach ($prices as $price) {
 			/*
 			 * validate runner payload

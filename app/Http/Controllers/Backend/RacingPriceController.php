@@ -39,7 +39,7 @@ class RacingPriceController extends Controller {
 		// get the JSON POST
 		$racingJSON = Input::json();
 		//try {
-			$this->dataprocessing->processPriceData($racingJSON);
+			$this->dataprocessing->processRacingData($racingJSON);
 	//	}catch(Exception $e){
 	//		return $this->response->failed($e->getMessage(), 400, 400, "JSON could not be processed", "Error processing the JSON payload.");
 	//	}
