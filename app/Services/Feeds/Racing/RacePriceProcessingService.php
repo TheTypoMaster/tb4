@@ -48,7 +48,7 @@ class RacePriceProcessingService {
 	 * @param $prices
 	 * @return string
 	 */
-	private function _processPriceData($prices){
+	public function processPriceData($prices){
 
 		foreach ($prices as $price) {
 			/*
