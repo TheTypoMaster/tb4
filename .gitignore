@@ -6,3 +6,4 @@
 atlassian-ide-plugin.xml
 .vagrant
 .env
+/app/Console/Commands/DevTools/CreateTestSport.php

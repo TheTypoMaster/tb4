@@ -365,6 +365,12 @@ class TournamentService {
             }
         }
 
+        if($tournamentData['tournament_sport_id'] == 1){
+            $tournamentData['tournament_type'] = 'Racing';
+        }else{
+            $tournamentData['tournament_type'] = 'Sport';
+        }
+
         //tournament of the day
         $tod = array_get($tournamentData, 'tod_flag', null);
         if ( $tod && $this->tournamentRepository->tournamentOfTheDay($tod, Carbon::createFromFormat('Y-m-d H:i:s', $tournamentData['start_date'])->toDateString()) ) {
@@ -743,5 +749,20 @@ class TournamentService {
         }
 
         return $automated_text;
+    }
+
+    /**
+     * get tournament list start from today
+     * used for drop down list in template
+     * @return mixed
+     */
+    public function getTournamentsFromToday() {
+        $tournament_list = array();
+        $tournaments = $this->tournamentRepository->getTournamentList();
+        foreach($tournaments as $tournament) {
+            $tournament_transaction = array();
+            $tournament_list[$tournament->id] = '(#' . $tournament->id . ')' . $tournament->name;
+        }
+        return $tournament_list;
     }
 }

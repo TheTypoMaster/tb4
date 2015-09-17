@@ -12,9 +12,12 @@ use Config;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\UnauthorizedException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Models\TournamentModel;
+use TopBetta\Models\UserModel;
 use TopBetta\Repositories\Contracts\TournamentCommentRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
+use TopBetta\Repositories\UserRepo;
 use TopBetta\Services\Resources\Tournaments\CommentResource;
 use TopBetta\Services\Resources\Tournaments\CommentResourceService;
 use TopBetta\Services\Validation\TournamentCommentValidator;
@@ -41,12 +44,14 @@ class TournamentCommentService {
     public function  __construct(TournamentCommentRepositoryInterface $commentRepository,
                                  TournamentRepositoryInterface $tournamentRepository,
                                  CommentResourceService $commentResourceService,
-                                 TournamentTicketRepositoryInterface $ticketRepository)
+                                 TournamentTicketRepositoryInterface $ticketRepository,
+                                 UserRepo $userRepository)
     {
         $this->commentRepository = $commentRepository;
         $this->tournamentRepository = $tournamentRepository;
         $this->commentResourceService = $commentResourceService;
         $this->ticketRepository = $ticketRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function storeComment($user, $data)
@@ -101,5 +106,40 @@ class TournamentCommentService {
         }
 
         return $this->commentResourceService->getComments($tournament, array_get($data, 'limit'));
+    }
+
+    /**
+     * get all the comments collections and transact them to array
+     * @return mixed
+     */
+    public function getAllComments() {
+        $comments = $this->commentRepository->getAllComments();
+        $pagination = array();
+        $pagination['total_pages'] = (int)ceil($comments->total() / 15);
+        $pagination['current_page'] = $comments->currentPage();
+        $pagination['has_more_pages'] = $comments->hasMorePages();
+        $pagination['previous_page_url'] = $comments->previousPageUrl();
+        $pagination['next_page_url'] = $comments->nextPageUrl();
+
+        $comment_list = array();
+        foreach($comments as $comment) {
+            $comment_trans = array();
+            $tournament = TournamentModel::where('id', $comment->tournament_id)->first();
+            $comment_trans['id'] = $comment->id;
+            $comment_trans['username'] = UserModel::where('id', $comment->user_id)->first()->name;
+            $comment_trans['tournament_id'] = $tournament->id;
+            $comment_trans['tournament_name'] = $tournament->name;
+            $comment_trans['buy_in'] = $tournament->buy_in;
+            $comment_trans['entry_fee'] = $tournament->entry_fee;
+            $comment_trans['created_date'] = $comment->created_date;
+            $comment_trans['visible'] = $comment->visible;
+            $comment_trans['comment'] = $comment->comment;
+            array_push($comment_list, $comment_trans);
+        }
+
+        $comments_with_pagination = array();
+        $comments_with_pagination['comment_list'] = $comment_list;
+        $comments_with_pagination['pagination'] = $pagination;
+        return $comments_with_pagination;
     }
 }
