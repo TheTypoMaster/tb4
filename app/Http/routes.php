@@ -20,6 +20,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('raceresults', 'Backend\RacingResultsController');
     //incoming race data
     Route::resource('racedata', 'Backend\RacingDataController');
+    //incoming price data
+    Route::resource('pricedata', 'Backend\RacingPriceController');
     //New sport feed endpoint
     Route::resource('sports-feed', 'Backend\SportsFeedController', array("only" => array('store')));
     //Trainer endpoint
