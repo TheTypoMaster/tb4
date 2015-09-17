@@ -2,6 +2,7 @@
 
 namespace TopBetta\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +56,7 @@ class TournamentCommentsController extends Controller
         $comment::create(['tournament_id' => Input::get('tournament'),
                           'user_id' => Auth::user()->id,
                           'comment' => Input::get('new_comment'),
+                          'created_date' => Carbon::now(),
                           'visible' => 1]);
 
         //get tournament list
