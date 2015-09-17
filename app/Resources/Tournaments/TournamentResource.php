@@ -43,6 +43,8 @@ class TournamentResource extends AbstractEloquentResource {
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
         'tournamentPrizeFormat' => 'tournament_prize_format',
+        'tournamentType'       => 'tournament_type',
+        'tournamentMixed'       => 'tournament_mixed',
         'type'                  => 'type',
         'entrants'              => 'entrants',
         'event_group_id'        => 'event_group_id'
@@ -66,6 +68,7 @@ class TournamentResource extends AbstractEloquentResource {
         'topupBuyin'       => 'int',
         'topupCurrency'    => 'int',
         'event_group_id'   => 'int',
+        'tournamentMixed' => 'bool',
     );
 
     private $entrants = null;

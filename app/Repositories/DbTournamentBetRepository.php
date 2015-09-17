@@ -161,7 +161,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->leftJoin('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'bp.id')
             ->groupBy('tb.id')
             ->select(array(
-                'tb.id', 'tb.win_amount', 'tb.fixed_odds', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
+                'tb.id', 'tb.win_amount', 'tb.fixed_odds', 'tb.bet_amount', 's.id as selection_id', 's.name as selection_name', 'm.id as market_id', 'mt.name as market_name',
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status',
                 'bt.name as bet_type', 'e.start_date as start_date', 'eg.type_code as event_type', 'sp.win_odds as win_odds', 'sp.place_odds as place_odds',
                 'sr.win_dividend', 'sr.place_dividend', 's.number as selection_number', 'bp.is_fixed_odds as fixed',

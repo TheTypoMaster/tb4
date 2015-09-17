@@ -8,7 +8,6 @@
 
 namespace TopBetta\Resources\Tournaments;
 
-
 use TopBetta\Resources\AbstractEloquentResource;
 
 class TournamentGroupResource extends AbstractEloquentResource {
@@ -17,7 +16,8 @@ class TournamentGroupResource extends AbstractEloquentResource {
         'id' => 'id',
         'name' => 'group_name',
         'description' => 'description',
-        'ordering' => 'ordering'
+        'ordering' => 'ordering',
+        'group_icon' => 'tournament_group_icon',
     );
 
     protected $loadIfRelationExists = array(

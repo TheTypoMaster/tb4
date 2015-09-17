@@ -27,6 +27,7 @@ class MeetingResource extends AbstractEloquentResource {
         "railPosition"  => 'rail_position'
     );
 
+
     protected $loadIfRelationExists = array(
         'competitionEvents' => 'races',
         'races'             => 'races',

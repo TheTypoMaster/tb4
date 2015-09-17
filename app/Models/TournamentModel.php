@@ -106,4 +106,10 @@ class TournamentModel extends Eloquent {
         $current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants;
         return ($current_prize_pool > $tournament -> minimum_prize_pool) ? $current_prize_pool : $tournament -> minimum_prize_pool;
     }
+
+    public function scopeFromToday($query) {
+        $date = Carbon::today();
+        $query->where('start_date', '>=', $date);
+        return $query;
+    }
 }

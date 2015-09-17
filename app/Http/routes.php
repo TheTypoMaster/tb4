@@ -235,8 +235,16 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
     Route::get('tournaments/download/entrants', 'Admin\tournamentsController@downloadEntrants');
 
+    //tournament comments routes
+    Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
+    Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
+    Route::post('tournament-comments/store', 'Admin\TournamentCommentsController@store');
+    Route::get('tournament-comments/block/{id}', 'Admin\TournamentCommentsController@update');
+
+
     //tournament groups
     Route::resource('tournament-groups', 'Admin\TournamentGroupController');
+
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
