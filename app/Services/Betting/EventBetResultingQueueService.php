@@ -136,7 +136,7 @@ class EventBetResultingQueueService {
             $riskPayload = array('MeetingId' => str_replace('_'.$event->number, '', $event->external_event_id),
                             'RaceNo' => $event->number,
                             'status_id' => 4);
-            Log::error('EventBetResultingQueueService (fire): Pushing PAID status to Risk - Events Status : '. $event->event_status_id, $riskPayload );
+            Log::debug('EventBetResultingQueueService (fire): Pushing PAID status to Risk - Events Status : '. $event->event_status_id, $riskPayload );
             try{
                 $this->riskapi->sendRaceStatus(array('RaceStatusUpdate' => $riskPayload));
             }catch (\Exception $e ){
