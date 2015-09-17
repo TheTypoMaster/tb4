@@ -71,7 +71,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface',
-            'TopBetta\Repositories\DbAccountTransactionRepository'
+            'TopBetta\Repositories\Cache\Users\AccountTransactionRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface',
@@ -95,7 +95,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
 		$this->app->bind(
             'TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface',
-            'TopBetta\Repositories\DbFreeCreditTransactionRepository'
+            'TopBetta\Repositories\Cache\Users\FreeCreditTransactionRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',

@@ -60,7 +60,7 @@ class UserSessionController extends Controller {
         $input = Input::json()->all();
 
         try {
-            $user = new UserResource($this->userservice->login($input));
+            $user = $this->userservice->login($input);
         } catch (ValidationException $e) {
             return $this->response->failed($e->getErrors(), 400, 101, 'User Login Failed', 'User Login Failed - check errors');
         } catch (UnauthorizedAccessException $e) {
@@ -102,9 +102,8 @@ class UserSessionController extends Controller {
         }
 
         //get authenticated user
-        $user = Auth::user()->load('topbettauser');
+        $user = Auth::user();
 
-        $user = new UserResource($user);
 
         return $this->response->success($user->toArray());
     }
