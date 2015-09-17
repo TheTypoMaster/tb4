@@ -342,6 +342,12 @@ class TournamentService {
             $tournamentData['start_date'] = array_get($tournamentData, 'future_meeting_date');
             $tournamentData['end_date'] = $tournamentData['start_date'];
 
+            if($tournamentData['tournament_sport_id'] == 1){
+                $tournamentData['tournament_type'] = 'Racing';
+            }else{
+                $tournamentData['tournament_type'] = 'Sport';
+            }
+
             //betting closed date
             if (array_get($tournamentData, 'close_betting_on_first_match_flag')) {
                 $tournamentData['betting_closed_date'] = $tournamentData['start_date'];

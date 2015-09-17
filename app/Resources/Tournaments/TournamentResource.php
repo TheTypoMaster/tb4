@@ -41,6 +41,8 @@ class TournamentResource extends AbstractEloquentResource {
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
         'tournamentPrizeFormat' => 'tournament_prize_format',
+        'tournamentType'       => 'tournament_type',
+        'tournamentMixed'       => 'tournament_mixed',
     );
 
     protected $types = array(
@@ -60,6 +62,7 @@ class TournamentResource extends AbstractEloquentResource {
         'topupEntryFee'    => 'int',
         'topupBuyin'       => 'int',
         'topupCurrency'    => 'int',
+        'tournamentMixed' => 'bool',
     );
 
     private $entrants = null;
@@ -77,6 +80,15 @@ class TournamentResource extends AbstractEloquentResource {
     private $prizeFormat;
 
     public function getEntrants()
+    {
+        if( is_null($this->entrants) ) {
+            $this->entrants = $this->model->tickets->count();
+        }
+
+        return $this->entrants;
+    }
+
+    public function getTournamentType()
     {
         if( is_null($this->entrants) ) {
             $this->entrants = $this->model->tickets->count();
