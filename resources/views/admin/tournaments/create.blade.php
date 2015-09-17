@@ -11,19 +11,19 @@
             <fieldset>
                 <legend>Tournament Details</legend>
                 <div class="col-lg-6">
-                    <div class="form-group">
-                        {!! Form::label('tournament_sport_id', 'Sports') !!}<br/>
-                        {!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('tournament_sport_id', 'Sports') !!}<br/>--}}
+                        {{--{!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}--}}
+                    {{--</div>--}}
 
-                    <div class="form-group">
-                        {!! Form::label('competition_id', 'Competitions') !!}<br/>
-                        {!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('competition_id', 'Competitions') !!}<br/>--}}
+                        {{--{!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}--}}
+                    {{--</div>--}}
 
                     <div class="form-group event-group-container" id="event-group">
                         {!! Form::label('event_group_id', 'Event Group') !!}<br/>
-                        {!! Form::select('event_group_id', [], null, array("" => "","class" => "event-multiselect form-control")) !!}
+                        {!! Form::select('event_group_id', $eventGroups, null, array("" => "","class" => "event-multiselect form-control")) !!}
                         <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select Future Meeting</a>
                     </div>
 
@@ -307,63 +307,63 @@
             return html;
         }
 
-        $('#tournament_sport_id').change(function(){
-            if ( ! $(this).val()) {return;}
+//        $('#tournament_sport_id').change(function(){
+//            if ( ! $(this).val()) {return;}
+//
+//            var val = $(this).val();
+//
+//            if ( ! $.isArray(val) ) {
+//                val = [val];
+//            }
+//
+//            $.each(val, function (index, value) {
+//                $.get('/admin/tournaments/get-competitions/' + value)
+//                    .done(function(data) {
+//                        $('#competition_id').html(createSelectOptions(data));
+//                        $('#competition_id').change();
+//                        $('#event_group_id').change();
+//                        $('.sport-multiselect').multiselect("rebuild");
+//                        $('.event-multiselect').multiselect("rebuild");
+//                        $('.competition-multiselect').multiselect("rebuild");
+//                    });
+//            });
+//
+////            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
+////                $('#event-group').find('.event-group-toggle').show();
+////            } else {
+////                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
+////                $eventGroup.show();
+////                $eventGroup.find('.form-control').removeAttr('disabled');
+////                $eventGroup.find('.event-group-toggle').hide();
+////                $eventGroup.find('.event-multiselect').multiselect('enable');
+////                $future.hide();
+////                $future.find('.form-control').attr('disabled', 'disabled');
+////            }
+//
+//
+//        });
 
-            var val = $(this).val();
-
-            if ( ! $.isArray(val) ) {
-                val = [val];
-            }
-
-            $.each(val, function (index, value) {
-                $.get('/admin/tournaments/get-competitions/' + value)
-                    .done(function(data) {
-                        $('#competition_id').html(createSelectOptions(data));
-                        $('#competition_id').change();
-                        $('#event_group_id').change();
-                        $('.sport-multiselect').multiselect("rebuild");
-                        $('.event-multiselect').multiselect("rebuild");
-                        $('.competition-multiselect').multiselect("rebuild");
-                    });
-            });
-
-            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
-                $('#event-group').find('.event-group-toggle').show();
-            } else {
-                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
-                $eventGroup.show();
-                $eventGroup.find('.form-control').removeAttr('disabled');
-                $eventGroup.find('.event-group-toggle').hide();
-                $eventGroup.find('.event-multiselect').multiselect('enable');
-                $future.hide();
-                $future.find('.form-control').attr('disabled', 'disabled');
-            }
-
-
-        });
-
-        $('#competition_id').change(function(){
-            if ( ! $(this).val()) {return;}
-
-            var val = $(this).val();
-
-            if ( ! $.isArray(val) ) {
-                val = [val];
-            }
-
-            $.each(val, function (index, value) {
-                $.get('/admin/tournaments/get-event-groups/' + value)
-                        .done(function(data){
-                            $('#event_group_id').html(createSelectOptions(data));
-                            $('#event_group_id').change();
-                            $('.sport-multiselect').multiselect("rebuild");
-                            $('.event-multiselect').multiselect("rebuild");
-                            $('.competition-multiselect').multiselect("rebuild");
-                        });
-            });
-
-        });
+//        $('#competition_id').change(function(){
+//            if ( ! $(this).val()) {return;}
+//
+//            var val = $(this).val();
+//
+//            if ( ! $.isArray(val) ) {
+//                val = [val];
+//            }
+//
+//            $.each(val, function (index, value) {
+//                $.get('/admin/tournaments/get-event-groups/' + value)
+//                        .done(function(data){
+//                            $('#event_group_id').html(createSelectOptions(data));
+//                            $('#event_group_id').change();
+//                            $('.sport-multiselect').multiselect("rebuild");
+//                            $('.event-multiselect').multiselect("rebuild");
+//                            $('.competition-multiselect').multiselect("rebuild");
+//                        });
+//            });
+//
+//        });
 
         $('.event-group-toggle').click(function() {
             var $target = $($(this).data('target'));
