@@ -64,6 +64,8 @@ return array(
         array("uri" => "tournament-comments/delete/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/store", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-groups", 'permission' => 'tournaments.view'),
+        array("uri" => "tournaments/event-group/create", 'permission' => 'tournaments.view'),
+
     ),
 
     // --- SIDEBAR NAVIGATION MENU ---

@@ -3,6 +3,7 @@
 use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Request;
+use TopBetta\Models\TournamentEventGroupModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface;
@@ -622,6 +623,17 @@ class TournamentsController extends Controller
         return array_map(function($key, $value) {
             return array("id" => $key, "name" => $value);
         }, array_keys($array), $array);
+    }
+
+    /**
+     * create tournament event group
+     * @return string
+     */
+    public function createEventGroup()
+    {
+        TournamentEventGroupModel::create(['name' => Input::get('name')]);
+
+        return 'create new event group';
     }
 
 
