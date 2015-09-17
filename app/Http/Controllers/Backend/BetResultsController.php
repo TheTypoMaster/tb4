@@ -30,6 +30,7 @@ class BetResultsController extends Controller {
 	/**
 	 * Default time formatting string for log messages
 	 *
+	 *
 	 * @var string
 	 */
 	const LOG_TIME_FORMAT_DEFAULT = 'r';

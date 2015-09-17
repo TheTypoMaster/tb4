@@ -28,4 +28,13 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
             ->with('user')
             ->paginate($limit);
     }
+
+    /**
+     * get all the comments in database
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getAllComments() {
+        return $this->model->paginate(15);
+//        return $this->model->all();
+    }
 }
