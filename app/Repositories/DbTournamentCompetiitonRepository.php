@@ -6,6 +6,7 @@
  * Project: tb4
  */
 
+use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\TournamentCompetitionRepositoryInterface;
 use TopBetta\Models\TournamentCompetition;
 
@@ -19,7 +20,13 @@ class DbTournamentCompetiitonRepository extends BaseEloquentRepository implement
 
     public function getBySport($sportId)
     {
-        return $this->model->where('tournament_sport_id', $sportId)->orderBy('name', 'ASC')->get();
+        return $this->model
+            ->join('tbdb_event_group', 'tbdb_event_group.tournament_competition_id', '=', 'tbdb_tournament_competition.id')
+            ->where('tournament_sport_id', $sportId)
+            ->where('start_date', '>=', Carbon::now())
+            ->groupBy('tbdb_tournament_competition.id')
+            ->orderBy('tbdb_tournament_competition.name', 'ASC')
+            ->get(array('tbdb_tournament_competition.*'));
     }
 
 } 

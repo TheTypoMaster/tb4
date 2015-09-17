@@ -57,8 +57,8 @@ class TournamentModel extends Eloquent {
     {
         return $this->bettingClosed() || $this->end_date < Carbon::now() || ($this->entries_close && $this->entries_close != '0000-00-00 00:00:00' && $this->entries_close < Carbon::now());
     }
-
-    public function qualifiers()
+	
+	public function qualifiers()
     {
         return $this->leaderboards()->whereRaw('balance_to_turnover <= turned_over')->where('currency', '>', 0);
     }
@@ -66,6 +66,11 @@ class TournamentModel extends Eloquent {
     public function prizeFormat()
     {
         return $this->belongsTo('TopBetta\Models\TournamentPrizeFormat', 'tournament_prize_format');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany('TopBetta\Models\TournamentCommentModel', 'tournament_id');
     }
 
     public function prizePool()
@@ -100,5 +105,11 @@ class TournamentModel extends Eloquent {
 
         $current_prize_pool = empty($result) ? 0 : ($result[0] -> buy_in) * $result[0] -> entrants;
         return ($current_prize_pool > $tournament -> minimum_prize_pool) ? $current_prize_pool : $tournament -> minimum_prize_pool;
+    }
+
+    public function scopeFromToday($query) {
+        $date = Carbon::today();
+        $query->where('start_date', '>=', $date);
+        return $query;
     }
 }

@@ -1,7 +1,8 @@
 <?php namespace TopBetta\Helpers;
 
 use TopBetta\Models\BetResultStatus;
-use Illuminate\Support\Facades\Config;
+use Config;
+use Log;
 
 class RiskManagerAPI
 {
@@ -76,6 +77,75 @@ class RiskManagerAPI
         } else {
             return false;
         }
+    }
+
+    public function sendRaceStatus($raceData)
+    {
+        Log::debug('RiskManagerAPI (sendRaceStatus): Race Status Payload', $raceData);
+        // we only want to send to risk manager for production
+//        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+//            Log::debug('RiskManagerAPI (sendRaceStatus): App env not va', $raceData);
+//            return false;
+//        }
+
+        // send bet to risk manager
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
+                                            Config::get('riskmanager.RISK_RACE_DATA_URI'),
+                                            'POST',
+                                            json_encode($raceData));
+
+        $response = json_decode($responseJSON);
+
+        if (!$response) {
+            Log::debug('RiskManagerAPI (sendRaceStatus): No response from Risk API');
+            return false;
+        }
+
+        Log::debug('RiskManagerAPI (sendRaceStatus): Response - '.print_r($response,true));
+        if ($response->http_status_code == 200) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public function sendResultData($resultsData)
+    {
+        // we only want to send to risk manager for production
+        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+            return false;
+        }
+
+        // send bet to risk manager
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
+            Config::get('riskmanager.RISK_RACE_DATA_URI'),
+            'POST',
+            json_encode($resultsData));
+
+        $response = json_decode($responseJSON);
+
+        if (!$response) {
+            return false;
+        }
+
+        Log::debug('RiskManagerAPI (sendResultData): Response - '.print_r($response,true));
+        if ($response->http_status_code == 200) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public function sendFixedOddsData($fixedOddsData)
+    {
+        // we only want to send to risk manager for production
+        if (app()->environment() != Config::get('riskmanager.productionHost')) {
+            return false;
+        }
+
+
     }
 
 }

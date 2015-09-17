@@ -23,7 +23,7 @@ class TournamentPlacesPaidService {
         $this->placesPaidRepository = $placesPaidRepository;
     }
 
-    public function getPercentagesForTournamentByEntrants($tournament)
+    public function getPercentagesForTournamentByQualifiers($tournament)
     {
         $percentages = $this->placesPaidRepository->getByEntrants($tournament->tickets->count());
 
@@ -34,12 +34,17 @@ class TournamentPlacesPaidService {
         return $percentages;
     }
 
+    public function getPercentagesForTournamentByEntrants($tournament)
+    {
+        return $this->placesPaidRepository->getByEntrants($tournament->tickets->count());
+    }
+
     public function getPercentagesByPlacesPaid($placesPaid)
     {
         $percentages = $this->placesPaidRepository->getByPlacesPaid($placesPaid);
 
         if (!$percentages) {
-            throw new \Exception;
+            return null;
         }
 
         return $percentages;

@@ -9,7 +9,8 @@
 
 use Eloquent;
 
-class MarketTypeModel extends Eloquent {
+class MarketTypeModel extends Eloquent
+{
     protected $table = 'tbdb_market_type';
     protected $guarded = array();
 
@@ -25,4 +26,13 @@ class MarketTypeModel extends Eloquent {
     {
         return $this->belongsTo('TopBetta\Models\IconModel');
     }
+
+    public function sportDetails($sport)
+    {
+        return $this->hasMany('TopBetta\Models\SportMarketTypeDetailsModel', 'market_type_id')
+            ->where('sport_id', $sport)
+            ->first();
+    }
+
+
 }

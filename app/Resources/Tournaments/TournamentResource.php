@@ -13,6 +13,8 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class TournamentResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\TournamentModel';
+
     protected $attributes = array(
         'id'                    => 'id',
         'name'                  => 'name',
@@ -40,6 +42,12 @@ class TournamentResource extends AbstractEloquentResource {
         'topup_end'             => 'topup_end',
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
+        'tournamentPrizeFormat' => 'tournament_prize_format',
+        'tournamentType'       => 'tournament_type',
+        'tournamentMixed'       => 'tournament_mixed',
+        'type'                  => 'type',
+        'entrants'              => 'entrants',
+        'event_group_id'        => 'event_group_id'
     );
 
     protected $types = array(
@@ -59,6 +67,8 @@ class TournamentResource extends AbstractEloquentResource {
         'topupEntryFee'    => 'int',
         'topupBuyin'       => 'int',
         'topupCurrency'    => 'int',
+        'event_group_id'   => 'int',
+        'tournamentMixed' => 'bool',
     );
 
     private $entrants = null;
@@ -71,13 +81,34 @@ class TournamentResource extends AbstractEloquentResource {
 
     private $competitions = array();
 
+    private $results = null;
+
+    private $type;
+
+    private $prizeFormat;
+
     public function getEntrants()
     {
+        if (isset($this->model->entrants)) {
+            return $this->model->entrants;
+        }
+
         if( is_null($this->entrants) ) {
             $this->entrants = $this->model->tickets->count();
         }
 
         return $this->entrants;
+    }
+
+    public function addEntrant()
+    {
+        if (isset($this->model->entrants)) {
+            $this->model->entrants++;
+            return;
+        }
+
+
+        $this->entrants = $this->getEntrants() + 1;
     }
 
     public function getPrizePool()
@@ -91,7 +122,7 @@ class TournamentResource extends AbstractEloquentResource {
 
     public function setLeaderboard($leaderboard)
     {
-        $this->leaderboard = $leaderboard;
+        $this->setRelation('leaderboard', $leaderboard);
         return $this;
     }
 
@@ -107,6 +138,80 @@ class TournamentResource extends AbstractEloquentResource {
         return $this;
     }
 
+    public function setResults($results)
+    {
+        $this->results = $results;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        if (!$this->type) {
+            return $this->model->type;
+        }
+
+        return $this->type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTournamentPrizeFormat()
+    {
+        if (object_get($this->model, 'tournament_prize_format') && !is_numeric($this->model->tournament_prize_format)) {
+            return $this->model->tournament_prize_format;
+        }
+
+        if ($this->prizeFormat) {
+            return $this->prizeFormat;
+        }
+
+        return $this->model->prizeFormat;
+    }
+
+    /**
+     * @param mixed $prizeFormat
+     * @return $this
+     */
+    public function setPrizeFormat($prizeFormat)
+    {
+        $this->prizeFormat = $prizeFormat;
+        return $this;
+    }
+
+    /**
+     * @param mixed $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getResults()
+    {
+        if(isset($this->model->prizes)) {
+            return $this->model->prizes;
+        }
+
+        return $this->results;
+    }
+
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->setType($this->model->eventGroup->sport_id > 3 ? 'sport' : 'racing');
+
+        $this->setPrizeFormat($this->model->prizeFormat->name);
+        
+        $resultService = \App::make('TopBetta\Services\Tournaments\TournamentResultService');
+        $this->setResults($resultService->getTournamentResults($this->model)->values());
+    }
 
     public function toArray()
     {
@@ -115,6 +220,7 @@ class TournamentResource extends AbstractEloquentResource {
         $array = array_merge($array, array(
             'entrants' => $this->getEntrants(),
             'prize_pool' => $this->getPrizePool(),
+            'prizes' => is_array($this->getResults()) ? $this->getResults() : $this->getResults()->toArray()
         ));
 
         if ($this->leaderboard) {

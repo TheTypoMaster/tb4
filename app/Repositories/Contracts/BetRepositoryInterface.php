@@ -10,6 +10,10 @@ use Carbon\Carbon;
  
 interface BetRepositoryInterface {
 
+    public function getBetsForSelectionsByBetType($user, $selections, $betType);
+
+    public function getBetsForUserByMarket($user, $market, $type=null);
+
     public function getBetsForUserByEvent($userId, $eventId, $type = null);
 
     public function getBetsForUserBySelection($userId, $selection, $type = null);
@@ -35,4 +39,8 @@ interface BetRepositoryInterface {
     public function getByEntryTransaction($transaction);
 
     public function findBets($bets);
+
+    public function getBetsForEventByStatus($event, $status, $type = null);
+
+    public function getBetsForEventByStatusAndProduct($event, $status, $product, $type = null);
 }

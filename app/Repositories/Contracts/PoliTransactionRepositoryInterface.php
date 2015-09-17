@@ -15,7 +15,7 @@ interface PoliTransactionRepositoryInterface {
 
     public function setToken($poliTransaction, $token);
 
-    public function updateStatus($poliTransaction, $transactionStatus, $errorCode = 0);
+    public function updateStatusAndAmount($poliTransaction, $transactionStatus, $amount, $errorCode = 0);
 
     public function initialize($id, $refNo);
 

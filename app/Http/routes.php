@@ -51,6 +51,11 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::put('risk-show-competition/{competition}', 'Backend\RiskCompetitionController@showCompetition');
     Route::put('risk-hide-competition/{competition}', 'Backend\RiskCompetitionController@hideCompetition');
 
+    Route::post('meeting-products', 'Backend\ProductController@setMeetingProducts');
+    Route::post('user-products', 'Backend\ProductController@setUserProducts');
+
+    Route::post('override-price', 'Backend\PricesController@override');
+
 });
 
 
@@ -185,7 +190,7 @@ Route::group(array('prefix' => 'admin', 'after' => 'topbetta_secure_links'), fun
 Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'topbetta_secure_links'), function() {
 
     Route::resource('account-transactions', 'Admin\AccountTransactionsController');
-    Route::resource('bet-limits', 'Admin\BetlimitsController');
+    Route::resource('bet-limits', 'Admin\BetLimitsController');
     Route::resource('bets', 'Admin\BetsController');
     Route::resource('competitions', 'Admin\CompetitionsController');
     Route::resource('dashboard', 'Admin\DashboardController');
@@ -228,9 +233,18 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/remove/{tournamentId}/{userId}', 'Admin\TournamentsController@removeUserFromTournament');
     Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
+    Route::get('tournaments/download/entrants', 'Admin\TournamentsController@downloadEntrants');
+
+    //tournament comments routes
+    Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
+    Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
+    Route::post('tournament-comments/store', 'Admin\TournamentCommentsController@store');
+    Route::get('tournament-comments/block/{id}', 'Admin\TournamentCommentsController@update');
+
 
     //tournament groups
     Route::resource('tournament-groups', 'Admin\TournamentGroupController');
+
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
@@ -245,11 +259,15 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::resource('icons', 'Admin\IconController');
 
     //user activity
-    Route::post('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
+    Route::post('user-activity/download', 'Admin\UserActivityController@createUserActivity');
+    Route::get('user-activity/download', 'Admin\UserActivityController@downloadUserActivity');
     Route::resource('user-activity', 'Admin\UserActivityController');
 
     Route::get('sports-list', 'Admin\SportsController@getSports');
     Route::get('sports/{sportId}/competitions', 'Admin\CompetitionsController@getBySport');
+
+    //market type details
+    Route::resource("market-type-details", 'Admin\SportMarketTypeDetailsController');
 
 });
 
@@ -315,6 +333,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('combined/meeting/races/selections', 'Frontend\MeetingRaceSelectionsController@index');
     Route::get('combined/meetings/races/selections', 'Frontend\MeetingRaceSelectionsController@getMeetingsWithSelectionsForMeeting');
     Route::get('combined/race/selections', 'Frontend\RaceSelectionsController@index');
+    Route::get('races/{id}', 'Frontend\RaceController@show');
 
     // --- N2J ---
     Route::get('/racing/next-to-jump', 'Frontend\FrontRacesController@nextToJump');
@@ -322,7 +341,10 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('/racing/fast-bet', 'Frontend\FrontRacesController@fastBetEvents');
 
     // --- SPORTS ROUTES ---
+    Route::get('visible-sports', 'Frontend\SportsController@getVisibleSports');
+    Route::get('sport/competitions', 'Frontend\CompetitionsController@getCompetitionsForSport');
     Route::get('combined/sports/competitions', 'Frontend\SportsController@getVisibleSportsWithCompetitions');
+    Route::get('combined/sports/competition/events', 'Frontend\SportsController@getVisibleSportsWithSelectedCompetition');
     Route::get('combined/events/markets/selections', 'Frontend\EventsController@getEventsForCompetition');
     Route::get('combined/markets/selections', 'Frontend\MarketsController@getAllMarketsForEvent');
     Route::get('/sports/competition/market-types', 'Frontend\MarketTypesController@getMarketTypesForCompetition');
@@ -356,11 +378,13 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::resource('tournament-bets', 'Frontend\TournamentBetsController', array("only" => array('index', 'store')));
         Route::resource('tickets', 'Frontend\TicketsController', array("only" => array('index', 'store', 'show')));
         Route::post('comments', 'Frontend\TournamentCommentController@store');
+
+        //tournament rebuys and topups
+        Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
+        Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
     });
 
-    //tournament rebuys and topups
-    Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
-    Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
+
 
     //user tournament bets
     Route::resource('user.tournament.bets', 'Frontend\UserTournamentBetsController', array("only" => array('index')));
@@ -407,6 +431,11 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::resource('deposits', 'Frontend\DepositsController', array("only" => array('store')));
     Route::resource('scheduled-deposits', 'Frontend\ScheduledDepositsController', array("only" => array('index', 'store', 'destroy')));
     Route::resource('eway-tokens', 'Frontend\EwayCreditCardController', array("only" => array('index', 'destroy')));
+    Route::resource('poli-deposit', 'Frontend\FrontUsersPoliDepositController');
+
+
+    //CONTACT USE ENDPOINT
+    Route::post('contact-us', 'Frontend\ContactController@contactUs');
 });
 
 // new login/logout methods

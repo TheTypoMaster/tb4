@@ -13,8 +13,11 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class LeaderboardResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\TournamentLeaderboardModel';
+
     protected $attributes = array(
         "id" => "id",
+        "userId" => "user_id",
         "username" => "username",
         "currency" => 'currency',
         'turned_over' => 'turned_over',
@@ -29,13 +32,18 @@ class LeaderboardResource extends AbstractEloquentResource {
         "turned_over" => "int",
         "rebuys" => "int",
         "topups" => "int",
-        "qualified" => "bool"
+        "qualified" => "bool",
+        "userId" => "int",
     );
 
     private $position = '-';
 
     public function qualified()
     {
+        if (isset($this->model->qualified)) {
+            return $this->model->qualified;
+        }
+
         return $this->model->turned_over >= $this->model->balance_to_turnover;
     }
 
@@ -45,11 +53,58 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getPosition()
+    {
+        if ($this->model->position) {
+            return $this->model->position;
+        }
+
+        return $this->position;
+    }
+
+    /**
+     * Compare currency and qualifed with leaderboard record
+     * @param LeaderboardResource $leaderboardResource
+     * @return int
+     */
+    public function compare(LeaderboardResource $leaderboardResource)
+    {
+        if (!$this->qualified() && !$leaderboardResource->qualified()) {
+            return 0;
+        }
+
+        if ($this->qualified() && !$leaderboardResource->qualified()) {
+            return 1;
+        }
+
+        if (!$this->qualified() && $leaderboardResource->qualified()) {
+            return -1;
+        }
+
+        if ($this->currency == $leaderboardResource->currency) {
+            return 0;
+        }
+
+        return $this->currency > $leaderboardResource->currency ? 1 : -1;
+    }
+
+    public function intialize()
+    {
+        parent::initialize();
+
+        if (!$this->model->username) {
+            $this->model->username = $this->model->user->username;
+        }
+    }
+
     public function toArray()
     {
         $array = parent::toArray();
 
-        $array['position'] = $this->position;
+        $array['position'] = $this->getPosition();
 
         return $array;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php namespace TopBetta\Repositories;
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
@@ -6,14 +6,12 @@
  * Time: 4:19 PM
  */
 
-namespace TopBetta\Repositories;
-
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Models\EventModel;
 use \TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
+
 class DbEventModelRepository extends BaseEloquentRepository implements EventModelRepositoryInterface
 {
-
 
     public function __construct(EventModel $event)
     {
@@ -23,7 +21,11 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
 
     public function setDisplayFlagForEvent($eventId, $displayFlag)
     {
-        $event = $this->model->findOrFail($eventId);
+        // $event = $this->model->findOrFail($eventId);
+
+        $event = $this->model->where('external_event_id', $eventId)->first();
+
+        if(!$event) Throw new ModelNotFoundException;
 
         $event->display_flag = $displayFlag;
 
@@ -81,5 +83,13 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
         }
 
         return $model->first();
+    }
+
+    public function getEventsForCompetition($competitionId)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event as ege', 'ege.event_id' , '=', 'tbdb_event.id')
+            ->where('ege.event_group_id', $competitionId)
+            ->get();
     }
 }

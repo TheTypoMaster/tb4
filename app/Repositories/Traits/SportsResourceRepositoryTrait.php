@@ -42,6 +42,9 @@ trait SportsResourceRepositoryTrait {
                     })
                     ->orWhere(function($p) {
                         $p->where(\DB::raw('sp.override_odds * sp.win_odds'), '>', '1')->where('sp.override_type', 'percentage');
+                    })
+                    ->orWhere(function($p) {
+                        $p->where('sp.override_odds', '>', 1)->where('sp.override_type', 'promo');
                     });
             })
             ->where('s.selection_status_id', 1);

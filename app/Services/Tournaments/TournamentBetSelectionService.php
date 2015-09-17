@@ -69,4 +69,16 @@ class TournamentBetSelectionService {
         ));
     }
 
+    public function setWinProduct($product)
+    {
+        $this->betSelectionService->setWinProduct($product);
+        return $this;
+    }
+
+    public function setPlaceProduct($product)
+    {
+        $this->betSelectionService->setPlaceProduct($product);
+        return $this;
+    }
+
 }

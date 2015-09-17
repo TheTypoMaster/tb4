@@ -12,6 +12,7 @@ use Lang;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetLimitService;
+use TopBetta\Services\Betting\BetProduct\BetProductValidator;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\EventService;
@@ -21,6 +22,8 @@ use TopBetta\Services\Betting\Factories\ExoticBetLibraryFactory;
 use TopBetta\Services\Risk\RiskExoticBetService;
 
 class RacingExoticBetPlacementService extends AbstractBetPlacementService {
+
+    protected $product;
 
     public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitService $betLimitService, RiskExoticBetService $riskBetService)
     {
@@ -82,6 +85,8 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
             throw new BetPlacementException(Lang::get('bets.bet_type_not_valid_international'));
         }
 
+        $this->validateProduct($selections);
+
         parent::validateBet($user, $amount, $type, $selections);
     }
 
@@ -109,5 +114,17 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
         return parent::createBet($user, $transactions, $type, $origin, $selections, $data);
     }
 
+    /**
+     * Validate product
+     * @param $selections
+     */
+    protected function validateProduct($selections)
+    {
+        $meeting = $selections[0]['selection']->market->event->competition->first();
+
+        $validator = BetProductValidator::make($meeting);
+
+        $validator->validateProduct($this->product, $this->betType);
+    }
 
 }

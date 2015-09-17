@@ -9,12 +9,14 @@
 namespace TopBetta\Services\Tournaments\Betting\BetPlacement;
 
 
+use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Betting\Factories\BetSelectionFactory;
 use TopBetta\Services\Tournaments\Betting\TournamentBetLimitService;
 use TopBetta\Services\Tournaments\TournamentBetSelectionService;
+use TopBetta\Services\Tournaments\TournamentLeaderboardService;
 use TopBetta\Services\Tournaments\TournamentTicketService;
 
 abstract class AbstractTournamentBetPlacementService {
@@ -42,12 +44,26 @@ abstract class AbstractTournamentBetPlacementService {
      */
     private $ticketService;
 
-    public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService)
+    protected $product;
+
+    protected $betType;
+    /**
+     * @var BetResultStatusRepositoryInterface
+     */
+    private $betResultStatusRepository;
+    /**
+     * @var TournamentLeaderboardService
+     */
+    private $leaderboardService;
+
+    public function __construct(TournamentBetRepositoryInterface $betRepository, TournamentBetLimitService $betLimitService, TournamentTicketService $ticketService, BetResultStatusRepositoryInterface $betResultStatusRepository, TournamentLeaderboardService $leaderboardService)
     {
         $this->betRepository = $betRepository;
         $this->selectionService = new TournamentBetSelectionService(\App::make($this->selectionServiceClass));
         $this->betLimitService = $betLimitService;
         $this->ticketService = $ticketService;
+        $this->betResultStatusRepository = $betResultStatusRepository;
+        $this->leaderboardService = $leaderboardService;
     }
 
     public function placeBet($ticket, $selections, $amount, $betType)
@@ -57,11 +73,11 @@ abstract class AbstractTournamentBetPlacementService {
             throw new BetPlacementException("Insufficient funds");
         }
 
-        //validate tournament
-        $this->validateTournamentBet($ticket, $amount, $betType);
-
         //get and validate selections
         $selections = $this->selectionService->getAndValidateSelections($selections, $ticket->tournament);
+
+        //validate tournament
+        $this->validateTournamentBet($ticket, $amount, $betType, $selections);
 
         //check bet limit
         $this->checkBetLimit($ticket, array_unique(array_pluck($selections, 'selection')), $amount, $betType);
@@ -76,6 +92,8 @@ abstract class AbstractTournamentBetPlacementService {
             "tournament_ticket_id" => $ticket->id,
             "bet_type_id" => $betType->id,
             "bet_amount" => $amount,
+            "bet_product_id" => $this->product ? $this->product->id : 0,
+            "bet_result_status_id" => $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
         );
 
         //create bet
@@ -95,15 +113,33 @@ abstract class AbstractTournamentBetPlacementService {
             throw new BetSelectionException(null, "Error creating bet selections");
         }
 
+        $this->leaderboardService->increaseTurnedOver($ticket->tournament_id, $ticket->user_id, $amount);
+
         return $bet;
     }
 
-    public function validateTournamentBet($ticket, $amount, $betType)
+    public function validateTournamentBet($ticket, $amount, $betType, $selections)
     {
         //check betting closed
         if ($ticket->tournament->bettingClosed()) {
             throw new BetPlacementException("Betting closed for tournament " . $ticket->tournament->name);
         }
+    }
+
+    /**
+     * @param mixed $product
+     * @return $this
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    public function setBetType($betType)
+    {
+        $this->betType = $betType;
+        return $this;
     }
 
     abstract function getTotalAmountForBet($selections, $amount);

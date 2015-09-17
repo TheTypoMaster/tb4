@@ -82,10 +82,11 @@ abstract class AbstractBetSelectionService {
     /**
      * validates the selection
      * @param $selection
-     * @param int $dividend
+     * @param int $winDividend
+     * @param int $placeDividend
      * @throws BetSelectionException
      */
-    public function validateSelection($selection, $dividend = 0)
+    public function validateSelection($selection, $winDividend = 0, $placeDividend = 0)
     {
         //selection is in correct status
         if( ! $this->selectionService->isSelectionAvailableForBetting($selection) ) {
@@ -124,9 +125,9 @@ abstract class AbstractBetSelectionService {
                 throw new BetSelectionException(null, "Selection not found");
             }
 
-            $this->validateSelection($selectionModel, array_get($selection, 'dividend', 0));
+            $this->validateSelection($selectionModel, array_get($selection, 'win_dividend', 0), array_get($selection, 'place_dividend', 0));
 
-            $selectionModels[] = array("selection" => $selectionModel, 'dividend' => array_get($selection, 'dividend', 0));
+            $selectionModels[] = array("selection" => $selectionModel, 'win_dividend' => array_get($selection, 'win_dividend', 0), 'place_dividend' => array_get($selection, 'place_dividend', 0));
         }
 
         return $selectionModels;

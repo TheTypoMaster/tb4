@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Feeds;
 
+use TopBetta\Services\Caching\SportsDataCacheManager;
 use TopBetta\Services\Feeds\Processors\GameListProcessor;
 use TopBetta\Services\Feeds\Processors\MarketListProcessor;
 use TopBetta\Services\Feeds\Processors\ResultListProcessor;
@@ -37,10 +38,15 @@ class SportsFeedService {
                                 SelectionListProcessor $selectionListProcessor,
                                 ResultListProcessor $resultListProcessor)
     {
+        $container = new SportsCollectionContainer;
         $this->gameListProcessor = $gameListProcessor;
+        $this->gameListProcessor->setModelContainer($container);
         $this->marketListProcessor = $marketListProcessor;
+        $this->marketListProcessor->setModelContainer($container);
         $this->selectionListProcessor = $selectionListProcessor;
+        $this->selectionListProcessor->setModelContainer($container);
         $this->resultListProcessor = $resultListProcessor;
+        $this->resultListProcessor->setModelContainer($container);
     }
 
     /**

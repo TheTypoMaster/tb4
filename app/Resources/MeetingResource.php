@@ -27,13 +27,20 @@ class MeetingResource extends AbstractEloquentResource {
         "railPosition"  => 'rail_position'
     );
 
+
     protected $loadIfRelationExists = array(
-        'competitionEvents' => 'races'
+        'competitionEvents' => 'races',
+        'races'             => 'races',
     );
 
+    protected static $modelClass = 'TopBetta\Models\CompetitionModel';
+
+    /**
+     * @return EloquentResourceCollection
+     */
     public function races()
     {
-        return $this->collection('races', 'TopBetta\Resources\RaceResource', $this->model->competitionEvents);
+        return $this->collection('races', 'TopBetta\Resources\RaceResource', 'competitionEvents');
     }
 
     public function setRaces($races)

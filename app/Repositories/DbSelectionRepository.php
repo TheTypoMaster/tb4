@@ -168,6 +168,15 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         return null;
     }
 
+    public function getModelByExternalIds($externalSelectionId, $externalMarketId, $externalEventId)
+    {
+        return $this->model
+            ->where('external_selection_id', $externalSelectionId)
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first();
+    }
+
     public function getByExternalIdsAndName($externalMarketId, $externalEventId, $name)
     {
         $selection = $this->model
@@ -191,6 +200,11 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
 		if(!$selection) return null;
 		return $selection;
 	}
+
+    public function getSelectionByExternalId($externalId){
+        return $this->model->where('external_selection_id', $externalId)
+            ->first();
+    }
 
     public function getAllSelectionsForMarket($marketId)
     {
@@ -237,5 +251,32 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
                 'team',
                 'player'
             ));
+    }
+
+    public function getSelectionsForRace($race)
+    {
+        return $this->model
+            ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->join('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
+            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->where('tbdb_event.id', $race)
+            ->with(array(
+                'result',
+                'price',
+                'runner',
+                'runner.owner',
+                'runner.trainer',
+                'form',
+                'lastStarts'
+            ))
+            ->get(array('tbdb_selection.*', 'tbdb_event_group.type_code as type_code'));
+    }
+
+    public function getSelectionsByMarket($market)
+    {
+        return $this->model
+            ->where('market_id', $market)
+            ->get();
     }
 } 

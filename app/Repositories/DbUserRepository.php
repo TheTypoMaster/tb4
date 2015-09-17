@@ -156,6 +156,29 @@ class DbUserRepository extends BaseEloquentRepository implements UserRepositoryI
 
     }
 
+    public function syncProductsForBetType(UserModel $user, $productIds, $betTypeId, $venue = 0)
+    {
+        $existsingProducts = $user->products()->where('bet_type_id', $betTypeId)->where('venue_id', $venue)->get();
+
+        $toRemove = array_diff($existsingProducts->lists('id')->all(), $productIds);
+        $toAttach = array_diff($productIds, $existsingProducts->lists('id')->all());
+
+        if (count($toRemove)) {
+            $user->products()->newPivotStatement()->where('venue_id', $venue)
+                ->where('bet_type_id', $betTypeId)->whereIn('bet_product_id', $toRemove)->delete();
+        }
+
+        if (count($toAttach)) {
+            $user->products()->attach(array_combine(
+                $toAttach,
+                array_fill(0, count($toAttach), array('bet_type_id' => $betTypeId, 'venue_id' => $venue))
+            ));
+        }
+
+        return $user;
+
+    }
+
     public function search($search)
     {
         return $this->model

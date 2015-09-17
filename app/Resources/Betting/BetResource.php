@@ -30,14 +30,18 @@ class BetResource extends AbstractEloquentResource {
         'competitionName'  => 'competition_name',
         'betType'          => 'bet_type',
         'status'           => 'status',
-        'paid'             => 'won_amount',
+        'paid'             => 'win_amount',
         'date'             => 'start_date',
         'eventType'        => 'eventType',
         'percentage'       => 'percentage',
         'odds'             => 'odds',
         'boxedFlag'        => 'boxed_flag',
         'dividend'         => 'dividend',
-        'isExotic'         => 'isExotic'
+        'isExotic'         => 'isExotic',
+        'isFixed'          => 'isFixed',
+        'deductions'       => 'deductions',
+        'productId'        => 'product_id',
+        'productCode'      => 'provider_product_name',
     );
 
     protected $types = array(
@@ -53,17 +57,25 @@ class BetResource extends AbstractEloquentResource {
         "odds"            => "float",
         "dividend"        => "float",
         "boxedFlag"       => "bool",
+        "isFixed"         => "bool",
     );
+
+    protected $deductions = 0;
 
 
     public function paid()
     {
-        return  ! is_null($this->model->won_amount) ? $this->model->won_amount : 0;
+        return  ! is_null($this->model->win_amount) ? $this->model->win_amount : 0;
     }
 
     public function selectionName()
     {
         return ! $this->isexotic() ? $this->model->selection_name : null;
+    }
+
+    public function selectionNumber()
+    {
+        return ! $this->isexotic() ? $this->model->selection_number : null;
     }
 
     public function selectionId()
@@ -115,5 +127,28 @@ class BetResource extends AbstractEloquentResource {
             BetTypeRepositoryInterface::TYPE_TRIFECTA,
             BetTypeRepositoryInterface::TYPE_FIRSTFOUR
         ));
+    }
+
+    public function isFixed()
+    {
+        return $this->model->fixed;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeductions()
+    {
+        return $this->deductions;
+    }
+
+    protected function initialize()
+    {
+        parent::initialize();
+
+        if ($this->isFixed() && in_array($this->betType, [BetTypeRepositoryInterface::TYPE_WIN, BetTypeRepositoryInterface::TYPE_PLACE])) {
+            $service = \App::make('TopBetta\Services\Betting\SelectionService');
+            $this->deductions = $service->totalDeduction($this->marketId, $this->betType);
+        }
     }
 }

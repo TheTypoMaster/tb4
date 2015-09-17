@@ -42,6 +42,19 @@ class MarketResourceService {
         return $markets;
     }
 
+    public function getFilteredMarketsWithselectionsForEvents($events, $types)
+    {
+        $markets = $this->marketRepository->getMarketsForEvents($events, $types);
+
+        $selections = $this->selectionResourceService->getSelectionsForMarkets($markets->lists('id')->all());
+
+        $markets = new EloquentResourceCollection($markets, 'TopBetta\Resources\Sports\MarketResource');
+
+        $markets->setRelations('selections', 'market_id', $selections);
+
+        return $markets;
+    }
+
     public function getAllMarketsForEvent($event)
     {
         $markets = $this->marketRepository->getMarketsForEvent($event);

@@ -9,9 +9,10 @@
 namespace TopBetta\Services\Tournaments\Resulting;
 
 
+use Illuminate\Contracts\Support\Arrayable;
 use TopBetta\Models\TournamentTicketModel;
 
-class TournamentResult {
+class TournamentResult implements Arrayable {
 
     private $ticket;
 
@@ -25,7 +26,7 @@ class TournamentResult {
 
     private $position;
 
-    public function __construct(TournamentTicketModel $ticket)
+    public function __construct(TournamentTicketModel $ticket = null)
     {
         $this->ticket = $ticket;
     }
@@ -147,6 +148,22 @@ class TournamentResult {
     {
         $this->position = $position;
         return $this;
+    }
+
+    public function toArray()
+    {
+        $array =  array(
+            "amount" => $this->getAmount(),
+            "free_credit_amount" => $this->getFreeCreditAmount(),
+            "jackpot_tournament_id" => $this->getJackpotTicket() ? $this->getJackpotTicket()->id : null,
+            "position" => $this->position,
+        );
+
+        if ($this->getTicket()) {
+            $array['user_id'] = $this->getTicket()->user_id;
+        }
+
+        return $array;
     }
 
 }

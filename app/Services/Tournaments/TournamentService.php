@@ -9,8 +9,10 @@
 namespace TopBetta\Services\Tournaments;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Resources\MeetingResource;
 use TopBetta\Resources\Sports\CompetitionResource;
+use TopBetta\Services\Resources\Tournaments\LeaderboardResourceService;
 use TopBetta\Services\Resources\Tournaments\TournamentResourceService;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -66,20 +68,47 @@ class TournamentService {
      * @var CompetitionService
      */
     private $competitionService;
+    /**
+     * @var TournamentGroupService
+     */
+    private $tournamentGroupService;
+    /**
+     * @var TournamentResourceService
+     */
+    private $tournamentResourceService;
+    /**
+     * @var TournamentEventService
+     */
+    private $tournamentEventService;
+    /**
+     * @var TournamentTransactionService
+     */
+    private $tournamentTransactionService;
+    /**
+     * @var LeaderboardResourceService
+     */
+    private $leaderboardResourceService;
+    /**
+     * @var TournamentResultService
+     */
+    private $resultService;
 
-    public function __construct(DbTournamentRepository $tournamentRepository,
+    public function __construct(TournamentRepositoryInterface $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
                                 CompetitionRepositoryInterface $competitionRepository,
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
                                 TournamentBuyInTypeRepositoryInterface $buyinTypeRepository,
                                 TournamentBuyInService $buyInService,
-                                TournamentLeaderboardService $leaderboardService, TournamentTicketService $ticketService,
+                                TournamentLeaderboardService $leaderboardService,
+                                TournamentTicketService $ticketService,
                                 EventModelRepositoryInterface $eventRepository,
                                 CompetitionService $competitionService,
                                 TournamentGroupService $tournamentGroupService,
                                 TournamentResourceService $tournamentResourceService,
                                 TournamentEventService $tournamentEventService ,
-                                TournamentTransactionService $tournamentTransactionService)
+                                TournamentTransactionService $tournamentTransactionService,
+                                LeaderboardResourceService $leaderboardResourceService,
+                                TournamentResultService $resultService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -95,6 +124,8 @@ class TournamentService {
         $this->tournamentResourceService = $tournamentResourceService;
         $this->tournamentEventService = $tournamentEventService;
         $this->tournamentTransactionService = $tournamentTransactionService;
+        $this->leaderboardResourceService = $leaderboardResourceService;
+        $this->resultService = $resultService;
     }
 
     public function getVisibleTournaments($type = 'racing', $date = null)
@@ -117,7 +148,12 @@ class TournamentService {
     public function getTournamentWithEvents($id, $eventId = null)
     {
         $tournament = $this->tournamentResourceService->getTournament($id);
-        $tournament->setLeaderboard($this->leaderboardService->getLeaderboard($id));
+
+        if (!$tournament->getResults()) {
+            $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->values()->toArray());
+        }
+
+        $tournament->setLeaderboard($this->leaderboardResourceService->getTournamentLeaderboard($id)->getCollection());
 
         $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
 
@@ -125,7 +161,6 @@ class TournamentService {
             if( $event instanceof MeetingResource ) {
                 $tournament->addMeeting($event);
             } else if ( $event instanceof CompetitionResource ) {
-
                 $tournament->addCompetition($event);
             }
         }
@@ -191,13 +226,8 @@ class TournamentService {
 
         return $ticket;
     }
-    
-    public function getTournament($tournamentId)
-    {
-        return $this->tournamentRepository->find($tournamentId);
-    }
 
-    public function createTicketAndLeaderboardRecordForUser($tournament, $user)
+	public function createTicketAndLeaderboardRecordForUser($tournament, $user)
     {
         //create ticket
         $ticket = $this->ticketService->createTournamentTicketForUser($tournament, $user);
@@ -207,6 +237,14 @@ class TournamentService {
 
         return $ticket;
     }
+
+    
+    public function getTournament($tournamentId)
+    {
+        return $this->tournamentRepository->find($tournamentId);
+    }
+
+
 
     public function removeUserFromTournament($tournamentId, $userId)
     {
@@ -330,6 +368,12 @@ class TournamentService {
             }
         }
 
+        if($tournamentData['tournament_sport_id'] == 1){
+            $tournamentData['tournament_type'] = 'Racing';
+        }else{
+            $tournamentData['tournament_type'] = 'Sport';
+        }
+
         //tournament of the day
         $tod = array_get($tournamentData, 'tod_flag', null);
         if ( $tod && $this->tournamentRepository->tournamentOfTheDay($tod, Carbon::createFromFormat('Y-m-d H:i:s', $tournamentData['start_date'])->toDateString()) ) {
@@ -393,8 +437,6 @@ class TournamentService {
             throw $e;
         }
 
-        $tournament = $this->tournamentRepository->find($tournament['id']);
-
         //add labels
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
@@ -402,7 +444,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $tournament->groups()->sync($groups);
+            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
@@ -493,8 +535,6 @@ class TournamentService {
             'tournament_groups',
         )));
 
-        $tournament = $this->tournamentRepository->find($id);
-
         //add labels
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
@@ -502,7 +542,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $tournament->groups()->sync($groups);
+            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
@@ -708,5 +748,20 @@ class TournamentService {
         }
 
         return $automated_text;
+    }
+
+    /**
+     * get tournament list start from today
+     * used for drop down list in template
+     * @return mixed
+     */
+    public function getTournamentsFromToday() {
+        $tournament_list = array();
+        $tournaments = $this->tournamentRepository->getTournamentList();
+        foreach($tournaments as $tournament) {
+            $tournament_transaction = array();
+            $tournament_list[$tournament->id] = '(#' . $tournament->id . ')' . $tournament->name;
+        }
+        return $tournament_list;
     }
 }

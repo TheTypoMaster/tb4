@@ -3,6 +3,7 @@
 use TopBetta\Http\Controllers\Controller;
 
 use Request;
+use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
@@ -19,14 +20,20 @@ class EventsController extends Controller
 	private $eventsrepo;
 	private $eventstatusrepo;
     private $teamRepository;
+    /**
+     * @var CompetitionRepositoryInterface
+     */
+    private $competitionRepository;
 
     public function __construct(EventRepositoryInterface $eventsrepo,
 								EventStatusRepositoryInterface $eventstatusrepo,
-                                TeamRepositoryInterface $teamRepository)
+                                TeamRepositoryInterface $teamRepository,
+                                CompetitionRepositoryInterface $competitionRepository)
 	{
 		$this->eventsrepo = $eventsrepo;
 		$this->eventstatusrepo = $eventstatusrepo;
         $this->teamRepository = $teamRepository;
+        $this->competitionRepository = $competitionRepository;
     }
 
 	/**
@@ -53,7 +60,26 @@ class EventsController extends Controller
 	 */
 	public function create()
 	{
-		//
+        //Get the search string if it exists so after updating we redirect back to filtered view
+        $search = Input::get("q", '');
+
+        if( ! $competition = Input::get('competition_id') ) {
+            return \Redirect::back()
+                ->with(array('flash_message' => "Please specify competition"));
+        }
+
+        $competition = $this->competitionRepository->find($competition);
+
+        if( ! $competition ) {
+            return \Redirect::back()
+                ->with(array('flash_message' => "Please specify competition"));
+        }
+
+        $event_status = $this->eventstatusrepo->getEventStatusList();
+
+        $teams = $this->teamRepository->findAll();
+
+        return View::make('admin.eventdata.events.create', compact('competition', 'event_status', 'teams', 'search'));
 	}
 
 	/**
@@ -63,7 +89,28 @@ class EventsController extends Controller
 	 */
 	public function store()
 	{
-		//
+        $search = Input::get("q", '');
+
+        if( ! $competition = Input::get('competition_id') ) {
+            return \Redirect::back()
+                ->with(array('flash_message' => "Please specify competition"));
+        }
+
+        $event = $this->eventsrepo->create(Input::except(array('_token', '_method', 'q', 'teams', 'team_position', 'competition_id')));
+
+        //get team info
+        $teams = Input::get('teams', array());
+        $teamPositions = Input::get('team_position', array());
+
+        $teams = array_combine($teams, array_map( function($value) { return array("team_position" => $value); }, $teamPositions));
+
+        $this->eventsrepo->addTeams($event['id'], array_except($teams, 0));
+
+        $event = $this->eventsrepo->find($event['id']);
+        $event->competitions()->attach($competition);
+
+        return Redirect::route('admin.competitions.index', array("q" => $search))
+            ->with('flash_message', 'Saved!');
 	}
 
 	/**

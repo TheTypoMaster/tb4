@@ -85,7 +85,7 @@ class BetController extends Controller {
 		$input = Input::json()->all();
 
         try {
-            $service = BetPlacementFactory::make(array_get($input, 'bet_type', ''));
+            $service = BetPlacementFactory::make(array_get($input, 'bet_type', ''), array_get($input, 'win_product', array_get($input, 'product')), array_get($input, 'place_product'));
             $response = $service->placeBet(Auth::user(), $input['amount'], $input['bet_type'], $input['origin'], $input['selections'], $input['free_credit_flag']);
         } catch ( BetSelectionException $e ) {
             $selection = $e->getSelection();

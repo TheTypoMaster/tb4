@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Feeds\Processors;
 
 use Log;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\TeamRepositoryInterface;
 
 class TeamProcessor extends AbstractFeedProcessor {
@@ -22,11 +23,18 @@ class TeamProcessor extends AbstractFeedProcessor {
      */
     private $playerProcessor;
 
-    public function __construct(TeamRepositoryInterface $teamRepository, PlayerProcessor $playerProcessor)
+    private $event = null;
+    /**
+     * @var EventRepositoryInterface
+     */
+    private $eventRepositoryInterface;
+
+    public function __construct(TeamRepositoryInterface $teamRepository, PlayerProcessor $playerProcessor, EventRepositoryInterface $eventRepositoryInterface)
     {
         $this->teamRepository = $teamRepository;
         $this->playerProcessor = $playerProcessor;
         $this->logprefix = 'SportsFeedService - TeamProcessor: ';
+        $this->eventRepositoryInterface = $eventRepositoryInterface;
     }
 
     public function process($team)
@@ -46,7 +54,13 @@ class TeamProcessor extends AbstractFeedProcessor {
         Log::info($this->logprefix."Processing team " . $teamId. ", Name: ".$data['name']);
 
         //create the team
-        $teamModel = $this->teamRepository->updateOrCreate($data, 'external_team_id');
+        if ($teamModel = $this->modelContainer->getTeam($teamId)) {
+            $teamModel = $this->teamRepository->update($teamModel, $data);
+        } else {
+            $teamModel = $this->teamRepository->updateOrCreateAndReturnModel($data, 'external_team_id');
+        }
+
+        $this->modelContainer->addTeam($teamModel, $teamId);
 
         //update the player
         $this->processTeamPlayers(array_get($team, 'team_players', array()), array_get($teamModel, 'id', 0));
@@ -62,7 +76,7 @@ class TeamProcessor extends AbstractFeedProcessor {
     public function processTeamPlayers($playerData, $teamId)
     {
 
-        $playerIds = $this->playerProcessor->processArray($playerData);
+        $playerIds = $this->playerProcessor->setModelContainer($this->modelContainer)->processArray($playerData);
 
         //add the players to the team
         if($teamId) {
@@ -70,7 +84,19 @@ class TeamProcessor extends AbstractFeedProcessor {
             $ids = array_filter($playerIds, function ($value) { return $value > 0; });
 
             $this->teamRepository->addPlayers($teamId, $ids);
+
+            $this->eventRepositoryInterface->addTeamPlayers($this->event, $teamId, $ids);
         }
+    }
+
+    /**
+     * @param null $event
+     * @return $this
+     */
+    public function setEvent($event)
+    {
+        $this->event = $event;
+        return $this;
     }
 
 }

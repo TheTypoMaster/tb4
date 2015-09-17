@@ -11,12 +11,13 @@ namespace TopBetta\Services\Sports;
 
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Services\Resources\Cache\Sports\CachedCompetitionResourceService;
 use TopBetta\Services\Resources\Sports\CompetitionResourceService;
 
 class CompetitionService {
 
     /**
-     * @var CompetitionResourceService
+     * @var CachedCompetitionResourceService
      */
     private $competitionResourceService;
     /**
@@ -24,7 +25,7 @@ class CompetitionService {
      */
     private $eventService;
 
-    public function __construct(CompetitionResourceService $competitionResourceService, EventService $eventService)
+    public function __construct(CachedCompetitionResourceService $competitionResourceService, EventService $eventService)
     {
         $this->competitionResourceService = $competitionResourceService;
         $this->eventService = $eventService;

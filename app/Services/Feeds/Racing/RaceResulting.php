@@ -6,20 +6,27 @@
  * Project: tb4
  */
 
+use Illuminate\Support\Collection;
 use Log;
 use File;
 use Carbon;
 use Queue;
 use Config;
 
+use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionResultRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 
 use TopBetta\Repositories\BetResultRepo;
 use TopBetta\Services\Betting\BetResults\BetResultService;
+use TopBetta\Services\Racing\RaceResultService;
+
+use TopBetta\Helpers\RiskManagerAPI;
 
 class RaceResulting {
 
@@ -33,6 +40,28 @@ class RaceResulting {
      * @var BetResultService
      */
     private $betResultService;
+    /**
+     * @var BetTypeRepositoryInterface
+     */
+    private $betTypeRepository;
+    /**
+     * @var ResultPricesRepositoryInterface
+     */
+    private $resultPricesRepository;
+    /**
+     * @var BetTypeMapper
+     */
+    private $betTypeMapper;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
+    /**
+     * @var RaceResultService
+     */
+    private $resultService;
+
+    private $riskhelper;
 
     public function __construct(EventRepositoryInterface $events,
                                 SelectionRepositoryInterface $selections,
@@ -40,7 +69,12 @@ class RaceResulting {
                                 CompetitionRepositoryInterface $competitions,
                                 BetProductRepositoryInterface $betproducts,
                                 BetResultRepo $betresults,
-                                BetResultService $betResultService){
+                                BetResultService $betResultService,
+                                RaceRepository $raceRepository,
+                                RaceResultService $resultService,
+                                BetTypeMapper $betTypeMapper,
+                                ResultPricesRepositoryInterface $resultPricesRepository,
+                                RiskManagerAPI $riskhelper){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -49,6 +83,34 @@ class RaceResulting {
         $this->betresults = $betresults;
         $this->betResultService = $betResultService;
         $this->logprefix = 'RaceResultService - Result Events: ';
+        $this->raceRepository = $raceRepository;
+        $this->resultService = $resultService;
+        $this->resultPricesRepository = $resultPricesRepository;
+        $this->betTypeMapper = $betTypeMapper;
+        $this->riskhelper = $riskhelper;
+    }
+
+    public function deleteWrongResults($results, $eventModel, $product)
+    {
+        $currentResults = $this->results->getResultsForEvent($eventModel->id);
+        $toDelete = array();
+
+        foreach ($currentResults as $result) {
+            //hacky way to find if result exists in $results since we have no external id
+            if (!in_array(
+                array("Selection" => $result->selection->name, "PlaceNo" => $result->position),
+                array_map(function ($v) {return array('Selection' => $v['Selection'], 'PlaceNo' => $v['PlaceNo']);}, $results)
+            )) {
+                $toDelete[] = $result->id;
+            }
+        }
+
+        //delete wrong results
+        $this->results->deleteResults($toDelete);
+        $this->resultPricesRepository->deletePricesForResults($toDelete);
+
+        //delete exotic results for product
+        return $this->resultPricesRepository->deleteExoticPricesForEventAndProduct($eventModel->id, $product->id);
     }
 
     public function ResultEvents($racingArray){
@@ -62,6 +124,18 @@ class RaceResulting {
         $eventList = array();
         $firstProcess = true;
         $eventModel = false;
+
+        $currentResults = null;
+
+        if (count($racingArray)) {
+            // get the event model
+            $eventModel = $this->events->getEventForMeetingIdRaceId($racingArray[0]['MeetingId'], $racingArray[0]['RaceNo']);
+
+            // check if this is a product we need to store in the DB
+            $productUsed = $this->betproducts->getProductByCode($racingArray[0]['PriceType']);
+
+            $this->deleteWrongResults($racingArray, $eventModel, $productUsed);
+        }
 
         foreach ($racingArray as $dataArray) {
 
@@ -86,10 +160,13 @@ class RaceResulting {
             $payout = $dataArray ['Payout'];
             $providerName = "igas"; // TODO remove this hard coding
 
-            $log_msg_prefix = $this->logprefix. " MID:$meetingId, RN:$raceNo -";
+            $betTypeModel = $this->betTypeMapper->getBetType($betType);
 
-            // check if this is a product we need to store in the DB
-            $productUsed = $this->_canProductBeProcessed($dataArray, $providerName, $raceNo, "Result");
+            if (!$betTypeModel) {
+                Log::error($this->logprefix . " Bet type not found Type: " . $betType);
+            }
+
+            $log_msg_prefix = $this->logprefix. " MID:$meetingId, RN:$raceNo -";
 
             // dont process if TB does not use this
             if(!$productUsed) {
@@ -98,26 +175,13 @@ class RaceResulting {
             }
 
             Log::info($log_msg_prefix . " PriceType:$priceType. BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
-            // get the event model
-            $eventModel = $this->events->getEventForMeetingIdRaceId($meetingId, $raceNo);
+
 
             if(!$eventModel) return array('error' => true, 'message' => "Error: No event found in database for meeting: $meetingId and race: $raceNo");
 
             // remove existing results
-            if ($firstProcess == true) {
-                // reset all exotic result to NULL
-                $eventModel->quinella_dividend = $eventModel->exacta_dividend = $eventModel->trifecta_dividend = $eventModel->firstfour_dividend = NULL;
-
-                // update the database
-                $eventModel->save();
-
-                // delete all results records for this event
-                $deleteRaceID = $this->results->deleteResultsForRaceId($eventModel->id);
-
-                // update the flag so this only happens once
-                $firstProcess = false;
-
-                Log::debug($log_msg_prefix . " Existing Results for EventID: {$eventModel->id} deleted. Response: $deleteRaceID.");
+            if (!$currentResults) {
+                $currentResults= $this->results->getResultsForRace($eventModel->id);
             }
 
             // win and place bets results are stored with the selection record
@@ -126,7 +190,7 @@ class RaceResulting {
                 $selectionModel = $this->selections->getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $selection);
 
                 if(!$selectionModel) {
-                    Log::debug($log_msg_prefix . " Not Processed! Selection not found - {$selectionModel->id}. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
+                    Log::debug($log_msg_prefix . " Not Processed! Selection not found - {$selection}. PriceType:$priceType.  BetType:$betType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
                     continue;
                 }
 
@@ -135,10 +199,41 @@ class RaceResulting {
                 $raceResult['position'] = $placeNo;
                 $raceResult['selection_id'] = $selectionModel->id;
                 ($betType == 'W') ? $raceResult['position'] = 1 : $raceResult['position'] = $placeNo;
-                ($betType == 'W') ? $raceResult['win_dividend'] = $payout / 100 : $raceResult['place_dividend'] = $payout / 100;
 
                 // save result
                 $raceResultSave = $this->results->updateOrCreate($raceResult, 'selection_id');
+
+                $price = array(
+                    'product_id' => $productUsed->id,
+                    'selection_result_id' => $raceResultSave['id'],
+                    'event_id' => $eventModel->id,
+                    'bet_type_id' => ($betTypeModel) ? $betTypeModel->id : null,
+                    'dividend' => $payout / 100
+                );
+
+                if ($existingPrice = $this->resultPricesRepository->getByResultProductAndBetType($raceResultSave['id'], $productUsed->id, $betTypeModel->id)) {
+                    $this->resultPricesRepository->updateWithId($existingPrice->id, $price);
+                } else {
+                    $this->resultPricesRepository->create($price);
+                }
+
+                $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
+                                            'external_selection_id' => $selectionModel->external_selection_id,
+                                            'number' => $selectionModel->number,
+                                            'position' => $placeNo,
+                                            'product_name' => $dataArray ['PriceType'],
+                                            'bet_type_name' => $betTypeModel->name,
+                                            'dividend' => $payout / 100);
+
+                // push result update to Risk...
+                Log::debug($this->logprefix. 'Pushing W/P results details to Risk', $riskResultsPayload);
+                // TODO: add notification
+                try{
+                    $this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
+                }catch (Exception $e){
+                    Log::error($this->logprefix. 'Pushing W/P results details to Risk Failed'. print_r($e->getMessage(), true));
+                }
+
 
                 Log::debug($log_msg_prefix . " Result Saved {$raceResultSave['id']} - BetType:$betType, PriceType:$priceType, Selection:$selection, PlaceNo:$placeNo, Payout:$payout");
 
@@ -155,95 +250,41 @@ class RaceResulting {
 
                 Log::debug($log_msg_prefix . "  Exotic Type:$betType. Positions:$arrayKey, Dividend:$arrayValue.");
 
-                // process each exotic type
-                switch ($betType) {
-                    case "Q" : // Quinella
-                        // if we already have a dividend stored
-                        if ($eventModel->quinella_dividend != NULL) {
-                            // if the new exotic results are the same as what we already have in the database
-                            if ($eventModel->quinella_dividend != serialize($exoticArray)) {
-                                // unserialise the existing dividend from the database
-                                $previousDivArray = unserialize($eventModel->quinella_dividend);
-                                // update or add selection dividends
-                                $previousDivArray[$arrayKey] = $arrayValue;
-                                // add the new dividends
-                                $eventModel->quinella_dividend = serialize($previousDivArray);
-                            }
-                            // if we didn't have a result stored already then store it
-                        } else {
-                            $eventModel->quinella_dividend = serialize($exoticArray);
-                        }
-                        Log::debug($log_msg_prefix . "  Exotics Result Div: Type:$betType. Added Dividends:$eventModel->quinella_dividend.");
-                        break;
+                $this->resultPricesRepository->create(array(
+                    'event_id' => $eventModel->id,
+                    'product_id' => $productUsed->id,
+                    'bet_type_id' => $betTypeModel->id,
+                    'dividend' => $payout/100,
+                    'result_string' => str_replace('-', '/', $selection),
+                ));
 
-                    case "E" : // Exacta
-                        // if we already have a dividend stored
-                        if ($eventModel->exacta_dividend != NULL) {
-                            // if the new exotic results are the same as what we already have in the database
-                            if ($eventModel->exacta_dividend != serialize($exoticArray)) {
-                                // unserialise the existing dividend from the database
-                                $previousDivArray = unserialize($eventModel->exacta_dividend);
-                                // update or add selection dividends
-                                $previousDivArray[$arrayKey] = $arrayValue;
-                                // add the new dividends
-                                $eventModel->exacta_dividend = serialize($previousDivArray);
-                            }
-                            // if we didn't have a result stored already then store it
-                        } else {
-                            $eventModel->exacta_dividend = serialize($exoticArray);
-                        }
-                        Log::debug($log_msg_prefix . "  Exotics Result Div: Type:$betType. Added Dividends:$eventModel->exacta_dividend.");
-                        break;
+                $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
+                                           // 'external_selection_id' => $selectionModel->external_selection_id,
+                                            'product_name' => $dataArray ['PriceType'],
+                                            'bet_type_name' => $betTypeModel->name,
+                                            'dividend' => $payout / 100,
+                                            'result_string' => str_replace('-', '/', $selection));
 
-                    case "T" : // Trifecta
-                        // if we already have a dividend stored
-                        if ($eventModel->trifecta_dividend != NULL) {
-                            // if the new exotic results are the same as what we already have in the database
-                            if ($eventModel->trifecta_dividend != serialize($exoticArray)) {
-                                // unserialise the existing dividend from the database
-                                $previousDivArray = unserialize($eventModel->trifecta_dividend);
-                                // update or add selection dividends
-                                $previousDivArray[$arrayKey] = $arrayValue;
-                                // add the new dividends
-                                $eventModel->trifecta_dividend = serialize($previousDivArray);
-                            }
-                            // if we didn't have a result stored already then store it
-                        } else {
-                            $eventModel->trifecta_dividend = serialize($exoticArray);
-                        }
-                        Log::debug($log_msg_prefix . "  Exotics Result Div: Type:$betType. Added Dividends:$eventModel->trifecta_dividend.");
-                        break;
-
-                    case "FF" : // First Four
-                        // if we already have a dividend stored
-                        if ($eventModel->firstfour_dividend != NULL) {
-                            // if the new exotic results are the same as what we already have in the database
-                            if ($eventModel->firstfour_dividend != serialize($exoticArray)) {
-                                // unserialise the existing dividend from the database
-                                $previousDivArray = unserialize($eventModel->firstfour_dividend);
-                                // update or add selection dividends
-                                $previousDivArray[$arrayKey] = $arrayValue;
-                                // add the new dividends
-                                $eventModel->firstfour_dividend = serialize($previousDivArray);
-                            }
-                            // if we didn't have a result stored already then store it
-                        } else {
-                            $eventModel->firstfour_dividend = serialize($exoticArray);
-                        }
-                        Log::debug($log_msg_prefix . "  Exotics Result Div: Type:$betType. Added Dividends:$eventModel->firstfour_dividend.");
-                        break;
-
-                    default :
-                        Log::debug($log_msg_prefix . " No valid betType found:$betType. Can't process");
+                // push result update to Risk...
+                Log::debug($this->logprefix. 'Pushing Exotic results details to Risk', $riskResultsPayload);
+                // TODO: add notification
+                try{
+                    Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceResults' => $riskResultsPayload), 'risk-results-queue');
+                    //$this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
+                }catch (Exception $e){
+                    Log::error($this->logprefix. 'Pushing Exotic results details to Risk Failed'. print_r($e->getMessage(), true));
                 }
-
-                // save the exotic dividend
-                $eventModel->save();
-
             }
+
+
 
         }
 
+        //update results in cache
+        $this->raceRepository->makeCacheResource($eventModel);
+        $race = $this->raceRepository->getRace($eventModel->id);
+        $this->resultService->loadResultForRace($race, true);
+        $this->raceRepository->save($race);
 
         /*
          * result BETS
@@ -257,39 +298,12 @@ class RaceResulting {
 //            File::append('/tmp/'.$date.'-ResultPost-E' .$eventModel->id.'-'. $currentTimeMs, json_encode($racingArray));
 
             //$this->betresults->resultAllBetsForEvent($eventModel->id);
-            Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id), Config::get('betresulting.queue'));
+            Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $eventModel->id, 'product_id' => $productUsed->id), Config::get('betresulting.queue'));
         }
 
         return array('error' => false,
                     'message' => "OK: Processed Successfully",
                     'status_code' => 200);
 
-    }
-
-    private function _canProductBeProcessed($dataArray, $providerName, $raceNo, $type = null)
-    {
-        $productUsed = false;
-        $meetingId = $dataArray['MeetingId'];
-        $betType = $dataArray['BetType'];
-        $priceType = $dataArray['PriceType'];
-
-        // get meeting details
-        $meetingTypeCodeResult = $this->competitions->getMeetingDetails($meetingId);
-
-        if(!$meetingTypeCodeResult) return false;
-
-        $meetingTypeCode = $meetingTypeCodeResult['type_code'];
-        $meetingCountry = $meetingTypeCodeResult['country'];
-        $meetingGrade = $meetingTypeCodeResult['meeting_grade'];
-
-        // check if product is used
-        $productUsed = $this->betproducts->isProductUsed($priceType, $betType, $meetingCountry, $meetingGrade, $meetingTypeCode, $providerName);
-
-        if (!$productUsed) {
-            Log::debug($this->logprefix . "Processing $type. IGNORED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
-            return false;
-        }
-        Log::info($this->logprefix . "Processing $type. USED: MeetID:$meetingId, RaceNo:$raceNo, BetType:$betType, PriceType:$priceType, TypeCode:$meetingTypeCode, Country:$meetingCountry, Grade:$meetingGrade");
-        return true;
     }
 }

@@ -18,6 +18,8 @@ class TicketResource extends AbstractEloquentResource {
         'tournamentId' => 'tournament_id',
         'rebuys' => 'rebuy_count',
         'topups' => 'topup_count',
+        'turnedOver' => 'turnedOver',
+        'balanceToTurnover' => 'balanceToTurnover',
     );
 
     protected $types = array(
@@ -42,7 +44,7 @@ class TicketResource extends AbstractEloquentResource {
     public function getAvailableCurrency()
     {
         if( is_null($this->availableCurrency) && $this->model->leaderboard ) {
-            $this->availableCurrency = $this->model->leaderboard->currency - $this->model->bets->where('resulted_flag', false)->sum('bet_amount');
+            $this->availableCurrency = $this->model->leaderboard->currency - $this->model->bets->whereLoose('resulted_flag', false)->sum('bet_amount');
         }
 
         return $this->availableCurrency;
@@ -65,6 +67,24 @@ class TicketResource extends AbstractEloquentResource {
         }
 
         return $this->model->leaderboard->turned_over >= $this->model->leaderboard->balance_to_turnover;
+    }
+
+    public function getTurnedOver()
+    {
+        if ($this->model->leaderboard) {
+            return $this->model->leaderboard->turned_over;
+        }
+
+        return 0;
+    }
+
+    public function getBalanceToTurnover()
+    {
+        if ($this->model->leaderboard) {
+            return $this->model->leaderboard->balance_to_turnover;
+        }
+
+        return 0;
     }
 
     public function toArray()

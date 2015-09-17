@@ -4,6 +4,8 @@ use TopBetta\Http\Controllers\Controller;
 use Queue;
 use Config;
 use Illuminate\Support\Facades\Input;
+use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\BetResultService;
 
 class RiskRaceStatusController extends Controller
@@ -13,10 +15,20 @@ class RiskRaceStatusController extends Controller
      * @var BetResultService
      */
     private $betResultService;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
+    /**
+     * @var EventRepositoryInterface
+     */
+    private $eventRepository;
 
-    public function __construct(BetResultService $betResultService)
+    public function __construct(BetResultService $betResultService, RaceRepository $raceRepository, EventRepositoryInterface $eventRepository)
     {
         $this->betResultService = $betResultService;
+        $this->raceRepository = $raceRepository;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -54,16 +66,16 @@ class RiskRaceStatusController extends Controller
 
     private static function updateOverrideStart($raceId, $enabled = false)
     {
-        return \TopBetta\Models\RaceEvent::where('id', $raceId)->update(array('override_start' => $enabled));
+        return \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->update(array('override_start' => $enabled));
     }
 
     public function updateRaceStatus($status, $raceId)
     {
         $eventStatus = \TopBetta\Models\RaceEventStatus::where('keyword', $status)->value('id');
-        $event = \TopBetta\Models\RaceEvent::find($raceId);
+        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
         if ($eventStatus && $event) {
-            $event->event_status_id = $eventStatus;
-            $event->save();
+
+            $this->raceRepository->updateWithId($raceId, array("event_status_id" => $eventStatus), 'external_event_id');
 
             if ($eventStatus == 6 || $eventStatus == 2 || $eventStatus == 3) {
                 // result bets for race status of interim, paying or abandoned

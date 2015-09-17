@@ -78,12 +78,17 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
     public function getDisplayedEventsForCompetition($competitionId)
     {
-        return $this->model->find($competitionId)->events()->where("display_flag", "=", "1")->get();
+        //return $this->model->find($competitionId)->events()->where("display_flag", "=", "1")->get();
+        return $this->model->where('external_event_group_id', $competitionId)
+            ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->where("tbdb_event.display_flag", "=", "1")
+            ->get();
     }
 
     public function setDisplayFlagForCompetition($competitionId, $displayFlag)
     {
-        $competition = $this->model->find($competitionId);
+        $competition = $this->model->where('external_event_group_id', $competitionId)->first();
 
         $competition->display_flag = $displayFlag;
 
@@ -201,6 +206,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get();
     }
 
+
     public function getRacingCompetitionsByDate(Carbon $date, $type = null, $withRaces = false)
     {
         $model = $this->model->where('sport_id', '<=', 3)
@@ -220,6 +226,14 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         }
 
         return $model->get();
+    }
+
+    public function getByEvent($event)
+    {
+        return $this->model
+            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
+            ->where('ege.event_id', $event)
+            ->first();
     }
 
     public function getVisibleCompetitionByBaseCompetition($baseCompetition)
@@ -275,14 +289,27 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $model->get(array('eg.*'));
     }
 
-
-
-    public function getByEvent($event)
+    public function syncProductsForBetType(CompetitionModel $meeting, $productIds, $betTypeId)
     {
-        return $this->model
-            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'tbdb_event_group.id')
-            ->where('ege.event_id', $event)
-            ->first();
-    }
+        $products = $meeting->products()->where('bet_type_id', $betTypeId)->get();
 
+        $toRemove = array_diff($products->lists('id')->all(), $productIds);
+        $toAttach = array_diff($productIds, $products->lists('id')->all());
+
+        if ($toRemove) {
+            $meeting->products()->newPivotStatement()->whereIn('bet_product_id', $toRemove)
+                ->where('bet_type_id', $betTypeId)->delete();
+        }
+
+        if ($toAttach) {
+            $meeting->products()
+                ->attach(array_combine(
+                    $toAttach,
+                    array_fill(0, count($toAttach), array("bet_type_id" => $betTypeId))
+                ));
+        }
+
+
+        return $meeting;
+    }
 } 

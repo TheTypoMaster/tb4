@@ -15,7 +15,7 @@ class TournamentBetValidator extends Validator {
         'amount' => 'required|numeric',
         'bet_type' => 'required',
         'selections' => 'required',
-        'ticket_id' => 'required'
+        'ticket_id' => 'required',
     );
 
     protected $createRules = array();

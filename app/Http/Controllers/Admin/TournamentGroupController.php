@@ -65,7 +65,7 @@ class TournamentGroupController extends Controller
         $search = $request->get('q', '');
 
         $data = $request->only(array(
-            'group_name', 'description', 'ordering'
+            'group_name', 'description', 'tournament_group_icon', 'ordering'
         ));
 
         $data['ordering'] = $data['ordering'] ? : null;
@@ -115,7 +115,7 @@ class TournamentGroupController extends Controller
         $search = $request->get('q', '');
 
         $data = $request->only(array(
-            'group_name', 'description', 'ordering'
+            'group_name', 'description', 'tournament_group_icon', 'ordering'
         ));
 
         $data['ordering'] = $data['ordering'] ? : null;

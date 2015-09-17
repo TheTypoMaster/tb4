@@ -13,11 +13,15 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class MarketResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\MarketModel';
+
     protected $attributes = array(
         'id' => 'id',
-        'name' => 'marketType.name',
+        'name' => 'name',
         'line' => 'line',
-        'status' => 'market_status'
+        'market_status' => 'market_status',
+        "display_flag" => "display_flag",
+        "market_type_id" => "market_type_id",
     );
 
     protected $loadIfRelationExists = array(
@@ -26,6 +30,20 @@ class MarketResource extends AbstractEloquentResource {
 
     public function selections()
     {
-        return $this->collection('selections', 'TopBetta\Resources\Sports\SelectionResource', $this->model->selections);
+        return $this->collection('selections', 'TopBetta\Resources\Sports\SelectionResource', 'selections');
+    }
+
+    public function getName()
+    {
+        return $this->model->name ? : $this->model->markettype->name;
+    }
+
+    public function addSelection($selection)
+    {
+        $selections = $this->selections->keyBy('id');
+
+        $selections->put($selection->id, $selection);
+
+        $this->relations['selections'] = $selections->values();
     }
 }

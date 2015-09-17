@@ -163,6 +163,14 @@ class DbMarketRepository extends BaseEloquentRepository implements MarketReposit
             ->first()->toArray();
     }
 
+    public function getMarketModelByExternalIds($externalMarketId, $externalEventId)
+    {
+        return $this->model
+            ->where('external_market_id', $externalMarketId)
+            ->where('external_event_id', $externalEventId)
+            ->first();
+    }
+
 
 	public function getMarketDetailByEventIdAndMarket($eventId, $martketTypeId){
 		$market = $this->model->where('event_id', $eventId)

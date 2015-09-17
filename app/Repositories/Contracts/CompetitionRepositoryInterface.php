@@ -1,5 +1,6 @@
 <?php namespace TopBetta\Repositories\Contracts;
 use Carbon\Carbon;
+use TopBetta\Models\CompetitionModel;
 
 /**
  * Coded by Oliver Shanahan
@@ -15,4 +16,6 @@ interface CompetitionRepositoryInterface {
     public function getByEvent($event);
 
     public function getVisibleCompetitions(Carbon $date = null);
+
+    public function syncProductsForBetType(CompetitionModel $meeting, $productIds, $betTypeId);
 } 

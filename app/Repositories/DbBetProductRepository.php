@@ -49,5 +49,39 @@ class DbBetProductRepository extends BaseEloquentRepository implements BetProduc
 
     }
 
+    public function getProductByCode($productCode)
+    {
+        return $this->model
+            ->join('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'tbdb_bet_product.id')
+            ->where('ppm.provider_product_name', $productCode)
+            ->first(array('tbdb_bet_product.*'));
+    }
 
+    public function getProductsByCodes($productCodes)
+    {
+        return $this->model
+            ->join('tb_product_provider_match as ppm', 'ppm.tb_product_id', '=', 'tbdb_bet_product.id')
+            ->whereIN('ppm.provider_product_name', $productCodes)
+            ->get(array('tbdb_bet_product.*'));
+    }
+
+    public function getProductsForUser($user, $venue)
+    {
+        return $this->model
+            ->join('tb_user_products', 'tb_user_products.bet_product_id', '=', 'tbdb_bet_product.id')
+            ->join('tbdb_bet_type', 'tbdb_bet_type.id', '=', 'tb_user_products.bet_type_id')
+            ->where('user_id', $user)
+            ->where(function($q) use ($venue) {
+                $q->where('venue_id', $venue)->orWhere('venue_id', 0);
+            })
+            ->orderBy('venue_id', 'DESC')
+            ->get(array('tbdb_bet_product.*', 'tbdb_bet_type.name as bet_type', 'tb_user_products.venue_id as venue_id'));
+    }
+
+    public function getFixedOddsProducts()
+    {
+        return $this->model
+            ->where('is_fixed_odds', true)
+            ->get();
+    }
 }

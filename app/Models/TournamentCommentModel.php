@@ -2,6 +2,7 @@
 
 namespace TopBetta\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class TournamentCommentModel extends Model
@@ -9,6 +10,8 @@ class TournamentCommentModel extends Model
     protected $table = 'tbdb_tournament_comment';
 
     protected $guarded = array();
+
+    protected $fillable = ['tournament_id', 'user_id', 'comment', 'created_date', 'visible'];
 
     public function tournament()
     {

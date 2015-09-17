@@ -13,13 +13,35 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class EventResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\EventModel';
+
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
+        "display_flag" => "display_flag",
+    );
+
+    protected $loadIfRelationExists = array(
+        "teams" => "teams",
     );
 
     public function markets()
     {
-        return $this->collection('markets', 'TopBetta\Resources\MarketResource', $this->model->markets);
+        return $this->collection('markets', 'TopBetta\Resources\MarketResource', 'markets');
+    }
+
+    public function teams()
+    {
+        return $this->collection('teams', 'TopBetta\Resources\Sports\TeamResource', 'teams');
+    }
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        if (!array_get($this->relations, 'teams')) {
+            $this->model->load('teams');
+            $this->loadRelation('teams');
+        }
     }
 }

@@ -15,6 +15,11 @@
                 {!! Form::text('group_name', null, array('class' => 'form-control')) !!}
             </div>
 
+        <div class="form-group">
+            {!! Form::label('tournament_group_icon', 'Icon') !!}
+            {!! Form::text('tournament_group_icon', null, array('class' => 'form-control')) !!}
+        </div>
+
             <div class="form-group">
                 {!! Form::label('description' , 'Description') !!}
                 {!! Form::textarea('description', null, array('class' => 'form-control')) !!}

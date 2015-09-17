@@ -10,8 +10,12 @@ namespace TopBetta\Services\Sports;
 
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Repositories\Cache\Sports\CompetitionRepository;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Services\Markets\MarketOrderingService;
+use TopBetta\Services\Resources\Cache\Sports\CachedCompetitionResourceService;
+use TopBetta\Services\Resources\Cache\Sports\CachedMarketResourceService;
+use TopBetta\Services\Resources\Cache\Sports\CachedMarketTypeResourceService;
 use TopBetta\Services\Resources\Sports\MarketTypeResourceService;
 use TopBetta\Services\Resources\Sports\SelectionResourceService;
 use TopBetta\Services\Resources\Sports\MarketResourceService;
@@ -27,10 +31,6 @@ class MarketService {
      */
     private $marketOrderingService;
     /**
-     * @var CompetitionRepositoryInterface
-     */
-    private $competitionRepository;
-    /**
      * @var SelectionResourceService
      */
     private $selectionResourceService;
@@ -38,14 +38,20 @@ class MarketService {
      * @var MarketTypeResourceService
      */
     private $marketTypeResourceService;
+    /**
+     * @var CompetitionRepository
+     */
+    private $competitionRepository;
 
-    public function __construct(MarketResourceService $marketResourceService, MarketOrderingService $marketOrderingService, CompetitionRepositoryInterface $competitionRepository, SelectionResourceService $selectionResourceService, MarketTypeResourceService $marketTypeResourceService)
+
+    public function __construct(CachedMarketResourceService $marketResourceService, MarketOrderingService $marketOrderingService, CompetitionRepository $competitionRepository, SelectionResourceService $selectionResourceService, CachedMarketTypeResourceService $marketTypeResourceService)
     {
         $this->marketResourceService = $marketResourceService;
         $this->marketOrderingService = $marketOrderingService;
-        $this->competitionRepository = $competitionRepository;
         $this->selectionResourceService = $selectionResourceService;
         $this->marketTypeResourceService = $marketTypeResourceService;
+
+        $this->competitionRepository = $competitionRepository;
     }
 
     public function getFilteredMarketsForCompetition($competition, $types = null)
@@ -69,7 +75,7 @@ class MarketService {
 
     public function getMarketTypesForCompetition($competition)
     {
-        $competition = $this->competitionRepository->find($competition);
+        $competition = $this->competitionRepository->findOrGetFromDb($competition);
 
         if( ! $competition ) {
             throw new ModelNotFoundException;
