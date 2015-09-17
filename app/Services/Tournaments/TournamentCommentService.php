@@ -105,7 +105,7 @@ class TournamentCommentService {
             throw new \InvalidArgumentException("No tournament id specified");
         }
 
-        return $this->commentResourceService->getComments($tournament, array_get($data, 'limit'));
+        return $this->commentResourceService->getComments($tournament, array_get($data, 'limit', 50));
     }
 
     /**

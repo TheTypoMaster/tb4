@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Tournaments;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Resources\MeetingResource;
 use TopBetta\Resources\Sports\CompetitionResource;
 use TopBetta\Services\Resources\Tournaments\LeaderboardResourceService;
@@ -92,7 +93,7 @@ class TournamentService {
      */
     private $resultService;
 
-    public function __construct(DbTournamentRepository $tournamentRepository,
+    public function __construct(TournamentRepositoryInterface $tournamentRepository,
                                 TournamentBuyInRepositoryInterface $buyInRepository,
                                 CompetitionRepositoryInterface $competitionRepository,
                                 TournamentTicketBuyInHistoryRepositoryInterface $buyInHistoryRepository,
@@ -148,7 +149,9 @@ class TournamentService {
     {
         $tournament = $this->tournamentResourceService->getTournament($id);
 
-        $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->values()->toArray());
+        if (!$tournament->getResults()) {
+            $tournament->setResults($this->resultService->getTournamentResults($tournament->getModel())->values()->toArray());
+        }
 
         $tournament->setLeaderboard($this->leaderboardResourceService->getTournamentLeaderboard($id)->getCollection());
 
@@ -434,8 +437,6 @@ class TournamentService {
             throw $e;
         }
 
-        $tournament = $this->tournamentRepository->find($tournament['id']);
-
         //add labels
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
@@ -443,7 +444,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $tournament->groups()->sync($groups);
+            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
@@ -534,8 +535,6 @@ class TournamentService {
             'tournament_groups',
         )));
 
-        $tournament = $this->tournamentRepository->find($id);
-
         //add labels
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
@@ -543,7 +542,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $tournament->groups()->sync($groups);
+            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);

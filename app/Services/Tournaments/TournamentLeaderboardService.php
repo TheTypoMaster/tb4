@@ -11,6 +11,7 @@ namespace TopBetta\Services\Tournaments;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Contracts\TournamentBuyInTypeRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
@@ -30,7 +31,7 @@ class TournamentLeaderboardService {
      */
     private $ticketRepository;
 
-    public function __construct(DbTournamentLeaderboardRepository $leaderboardRepository, TournamentBuyInTypeRepositoryInterface $buyInTypeRepository, TournamentTicketRepositoryInterface $ticketRepository)
+    public function __construct(TournamentLeaderboardRepositoryInterface $leaderboardRepository, TournamentBuyInTypeRepositoryInterface $buyInTypeRepository, TournamentTicketRepositoryInterface $ticketRepository)
     {
         $this->leaderboardRepository = $leaderboardRepository;
         $this->buyInTypeRepository = $buyInTypeRepository;
@@ -156,7 +157,7 @@ class TournamentLeaderboardService {
     {
         $leaderboard = $this->leaderboardRepository->getLeaderboardRecordForUserInTournament($userId, $tournament->id);
 
-        return $leaderboard->delete();
+        return $this->leaderboardRepository->delete($leaderboard);
     }
 
     public function increaseTurnedOver($tournamentId, $userId, $amount)
