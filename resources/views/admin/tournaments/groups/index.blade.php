@@ -27,6 +27,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
+                    <th>Icon</th>
                     <th>Description</th>
                     <th>Ordering</th>
                     <th>Action</th>
@@ -38,6 +39,7 @@
                     <tr>
                         <td>{{ $group->id }}</td>
                         <td>{{ $group->group_name }}</td>
+                        <td>{{ $group->tournament_group_icon }}</td>
                         <td>{{ $group->description }}</td>
                         <td>{{ $group->ordering }}</td>
                         <td>

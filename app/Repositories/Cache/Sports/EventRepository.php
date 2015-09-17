@@ -17,7 +17,7 @@ use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketTypeRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 
-class EventRepository extends CachedResourceRepository {
+class EventRepository extends CachedSportResourceRepository {
 
     const CACHE_KEY_PREFIX = 'events_';
 
@@ -29,13 +29,14 @@ class EventRepository extends CachedResourceRepository {
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
-    protected $collectionKeys = array(
-        self::COLLECTION_COMPETITION_EVENTS,
-    );
-
     protected $tags = array("sports", "events");
 
     protected $nextToJumpTags = array("events", "n2j");
+
+    protected $parentCollectionKey = self::COLLECTION_COMPETITION_EVENTS;
+
+    protected $storeIndividualResource = false;
+
 
     /**
      * @var
@@ -46,7 +47,10 @@ class EventRepository extends CachedResourceRepository {
      */
     private $marketRepository;
 
-    public function __construct(EventRepositoryInterface $repository, MarketTypeRepositoryInterface $marketTypeRepository, MarketRepositoryInterface $marketRepository)
+    public function __construct(EventRepositoryInterface $repository,
+                                MarketTypeRepositoryInterface $marketTypeRepository,
+                                MarketRepositoryInterface $marketRepository,
+                                CompetitionRepository $competitionRepository)
     {
         $this->repository = $repository;
         $this->marketTypeRepository = $marketTypeRepository;
@@ -56,6 +60,34 @@ class EventRepository extends CachedResourceRepository {
     public function getEventsForCompetition($id)
     {
         return $this->getCollection($this->cachePrefix . 'competition_' . $id);
+    }
+
+    public function getEventsArrayForCompetition($id)
+    {
+        return \Cache::tags($this->tags)->get($this->cachePrefix . 'competition_' . $id);
+    }
+
+    public function getEventArray($id)
+    {
+        return \Cache::tags($this->tags)->get($this->cachePrefix . $id);
+    }
+
+    public function addTeamsToModel($model, $teams)
+    {
+        $changes = $this->repository->addTeamsToModel($model, $teams);
+
+        if (count($changes)) {
+            $this->makeCacheResource($model->load('teams'));
+        }
+
+        return $model;
+    }
+
+    public function makeCacheResource($model)
+    {
+        $this->updateVisibleResource($model);
+
+        return $model;
     }
 
     public function nextToJump()
@@ -113,4 +145,20 @@ class EventRepository extends CachedResourceRepository {
 
         return Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay()->addDays(2)->diffInMinutes();
     }
+
+    protected function setParentRepository()
+    {
+        $this->parentRepository = \App::make('TopBetta\Repositories\Cache\Sports\CompetitionRepository');
+    }
+
+    protected function getParentResource($model)
+    {
+        return $model->competition->first();
+    }
+
+    protected function getParentResourceCollection($id)
+    {
+        return $this->getEventsForCompetition($id);
+    }
+
 }

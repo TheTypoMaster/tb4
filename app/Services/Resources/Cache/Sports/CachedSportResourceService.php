@@ -9,8 +9,10 @@
 namespace TopBetta\Services\Resources\Cache\Sports;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\Sports\CompetitionRepository;
 use TopBetta\Repositories\Cache\Sports\SportRepository;
+use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\Cache\CachedResourceService;
 use TopBetta\Services\Resources\Sports\SportResourceService;
 
@@ -47,34 +49,21 @@ class CachedSportResourceService extends CachedResourceService {
 
         $sports = $this->attachCompetitions($sports);
 
-        return $this->filterSports($sports);
+        return $sports;
     }
 
-    public function getVisibleSportsWithSelectedCompetition($competition)
-    {
-        $sports = $this->sportRepository->getVisibleSports();
-
-        return $this->filterSports($sports, $competition);
-    }
 
     public function getVisibleSports($sportId = null)
     {
         $sports = $this->sportRepository->getVisibleSports();
 
-        return $this->filterSports($sports, $sportId);
+        if (!$sports) {
+            return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\SportResource');
+        }
+
+        return $sports;
     }
 
-    public function filterSports($sports, $sportId = null)
-    {
-        return $sports->filter(function ($v) use ($sportId) {
-            if ($v->id == $sportId) {
-                return true;
-            }
-
-            $baseCompetitions = $this->baseCompetitionResourceService->getBaseCompetitionForSport($v->id);
-            return (bool) ($baseCompetitions->count() > 0 && $v->display_flag);
-        });
-    }
 
 
     protected function attachCompetitions($sports)

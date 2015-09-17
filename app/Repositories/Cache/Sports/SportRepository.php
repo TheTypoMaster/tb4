@@ -29,9 +29,6 @@ class SportRepository extends CachedResourceRepository {
 
     protected $allSportsCollectionKey;
 
-    protected $collectionKeys = array(
-        self::COLLECTION_ALL_SPORTS,
-    );
 
     protected $cacheForever = true;
     /**
@@ -51,6 +48,15 @@ class SportRepository extends CachedResourceRepository {
         return $this->getCollection($this->allSportsCollectionKey);
     }
 
+    public function makeCacheResource($model)
+    {
+        $model = parent::makeCacheResource($model);
+
+        $this->updateVisibleResource($model);
+
+        return $model;
+    }
+
     protected function getCollectionCacheKey($keyTemplate, $model)
     {
         switch ($keyTemplate) {
@@ -61,5 +67,71 @@ class SportRepository extends CachedResourceRepository {
         throw new \InvalidArgumentException("Invalid key " . $keyTemplate);
     }
 
+    public function addVisibleResource($model)
+    {
+        if ($this->canStore($model)) {
+
+            $sports = $this->getVisibleSports();
+
+            if (!$sports) {
+                $sports = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+            }
+
+            $resource = $this->createResource($model);
+            $sports->put($model->id, $resource);
+
+            \Cache::tags($this->tags)->forever(
+                $this->getCollectionCacheKey(self::COLLECTION_ALL_SPORTS, $resource),
+                $sports->toArray()
+            );
+        }
+    }
+
+    public function removeVisibleResource($model)
+    {
+        $sports = $this->getVisibleSports();
+
+        if ($sports && $resource = $sports->get($model->id)) {
+            $sports->forget($model->id);
+
+            if (!$sports->count()) {
+                \Cache::tags($this->tags)->forget($this->getCollectionCacheKey(self::COLLECTION_ALL_SPORTS, $resource));
+            } else {
+                \Cache::tags($this->tags)->forever(
+                    $this->getCollectionCacheKey(self::COLLECTION_ALL_SPORTS, $resource),
+                    $sports->toArray()
+                );
+            }
+        }
+    }
+
+    public function updateVisibleResource($model)
+    {
+        $sports = $this->getVisibleSports();
+
+        if ($sports && $resource = $sports->get($model->id)) {
+
+            if (!$this->canStore($model)) {
+                $sports->forget($model->id);
+            } else {
+                $resource = $this->createResource($model);
+                $sports->put($model->id, $resource);
+            }
+
+            if (!$sports->count()) {
+                \Cache::tags($this->tags)->forget($this->getCollectionCacheKey(self::COLLECTION_ALL_SPORTS, $resource));
+            } else {
+                \Cache::tags($this->tags)->forever(
+                    $this->getCollectionCacheKey(self::COLLECTION_ALL_SPORTS, $resource),
+                    $sports->toArray()
+                );
+            }
+        }
+    }
+
+    public function canStore($model)
+    {
+        return (bool)$model->display_flag;
+    }
 
 }

@@ -9,10 +9,12 @@
 namespace TopBetta\Repositories\Cache\Sports;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\BaseCompetitionRepositoryInterface;
+use TopBetta\Resources\EloquentResourceCollection;
 
-class BaseCompetitionRepository extends CachedResourceRepository {
+class BaseCompetitionRepository extends CachedSportResourceRepository {
 
     const CACHE_KEY_PREFIX = 'base_competitions_';
 
@@ -26,9 +28,7 @@ class BaseCompetitionRepository extends CachedResourceRepository {
 
     protected $tags = array("sports", "baseCompetitions");
 
-    protected $collectionKeys = array(
-        self::COLLECTION_BASE_COMPETITIONS_SPORT,
-    );
+    protected $parentCollectionKey = self::COLLECTION_BASE_COMPETITIONS_SPORT;
 
     /**
      * @var SportRepository
@@ -51,6 +51,11 @@ class BaseCompetitionRepository extends CachedResourceRepository {
         return $this->getCollection($this->cachePrefix . 'sport_' . $sport);
     }
 
+    public function getBaseCompetitionsArrayBySport($sport)
+    {
+        return \Cache::tags($this->tags)->get($this->cachePrefix . 'sport_' . $sport);
+    }
+
     public function getCollectionCacheKey($key, $model)
     {
         switch ($key) {
@@ -59,6 +64,21 @@ class BaseCompetitionRepository extends CachedResourceRepository {
         }
 
         throw new \InvalidArgumentException("Invalid key " . $key);
+    }
+
+    protected function setParentRepository()
+    {
+        $this->parentRepository = \App::make('TopBetta\Repositories\Cache\Sports\SportRepository');
+    }
+
+    protected function getParentResource($model)
+    {
+        return $model->sport;
+    }
+
+    protected function getParentResourceCollection($id)
+    {
+        return $this->getBaseCompetitionsBySport($id);
     }
 
 

@@ -43,10 +43,14 @@ class TournamentResourceService {
 
     public function getTournament($id)
     {
-        $tournament = $this->tournamentRepositoryInterface->find($id);
+        $tournament = $this->tournamentRepositoryInterface->getTournament($id);
 
         if( ! $tournament ) {
             throw new ModelNotFoundException;
+        }
+
+        if ($tournament instanceof TournamentResource) {
+            return $tournament;
         }
 
         $tournament->load('tickets');

@@ -46,29 +46,37 @@ class MeetingRepository extends CachedResourceRepository {
 
     public function getSmallMeetings(Carbon $date)
     {
-        return $this->getCollection($this->cachePrefix . 'small_' . $date->toDateString(), 'TopBetta\Resources\SmallMeetingResource');
+        return \Cache::tags($this->tags)->get($this->cachePrefix . 'small_' . $date->toDateString());
+    }
+
+    public function getSmallMeetingsCollection(Carbon $date)
+    {
+        return $this->getCollection($this->cachePrefix . 'small_' . $date->toDateString());
     }
 
     public function makeCacheResource($model)
     {
         $model = parent::makeCacheResource($model);
 
-        $resource = $this->createSmallMeeting($model);
+        if ($model->start_date) {
+            $resource = $this->createSmallMeeting($model);
 
-        $meetings = $this->getSmallMeetings(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+            $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
 
-        if ($meetings && $meeting = $meetings->get($model->id)) {
-            $resource->setRelation('races', $meeting->races);
+            if ($meetings && $meeting = $meetings->get($model->id)) {
+                $resource->setRelation('races', $meeting->races);
+            }
+
+            \Log::debug("MeetingRepository (makeCacheResource): Adding small meetings " . $model->start_date . " count " . $meetings->count());
+            $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
         }
-
-        $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE);
 
         return $model;
     }
 
     public function addSmallRace($resource, $meetingModel)
     {
-        $meetings = $this->getSmallMeetings(Carbon::createFromFormat('Y-m-d H:i:s', $meetingModel->start_date));
+        $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $meetingModel->start_date));
 
         //check meeting exists
         if ($meetings && $meeting = $meetings->get($meetingModel->id)) {

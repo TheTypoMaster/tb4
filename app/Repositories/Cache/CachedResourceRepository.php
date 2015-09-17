@@ -61,7 +61,7 @@ abstract class CachedResourceRepository {
             return $this->createCollectionFromArray($collection, $resource);
         }
 
-        return $collection;
+        return new EloquentResourceCollection(new Collection(), $this->resourceClass);
     }
 
     public function put($key, $model, $time)
@@ -117,6 +117,11 @@ abstract class CachedResourceRepository {
         $model = $this->repository->updateOrCreateAndReturnModel($data, $criteria);
 
         return $this->makeCacheResource($model);
+    }
+
+    public function delete($model)
+    {
+        return $this->repository->delete($model);
     }
 
     public function makeCacheResource($model)
