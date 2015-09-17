@@ -437,7 +437,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     //CONTACT USE ENDPOINT
     Route::post('contact-us', 'Frontend\ContactController@contactUs');
 });
-    
+
 // new login/logout methods
 Route::group(array('prefix' => '/api/v2', 'after' => 'topbetta_secure_links'), function() {
 

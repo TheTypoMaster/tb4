@@ -227,5 +227,10 @@ class BaseEloquentRepository {
         return $model->delete();
     }
 
+    public function delete($model)
+    {
+        return $model->delete();
+    }
+
 
 } 

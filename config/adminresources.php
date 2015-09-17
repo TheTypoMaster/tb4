@@ -56,14 +56,14 @@ return array(
         array("uri" => "tournaments/get-.*", "permission" => "tournaments.view"),
         array("uri" => "sports-list", "permission" => "sports.view"),
         array('uri' => 'tournament-settings', "permission" => "tournament_settings"),
-        array('uri' => "tournaments/remove/{tournamentId}/{userId}", "remove_users_from_tournament"),
+        array('uri' => "tournaments/remove/{tournamentId}/{userId}", "permission" => "remove_users_from_tournament"),
         array('uri' => 'tournaments/cancel/{tournamentId}', "permission" => 'tournaments.delete'),
         array('uri' => 'user-activity/download', "permission" => "get_user_activity"),
         array('uri' => 'tournaments/download/entrants', 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/delete/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/store", 'permission' => 'tournaments.view'),
-        array("uri" => "tournament-comments/block/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "tournament-groups", 'permission' => 'tournaments.view'),
     ),
 
     // --- SIDEBAR NAVIGATION MENU ---
@@ -89,6 +89,7 @@ return array(
             array("name" => "Tournament Sport Markets", "fa-icon" => "fa-edit", "route" => "admin.tournament-sport-markets.index"),
             array("name" => "Tournament Settings", "fa-icon" => "fa-cog", "url" => "/admin/tournament-settings"),
             array("name" => "Tournament Comments", "fa-icon" => "fa-comment", "url" => "/admin/tournament-comments"),
+            array("name" => "Tournament Groups", "fa-icon" => "fa-cubes", "url" => "/admin/tournament-groups"),
         )),
         array("name" => "Reports", "route" => "admin.reports.index", "fa-icon" => "fa-file-text"),
         array("name" => "Event Management", "fa-icon" => "fa-list", "children" => array(

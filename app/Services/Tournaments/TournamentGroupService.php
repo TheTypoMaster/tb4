@@ -56,10 +56,15 @@ class TournamentGroupService {
         }
 
         if( ! $tournament->groups->where('id', $group['id'])->first() ) {
-            $tournament->groups()->attach($group['id']);
+            $this->addTournamentToGroups($tournament, array($group['id']));
         }
 
         return $tournament;
+    }
+
+    public function addTournamentToGroups($tournament, $groups)
+    {
+        $this->tournamentGroupRepository->addTournamentToGroups($tournament, $groups);
     }
 
     /**

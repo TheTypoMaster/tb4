@@ -19,6 +19,8 @@ class Kernel extends ConsoleKernel {
         'TopBetta\Console\Commands\DevTools\PopulateSportsCache',
         'TopBetta\Console\Commands\DevTools\PopulateRacingCache',
         'TopBetta\Console\Commands\NextToJump\ManageSportsNextToJump',
+        'TopBetta\Console\Commands\DevTools\PopulateTournamentCache',
+        'TopBetta\Console\Commands\Cache\ManageTournamentGroups',
 	];
 
 	/**
@@ -31,6 +33,9 @@ class Kernel extends ConsoleKernel {
 	{
 		$schedule->command('inspire')
 				 ->hourly();
+
+        $schedule->command('topbetta:manage-tournament-groups')
+            ->daily();
 	}
 
 }

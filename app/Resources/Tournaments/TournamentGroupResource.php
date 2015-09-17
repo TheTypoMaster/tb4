@@ -24,8 +24,10 @@ class TournamentGroupResource extends AbstractEloquentResource {
         'tournaments' => 'tournaments'
     );
 
+    protected static $modelClass = 'TopBetta\Models\TournamentGroupModel';
+
     public function tournaments()
     {
-        return $this->collection('tournaments', 'TopBetta\Resources\Tournaments\TournamentResource', $this->model->tournaments);
+        return $this->collection('tournaments', 'TopBetta\Resources\Tournaments\TournamentResource', 'tournaments');
     }
 }

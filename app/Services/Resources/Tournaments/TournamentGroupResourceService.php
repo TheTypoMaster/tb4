@@ -28,12 +28,20 @@ class TournamentGroupResourceService {
     {
         $groups = $this->tournamentGroupRepository->getVisibleSportTournamentGroupsWithTournaments($date);
 
+        if ($groups instanceof EloquentResourceCollection) {
+            return $groups;
+        }
+
         return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
     }
 
     public function getVisibleRacingTournamentGroupsWithTournaments($date = null)
     {
         $groups = $this->tournamentGroupRepository->getVisibleRacingTournamentGroupsWithTournaments($date);
+
+        if ($groups instanceof EloquentResourceCollection) {
+            return $groups;
+        }
 
         return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
     }

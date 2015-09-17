@@ -35,6 +35,10 @@ class LeaderboardResourceService {
     {
         $leaderboard = $this->leaderboardRepository->getTournamentLeaderboardPaginated($tournamentId, $limit);
 
+        if ($leaderboard instanceof PaginatedEloquentResourceCollection) {
+            return $leaderboard;
+        }
+
         $leaderboard = new PaginatedEloquentResourceCollection($leaderboard, 'TopBetta\Resources\Tournaments\LeaderboardResource');
 
         if ($leaderboard->count()) {

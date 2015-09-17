@@ -76,6 +76,7 @@
                             </li>
                             @for($i=1; $i<=$pagination['total_pages']; $i++)
                                 @if($pagination['current_page'] == $i)
+
                                     <li class="active">{!! link_to('admin/tournament-comments?page=' . $i, $i, array()) !!}</li>
                                 @else
                                     <li>{!! link_to('admin/tournament-comments?page=' . $i, $i, array()) !!}</li>
