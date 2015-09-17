@@ -51,7 +51,6 @@ class FreeCreditTransactionRepository extends CachedResourceRepository implement
         $this->userRepository->addFreeCreditBalance($userId, $amount);
 
         return $transaction;
-
     }
 
     public function findWithType($id)

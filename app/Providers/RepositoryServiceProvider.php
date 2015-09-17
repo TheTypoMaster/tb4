@@ -55,7 +55,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\BetRepositoryInterface',
-            'TopBetta\Repositories\DbBetRepository'
+            'TopBetta\Repositories\Cache\Bets\BetRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\UserTokenRepositoryInterface',
