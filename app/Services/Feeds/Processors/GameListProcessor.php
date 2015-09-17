@@ -112,7 +112,7 @@ class GameListProcessor extends AbstractFeedProcessor {
         $this->teamProcessor->setModelContainer($this->modelContainer)->setEvent($event);
         $teams = $this->teamProcessor->processArray(array_get($data, 'Teams', array()));
         if( $event ) {
-            $this->processEventTeams($event['id'], $teams, array_get($data, 'Teams', array()));
+            $this->processEventTeams($event, $teams, array_get($data, 'Teams', array()));
         }
 
     }
@@ -273,7 +273,7 @@ class GameListProcessor extends AbstractFeedProcessor {
             return array("team_position" => $team['team_position']);
         }, $teamData);
 
-        return $this->eventRepository->addTeams($event, array_except(array_combine($teams, $teamPositions), 0));
+        return $this->eventRepository->addTeamsToModel($event, array_except(array_combine($teams, $teamPositions), 0));
     }
 
 

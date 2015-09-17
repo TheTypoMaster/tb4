@@ -56,7 +56,7 @@ return array(
         array("uri" => "tournaments/get-.*", "permission" => "tournaments.view"),
         array("uri" => "sports-list", "permission" => "sports.view"),
         array('uri' => 'tournament-settings', "permission" => "tournament_settings"),
-        array('uri' => "tournaments/remove/{tournamentId}/{userId}", "remove_users_from_tournament"),
+        array('uri' => "tournaments/remove/{tournamentId}/{userId}", "permission" => "remove_users_from_tournament"),
         array('uri' => 'tournaments/cancel/{tournamentId}', "permission" => 'tournaments.delete'),
         array('uri' => 'user-activity/download', "permission" => "get_user_activity"),
         array('uri' => 'tournaments/download/entrants', 'permission' => 'tournaments.view'),

@@ -11,9 +11,10 @@ namespace TopBetta\Services\Resources\Tournaments;
 
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\MeetingResource;
+use TopBetta\Services\Resources\Cache\CachedMeetingResourceService;
 use TopBetta\Services\Resources\MeetingResourceService;
 
-class TournamentMeetingResourceService extends MeetingResourceService {
+class TournamentMeetingResourceService extends CachedMeetingResourceService {
 
     public function loadTotesForMeeting(MeetingResource $meetingResource)
     {

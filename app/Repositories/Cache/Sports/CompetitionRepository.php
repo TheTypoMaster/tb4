@@ -15,7 +15,7 @@ use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 
-class CompetitionRepository extends CachedResourceRepository {
+class CompetitionRepository extends CachedSportResourceRepository {
 
     const CACHE_KEY_PREFIX = 'competitions_';
 
@@ -25,15 +25,17 @@ class CompetitionRepository extends CachedResourceRepository {
 
     protected $cachePrefix = self::CACHE_KEY_PREFIX;
 
-    protected $collectionKeys = array(
-        self::COLLECTION_COMPETITION_BASE_COMPETITION,
-    );
 
     protected $tags = array("sports", "competitions");
+    /**
+     * @var BaseCompetitionRepository
+     */
+    private $baseCompetitionRepository;
 
-    public function __construct(CompetitionRepositoryInterface $repository)
+    public function __construct(CompetitionRepositoryInterface $repository, BaseCompetitionRepository $baseCompetitionRepository)
     {
         $this->repository = $repository;
+        $this->baseCompetitionRepository = $baseCompetitionRepository;
     }
 
     public function getCompetitionsForBaseCompetition($id)
@@ -52,6 +54,17 @@ class CompetitionRepository extends CachedResourceRepository {
 
         if (!$competitions) {
             return new EloquentResourceCollection(new Collection(), $this->resourceClass);
+        }
+
+        return $competitions;
+    }
+
+    public function getVisibleCompetitionsArrayByBaseCompetition($baseCompetition)
+    {
+        $competitions = \Cache::tags($this->tags)->get($this->cachePrefix . 'base_competition_' . $baseCompetition);
+
+        if (!$competitions) {
+            return array();
         }
 
         return $competitions;
@@ -95,5 +108,20 @@ class CompetitionRepository extends CachedResourceRepository {
         }
 
         return Carbon::createFromFormat('Y-m-d H:i:s', $date)->startOfDay()->addDays(2)->diffInMinutes();
+    }
+
+    protected function setParentRepository()
+    {
+        $this->parentRepository = \App::make('TopBetta\Repositories\Cache\Sports\BaseCompetitionRepository');
+    }
+
+    protected function getParentResource($model)
+    {
+        return $model->baseCompetition;
+    }
+
+    protected function getParentResourceCollection($id)
+    {
+        return $this->getCompetitionsForBaseCompetition($id);
     }
 }

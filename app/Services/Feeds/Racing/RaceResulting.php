@@ -259,7 +259,7 @@ class RaceResulting {
                 ));
 
                 $riskResultsPayload = array('external_event_id' => $eventModel->external_event_id,
-                                            'external_selection_id' => $selectionModel->external_selection_id,
+                                           // 'external_selection_id' => $selectionModel->external_selection_id,
                                             'product_name' => $dataArray ['PriceType'],
                                             'bet_type_name' => $betTypeModel->name,
                                             'dividend' => $payout / 100,
@@ -269,7 +269,8 @@ class RaceResulting {
                 Log::debug($this->logprefix. 'Pushing Exotic results details to Risk', $riskResultsPayload);
                 // TODO: add notification
                 try{
-                    $this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
+                    Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceResults' => $riskResultsPayload), 'risk-results-queue');
+                    //$this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
                 }catch (Exception $e){
                     Log::error($this->logprefix. 'Pushing Exotic results details to Risk Failed'. print_r($e->getMessage(), true));
                 }

@@ -8,7 +8,6 @@
 
 namespace TopBetta\Resources\Tournaments;
 
-
 use TopBetta\Resources\AbstractEloquentResource;
 
 class TournamentGroupResource extends AbstractEloquentResource {
@@ -17,15 +16,18 @@ class TournamentGroupResource extends AbstractEloquentResource {
         'id' => 'id',
         'name' => 'group_name',
         'description' => 'description',
-        'ordering' => 'ordering'
+        'ordering' => 'ordering',
+        'group_icon' => 'tournament_group_icon',
     );
 
     protected $loadIfRelationExists = array(
         'tournaments' => 'tournaments'
     );
 
+    protected static $modelClass = 'TopBetta\Models\TournamentGroupModel';
+
     public function tournaments()
     {
-        return $this->collection('tournaments', 'TopBetta\Resources\Tournaments\TournamentResource', $this->model->tournaments);
+        return $this->collection('tournaments', 'TopBetta\Resources\Tournaments\TournamentResource', 'tournaments');
     }
 }

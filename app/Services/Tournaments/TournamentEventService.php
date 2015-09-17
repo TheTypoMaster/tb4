@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Tournaments;
 
 
+use Illuminate\Support\Collection;
 use TopBetta\Services\Racing\MeetingService;
 use TopBetta\Services\Sports\CompetitionService;
 
@@ -34,17 +35,25 @@ class TournamentEventService {
     {
         $data = array();
 
-        if( ! $tournament->eventGroup()->first()->sport || $tournament->eventGroup()->first()->sport->isRacing() ) {
+        if( $tournament->type == 'racing') {
             $eventGroup = $this->meetingService->getMeetingWithSelections($tournament->event_group_id, $eventId);
             $data['selected_race'] = $eventGroup['selected_race'];
             $eventGroup = $eventGroup['data'];
+        if( ! ($sport = $tournament->getModel()->eventGroup->events->first()->competition->first()->sport) || $sport->isRacing() ) {
+            return $this->getMeetings($tournament, $eventId);
         } else {
             $eventGroup = $this->competitionService->getCompetitionsWithEvents(array('competition_id' => $tournament->event_group_id))['data']->first();
             $selected = null;
         }
 
-        $data['data'] = array($eventGroup);
+        return array('data' => array($eventGroup), 'selected_event' => $selected);
+    }
 
-        return $data;
+    public function getMeetings($tournament, $eventId = null)
+    {
+        $races = $tournament->getModel()->eventGroup->events
+            ->load('competition');
+
+        return $this->meetingService->getMeetingsByRaces($races, $eventId);
     }
 }

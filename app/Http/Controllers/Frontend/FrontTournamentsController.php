@@ -558,8 +558,8 @@ class FrontTournamentsController extends Controller {
                 'topup_start_date' => $tournament->topup_start_date,
             );
 
-
-            $tournamentParent = \TopBetta\Models\RaceMeeting::find($meetingId);
+            $tournament = \TopBetta\Models\TournamentModel::find($tournament->id);
+            $tournamentParent = \TopBetta\Models\RaceMeeting::find($tournament->eventGroup->events->first()->competition->first()->id);
 
             //($tournament->tournament_sponsor_name) ? $tournamentName = $tournamentParent->name .' - '.$tournament->tournament_sponsor_name : $tournamentName = $tournamentParent->name;
 

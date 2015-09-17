@@ -40,7 +40,7 @@ class CachedBaseCompetitionResourceService {
             return new EloquentResourceCollection(new Collection(), 'TopBetta\Resources\Sports\BaseCompetitionResource');
         }
 
-        return $this->filter($baseCompetitions);
+        return $baseCompetitions;
     }
 
     public function getBaseCompetitionsForSportWithCompetitions($sport, $competition = null)
@@ -55,7 +55,7 @@ class CachedBaseCompetitionResourceService {
             $v->setRelation('competitions', $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($v->id, $competition));
         });
 
-        return $this->filterWithCompetitions($baseCompetitions, $competition);
+        return $baseCompetitions;
     }
 
     public function getBaseCompetitionForCompetitionId($competition)
@@ -65,22 +65,5 @@ class CachedBaseCompetitionResourceService {
         return $this->baseCompetitionRepository->getBaseCompetition($competition->base_competition_id);
     }
 
-    public function filter($baseCompetitions)
-    {
-        return $baseCompetitions->filter(function($v) {
-            $competitions = $this->competitionResourceService->getVisibleCompetitionsByBaseCompetition($v->id);
-
-            return (bool) ($competitions->count() > 0 && $v->display_flag);
-        });
-    }
-
-    public function filterWithCompetitions($baseCompetitions)
-    {
-        return $baseCompetitions->filter(function($v) {
-            $competitions = $v->competitions;
-
-            return (bool) ($competitions->count() > 0 && $v->display_flag);
-        });
-    }
 
 }

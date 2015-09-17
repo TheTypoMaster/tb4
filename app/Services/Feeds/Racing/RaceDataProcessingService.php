@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Validator;
 use Log;
 use File;
 use Carbon;
+use Queue;
 
 use TopBetta\Repositories\Cache\MeetingRepository;
 use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionRepository;
 use TopBetta\Repositories\Contracts\ProductProviderMatchRepositoryInterface;
 use TopBetta\Repositories\Contracts\RunnerRepositoryInterface;
@@ -73,7 +75,7 @@ class RaceDataProcessingService {
 
     public function __construct(RaceRepository $events,
                                 RacingSelectionRepository $selections,
-								SelectionPriceRepositoryInterface $prices,
+								RacingSelectionPriceRepository $prices,
                                 SelectionResultRepositoryInterface $results,
                                 MeetingRepository $competitions,
 								DataValueRepositoryInterface $datavalues,
@@ -86,7 +88,6 @@ class RaceDataProcessingService {
 								MarketRepositoryInterface $markets,
 								RisaFormRepository $risaform,
 								LastStartRepositoryInterface $laststarts,
-								SelectionPriceRepositoryInterface $prices,
                                 TournamentBetService $tournamentBetService,
                                 RunnerRepositoryInterface $runnerRepository,
                                 ProductProviderMatchRepositoryInterface $productProviderMatchRepository,
@@ -381,6 +382,7 @@ class RaceDataProcessingService {
                 Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
                 $race['status_id'] = $raceDetails['event_status_id'];
                 // TODO: add notification
+                //Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceStatusUpdate' => $race), 'risk-results-queue');
                 $this->riskhelper->sendRaceStatus(array('RaceStatusUpdate' => $race));
             }
 
@@ -653,6 +655,7 @@ class RaceDataProcessingService {
             $betProduct = $this->betproduct->getProductByCode($price['PriceType']);
             if (!$betProduct) {
                 Log::debug($this->logprefix . 'PriceType not found ' . $price['PriceType']);
+                continue;
             }
 
             Log::info($this->logprefix ."Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
@@ -667,16 +670,16 @@ class RaceDataProcessingService {
 				}
 
 				// check if selection exists
-				$existingSelectionId = $this->selections->getSeletcionIdByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount);
+				$existingSelection = $this->selections->getSelectionByExternalId($price['MeetingId'] . '_' . $price['RaceNo'].'_'.$runnerCount);
 
-				if(!$existingSelectionId) {
+				if(!$existingSelection) {
 					Log::debug($this->logprefix . 'Selection for price missing', $price);
 					continue;
 
 				}
 
 				$priceDetails = array("bet_product_id" => $betProduct->id);
-				$priceDetails['selection_id'] = $existingSelectionId;
+				$priceDetails['selection_id'] = $existingSelection->id;
 				switch ($price['BetType']) {
 					case "W":
 						$priceDetails['win_odds'] = $runnerOdds / 100;
@@ -688,13 +691,20 @@ class RaceDataProcessingService {
 						Log::debug($this->logprefix . 'Price BetType is invalid ', $price);
 						continue;
 				}
-				$priceModel = $this->prices->updateOrCreatePrice($priceDetails);
 
-                $this->selections->updatePricesForSelectionInRace($existingSelectionId, $existingRaceDetails, $priceModel);
+                $priceModel = $this->prices->getPriceForSelectionByProduct($existingSelection->id, $betProduct->id);
+
+                if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
+                    $priceModel = $this->prices->update($priceModel, $priceDetails);
+                    $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
+                } else {
+                    $priceModel = $this->prices->create($priceDetails);
+                    $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
+                }
+
 
 				$runnerCount++;
 			}
-
 
 
 		}
