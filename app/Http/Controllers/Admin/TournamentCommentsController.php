@@ -28,10 +28,14 @@ class TournamentCommentsController extends Controller
      */
     public function index()
     {
-        $comments = $this->commentService->getAllComments();
+        $comments_with_pagination = $this->commentService->getAllComments();
+        $comments = $comments_with_pagination['comment_list'];
+        $pagination = $comments_with_pagination['pagination'];
         $tournament_list = $this->tournamentService->getTournamentsFromToday();
-//        dd($tournament_list);
-        return view('admin.tournaments.comments.index')->with(['comments' => $comments, 'tournament_list' => $tournament_list]);
+//        dd($comments);
+        return view('admin.tournaments.comments.index')->with(['comments' => $comments,
+                                                               'tournament_list' => $tournament_list,
+                                                               'pagination' => $pagination]);
     }
 
     /**

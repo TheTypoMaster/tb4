@@ -114,6 +114,13 @@ class TournamentCommentService {
      */
     public function getAllComments() {
         $comments = $this->commentRepository->getAllComments();
+        $pagination = array();
+        $pagination['total_pages'] = (int)ceil($comments->total() / 5);
+        $pagination['current_page'] = $comments->currentPage();
+        $pagination['has_more_pages'] = $comments->hasMorePages();
+        $pagination['previous_page_url'] = $comments->previousPageUrl();
+        $pagination['next_page_url'] = $comments->nextPageUrl();
+
         $comment_list = array();
         foreach($comments as $comment) {
             $comment_trans = array();
@@ -129,6 +136,10 @@ class TournamentCommentService {
             $comment_trans['comment'] = $comment->comment;
             array_push($comment_list, $comment_trans);
         }
-        return $comment_list;
+
+        $comments_with_pagination = array();
+        $comments_with_pagination['comment_list'] = $comment_list;
+        $comments_with_pagination['pagination'] = $pagination;
+        return $comments_with_pagination;
     }
 }
