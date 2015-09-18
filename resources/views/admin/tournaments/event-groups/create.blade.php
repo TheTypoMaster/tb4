@@ -10,18 +10,24 @@
                 </h2>
             </div>
 
-            <div class="row">
-                <table class="table" style="margin-left: 20px; margin-right: 20px;">
-                    <tr>
-                        <th>Event Group ID</th>
-                        <th>Event Group Name</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th colsan="2" align="centre">Action</th>
-                    </tr>
+            <div class="row" style="margin-left: 20px; margin-right: 20px;">
+                {!! Form::open(['url' => 'admin/event-groups/store']) !!}
 
+                <div class="form-group">
+                    {!! Form::label('event_group_name', 'Event Group Name: ') !!}
+                    {!! Form::input('text', 'event_group_name', null, array('class' => 'form-control')) !!}
+                </div>
 
-                </table>
+                <div class="form-group">
+                    {!! Form::label('events', 'Events: ') !!}
+                    {!! Form::select('events[]', $event_group_list, [], array('class' => 'form-control', 'multiple')) !!}
+                </div>
+
+                <div class="form-group">
+                    {!! Form::submit('Submit', array('class' => 'btn btn-primary')) !!}
+                </div>
+
+                {!! Form::close() !!}
             </div>
 
         </div>

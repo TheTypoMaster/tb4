@@ -6,7 +6,7 @@
         <div class="col-lg-12">
             <div class="row page-header">
                 <h2 class="col-lg-8">Tournament Event Groups
-                <a href="{{URL::to('event-groups/create')}}"><button class="btn btn-primary">Create</button></a>
+                <a href="{{URL::to('admin/event-groups/create')}}"><button class="btn btn-primary">Create</button></a>
                 </h2>
             </div>
 
@@ -26,8 +26,8 @@
                             <td>{{$event_group->name}}</td>
                             <td>{{$event_group->start_date}}</td>
                             <td>{{$event_group->end_date}}</td>
-                            <td><a href="{{URL::to('event-groups/edit/' . $event_group->id)}}"><button class="btn btn-primary">Edit</button></a></td>
-                            <td><a href="{{URL::to('event-groups/delete/' . $event_group->id)}}"><button class="btn btn-primary">Delete</button></a></td>
+                            <td><a href="{{URL::to('admin/event-groups/edit/' . $event_group->id)}}"><button class="btn btn-primary">Edit</button></a></td>
+                            <td><a href="{{URL::to('admin/event-groups/delete/' . $event_group->id)}}"><button class="btn btn-primary">Delete</button></a></td>
                         </tr>
                     @endforeach
                 </table>

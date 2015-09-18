@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
+use Input;
 
 class TournamentEventGroupController extends Controller
 {
@@ -23,7 +24,6 @@ class TournamentEventGroupController extends Controller
     public function index()
     {
         $event_groups = $this->tournamentEventGroupService->getAllEventGroups();
-//        dd($event_group_list);
         return view('admin.tournaments.event-groups.index')->with(['event_groups' => $event_groups]);
     }
 
@@ -34,7 +34,8 @@ class TournamentEventGroupController extends Controller
      */
     public function create()
     {
-        //
+        $event_group_list = $this->tournamentEventGroupService->getAllEventGroupsToArray();
+        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $event_group_list]);
     }
 
     /**
@@ -45,7 +46,8 @@ class TournamentEventGroupController extends Controller
      */
     public function store(Request $request)
     {
-        TournamentEventGroupModel::create(['name' => Input::get('name')]);
+        $tournamentEventGroupModel = TournamentEventGroupModel::create(['name' => Input::get('event_group_name')]);
+
 
         return 'create new event group';
     }
