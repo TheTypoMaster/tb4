@@ -119,7 +119,7 @@ class RacePriceProcessingService {
                 continue;
             }
 
-            Log::info($this->logprefix ."(_processPriceData): Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
+           // Log::info($this->logprefix ."(_processPriceData): Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
 
 			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {
