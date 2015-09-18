@@ -72,13 +72,16 @@ class PopulateRacingCache extends Command
             $this->meetingRepository->makeCacheResource($meeting);
 
             foreach ($meeting->competitionEvents as $event) {
-                $race = new RaceResource($event);
-                $this->resultService->loadresultForRace($race);
 
-                $this->raceRepository->save($race);
+                if ($event->markets) {
+                    $race = new RaceResource($event);
+                    $this->resultService->loadresultForRace($race);
 
-                foreach ($event->markets->first()->selections as $selection) {
-                    $this->selectionRepository->makeCacheResource($selection);
+                    $this->raceRepository->save($race);
+
+                    foreach ($event->markets->first()->selections as $selection) {
+                        $this->selectionRepository->makeCacheResource($selection);
+                    }
                 }
             }
         }
