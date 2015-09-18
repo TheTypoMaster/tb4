@@ -20,4 +20,16 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
         return TournamentEventGroupModel::all();
 
     }
+
+    /**
+     * get tournament event group by id
+     * @param $id
+     * @return mixed
+     */
+    public function getEventGroupByID($id) {
+
+        $event_group = $this->model->where('id', $id)->first();
+
+        return $event_group;
+    }
 }

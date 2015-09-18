@@ -25,6 +25,17 @@ class TournamentEventGroupService
     }
 
     /**
+     * get tournament event group by id
+     * @param $id
+     * @return mixed
+     */
+    public function getEventGroupByID($id) {
+        $event_group = $this->tournamentEventGroupRepo->getEventGroupByID($id);
+
+        return $event_group;
+}
+
+    /**
      * get all event gruops and change them to array
      * @return array
      */

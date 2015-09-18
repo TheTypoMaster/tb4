@@ -128,4 +128,9 @@ class EventService {
         }
         return $event_list;
     }
+
+    public function getEventByID($id) {
+        $event = $this->eventRepository->getEventByEventID($id);
+        return $event;
+    }
 }

@@ -59,6 +59,11 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $this->model->fromToday()->get();
     }
 
+
+    public function getEventByEventID($id) {
+        return $this->model->where('id', $id)->first();
+    }
+
     /**
      * Return the requested event deatils if it exists.
      *

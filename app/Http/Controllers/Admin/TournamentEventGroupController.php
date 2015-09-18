@@ -40,7 +40,6 @@ class TournamentEventGroupController extends Controller
      */
     public function create()
     {
-        $event_group_list = $this->tournamentEventGroupService->getAllEventGroupsToArray();
 
         $events = $this->eventService->getAllEventsFromToday();
 
@@ -61,9 +60,39 @@ class TournamentEventGroupController extends Controller
         $selected_events = Input::get('events');
         $items = array();
         $items['id'] = $event_group['id'];
-        foreach($selected_events as $selected_event) {
+
+        //get the earliest start day from all events as event group start date
+        $start_time = '';
+        $end_time = '';
+        foreach($selected_events as $key => $selected_event) {
             $items[] = $selected_event;
+            $event_start_time = $this->eventService->getEventByID($selected_event)->start_date;
+
+            if($key == 0) {
+                $start_time = $event_start_time;
+                $end_time = $event_start_time;
+
+            } else {
+                //set event group start date as the earliest event start date
+                if($event_start_time < $start_time) {
+
+                    $start_time = $event_start_time;
+                }
+
+                //set event group end date as the latest event start date
+                if($event_start_time > $end_time) {
+                    $end_time = $event_start_time;
+                }
+            }
         }
+
+
+        //get the earliest created event group by id to set the event group start date, and the latest event start date as
+        //event group end date
+        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group['id']);
+        $new_created_event_group->start_date = $start_time;
+        $new_created_event_group->end_date = $end_time;
+        $new_created_event_group->update();
 
         $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
         return redirect()->action('Admin\TournamentEventGroupController@index');
