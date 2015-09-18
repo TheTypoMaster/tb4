@@ -28,7 +28,7 @@ class RiskManagerPushAPIService
             return false;
         }
 
-        Log::debug('RiskManagerAPI (sendResultData): Response - '.print_r($response,true));
+        Log::debug('RiskManagerAPI (sendData): Response - '.print_r($response,true));
         if ($response->http_status_code == 200) {
             return true;
         } else {

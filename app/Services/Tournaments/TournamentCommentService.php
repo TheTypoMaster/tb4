@@ -124,9 +124,15 @@ class TournamentCommentService {
         $comment_list = array();
         foreach($comments as $comment) {
             $comment_trans = array();
+            $user = UserModel::where('id', $comment->user_id)->first();
             $tournament = TournamentModel::where('id', $comment->tournament_id)->first();
             $comment_trans['id'] = $comment->id;
-            $comment_trans['username'] = UserModel::where('id', $comment->user_id)->first()->name;
+
+            if(count($user->permissions) > 0 && $user->permissions['superuser'] == 1) {
+                $comment_trans['username'] = 'TopBetta Admin';
+            } else {
+                $comment_trans['username'] = $user->name;
+            }
             $comment_trans['tournament_id'] = $tournament->id;
             $comment_trans['tournament_name'] = $tournament->name;
             $comment_trans['buy_in'] = $tournament->buy_in;
