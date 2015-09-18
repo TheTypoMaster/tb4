@@ -111,7 +111,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
                 $this->processMarketLine($market, $line);
             }
 
-            //$this->selectionRepository->addSelectionToMarket($selection, $market, $event->id, $event->start_date);
+            $this->selectionRepository->addSelectionToMarket($selection, $market, $event->id, $event->start_date);
 
             return $selection['id'];
         }
