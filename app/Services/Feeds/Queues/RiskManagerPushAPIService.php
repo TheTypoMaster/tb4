@@ -15,7 +15,7 @@ class RiskManagerPushAPIService
 {
     public function pushDataToRiskManagerAPI($data)
     {
-        Log::debug('RiskManagerAPI (pushDataToRiskManagerAPI): Pushing Payload to Rick manager', $data);
+        Log::debug('RiskManagerAPI (pushDataToRiskManagerAPI): Pushing Payload to Risk manager', $data);
 
         // send bet to risk manager
         $responseJSON = \TopBetta\Helpers\CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
