@@ -40,5 +40,14 @@ class TournamentEventGroupService
         return $event_group_list;
     }
 
+    /**
+     * create new event group
+     * @param $item
+     * @return mixed
+     */
+    public function createEventGroup($item) {
+        return $this->tournamentEventGroupRepo->create($item);
+    }
+
 
 }

@@ -6,15 +6,21 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Models\TournamentEventGroupModel;
+use TopBetta\Services\Betting\EventService;
+use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
 use Input;
 
 class TournamentEventGroupController extends Controller
 {
 
-    public function __construct(TournamentEventGroupService $tournamentEventGroupService) {
+    public function __construct(TournamentEventGroupService $tournamentEventGroupService, TournamentEventGroupEventService $tournamentEventGroupEventService,
+                                EventService $eventService) {
 
         $this->tournamentEventGroupService = $tournamentEventGroupService;
+        $this->tournamentEventGroupEventService = $tournamentEventGroupEventService;
+        $this->eventService = $eventService;
     }
     /**
      * Display a listing of the resource.
@@ -35,7 +41,10 @@ class TournamentEventGroupController extends Controller
     public function create()
     {
         $event_group_list = $this->tournamentEventGroupService->getAllEventGroupsToArray();
-        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $event_group_list]);
+
+        $events = $this->eventService->getAllEventsFromToday();
+
+        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events]);
     }
 
     /**
@@ -46,10 +55,18 @@ class TournamentEventGroupController extends Controller
      */
     public function store(Request $request)
     {
-        $tournamentEventGroupModel = TournamentEventGroupModel::create(['name' => Input::get('event_group_name')]);
+//        $tournamentEventGroupModel = TournamentEventGroupModel::create(['name' => Input::get('event_group_name')]);
+        $event_group_params = array('name' => Input::get('event_group_name'));
+        $event_group = $this->tournamentEventGroupService->createEventGroup($event_group_params);
+        $selected_events = Input::get('events');
+        $items = array();
+        $items['id'] = $event_group['id'];
+        foreach($selected_events as $selected_event) {
+            $items[] = $selected_event;
+        }
 
-
-        return 'create new event group';
+        $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
+        return redirect()->action('Admin\TournamentEventGroupController@index');
     }
 
     /**

@@ -9,7 +9,7 @@ use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
 class TournamentEventGroupRepository extends BaseEloquentRepository implements TournamentEventGroupRepositoryInterface {
 
     public function __construct(TournamentEventGroupModel $tournamentEventGroup) {
-        $this->tournamentEventGroup = $tournamentEventGroup;
+        $this->model = $tournamentEventGroup;
     }
 
     /**

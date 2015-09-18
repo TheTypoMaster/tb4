@@ -11,7 +11,7 @@
             </div>
 
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
-                {!! Form::open(['url' => 'admin/event-groups/store']) !!}
+                {!! Form::open(['url' => 'admin/event-groups/store?XDEBUG_SESSION_START']) !!}
 
                 <div class="form-group">
                     {!! Form::label('event_group_name', 'Event Group Name: ') !!}

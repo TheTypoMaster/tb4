@@ -52,6 +52,14 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     }
 
     /**
+     * get all events start from today
+     * @return mixed
+     */
+    public function getAllEventsFromToday() {
+        return $this->model->fromToday()->get();
+    }
+
+    /**
      * Return the requested event deatils if it exists.
      *
      * @param $meetingId
