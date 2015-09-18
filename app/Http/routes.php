@@ -20,6 +20,8 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
     Route::resource('raceresults', 'Backend\RacingResultsController');
     //incoming race data
     Route::resource('racedata', 'Backend\RacingDataController');
+    //incoming price data
+    Route::resource('pricedata', 'Backend\RacingPriceController');
     //New sport feed endpoint
     Route::resource('sports-feed', 'Backend\SportsFeedController', array("only" => array('store')));
     //Trainer endpoint
@@ -235,8 +237,16 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
     Route::get('tournaments/download/entrants', 'Admin\TournamentsController@downloadEntrants');
 
+    //tournament comments routes
+    Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
+    Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
+    Route::post('tournament-comments/store', 'Admin\TournamentCommentsController@store');
+    Route::get('tournament-comments/block/{id}', 'Admin\TournamentCommentsController@update');
+
+
     //tournament groups
     Route::resource('tournament-groups', 'Admin\TournamentGroupController');
+
 
     // tournament settings
     Route::get('tournament-settings', 'Admin\TournamentSettingsController@edit');
@@ -429,7 +439,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     //CONTACT USE ENDPOINT
     Route::post('contact-us', 'Frontend\ContactController@contactUs');
 });
-    
+
 // new login/logout methods
 Route::group(array('prefix' => '/api/v2', 'after' => 'topbetta_secure_links'), function() {
 

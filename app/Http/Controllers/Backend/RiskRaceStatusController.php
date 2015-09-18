@@ -75,7 +75,7 @@ class RiskRaceStatusController extends Controller
         $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
         if ($eventStatus && $event) {
 
-            $this->raceRepository->updateWithId($raceId, array("event_status_id" => $eventStatus));
+            $this->raceRepository->updateWithId($raceId, array("event_status_id" => $eventStatus), 'external_event_id');
 
             if ($eventStatus == 6 || $eventStatus == 2 || $eventStatus == 3) {
                 // result bets for race status of interim, paying or abandoned

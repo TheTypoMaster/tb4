@@ -13,6 +13,7 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class CommentResource extends AbstractEloquentResource
 {
+    protected static $modelClass = 'TopBetta\Models\TournamentCommentModel';
 
     protected $attributes = array(
         'id'           => 'id',
@@ -24,11 +25,19 @@ class CommentResource extends AbstractEloquentResource
 
     public function getUsername()
     {
+        if ($this->model->username) {
+            return $this->model->username;
+        }
+
         return $this->model->user ? $this->model->user->username : null;
     }
 
     public function getDate()
     {
+        if ($this->model->date) {
+            return $this->model->date;
+        }
+
         return $this->model->created_at->toDateTimeString();
     }
 }

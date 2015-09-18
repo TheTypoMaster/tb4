@@ -23,6 +23,7 @@ class TournamentBetResource extends BetResource
         "resulted"        => "resulted_flag",
         "selectionId"     => "selection_id",
         "selectionName"   => "selection_name",
+        "selectionNumber" => "selection_number",
         "marketId"        => "market_id",
         "marketType"      => "market_type",
         "eventId"         => "event_id",
@@ -42,6 +43,7 @@ class TournamentBetResource extends BetResource
         'eventType'       => 'eventType',
         'date'            => 'start_date',
     );
+
 
 
 }
