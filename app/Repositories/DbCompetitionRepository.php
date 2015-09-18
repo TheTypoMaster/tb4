@@ -1,4 +1,5 @@
 <?php namespace TopBetta\Repositories;
+
 /**
  * Coded by Oliver Shanahan
  * File creation date: 20/11/14
@@ -11,21 +12,24 @@ use TopBetta\Models\CompetitionModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
-class DbCompetitionRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface{
+class DbCompetitionRepository extends BaseEloquentRepository implements CompetitionRepositoryInterface
+{
     use SportsResourceRepositoryTrait;
 
     protected $competitions;
 
-    function __construct(CompetitionModel $competitions) {
+    function __construct(CompetitionModel $competitions)
+    {
         $this->model = $competitions;
     }
-	/*
-		 * Relationships
-		 */
-	public function events()
-	{
-		return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
-	}
+
+    /*
+         * Relationships
+         */
+    public function events()
+    {
+        return $this->belongsToMany('TopBetta\Models\EventModel', 'tbdb_event_group_event', 'event_group_id', 'event_id');
+    }
 
     /**
      * @param $search
@@ -37,7 +41,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->orderBy('start_date', 'DESC')
             ->where('name', 'LIKE', "%$search%");
 
-        if( $sportOnly ) {
+        if ($sportOnly) {
             $model->where('sport_id', '>', 3);
         }
 
@@ -60,19 +64,21 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
      * @param $meetingId
      * @return mixed
      */
-    public function getMeetingDetails($meetingId) {
+    public function getMeetingDetails($meetingId)
+    {
         $racingCodes = array('R', 'G', 'H');
 
-        $meetings =  $this->model->where('external_event_group_id', '=', $meetingId)
-                                ->whereIn('type_code', $racingCodes)->first();
+        $meetings = $this->model->where('external_event_group_id', '=', $meetingId)
+            ->whereIn('type_code', $racingCodes)->first();
 
-        if($meetings){
+        if ($meetings) {
             return $meetings->toArray();
         }
         return null;
     }
 
-    public function selectList(){
+    public function selectList()
+    {
         return $this->model->lists('name', 'id')->all();
     }
 
@@ -108,42 +114,45 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $this->model->where('name', $name)->first();
     }
 
-    public function competitionFeed($input){
+    public function competitionFeed($input)
+    {
 
         $query = $this->model->join('tbdb_tournament_sport', 'tbdb_tournament_sport.id', '=', 'tbdb_event_group.sport_id');
 
-        if(isset($input['sport'])){
+        if (isset($input['sport'])) {
             $query = $query->where('tbdb_tournament_sport.name', $input['sport']);
-        }else{
+        } else {
             $query = $query->where('tbdb_event_group.sport_id', '!=', 0);
         }
 
         $competitions = $query->where('tbdb_event_group.display_flag', 1)
-                                ->where('tbdb_tournament_sport.status_flag', 1)
-                                ->select(array('tbdb_event_group.id as competition_id',  'tbdb_tournament_sport.name as competition_sport',
-                                    'tbdb_event_group.name as competition_name', 'start_date as competition_start_date'))
-                                ->get();
+            ->where('tbdb_tournament_sport.status_flag', 1)
+            ->select(array('tbdb_event_group.id as competition_id', 'tbdb_tournament_sport.name as competition_sport',
+                'tbdb_event_group.name as competition_name', 'start_date as competition_start_date'))
+            ->get();
 
-        if(!$competitions) return null;
+        if (!$competitions) return null;
 
         return $competitions->toArray();
     }
 
-	public function getMeetingFromExternalId($meetingId) {
-		$meeting = $this->model->where('external_event_group_id', $meetingId)
-						->first();
-		if(!$meeting) return null;
+    public function getMeetingFromExternalId($meetingId)
+    {
+        $meeting = $this->model->where('external_event_group_id', $meetingId)
+            ->first();
+        if (!$meeting) return null;
 
-		return $meeting->toArray();
-	}
+        return $meeting->toArray();
+    }
 
-	public function getMeetingFromCode($meetingCode) {
-		$meeting = $this->model->where('meeting_code', '=', $meetingCode)
-					->first();
-		if(!$meeting) return null;
+    public function getMeetingFromCode($meetingCode)
+    {
+        $meeting = $this->model->where('meeting_code', '=', $meetingCode)
+            ->first();
+        if (!$meeting) return null;
 
-		return $meeting->toArray();
-	}
+        return $meeting->toArray();
+    }
 
     public function getFutureEventGroupsByTournamentCompetition($tournamentCompetitionId)
     {
@@ -171,7 +180,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->first();
     }
 
-	public function getCompetitionBySelection($selectionId)
+    public function getCompetitionBySelection($selectionId)
     {
         return $this->model
             ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
@@ -188,7 +197,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->where('sport_id', '>', 3)
             ->orderBy('start_date', 'DESC');
 
-        if( $paged ) {
+        if ($paged) {
             return $model->paginate($paged);
         }
 
@@ -199,7 +208,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     {
         $model = $this->model->where('sport_id', $sportId)->orderBy($orderBy[0], $orderBy[1]);
 
-        if( $paged ) {
+        if ($paged) {
             return $model->paginate($paged);
         }
 
@@ -213,7 +222,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->where('start_date', '>=', $date->startOfDay()->toDateTimeString())
             ->where('start_date', '<=', $date->endOfDay()->toDateTimeString());
 
-        if( $withRaces ) {
+        if ($withRaces) {
             $model->with(array(
                 'competitionEvents',
                 'competitionEvents.eventstatus'
@@ -221,7 +230,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         }
 
 
-        if( $type ) {
+        if ($type) {
             $model->where('type_code', $type);
         }
 
@@ -264,15 +273,15 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->where('e.display_flag', true)
             ->where('m.display_flag', true)
             ->whereNotIn('m.market_status', array('D', 'S'))
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q
-                    ->where(function($p) {
+                    ->where(function ($p) {
                         $p->where('sp.win_odds', '>', '1')->whereNull('sp.override_type');
                     })
-                    ->orWhere(function($p) {
+                    ->orWhere(function ($p) {
                         $p->where('sp.override_odds', '>', 1)->where('sp.override_type', '=', 'price');
                     })
-                    ->orWhere(function($p) {
+                    ->orWhere(function ($p) {
                         $p->where(\DB::raw('sp.override_odds * sp.win_odds'), '>', '1')->where('sp.override_type', 'percentage');
                     });
             })
@@ -280,7 +289,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->groupBy('eg.id')
             ->with(array('baseCompetition', 'baseCompetition.sport', 'icon', 'baseCompetition.defaultEventGroupIcon', 'baseCompetition.sport.icon', 'baseCompetition.icon', 'baseCompetition.sport.defaultCompetitionIcon'));
 
-        if( $date ) {
+        if ($date) {
             $model->where('e.start_date', '>=', $date->startOfDay()->toDateTimeString())->where('e.start_date', '<=', $date->endOfDay()->toDateTimeString());
         } else {
             $model->where('e.start_date', '>=', Carbon::now());
@@ -312,4 +321,19 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
 
         return $meeting;
     }
-} 
+
+    /**
+     * get all event groups by sport id
+     * @param $sportId
+     * @return mixed
+     */
+    public function getEventGruopsBySportId($sportId)
+    {
+        $event_groups = $this->model
+            ->where('sport_id', $sportId)
+//            ->where('start_date', '>=', Carbon::now())
+            ->where('display_flag', 1)
+            ->get();
+        return $event_groups;
+    }
+}

@@ -307,63 +307,63 @@
             return html;
         }
 
-//        $('#tournament_sport_id').change(function(){
-//            if ( ! $(this).val()) {return;}
-//
-//            var val = $(this).val();
-//
-//            if ( ! $.isArray(val) ) {
-//                val = [val];
-//            }
-//
-//            $.each(val, function (index, value) {
-//                $.get('/admin/tournaments/get-competitions/' + value)
-//                    .done(function(data) {
-//                        $('#competition_id').html(createSelectOptions(data));
-//                        $('#competition_id').change();
-//                        $('#event_group_id').change();
-//                        $('.sport-multiselect').multiselect("rebuild");
-//                        $('.event-multiselect').multiselect("rebuild");
-//                        $('.competition-multiselect').multiselect("rebuild");
-//                    });
-//            });
-//
-////            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
-////                $('#event-group').find('.event-group-toggle').show();
-////            } else {
-////                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
-////                $eventGroup.show();
-////                $eventGroup.find('.form-control').removeAttr('disabled');
-////                $eventGroup.find('.event-group-toggle').hide();
-////                $eventGroup.find('.event-multiselect').multiselect('enable');
-////                $future.hide();
-////                $future.find('.form-control').attr('disabled', 'disabled');
-////            }
-//
-//
-//        });
+        $('#tournament_sport_id').change(function(){
+            if ( ! $(this).val()) {return;}
 
-//        $('#competition_id').change(function(){
-//            if ( ! $(this).val()) {return;}
-//
-//            var val = $(this).val();
-//
-//            if ( ! $.isArray(val) ) {
-//                val = [val];
+            var val = $(this).val();
+
+            if ( ! $.isArray(val) ) {
+                val = [val];
+            }
+
+            $.each(val, function (index, value) {
+                $.get('/admin/tournaments/get-competitions/' + value)
+                    .done(function(data) {
+                        $('#competition_id').html(createSelectOptions(data));
+                        $('#competition_id').change();
+                        $('#event_group_id').change();
+                        $('.sport-multiselect').multiselect("rebuild");
+                        $('.event-multiselect').multiselect("rebuild");
+                        $('.competition-multiselect').multiselect("rebuild");
+                    });
+            });
+
+//            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
+//                $('#event-group').find('.event-group-toggle').show();
+//            } else {
+//                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
+//                $eventGroup.show();
+//                $eventGroup.find('.form-control').removeAttr('disabled');
+//                $eventGroup.find('.event-group-toggle').hide();
+//                $eventGroup.find('.event-multiselect').multiselect('enable');
+//                $future.hide();
+//                $future.find('.form-control').attr('disabled', 'disabled');
 //            }
-//
-//            $.each(val, function (index, value) {
-//                $.get('/admin/tournaments/get-event-groups/' + value)
-//                        .done(function(data){
-//                            $('#event_group_id').html(createSelectOptions(data));
-//                            $('#event_group_id').change();
-//                            $('.sport-multiselect').multiselect("rebuild");
-//                            $('.event-multiselect').multiselect("rebuild");
-//                            $('.competition-multiselect').multiselect("rebuild");
-//                        });
-//            });
-//
-//        });
+
+
+        });
+
+        $('#competition_id').change(function(){
+            if ( ! $(this).val()) {return;}
+
+            var val = $(this).val();
+
+            if ( ! $.isArray(val) ) {
+                val = [val];
+            }
+
+            $.each(val, function (index, value) {
+                $.get('/admin/tournaments/get-event-groups/' + value)
+                        .done(function(data){
+                            $('#event_group_id').html(createSelectOptions(data));
+                            $('#event_group_id').change();
+                            $('.sport-multiselect').multiselect("rebuild");
+                            $('.event-multiselect').multiselect("rebuild");
+                            $('.competition-multiselect').multiselect("rebuild");
+                        });
+            });
+
+        });
 
         $('.event-group-toggle').click(function() {
             var $target = $($(this).data('target'));

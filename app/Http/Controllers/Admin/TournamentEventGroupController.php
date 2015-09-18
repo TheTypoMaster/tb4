@@ -8,6 +8,7 @@ use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\TournamentEventGroupModel;
 use TopBetta\Services\Betting\EventService;
+use TopBetta\Services\Sports\SportsService;
 use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
 use Input;
@@ -16,11 +17,13 @@ class TournamentEventGroupController extends Controller
 {
 
     public function __construct(TournamentEventGroupService $tournamentEventGroupService, TournamentEventGroupEventService $tournamentEventGroupEventService,
-                                EventService $eventService) {
+                                EventService $eventService,
+                                SportsService $sportService) {
 
         $this->tournamentEventGroupService = $tournamentEventGroupService;
         $this->tournamentEventGroupEventService = $tournamentEventGroupEventService;
         $this->eventService = $eventService;
+        $this->sportService = $sportService;
     }
     /**
      * Display a listing of the resource.
@@ -43,7 +46,10 @@ class TournamentEventGroupController extends Controller
 
         $events = $this->eventService->getAllEventsFromToday();
 
-        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events]);
+        $sports = $this->sportService->getAllSports();
+
+        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events,
+                                                                    'sport_list' => $sports]);
     }
 
     /**
@@ -117,7 +123,9 @@ class TournamentEventGroupController extends Controller
      */
     public function edit($id)
     {
-        //
+        $event_group = $this->tournamentEventGroupService->getEventGroupByID($id);
+
+        return view('admin.tournaments.event-groups.edit')->with(['event_group' => $event_group]);
     }
 
     /**
@@ -141,5 +149,16 @@ class TournamentEventGroupController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * get event groups by sport id
+     * @param $sportId
+     * @return mixed
+     */
+    public function getEvnetGruops($sportId) {
+
+        $event_groups = $this->tournamentEventGroupService->getEventGroups($sportId);
+        return $event_groups;
     }
 }

@@ -70,6 +70,7 @@ return array(
         array("uri" => "event-groups/delete/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "event-groups/create", 'permission' => 'tournaments.view'),
         array("uri" => "event-groups/store", 'permission' => 'tournaments.view'),
+        array("uri" => "get-event-groups/{id}", 'permission' => 'tournaments.view'),
 
 
     ),
