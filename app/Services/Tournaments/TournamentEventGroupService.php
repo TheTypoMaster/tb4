@@ -13,7 +13,22 @@ class TournamentEventGroupService
         $this->tournamentEventGroupRepo = $tournamentEventGroupRepo;
     }
 
+    /**
+     * get all tournament event groups
+     * @return array
+     */
     public function getAllEventGroups()
+    {
+        $event_group_list = $this->tournamentEventGroupRepo->getAllEventGroup();
+
+        return $event_group_list;
+    }
+
+    /**
+     * get all event gruops and change them to array
+     * @return array
+     */
+    public function getAllEventGroupsToArray()
     {
         $event_groups = $this->tournamentEventGroupRepo->getAllEventGroup();
 
@@ -24,4 +39,6 @@ class TournamentEventGroupService
 
         return $event_group_list;
     }
+
+
 }

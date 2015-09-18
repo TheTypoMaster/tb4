@@ -236,7 +236,12 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancelForm');
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
     Route::get('tournaments/download/entrants', 'Admin\TournamentsController@downloadEntrants');
-    Route::get('tournaments/event-group/create', 'Admin\TournamentsController@createEventGroup');
+
+    //tournament event groups
+    Route::get('event-groups', 'Admin\TournamentEventGroupController@index');
+    Route::get('event-groups/edit/{id}', 'Admin\TournamentEventGroupController@edit');
+    Route::get('event-groups/delete/{id}', 'Admin\TournamentEventGroupController@destroy');
+    Route::get('event-groups/create', 'Admin\TournamentEventGroupController@create');
 
 
     //tournament comments routes

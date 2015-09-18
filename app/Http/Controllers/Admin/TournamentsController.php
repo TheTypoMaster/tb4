@@ -186,7 +186,7 @@ class TournamentsController extends Controller
 //            }
 //        }
 
-        $eventGroups = $this->tournamentEventGroupService->getAllEventGroups();
+        $eventGroups = $this->tournamentEventGroupService->getAllEventGroupsToArray();
 //        dd($eventGroups);
         //get the buyins
         $buyins = array("Select Ticket Value");
@@ -624,18 +624,5 @@ class TournamentsController extends Controller
             return array("id" => $key, "name" => $value);
         }, array_keys($array), $array);
     }
-
-    /**
-     * create tournament event group
-     * @return string
-     */
-    public function createEventGroup()
-    {
-        TournamentEventGroupModel::create(['name' => Input::get('name')]);
-
-        return 'create new event group';
-    }
-
-
 
 }
