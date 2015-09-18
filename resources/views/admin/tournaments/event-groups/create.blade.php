@@ -20,7 +20,7 @@
 
                 <div class="form-group">
                     {!! Form::label('events', 'Events: ') !!}
-                    {!! Form::select('events[]', $event_group_list, [], array('class' => 'form-control', 'multiple')) !!}
+                    {!! Form::select('events[]', $event_group_list, [], array('id' => 'events', 'class' => 'form-control select2', 'multiple')) !!}
                 </div>
 
                 <div class="form-group">
@@ -32,5 +32,13 @@
 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#events').select2({
+                placeholder: 'select'
+            });
+        });
+    </script>
 
 @stop
