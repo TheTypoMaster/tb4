@@ -12,6 +12,8 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class TicketResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\TournamentTicketModel';
+
     protected $attributes = array(
         'id' => 'id',
         'userId' => 'user_id',
@@ -48,6 +50,12 @@ class TicketResource extends AbstractEloquentResource {
         }
 
         return $this->availableCurrency;
+    }
+
+    public function addAvailableCurrency($currency)
+    {
+        $this->availableCurrency = $this->getAvailableCurrency() + $currency;
+        return $this;
     }
 
     public function getPosition()

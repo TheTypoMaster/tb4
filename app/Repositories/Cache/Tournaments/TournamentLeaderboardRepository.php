@@ -35,10 +35,15 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
     protected $collectionKeys = array(
         self::COLLECTION_TOURNAMENT_LEADERBOARD
     );
+    /**
+     * @var TournamentTicketRepository
+     */
+    private $ticketRepository;
 
-    public function __construct(DbTournamentLeaderboardRepository $repository)
+    public function __construct(DbTournamentLeaderboardRepository $repository, TournamentTicketRepository $ticketRepository)
     {
         $this->repository = $repository;
+        $this->ticketRepository = $ticketRepository;
     }
 
     public function getTournamentLeaderboardPaginated($tournament, $limit = 50)
@@ -186,6 +191,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                         $record->setPosition($position);
                     }
 
+                    $this->ticketRepository->updatePosition($record->userId, $record->getModel()->tournament_id, $record->getPosition());
                     $newLeaderboard->push($record);
                     $previousRecord = $record;
                     $inserted = true;
@@ -202,6 +208,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                     $leaderboardRecord->setPosition($position);
                 }
 
+                $this->ticketRepository->updatePosition($leaderboardRecord->userId, $record->tournament->id, $leaderboardRecord->getPosition());
                 $newLeaderboard->push($leaderboardRecord);
                 $previousRecord = $leaderboardRecord;
             }
@@ -209,6 +216,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
         if (!$record->qualified()) {
             $newLeaderboard->push($record);
+            $this->ticketRepository->updatePosition($record->userId, $record->getModel()->tournament_id, $record->getPosition());
         }
 
         return $newLeaderboard;
@@ -237,6 +245,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                     $leaderboardRecord->setPosition($position);
                 }
 
+                $this->ticketRepository->updatePosition($leaderboardRecord->userId, $record->tournament->id, $leaderboardRecord->getPosition());
                 $newLeaderboard->push($leaderboardRecord);
                 $previousRecord = $leaderboardRecord;
             }

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Models\TournamentBetModel;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
+use TopBetta\Repositories\Cache\Tournaments\TournamentTicketRepository;
 use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
@@ -47,18 +48,27 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
      * @var DbEventRepository
      */
     private $eventRepository;
+    /**
+     * @var TournamentTicketRepository
+     */
+    private $ticketRepository;
 
-    public function __construct(DbTournamentBetRepository $repository, RacingSelectionPriceRepository $racingSelectionPriceRepository, ResultPricesRepositoryInterface $resultPricesRepository, DbEventRepository $eventRepository)
+    public function __construct(DbTournamentBetRepository $repository, RacingSelectionPriceRepository $racingSelectionPriceRepository, ResultPricesRepositoryInterface $resultPricesRepository, DbEventRepository $eventRepository, TournamentTicketRepository $ticketRepository)
     {
         $this->repository = $repository;
         $this->racingSelectionPriceRepository = $racingSelectionPriceRepository;
         $this->resultPricesRepository = $resultPricesRepository;
         $this->eventRepository = $eventRepository;
+        $this->ticketRepository = $ticketRepository;
     }
 
     public function create($data)
     {
-        return $this->repository->createAndReturnModel($data);
+        $model = $this->repository->createAndReturnModel($data);
+
+        $this->ticketRepository->addAvailableCurrency($model->ticket->user_id, $model->ticket->tournament, -$model->bet_amount);
+
+        return $model;
     }
 
     public function getTournamentBetsArray($user, $tournament)
@@ -133,6 +143,11 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
         if (!$bets) {
             $bets = array();
+        }
+
+        if (($existingBet = array_get($bets, $resource->id)) && $existingBet['status'] == BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED &&
+            $resource->status != BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED && $resource->paid > 0) {
+            $this->ticketRepository->addAvailableCurrency($userId, $tournament, $resource->paid);
         }
 
         $bets[$resource->id] = $resource->toArray();
@@ -243,6 +258,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             'productId'        => $bet->product ? $bet->product->id : null,
             'productCode'      => $bet->product ? $bet->product->productProviderMatch ? $bet->product->productProviderMatch->id : null : null,
             'event_status_id'    => $bet->selection->first()->market->event->event_status_id,
+            'tournament_ticket_id' => $bet->tournament_ticket_id,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {

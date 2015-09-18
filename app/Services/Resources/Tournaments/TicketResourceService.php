@@ -114,6 +114,10 @@ class TicketResourceService {
 
     protected function createTicketCollection($tickets)
     {
+        if ($tickets instanceof EloquentResourceCollection) {
+            return $tickets;
+        }
+
         $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\TicketResource');
 
         foreach($tickets as $ticket) {
