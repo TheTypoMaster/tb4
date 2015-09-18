@@ -174,7 +174,7 @@ class RacePriceProcessingService {
             if($betProduct->is_fixed_odds == 0) continue;
 
             // put on the queue
-            Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => $price), 'risk-fixed-queue');
+            Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => array($price)), 'risk-fixed-queue');
 		}
 		return "Price(s) Processed";
 	}
