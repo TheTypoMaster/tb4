@@ -49,6 +49,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
         return $this->getBetBuilder()
             ->join('tbdb_tournament_ticket', 'tbdb_tournament_ticket.id', '=', 'tb.tournament_ticket_id')
             ->where('tbdb_tournament_ticket.tournament_id', $tournament)
+            ->where('tbdb_tournament_ticket.user_id', $user)
             ->whereIn('e.event_status_id', $eventStatuses)
             ->get(array("tbdb_tournament_bet.*"));
     }
@@ -165,7 +166,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status',
                 'bt.name as bet_type', 'e.start_date as start_date', 'eg.type_code as event_type', 'sp.win_odds as win_odds', 'sp.place_odds as place_odds',
                 'sr.win_dividend', 'sr.place_dividend', 's.number as selection_number', 'bp.is_fixed_odds as fixed',
-                'ppm.provider_product_name', 'bp.id as product_id',
+                'ppm.provider_product_name', 'bp.id as product_id', 'e.event_status_id as event_status_id'
             ));
     }
 

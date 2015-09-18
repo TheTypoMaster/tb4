@@ -11,12 +11,14 @@ namespace TopBetta\Repositories\Cache\Bets;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Models\TournamentBetModel;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
 use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\ResultPricesRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
+use TopBetta\Repositories\DbEventRepository;
 use TopBetta\Repositories\DbTournamentBetRepository;
 use TopBetta\Resources\EloquentResourceCollection;
 
@@ -41,12 +43,22 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
      * @var ResultPricesRepositoryInterface
      */
     private $resultPricesRepository;
+    /**
+     * @var DbEventRepository
+     */
+    private $eventRepository;
 
-    public function __construct(DbTournamentBetRepository $repository, RacingSelectionPriceRepository $racingSelectionPriceRepository, ResultPricesRepositoryInterface $resultPricesRepository)
+    public function __construct(DbTournamentBetRepository $repository, RacingSelectionPriceRepository $racingSelectionPriceRepository, ResultPricesRepositoryInterface $resultPricesRepository, DbEventRepository $eventRepository)
     {
         $this->repository = $repository;
         $this->racingSelectionPriceRepository = $racingSelectionPriceRepository;
         $this->resultPricesRepository = $resultPricesRepository;
+        $this->eventRepository = $eventRepository;
+    }
+
+    public function create($data)
+    {
+        return $this->repository->createAndReturnModel($data);
     }
 
     public function getTournamentBetsArray($user, $tournament)
@@ -67,11 +79,18 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
         return $bets;
     }
 
-    public function getTournamentBetsByEventStatuses($user, $tournament)
+    public function getTournamentBetsByEventStatuses($user, $tournament, $eventStatuses)
     {
         $bets = $this->getCollection($this->cachePrefix . $user . '_' . $tournament);
 
-        if ($bets) {
+        if ($bets && $bets->count()) {
+
+            $events = $this->eventRepository->getEventsWithStatusIn($bets->unique('event_id')->lists('eventId')->all(), $eventStatuses)->lists('id')->all();
+
+            $bets = $bets->filter(function($v) use ($events) {
+                return in_array($v->eventId, $events);
+            });
+
             $bets = $bets->map(function ($v) {
                 return $this->attachOdds($v);
             });
@@ -82,11 +101,12 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
     public function makeCacheResource($model)
     {
-        if ($model->ticket->tournament->end_date >= Carbon::now()->subDays(2)->diffInMinutes()) {
+        if ($model->ticket->tournament->end_date >= Carbon::now()->subDays(2)) {
             $resource = $this->buildResourceArrayFromModel($model);
+            $resource = $this->createResource(new TournamentBetModel($resource));
             $resource = $this->attachOdds($resource);
 
-            $this->addBetToTournamentCollection($model->ticket->user_id, $model->tournament, $resource);
+            $this->addBetToTournamentCollection($model->ticket->user_id, $model->ticket->tournament, $resource->getModel());
         }
 
         return $model;
@@ -94,11 +114,12 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
     public function makeAndReturnBetResource($model)
     {
-        if ($model->ticket->tournament->end_date >= Carbon::now()->subDays(2)->diffInMinutes()) {
+        if ($model->ticket->tournament->end_date >= Carbon::now()->subDays(2)) {
             $resource = $this->buildResourceArrayFromModel($model);
+            $resource = $this->createResource(new TournamentBetModel($resource));
             $resource = $this->attachOdds($resource);
 
-            $this->addBetToTournamentCollection($model->ticket->user_id, $model->tournament, $resource);
+            $this->addBetToTournamentCollection($model->ticket->user_id, $model->ticket->tournament, $resource->getModel());
 
             return $resource;
         }
@@ -108,7 +129,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
     public function addBetToTournamentCollection($userId, $tournament, $resource)
     {
-        $bets = $this->getTournamentBetsArray($userId, $tournament);
+        $bets = $this->getTournamentBetsArray($userId, $tournament->id);
 
         if (!$bets) {
             $bets = array();
@@ -135,13 +156,18 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
     public function getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $eventStatuses)
     {
-        $bets = $this->getTournamentBetsByEventStatuses($user, $tournament);
+        return $this->repository->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $eventStatuses);
+    }
+
+    public function getBetResourcesForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses)
+    {
+        $bets = $this->getTournamentBetsByEventStatuses($user, $tournament, $statuses);
 
         if ($bets) {
             return $bets;
         }
 
-        $bets = $this->repository->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $eventStatuses);
+        $bets = $this->repository->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
 
         //set bets to be an emoty collection for this user
         $this->storeTournamentBets($user, $tournament, new EloquentResourceCollection(new Collection(), $this->resourceClass));
@@ -212,10 +238,11 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             'eventType'        => $bet->selection->first()->market->event->competition->first()->type_code,
             'percentage'       => $bet->percentage,
             'boxedFlag'        => $bet->boxed_flag,
-            'fixed'            => $bet->product->is_fixed_odds || $bet->type->name == BetTypeRepositoryInterface::TYPE_SPORT,
+            'fixed'            => ($bet->product ? $bet->product->is_fixed_odds : false) || $bet->type->name == BetTypeRepositoryInterface::TYPE_SPORT,
             "fixed_odds"       => $bet->fixed_odds,
-            'productId'        => $bet->product->id,
-            'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->id : null,
+            'productId'        => $bet->product ? $bet->product->id : null,
+            'productCode'      => $bet->product ? $bet->product->productProviderMatch ? $bet->product->productProviderMatch->id : null : null,
+            'event_status_id'    => $bet->selection->first()->market->event->event_status_id,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {

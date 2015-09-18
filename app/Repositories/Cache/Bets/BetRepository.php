@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Bets;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use TopBetta\Models\BetModel;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
 use TopBetta\Repositories\Cache\Sports\SelectionPriceRepository;
@@ -100,7 +101,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     public function makeCacheResource($model)
     {
         if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
-            $resource = $this->createResourceFromArray($this->buildResourceArrayFromModel($model));
+            $resource = new BetModel($this->buildResourceArrayFromModel($model));
             $resource = $this->attachOdds($resource);
 
             $this->updateActiveBets($resource, $model->user_id);
