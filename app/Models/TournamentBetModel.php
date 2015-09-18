@@ -58,4 +58,10 @@ class TournamentBetModel extends Eloquent {
     {
         return $this->belongsTo('TopBetta\Models\BetProductModel', 'bet_product_id');
     }
+
+    public function status()
+    {
+        return $this->belongsTo('TopBetta\Models\BetResultStatusModel', 'bet_result_status_id');
+    }
+
 } 
