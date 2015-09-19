@@ -10,12 +10,26 @@
                 </h2>
             </div>
 
+            <?php
+
+                $default_group_name = '';
+                $default_group_id = '';
+            ?>
+
+            @if(isset($event_group_name))
+                <?php $default_group_name = $event_group_name;?>
+            @endif
+
+            @if(isset($event_group_id))
+                <?php $default_group_id = $event_group_id;?>
+            @endif
+
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
                 {!! Form::open(['url' => 'admin/event-groups/store?XDEBUG_SESSION_START']) !!}
 
                 <div class="form-group">
                     {!! Form::label('event_group_name', 'Event Group Name: ') !!}
-                    {!! Form::input('text', 'event_group_name', null, array('class' => 'form-control')) !!}
+                    {!! Form::input('text', 'event_group_name', $default_group_name, array('class' => 'form-control')) !!}
                 </div>
 
                 <div class="form-group">
@@ -30,12 +44,14 @@
 
                 <div class="form-group">
                     {!! Form::label('events', 'Events ') !!}
-                    {!! Form::select('events', $event_group_list, [], array('id' => 'events', 'class' => 'form-control', 'placeholder' => '--Select events--')) !!}
+                    {!! Form::select('events[]', $event_group_list, [], array('id' => 'events', 'class' => 'select2 form-control', 'placeholder' => '--Select events--', 'multiple')) !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::submit('Submit', array('class' => 'btn btn-primary')) !!}
+                    {!! Form::submit('Add', array('class' => 'btn btn-primary')) !!}
                 </div>
+
+                {!! Form::input('hidden', 'event_group_id', $default_group_id, array()) !!}
 
                 {!! Form::close() !!}
             </div>
@@ -44,45 +60,50 @@
     </div>
 
     <script>
-        //        $(document).ready(function () {
-        //            $('#events').select2({
-        //                placeholder: 'select'
-        //            });
-        //        });
+        $(document).ready(function () {
+            $('#events').select2({
+                placeholder: 'select'
+            });
 
-        function createSelectOptions(json) {
-            var html = $();
 
-            $.each(json, function (index, value) {
+            function createSelectOptions(json) {
+                var html = $();
+
+                $.each(json, function (index, value) {
 //                if ($.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
 //                    html = html.add($
 //                    ('<option></option>').text(value.name).val(value.id));
 //                }
 
-                html = html.add($
-                ('<option></option>').text(value.name).val(value.id));
+                    html = html.add($
+                    ('<option></option>').text(value.name).val(value.id));
+                });
+
+                return html;
+            }
+
+            $('#sports').change(function () {
+                var sport = $('#sports').val();
+
+                $.get('/admin/get-event-groups/' + sport)
+                        .done(function (data) {
+                            $('#event_groups').html(createSelectOptions(data));
+                        });
             });
 
-            return html;
-        }
+            $('#event_groups').change(function () {
+                var event_group = $('#event_groups').val();
 
-        $('#sports').change(function () {
-            var sport = $('#sports').val();
-
-            $.get('/admin/get-event-groups/' + sport)
-                    .done(function (data) {
-                        $('#event_groups').html(createSelectOptions(data));
-                    });
+                $.get('/admin/get-events/' + event_group)
+                        .done(function (data) {
+                            $('#events').html(createSelectOptions(data));
+                            $('#events').select2({
+                                placeholder: '--Select events--'
+                            });
+                        });
+            });
         });
 
-        $('#event_groups').change(function () {
-            var event_group = $('#event_groups').val();
-
-            $.get('/admin/get-events/' + event_group)
-                    .done(function (data) {
-                        $('#events').html(createSelectOptions(data));
-                    });
-        });
     </script>
 
 @stop
