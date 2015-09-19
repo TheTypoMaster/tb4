@@ -120,28 +120,16 @@ class TicketResourceService {
 
         $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\TicketResource');
 
-        foreach($tickets as $ticket) {
-            if( $ticket->getQualified() ) {
-                $ticket->setPosition(
-                    $this->leaderboardService->getLeaderboardPositionForTicket($ticket)
-                );
-            }
-        }
-
         return $tickets;
     }
 
     protected function createNextToJumpCollection($tickets)
     {
-        $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\NextToJumpTicketResource');
-
-        foreach($tickets as $ticket) {
-            if( $ticket->getQualified() ) {
-                $ticket->setPosition(
-                    $this->leaderboardService->getLeaderboardPositionForTicket($ticket)
-                );
-            }
+        if ($tickets instanceof EloquentResourceCollection) {
+            return $tickets;
         }
+
+        $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\NextToJumpTicketResource');
 
         return $tickets;
     }

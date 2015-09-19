@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Tournaments;
 
 use Carbon\Carbon;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Repositories\DbTournamentTicketRepository;
 use TopBetta\Resources\EloquentResourceCollection;
@@ -32,6 +33,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
      */
     private $tournamentRepository;
 
+
     public function __construct(DbTournamentTicketRepository $repository, TournamentRepository $tournamentRepository)
     {
         $this->repository = $repository;
@@ -49,7 +51,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
     public function addAvailableCurrency($userId, $tournament, $currency)
     {
-        $ticket = $this->getTicket($userId, $tournament->id);
+        $ticket = $this->getTicketByUserAndTournament($userId, $tournament->id);
 
         if ($ticket) {
             $ticket->addAvailableCurrency($currency);
@@ -57,12 +59,13 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
             $this->updateActiveTickets($ticket);
             $this->updateDateTickets($tournament->end_date, $ticket);
+            $this->updateNextToJump($ticket);
         }
     }
 
     public function updatePosition($user, $tournament, $position)
     {
-        $ticket = $this->getTicket($user, $tournament);
+        $ticket = $this->getTicketByUserAndTournament($user, $tournament);
 
         if ($ticket && $ticket->getPosition() != $position) {
             $ticket->setPosition($position);
@@ -70,12 +73,13 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
             $this->updateActiveTickets($ticket);
             $this->updateDateTickets($ticket->tournament->end_date, $ticket);
+            $this->updateNextToJump($ticket);
         }
     }
 
     public function updatePositionAndTurnover($user, $tournament, $position, $turnedOver, $balanceToTurnover)
     {
-        $ticket = $this->getTicket($user, $tournament);
+        $ticket = $this->getTicketByUserAndTournament($user, $tournament);
 
         if ($ticket && $ticket->getPosition() != $position) {
             $ticket->setPosition($position);
@@ -85,6 +89,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
             $this->updateActiveTickets($ticket);
             $this->updateDateTickets($ticket->tournament->end_date, $ticket);
+            $this->updateNextToJump($ticket);
         }
     }
 
@@ -111,6 +116,22 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     public function getDateTickets($user, $date)
     {
         return $this->getCollection($this->cachePrefix . $user . '_' . $date);
+    }
+
+    public function getCacheNextToJumpTickets($user)
+    {
+        return $this->getCollection($this->cachePrefix . $user . '_n2j', 'TopBetta\Resources\Tournaments\NextToJumpTicketResource');
+    }
+
+    public function getNextToJumpArray($user)
+    {
+        $tickets = \Cache::tags($this->tags)->get($this->cachePrefix . $user . '_n2j');
+
+        if ($tickets) {
+            return $tickets;
+        }
+
+        return array();
     }
 
     public function updateActiveTickets($resource)
@@ -159,11 +180,34 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         $this->put($this->cachePrefix . $user . '_' . $date, $ticketResources->toArray(), Carbon::createFromFormat('Y-m-d', $date)->addDays(2)->diffInMinutes());
     }
 
+    public function updateNextToJump($model)
+    {
+        $tickets = $this->getNextToJumpArray($model->userId);
+
+        $updated = false;
+        foreach ($tickets as &$ticket) {
+            if ($ticket['id'] == $model->id) {
+                $ticket['position'] = $model->getPosition();
+                $ticket['available_currency'] = $model->getAvailableCurrency();
+                $ticket['turned_over'] = $model->getTurnedOver();
+                $ticket['balance_to_turnover'] = $model->getBalanceToTurnover();
+                $updated = true;
+                break;
+            }
+        }
+
+        if ($updated) {
+            $this->put($this->cachePrefix . $model->userId . '_n2j', $tickets, Carbon::now()->addWeek()->diffInMinutes());
+        }
+    }
+
     public function makeCacheResource($model)
     {
         $resource = $this->saveTicket($model);
 
         if ($resource) {
+            $this->loadNextToJumpTickets($model->user_id, 10);
+
             $this->updateActiveTickets($resource);
 
             $this->updateDateTickets($model->tournament->end_date, $resource);
@@ -182,6 +226,11 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         return $this->repository->getWithUserAndTournament($ticketId);
     }
 
+    /**
+     * @param $userId
+     * @param $tournamentId
+     * @return \TopBetta\Resources\Tournaments\TicketResource
+     */
     public function getTicketByUserAndTournament($userId, $tournamentId)
     {
         $ticket = $this->getTicket($userId, $tournamentId);
@@ -212,7 +261,27 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
     public function nextToJumpTicketsForUser($user, $limit = 10)
     {
-        return $this->repository->nextToJumpTicketsForUser($user, $limit);
+        $tickets = $this->getCacheNextToJumpTickets($user);
+
+        if ($tickets) {
+            if (!$tickets->first() || $tickets->first()->event_start_date >= Carbon::now()) {
+                return $tickets;
+            }
+        }
+
+        return $this->loadNextToJumpTickets($user, $limit);
+    }
+
+    public function loadNextToJumpTickets($user, $limit)
+    {
+        $tickets = $this->repository->nextToJumpTicketsForUser($user, $limit);
+
+        $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\NextToJumpTicketResource');
+
+
+        $this->put($this->cachePrefix . $user . '_n2j', $tickets->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+
+        return $tickets;
     }
 
     public function getActiveTicketsForUser($user)

@@ -146,4 +146,17 @@ class TicketResource extends AbstractEloquentResource {
         return $array;
     }
 
+    public function initialize()
+    {
+        parent::initialize();
+
+        if( $this->getQualified() ) {
+            $leaderboardService = \App::make('TopBetta\Services\Tournaments\TournamentLeaderboardService');
+            $this->setPosition(
+                $leaderboardService->getLeaderboardPositionForTicket($this->model)
+            );
+        }
+
+    }
+
 }
