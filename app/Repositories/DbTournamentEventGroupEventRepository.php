@@ -10,4 +10,15 @@ class DbTournamentEventGroupEventRepository extends BaseEloquentRepository imple
     public function __construct(TournamentEventGroupEventModel $tournamentEventGroupEventModel) {
         $this->model = $tournamentEventGroupEventModel;
     }
+
+    /**
+     * remove event from group
+     * @param $group_id
+     * @param $event_id
+     */
+    public function removeEvent($group_id, $event_id) {
+        $this->model->where('tournament_event_group_id', $group_id)
+                    ->where('event_id', $event_id)
+                   ->delete();
+    }
 }

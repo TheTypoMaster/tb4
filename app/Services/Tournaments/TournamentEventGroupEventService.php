@@ -29,4 +29,13 @@ class TournamentEventGroupEventService
 
         return $new_models;
     }
+
+    /**
+     * remove event from event group
+     * @param $group_id
+     * @param $event_id
+     */
+    public function removeEventFromGroup($group_id, $event_id) {
+        $this->tournamentEventGroupEventRepository->removeEvent($group_id, $event_id);
+    }
 }

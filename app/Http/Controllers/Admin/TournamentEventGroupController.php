@@ -210,11 +210,34 @@ class TournamentEventGroupController extends Controller
     public function keepAdding($group_name, $group_id)
     {
 
-        $events = $this->eventService->getAllEventsFromToday();
+//        $events = $this->eventService->getAllEventsFromToday();
 
         $sports = $this->sportService->getAllSports();
 
-        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($group_id);
+//        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($group_id);
+
+        $events = $this->tournamentEventGroupService->getEventsByTournamentEventGruop($group_id);
+
+        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events,
+            'sport_list' => $sports,
+            'event_group_name' => $group_name,
+            'event_group_id' => $group_id,
+            'events' => $events]);
+    }
+
+
+    /**
+     * remove event from group
+     * @param $group_id
+     * @param $event_id
+     * @param $group_name
+     * @return $this
+     */
+    public function removeEventFromGroup($group_id, $event_id, $group_name) {
+
+        $this->tournamentEventGroupEventService->removeEventFromGroup($group_id, $event_id);
+
+        $sports = $this->sportService->getAllSports();
 
         $events = $this->tournamentEventGroupService->getEventsByTournamentEventGruop($group_id);
 

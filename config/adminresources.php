@@ -73,6 +73,7 @@ return array(
         array("uri" => "get-event-groups/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "get-events/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "event-groups/keepadding/{group_name}/{group_id}", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/remove_event/{group_id}/{event_id}/{group_name}", 'permission' => 'tournaments.view'),
 
 
     ),

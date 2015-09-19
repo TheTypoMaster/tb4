@@ -56,7 +56,7 @@
                 {!! Form::close() !!}
             </div>
 
-            <div class="row" style="margin-left: 20px; width: 60%;">
+            <div class="row" style="margin-left: 20px; margin-top: 40px; width: 60%;">
                 @if(isset($events))
                     <table class="table">
                         <tr>
@@ -69,12 +69,14 @@
                             <tr>
                                 <td>{{$event_group_name}}</td>
                                 <td>{{$event->name}}</td>
-                                <td><a href="{{URL::to('')}}"><button class="btn btn-primary">Remove</button></a></td>
+                                <td><a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}"><button class="btn btn-primary">Remove</button></a></td>
                             </tr>
                         @endforeach
                     </table>
 
-                    <a href="{{URL::to('admin/event-groups')}}"><button class="btn btn-primary">Done</button></a>
+                    <a href="{{URL::to('admin/event-groups')}}">
+                        <button class="btn btn-primary">Done</button>
+                    </a>
                 @endif
 
             </div>
