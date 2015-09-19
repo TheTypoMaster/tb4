@@ -130,6 +130,8 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
     public function makeCacheResource($model)
     {
         \Bus::dispatch(new UpdateTournamentLeaderboard($model));
+
+        return $model;
     }
 
     public function updateCacheLeaderboard($model)

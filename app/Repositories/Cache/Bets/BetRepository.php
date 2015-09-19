@@ -101,14 +101,14 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     public function makeCacheResource($model)
     {
         if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
-            $resource = new BetModel($this->buildResourceArrayFromModel($model));
+            $resource = $this->createResource(new BetModel($this->buildResourceArrayFromModel($model)));
             $resource = $this->attachOdds($resource);
 
-            $this->updateActiveBets($resource, $model->user_id);
+            $this->updateActiveBets($resource->getModel(), $model->user_id);
 
-            $this->addToDateBets($resource, $model->user_id);
+            $this->addToDateBets($resource->getModel(), $model->user_id);
 
-            $this->addToEventBets($resource->event_id, $model->user_id,  $model);
+            $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
         }
 
         return $model;
@@ -176,16 +176,16 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     {
         if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
 
-            $resource = $this->createResourceFromArray($this->buildResourceArrayFromModel($model));
+            $resource = $this->createResourceFromArray(new BetModel($this->buildResourceArrayFromModel($model)));
             $resource = $this->attachOdds($resource);
 
             if ($model->status->name == BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
-                $this->addToActiveBets($resource, $model->user_id);
+                $this->addToActiveBets($resource->getModel(), $model->user_id);
             }
 
-            $this->addToDateBets($resource, $model->user_id);
+            $this->addToDateBets($resource->getModel(), $model->user_id);
 
-            $this->addToEventBets($resource->event_id, $model->user_id,  $model);
+            $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
 
             return $resource;
         }
