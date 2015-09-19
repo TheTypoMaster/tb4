@@ -38,8 +38,6 @@ class RiskExoticBetService extends AbstractRiskBetService {
 
     public function sendBet($bet)
     {
-        $bet = $this->betRepository->find($bet);
-
         $riskBet = array(
             'ReferenceId' => $bet->id,
             'EventId' => $bet->event->external_event_id,

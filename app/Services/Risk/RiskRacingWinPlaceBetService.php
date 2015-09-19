@@ -33,8 +33,6 @@ class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
 
     public function sendBet($bet)
     {
-        $bet = $this->betRepository->find($bet);
-
         $riskBet = array(
             'ReferenceId' => $bet['id'],
             'BetDate' => is_string($bet->created_at) ? $bet->created_at : $bet->created_at->toDateTimeString(),
