@@ -149,7 +149,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         $leaderboard = $this->getCollection($key);
 
         if (!$leaderboard) {
-            $leaderboard = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+            $leaderboard = new EloquentResourceCollection($this->getTournamentLeaderboardCollection($resource->tournament_id, null), $this->resourceClass);
         }
 
         $leaderboard = $this->insertLeaderboardRecord($resource, $leaderboard);
@@ -229,7 +229,11 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
             }
         }
 
-        if (!$record->qualified()) {
+        if (!$inserted) {
+            if ($record->qualified()) {
+                $record->setPosition($position + $positionCount);
+            }
+
             $newLeaderboard->push($record);
             $this->ticketRepository->updatePositionAndTurnover($record->userId, $record->getModel()->tournament_id, $record->getPosition(), $record->turned_over, $record->balance_to_turnover);
         }

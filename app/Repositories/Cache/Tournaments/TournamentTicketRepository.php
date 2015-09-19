@@ -51,46 +51,57 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
     public function addAvailableCurrency($userId, $tournament, $currency)
     {
-        $ticket = $this->getTicketByUserAndTournament($userId, $tournament->id);
+        $ticket = $this->getTicket($userId, $tournament->id);
 
         if ($ticket) {
             $ticket->addAvailableCurrency($currency);
             $this->put($this->cachePrefix . $userId . '_' . $tournament->id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
-
-            $this->updateActiveTickets($ticket);
-            $this->updateDateTickets($tournament->end_date, $ticket);
-            $this->updateNextToJump($ticket);
+        } else {
+            $ticket = $this->getTicketByUserAndTournament($userId, $tournament->id);
         }
+
+        $this->updateActiveTickets($ticket);
+        $this->updateDateTickets($tournament->end_date, $ticket);
+        $this->updateNextToJump($ticket);
+
     }
 
     public function updatePosition($user, $tournament, $position)
     {
-        $ticket = $this->getTicketByUserAndTournament($user, $tournament);
+        $ticket = $this->getTicket($user, $tournament);
 
         if ($ticket && $ticket->getPosition() != $position) {
             $ticket->setPosition($position);
             $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+        } else {
+            $ticket = $this->getTicketByUserAndTournament($user, $tournament);
+        }
 
+        if ($ticket->getPosition() != $position) {
             $this->updateActiveTickets($ticket);
             $this->updateDateTickets($ticket->tournament->end_date, $ticket);
             $this->updateNextToJump($ticket);
         }
+
     }
 
     public function updatePositionAndTurnover($user, $tournament, $position, $turnedOver, $balanceToTurnover)
     {
-        $ticket = $this->getTicketByUserAndTournament($user, $tournament);
+        $ticket = $this->getTicket($user, $tournament);
 
-        if ($ticket && $ticket->getPosition() != $position) {
+        if ($ticket) {
             $ticket->setPosition($position);
             $ticket->setTurnedOver($turnedOver);
             $ticket->setBalanceToTurnOver($balanceToTurnover);
             $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
 
-            $this->updateActiveTickets($ticket);
-            $this->updateDateTickets($ticket->tournament->end_date, $ticket);
-            $this->updateNextToJump($ticket);
+        } else {
+            $ticket = $this->getTicketByUserAndTournament($user, $tournament);
         }
+
+        $this->updateActiveTickets($ticket);
+        $this->updateDateTickets($ticket->tournament->end_date, $ticket);
+        $this->updateNextToJump($ticket);
     }
 
     public function getTicket($user, $tournament)
