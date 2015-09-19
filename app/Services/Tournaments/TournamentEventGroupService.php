@@ -73,4 +73,16 @@ class TournamentEventGroupService
         return $event_groups;
     }
 
+    /**
+     * get events by event group id
+     * @param $event_group_id
+     * @return mixed
+     */
+    public function getEventsByEventGroup($event_group_id) {
+
+        $events = $this->eventGroupRepository->getEvents($event_group_id);
+
+        return $events;
+    }
+
 }

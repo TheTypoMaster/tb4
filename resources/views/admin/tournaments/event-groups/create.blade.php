@@ -20,12 +20,17 @@
 
                 <div class="form-group">
                     {!! Form::label('sports', 'Sports: ') !!}
-                    {!! Form::select('sports', $sport_list, [], array('id' => 'sports', 'class' => 'form-control')) !!}
+                    {!! Form::select('sports', $sport_list, [], array('id' => 'sports', 'class' => 'form-control', 'placeholder' => '--Select a sport--')) !!}
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('events', 'Events: ') !!}
-                    {!! Form::select('events', $event_group_list, [], array('id' => 'events', 'class' => 'form-control', '')) !!}
+                    {!! Form::label('event_groups', 'Event Groups: ') !!}
+                    {!! Form::select('event_groups', $event_group_list, [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('events', 'Events ') !!}
+                    {!! Form::select('events', $event_group_list, [], array('id' => 'events', 'class' => 'form-control', 'placeholder' => '--Select events--')) !!}
                 </div>
 
                 <div class="form-group">
@@ -66,7 +71,15 @@
 
             $.get('/admin/get-event-groups/' + sport)
                     .done(function (data) {
-                        console.log(data);
+                        $('#event_groups').html(createSelectOptions(data));
+                    });
+        });
+
+        $('#event_groups').change(function () {
+            var event_group = $('#event_groups').val();
+
+            $.get('/admin/get-events/' + event_group)
+                    .done(function (data) {
                         $('#events').html(createSelectOptions(data));
                     });
         });

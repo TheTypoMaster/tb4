@@ -244,6 +244,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('event-groups/edit/{id}', 'Admin\TournamentEventGroupController@edit');
     Route::get('event-groups/delete/{id}', 'Admin\TournamentEventGroupController@destroy');
     Route::get('get-event-groups/{id}', 'Admin\TournamentEventGroupController@getEvnetGruops');
+    Route::get('get-events/{id}', 'Admin\TournamentEventGroupController@getEventsByEventGroup');
 
 
 

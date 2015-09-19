@@ -133,4 +133,5 @@ class EventService {
         $event = $this->eventRepository->getEventByEventID($id);
         return $event;
     }
+
 }

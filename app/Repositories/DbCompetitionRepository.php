@@ -336,4 +336,17 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->get();
         return $event_groups;
     }
+
+    /**
+     * get all events by event group id
+     * @param $event_group_id
+     * @return mixed
+     */
+    public function getEvents($event_group_id) {
+        return $this->model->find($event_group_id)
+                           ->competitionEvents()
+                           ->orderBy('start_date', 'ASC')
+                           ->get();
+
+    }
 }

@@ -18,13 +18,15 @@ class TournamentEventGroupController extends Controller
 
     public function __construct(TournamentEventGroupService $tournamentEventGroupService, TournamentEventGroupEventService $tournamentEventGroupEventService,
                                 EventService $eventService,
-                                SportsService $sportService) {
+                                SportsService $sportService)
+    {
 
         $this->tournamentEventGroupService = $tournamentEventGroupService;
         $this->tournamentEventGroupEventService = $tournamentEventGroupEventService;
         $this->eventService = $eventService;
         $this->sportService = $sportService;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -49,13 +51,13 @@ class TournamentEventGroupController extends Controller
         $sports = $this->sportService->getAllSports();
 
         return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events,
-                                                                    'sport_list' => $sports]);
+            'sport_list' => $sports]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
+     * @param  Request $request
      * @return Response
      */
     public function store(Request $request)
@@ -70,23 +72,23 @@ class TournamentEventGroupController extends Controller
         //get the earliest start day from all events as event group start date
         $start_time = '';
         $end_time = '';
-        foreach($selected_events as $key => $selected_event) {
+        foreach ($selected_events as $key => $selected_event) {
             $items[] = $selected_event;
             $event_start_time = $this->eventService->getEventByID($selected_event)->start_date;
 
-            if($key == 0) {
+            if ($key == 0) {
                 $start_time = $event_start_time;
                 $end_time = $event_start_time;
 
             } else {
                 //set event group start date as the earliest event start date
-                if($event_start_time < $start_time) {
+                if ($event_start_time < $start_time) {
 
                     $start_time = $event_start_time;
                 }
 
                 //set event group end date as the latest event start date
-                if($event_start_time > $end_time) {
+                if ($event_start_time > $end_time) {
                     $end_time = $event_start_time;
                 }
             }
@@ -107,7 +109,7 @@ class TournamentEventGroupController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function show($id)
@@ -118,7 +120,7 @@ class TournamentEventGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function edit($id)
@@ -131,8 +133,8 @@ class TournamentEventGroupController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param  Request $request
+     * @param  int $id
      * @return Response
      */
     public function update(Request $request, $id)
@@ -143,7 +145,7 @@ class TournamentEventGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function destroy($id)
@@ -156,9 +158,22 @@ class TournamentEventGroupController extends Controller
      * @param $sportId
      * @return mixed
      */
-    public function getEvnetGruops($sportId) {
+    public function getEvnetGruops($sportId)
+    {
 
         $event_groups = $this->tournamentEventGroupService->getEventGroups($sportId);
         return $event_groups;
+    }
+
+    /**
+     * get events by event group id
+     * @param $event_group_id
+     * @return mixed
+     */
+    public function getEventsByEventGroup($event_group_id)
+    {
+        $event = $this->tournamentEventGroupService->getEventsByEventGroup($event_group_id);
+//        dd($event);
+        return $event;
     }
 }
