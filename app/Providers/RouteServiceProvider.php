@@ -82,6 +82,7 @@ class RouteServiceProvider extends ServiceProvider {
 		{
 			Config::set('auth.table', 'tb_api_users');
 			Config::set('auth.model', 'TopBetta\Models\APIUserModel');
+            Config::set('auth.driver', 'eloquent');
 			return Auth::onceBasic('username');
 		});
 
