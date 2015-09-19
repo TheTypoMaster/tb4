@@ -39,12 +39,12 @@
 
                 <div class="form-group">
                     {!! Form::label('event_groups', 'Event Groups: ') !!}
-                    {!! Form::select('event_groups', $event_group_list, [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
+                    {!! Form::select('event_groups', [], [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
                 </div>
 
                 <div class="form-group">
                     {!! Form::label('events', 'Events ') !!}
-                    {!! Form::select('events[]', $event_group_list, [], array('id' => 'events', 'class' => 'select2 form-control', 'placeholder' => '--Select events--', 'multiple')) !!}
+                    {!! Form::select('events[]', [], [], array('id' => 'events', 'class' => 'select2 form-control', 'placeholder' => '--Select events--', 'multiple')) !!}
                 </div>
 
                 <div class="form-group">
@@ -57,17 +57,20 @@
             </div>
 
             <div class="row" style="margin-left: 20px; margin-top: 40px; width: 60%;">
-                @if(isset($events))
+                @if(isset($event_list))
                     <table class="table">
                         <tr>
-                            <th>Group Name</th>
+                            <th>Event Group Name: </th>
                             <th>Events</th>
                             <th>Action</th>
                         </tr>
 
-                        @foreach($events as $key => $event)
+                        @foreach($event_list as $id => $event_with_group_name)
+                            <?php
+                                $event = $event_with_group_name['event'];
+                            ?>
                             <tr>
-                                <td>{{$event_group_name}}</td>
+                                <td>{{$event_with_group_name['event_group_name']}}</td>
                                 <td>{{$event->name}}</td>
                                 <td><a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}"><button class="btn btn-primary">Remove</button></a></td>
                             </tr>

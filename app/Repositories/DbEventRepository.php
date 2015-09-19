@@ -275,4 +275,15 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $this;
     }
 
+    /**
+     * get event group by event id
+     * @param $event_id
+     * @return mixed
+     */
+    public function getEventGroup($event_id) {
+        return $this->model->find($event_id)
+                           ->competitions()
+                           ->first();
+    }
+
 }

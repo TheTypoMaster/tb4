@@ -3,6 +3,7 @@
 namespace TopBetta\Services\Tournaments;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
 use TopBetta\Repositories\TournamentEventGroupRepository;
 
@@ -10,10 +11,12 @@ class TournamentEventGroupService
 {
 
     public function __construct(TournamentEventGroupRepositoryInterface $tournamentEventGroupRepo,
-                                CompetitionRepositoryInterface $eventGroupRepository)
+                                CompetitionRepositoryInterface $eventGroupRepository,
+                                EventRepositoryInterface $eventRepository)
     {
         $this->tournamentEventGroupRepo = $tournamentEventGroupRepo;
         $this->eventGroupRepository = $eventGroupRepository;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -94,6 +97,27 @@ class TournamentEventGroupService
         $events = $this->tournamentEventGroupRepo->getEvents($group_id);
 
         return $events;
+    }
+
+    /**
+     * get events with event group id
+     * @param $group_id
+     * @return array
+     */
+    public function getEventsByTournamentEventGroupToArray ($group_id) {
+
+        $event_list = array();
+
+        $events = $this->tournamentEventGroupRepo->getEvents($group_id);
+
+        foreach($events as $key => $event) {
+
+            $event_group = $this->eventRepository->getEventGroup($event->id);
+            $event_with_group = array('event' => $event, 'event_group_name' => $event_group->name);
+            $event_list[$event->id] = $event_with_group;
+        }
+
+        return $event_list;
     }
 
 }

@@ -46,12 +46,11 @@ class TournamentEventGroupController extends Controller
     public function create()
     {
 
-        $events = $this->eventService->getAllEventsFromToday();
+//        $events = $this->eventService->getAllEventsFromToday();
 
         $sports = $this->sportService->getAllSports();
 
-        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events,
-            'sport_list' => $sports]);
+        return view('admin.tournaments.event-groups.create')->with(['sport_list' => $sports]);
     }
 
     /**
@@ -72,7 +71,7 @@ class TournamentEventGroupController extends Controller
             $event_group_params = array('name' => Input::get('event_group_name'));
             $event_group = $this->tournamentEventGroupService->createEventGroup($event_group_params);
             $event_group_id = $event_group['id'];
-//            $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
+            $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
             $start_time = '';
             $end_time = '';
 
@@ -117,7 +116,7 @@ class TournamentEventGroupController extends Controller
 
         //get the earliest created event group by id to set the event group start date, and the latest event start date as
         //event group end date
-        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
+//        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
         $new_created_event_group->start_date = $start_time;
         $new_created_event_group->end_date = $end_time;
         $new_created_event_group->update();
@@ -216,13 +215,12 @@ class TournamentEventGroupController extends Controller
 
 //        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($group_id);
 
-        $events = $this->tournamentEventGroupService->getEventsByTournamentEventGruop($group_id);
+        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($group_id);
 
-        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events,
-            'sport_list' => $sports,
-            'event_group_name' => $group_name,
-            'event_group_id' => $group_id,
-            'events' => $events]);
+        return view('admin.tournaments.event-groups.create')->with(['sport_list' => $sports,
+                                                                    'event_group_name' => $group_name,
+                                                                    'event_group_id' => $group_id,
+                                                                    'event_list' => $event_list]);
     }
 
 
@@ -237,15 +235,16 @@ class TournamentEventGroupController extends Controller
 
         $this->tournamentEventGroupEventService->removeEventFromGroup($group_id, $event_id);
 
+//        $events = $this->eventService->getAllEventsFromToday();
+
         $sports = $this->sportService->getAllSports();
 
-        $events = $this->tournamentEventGroupService->getEventsByTournamentEventGruop($group_id);
+        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($group_id);
 
-        return view('admin.tournaments.event-groups.create')->with(['event_group_list' => $events,
-            'sport_list' => $sports,
-            'event_group_name' => $group_name,
-            'event_group_id' => $group_id,
-            'events' => $events]);
+        return view('admin.tournaments.event-groups.create')->with(['sport_list' => $sports,
+                                                                    'event_group_name' => $group_name,
+                                                                    'event_group_id' => $group_id,
+                                                                    'event_list' => $event_list]);
     }
 
 }
