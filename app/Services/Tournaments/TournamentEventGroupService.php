@@ -85,4 +85,15 @@ class TournamentEventGroupService
         return $events;
     }
 
+    /**
+     * get events that belongs to tournament event group
+     * @param $group_id
+     */
+    public function getEventsByTournamentEventGruop($group_id) {
+
+        $events = $this->tournamentEventGroupRepo->getEvents($group_id);
+
+        return $events;
+    }
+
 }

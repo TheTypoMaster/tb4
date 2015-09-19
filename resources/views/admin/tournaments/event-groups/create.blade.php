@@ -12,8 +12,8 @@
 
             <?php
 
-                $default_group_name = '';
-                $default_group_id = '';
+            $default_group_name = '';
+            $default_group_id = '';
             ?>
 
             @if(isset($event_group_name))
@@ -54,6 +54,29 @@
                 {!! Form::input('hidden', 'event_group_id', $default_group_id, array()) !!}
 
                 {!! Form::close() !!}
+            </div>
+
+            <div class="row" style="margin-left: 20px; width: 60%;">
+                @if(isset($events))
+                    <table class="table">
+                        <tr>
+                            <th>Group Name</th>
+                            <th>Events</th>
+                            <th>Action</th>
+                        </tr>
+
+                        @foreach($events as $key => $event)
+                            <tr>
+                                <td>{{$event_group_name}}</td>
+                                <td>{{$event->name}}</td>
+                                <td><a href="{{URL::to('')}}"><button class="btn btn-primary">Remove</button></a></td>
+                            </tr>
+                        @endforeach
+                    </table>
+
+                    <a href="{{URL::to('admin/event-groups')}}"><button class="btn btn-primary">Done</button></a>
+                @endif
+
             </div>
 
         </div>
