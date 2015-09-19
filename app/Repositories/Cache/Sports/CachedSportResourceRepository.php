@@ -53,7 +53,7 @@ abstract class CachedSportResourceRepository extends CachedResourceRepository {
         if ($this->canStore($model) && $parent = $this->getParentResource($model)) {
             $resources = $this->getParentResourceCollection($parent->id);
 
-            if(!$resources) {
+            if(!$resources->count()) {
                 $resources = new EloquentResourceCollection(new Collection(), $this->resourceClass);
 
                 if ($this->getParentRepository()) {
