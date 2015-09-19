@@ -38,6 +38,16 @@ class TicketResource extends AbstractEloquentResource {
 
     private $position = null;
 
+    public static function createResourceFromArray($array, $resource = null)
+    {
+        $resource = parent::createResourceFromArray($array, $resource);
+
+        $resource->setAvailableCurrency($array['available_currency']);
+        $resource->setPosition($array['position']);
+
+        return $resource;
+    }
+
     public function tournament()
     {
         return $this->item('tournament', 'TopBetta\Resources\Tournaments\TournamentResource', $this->model->tournament);
@@ -50,6 +60,16 @@ class TicketResource extends AbstractEloquentResource {
         }
 
         return $this->availableCurrency;
+    }
+
+    /**
+     * @param null $availableCurrency
+     * @return $this
+     */
+    public function setAvailableCurrency($availableCurrency)
+    {
+        $this->availableCurrency = $availableCurrency;
+        return $this;
     }
 
     public function addAvailableCurrency($currency)
@@ -70,15 +90,19 @@ class TicketResource extends AbstractEloquentResource {
 
     public function getQualified()
     {
-        if( ! $this->model->leaderboard ) {
+        if( ! $this->getBalanceToTurnover() ) {
             return false;
         }
 
-        return $this->model->leaderboard->turned_over >= $this->model->leaderboard->balance_to_turnover;
+        return $this->getBalanceToTurnover() <= $this->getTurnedOver();
     }
 
     public function getTurnedOver()
     {
+        if ($this->model->turned_over) {
+            return $this->model->turned_over;
+        }
+
         if ($this->model->leaderboard) {
             return $this->model->leaderboard->turned_over;
         }
@@ -88,11 +112,27 @@ class TicketResource extends AbstractEloquentResource {
 
     public function getBalanceToTurnover()
     {
+        if ($this->model->balance_to_turnover) {
+            return $this->model->balance_to_turnover;
+        }
+
         if ($this->model->leaderboard) {
             return $this->model->leaderboard->balance_to_turnover;
         }
 
         return 0;
+    }
+
+    public function setTurnedOver($turnover)
+    {
+        $this->model->turned_over = $turnover;
+        return $this;
+    }
+
+    public function setBalanceToTurnover($balance)
+    {
+        $this->model->balance_to_turnover = $balance;
+        return $this;
     }
 
     public function toArray()

@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Tournaments;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Jobs\UpdateTournamentLeaderboard;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
@@ -126,6 +127,18 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         return $this->repository->getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified);
     }
 
+    public function makeCacheResource($model)
+    {
+        \Bus::dispatch(new UpdateTournamentLeaderboard($model));
+    }
+
+    public function updateCacheLeaderboard($model)
+    {
+        $resource = $this->createResource($model);
+
+        $this->addToCollection($resource, self::COLLECTION_TOURNAMENT_LEADERBOARD);
+    }
+
 
     public function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
@@ -191,7 +204,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                         $record->setPosition($position);
                     }
 
-                    $this->ticketRepository->updatePosition($record->userId, $record->getModel()->tournament_id, $record->getPosition());
+                    $this->ticketRepository->updatePositionAndTurnOver($record->userId, $record->getModel()->tournament_id, $record->getPosition(), $record->turned_over, $record->balance_to_turnover);
                     $newLeaderboard->push($record);
                     $previousRecord = $record;
                     $inserted = true;
@@ -208,7 +221,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                     $leaderboardRecord->setPosition($position);
                 }
 
-                $this->ticketRepository->updatePosition($leaderboardRecord->userId, $record->tournament->id, $leaderboardRecord->getPosition());
+                $this->ticketRepository->updatePosition($leaderboardRecord->userId, $record->getModel()->tournament->id, $leaderboardRecord->getPosition());
                 $newLeaderboard->push($leaderboardRecord);
                 $previousRecord = $leaderboardRecord;
             }
@@ -216,7 +229,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
         if (!$record->qualified()) {
             $newLeaderboard->push($record);
-            $this->ticketRepository->updatePosition($record->userId, $record->getModel()->tournament_id, $record->getPosition());
+            $this->ticketRepository->updatePositionAndTurnover($record->userId, $record->getModel()->tournament_id, $record->getPosition(), $record->turned_over, $record->balance_to_turnover);
         }
 
         return $newLeaderboard;

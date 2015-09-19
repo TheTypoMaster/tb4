@@ -60,12 +60,27 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         }
     }
 
-    public function setPosition($user, $tournament, $position)
+    public function updatePosition($user, $tournament, $position)
     {
         $ticket = $this->getTicket($user, $tournament);
 
         if ($ticket && $ticket->getPosition() != $position) {
             $ticket->setPosition($position);
+            $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+
+            $this->updateActiveTickets($ticket);
+            $this->updateDateTickets($ticket->tournament->end_date, $ticket);
+        }
+    }
+
+    public function updatePositionAndTurnover($user, $tournament, $position, $turnedOver, $balanceToTurnover)
+    {
+        $ticket = $this->getTicket($user, $tournament);
+
+        if ($ticket && $ticket->getPosition() != $position) {
+            $ticket->setPosition($position);
+            $ticket->setTurnedOver($turnedOver);
+            $ticket->setBalanceToTurnOver($balanceToTurnover);
             $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
 
             $this->updateActiveTickets($ticket);
@@ -95,7 +110,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
     public function getDateTickets($user, $date)
     {
-        return $this->getCollection($this->cacheForever . $user . '_' . $date);
+        return $this->getCollection($this->cachePrefix . $user . '_' . $date);
     }
 
     public function updateActiveTickets($resource)
@@ -104,6 +119,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         if ($resource->resulted_flag && array_get($tickets, $resource->id)) {
             unset($tickets[$resource->id]);
         } else if (!$resource->resulted_flag) {
+            $resource->loadRelation('tournament');
             $tickets[$resource->id] = $resource->toArray();
         }
 
@@ -114,17 +130,17 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     {
         if (($carbonDate = Carbon::createFromFormat('Y-m-d H:i:s', $date)) > Carbon::now()->startOfDay()->subDays(2)) {
             $tickets = $this->getDateTicketsArray($resource->user_id, $date);
-
+            $resource->loadRelation('tournament');
             $tickets[$resource->id] = $resource->toArray();
 
-            $this->put($this->cachePrefix . $resource->user_id . '_active', $tickets, $carbonDate->addDay(2)->diffInMinutes());
+            $this->put($this->cachePrefix . $resource->user_id . $carbonDate->toDateString(), $tickets, $carbonDate->addDay(2)->diffInMinutes());
         }
     }
 
     public function saveTicket($model)
     {
         $resource = $this->createResource($model);
-        $this->put($this->cachePrefix . $model->user_id . '_'. $model->tournament_id, $resource->toArray(), $carbonDate->addDays(2)->diffInMinutes());
+        $this->put($this->cachePrefix . $model->user_id . '_'. $model->tournament_id, $resource->toArray(), Carbon::now()->addWeek()->diffInMinutes());
         return $resource;
 
     }
@@ -140,7 +156,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     {
         $ticketResources = new EloquentResourceCollection($tickets, $this->resourceClass);
 
-        $this->put($this->cachePrefix . $user . '_' . $date, $ticketResources->toArray(), Carbon::createFromFormat('Y-m-d', $date)->addDay(2)->diffInMinutes());
+        $this->put($this->cachePrefix . $user . '_' . $date, $ticketResources->toArray(), Carbon::createFromFormat('Y-m-d', $date)->addDays(2)->diffInMinutes());
     }
 
     public function makeCacheResource($model)
@@ -174,7 +190,13 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             return $ticket;
         }
 
-        return $this->saveTicket($this->repository->getTicketByUserAndTournament($userId, $tournamentId));
+        $ticket = $this->repository->getTicketByUserAndTournament($userId, $tournamentId);
+
+        if ($ticket) {
+            return $this->saveTicket($ticket);
+        }
+
+        return null;
     }
 
     public function getRecentAndActiveTicketsForUserWithTournament($user)
@@ -250,7 +272,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     {
         $collection = \Cache::tags($this->tags)->get($key);
 
-        if ($collection) {
+        if (!is_null($collection)) {
             return $this->createCollectionFromArray($collection, $resource);
         }
 
