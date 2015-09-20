@@ -10,6 +10,10 @@
                 </h2>
             </div>
 
+            @if(isset($event_group_id))
+                <?php $default_group_id = $event_group_id;?>
+            @endif
+
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
                 {!! Form::open(['url' => 'admin/event-groups/update/'.$event_group_id]) !!}
 
@@ -37,6 +41,8 @@
                 <div class="form-group">
                     {!! Form::submit('Update', array('class' => 'btn btn-primary')) !!}
                 </div>
+
+                {!! Form::input('hidden', 'event_group_id', $default_group_id, array()) !!}
 
                 {!! Form::close() !!}
             </div>
