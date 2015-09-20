@@ -11,11 +11,22 @@
             </div>
 
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
-                {!! Form::open(['url' => 'admin/event-groups/store?XDEBUG_SESSION_START']) !!}
+                {!! Form::open(['url' => 'admin/event-groups/update/'.$event_group_id]) !!}
 
                 <div class="form-group">
                     {!! Form::label('event_group_name', 'Event Group Name: ') !!}
                     {!! Form::input('text', 'event_group_name', $event_group->name, array('class' => 'form-control')) !!}
+                </div>
+
+                <div class="form-group">
+                    {!! Form::label('sports', 'Sports: ') !!}
+                    {!! Form::select('sports', $sport_list, [], array('id' => 'sports', 'class' => 'form-control', 'placeholder' => '--Select a sport--')) !!}
+                </div>
+
+
+                <div class="form-group">
+                    {!! Form::label('event_groups', 'Event Groups: ') !!}
+                    {!! Form::select('event_groups', [], [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
                 </div>
 
                 <div class="form-group">
@@ -30,6 +41,36 @@
                 {!! Form::close() !!}
             </div>
 
+            <div class="row" style="margin-left: 20px; margin-top: 40px; width: 60%;">
+                @if(isset($event_list))
+                    <table class="table">
+                        <tr>
+                            <th>Event Group Name: </th>
+                            <th>Events</th>
+                            <th>Start Date</th>
+                            <th>Action</th>
+                        </tr>
+
+                        @foreach($event_list as $id => $event_with_group_name)
+                            <?php
+                            $event = $event_with_group_name['event'];
+                            ?>
+                            <tr>
+                                <td>{{$event_with_group_name['event_group_name']}}</td>
+                                <td>(#{{$event->id}}) {{$event->name}}</td>
+                                <td>{{$event->start_date}}</td>
+                                <td><a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}"><button class="btn btn-primary">Remove</button></a></td>
+                            </tr>
+                        @endforeach
+                    </table>
+
+                    <a href="{{URL::to('admin/event-groups')}}">
+                        <button class="btn btn-primary">Done</button>
+                    </a>
+                @endif
+
+            </div>
+
         </div>
     </div>
 
@@ -38,7 +79,46 @@
             $('#events').select2({
                 placeholder: 'select'
             });
+
+
+            function createSelectOptions(json) {
+                var html = $();
+
+                $.each(json, function (index, value) {
+//                if ($.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
+//                    html = html.add($
+//                    ('<option></option>').text(value.name).val(value.id));
+//                }
+
+                    html = html.add($
+                    ('<option></option>').text(value.name).val(value.id));
+                });
+
+                return html;
+            }
+
+            $('#sports').change(function () {
+                var sport = $('#sports').val();
+
+                $.get('/admin/get-event-groups/' + sport)
+                        .done(function (data) {
+                            $('#event_groups').html(createSelectOptions(data));
+                        });
+            });
+
+            $('#event_groups').change(function () {
+                var event_group = $('#event_groups').val();
+
+                $.get('/admin/get-events/' + event_group)
+                        .done(function (data) {
+                            $('#events').html(createSelectOptions(data));
+                            $('#events').select2({
+                                placeholder: '--Select events--'
+                            });
+                        });
+            });
         });
+
     </script>
 
 @stop

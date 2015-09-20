@@ -149,20 +149,26 @@ class TournamentEventGroupController extends Controller
     public function edit($id)
     {
         $event_group = $this->tournamentEventGroupService->getEventGroupByID($id);
+        $sports = $this->sportService->getAllSports();
+        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($id);
 
-        return view('admin.tournaments.event-groups.edit')->with(['event_group' => $event_group]);
+        return view('admin.tournaments.event-groups.edit')->with(['event_group' => $event_group,
+                                                                  'sport_list' => $sports,
+                                                                  'event_list' => $event_list,
+                                                                  'event_group_id' => $id,
+                                                                  'event_group_name' => $event_group->name]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  Request $request
-     * @param  int $id
+     * @param  int $group_id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $group_id)
     {
-        //
+        dd($group_id);
     }
 
     /**
