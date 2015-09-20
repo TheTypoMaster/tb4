@@ -37,6 +37,7 @@
                     {!! Form::select('sports', $sport_list, [], array('id' => 'sports', 'class' => 'form-control', 'placeholder' => '--Select a sport--')) !!}
                 </div>
 
+
                 <div class="form-group">
                     {!! Form::label('event_groups', 'Event Groups: ') !!}
                     {!! Form::select('event_groups', [], [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
@@ -62,6 +63,7 @@
                         <tr>
                             <th>Event Group Name: </th>
                             <th>Events</th>
+                            <th>Start Date</th>
                             <th>Action</th>
                         </tr>
 
@@ -71,7 +73,8 @@
                             ?>
                             <tr>
                                 <td>{{$event_with_group_name['event_group_name']}}</td>
-                                <td>{{$event->name}}</td>
+                                <td>(#{{$event->id}}) {{$event->name}}</td>
+                                <td>{{$event->start_date}}</td>
                                 <td><a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}"><button class="btn btn-primary">Remove</button></a></td>
                             </tr>
                         @endforeach
