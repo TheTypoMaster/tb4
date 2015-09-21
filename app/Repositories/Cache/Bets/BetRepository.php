@@ -234,7 +234,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             'fixed'            => $bet->product->is_fixed_odds || $bet->type->name == BetTypeRepositoryInterface::TYPE_SPORT,
             "fixed_odds"       => $bet->betselection->first()->fixed_odds,
             'productId'        => $bet->product->id,
-            'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->provider_product_match : null,
+            'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->provider_product_name : null,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {
