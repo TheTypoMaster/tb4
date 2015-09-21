@@ -17,7 +17,7 @@
                         <th>Event Group Name</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th colsan="2" align="centre">Action</th>
+                        <th colspan="2" align="centre">Action</th>
                     </tr>
 
                     @foreach($event_groups as $event_group)
