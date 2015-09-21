@@ -21,4 +21,13 @@ class DbTournamentEventGroupEventRepository extends BaseEloquentRepository imple
                     ->where('event_id', $event_id)
                    ->delete();
     }
+
+    /**
+     * remove all events that belong to the group
+     * @param $group_id
+     */
+    public function removeAllEventsFromGroup($group_id) {
+        $this->model->where('tournament_event_group_id', $group_id)
+                    ->delete();
+    }
 }

@@ -38,4 +38,12 @@ class TournamentEventGroupEventService
     public function removeEventFromGroup($group_id, $event_id) {
         $this->tournamentEventGroupEventRepository->removeEvent($group_id, $event_id);
     }
+
+    /**
+     * remove all events that belong to the group
+     * @param $group_id
+     */
+    public function removeAllEventsFromGroup($group_id) {
+        $this->tournamentEventGroupEventRepository->removeAllEventsFromGroup($group_id);
+    }
 }

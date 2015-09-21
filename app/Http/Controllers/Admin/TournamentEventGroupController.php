@@ -77,14 +77,29 @@ class TournamentEventGroupController extends Controller
 
         } else {
             $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID(Input::get('event_group_id'));
+
             $event_group_id = Input::get('event_group_id');
             $event_group_params = array('name' => Input::get('event_group_name'));
             $start_time = $new_created_event_group->start_date;
             $end_time = $new_created_event_group->end_date;
+
+            //edit the tournament event group name
+            $new_group_name = Input::get('event_group_name');
+            $new_created_event_group->name = $new_group_name;
+            $new_created_event_group->update();
+
         }
 
 
+
+
         $selected_events = Input::get('events');
+
+        //if no event selected, just update tournament event group name
+        if(Input::get('events') == '') {
+            $selected_events = array();
+        }
+
         $items = array();
         $items['id'] = $event_group_id;
 
@@ -121,10 +136,13 @@ class TournamentEventGroupController extends Controller
         $new_created_event_group->end_date = $end_time;
         $new_created_event_group->update();
 
-        //get all events that belong to this event group, send them to template
 
+        //if no events selected, do not create new events
+        if(Input::get('events') != '') {
 
-        $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
+            //get all events that belong to this event group, send them to template
+            $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
+        }
         return redirect()->action('Admin\TournamentEventGroupController@keepAdding', ['event_group_name' => $event_group_params['name'],
             'event_group_id' => $event_group_id]);
     }
@@ -168,7 +186,7 @@ class TournamentEventGroupController extends Controller
      */
     public function update(Request $request, $group_id)
     {
-        dd($group_id);
+
     }
 
     /**
@@ -177,9 +195,12 @@ class TournamentEventGroupController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($group_id)
     {
-        //
+        $tournament_event_group = $this->tournamentEventGroupService->getEventGroupByID($group_id);
+        $tournament_event_group->delete();
+        $this->tournamentEventGroupEventService->removeAllEventsFromGroup($group_id);
+        return redirect()->action('Admin\TournamentEventGroupController@index');
     }
 
     /**

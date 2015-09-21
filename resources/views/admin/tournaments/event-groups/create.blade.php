@@ -14,10 +14,14 @@
 
             $default_group_name = '';
             $default_group_id = '';
+            $disable = '';
             ?>
 
             @if(isset($event_group_name))
-                <?php $default_group_name = $event_group_name;?>
+                <?php
+                    $default_group_name = $event_group_name;
+                    $disable = 'disabled';
+                ?>
             @endif
 
             @if(isset($event_group_id))
