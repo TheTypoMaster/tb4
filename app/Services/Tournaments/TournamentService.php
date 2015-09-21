@@ -488,23 +488,31 @@ class TournamentService {
         }
 
         //get start and end dates
-        if( $eventGroupId = array_get($tournamentData, 'event_group_id', null)) {
-            if ($event = $this->competitionRepository->getFirstEventForCompetition($eventGroupId)) {
-                $tournamentData['start_date'] = $event->start_date;
-                $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
-            } else {
-                if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
-                    $tournamentData['start_date'] = $eventGroup->start_date;
-                    $tournamentData['end_date']   = $eventGroup->start_date;
-                }
-            }
-            //betting closed date
-            if (array_get($tournamentData, 'close_betting_on_first_match_flag')) {
-                $tournamentData['betting_closed_date'] = $tournamentData['start_date'];
-            } else {
-                $tournamentData['betting_closed_date'] = $tournamentData['end_date'];
-            }
-        }
+//        if( $eventGroupId = array_get($tournamentData, 'event_group_id', null)) {
+//            if ($event = $this->competitionRepository->getFirstEventForCompetition($eventGroupId)) {
+//                $tournamentData['start_date'] = $event->start_date;
+//                $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
+//            } else {
+//                if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
+//                    $tournamentData['start_date'] = $eventGroup->start_date;
+//                    $tournamentData['end_date']   = $eventGroup->start_date;
+//                }
+//            }
+//            //betting closed date
+//            if (array_get($tournamentData, 'close_betting_on_first_match_flag')) {
+//                $tournamentData['betting_closed_date'] = $tournamentData['start_date'];
+//            } else {
+//                $tournamentData['betting_closed_date'] = $tournamentData['end_date'];
+//            }
+//        }
+
+        //get tournament event group
+        $tournament_event_group = $this->tournamentEventGroupService->getEventGroupByID($tournamentData['event_group_id']);
+
+        //set tournament start date and end date
+        $tournamentData['start_date'] = $tournament_event_group->start_date;
+        $tournamentData['end_date'] = $tournament_event_group->end_date;
+
 
         //tournament of the day
         $tod = array_get($tournamentData, 'tod_flag', null);
