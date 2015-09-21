@@ -108,7 +108,8 @@ class TournamentService {
                                 TournamentEventService $tournamentEventService ,
                                 TournamentTransactionService $tournamentTransactionService,
                                 LeaderboardResourceService $leaderboardResourceService,
-                                TournamentResultService $resultService)
+                                TournamentResultService $resultService,
+                                TournamentEventGroupService $tournamentEventGroupService)
     {
         $this->tournamentRepository = $tournamentRepository;
         $this->buyInRepository = $buyInRepository;
@@ -126,6 +127,7 @@ class TournamentService {
         $this->tournamentTransactionService = $tournamentTransactionService;
         $this->leaderboardResourceService = $leaderboardResourceService;
         $this->resultService = $resultService;
+        $this->tournamentEventGroupService = $tournamentEventGroupService;
     }
 
     public function getVisibleTournaments($type = 'racing', $date = null)
@@ -347,15 +349,23 @@ class TournamentService {
             }
 
         } else if( $eventGroupId = array_get($tournamentData, 'event_group_id', null)) {
-            if ($event = $this->competitionRepository->getFirstEventForCompetition($eventGroupId)) {
-                $tournamentData['start_date'] = $event->start_date;
-                $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
-            } else {
-                if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
-                    $tournamentData['start_date'] = $eventGroup->start_date;
-                    $tournamentData['end_date']   = $eventGroup->start_date;
-                }
-            }
+//            if ($event = $this->competitionRepository->getFirstEventForCompetition($eventGroupId)) {
+//                $tournamentData['start_date'] = $event->start_date;
+//                $tournamentData['end_date']   = $this->competitionRepository->getLastEventForCompetition($eventGroupId)->start_date;
+//            } else {
+//                if( $eventGroup = $this->competitionRepository->find($eventGroupId) ) {
+//                    $tournamentData['start_date'] = $eventGroup->start_date;
+//                    $tournamentData['end_date']   = $eventGroup->start_date;
+//                }
+//            }
+
+            //get tournament event group
+            $tournament_event_group = $this->tournamentEventGroupService->getEventGroupByID($eventGroupId);
+
+            //set tournament start date and end date
+            $tournamentData['start_date'] = $tournament_event_group->start_date;
+            $tournamentData['end_date'] = $tournament_event_group->end_date;
+
             //betting closed date
             if (array_get($tournamentData, 'close_betting_on_first_match_flag')) {
                 $tournamentData['betting_closed_date'] = $tournamentData['start_date'];
@@ -399,7 +409,8 @@ class TournamentService {
         }
 
         //get tournament name and desc
-        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
+//        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
+        $tournamentData['name'] = $tournament_event_group->name;
         $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
 
         //convert from cents
@@ -641,7 +652,9 @@ class TournamentService {
 
                 if (!empty($meeting_id) && $meeting_id != -1) {
                     $meeting	= $this->competitionRepository->find($meeting_id);
-                    $automated_text	.= $meeting->name ;
+//                    $automated_text	.= $meeting->name ;
+                    $automated_text	.= 'meeting_name' ;
+
                 } else if (!empty($future_meeting_venue) && $future_meeting_venue != -1) {
                     $automated_text .= $future_meeting_venue;
                 }
