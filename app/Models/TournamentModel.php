@@ -112,4 +112,15 @@ class TournamentModel extends Eloquent {
         $query->where('start_date', '>=', $date);
         return $query;
     }
+
+    public function __get($name)
+    {
+        $value = parent::__get($name);
+
+        if ($name == 'eventGroup' && !$value) {
+            return $this->competition;
+        }
+
+        return $value;
+    }
 }
