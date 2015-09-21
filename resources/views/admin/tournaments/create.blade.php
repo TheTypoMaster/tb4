@@ -7,7 +7,10 @@
                 <h2 class="col-lg-4">Tournaments</h2>
             </div>
 
+            {{--{!! Form::model(\Input::old(), array("route" => ["admin.tournaments.store", 'XDEBUG_SESSION_START' => 1], "method" => "post")) !!}--}}
+
             {!! Form::model(\Input::old(), array("route" => "admin.tournaments.store", "method" => "post")) !!}
+
             <fieldset>
                 <legend>Tournament Details</legend>
                 <div class="col-lg-6">

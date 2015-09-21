@@ -58,7 +58,7 @@
 			<td>{{ TopBetta\Models\TournamentTicket::countTournamentEntrants($tournament->id) }}</td>
 			<td>{{ ($tournament->status_flag) ? 'Active' : 'Inactive' }}</td>
             <td>
-                {!! link_to_route('admin.tournaments.edit', "Edit", array($tournament->id), array("class" => 'btn btn-primary')) !!} <br/>
+                {!! link_to_route('admin.tournaments.edit', "Edit", array($tournament->id, 'XDEBUG_SESSION_START'=>1), array("class" => 'btn btn-primary')) !!} <br/>
                 @if( ! $tournament->cancelled_flag && $tournament->end_date > Carbon\Carbon::now())
                     {!! link_to('/admin/tournaments/add-users/' . $tournament->id, "Add Users", array("class" => "btn btn-info")) !!} <br/>
                 @endif
