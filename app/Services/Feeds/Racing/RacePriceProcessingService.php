@@ -12,6 +12,7 @@ use File;
 use Carbon;
 use Queue;
 
+use TopBetta\Jobs\Pusher\Racing\PriceSocketUpdate;
 use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionRepository;
@@ -79,6 +80,8 @@ class RacePriceProcessingService {
 	 */
 	private function _processPriceData($prices){
 
+        $updates = array();
+
         Log::debug($this->logprefix . '(_processPriceData): ', $prices);
 		foreach ($prices as $price) {
 			/*
@@ -110,6 +113,10 @@ class RacePriceProcessingService {
 				Log::debug($this->logprefix . '(_processPriceData): Race for price not found ' . $price['MeetingId'] . '_' . $price['RaceNo']);
 				continue;
 			}
+            if (!array_get($updates, $existingRaceDetails['id'])) {
+                $updates[$existingRaceDetails['id']] = array();
+            }
+
 
 			$runnerCount = 1;
 
@@ -158,9 +165,11 @@ class RacePriceProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
+                    $updates[$existingRaceDetails['id']][] = $priceModel;
                 } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
+                    $updates[$existingRaceDetails['id']][] = $priceModel;
                 }
                 $runnerCount++;
 			}
@@ -176,6 +185,13 @@ class RacePriceProcessingService {
             // put on the queue
             Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => array($price)), 'risk-fixed-queue');
 		}
+
+        foreach($updates as $race=>$selections) {
+            if (count($selections)) {
+                \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => $selections)));
+            }
+        }
+
 		return "Price(s) Processed";
 	}
 }
