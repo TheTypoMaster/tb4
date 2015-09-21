@@ -37,7 +37,7 @@ class TournamentEventService {
 
         if( $tournament->type == 'racing') {
             $eventGroup = $this->meetingService->getMeetingWithSelections($tournament->event_group_id, $eventId);
-            $data['selected_race'] = $eventGroup['selected_race'];
+            $selected = $eventGroup['selected_race'];
             $eventGroup = $eventGroup['data'];
         } else {
             $eventGroup = $this->competitionService->getCompetitionsWithEvents(array('competition_id' => $tournament->event_group_id))['data']->first();
