@@ -50,4 +50,13 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
             ->get();
     }
 
+    /**
+     * get event group by event group id
+     * @param $event_group_id
+     * @return mixed
+     */
+    public function getEventGroup($event_group_id) {
+        return $this->model->find($event_group_id)->first();
+    }
+
 }
