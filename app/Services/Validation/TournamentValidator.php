@@ -12,7 +12,6 @@ namespace TopBetta\Services\Validation;
 class TournamentValidator extends Validator {
 
     public $rules = array(
-        "tournament_sport_id" => "required|exists:tbdb_tournament_sport,id",
         "event_group_id" => "required|exists:tbdb_event_group,id",
         "buy_in" => "required|numeric",
         "entry_fee" => "required|numeric",

@@ -10,6 +10,10 @@ namespace TopBetta\Services\Racing;
 
 use App;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\MeetingResource;
+use TopBetta\Resources\RaceResource;
 use TopBetta\Services\Betting\BetService;
 use TopBetta\Services\Resources\Cache\CachedMeetingResourceService;
 use TopBetta\Services\Resources\Cache\CachedSelectionResourceService;
@@ -151,6 +155,36 @@ class MeetingService {
     {
         $this->meetingResourceService = App::make('TopBetta\Services\Resources\Cache\CachedMeetingResourceService');
         return $this;
+    }
+
+    public function getMeetingsByRaces($races, $selected = null)
+    {
+        $meetings = new EloquentResourceCollection(new Collection, 'TopBetta\Resources\MeetingResource');
+
+        $selectionsSet = false;
+
+        foreach ($races as $race) {
+            if (! $meeting = $meetings->get($race->competition->first()->id)) {
+                $meeting = new MeetingResource($race->competition->first());
+                $meeting->setRaces(new Collection);
+                $meetings->put($meeting->id, $meeting);
+            }
+
+            $meeting->races()->push($resource = new RaceResource($race));
+
+            $this->raceResourceService->loadTotesForRace($resource);
+
+            if (($selected == $race->id) || (!$selectionsSet && $this->raceResourceService->isOpen($resource))) {
+                $resource->loadRelation('selections');
+                $selectionsSet = $race->id;
+            }
+        }
+
+        if (!$selectionsSet) {
+            $meetings->first()->races()->first()->loadRelation('selections');
+        }
+
+        return array("data" => $meetings, "selected_race" => $selectionsSet);
     }
 
 }

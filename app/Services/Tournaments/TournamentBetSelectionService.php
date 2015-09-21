@@ -51,7 +51,7 @@ class TournamentBetSelectionService {
 
     public function selectionBelongsToTournament($selection, $tournament)
     {
-        return in_array($selection->market->event->id, $tournament->competition->events()->get()->lists('id')->all());
+        return in_array($selection->market->event->id, $tournament->eventGroup->events->lists('id')->all());
     }
 
     public function createBetSelections($bet, $selections)

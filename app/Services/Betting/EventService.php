@@ -114,4 +114,24 @@ class EventService {
 
         return $betsPaid;
     }
+
+    /**
+     * get all events start from today
+     * @return mixed
+     */
+    public function getAllEventsFromToday() {
+        $events = $this->eventRepository->getAllEventsFromToday();
+        $event_list = array();
+
+        foreach($events as $event) {
+            $event_list[$event->id] = '(#' . $event->id . ') ' . $event->name;
+        }
+        return $event_list;
+    }
+
+    public function getEventByID($id) {
+        $event = $this->eventRepository->getEventByEventID($id);
+        return $event;
+    }
+
 }

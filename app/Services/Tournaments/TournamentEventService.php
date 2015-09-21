@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Tournaments;
 
 
+use Illuminate\Support\Collection;
 use TopBetta\Services\Racing\MeetingService;
 use TopBetta\Services\Sports\CompetitionService;
 
@@ -43,8 +44,14 @@ class TournamentEventService {
             $selected = null;
         }
 
-        $data['data'] = array($eventGroup);
+        return array('data' => array($eventGroup), 'selected_event' => $selected);
+    }
 
-        return $data;
+    public function getMeetings($tournament, $eventId = null)
+    {
+        $races = $tournament->getModel()->eventGroup->events
+            ->load('competition');
+
+        return $this->meetingService->getMeetingsByRaces($races, $eventId);
     }
 }

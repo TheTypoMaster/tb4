@@ -237,6 +237,22 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('tournaments/cancel/{tournamentId}', 'Admin\TournamentsController@cancel');
     Route::get('tournaments/download/entrants', 'Admin\TournamentsController@downloadEntrants');
 
+    //tournament event groups
+    Route::get('event-groups', 'Admin\TournamentEventGroupController@index');
+    Route::get('event-groups/create', 'Admin\TournamentEventGroupController@create');
+    Route::post('event-groups/store', 'Admin\TournamentEventGroupController@store');
+    Route::get('event-groups/edit/{id}', 'Admin\TournamentEventGroupController@edit');
+    Route::get('event-groups/delete/{id}', 'Admin\TournamentEventGroupController@destroy');
+    Route::get('get-event-groups/{id}', 'Admin\TournamentEventGroupController@getEvnetGruops');
+    Route::get('get-events/{id}', 'Admin\TournamentEventGroupController@getEventsByEventGroup');
+    Route::get('event-groups/keepadding/{group_name}/{group_id}', 'Admin\TournamentEventGroupController@keepAdding');
+    Route::get('event-groups/remove_event/{group_id}/{event_id}/{group_name}', 'Admin\TournamentEventGroupController@removeEventFromGroup');
+    Route::post('event-groups/update/{id}', 'Admin\TournamentEventGroupController@store');
+
+
+
+
+
     //tournament comments routes
     Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
     Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');

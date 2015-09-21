@@ -65,12 +65,15 @@ class FrontCombinedTournamentsController extends Controller {
         $combinedResult = false;
 
         // RACING TOURNAMENT
-
+        $tournamentModel = TopBetta\Models\TournamentModel::find($tournId);
         if ($tournamentDetails['tournament_type'] == 'r') {
 
             // work out next event for this meeting
             $meetingId = $tournamentDetails['meeting_id'];
-            $races = TopBetta\Models\RaceMeeting::getRacesForMeetingId($meetingId);
+            $races = array();
+            foreach ($tournamentModel->eventGroup->events->map(function($v){return $v->competition->first(); })->unique('id') as $meetingId) {
+                $races = array_merge($races, TopBetta\Models\RaceMeeting::getRacesForMeetingId($meetingId->id));
+            }
 
             $nextEvent = false;
 
@@ -98,16 +101,29 @@ class FrontCombinedTournamentsController extends Controller {
                 $nextEvent = (int)$raceId;
             }
 
-            $racingController = \App::make('\TopBetta\Http\Controllers\Frontend\FrontCombinedRacingController');
-            $racing =  $racingController->index('r', $nextEvent, $meetingId);
+            $meetings = null;
+            foreach ($tournamentModel->eventGroup->events->map(function($v){return $v->competition->first(); })->unique('id') as $meetingId) {
+                $racingController = \App::make('\TopBetta\Http\Controllers\Frontend\FrontCombinedRacingController');
+                $racing =  $racingController->index('r', $nextEvent, $meetingId->id);
 
-            if ($racing['success']) {
+                if ($racing['success']) {
+                    if (!$meetings) {
+                        $meetings = $racing;
+                        $nextEvent = $meetings['result']['races'][0]['id'];
+                    } else {
+                        $meetings['result']['races'] = array_merge($racing['result']['races'], $meetings['result']['races']);
+                    }
+                }
+            };
+
+
+
 
 //                // add sponsor to race meeting name
 //                $racing['result']['meeting']['name'] = $tournamentKey['group']['name'];
 
-                $combinedResult = array_merge($tournamentKey, $racing['result'], array('selected' => array('race_id' => $nextEvent)));
-            }
+            $combinedResult = array_merge($tournamentKey, $meetings['result'], array('selected' => array('race_id' => $nextEvent)));
+
 
         } else {
 
