@@ -37,4 +37,13 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
         return $this->model->paginate(15);
 //        return $this->model->all();
     }
+
+    /**
+     * get comment by id
+     * @param $comment_id
+     * @return mixed
+     */
+    public function getCommentById($comment_id) {
+        return $this->model->find($comment_id);
+    }
 }
