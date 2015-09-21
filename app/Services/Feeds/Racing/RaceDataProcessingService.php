@@ -671,6 +671,9 @@ class RaceDataProcessingService {
 				Log::debug($this->logprefix . 'Race for price not found ' . $price['MeetingId'] . '_' . $price['RaceNo']);
 				continue;
 			}
+            if (!array_get($updates, $existingRaceDetails->id)) {
+                $updates[$existingRaceDetails->id] = array();
+            }
 
 			$runnerCount = 1;
 
@@ -734,7 +737,15 @@ class RaceDataProcessingService {
 		}
 
         foreach($updates as $race=>$selections) {
-            \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => array_combine(array_fill(0, count($selections), 'id'), $selections))));
+
+            if (count($selections)) {
+                $selectionArray = array();
+                foreach ($selections as $selection) {
+                    $selectionArray[] = array('id' => $selection);
+                }
+
+                \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => $selectionArray)));
+            }
         }
 
 		return "Price(s) Processed";
