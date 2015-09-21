@@ -111,6 +111,15 @@ class RacingSelectionRepository extends CachedResourceRepository
         }
     }
 
+    public function pushRaceSelections($race, $selections)
+    {
+        $resources = new EloquentResourceCollection($selections, $this->resourceClass);
+
+        $raceArray = array("id" => (int) $race, "selections" => $resources);
+
+        $this->getPusher()->trigger($this->cachePrefix . $race, 'update', $raceArray);
+    }
+
     protected function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
         $key = $this->getCollectionCacheKey($collectionKey, $resource);

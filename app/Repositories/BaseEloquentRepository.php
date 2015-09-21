@@ -232,5 +232,10 @@ class BaseEloquentRepository {
         return $model->delete();
     }
 
+    public function getOneByCriteria($column, $value)
+    {
+        return $this->model->where($column, $value)->first();
+    }
+
 
 } 
