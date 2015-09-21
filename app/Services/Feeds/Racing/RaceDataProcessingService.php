@@ -253,13 +253,13 @@ class RaceDataProcessingService {
 
 			$existingMeetingDetails = $this->competitions->getMeetingFromExternalId($race['MeetingId']);
 			if(!$existingMeetingDetails) {
-				Log::debug($this->logprefix . 'Race meeting not found ' . $race['MeetingId']);
+				Log::debug($this->logprefix . '(_processRaceData): Race meeting not found ' . $race['MeetingId']);
 				continue;
 			}
 
 			// make sure there is no overlap with an existing sports competition
 			if ($existingMeetingDetails['type_code'] == 'NULL'){
-				Log::debug($this->logprefix . 'Race meeting overlaps sports ' . $race['MeetingId']);
+				Log::debug($this->logprefix . '(_processRaceData): Race meeting overlaps sports ' . $race['MeetingId']);
 				continue;
 			}
 
@@ -269,7 +269,7 @@ class RaceDataProcessingService {
 			$raceDetails = array();
 
 			if($existingRaceDetails) {
-				Log::debug($this->logprefix . 'Processing existing race - ' . $existingRaceDetails['external_event_id']);
+				Log::debug($this->logprefix . '(_processRaceData): Processing existing race - ' . $existingRaceDetails['external_event_id']);
 				// build up the status check/order array
 				$raceStatusCheckArray = array('O' => 1, 'C' => 2, 'I' => 3, 'R' => 4, 'A' => 5);
 				$currentRaceStatus = $existingRaceDetails['event_status_id'];
@@ -374,12 +374,12 @@ class RaceDataProcessingService {
 
 			$this->events->updateOrCreate($raceDetails, 'external_event_id');
 
-			Log::info($this->logprefix. 'Race Saved - '.$raceDetails['external_event_id'] .', Status - '.$raceDetails['event_status_id']);
+			Log::info($this->logprefix. '(_processRaceData): Race Saved - '.$raceDetails['external_event_id'] .', Status - '.$raceDetails['event_status_id']);
 
             // push race status update to risk manager only if the race already exists and the status changes
             if($existingRaceDetails && $raceStatusCheck[$currentRaceStatus] < $raceStatusCheckArray[$race['RaceStatus']])
             {
-                Log::info($this->logprefix. 'Pushing race status update to Risk', $raceDetails);
+                Log::info($this->logprefix. '(_processRaceData): Pushing race status update to Risk', $raceDetails);
                 $race['status_id'] = $raceDetails['event_status_id'];
                 // TODO: add notification
                 //Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceStatusUpdate' => $race), 'risk-results-queue');
@@ -392,7 +392,7 @@ class RaceDataProcessingService {
             $eventId = $event->id;
 
 			// add pivot table record if this is a newly added race
-            Log::debug($this->logprefix.' Pivot Table Created for eventID - '. $eventId);
+            Log::debug($this->logprefix.'(_processRaceData): Pivot Table Created for eventID - '. $eventId);
             $competitionModel = $this->competitions->getMeeting($existingMeetingDetails['id']);
             $this->events->addModelToCompetition($event, $competitionModel);
 
@@ -697,7 +697,7 @@ class RaceDataProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                } else {
+                } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
                 }

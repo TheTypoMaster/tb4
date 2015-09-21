@@ -14,6 +14,8 @@ use TopBetta\Resources\AbstractEloquentResource;
 
 class BetResource extends AbstractEloquentResource {
 
+    protected static $modelClass = 'TopBetta\Models\BetModel';
+
     protected $attributes = array(
         'id'               => 'id',
         'amount'           => 'bet_amount',
@@ -139,6 +141,13 @@ class BetResource extends AbstractEloquentResource {
      */
     public function getDeductions()
     {
+        if (!$this->deductions) {
+            if ($this->isFixed() && in_array($this->betType, [BetTypeRepositoryInterface::TYPE_WIN, BetTypeRepositoryInterface::TYPE_PLACE])) {
+                $service = \App::make('TopBetta\Services\Betting\SelectionService');
+                $this->deductions = $service->totalDeduction($this->marketId, $this->betType);
+            }
+        }
+
         return $this->deductions;
     }
 

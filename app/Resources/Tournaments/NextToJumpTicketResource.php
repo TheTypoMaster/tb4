@@ -11,7 +11,7 @@ namespace TopBetta\Resources\Tournaments;
 
 class NextToJumpTicketResource extends TicketResource {
 
-    protected function initialize()
+    public function initialize()
     {
         parent::initialize();
 

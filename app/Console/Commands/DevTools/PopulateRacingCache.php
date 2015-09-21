@@ -4,6 +4,7 @@ namespace TopBetta\Console\Commands\DevTools;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use TopBetta\Repositories\Cache\MeetingRepository;
 use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionRepository;
@@ -65,22 +66,32 @@ class PopulateRacingCache extends Command
      */
     public function handle()
     {
-        $meetings = \TopBetta\Models\CompetitionModel::where('start_date', '>=', Carbon::now()->subDays(2))->where('sport_id', '<=', 3)->get();
+        $meetings = \TopBetta\Models\CompetitionModel::where('start_date', '>=', Carbon::now()->subDays(2))->where('sport_id', '<=', 3)->where('type_code', $this->argument('type_code'))->get();
 
         foreach ($meetings as $meeting) {
             $this->meetingRepository->makeCacheResource($meeting);
 
             foreach ($meeting->competitionEvents as $event) {
-                $race = new RaceResource($event);
-                $this->resultService->loadresultForRace($race);
 
-                $this->raceRepository->save($race);
+                if ($event->markets) {
+                    $race = new RaceResource($event);
+                    $this->resultService->loadresultForRace($race);
 
-                foreach ($event->markets->first()->selections as $selection) {
-                    $this->selectionRepository->makeCacheResource($selection);
+                    $this->raceRepository->save($race);
+
+                    foreach ($event->markets->first()->selections as $selection) {
+                        $this->selectionRepository->makeCacheResource($selection);
+                    }
                 }
             }
         }
 
+    }
+
+    protected function getArguments()
+    {
+        return [
+            ['type_code', InputArgument::REQUIRED, 'Type code R|G|H'],
+        ];
     }
 }

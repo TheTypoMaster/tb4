@@ -74,7 +74,7 @@ class PopulateSportsCache extends Command
      */
     public function handle()
     {
-        \Cache::flush(array('sports'));
+        \Cache::tags(array("sports"))->flush();
         $sports = \TopBetta\Models\SportModel::where('id', '>', '3')->get()->load('baseCompetitions');
 
         foreach ($sports as $sport) {

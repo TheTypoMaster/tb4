@@ -9,8 +9,11 @@
 namespace TopBetta\Resources;
 
 
-class UserResource extends AbstractEloquentResource
+use Illuminate\Contracts\Auth\Authenticatable;
+
+class UserResource extends AbstractEloquentResource implements Authenticatable
 {
+    protected static $modelClass = 'TopBetta\Models\UserModel';
 
     protected $attributes = array(
         "id"                => "id",
@@ -51,8 +54,31 @@ class UserResource extends AbstractEloquentResource
 
     private $freeCreditBalance = null;
 
+    public static function createResourceFromArray($array, $resource = null)
+    {
+        $resource = parent::createResourceFromArray($array, $resource);
+
+        if ($balance = $resource->getModel()->account_balance) {
+            $resource->setAccountBalance($balance);
+        }
+
+        if ($balance = $resource->getModel()->free_credit_balance) {
+            $resource->setFreeCreditBalance($balance);
+        }
+
+        return $resource;
+    }
+
     public function getDob()
     {
+        if ($this->model->dob) {
+            return $this->model->dob;
+        }
+
+        if (!$this->model->topbettauser) {
+            return null;
+        }
+
         return $this->model->topbettauser->dob_year . '-' .
             $this->model->topbettauser->dob_month . '-' .
             $this->model->topbettauser->dob_day;
@@ -76,4 +102,85 @@ class UserResource extends AbstractEloquentResource
         return $this->freeCreditBalance;
     }
 
+    public function addAccountBalance($amount)
+    {
+        $this->accountBalance = $this->getAccountBalance() + $amount;
+        return $this;
+    }
+
+    public function addFreeCreditBalance($amount)
+    {
+        $this->freeCreditBalance = $this->getFreeCreditBalance() + $amount;
+        return $this;
+    }
+
+    /**
+     * @param null $accountBalance
+     * @return $this
+     */
+    public function setAccountBalance($accountBalance)
+    {
+        $this->accountBalance = $accountBalance;
+        return $this;
+    }
+
+    /**
+     * @param null $freeCreditBalance
+     * @return $this
+     */
+    public function setFreeCreditBalance($freeCreditBalance)
+    {
+        $this->freeCreditBalance = $freeCreditBalance;
+        return $this;
+    }
+
+    /**
+     * Get the unique identifier for the user.
+     *
+     * @return mixed
+     */
+    public function getAuthIdentifier()
+    {
+        return $this->model->getAuthIdentifier();
+    }
+
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->model->getAuthPassword();
+    }
+
+    /**
+     * Get the e-mail address where password reminders are sent.
+     *
+     * @return string
+     */
+    public function getReminderEmail()
+    {
+        return $this->model->getReminderEmail();
+    }
+
+    public function getRememberToken()
+    {
+        return $this->model->getRememberToken();
+    }
+
+    public function setRememberToken($value)
+    {
+        $this->model->setRememberToken($value);
+    }
+
+    public function getRememberTokenName()
+    {
+        return $this->model->getRememberTokenName();
+    }
+
+    public function topbettauser()
+    {
+        return $this->model->topbettauser;
+    }
 }

@@ -229,7 +229,8 @@ class RaceResulting {
                 Log::debug($this->logprefix. 'Pushing W/P results details to Risk', $riskResultsPayload);
                 // TODO: add notification
                 try{
-                    $this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
+                    Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('RaceResults' => $riskResultsPayload), 'risk-results-queue');
+                    // $this->riskhelper->sendResultData(array('RaceResults' => $riskResultsPayload));
                 }catch (Exception $e){
                     Log::error($this->logprefix. 'Pushing W/P results details to Risk Failed'. print_r($e->getMessage(), true));
                 }

@@ -45,5 +45,12 @@ class TournamentBetResource extends BetResource
     );
 
 
+    public function __isset($name)
+    {
+        if ($name == 'eventId') {
+            return true;
+        }
 
+        return false;
+    }
 }
