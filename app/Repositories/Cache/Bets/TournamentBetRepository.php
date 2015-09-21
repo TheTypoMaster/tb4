@@ -142,7 +142,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
         $bets = $this->getTournamentBetsArray($userId, $tournament->id);
 
         if (!$bets) {
-            $bets = array();
+            $bets = $this->getBetsForUserTournament($userId, $tournament->id)->toArray();
         }
 
         if (($existingBet = array_get($bets, $resource->id)) && $existingBet['status'] == BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED &&
@@ -152,7 +152,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
         $bets[$resource->id] = $resource->toArray();
 
-        $this->put($this->cachePrefix . $userId . '_' . $tournament->id, $bets, $tournament->end_date >= Carbon::now()->subDays(2)->diffInMinutes());
+        $this->put($this->cachePrefix . $userId . '_' . $tournament->id, $bets, Carbon::createFromFormat('Y-m-d H:i:s', $tournament->end_date)->addDays(2)->diffInMinutes());
     }
 
     public function storeTournamentBets($user, $tournament, $bets)

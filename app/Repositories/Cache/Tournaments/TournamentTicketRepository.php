@@ -148,7 +148,10 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     public function updateActiveTickets($resource)
     {
         $tickets = $this->getActiveTicketsArray($resource->user_id);
-        if ($resource->resulted_flag && array_get($tickets, $resource->id)) {
+
+        if (!$tickets) {
+            return;
+        } else if ($resource->resulted_flag && array_get($tickets, $resource->id)) {
             unset($tickets[$resource->id]);
         } else if (!$resource->resulted_flag) {
             $resource->loadRelation('tournament');
@@ -162,6 +165,10 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     {
         if (($carbonDate = Carbon::createFromFormat('Y-m-d H:i:s', $date)) > Carbon::now()->startOfDay()->subDays(2)) {
             $tickets = $this->getDateTicketsArray($resource->user_id, $date);
+
+            if (!$tickets) {
+                return;
+            }
             $resource->loadRelation('tournament');
             $tickets[$resource->id] = $resource->toArray();
 
