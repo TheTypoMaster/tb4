@@ -412,6 +412,6 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     {
         $array = $resource->toArray();
         $array['user_id'] = $resource->user_id;
-        \Bus::dispatch(new BetSocketUpdate($resource->toArray()));
+        \Bus::dispatch(new BetSocketUpdate($array));
     }
 }

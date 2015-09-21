@@ -17,7 +17,7 @@ class BetSocketUpdate extends PusherJob {
 
     public function __construct($data)
     {
-        $this->channel = self::CHANNEL_PREFIX . $data['id'];
+        $this->channel = self::CHANNEL_PREFIX . $data['user_id'];
         parent::__construct($data);
     }
 }
