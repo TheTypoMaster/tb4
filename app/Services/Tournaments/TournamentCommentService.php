@@ -20,6 +20,7 @@ use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Repositories\UserRepo;
 use TopBetta\Services\Resources\Tournaments\CommentResource;
 use TopBetta\Services\Resources\Tournaments\CommentResourceService;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\Validation\TournamentCommentValidator;
 
 class TournamentCommentService {
@@ -45,13 +46,15 @@ class TournamentCommentService {
                                  TournamentRepositoryInterface $tournamentRepository,
                                  CommentResourceService $commentResourceService,
                                  TournamentTicketRepositoryInterface $ticketRepository,
-                                 UserRepo $userRepository)
+                                 UserRepo $userRepository,
+                                 UserAccountService $userService)
     {
         $this->commentRepository = $commentRepository;
         $this->tournamentRepository = $tournamentRepository;
         $this->commentResourceService = $commentResourceService;
         $this->ticketRepository = $ticketRepository;
         $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     public function storeComment($user, $data)
@@ -124,15 +127,18 @@ class TournamentCommentService {
         $comment_list = array();
         foreach($comments as $comment) {
             $comment_trans = array();
-            $user = UserModel::where('id', $comment->user_id)->first();
+//            $user = UserModel::where('id', $comment->user_id)->first();
+            $user = $this->userService->getUser($comment->user_id);
             $tournament = TournamentModel::where('id', $comment->tournament_id)->first();
             $comment_trans['id'] = $comment->id;
 
-            if(count($user->permissions) > 0 && $user->permissions['superuser'] == 1) {
+
+            if($user->usertype == 'Super Administrator') {
                 $comment_trans['username'] = 'TopBetta Admin';
             } else {
                 $comment_trans['username'] = $user->name;
             }
+            $comment_trans['username'] = $user->name;
             $comment_trans['tournament_id'] = $tournament->id;
             $comment_trans['tournament_name'] = $tournament->name;
             $comment_trans['buy_in'] = $tournament->buy_in;
@@ -147,5 +153,14 @@ class TournamentCommentService {
         $comments_with_pagination['comment_list'] = $comment_list;
         $comments_with_pagination['pagination'] = $pagination;
         return $comments_with_pagination;
+    }
+
+    /**
+     * get comment by id
+     * @param $comment_id
+     * @return mixed
+     */
+    public function getCommentById($comment_id) {
+        return $this->commentRepository->getCommentById($comment_id);
     }
 }

@@ -8,9 +8,12 @@ use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Models\TournamentModel;
+use TopBetta\Models\UserModel;
 use TopBetta\Resources\Tournaments\CommentResource;
 use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Tournaments\TournamentCommentService;
+use TopBetta\Services\UserAccount\UserAccountService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 
 class TournamentCommentController extends Controller
@@ -26,10 +29,11 @@ class TournamentCommentController extends Controller
      */
     private $response;
 
-    public function __construct(TournamentCommentService $commentService, ApiResponse $response)
+    public function __construct(TournamentCommentService $commentService, UserAccountService $userService, ApiResponse $response)
     {
         $this->commentService = $commentService;
         $this->response = $response;
+        $this->userService = $userService;
     }
 
     /**
@@ -42,6 +46,17 @@ class TournamentCommentController extends Controller
         try {
             $comments = $this->commentService->getComments($request->all());
             $comments = $comments->toArray();
+
+            //change user name to be TopBetta Admin if the user is a super user
+            foreach($comments['data'] as $key => $comment) {
+                $comment = $this->commentService->getCommentById($comment['id']);
+                $user_id = $comment->user_id;
+                $user = $this->userService->getUser($user_id);
+                if($user->usertype == 'Super Administrator') {
+                    $comments['data'][$key]['username'] = 'TopBetta Admin';
+                }
+            }
+            dd($comments);
         } catch (\InvalidArgumentException $e) {
             return $this->response->failed($e->getMessage(), 400);
         } catch (\Exception $e) {
