@@ -8,6 +8,7 @@
 
 use Cache;
 use Log;
+use TopBetta\Jobs\Pusher\Racing\NextToJumpSocketUpdate;
 use TopBetta\Repositories\DbNextToJumpRepository;
 
 class NextToJumpCacheService {
@@ -133,6 +134,9 @@ class NextToJumpCacheService {
 
         // no results no update
         if(!$nextToJumpArray) return false;
+
+        //updates so trigger socket up
+        event(new NextToJumpSocketUpdate($nextToJumpArray));
 
         // add the cache object
         return $this->_updateNextToJumpCacheObject($nextToJumpArray);

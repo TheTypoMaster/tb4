@@ -12,6 +12,7 @@ namespace TopBetta\Repositories\Cache;
 use Carbon\Carbon;
 use TopBetta\Models\SelectionPricesModel;
 use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
+use TopBetta\Resources\EloquentResourceCollection;
 
 class RacingSelectionPriceRepository extends CachedResourceRepository {
 
@@ -48,6 +49,13 @@ class RacingSelectionPriceRepository extends CachedResourceRepository {
         \Cache::tags($this->tags)->put($this->cachePrefix . $model->selection_id . '_' . $model->bet_product_id, $model->toArray(), Carbon::now()->addDays(1)->diffInMinutes());
 
         return $model;
+    }
+
+    public function pushRaceSelectionPrices($race, $prices)
+    {
+        $resources = new EloquentResourceCollection($prices, $this->resourceClass);
+
+        $this->getPusher()->trigger($this->cachePrefix . $race, 'update', $resources->toArray());
     }
 
 }

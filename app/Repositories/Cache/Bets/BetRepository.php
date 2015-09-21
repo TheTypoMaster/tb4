@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Bets;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use TopBetta\Jobs\Pusher\BetSocketUpdate;
 use TopBetta\Models\BetModel;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
@@ -187,6 +188,8 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
 
             $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
 
+            $this->fireEvents($resource);
+
             return $resource;
         }
 
@@ -235,6 +238,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             "fixed_odds"       => $bet->betselection->first()->fixed_odds,
             'productId'        => $bet->product->id,
             'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->provider_product_name : null,
+            'user_id'           => $bet->user_id,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {
@@ -402,5 +406,12 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
         }
 
         return null;
+    }
+
+    public function fireEvents($resource)
+    {
+        $array = $resource->toArray();
+        $array['user_id'] = $resource->user_id;
+        \Bus::dispatch(new BetSocketUpdate($array));
     }
 }
