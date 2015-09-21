@@ -106,6 +106,7 @@ class TournamentEventGroupService
     public function getEventsByEventGroup($event_group_id) {
 
         $events = $this->eventGroupRepository->getEvents($event_group_id);
+
         return $events;
     }
 

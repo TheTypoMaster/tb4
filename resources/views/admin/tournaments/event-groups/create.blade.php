@@ -116,6 +116,23 @@
                 return html;
             }
 
+            function createSelectOptionsForEvents(json) {
+                var html = $();
+                var race_number = '';
+
+                $.each(json, function (index, value) {
+
+                    if(value.number != null) {
+                        race_number = ', Race: '+value.number;
+                    }
+
+                    html = html.add($
+                    ('<option></option>').text('(#'+value.id+''+race_number+') '+value.name).val(value.id));
+                });
+
+                return html;
+            }
+
             $('#sports').change(function () {
                 var sport = $('#sports').val();
 
@@ -135,7 +152,7 @@
 
                 $.get('/admin/get-events/' + event_group)
                         .done(function (data) {
-                            $('#events').html(createSelectOptions(data));
+                            $('#events').html(createSelectOptionsForEvents(data));
 
                             $('#events').select2({
                                 placeholder: '--Select events--'
