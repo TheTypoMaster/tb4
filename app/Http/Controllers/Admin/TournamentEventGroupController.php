@@ -223,7 +223,6 @@ class TournamentEventGroupController extends Controller
     public function getEventsByEventGroup($event_group_id)
     {
         $event = $this->tournamentEventGroupService->getEventsByEventGroup($event_group_id);
-//        dd($event);
         return $event;
     }
 

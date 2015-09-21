@@ -57,7 +57,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $ticket->addAvailableCurrency($currency);
             $this->put($this->cachePrefix . $userId . '_' . $tournament->id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
         } else {
-            $ticket = $this->getTicketByUserAndTournament($userId, $tournament->id);
+            $ticket = $this->getTicketResourceByUserAndTournament($userId, $tournament->id);
         }
 
         $this->updateActiveTickets($ticket);
@@ -74,7 +74,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $ticket->setPosition($position);
             $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
         } else {
-            $ticket = $this->getTicketByUserAndTournament($user, $tournament);
+            $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
         }
 
         if ($ticket->getPosition() != $position) {
@@ -96,7 +96,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
 
         } else {
-            $ticket = $this->getTicketByUserAndTournament($user, $tournament);
+            $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
         }
 
         $this->updateActiveTickets($ticket);
@@ -249,7 +249,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
      * @param $tournamentId
      * @return \TopBetta\Resources\Tournaments\TicketResource
      */
-    public function getTicketByUserAndTournament($userId, $tournamentId)
+    public function getTicketResourceByUserAndTournament($userId, $tournamentId)
     {
         $ticket = $this->getTicket($userId, $tournamentId);
 
@@ -264,6 +264,11 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         }
 
         return null;
+    }
+
+    public function getTicketByUserAndTournament($userId, $tournamentId)
+    {
+        return $this->repository->getTicketByUserAndTournament($userId, $tournamentId);
     }
 
     public function getRecentAndActiveTicketsForUserWithTournament($user)

@@ -19,8 +19,8 @@
 
             @if(isset($event_group_name))
                 <?php
-                    $default_group_name = $event_group_name;
-                    $disable = 'disabled';
+                $default_group_name = $event_group_name;
+                $disable = 'disabled';
                 ?>
             @endif
 
@@ -65,7 +65,7 @@
                 @if(isset($event_list))
                     <table class="table">
                         <tr>
-                            <th>Event Group Name: </th>
+                            <th>Event Group Name:</th>
                             <th>Events</th>
                             <th>Start Date</th>
                             <th>Action</th>
@@ -73,13 +73,22 @@
 
                         @foreach($event_list as $id => $event_with_group_name)
                             <?php
-                                $event = $event_with_group_name['event'];
+                            $event = $event_with_group_name['event'];
                             ?>
                             <tr>
                                 <td>{{$event_with_group_name['event_group_name']}}</td>
-                                <td>(#{{$event->id}}) {{$event->name}}</td>
+
+                                @if($event->number != null)
+                                    <td>(#{{$event->id}}, Race: {{$event->number}}) {{$event->name}}</td>
+                                @else
+                                    <td>(#{{$event->id}}) {{$event->name}}</td>
+                                @endif
+
                                 <td>{{$event->start_date}}</td>
-                                <td><a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}"><button class="btn btn-primary">Remove</button></a></td>
+                                <td>
+                                    <a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}">
+                                        <button class="btn btn-primary">Remove</button>
+                                    </a></td>
                             </tr>
                         @endforeach
                     </table>
@@ -110,7 +119,24 @@
 //                    ('<option></option>').text(value.name).val(value.id));
 //                }
                     html = html.add($
-                    ('<option></option>').text('(#'+value.id+') '+value.name).val(value.id));
+                    ('<option></option>').text('(#' + value.id + ') ' + value.name).val(value.id));
+                });
+
+                return html;
+            }
+
+            function createSelectOptionsForEvents(json) {
+                var html = $();
+                var race_number = '';
+
+                $.each(json, function (index, value) {
+
+                    if (value.number != null) {
+                        race_number = ', Race: ' + value.number;
+                    }
+
+                    html = html.add($
+                    ('<option></option>').text('(#' + value.id + '' + race_number + ') ' + value.name + ' '+value.start_date).val(value.id));
                 });
 
                 return html;
@@ -135,7 +161,7 @@
 
                 $.get('/admin/get-events/' + event_group)
                         .done(function (data) {
-                            $('#events').html(createSelectOptions(data));
+                            $('#events').html(createSelectOptionsForEvents(data));
 
                             $('#events').select2({
                                 placeholder: '--Select events--'

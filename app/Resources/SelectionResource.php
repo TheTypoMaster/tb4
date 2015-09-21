@@ -102,6 +102,10 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function getForm()
     {
+        if ($form = object_get($this->model, 'form')) {
+            return $form;
+        }
+
         return $this->model->last_starts;
     }
 

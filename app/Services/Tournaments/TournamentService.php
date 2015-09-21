@@ -304,7 +304,8 @@ class TournamentService {
         }
 
         $this->tournamentRepository->updateWithId($tournament->id, array(
-            "paid_flag" => true
+            "paid_flag" => true,
+            "cancelled_flag" => true,
         ));
     }
 

@@ -111,8 +111,13 @@ class DbBetRepository extends BaseEloquentRepository implements BetRepositoryInt
     {
         $model =  $this->model
             ->where('event_id', $event)
-            ->where('bet_result_status_id', $status)
             ->where('bet_product_id', $product);
+
+        if (is_array($status)) {
+            $model->whereIn('bet_result_status_id', $status);
+        } else {
+            $model->where('bet_result_status_id', $status);
+        }
 
         if( $type ) {
             $model->where('bet_type_id', $type);
