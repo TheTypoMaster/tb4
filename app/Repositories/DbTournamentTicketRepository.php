@@ -111,6 +111,18 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
             ->load('leaderboard');
     }
 
+    public function getTicketsForUserByEndDate($user, Carbon $date)
+    {
+        return $this->model
+            ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
+            ->where('user_id', $user)
+            ->where('tbdb_tournament.end_date', '>=', $date->startOfDay()->toDateTimeString())
+            ->where('tbdb_tournament.end_date', '<=', $date->endOfDay()->toDateTimeString())
+            ->with(array('bets'))
+            ->get(array('tbdb_tournament_ticket.*'))
+            ->load('leaderboard');
+    }
+
     public function getAllForUserPaginated($user)
     {
         return $this->model

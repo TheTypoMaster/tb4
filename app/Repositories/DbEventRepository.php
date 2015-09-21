@@ -286,4 +286,12 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
                            ->first();
     }
 
+    public function getEventsWithStatusIn($events, $statuses)
+    {
+        return $this->model
+            ->whereIn('id', $events)
+            ->whereIn('event_status_id', $statuses)
+            ->get();
+    }
+
 }

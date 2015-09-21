@@ -42,6 +42,35 @@ class RacePriceProcessingService {
         $this->logprefix = 'RacePriceProcessingService ';
     }
 
+    /**
+     * Pass payload to correct method for processing
+     *
+     * @param $data
+     * @return string|void
+     */
+    public function processRacingData($data){
+        //\Log::info(print_r($data,true));
+        //Log::debug('Processing Payload');
+        foreach ($data as $key => $racingData) {
+
+            switch ($key) {
+                case 'MeetingList':
+                    return $this->_processMeetingData(($racingData));
+                    break;
+                case 'RaceList':
+                    return $this->_processRaceData(($racingData));
+                    break;
+                case 'RunnerList':
+                    return $this->_processRunnerData(($racingData));
+                    break;
+                case 'PriceList':
+                    return $this->_processPriceData(($racingData));
+                    break;
+            }
+
+        }
+    }
+
 	/**
 	 * Process price data
 	 *
@@ -50,6 +79,7 @@ class RacePriceProcessingService {
 	 */
 	private function _processPriceData($prices){
 
+        Log::debug($this->logprefix . '(_processPriceData): ', $prices);
 		foreach ($prices as $price) {
 			/*
 			 * validate runner payload
@@ -62,7 +92,7 @@ class RacePriceProcessingService {
                             'OddString' => 'required');
 			$validator = Validator::make($price, $rules);
 			if ($validator->fails()) {
-				Log::debug($this->logprefix . '(_processPriceData): Price data incomplete - ' . $validator->messages());
+				Log::debug($this->logprefix . '(_processPriceData): Price data incomplete - ' . $validator->messages(), $price);
 				continue;
 			}
 
@@ -89,7 +119,7 @@ class RacePriceProcessingService {
                 continue;
             }
 
-            Log::info($this->logprefix ."(_processPriceData): Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
+           // Log::info($this->logprefix ."(_processPriceData): Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
 
 			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {
@@ -128,7 +158,7 @@ class RacePriceProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                } else {
+                } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
                 }
@@ -144,7 +174,7 @@ class RacePriceProcessingService {
             if($betProduct->is_fixed_odds == 0) continue;
 
             // put on the queue
-            Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => $price), 'risk-fixed-queue');
+            Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => array($price)), 'risk-fixed-queue');
 		}
 		return "Price(s) Processed";
 	}

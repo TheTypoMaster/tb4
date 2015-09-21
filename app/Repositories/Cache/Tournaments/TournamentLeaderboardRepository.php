@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Tournaments;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Jobs\UpdateTournamentLeaderboard;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentLeaderboardRepositoryInterface;
 use TopBetta\Repositories\DbTournamentLeaderboardRepository;
@@ -35,10 +36,15 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
     protected $collectionKeys = array(
         self::COLLECTION_TOURNAMENT_LEADERBOARD
     );
+    /**
+     * @var TournamentTicketRepository
+     */
+    private $ticketRepository;
 
-    public function __construct(DbTournamentLeaderboardRepository $repository)
+    public function __construct(DbTournamentLeaderboardRepository $repository, TournamentTicketRepository $ticketRepository)
     {
         $this->repository = $repository;
+        $this->ticketRepository = $ticketRepository;
     }
 
     public function getTournamentLeaderboardPaginated($tournament, $limit = 50)
@@ -121,6 +127,20 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         return $this->repository->getLeaderboardRecordsForTournamentWithCurrencyGreaterThen($tournamentId, $currency, $onlyQualified);
     }
 
+    public function makeCacheResource($model)
+    {
+        \Bus::dispatch(new UpdateTournamentLeaderboard($model));
+
+        return $model;
+    }
+
+    public function updateCacheLeaderboard($model)
+    {
+        $resource = $this->createResource($model);
+
+        $this->addToCollection($resource, self::COLLECTION_TOURNAMENT_LEADERBOARD);
+    }
+
 
     public function addToCollection($resource, $collectionKey, $resourceClass = null)
     {
@@ -129,7 +149,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         $leaderboard = $this->getCollection($key);
 
         if (!$leaderboard) {
-            $leaderboard = new EloquentResourceCollection(new Collection(), $this->resourceClass);
+            $leaderboard = new EloquentResourceCollection($this->getTournamentLeaderboardCollection($resource->tournament_id, null), $this->resourceClass);
         }
 
         $leaderboard = $this->insertLeaderboardRecord($resource, $leaderboard);
@@ -186,6 +206,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                         $record->setPosition($position);
                     }
 
+                    $this->ticketRepository->updatePositionAndTurnOver($record->userId, $record->getModel()->tournament_id, $record->getPosition(), $record->turned_over, $record->balance_to_turnover);
                     $newLeaderboard->push($record);
                     $previousRecord = $record;
                     $inserted = true;
@@ -202,13 +223,19 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                     $leaderboardRecord->setPosition($position);
                 }
 
+                $this->ticketRepository->updatePosition($leaderboardRecord->userId, $record->getModel()->tournament->id, $leaderboardRecord->getPosition());
                 $newLeaderboard->push($leaderboardRecord);
                 $previousRecord = $leaderboardRecord;
             }
         }
 
-        if (!$record->qualified()) {
+        if (!$inserted) {
+            if ($record->qualified()) {
+                $record->setPosition($position + $positionCount);
+            }
+
             $newLeaderboard->push($record);
+            $this->ticketRepository->updatePositionAndTurnover($record->userId, $record->getModel()->tournament_id, $record->getPosition(), $record->turned_over, $record->balance_to_turnover);
         }
 
         return $newLeaderboard;
@@ -237,6 +264,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
                     $leaderboardRecord->setPosition($position);
                 }
 
+                $this->ticketRepository->updatePosition($leaderboardRecord->userId, $record->tournament->id, $leaderboardRecord->getPosition());
                 $newLeaderboard->push($leaderboardRecord);
                 $previousRecord = $leaderboardRecord;
             }

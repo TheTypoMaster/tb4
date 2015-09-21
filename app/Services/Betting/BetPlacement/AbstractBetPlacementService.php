@@ -136,13 +136,15 @@ abstract class AbstractBetPlacementService {
             throw new BetPlacementException("Error storing bet selections");
         }
 
+        $resource = $this->betRepository->makeAndGetBetResource($bet);
+
         //send bet to risk
-        $this->riskBetService->sendBet($bet['id']);
+        $this->riskBetService->sendBet($bet);
 
         //dashboard notfication
         $this->notifyDashboard($bet, $transactions);
 
-        return $bet;
+        return $resource;
     }
 
     public function notifyDashboard($bet, $transactions)

@@ -113,9 +113,11 @@ abstract class AbstractTournamentBetPlacementService {
             throw new BetSelectionException(null, "Error creating bet selections");
         }
 
+        $resource = $this->betRepository->makeAndReturnBetResource($bet);
+
         $this->leaderboardService->increaseTurnedOver($ticket->tournament_id, $ticket->user_id, $amount);
 
-        return $bet;
+        return $resource;
     }
 
     public function validateTournamentBet($ticket, $amount, $betType, $selections)

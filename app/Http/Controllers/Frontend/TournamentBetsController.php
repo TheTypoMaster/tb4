@@ -94,7 +94,9 @@ class TournamentBetsController extends Controller
             return $this->response->failed($e->getMessage());
         }
 
-        return $this->response->success($this->betResourceService->findBets(array_get($bets, 'id') ? array($bets['id']) : array_pluck($bets, 'id'))->toArray());
+        return $this->response->success(
+            is_array($bets) ? array_map(function ($v) {return $v->toArray();}, $bets) : ($bets ? $bets->toArray() : array())
+        );
     }
 
     /**

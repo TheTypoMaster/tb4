@@ -28,12 +28,20 @@ class TournamentBetResourceService {
     {
         $bets = $this->betRepository->getBetsForUserTournament($user, $tournament);
 
+        if ($bets instanceof EloquentResourceCollection) {
+            return $bets;
+        }
+
         return new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource');
     }
 
     public function getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses)
     {
         $bets = $this->betRepository->getBetResourcesForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
+
+        if ($bets instanceof EloquentResourceCollection) {
+            return $bets;
+        }
 
         return new EloquentResourceCollection($bets, 'TopBetta\Resources\Tournaments\TournamentBetResource');
     }
