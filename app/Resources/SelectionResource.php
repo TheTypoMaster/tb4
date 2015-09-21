@@ -37,6 +37,10 @@ class SelectionResource extends AbstractEloquentResource {
         "number" => "int",
         "silk_id" => "int",
         "barrier" => "int",
+        "win_tote" => "int",
+        "place_tote" => "int",
+        "win_fixed" => "int",
+        "place_fixed" => "int",
     );
 
     protected $loadIfRelationExists = array(
@@ -208,31 +212,30 @@ class SelectionResource extends AbstractEloquentResource {
         $this->setTypeCode($tempModel->market->event->competition->first()->type_code);
     }
 
+    public function getProduct($betType, $fixed = false)
+    {
+        $product = $this->products->filter(function ($v) use ($betType, $fixed) {
+            return $v->betType == $betType && $v->fixed === $fixed;
+        })->first();
+
+        if (!$product) {
+            return null;
+        }
+
+        return (int)$product->productId;
+    }
+
     public function toArray()
     {
         $array = parent::toArray();
 
-        $array['win_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN);
-        $array['place_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE);
-        $array['win_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN, true);
-        $array['place_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE, true);
-
-        return $array;
-    }
-
-    public function toSmallArray()
-    {
-        $array = array(
-            "id" => $this->id,
-        );
-
-        if ($prices = array_get($this->relations, 'prices')) {
-            $array['prices'] = $prices->toArray();
-            $array['win_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN);
-            $array['place_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE);
-            $array['win_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN, true);
-            $array['place_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE, true);
+        if ($this->products) {
+            $array['win_tote'] = $this->getProduct(BetTypeRepositoryInterface::TYPE_WIN);
+            $array['place_tote'] = $this->getProduct(BetTypeRepositoryInterface::TYPE_PLACE);
+            $array['win_fixed'] = $this->getProduct(BetTypeRepositoryInterface::TYPE_WIN, true);
+            $array['place_fixed'] = $this->getProduct(BetTypeRepositoryInterface::TYPE_PLACE, true);
         }
+
 
         return $array;
     }

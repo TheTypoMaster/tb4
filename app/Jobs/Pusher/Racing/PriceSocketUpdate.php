@@ -9,6 +9,7 @@
 namespace TopBetta\Jobs\Pusher\Racing;
 
 
+use TopBetta\Resources\PriceResource;
 use TopBetta\Resources\SelectionResource;
 
 class PriceSocketUpdate extends RaceSocketUpdate {
@@ -18,10 +19,10 @@ class PriceSocketUpdate extends RaceSocketUpdate {
     public function handle(\Pusher $pusher)
     {
         $data = array('id' => $this->data['id'], 'selections' => array());
+
         foreach ($this->data['selections'] as $selection) {
-            $resource = SelectionResource::createResourceFromArray($selection);
-            $resource->loadRelation('prices');
-            $data['selections'][] = $resource->toSmallArray();
+            $resource = array("id" => $selection->selection_id, "prices" => array((new PriceResource($selection))->toArray()));
+            $data['selections'][] = $resource;
         }
 
         $this->data = $data;
