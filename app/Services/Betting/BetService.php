@@ -57,7 +57,7 @@ class BetService {
         $active = $this->betResourceService->getUnresultedBetsForUser($user, false);
         $recent = $this->betResourceService->getBetsOnDateForUser($user, $date, true);
 
-        return $active->merge($recent);
+        return $recent->merge($active);
     }
 
     public function getBetsForDate($user, $date)
