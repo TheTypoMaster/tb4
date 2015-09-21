@@ -110,7 +110,7 @@
 //                    ('<option></option>').text(value.name).val(value.id));
 //                }
                     html = html.add($
-                    ('<option></option>').text(value.name).val(value.id));
+                    ('<option></option>').text('(#'+value.id+') '+value.name).val(value.id));
                 });
 
                 return html;

@@ -219,4 +219,21 @@ class SelectionResource extends AbstractEloquentResource {
 
         return $array;
     }
+
+    public function toSmallArray()
+    {
+        $array = array(
+            "id" => $this->id,
+        );
+
+        if ($prices = array_get($this->relations, 'prices')) {
+            $array['prices'] = $prices->toArray();
+            $array['win_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN);
+            $array['place_tote'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE);
+            $array['win_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_WIN, true);
+            $array['place_fixed'] = $this->getBetTypePrice(BetTypeRepositoryInterface::TYPE_PLACE, true);
+        }
+
+        return $array;
+    }
 }
