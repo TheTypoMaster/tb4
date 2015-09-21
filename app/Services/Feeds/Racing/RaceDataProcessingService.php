@@ -640,6 +640,7 @@ class RaceDataProcessingService {
         $updates = array();
 
 		foreach ($prices as $price) {
+
 			/*
 			 * validate runner payload
 			 */
@@ -671,6 +672,11 @@ class RaceDataProcessingService {
 				Log::debug($this->logprefix . 'Race for price not found ' . $price['MeetingId'] . '_' . $price['RaceNo']);
 				continue;
 			}
+
+            if (!array_get($updates, $existingRaceDetails['id'])) {
+                $updates[$existingRaceDetails['id']] = array();
+            }
+
 
 			$runnerCount = 1;
 
@@ -719,11 +725,11 @@ class RaceDataProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                    $updates[$existingRaceDetails['id']][] = $existingSelection->id;
+                    $updates[$existingRaceDetails['id']][] = $priceModel;
                 } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                    $updates[$existingRaceDetails['id']][] = $existingSelection->id;
+                    $updates[$existingRaceDetails['id']][] = $priceModel;
                 }
 
 
@@ -731,10 +737,13 @@ class RaceDataProcessingService {
 			}
 
 
+
 		}
 
         foreach($updates as $race=>$selections) {
-            \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => array_combine(array_fill(0, count($selections), 'id'), $selections))));
+            if (count($selections)) {
+                \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => $selections)));
+            }
         }
 
 		return "Price(s) Processed";
