@@ -234,7 +234,7 @@ class TournamentService {
         return $ticket;
     }
 
-    
+
     public function getTournament($tournamentId)
     {
         return $this->tournamentRepository->find($tournamentId);

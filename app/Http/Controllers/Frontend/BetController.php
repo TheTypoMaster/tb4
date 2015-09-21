@@ -100,7 +100,7 @@ class BetController extends Controller {
         }
 
         return $this->apiResponse->success(
-            $this->resourceService->findBets(array_get($response, 'id') ? array($response['id']) : array_pluck($response, 'id'))->toArray()
+            is_array($response) ? array_map(function ($v) {return $v->toArray();}, $response) : array($response->toArray())
         );
 	}
 

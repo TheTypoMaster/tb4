@@ -27,8 +27,6 @@ class RiskSportsBetService extends AbstractRiskBetService {
 
     public function sendBet($bet)
     {
-        $bet = $this->betRepository->find($bet);
-
         $riskBet = array(
             'result_status' => '',
             'dividend' => 0, // TODO: what to do for multis?

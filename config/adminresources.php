@@ -64,6 +64,19 @@ return array(
         array("uri" => "tournament-comments/delete/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/store", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-groups", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups", 'permission' => 'tournaments.view'),
+        array("uri" => "tournaments/event-group/create", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/edit/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/delete/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/create", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/store", 'permission' => 'tournaments.view'),
+        array("uri" => "get-event-groups/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "get-events/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/keepadding/{group_name}/{group_id}", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/remove_event/{group_id}/{event_id}/{group_name}", 'permission' => 'tournaments.view'),
+        array("uri" => "event-groups/update/{id}", 'permission' => 'tournaments.view'),
+
+
     ),
 
     // --- SIDEBAR NAVIGATION MENU ---
@@ -90,6 +103,7 @@ return array(
             array("name" => "Tournament Settings", "fa-icon" => "fa-cog", "url" => "/admin/tournament-settings"),
             array("name" => "Tournament Comments", "fa-icon" => "fa-comment", "url" => "/admin/tournament-comments"),
             array("name" => "Tournament Groups", "fa-icon" => "fa-cubes", "url" => "/admin/tournament-groups"),
+            array("name" => "Tournament Event Groups", "fa-icon" => "fa-cubes", "url" => "/admin/event-groups"),
         )),
         array("name" => "Reports", "route" => "admin.reports.index", "fa-icon" => "fa-file-text"),
         array("name" => "Event Management", "fa-icon" => "fa-list", "children" => array(

@@ -15,6 +15,7 @@ class RiskManagerPushAPIService
 {
     public function pushDataToRiskManagerAPI($data)
     {
+        Log::debug('RiskManagerAPI (pushDataToRiskManagerAPI): Pushing Payload to Risk manager', $data);
 
         // send bet to risk manager
         $responseJSON = \TopBetta\Helpers\CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
@@ -28,7 +29,7 @@ class RiskManagerPushAPIService
             return false;
         }
 
-        Log::debug('RiskManagerAPI (sendData): Response - '.print_r($response,true));
+        Log::debug('RiskManagerAPI (pushDataToRiskManagerAPI): Response - '.print_r($response,true));
         if ($response->http_status_code == 200) {
             return true;
         } else {

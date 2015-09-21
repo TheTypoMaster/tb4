@@ -3,6 +3,7 @@
 use TopBetta\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Request;
+use TopBetta\Models\TournamentEventGroupModel;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\MarketRepositoryInterface;
 use TopBetta\Repositories\Contracts\MeetingVenueRepositoryInterface;
@@ -15,6 +16,7 @@ use TopBetta\Repositories\DbTournamentCompetiitonRepository;
 use TopBetta\Repositories\DbTournamentRepository;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
 use TopBetta\Services\Tournaments\TournamentAdminService;
+use TopBetta\Services\Tournaments\TournamentEventGroupService;
 use TopBetta\Services\Tournaments\TournamentService;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
 use View;
@@ -104,7 +106,8 @@ class TournamentsController extends Controller
                                 TournamentAdminService $tournamentAdminService,
                                 MarketRepositoryInterface $marketRepository,
                                 MeetingVenueRepositoryInterface $meetingVenueRepository,
-                                TournamentGroupRepositoryInterface $tournamentGroupRepository )
+                                TournamentGroupRepositoryInterface $tournamentGroupRepository,
+                                TournamentEventGroupService $tournamentEventGroupService)
 	{
 
 		$this->tournamentRepo = $tournamentRepo;
@@ -121,6 +124,7 @@ class TournamentsController extends Controller
         $this->marketRepository = $marketRepository;
         $this->meetingVenueRepository = $meetingVenueRepository;
         $this->tournamentGroupRepository = $tournamentGroupRepository;
+        $this->tournamentEventGroupService = $tournamentEventGroupService;
     }
 
 	/**
@@ -147,7 +151,7 @@ class TournamentsController extends Controller
         } else {
 			$tournaments = $this->tournamentRepo->findAllPaginated();
 		}
-
+//        dd($tournaments);
 		return View::make('admin.tournaments.index', compact('tournaments', 'search', 'from', 'to', 'order'));
 	}
 
@@ -171,17 +175,19 @@ class TournamentsController extends Controller
         }
 
         //get event groups
-        $eventGroups = array("Select Event Group");
-        if($competitionId = Input::old('competition_id')) {
-            $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
+//        $eventGroups = array("Select Event Group");
+//        if($competitionId = Input::old('competition_id')) {
+//            $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
+//
+//            if($eventGroupsCollection) {
+//                $eventGroups += $eventGroupsCollection->map(function($q) {
+//                    return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
+//                })->lists('name', 'id')->all();
+//            }
+//        }
 
-            if($eventGroupsCollection) {
-                $eventGroups += $eventGroupsCollection->map(function($q) {
-                    return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
-                })->lists('name', 'id')->all();
-            }
-        }
-
+        $eventGroups = $this->tournamentEventGroupService->getAllEventGroupsToArray();
+//        dd($eventGroups);
         //get the buyins
         $buyins = array("Select Ticket Value");
 
@@ -242,6 +248,7 @@ class TournamentsController extends Controller
             ));
         }
 
+        $tournamentData['tournament_sport_id'] = 0;
         try {
             $tournament = $this->tournamentService->createTournament($tournamentData);
         } catch (ValidationException $e) {
@@ -617,7 +624,5 @@ class TournamentsController extends Controller
             return array("id" => $key, "name" => $value);
         }, array_keys($array), $array);
     }
-
-
 
 }

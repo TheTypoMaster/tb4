@@ -11,19 +11,19 @@
             <fieldset>
                 <legend>Tournament Details</legend>
                 <div class="col-lg-6">
-                    <div class="form-group">
-                        {!! Form::label('tournament_sport_id', 'Sports') !!}<br/>
-                        {!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('tournament_sport_id', 'Sports') !!}<br/>--}}
+                        {{--{!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}--}}
+                    {{--</div>--}}
 
-                    <div class="form-group">
-                        {!! Form::label('competition_id', 'Competitions') !!}<br/>
-                        {!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('competition_id', 'Competitions') !!}<br/>--}}
+                        {{--{!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}--}}
+                    {{--</div>--}}
 
                     <div class="form-group event-group-container" id="event-group">
                         {!! Form::label('event_group_id', 'Event Group') !!}<br/>
-                        {!! Form::select('event_group_id', [], null, array("" => "","class" => "event-multiselect form-control")) !!}
+                        {!! Form::select('event_group_id', $eventGroups, null, array("" => "","class" => "event-multiselect form-control")) !!}
                         <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select Future Meeting</a>
                     </div>
 
@@ -328,17 +328,17 @@
                     });
             });
 
-            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
-                $('#event-group').find('.event-group-toggle').show();
-            } else {
-                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
-                $eventGroup.show();
-                $eventGroup.find('.form-control').removeAttr('disabled');
-                $eventGroup.find('.event-group-toggle').hide();
-                $eventGroup.find('.event-multiselect').multiselect('enable');
-                $future.hide();
-                $future.find('.form-control').attr('disabled', 'disabled');
-            }
+//            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
+//                $('#event-group').find('.event-group-toggle').show();
+//            } else {
+//                var $eventGroup = $('#event-group'), $future = $('#future-meeting');
+//                $eventGroup.show();
+//                $eventGroup.find('.form-control').removeAttr('disabled');
+//                $eventGroup.find('.event-group-toggle').hide();
+//                $eventGroup.find('.event-multiselect').multiselect('enable');
+//                $future.hide();
+//                $future.find('.form-control').attr('disabled', 'disabled');
+//            }
 
 
         });

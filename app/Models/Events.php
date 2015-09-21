@@ -1,5 +1,6 @@
 <?php namespace TopBetta\Models;
 
+use Carbon\Carbon;
 use Eloquent;
 
 class Events extends Eloquent {
@@ -39,6 +40,17 @@ class Events extends Eloquent {
     public function teamPlayers()
     {
         return $this->hasMany('TopBetta\Models\EventTeamPlayerModel', 'event_id');
+    }
+
+    /**
+     * get all events that start from today
+     * @param $query
+     * @return mixed
+     */
+    public function scopeFromToday($query) {
+        $date = Carbon::today();
+        $query->where('start_date', '>=', $date);
+        return $query;
     }
 
 }

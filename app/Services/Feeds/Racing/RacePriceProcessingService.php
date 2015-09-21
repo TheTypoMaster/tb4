@@ -119,7 +119,7 @@ class RacePriceProcessingService {
                 continue;
             }
 
-            Log::info($this->logprefix ."(_processPriceData): Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
+           // Log::info($this->logprefix ."(_processPriceData): Processing Odds. USED: MeetID:{$price['MeetingId']}, RaceNo:{$price['RaceNo']}, BetType:{$price['BetType']}, PriceType:{$price['PriceType']}, Odds:" . $price['OddString']);
 
 			// loop on each runners odds
 			foreach ($oddsArray as $runnerOdds) {
@@ -158,7 +158,7 @@ class RacePriceProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                } else {
+                } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
                 }
@@ -174,7 +174,7 @@ class RacePriceProcessingService {
             if($betProduct->is_fixed_odds == 0) continue;
 
             // put on the queue
-            Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => $price), 'risk-fixed-queue');
+            Queue::push('TopBetta\Services\Feeds\Queues\RiskManagerPushAPIQueueService', array('PriceList' => array($price)), 'risk-fixed-queue');
 		}
 		return "Price(s) Processed";
 	}

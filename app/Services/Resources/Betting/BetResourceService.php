@@ -57,6 +57,7 @@ class BetResourceService extends OrderableResourceService {
     {
         $bets = $this->repository->getUnresultedBetsForUser($user, $page);
 
+
         return $this->createBetsCollection($bets, $page);
     }
 
@@ -84,6 +85,10 @@ class BetResourceService extends OrderableResourceService {
     public function getBetsOnDateForUser($user, Carbon $date, $resulted = null)
     {
         $bets = $this->repository->getBetsOnDateForUser($user, $date, $resulted);
+
+        if ($bets instanceof EloquentResourceCollection) {
+            return $bets;
+        }
 
         return new EloquentResourceCollection($bets, 'TopBetta\Resources\Betting\BetResource');
     }
@@ -117,6 +122,10 @@ class BetResourceService extends OrderableResourceService {
 
     protected function createBetsCollection($bets, $page = true)
     {
+        if ($bets instanceof EloquentResourceCollection) {
+            return $bets;
+        }
+
         if( $page ) {
             return new PaginatedEloquentResourceCollection($bets, 'TopBetta\Resources\Betting\BetResource');
         }

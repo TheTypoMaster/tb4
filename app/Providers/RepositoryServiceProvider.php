@@ -55,7 +55,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\BetRepositoryInterface',
-            'TopBetta\Repositories\DbBetRepository'
+            'TopBetta\Repositories\Cache\Bets\BetRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\UserTokenRepositoryInterface',
@@ -71,7 +71,7 @@ class RepositoryServiceProvider extends ServiceProvider {
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\AccountTransactionRepositoryInterface',
-            'TopBetta\Repositories\DbAccountTransactionRepository'
+            'TopBetta\Repositories\Cache\Users\AccountTransactionRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\AccountTransactionTypeRepositoryInterface',
@@ -95,7 +95,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
 		$this->app->bind(
             'TopBetta\Repositories\Contracts\FreeCreditTransactionRepositoryInterface',
-            'TopBetta\Repositories\DbFreeCreditTransactionRepository'
+            'TopBetta\Repositories\Cache\Users\FreeCreditTransactionRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\ProcessParamsRepositoryInterface',
@@ -219,7 +219,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
 		$this->app->bind(
             'TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface',
-            'TopBetta\Repositories\DbTournamentBetRepository'
+            'TopBetta\Repositories\Cache\Bets\TournamentBetRepository'
         );
         $this->app->bind(
             'TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface',
@@ -333,6 +333,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\TournamentPlacesPaidRepositoryInterface',
             'TopBetta\Repositories\DbTournamentPlacesPaidRepository'
 		);
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface',
+            'TopBetta\Repositories\TournamentEventGroupRepository'
+        );
     }
 
 } 
