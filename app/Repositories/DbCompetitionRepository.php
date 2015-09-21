@@ -349,4 +349,13 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
                            ->get();
 
     }
+
+    /**
+     * get event groups by race type code
+     * @param $type_code
+     * @return mixed
+     */
+    public function getEventGroupByRaceType($type_code) {
+        return $this->model->where('type_code', $type_code)->get();
+    }
 }
