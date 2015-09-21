@@ -5,6 +5,7 @@ namespace TopBetta\Services\Tournaments;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
+use TopBetta\Repositories\DbSportsRepository;
 use TopBetta\Repositories\TournamentEventGroupRepository;
 
 class TournamentEventGroupService
@@ -12,11 +13,13 @@ class TournamentEventGroupService
 
     public function __construct(TournamentEventGroupRepositoryInterface $tournamentEventGroupRepo,
                                 CompetitionRepositoryInterface $eventGroupRepository,
-                                EventRepositoryInterface $eventRepository)
+                                EventRepositoryInterface $eventRepository,
+                                DbSportsRepository $sportsRepository)
     {
         $this->tournamentEventGroupRepo = $tournamentEventGroupRepo;
         $this->eventGroupRepository = $eventGroupRepository;
         $this->eventRepository = $eventRepository;
+        $this->sportsRepository = $sportsRepository;
     }
 
     /**
@@ -72,7 +75,26 @@ class TournamentEventGroupService
      * @return mixed
      */
     public function getEventGroups($sportId) {
-        $event_groups = $this->eventGroupRepository->getEventGruopsBySportId($sportId);
+
+        //check if the sport is race or not, if it is race, get the sport name
+        $race = $this->sportsRepository->isRace($sportId);
+
+        if($race) {
+
+            $type_code = '';
+            if($race == 'galloping') {
+                $type_code = 'R';
+            } else if($race == 'harness') {
+                $type_code = 'H';
+            } else if($race == 'greyhounds') {
+                $type_code = 'G';
+            }
+
+            $event_groups = $this->eventGroupRepository->getEventGroupByRaceType($type_code);
+        } else {
+            $event_groups = $this->eventGroupRepository->getEventGruopsBySportId($sportId);
+        }
+
         return $event_groups;
     }
 
@@ -84,7 +106,6 @@ class TournamentEventGroupService
     public function getEventsByEventGroup($event_group_id) {
 
         $events = $this->eventGroupRepository->getEvents($event_group_id);
-
         return $events;
     }
 

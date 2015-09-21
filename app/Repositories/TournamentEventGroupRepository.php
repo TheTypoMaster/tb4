@@ -49,4 +49,5 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
             ->events()
             ->get();
     }
+
 }

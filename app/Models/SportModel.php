@@ -25,7 +25,7 @@ class SportModel extends Eloquent
         return $this->belongsTo('TopBetta\Models\IconModel', 'default_competition_icon_id');
     }
 
-    public function isRacing()
+        public function isRacing()
     {
         return in_array($this->name, array('galloping', 'harness', 'greyhounds'));
     }

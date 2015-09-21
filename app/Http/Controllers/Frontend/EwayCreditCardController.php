@@ -4,6 +4,7 @@ use Auth;
 use Log;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\PaymentEwayTokens;
+use TopBetta\Resources\UserResource;
 use TopBetta\Services\Accounting\Payments\EwayPaymentService;
 use TopBetta\Services\Response\ApiResponse;
 
@@ -33,6 +34,10 @@ class EwayCreditCardController extends Controller {
 	public function index()
 	{
 		$user = Auth::user();
+
+        if ($user instanceof UserResource) {
+            $user = $user->getModel();
+        }
 
         //get the card details from Eway
         $cards = array();

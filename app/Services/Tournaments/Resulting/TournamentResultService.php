@@ -124,7 +124,10 @@ class TournamentResultService {
         if ($remainder && $tournament->buy_in > 0) {
             if ($tournament->qualifiers->count() < $nextRank) {
                 $percentages = $this->getPayoutPercentages($tournament);
-                $this->createCashResults($tournament, $percentages, $leaderboard, $remainder);
+
+                if ($percentages) {
+                    $this->createCashResults($tournament, $percentages, $leaderboard, $remainder);
+                }
             } else {
                 $usersAtRank =  $usersAtRank = array_filter($leaderboard, function ($v) use ($nextRank) { return $v['rank'] == $nextRank; });
                 foreach ($usersAtRank as $leaderboardRecord) {
