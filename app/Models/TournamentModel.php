@@ -22,7 +22,7 @@ class TournamentModel extends Eloquent {
 	}
 	
 	public function eventGroup() {
-		return $this->belongsTo('TopBetta\Models\RaceMeeting', 'event_group_id');
+		return $this->belongsTo('TopBetta\Models\TournamentEventGroupModel', 'event_group_id');
 	}
 	
 	public function sport() {
@@ -111,5 +111,16 @@ class TournamentModel extends Eloquent {
         $date = Carbon::today();
         $query->where('start_date', '>=', $date);
         return $query;
+    }
+
+    public function __get($name)
+    {
+        $value = parent::__get($name);
+
+        if ($name == 'eventGroup' && !$value) {
+            return $this->competition;
+        }
+
+        return $value;
     }
 }

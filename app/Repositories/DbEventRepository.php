@@ -52,6 +52,19 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     }
 
     /**
+     * get all events start from today
+     * @return mixed
+     */
+    public function getAllEventsFromToday() {
+        return $this->model->fromToday()->get();
+    }
+
+
+    public function getEventByEventID($id) {
+        return $this->model->where('id', $id)->first();
+    }
+
+    /**
      * Return the requested event deatils if it exists.
      *
      * @param $meetingId
@@ -260,6 +273,17 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         $event->teamPlayers()->insert($playersToInsert);
 
         return $this;
+    }
+
+    /**
+     * get event group by event id
+     * @param $event_id
+     * @return mixed
+     */
+    public function getEventGroup($event_id) {
+        return $this->model->find($event_id)
+                           ->competitions()
+                           ->first();
     }
 
     public function getEventsWithStatusIn($events, $statuses)

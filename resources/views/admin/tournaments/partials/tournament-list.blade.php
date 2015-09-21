@@ -27,7 +27,6 @@
 			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.tod_flag', 'TOD', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'parent.name', 'Parent Name', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'event_group..name', 'Event Group', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
-			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'sport.name', 'Sport', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.start_date', 'Start Date', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>{!! Html::tableFilterLink('admin.tournaments.index', 'tournament.end_date', 'End Date', $order, array('q' => $search, 'to' => $to, 'from' => $from)) !!}</th>
 			<th>Prize</th>
@@ -49,7 +48,6 @@
 			<td>{{ ($tournament->tod_flag) ? 'Y' : 'N' }}</td>
 			<td>{{ $tournament->parentTournament ? $tournament->parentTournament->name .  ' (' . $tournament->parentTournament->id . ')' : '-' }}</td>
 			<td>{{ ($tournament->eventGroup) ? $tournament->eventGroup->name : 'n/a' }}</td>
-			<td>{{ $tournament->sport->name }}</td>
 			<td>{{ $tournament->start_date }}</td>
 			<td>{{ $tournament->end_date }}</td>
 			<td>{{ (!empty($tournament->jackpot_flag) && $tournament->parent_tournament_id > 0) ? 'Ticket' : 'Cash' }} (${{ number_format($tournament->calculateTournamentPrizePool($tournament->id) / 100, 2) }})</td>

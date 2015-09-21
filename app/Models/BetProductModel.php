@@ -15,4 +15,9 @@ class BetProductModel extends Eloquent{
 
     public static $rules = array();
 
+    public function productProviderMatch()
+    {
+        return $this->hasOne('TopBetta\Models\ProductProviderMatch', 'tb_product_id');
+    }
+
 } 

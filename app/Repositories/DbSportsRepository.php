@@ -46,6 +46,13 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
             ->paginate();
     }
 
+    /**
+     * get all sports without paginate
+     */
+    public function getAllSportsWithoutPaginate() {
+        return $this->model->all();
+    }
+
     public function selectList(){
         return $this->model->lists('name', 'id')->all();
     }

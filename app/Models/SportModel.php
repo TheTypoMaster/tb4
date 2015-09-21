@@ -1,4 +1,4 @@
-<?php namespace TopBetta\Models; 
+<?php namespace TopBetta\Models;
 
 /**
  * Coded by Oliver Shanahan
@@ -8,8 +8,9 @@
  */
 
 use Eloquent;
- 
-class SportModel extends Eloquent {
+
+class SportModel extends Eloquent
+{
 
     protected $table = 'tb_sports';
     protected $guarded = array();
@@ -32,6 +33,11 @@ class SportModel extends Eloquent {
     public function baseCompetitions()
     {
         return $this->hasMany('TopBetta\Models\BaseCompetitionModel', 'sport_id');
-}
+    }
+
+    public function getCompetitions()
+    {
+        return $this->hasMany('TopBetta\Models\CompetitionModel', 'sport_id');
+    }
 
 }

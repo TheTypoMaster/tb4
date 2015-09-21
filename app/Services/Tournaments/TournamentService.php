@@ -163,7 +163,7 @@ class TournamentService {
 
         $data = array("data" => $tournament);
 
-        if ($selected = array_get($events, 'selected_race')) {
+        if ($selected = array_get($events, 'selected_event')) {
             $data['selected_race'] = $selected;
         }
 
@@ -234,7 +234,7 @@ class TournamentService {
         return $ticket;
     }
 
-    
+
     public function getTournament($tournamentId)
     {
         return $this->tournamentRepository->find($tournamentId);

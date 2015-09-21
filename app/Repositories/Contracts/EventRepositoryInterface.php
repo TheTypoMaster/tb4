@@ -15,4 +15,6 @@ interface EventRepositoryInterface {
     public function getEventsForCompetition($competitionId);
 
     public function addTeamPlayers($event, $team, $players);
+
+
 }

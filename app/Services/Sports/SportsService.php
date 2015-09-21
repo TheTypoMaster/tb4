@@ -10,11 +10,13 @@ namespace TopBetta\Services\Sports;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\Cache\Sports\CachedBaseCompetitionResourceService;
 use TopBetta\Services\Resources\Cache\Sports\CachedSportResourceService;
 
-class SportsService {
+class SportsService
+{
 
     /**
      * @var CachedSportResourceService
@@ -34,18 +36,20 @@ class SportsService {
     private $eventService;
 
 
-    public function __construct(CachedSportResourceService $sportResourceService, CompetitionService $competitionService, CachedBaseCompetitionResourceService $baseCompetitionResourceService, EventService $eventService)
+    public function __construct(CachedSportResourceService $sportResourceService, CompetitionService $competitionService, CachedBaseCompetitionResourceService $baseCompetitionResourceService, EventService $eventService,
+                                SportRepositoryInterface $sportRepository)
     {
         $this->sportResourceService = $sportResourceService;
         $this->competitionService = $competitionService;
         $this->baseCompetitionResourceService = $baseCompetitionResourceService;
 
         $this->eventService = $eventService;
+        $this->sportRepository = $sportRepository;
     }
 
     public function getVisibleSportsWithCompetitions($date = null)
     {
-        if( $date ) {
+        if ($date) {
             $date = Carbon::createFromFormat("Y-m-d", $date);
         }
 
@@ -119,4 +123,21 @@ class SportsService {
     {
 
     }
+
+    /**
+     * get all sports
+     * @return mixed
+     */
+    public function getAllSports()
+    {
+        $sports = $this->sportRepository->getAllSportsWithoutPaginate();
+        $sport_list = array();
+        foreach($sports as $sport) {
+            $sport_list[$sport->id] = $sport->name;
+        }
+
+        return $sport_list;
+    }
+
+
 }
