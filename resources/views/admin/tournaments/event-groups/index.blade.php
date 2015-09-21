@@ -31,6 +31,10 @@
                         </tr>
                     @endforeach
                 </table>
+
+                {{-- add pagination --}}
+                {!! $event_groups->render() !!}
+
             </div>
 
         </div>

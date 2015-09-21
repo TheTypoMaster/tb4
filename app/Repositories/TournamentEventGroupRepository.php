@@ -20,7 +20,8 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
     public function getAllEventGroup()
     {
 
-        return TournamentEventGroupModel::all();
+//        return TournamentEventGroupModel::all()->paginate();
+        return $this->model->paginate();
 
     }
 
