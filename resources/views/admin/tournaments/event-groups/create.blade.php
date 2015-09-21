@@ -109,7 +109,6 @@
 //                    html = html.add($
 //                    ('<option></option>').text(value.name).val(value.id));
 //                }
-
                     html = html.add($
                     ('<option></option>').text(value.name).val(value.id));
                 });
@@ -123,6 +122,11 @@
                 $.get('/admin/get-event-groups/' + sport)
                         .done(function (data) {
                             $('#event_groups').html(createSelectOptions(data));
+                            $('#event_groups').change();
+                            $('#events').empty();
+                            $('#events').select2({
+                                placeholder: ''
+                            });
                         });
             });
 
@@ -132,6 +136,7 @@
                 $.get('/admin/get-events/' + event_group)
                         .done(function (data) {
                             $('#events').html(createSelectOptions(data));
+
                             $('#events').select2({
                                 placeholder: '--Select events--'
                             });

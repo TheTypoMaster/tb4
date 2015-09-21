@@ -77,4 +77,20 @@ class DbSportsRepository extends BaseEloquentRepository implements SportReposito
         return $this->model->hydrate($model);
     }
 
+    /**
+     * check if the sport is race or not, if it is race, return the sport name
+     * @param $sport_id
+     * @return mixed
+     */
+    public function isRace($sport_id) {
+
+        $sport_model = $this->model->find($sport_id);
+        if(  $sport_model->isRacing()) {
+            return $sport_model->name;
+        } else {
+            return false;
+        }
+
+    }
+
 } 
