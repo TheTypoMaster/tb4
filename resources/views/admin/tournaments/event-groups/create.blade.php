@@ -136,7 +136,6 @@
                 $.get('/admin/get-events/' + event_group)
                         .done(function (data) {
                             $('#events').html(createSelectOptions(data));
-//                            $('#events').change();
 
                             $('#events').select2({
                                 placeholder: '--Select events--'
