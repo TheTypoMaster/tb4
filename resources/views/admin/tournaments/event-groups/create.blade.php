@@ -136,7 +136,7 @@
                     }
 
                     html = html.add($
-                    ('<option></option>').text('(#' + value.id + '' + race_number + ') ' + value.name).val(value.id));
+                    ('<option></option>').text('(#' + value.id + '' + race_number + ') ' + value.name + ' '+value.start_date).val(value.id));
                 });
 
                 return html;
