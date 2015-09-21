@@ -165,6 +165,7 @@ return [
         'TopBetta\Providers\EmailServiceProvider',
         'TopBetta\Providers\ComposerServiceProvider',
         'TopBetta\Providers\AuthServiceProvider',
+        'TopBetta\Providers\PusherServiceProvider',
 
 	],
 
