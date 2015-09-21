@@ -123,6 +123,10 @@
                         .done(function (data) {
                             $('#event_groups').html(createSelectOptions(data));
                             $('#event_groups').change();
+                            $('#events').empty();
+                            $('#events').select2({
+                                placeholder: ''
+                            });
                         });
             });
 
