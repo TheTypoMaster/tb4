@@ -234,7 +234,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             'fixed'            => $bet->product->is_fixed_odds || $bet->type->name == BetTypeRepositoryInterface::TYPE_SPORT,
             "fixed_odds"       => $bet->betselection->first()->fixed_odds,
             'productId'        => $bet->product->id,
-            'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->id : null,
+            'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->provider_product_match : null,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {
@@ -252,12 +252,12 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     {
         if (!$resource->isExotic() && !$resource->isFixed()) {
             if ($resource->betType == BetTypeRepositoryInterface::TYPE_WIN) {
-                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selection_id, $resource->product_id);
+                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selection_id, $resource->productId);
                 if ($price) {
                     $resource->win_odds = $price->win_odds;
                 }
             } else if ($resource->betType == BetTypeRepositoryInterface::TYPE_PLACE) {
-                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selection_id, $resource->product_id);
+                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selection_id, $resource->productId);
                 if ($price) {
                     $resource->place_odds = $price->place_odds;
                 }
