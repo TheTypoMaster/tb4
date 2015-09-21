@@ -121,14 +121,20 @@ class BetResultService {
         if ( $this->eventService->isEventInterim($event) ) {
             $bets = $this->betRepository->getBetsForEventByStatusAndProduct(
                 $event->id,
-                $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                array(
+                    $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                    $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PARTIALLY_REFUNDED)->id,
+                ),
                 $product->id,
                 $this->betTypeRepository->getBetTypeByName(BetTypeRepositoryInterface::TYPE_WIN)->id
             );
         } else if ( $this->eventService->isEventPaying($event) ) {
             $bets = $this->betRepository->getBetsForEventByStatusAndProduct(
                 $event->id,
-                $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                array(
+                    $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                    $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PARTIALLY_REFUNDED)->id,
+                ),
                 $product->id
             );
         } else {
