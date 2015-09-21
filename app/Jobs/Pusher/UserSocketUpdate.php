@@ -11,7 +11,7 @@ namespace TopBetta\Jobs\Pusher;
 
 class UserSocketUpdate extends PusherJob {
 
-    protected $queue = 'user-socket';
+    public $queue = 'user-socket';
 
     const CHANNEL_PREFIX = 'user_';
 

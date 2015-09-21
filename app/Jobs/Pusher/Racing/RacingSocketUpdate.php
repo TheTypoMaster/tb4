@@ -13,5 +13,5 @@ use TopBetta\Jobs\Pusher\PusherJob;
 
 abstract class RacingSocketUpdate extends PusherJob {
 
-    protected $queue = 'racing-socket';
+    public $queue = 'racing-socket';
 }
