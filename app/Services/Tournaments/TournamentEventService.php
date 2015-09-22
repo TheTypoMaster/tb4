@@ -109,7 +109,7 @@ class TournamentEventService
                 $competition->setRelation('events', $events_with_markets);
             }
 
-            return array('data' => $competitions_resource, 'selected_event' => $selected_event);
+            return array('data' => $competitions_resource->toArray(), 'selected_event' => $selected_event);
         } else if ($type == 'race') {
 
             $competitions_resource = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($competitions), 'TopBetta\Resources\MeetingResource');
@@ -120,7 +120,7 @@ class TournamentEventService
                 $competition->setRelation('selections', $races_with_products);
             }
 
-            return array('data' => $competitions_resource, 'selected_event' => $selected_event);
+            return array('data' => $competitions_resource->toArray(), 'selected_event' => $selected_event);
         }
 
 

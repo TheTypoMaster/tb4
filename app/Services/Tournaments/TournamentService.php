@@ -411,7 +411,7 @@ class TournamentService {
 
         //get tournament name and desc
 //        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
-        $tournamentData['name'] = $tournament_event_group->name;
+//        $tournamentData['name'] = $tournament_event_group->name;
         $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
 
         //convert from cents
