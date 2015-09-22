@@ -98,7 +98,7 @@ class MeetingService {
     {
         $selectedMeeting = $this->getMeetingWithSelections($meetingId, $raceId);
 
-        $meetings = $this->getMeetingsForDate($selectedMeeting['data']->getStartDate());
+        $meetings = $this->getMeetingsForDate($selectedMeeting['data']->getStartDate()->toDateString());
 
         foreach( $meetings as $meeting ) {
             if( $meeting->id == $selectedMeeting['data']->id ) {
