@@ -132,7 +132,7 @@ abstract class CachedResourceRepository {
             return $this->makeCacheResource($model);
         }
 
-        if ($model->isDirty()) {
+        if ($model->fill($data)->isDirty()) {
             $this->repository->update($model, $data);
             return $this->makeCacheResource($model);
         }
