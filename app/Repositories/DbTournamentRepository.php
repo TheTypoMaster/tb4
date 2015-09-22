@@ -124,7 +124,7 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
     {
         return $this->model
             ->join('tb_tournament_event_group as eg', 'eg.id', '=', 'tbdb_tournament.event_group_id')
-            ->join('tb_tournament_event_group_event as ege', 'ege.event_group_id', '=', 'eg.id')
+            ->join('tb_tournament_event_group_event as ege', 'ege.tournament_event_group_id', '=', 'eg.id')
             ->leftJoin('tbdb_event as e', function($q) {
                 $q->on('e.id', '=', 'ege.event_id')
                     ->on('e.paid_flag', '=', \DB::raw(0));
