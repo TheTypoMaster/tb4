@@ -76,18 +76,20 @@ class MeetingRepository extends CachedResourceRepository {
 
     public function addSmallRace($resource, $meetingModel)
     {
-        $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $meetingModel->start_date));
+        if ($meetingModel->start_date) {
+            $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $meetingModel->start_date));
 
-        //check meeting exists
-        if ($meetings && $meeting = $meetings->get($meetingModel->id)) {
+            //check meeting exists
+            if ($meetings && $meeting = $meetings->get($meetingModel->id)) {
 
-            $races = $meeting->races->keyBy('id');
+                $races = $meeting->races->keyBy('id');
 
-            $races->put($resource->id, $resource);
+                $races->put($resource->id, $resource);
 
-            $meeting->setRelation('races', $races->values());
+                $meeting->setRelation('races', $races->values());
 
-            $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
+                $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
+            }
         }
     }
 
