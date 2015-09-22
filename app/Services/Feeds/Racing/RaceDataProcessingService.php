@@ -12,6 +12,8 @@ use File;
 use Carbon;
 use Queue;
 
+use TopBetta\Jobs\Pusher\Racing\PriceSocketUpdate;
+use TopBetta\Jobs\Pusher\Racing\SelectionSocketUpdate;
 use TopBetta\Repositories\Cache\MeetingRepository;
 use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
@@ -419,6 +421,7 @@ class RaceDataProcessingService {
 	private function _processRunnerData($runners){
 
 		$scratchList = array();
+        $pusherUpdate = array();
 
 		foreach ($runners as $runner) {
 			$raceExists = $selectionsExists = 0;
@@ -441,6 +444,10 @@ class RaceDataProcessingService {
 				Log::debug($this->logprefix . 'Race for runner not found ' . $runner['MeetingId'].'_'.$runner['RaceNo']);
 				continue;
 			}
+
+            if (!array_get($pusherUpdate, $existingRaceDetails['id'])) {
+                $pusherUpdate[$existingRaceDetails['id']] = array();
+            }
 
 			$runnerDetails = array();
 			$runnerDetails['number'] = $runner['RunnerNo'];
@@ -593,7 +600,14 @@ class RaceDataProcessingService {
 				}
 			}
 
-            $this->selections->updateOrCreate($selectionUpdate, 'id');
+            $selection = $this->selections->find($runnerId);
+
+            if ($selection && $selection->fill($selectionUpdate)->isDirty()) {
+                $pusherUpdate[$existingRaceDetails['id']][] = $this->selections->update($selection, $selectionUpdate);
+            } else if (!$selection) {
+                $pusherUpdate[$existingRaceDetails['id']][] = $this->selections->create($selectionUpdate);
+            }
+
 
             Log::info($this->logprefix. 'Runner Saved - '.$runnerDetails['external_selection_id']);
 
@@ -606,6 +620,12 @@ class RaceDataProcessingService {
             $this->tournamentBetService->refundBetsForSelection($scratchedId);
 		}
 
+        foreach ($pusherUpdate as $race => $selections) {
+            if (count($selections)) {
+                \Bus::dispatch(new SelectionSocketUpdate(array("id" => $race, "selections" => $selections)));
+            }
+        }
+
 		return "Runenr(s) Processed";
 	}
 
@@ -616,6 +636,8 @@ class RaceDataProcessingService {
 	 * @return string
 	 */
 	private function _processPriceData($prices){
+
+        $updates = array();
 
 		foreach ($prices as $price) {
 			/*
@@ -649,6 +671,9 @@ class RaceDataProcessingService {
 				Log::debug($this->logprefix . 'Race for price not found ' . $price['MeetingId'] . '_' . $price['RaceNo']);
 				continue;
 			}
+            if (!array_get($updates, $existingRaceDetails->id)) {
+                $updates[$existingRaceDetails->id] = array();
+            }
 
 			$runnerCount = 1;
 
@@ -697,9 +722,11 @@ class RaceDataProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
+                    $updates[$existingRaceDetails['id']][] = $existingSelection->id;
                 } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
+                    $updates[$existingRaceDetails['id']][] = $existingSelection->id;
                 }
 
 
@@ -708,6 +735,19 @@ class RaceDataProcessingService {
 
 
 		}
+
+        foreach($updates as $race=>$selections) {
+
+            if (count($selections)) {
+                $selectionArray = array();
+                foreach ($selections as $selection) {
+                    $selectionArray[] = array('id' => $selection);
+                }
+
+                \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => $selectionArray)));
+            }
+        }
+
 		return "Price(s) Processed";
 	}
 

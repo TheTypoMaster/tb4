@@ -9,6 +9,7 @@
 namespace TopBetta\Repositories\Cache;
 
 use Carbon\Carbon;
+use TopBetta\Jobs\Pusher\Racing\RaceSocketUpdate;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Resources\SmallRaceResource;
 
@@ -168,5 +169,10 @@ class RaceRepository extends CachedResourceRepository {
         }
 
         return $resource;
+    }
+
+    protected function fireEvents($resource)
+    {
+        \Bus::dispatch(new RaceSocketUpdate($resource->toArray()));
     }
 }
