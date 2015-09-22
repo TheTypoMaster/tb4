@@ -21,9 +21,10 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
 
     protected $model;
 
-    public function __construct(TournamentModel $tournaments, TournamentValidator $tournamentValidator){
+    public function __construct(TournamentModel $tournaments, TournamentValidator $tournamentValidator, TournamentEventGroupRepository $tournamentEventGroupRepository){
         $this->model = $tournaments;
         $this->validator = $tournamentValidator;
+        $this->tournamentEventGroupRepository = $tournamentEventGroupRepository;
     }
 
     public function updateTournamentByEventGroupId($eventGroupId, $closeDate){
@@ -146,29 +147,32 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
 
     public function getVisibleSportTournaments(Carbon $date = null)
     {
-        $model = $this->getVisibleTournamentBuilder($date);
-
-        //join competition and sport and look for non racing sports
-        $model->join('tb_tournament_event_group as eg', 'eg.id', '=', 't.event_group_id')
-            ->join('tb_sports as s', 's.id', '=', 'eg.sport_id')
-            ->whereNotIn('s.name', array(SportRepositoryInterface::SPORT_GALLOPING, SportRepositoryInterface::SPORT_GREYHOUNDS, SportRepositoryInterface::SPORT_HARNESS));
-
-        return $model->get(array('t.*'));
+//        $model = $this->getVisibleTournamentBuilder($date);
+//
+//        //join competition and sport and look for non racing sports
+//        $model->join('tb_tournament_event_group as eg', 'eg.id', '=', 't.event_group_id')
+//            ->join('tb_sports as s', 's.id', '=', 'eg.sport_id')
+//            ->whereNotIn('s.name', array(SportRepositoryInterface::SPORT_GALLOPING, SportRepositoryInterface::SPORT_GREYHOUNDS, SportRepositoryInterface::SPORT_HARNESS));
+//
+//        return $model->get(array('t.*'));
+        return $this->tournamentEventGroupRepository->getSportEventGroups();
     }
 
     public function getVisibleRacingTournaments(Carbon $date = null)
     {
-        $model = $this->getVisibleTournamentBuilder($date);
+//        $model = $this->getVisibleTournamentBuilder($date);
 
         //join competition and sport and look for racing
-        $model->join('tb_tournament_event_group as eg', 'eg.id', '=', 't.event_group_id')
-            ->leftJoin('tb_sports as s', 's.id', '=', 'eg.sport_id')
-            ->where(function($q) {
-                $q->whereIn('s.name', array(SportRepositoryInterface::SPORT_GALLOPING, SportRepositoryInterface::SPORT_GREYHOUNDS, SportRepositoryInterface::SPORT_HARNESS))
-                    ->orWhere('eg.sport_id', 0);
-            });
+//        $model->join('tb_tournament_event_group as eg', 'eg.id', '=', 't.event_group_id')
+//            ->leftJoin('tb_sports as s', 's.id', '=', 'eg.sport_id')
+//            ->where(function($q) {
+//                $q->whereIn('s.name', array(SportRepositoryInterface::SPORT_GALLOPING, SportRepositoryInterface::SPORT_GREYHOUNDS, SportRepositoryInterface::SPORT_HARNESS))
+//                    ->orWhere('eg.sport_id', 0);
+//            });
 
-        return $model->get(array('t.*'));
+        return $this->tournamentEventGroupRepository->getRaceEventGroups();
+
+//        return $model->get(array('t.*'));
     }
 
     /**
