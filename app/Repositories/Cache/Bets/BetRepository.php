@@ -225,6 +225,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             'competitionName'  => $bet->selection->first()->market->event->competition->first()->name,
             'betType'          => $bet->type->name,
             'status'           => $bet->status->name,
+            'bet_result_status_id' => $bet->bet_result_status_id,
             'paid'             => $bet->result ? $bet->result->amount : 0,
             'date'             => $bet->selection->first()->market->event->start_date,
             'eventType'        => $bet->selection->first()->market->event->competition->first()->type_code,
