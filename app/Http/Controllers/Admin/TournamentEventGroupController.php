@@ -126,6 +126,11 @@ class TournamentEventGroupController extends Controller
                     $end_time = $event_start_time;
                 }
             }
+
+            //get event group type
+            if($key == 0) {
+                $group_type = $this->tournamentEventGroupService->getEventGroupTypeByEvent($selected_event);
+            }
         }
 
 
@@ -134,6 +139,7 @@ class TournamentEventGroupController extends Controller
 //        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
         $new_created_event_group->start_date = $start_time;
         $new_created_event_group->end_date = $end_time;
+        $new_created_event_group->type = $group_type;
         $new_created_event_group->update();
 
 
