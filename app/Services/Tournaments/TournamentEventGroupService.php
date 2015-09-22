@@ -38,11 +38,12 @@ class TournamentEventGroupService
      * @param $id
      * @return mixed
      */
-    public function getEventGroupByID($id) {
+    public function getEventGroupByID($id)
+    {
         $event_group = $this->tournamentEventGroupRepo->getEventGroupByID($id);
 
         return $event_group;
-}
+    }
 
     /**
      * get all event gruops and change them to array
@@ -65,7 +66,8 @@ class TournamentEventGroupService
      * @param $item
      * @return mixed
      */
-    public function createEventGroup($item) {
+    public function createEventGroup($item)
+    {
         return $this->tournamentEventGroupRepo->create($item);
     }
 
@@ -74,19 +76,20 @@ class TournamentEventGroupService
      * @param $sportId
      * @return mixed
      */
-    public function getEventGroups($sportId) {
+    public function getEventGroups($sportId)
+    {
 
         //check if the sport is race or not, if it is race, get the sport name
         $race = $this->sportsRepository->isRace($sportId);
 
-        if($race) {
+        if ($race) {
 
             $type_code = '';
-            if($race == 'galloping') {
+            if ($race == 'galloping') {
                 $type_code = 'R';
-            } else if($race == 'harness') {
+            } else if ($race == 'harness') {
                 $type_code = 'H';
-            } else if($race == 'greyhounds') {
+            } else if ($race == 'greyhounds') {
                 $type_code = 'G';
             }
 
@@ -103,7 +106,8 @@ class TournamentEventGroupService
      * @param $event_group_id
      * @return mixed
      */
-    public function getEventsByEventGroup($event_group_id) {
+    public function getEventsByEventGroup($event_group_id)
+    {
 
         $events = $this->eventGroupRepository->getEvents($event_group_id);
 
@@ -114,7 +118,8 @@ class TournamentEventGroupService
      * get events that belongs to tournament event group
      * @param $group_id
      */
-    public function getEventsByTournamentEventGruop($group_id) {
+    public function getEventsByTournamentEventGruop($group_id)
+    {
 
         $events = $this->tournamentEventGroupRepo->getEvents($group_id);
 
@@ -126,13 +131,14 @@ class TournamentEventGroupService
      * @param $group_id
      * @return array
      */
-    public function getEventsByTournamentEventGroupToArray ($group_id) {
+    public function getEventsByTournamentEventGroupToArray($group_id)
+    {
 
         $event_list = array();
 
         $events = $this->tournamentEventGroupRepo->getEvents($group_id);
 
-        foreach($events as $key => $event) {
+        foreach ($events as $key => $event) {
 
             $event_group = $this->eventRepository->getEventGroup($event->id);
             $event_with_group = array('event' => $event, 'event_group_name' => $event_group->name);
@@ -142,8 +148,46 @@ class TournamentEventGroupService
         return $event_list;
     }
 
-    public function getEventGroupType($group_id) {
+
+    /**
+     * get event group type by event
+     * @param $event_id
+     * @return string
+     */
+    public function getEventGroupTypeByEvent($event_id)
+    {
+        //get event model
+        $event = $this->eventRepository->getEventByEventID($event_id);
+        $event_group = $event->competition()->first();
+//        $group_type = $this->getEventGroupType($event_group->id);
+        $tournament_event_group = $this->eventGroupRepository->getEventGroupByGroupId($event_group->id);
+        if ($tournament_event_group->type_code == null) {
+            $group_type = 'sport';
+        } else {
+            $group_type = 'race';
+        }
+
+        return $group_type;
+
+    }
+
+    /**
+     * check if the tournament event group is race or not
+     * @param $group_id
+     * @return string
+     */
+    protected function getEventGroupType($group_id)
+    {
+        dd($group_id);
         $tournament_event_group = $this->getEventGroupByID($group_id);
+
+        if ($tournament_event_group->type_code == null) {
+            $group_type = 'sport';
+        } else {
+            $group_type = 'race';
+        }
+
+        return $group_type;
 
     }
 
