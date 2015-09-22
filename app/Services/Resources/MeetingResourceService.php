@@ -70,7 +70,7 @@ class MeetingResourceService {
     {
 
         $collection = $this->competitionRepository->getRacingCompetitionsByDate(
-            $date,
+            $date->toDateString(),
             $type,
             $withRaces
         );
