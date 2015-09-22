@@ -121,10 +121,10 @@
                         {!! Form::select('tournament_labels[]', $labels, null, array("class"=>"form-control", "multiple"=>"multiple")) !!}
                     </div>
 
-                    <div class="form-group">
-                        {!! Form::label('tournament_groups', "Tournament Groups") !!} <br/>
-                        {!! Form::select('tournament_groups[]', $groups, null, array('class' => 'form-control group-multiselect', 'multiple' => 'multiple')) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('tournament_groups', "Tournament Groups") !!} <br/>--}}
+                        {{--{!! Form::select('tournament_groups[]', $groups, null, array('class' => 'form-control group-multiselect', 'multiple' => 'multiple')) !!}--}}
+                    {{--</div>--}}
 
                     <div class="form-group">
                         {!! Form::label('free_credit_flag', "Free credit prize ") !!}

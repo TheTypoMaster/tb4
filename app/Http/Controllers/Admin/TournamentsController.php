@@ -223,7 +223,8 @@ class TournamentsController extends Controller
             '_token',
             'entries_close_after',
             'type',
-            'competition_id'
+            'competition_id',
+            'tournament_groups'
         ));
 
         //rebuy data
@@ -387,6 +388,7 @@ class TournamentsController extends Controller
 	 */
 	public function update($id)
 	{
+        $group = Input::get('tournament_groups');
         $tournamentData = array_except(Input::all(), array(
             '_method',
             '_token',
@@ -395,6 +397,9 @@ class TournamentsController extends Controller
             'topup_start_after',
             'topup_end_after',
             'entries_close_after',
+            'type',
+            'competition_id',
+            'tournament_groups'
         ));
 
         //rebuy data
