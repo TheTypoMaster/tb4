@@ -142,4 +142,9 @@ class TournamentEventGroupService
         return $event_list;
     }
 
+    public function getEventGroupType($group_id) {
+        $tournament_event_group = $this->getEventGroupByID($group_id);
+
+    }
+
 }
