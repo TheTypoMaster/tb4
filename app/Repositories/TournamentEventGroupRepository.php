@@ -30,7 +30,8 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      * get event groups without paginate
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getEventGroupsWithoutPaginate() {
+    public function getEventGroupsWithoutPaginate()
+    {
         return $this->model->all();
     }
 
@@ -64,7 +65,8 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      * @param $event_group_id
      * @return mixed
      */
-    public function getEventGroup($event_group_id) {
+    public function getEventGroup($event_group_id)
+    {
         return $this->model->find($event_group_id)->first();
     }
 
@@ -74,14 +76,36 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      * @param $type_id
      * @return mixed
      */
-    public function getEventGroupsByType($type_id) {
-        if($type_id == 0) {
+    public function getEventGroupsByType($type_id)
+    {
+        if ($type_id == 0) {
             $type = 'Race';
         } else {
             $type = 'Sport';
         }
         return $this->model->where('type', $type)
-                           ->where('start_date', '>=', Carbon::today())
-                           ->get();
+            ->where('start_date', '>=', Carbon::today())
+            ->get();
+    }
+
+    /**
+     * get all race event groups
+     * @return mixed
+     */
+    public function getRaceEventGroups()
+    {
+        return $this->model->where('type', 'Race')
+        ->where('start_date', '>=', Carbon::today())
+        ->get();
+    }
+
+    /**
+     * get all sport event groups
+     * @return mixed
+     */
+    public function getSportEventGroups() {
+        return $this->model->where('type', 'Sport')
+            ->where('start_date', '>=', Carbon::today())
+            ->get();
     }
 }
