@@ -3,6 +3,7 @@
 namespace TopBetta\Repositories;
 
 
+use Carbon\Carbon;
 use TopBetta\Models\TournamentEventGroupModel;
 use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
 
@@ -23,6 +24,14 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
 //        return TournamentEventGroupModel::all()->paginate();
         return $this->model->paginate();
 
+    }
+
+    /**
+     * get event groups without paginate
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getEventGroupsWithoutPaginate() {
+        return $this->model->all();
     }
 
     /**
@@ -59,4 +68,20 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
         return $this->model->find($event_group_id)->first();
     }
 
+
+    /**
+     * get event groups by type
+     * @param $type_id
+     * @return mixed
+     */
+    public function getEventGroupsByType($type_id) {
+        if($type_id == 0) {
+            $type = 'Race';
+        } else {
+            $type = 'Sport';
+        }
+        return $this->model->where('type', $type)
+                           ->where('start_date', '>=', Carbon::today())
+                           ->get();
+    }
 }

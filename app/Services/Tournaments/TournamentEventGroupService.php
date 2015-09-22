@@ -51,7 +51,7 @@ class TournamentEventGroupService
      */
     public function getAllEventGroupsToArray()
     {
-        $event_groups = $this->tournamentEventGroupRepo->getAllEventGroup();
+        $event_groups = $this->tournamentEventGroupRepo->getEventGroupsWithoutPaginate();
 
         $event_group_list = array();
         foreach ($event_groups as $event_group) {
@@ -159,9 +159,8 @@ class TournamentEventGroupService
         //get event model
         $event = $this->eventRepository->getEventByEventID($event_id);
         $event_group = $event->competition()->first();
-//        $group_type = $this->getEventGroupType($event_group->id);
-        $tournament_event_group = $this->eventGroupRepository->getEventGroupByGroupId($event_group->id);
-        if ($tournament_event_group->type_code == null) {
+
+        if ($event_group->type_code == null) {
             $group_type = 'sport';
         } else {
             $group_type = 'race';
@@ -178,7 +177,6 @@ class TournamentEventGroupService
      */
     protected function getEventGroupType($group_id)
     {
-        dd($group_id);
         $tournament_event_group = $this->getEventGroupByID($group_id);
 
         if ($tournament_event_group->type_code == null) {
@@ -189,6 +187,15 @@ class TournamentEventGroupService
 
         return $group_type;
 
+    }
+
+    /**
+     * get tournament event group by type
+     * @param $type_id
+     * @return mixed
+     */
+    public function getEventGroupsByType($type_id) {
+        return $this->tournamentEventGroupRepo->getEventGroupsByType($type_id);
     }
 
 }
