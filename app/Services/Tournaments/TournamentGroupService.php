@@ -64,7 +64,7 @@ class TournamentGroupService {
 
     public function addTournamentToGroups($tournament, $groups)
     {
-        $this->tournamentGroupRepository->addTournamentToGroups($tournament, $groups);
+//        $this->tournamentGroupRepository->addTournamentToGroups($tournament, $groups);
     }
 
     /**
