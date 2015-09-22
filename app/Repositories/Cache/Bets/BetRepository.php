@@ -162,7 +162,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
         $bets = $this->getActiveBetsArray($user);
 
         if ($bet = array_get($bets, $resource->id)) {
-            if ($resource->status->keyword != BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
+            if ($resource->status != BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
                 unset($bets[$resource->id]);
             } else {
                 $bets[$resource->id] = $resource->toArray();
