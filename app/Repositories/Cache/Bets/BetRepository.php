@@ -103,7 +103,6 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     {
         if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
             $resource = $this->createResource(new BetModel($this->buildResourceArrayFromModel($model)));
-            $resource = $this->attachOdds($resource);
 
             $this->updateActiveBets($resource->getModel(), $model->user_id);
 

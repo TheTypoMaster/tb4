@@ -136,7 +136,7 @@ class NextToJumpCacheService {
         if(!$nextToJumpArray) return false;
 
         //updates so trigger socket up
-        event(new NextToJumpSocketUpdate($nextToJumpArray));
+        \Bus::dispatch(new NextToJumpSocketUpdate($nextToJumpArray));
 
         // add the cache object
         return $this->_updateNextToJumpCacheObject($nextToJumpArray);
