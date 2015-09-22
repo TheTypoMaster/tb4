@@ -65,9 +65,9 @@ class BetResource extends AbstractEloquentResource {
     protected $deductions = 0;
 
 
-    public function paid()
+    public function win_amount()
     {
-        return  ! is_null($this->model->win_amount) ? $this->model->win_amount : 0;
+        return  ! is_null($this->model->result->win_amount) ? $this->model->result->win_amount : 0;
     }
 
     public function selectionName()
