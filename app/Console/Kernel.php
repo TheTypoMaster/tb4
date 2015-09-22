@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel {
         'TopBetta\Console\Commands\DevTools\PopulateTournamentCache',
         'TopBetta\Console\Commands\Cache\ManageTournamentGroups',
         'TopBetta\Console\Commands\Pusher\PusherHeartbeat',
+//		'TopBetta\Console\Commands\DevTools\CreateTestSport',
 	];
 
 	/**

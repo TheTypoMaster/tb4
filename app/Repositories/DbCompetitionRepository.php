@@ -360,4 +360,13 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
                            ->where('start_date', '>=', Carbon::today())
                            ->get();
     }
+
+    /**
+     * get event group by group id
+     * @param $group_id
+     * @return mixed
+     */
+    public function getEventGroupByGroupId($group_id) {
+        return $this->model->find($group_id);
+    }
 }

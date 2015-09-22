@@ -222,6 +222,8 @@ class TournamentsController extends Controller
             '_method',
             '_token',
             'entries_close_after',
+            'type',
+            'competition_id'
         ));
 
         //rebuy data
@@ -586,6 +588,15 @@ class TournamentsController extends Controller
         });
 
         return $this->formatForResponse(array("Select Event Group") + $eventGroups->lists('name', 'id')->all());
+    }
+
+    /**
+     * get event groups by type
+     * @param $type_id
+     * @return mixed
+     */
+    public function getEventGroupsByType($type_id) {
+        return $this->tournamentEventGroupService->getEventGroupsByType($type_id);
     }
 
     public function getEvents($eventGroupId)
