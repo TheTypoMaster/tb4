@@ -12,7 +12,7 @@ class AffiliateTournamentResultNotifier extends Command implements SelfHandling,
 {
     use SerializesModels;
 
-    protected $queue;
+    public $queue;
     /**
      * @var TournamentModel
      */

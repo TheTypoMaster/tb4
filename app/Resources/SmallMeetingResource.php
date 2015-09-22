@@ -19,6 +19,8 @@ class SmallMeetingResource extends MeetingResource {
         "weather"       => 'weather',
         "type"          => 'type_code',
         'startDate'     => 'start_date',
+        "nextRaceDate"  => "nextRaceDate",
+        "nextRaceNumber" => "nextRaceNumber",
     );
 
     /**

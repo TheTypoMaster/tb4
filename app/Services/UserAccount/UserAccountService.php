@@ -325,6 +325,10 @@ class UserAccountService {
 
     }
 
+    public function getUser($userId) {
+        return $this->basicUser->getUser($userId);
+    }
+
     /**
      * Adds the amount to the users balance to turn over
      * @param $userId

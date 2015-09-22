@@ -63,7 +63,11 @@
                             ?>
                             <tr>
                                 <td>{{$event_with_group_name['event_group_name']}}</td>
-                                <td>(#{{$event->id}}) {{$event->name}}</td>
+                                @if($event->number != null)
+                                    <td>(#{{$event->id}}, Race: {{$event->number}}) {{$event->name}}</td>
+                                @else
+                                    <td>(#{{$event->id}}) {{$event->name}}</td>
+                                @endif
                                 <td>{{$event->start_date}}</td>
                                 <td><a href="{{URL::to('admin/event-groups/remove_event/' . $event_group_id . '/' . $event->id . '/' . $event_group_name)}}"><button class="btn btn-primary">Remove</button></a></td>
                             </tr>
@@ -103,6 +107,23 @@
                 return html;
             }
 
+            function createSelectOptionsForEvents(json) {
+                var html = $();
+                var race_number = '';
+
+                $.each(json, function (index, value) {
+
+                    if(value.number != null) {
+                        race_number = ', Race: '+value.number;
+                    }
+
+                    html = html.add($
+                    ('<option></option>').text('(#' + value.id + '' + race_number + ') ' + value.name + ' '+value.start_date).val(value.id));
+                });
+
+                return html;
+            }
+
             $('#sports').change(function () {
                 var sport = $('#sports').val();
 
@@ -122,7 +143,7 @@
 
                 $.get('/admin/get-events/' + event_group)
                         .done(function (data) {
-                            $('#events').html(createSelectOptions(data));
+                            $('#events').html(createSelectOptionsForEvents(data));
                             $('#events').select2({
                                 placeholder: '--Select events--'
                             });

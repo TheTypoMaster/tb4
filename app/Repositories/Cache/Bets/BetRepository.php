@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Bets;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use TopBetta\Jobs\Pusher\BetSocketUpdate;
 use TopBetta\Models\BetModel;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
@@ -102,7 +103,6 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
     {
         if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
             $resource = $this->createResource(new BetModel($this->buildResourceArrayFromModel($model)));
-            $resource = $this->attachOdds($resource);
 
             $this->updateActiveBets($resource->getModel(), $model->user_id);
 
@@ -162,7 +162,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
         $bets = $this->getActiveBetsArray($user);
 
         if ($bet = array_get($bets, $resource->id)) {
-            if ($resource->status->keyword != BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
+            if ($resource->status != BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
                 unset($bets[$resource->id]);
             } else {
                 $bets[$resource->id] = $resource->toArray();
@@ -186,6 +186,8 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             $this->addToDateBets($resource->getModel(), $model->user_id);
 
             $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
+
+            $this->fireEvents($resource);
 
             return $resource;
         }
@@ -226,6 +228,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             'competitionName'  => $bet->selection->first()->market->event->competition->first()->name,
             'betType'          => $bet->type->name,
             'status'           => $bet->status->name,
+            'bet_result_status_id' => $bet->bet_result_status_id,
             'paid'             => $bet->result ? $bet->result->amount : 0,
             'date'             => $bet->selection->first()->market->event->start_date,
             'eventType'        => $bet->selection->first()->market->event->competition->first()->type_code,
@@ -235,6 +238,7 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             "fixed_odds"       => $bet->betselection->first()->fixed_odds,
             'productId'        => $bet->product->id,
             'productCode'      => $bet->product->productProviderMatch ? $bet->product->productProviderMatch->provider_product_name : null,
+            'user_id'           => $bet->user_id,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {
@@ -402,5 +406,12 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
         }
 
         return null;
+    }
+
+    public function fireEvents($resource)
+    {
+        $array = $resource->toArray();
+        $array['user_id'] = $resource->user_id;
+        \Bus::dispatch(new BetSocketUpdate($array));
     }
 }

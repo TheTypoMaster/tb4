@@ -95,28 +95,49 @@ abstract class CachedResourceRepository {
 
     public function update($model, $data)
     {
-        $model = $this->repository->update($model, $data);
+        if ($model->fill($data)->isDirty()) {
+            $model = $this->repository->update($model, $data);
 
-        return $this->makeCacheResource($model);
+            return $this->makeCacheResource($model);
+        }
+
+        return $model;
     }
 
     public function updateWithId($id, $data, $key = 'id')
     {
         if($key == 'id'){
-            $model = $this->repository->updateWithIdAndReturnModel($id, $data);
+            $model = $this->repository->find($id);
         } else {
-            $model = $this->repository->updateWithExternalIdAndReturnModel($id, $data, $key);
+            $model = $this->repository->getOneByCriteria($key, $id);
         }
 
+        if ($model && $model->fill($data)->isDirty()) {
+            $this->repository->update($model, $data);
+            return $this->makeCacheResource($model);
+        }
 
-        return $this->makeCacheResource($model);
+        return $model;
     }
 
     public function updateOrCreate($data, $criteria)
     {
-        $model = $this->repository->updateOrCreateAndReturnModel($data, $criteria);
+        $model = null;
+        if ($id = array_get($data, $criteria)) {
+            $model = $this->repository->getOneByCriteria($criteria, $data[$criteria]);
+        }
 
-        return $this->makeCacheResource($model);
+        if (!$model) {
+            $model = $this->repository->createAndReturnModel($data);
+            return $this->makeCacheResource($model);
+        }
+
+        if ($model->fill($data)->isDirty()) {
+            $this->repository->update($model, $data);
+            return $this->makeCacheResource($model);
+        }
+
+        return $model;
     }
 
     public function delete($model)
@@ -134,6 +155,8 @@ abstract class CachedResourceRepository {
         }
 
         $this->addToCollections($resource);
+
+        $this->fireEvents($resource);
 
         return $model;
     }
@@ -213,5 +236,14 @@ abstract class CachedResourceRepository {
         return EloquentResourceCollection::createFromArray($array, $resource ? : $this->resourceClass)->keyBy('id');
     }
 
+    public function getPusher()
+    {
+        return \App::make('Pusher');
+    }
+
+    protected function fireEvents($resource)
+    {
+        return;
+    }
 
 }

@@ -15,15 +15,15 @@
                         {!! Form::label('name', 'Name') !!}
                         {!! Form::text('name', null, array('class' => 'form-control')) !!}
                     </div>
-                    <div class="form-group">
-                        {!! Form::label('tournament_sport_id', 'Sports') !!}<br/>
-                        {!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('tournament_sport_id', 'Sports') !!}<br/>--}}
+                        {{--{!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}--}}
+                    {{--</div>--}}
 
-                    <div class="form-group">
-                        {!! Form::label('competition_id', 'Competitions') !!}<br/>
-                        {!! Form::select('competition_id', $competitions, null, array("" => "","class"=>"competition-multiselect form-control")) !!}
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--{!! Form::label('competition_id', 'Competitions') !!}<br/>--}}
+                        {{--{!! Form::select('competition_id', $competitions, null, array("" => "","class"=>"competition-multiselect form-control")) !!}--}}
+                    {{--</div>--}}
 
                     <div class="form-group">
                         {!! Form::label('event_group_id', 'Event Group') !!}<br/>

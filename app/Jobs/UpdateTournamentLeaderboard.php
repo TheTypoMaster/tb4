@@ -15,7 +15,7 @@ class UpdateTournamentLeaderboard extends Command implements SelfHandling, Shoul
 
     const QUEUE_TUBE = 'leaderboard-update';
 
-    protected $queue;
+    public $queue;
     /**
      * @var TournamentLeaderboardModel
      */

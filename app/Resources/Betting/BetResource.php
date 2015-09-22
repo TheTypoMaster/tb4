@@ -32,7 +32,7 @@ class BetResource extends AbstractEloquentResource {
         'competitionName'  => 'competition_name',
         'betType'          => 'bet_type',
         'status'           => 'status',
-        'paid'             => 'win_amount',
+        'paid'             => 'won_amount',
         'date'             => 'start_date',
         'eventType'        => 'eventType',
         'percentage'       => 'percentage',
@@ -67,7 +67,7 @@ class BetResource extends AbstractEloquentResource {
 
     public function paid()
     {
-        return  ! is_null($this->model->win_amount) ? $this->model->win_amount : 0;
+        return  ! is_null($this->model->won_amount) ? $this->model->won_amount : 0;
     }
 
     public function selectionName()

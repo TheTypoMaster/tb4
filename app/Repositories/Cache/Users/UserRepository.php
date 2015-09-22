@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Users;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
+use TopBetta\Jobs\Pusher\UserSocketUpdate;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 
 class UserRepository extends CachedResourceRepository {
@@ -32,7 +33,8 @@ class UserRepository extends CachedResourceRepository {
     {
         if ($resource = $this->getUser($user)) {
             $resource->addAccountBalance($amount);
-            $this->put($this->cachePrefix . $resource->id, $resource->toArray(), $this->getModelCacheTime($resource));
+            \Bus::dispatch(new UserSocketUpdate($resourceArray = $resource->toArray()));
+            $this->put($this->cachePrefix . $resource->id, $resourceArray, $this->getModelCacheTime($resource));
         }
     }
 
@@ -40,7 +42,8 @@ class UserRepository extends CachedResourceRepository {
     {
         if ($resource = $this->getUser($user)) {
             $resource->addFreeCreditBalance($amount);
-            $this->put($this->cachePrefix . $resource->id, $resource->toArray(), $this->getModelCacheTime($resource));
+            \Bus::dispatch(new UserSocketUpdate($resourceArray = $resource->toArray()));
+            $this->put($this->cachePrefix . $resource->id, $resourceArray, $this->getModelCacheTime($resource));
         }
     }
 

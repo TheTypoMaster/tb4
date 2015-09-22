@@ -7,24 +7,35 @@
                 <h2 class="col-lg-4">Tournaments</h2>
             </div>
 
+            {{--{!! Form::model(\Input::old(), array("route" => ["admin.tournaments.store", 'XDEBUG_SESSION_START' => 1], "method" => "post")) !!}--}}
+
             {!! Form::model(\Input::old(), array("route" => "admin.tournaments.store", "method" => "post")) !!}
+
             <fieldset>
                 <legend>Tournament Details</legend>
                 <div class="col-lg-6">
                     {{--<div class="form-group">--}}
-                        {{--{!! Form::label('tournament_sport_id', 'Sports') !!}<br/>--}}
-                        {{--{!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}--}}
+                    {{--{!! Form::label('tournament_sport_id', 'Sports') !!}<br/>--}}
+                    {{--{!! Form::select('tournament_sport_id', $sports, null, array("" => "", "class"=>"sport-multiselect form-control")) !!}--}}
                     {{--</div>--}}
 
                     {{--<div class="form-group">--}}
-                        {{--{!! Form::label('competition_id', 'Competitions') !!}<br/>--}}
-                        {{--{!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}--}}
+                    {{--{!! Form::label('competition_id', 'Competitions') !!}<br/>--}}
+                    {{--{!! Form::select('competition_id', [], null, array("" => "","class"=>"competition-multiselect form-control")) !!}--}}
                     {{--</div>--}}
 
                     <div class="form-group event-group-container" id="event-group">
+                        {!! Form::label('type', 'Select Type') !!}<br/>
+                        {!! Form::select('type', [0 => 'Race', 1 => 'Sport'], null, array("id"=>"type", "class" => "form-control", 'placeholder' => '--Select a type--')) !!}
+                        <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select
+                            Future Meeting</a>
+                    </div>
+
+                    <div class="form-group event-group-container" id="event-group">
                         {!! Form::label('event_group_id', 'Event Group') !!}<br/>
-                        {!! Form::select('event_group_id', $eventGroups, null, array("" => "","class" => "event-multiselect form-control")) !!}
-                        <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select Future Meeting</a>
+                        {!! Form::select('event_group_id', [], null, array("" => "","class" => "form-control")) !!}
+                        <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select
+                            Future Meeting</a>
                     </div>
 
 
@@ -32,7 +43,8 @@
                         <div class="form-group">
                             {!! Form::label('future_meeting_id', "Future Meeting") !!}<br/>
                             {!! Form::select('future_meeting_id', $venues, null, array("class" => "event-multiselect form-control", "disabled")) !!}
-                            <a style='display:none' href="#" class="event-group-toggle" data-target="#event-group">Select Existing Meeting</a>
+                            <a style='display:none' href="#" class="event-group-toggle" data-target="#event-group">Select
+                                Existing Meeting</a>
                         </div>
                         <div class="form-group">
                             {!! Form::label('future_meeting_date', "Future Meeting Start") !!}
@@ -44,7 +56,8 @@
                         {!! Form::label('tournament_buyin_id', "Ticket Value") !!}
                         {!! Form::select('tournament_buyin_id', $buyins, null, array("class" => "form-control",)) !!}
                         <label id="limit_applies" style="display:none;">
-                            {!! Form::checkbox('free_tournament_buyin_limit_flag', true, true) !!} Free Buyin Limit Applies
+                            {!! Form::checkbox('free_tournament_buyin_limit_flag', true, true) !!} Free Buyin Limit
+                            Applies
                         </label>
                     </div>
 
@@ -294,12 +307,13 @@
     <script type="text/javascript">
 
         var events = [];
-        $('.datepicker').datetimepicker({'format' : 'YYYY-MM-DD HH:mm'});
+        $('.datepicker').datetimepicker({'format': 'YYYY-MM-DD HH:mm'});
         function createSelectOptions(json) {
             var html = $();
 
-            $.each(json, function(index, value){
-                if ( $.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
+            $.each(json, function (index, value) {
+                if ($.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
+                    console.log(value.id);
                     html = html.add($('<option></option>').text(value.name).val(value.id));
                 }
             });
@@ -307,25 +321,47 @@
             return html;
         }
 
-        $('#tournament_sport_id').change(function(){
-            if ( ! $(this).val()) {return;}
+
+        $('#type').change(function () {
+            if (!$(this).val()) {
+                return;
+            }
 
             var val = $(this).val();
 
-            if ( ! $.isArray(val) ) {
+            if (!$.isArray(val)) {
+                val = [val];
+            }
+
+            $.get('/admin/tournaments/get-event-groups-by-type/' + val)
+                    .done(function (data) {
+                        $('#event_group_id').html(createSelectOptions(data));
+                        $('#event_group_id').change();
+                    });
+
+        });
+
+        $('#tournament_sport_id').change(function () {
+            if (!$(this).val()) {
+                return;
+            }
+
+            var val = $(this).val();
+
+            if (!$.isArray(val)) {
                 val = [val];
             }
 
             $.each(val, function (index, value) {
                 $.get('/admin/tournaments/get-competitions/' + value)
-                    .done(function(data) {
-                        $('#competition_id').html(createSelectOptions(data));
-                        $('#competition_id').change();
-                        $('#event_group_id').change();
-                        $('.sport-multiselect').multiselect("rebuild");
-                        $('.event-multiselect').multiselect("rebuild");
-                        $('.competition-multiselect').multiselect("rebuild");
-                    });
+                        .done(function (data) {
+                            $('#competition_id').html(createSelectOptions(data));
+                            $('#competition_id').change();
+                            $('#event_group_id').change();
+                            $('.sport-multiselect').multiselect("rebuild");
+                            $('.event-multiselect').multiselect("rebuild");
+                            $('.competition-multiselect').multiselect("rebuild");
+                        });
             });
 
 //            if( $.inArray(val[0], ['1','2','3']) >= 0 ) {
@@ -343,18 +379,20 @@
 
         });
 
-        $('#competition_id').change(function(){
-            if ( ! $(this).val()) {return;}
+        $('#competition_id').change(function () {
+            if (!$(this).val()) {
+                return;
+            }
 
             var val = $(this).val();
 
-            if ( ! $.isArray(val) ) {
+            if (!$.isArray(val)) {
                 val = [val];
             }
 
             $.each(val, function (index, value) {
                 $.get('/admin/tournaments/get-event-groups/' + value)
-                        .done(function(data){
+                        .done(function (data) {
                             $('#event_group_id').html(createSelectOptions(data));
                             $('#event_group_id').change();
                             $('.sport-multiselect').multiselect("rebuild");
@@ -365,7 +403,7 @@
 
         });
 
-        $('.event-group-toggle').click(function() {
+        $('.event-group-toggle').click(function () {
             var $target = $($(this).data('target'));
             $target.show();
             $target.find('.form-control').removeAttr('disabled');
@@ -380,57 +418,59 @@
 
         });
 
-        $('#event_group_id').change(function() {
-            if ( ! $(this).val()) {return;}
-            var val = $(this).val();
+//        $('#event_group_id').change(function () {
+//            if (!$(this).val()) {
+//                return;
+//            }
+//            var val = $(this).val();
+//
+//            if (!$.isArray(val)) {
+//                val = [val];
+//            }
+//
+//            $.each(val, function (index, value) {
+//                $.get('/admin/tournaments/get-events/' + value)
+//                        .done(function (data) {
+//                            events = data;
+//                            $('.events-selector').html(createSelectOptions(data));
+//                            $('.sport-multiselect').multiselect("rebuild");
+//                            $('.event-multiselect').multiselect("rebuild");
+//                            $('.competition-multiselect').multiselect("rebuild");
+//                        });
+//
+//                if (value > 0) {
+//                    $.get('/admin/tournaments/get-markets/' + $(this).val())
+//                            .done(function (data) {
+//                                if (data.length > 0) {
+//                                    var html = $();
+//                                    $.each(data, function (i, v) {
+//                                        var $row = $("<tr/>");
+//                                        $row.append($("<td/>").text(v.market_type.name));
+//                                        $row.append($("<td/>").text(v.line));
+//                                        $row.append($("<td/>").text(v.tournament_status ? "Yes" : "No"));
+//                                        html = html.add($row);
+//                                    });
+//
+//                                    console.log(html);
+//
+//                                    $('#market-table-body').html(html);
+//                                    $('#markets').slideDown();
+//                                } else {
+//                                    $('#markets').slideUp();
+//                                }
+//                            });
+//                } else {
+//                    $('#markets').slideUp();
+//                }
+//            });
+//        });
 
-            if ( ! $.isArray(val) ) {
-                val = [val];
-            }
 
-            $.each(val, function (index, value) {
-                $.get('/admin/tournaments/get-events/' + value)
-                        .done(function(data){
-                            events = data;
-                            $('.events-selector').html(createSelectOptions(data));
-                            $('.sport-multiselect').multiselect("rebuild");
-                            $('.event-multiselect').multiselect("rebuild");
-                            $('.competition-multiselect').multiselect("rebuild");
-                        });
-
-                if(value > 0) {
-                    $.get('/admin/tournaments/get-markets/' + $(this).val())
-                            .done(function (data) {
-                                if (data.length > 0) {
-                                    var html = $();
-                                    $.each(data, function (i, v) {
-                                        var $row = $("<tr/>");
-                                        $row.append($("<td/>").text(v.market_type.name));
-                                        $row.append($("<td/>").text(v.line));
-                                        $row.append($("<td/>").text(v.tournament_status ? "Yes" : "No"));
-                                        html = html.add($row);
-                                    });
-
-                                    console.log(html);
-
-                                    $('#market-table-body').html(html);
-                                    $('#markets').slideDown();
-                                } else {
-                                    $('#markets').slideUp();
-                                }
-                            });
-                } else {
-                    $('#markets').slideUp();
-                }
-            });
-        });
-
-
-        $('.events-selector').change(function(){
+        $('.events-selector').change(function () {
             var needle = $(this).val();
             var startDate;
-            $.each(events, function(i,v) {
-                if(v.id == needle) {
+            $.each(events, function (i, v) {
+                if (v.id == needle) {
                     startDate = v.start_date;
                     return false;
                 }
@@ -439,16 +479,16 @@
             $(this).parents('.form-group').find('.event-date').val(startDate);
         });
 
-        $('input[name="jackpot_flag"]').change(function(){
+        $('input[name="jackpot_flag"]').change(function () {
             var $parentTourn = $('#parent-tournament');
             var $sportId = $('#tournament_sport_id');
             console.log($sportId.val());
-            if($(this).val() == 1 && $sportId.val() != 0) {
+            if ($(this).val() == 1 && $sportId.val() != 0) {
 
                 $.get('/admin/tournaments/get-parent-tournaments/' + $sportId.val())
-                    .done(function(data) {
-                        $('#parent_tournament_id').html(createSelectOptions(data));
-                    });
+                        .done(function (data) {
+                            $('#parent_tournament_id').html(createSelectOptions(data));
+                        });
 
                 $parentTourn.show();
                 $parentTourn.removeAttr('disabled');
@@ -458,19 +498,19 @@
             }
         });
 
-        $('#tournament_buyin_id').change(function(){
+        $('#tournament_buyin_id').change(function () {
 
             var $limitApplies = $('#limit_applies');
-            if($(this).find("option:selected").text() == '0.00 + 0.00') {
+            if ($(this).find("option:selected").text() == '0.00 + 0.00') {
                 $limitApplies.show();
             } else {
                 $limitApplies.hide();
             }
         });
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             var $eventGroupId = $('#event_group_id');
-            if($eventGroupId.val() != 0) {
+            if ($eventGroupId.val() != 0) {
                 $eventGroupId.change();
             }
 
@@ -479,7 +519,7 @@
     </script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             var config = {
                 enableFiltering: true,
@@ -494,7 +534,7 @@
 
             //trigger the change event on load
             var $tournamentSportId = $('#tournament_sport_id');
-            if($tournamentSportId.val() > 0) {
+            if ($tournamentSportId.val() > 0) {
                 $tournamentSportId.change();
             }
         });

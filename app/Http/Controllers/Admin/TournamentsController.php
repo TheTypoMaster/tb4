@@ -187,7 +187,7 @@ class TournamentsController extends Controller
 //        }
 
         $eventGroups = $this->tournamentEventGroupService->getAllEventGroupsToArray();
-//        dd($eventGroups);
+
         //get the buyins
         $buyins = array("Select Ticket Value");
 
@@ -222,6 +222,8 @@ class TournamentsController extends Controller
             '_method',
             '_token',
             'entries_close_after',
+            'type',
+            'competition_id'
         ));
 
         //rebuy data
@@ -306,23 +308,25 @@ class TournamentsController extends Controller
         $sports = array("Select Sport") + $this->sportsrepo->selectList();
 
         //get tournament comps
-        $competitions = array("Select Competition");
-        $competitionsCollection = $this->tournamentCompetiitonRepository->getBySport($tournament->sport->id);
-        if($competitionsCollection) {
-            $competitions += $competitionsCollection->lists('name', 'id')->all();
-        }
-        $tournament->competition_id = $tournament->eventGroup->tournament_competition_id;
+//        $competitions = array("Select Competition");
+//        $competitionsCollection = $this->tournamentCompetiitonRepository->getBySport($tournament->sport->id);
+//        if($competitionsCollection) {
+//            $competitions += $competitionsCollection->lists('name', 'id')->all();
+//        }
+//        $tournament->competition_id = $tournament->eventGroup->tournament_competition_id;
 
         //get event groups
         $eventGroups = array("Select Event Group");
-        $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($tournament->eventGroup->id);
-        if($eventGroupsCollection) {
-            $eventGroups += $eventGroupsCollection->map(function($q) {
-                return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
-            })->lists('name', 'id')->all();
-        }
-        $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name . ' - ' . $tournament->eventGroup->start_date);
+//        $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($tournament->eventGroup->id);
+//        if($eventGroupsCollection) {
+//            $eventGroups += $eventGroupsCollection->map(function($q) {
+//                return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
+//            })->lists('name', 'id')->all();
+//        }
+//        $eventGroups += array($tournament->eventGroup->id => $tournament->eventGroup->name . ' - ' . $tournament->eventGroup->start_date);
 
+        $eventGroupsModel = $this->tournamentEventGroupService->getEventGroupByID($tournament->event_group_id);
+        $eventGroups += array($tournament->event_group_id => $eventGroupsModel->name . ' - ' . $eventGroupsModel->start_date);
 
         //get the buyins
         $buyins = array("Select Ticket Value");
@@ -347,11 +351,14 @@ class TournamentsController extends Controller
 
         }
 
-        if ($tournament->sport->racing_flag) {
-            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
-        } else {
-            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
-        }
+//        if ($tournament->sport->racing_flag) {
+//            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
+//        } else {
+//            $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('sport');
+//        }
+
+        $parentTournaments = $this->tournamentRepo->findCurrentJackpotTournamentsByType('racing');
+
 
         $parentTournaments = array(-1 => 'Select Tournament') + $parentTournaments->map(function($value){
             return array('id' => $value->id, 'name' => $value->name . ' - ' . $value->start_date . ' ($' .
@@ -581,6 +588,15 @@ class TournamentsController extends Controller
         });
 
         return $this->formatForResponse(array("Select Event Group") + $eventGroups->lists('name', 'id')->all());
+    }
+
+    /**
+     * get event groups by type
+     * @param $type_id
+     * @return mixed
+     */
+    public function getEventGroupsByType($type_id) {
+        return $this->tournamentEventGroupService->getEventGroupsByType($type_id);
     }
 
     public function getEvents($eventGroupId)

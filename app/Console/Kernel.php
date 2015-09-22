@@ -21,6 +21,8 @@ class Kernel extends ConsoleKernel {
         'TopBetta\Console\Commands\NextToJump\ManageSportsNextToJump',
         'TopBetta\Console\Commands\DevTools\PopulateTournamentCache',
         'TopBetta\Console\Commands\Cache\ManageTournamentGroups',
+        'TopBetta\Console\Commands\Pusher\PusherHeartbeat',
+//		'TopBetta\Console\Commands\DevTools\CreateTestSport',
 	];
 
 	/**
@@ -36,6 +38,9 @@ class Kernel extends ConsoleKernel {
 
         $schedule->command('topbetta:manage-tournament-groups')
             ->daily();
+
+        $schedule->command('topbetta:pusher-heartbeat')
+            ->everyMinute();
 	}
 
 }
