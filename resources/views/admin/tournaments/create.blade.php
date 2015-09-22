@@ -38,6 +38,12 @@
                             Future Meeting</a>
                     </div>
 
+                    <div class="form-group event-group-container" id="event-group">
+                        {!! Form::label('name', 'Group Name', array("class" => "hidden name")) !!}<br/>
+                        {!! Form::input('text', 'name', '', array("" => "","class" => "form-control hidden name")) !!}
+                        <a style='display:none;' href="#" class="event-group-toggle" data-target="#future-meeting">Select
+                            Future Meeting</a>
+                    </div>
 
                     <div class="event-group-container" id="future-meeting" style='display:none'>
                         <div class="form-group">
@@ -313,7 +319,6 @@
 
             $.each(json, function (index, value) {
                 if ($.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
-                    console.log(value.id);
                     html = html.add($('<option></option>').text(value.name).val(value.id));
                 }
             });
@@ -339,6 +344,13 @@
                         $('#event_group_id').change();
                     });
 
+        });
+
+        $('#event_group_id').change(function() {
+            $('#name').val($('#event_group_id option:selected').text());
+            if($('#name').val() != '') {
+                $('.name').removeClass('hidden');
+            }
         });
 
         $('#tournament_sport_id').change(function () {
