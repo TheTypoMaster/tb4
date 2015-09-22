@@ -116,7 +116,7 @@ class MeetingService {
         if( ! $date ) {
             $date = Carbon::now();
         } else {
-            $date = Carbon::createFromFormat('Y-m-d', $date);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s', $date);
         }
 
         $collection = $this->meetingResourceService->getMeetingsForDate($date, $type, $withRaces);
