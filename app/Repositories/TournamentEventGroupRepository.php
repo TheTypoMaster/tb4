@@ -67,7 +67,7 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      */
     public function getEventGroup($event_group_id)
     {
-        return $this->model->find($event_group_id)->first();
+        return $this->model->find($event_group_id);
     }
 
 
@@ -107,5 +107,16 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
         return $this->model->where('type', 'Sport')
             ->where('start_date', '>=', Carbon::today())
             ->get();
+    }
+
+    /**
+     * get event group type
+     * @param $group_id
+     * @return mixed
+     */
+    public function getEventGroupType($group_id) {
+        $tournament_event_group = $this->model->find($group_id);
+
+        return $tournament_event_group->type;
     }
 }

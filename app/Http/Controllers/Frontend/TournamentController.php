@@ -60,7 +60,6 @@ class TournamentController extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->response->failed("Tournament not found", 404);
         }
-
         return $this->response->success($tournament['data']->toArray(), 200, array_except($tournament, 'data'));
     }
 
