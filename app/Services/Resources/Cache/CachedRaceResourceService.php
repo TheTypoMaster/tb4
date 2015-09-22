@@ -54,7 +54,7 @@ class CachedRaceResourceService extends CachedResourceService {
     {
         $races = $this->raceRepository->getRacesForMeeting($meetingId);
 
-        if (!$races) {
+        if (!$races->count()) {
             return $this->resourceService->getRacesForMeeting($meetingId);
         }
 
