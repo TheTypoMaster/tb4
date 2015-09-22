@@ -35,7 +35,7 @@ class CachedMeetingResourceService extends CachedResourceService {
     {
         $meetings = $this->meetingRepository->getSmallMeetings($date);
 
-        if (!$meetings) {
+        if (!$meetings->count()) {
             return $this->resourceService->getSmallMeetings($date);
         }
 
@@ -47,7 +47,7 @@ class CachedMeetingResourceService extends CachedResourceService {
 
         $meetings = $this->meetingRepository->getMeetingsForDate($date);
 
-        if (!$meetings) {
+        if (!$meetings->count()) {
             return $this->resourceService->getMeetingsForDate($date, $type, $withRaces);
         }
 
