@@ -17,19 +17,19 @@ class SelectionResource extends AbstractEloquentResource {
     protected static $modelClass = 'TopBetta\Models\SelectionModel';
 
     protected $attributes = array(
-        'id'             => 'id',
-        'name'           => 'name',
-        'number'         => 'number',
-        'jockey'         => 'associate',
-        'barrier'        => 'barrier',
-        'handicap'       => 'handicap',
-        'weight'         => 'weight',
-        'silk'           => 'silk',
-        'form'           => 'form',
-        'winDeductions'  => 'win_deductions',
-        'placeDeduction' => 'place_deductions',
-        'typeCode'       => 'typeCode',
-        'selectionStatus' => 'selectionstatus.keyword',
+        'id'               => 'id',
+        'name'             => 'name',
+        'number'           => 'number',
+        'jockey'           => 'associate',
+        'barrier'          => 'barrier',
+        'handicap'         => 'handicap',
+        'weight'           => 'weight',
+        'silk'             => 'silk',
+        'lastStartsString' => 'lastStartsString',
+        'winDeductions'    => 'win_deductions',
+        'placeDeduction'   => 'place_deductions',
+        'typeCode'         => 'typeCode',
+        'selectionStatus'  => 'selectionstatus.keyword',
     );
 
     protected $types = array(
@@ -100,9 +100,9 @@ class SelectionResource extends AbstractEloquentResource {
         $this->products = $products;
     }
 
-    public function getForm()
+    public function getLastStartsString()
     {
-        if ($form = object_get($this->model, 'form')) {
+        if (($form = object_get($this->model, 'form')) && is_string($form)) {
             return $form;
         }
 
