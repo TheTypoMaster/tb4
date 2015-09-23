@@ -74,7 +74,8 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
 
             if(count($tournaments) > 0 && $group->type == 'sport') {
                 $groups_with_tournaments[] = $tournaments;
-                $group->setRelation('tournaments', $tournaments);
+                $tournaments_resource = new EloquentResourceCollection($tournaments, 'TopBetta\Resources\Tournaments\TournamentResource');
+                $group->setRelation('tournaments', $tournaments_resource);
             }
 
         }
@@ -105,7 +106,8 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
 
             if(count($tournaments) > 0 && $group->type == 'race') {
                 $groups_with_tournaments[] = $tournaments;
-                $group->setRelation('tournaments', $tournaments);
+                $tournaments_resource = new EloquentResourceCollection($tournaments, 'TopBetta\Resources\Tournaments\TournamentResource');
+                $group->setRelation('tournaments', $tournaments_resource);
             }
 
         }
