@@ -13,7 +13,7 @@ class AddMarketGroupIdFieldToMarketTypeTable extends Migration
     public function up()
     {
         Schema::table('tbdb_market_type', function (Blueprint $table) {
-            $table->integer('market_type_group_id');
+            $table->integer('market_type_group_id')->after('icon_id');
         });
     }
 
