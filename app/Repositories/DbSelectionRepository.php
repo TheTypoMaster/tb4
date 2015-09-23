@@ -10,12 +10,14 @@ use TopBetta\Models\SelectionModel;
 use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Repositories\Traits\SportsResourceRepositoryTrait;
 
-class DbSelectionRepository extends BaseEloquentRepository implements SelectionRepositoryInterface{
+class DbSelectionRepository extends BaseEloquentRepository implements SelectionRepositoryInterface
+{
     use SportsResourceRepositoryTrait;
 
     protected $selections;
 
-    function __construct(SelectionModel $selections) {
+    function __construct(SelectionModel $selections)
+    {
         $this->model = $selections;
     }
 
@@ -33,20 +35,19 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->join('tbdb_selection_status', 'tbdb_selection_status.id', '=', 'tbdb_selection.selection_status_id')
             ->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
             ->leftjoin('tbdb_selection_result', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
-            ->where(function($q) use ($search) {
+            ->where(function ($q) use ($search) {
                 $q->where('tbdb_selection.name', 'LIKE', "%$search%")
                     ->orWhere('tbdb_event.name', 'LIKE', "%$search%")
                     ->orWhere('tbdb_event_group.name', 'LIKE', "%$search%");
             });
 
-            if( $market ) {
-                $model->where('market_id', $market);
-            }
+        if ($market) {
+            $model->where('market_id', $market);
+        }
 
-            return $model->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name', 'tbdb_event.id as event_id',
-                'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
-                'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
-
+        return $model->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name', 'tbdb_event.id as event_id',
+            'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
+            'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
             ->paginate();
     }
 
@@ -58,28 +59,26 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
     public function allSelections($limit = 10)
     {
 
-       // $results =  new \stdClass();
+        // $results =  new \stdClass();
         //$results->page = $page;
-       // $results->limit = $limit;
-       // $results->totalItems = 0;
-       // $results->items = array();
+        // $results->limit = $limit;
+        // $results->totalItems = 0;
+        // $results->items = array();
 
-        $selections =  $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
+        $selections = $this->model->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
             ->leftjoin('tbdb_event', 'tbdb_market.event_id', '=', 'tbdb_event.id')
             ->leftjoin('tbdb_event_group_event', 'tbdb_event_group_event.event_id', '=', 'tbdb_event.id')
             ->leftjoin('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
             ->leftjoin('tbdb_selection_status', 'tbdb_selection_status.id', '=', 'tbdb_selection.selection_status_id')
             ->leftjoin('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
             ->leftjoin('tbdb_selection_result', 'tbdb_selection_result.selection_id', '=', 'tbdb_selection.id')
-
             ->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name',
                 'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
                 'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
-
             ->paginate($limit);
 
-       // $results->totalItems = $this->model->count();
-       // $results->items = $selections->all();
+        // $results->totalItems = $this->model->count();
+        // $results->items = $selections->all();
 
         return $selections;
     }
@@ -110,26 +109,28 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
      * @param $runnerNo
      * @return mixed
      */
-     public function getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $runnerNo){
-         return $this->model->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
-                    ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
-                    ->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-                    ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
-                    ->where('tbdb_event_group.external_event_group_id',$meetingId )
-                    ->where('tbdb_event.number', $raceNo)
-                    ->where('tbdb_selection.number', $runnerNo)
-                    ->select('tbdb_selection.*')
-                    ->first();
-     }
+    public function getSelectionIdFromMeetingIdRaceNumberSelectionName($meetingId, $raceNo, $runnerNo)
+    {
+        return $this->model->join('tbdb_market', 'tbdb_selection.market_id', '=', 'tbdb_market.id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->join('tbdb_event_group_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->join('tbdb_event_group', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->where('tbdb_event_group.external_event_group_id', $meetingId)
+            ->where('tbdb_event.number', $raceNo)
+            ->where('tbdb_selection.number', $runnerNo)
+            ->select('tbdb_selection.*')
+            ->first();
+    }
 
-    public function getSelectionsforMarketId($id){
+    public function getSelectionsforMarketId($id)
+    {
         $selections = $this->model->join('tbdb_selection_price', 'tbdb_selection_price.selection_id', '=', 'tbdb_selection.id')
-                                    ->where('tbdb_selection.market_id', $id)
-                                    ->where('tbdb_selection_price.win_odds', '>', '1')
-                                    ->where('tbdb_selection.selection_status_id', '=', '1')
-                                    ->select('tbdb_selection.name as selection_name', 'tbdb_selection_price.win_odds as selection_odds', 'tbdb_selection_price.line as selection_handicap')
-                        ->get();
-        if(!$selections) return null;
+            ->where('tbdb_selection.market_id', $id)
+            ->where('tbdb_selection_price.win_odds', '>', '1')
+            ->where('tbdb_selection.selection_status_id', '=', '1')
+            ->select('tbdb_selection.name as selection_name', 'tbdb_selection_price.win_odds as selection_odds', 'tbdb_selection_price.line as selection_handicap')
+            ->get();
+        if (!$selections) return null;
 
         return $selections->toArray();
     }
@@ -141,12 +142,12 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
         $selection = $this->model->find($id);
 
         //assosciate teams
-        if(is_array($team = array_get($data, 'team', false))) {
+        if (is_array($team = array_get($data, 'team', false))) {
             $selection->team()->sync($team);
         }
 
         //assosciate players
-        if(is_array($player = array_get($data, 'player', false))) {
+        if (is_array($player = array_get($data, 'player', false))) {
             $selection->player()->sync($player);
         }
 
@@ -161,7 +162,7 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->where('external_event_id', $externalEventId)
             ->first();
 
-        if($selection) {
+        if ($selection) {
             return $selection->toArray();
         }
 
@@ -185,7 +186,7 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->where('name', $name)
             ->first();
 
-        if($selection) {
+        if ($selection) {
             return $selection->toArray();
         }
 
@@ -193,15 +194,16 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
     }
 
 
+    public function getSeletcionIdByExternalId($externalId)
+    {
+        $selection = $this->model->where('external_selection_id', $externalId)
+            ->value('id');
+        if (!$selection) return null;
+        return $selection;
+    }
 
-	public function getSeletcionIdByExternalId($externalId){
-		$selection = $this->model->where('external_selection_id', $externalId)
-								->value('id');
-		if(!$selection) return null;
-		return $selection;
-	}
-
-    public function getSelectionByExternalId($externalId){
+    public function getSelectionByExternalId($externalId)
+    {
         return $this->model->where('external_selection_id', $externalId)
             ->first();
     }
@@ -219,7 +221,6 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->select('tbdb_selection.*', 'tbdb_selection_status.name as status_name',
                 'tbdb_event_group.name as competition_name', 'tbdb_event.name as event_name', 'tbdb_selection_price.override_odds as override_odds', 'tbdb_selection_price.override_type as override_type',
                 'tbdb_selection_price.win_odds as win_odds', 'tbdb_selection_price.place_odds as place_odds', 'tbdb_selection_price.id as selection_price_id', 'tbdb_selection_price.line as line')
-
             ->paginate();
     }
 
@@ -279,4 +280,9 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
             ->where('market_id', $market)
             ->get();
     }
-} 
+
+    public function getByExternalId($id)
+    {
+        return $this->model->where('external_selection_id', $id)->first();
+    }
+}
