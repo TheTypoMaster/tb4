@@ -9,6 +9,7 @@
 namespace TopBetta\Resources\Tournaments;
 
 
+use TopBetta\Repositories\TournamentEventGroupRepository;
 use TopBetta\Resources\AbstractEloquentResource;
 
 class TournamentResource extends AbstractEloquentResource {
@@ -87,6 +88,7 @@ class TournamentResource extends AbstractEloquentResource {
 
     private $prizeFormat;
 
+
     public function getEntrants()
     {
         if (isset($this->model->entrants)) {
@@ -151,7 +153,6 @@ class TournamentResource extends AbstractEloquentResource {
         if (!$this->type) {
             return $this->model->type;
         }
-
         return $this->type;
     }
 
@@ -205,7 +206,12 @@ class TournamentResource extends AbstractEloquentResource {
     {
         parent::initialize();
 
-        $this->setType($this->model->eventGroup->sport_id > 3 ? 'sport' : 'racing');
+        $tournamentEventGroupRepository = \App::make('TopBetta\Repositories\TournamentEventGroupRepository');
+        $event_group = $tournamentEventGroupRepository->getEventGroup($this->model->event_group_id);
+        $this->setType($event_group->type);
+
+//        $this->setType($this->model->eventGroup->sport_id > 3 ? 'sport' : 'racing');
+
 
         $this->setPrizeFormat($this->model->prizeFormat->name);
         
