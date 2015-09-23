@@ -32,7 +32,7 @@ class TournamentGroupResourceService {
             return $groups;
         }
 
-        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
+        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
     }
 
     public function getVisibleRacingTournamentGroupsWithTournaments($date = null)

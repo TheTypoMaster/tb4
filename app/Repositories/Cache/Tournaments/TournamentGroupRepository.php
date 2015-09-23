@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentGroupRepositoryInterface;
 use TopBetta\Repositories\DbTournamentGroupRepository;
+use TopBetta\Repositories\DbTournamentRepository;
+use TopBetta\Repositories\TournamentEventGroupRepository;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\Tournaments\TournamentResource;
 
@@ -37,31 +39,77 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
         self::COLLECTION_ALL_TOURNAMENT_GROUPS,
     );
 
-    public function __construct(DbTournamentGroupRepository $repository)
+    public function __construct(DbTournamentGroupRepository $repository,
+                                DbTournamentRepository $tournamentRepository,
+                                TournamentEventGroupRepository $tournamentEventGroupRepository)
     {
         $this->repository = $repository;
+        $this->tournamentRepository = $tournamentRepository;
+        $this->tournamentEventGroupRepository = $tournamentEventGroupRepository;
     }
 
     public function getVisibleSportTournamentGroupsWithTournaments(Carbon $date = null)
     {
-        return $this->getTournamentGroups()->filter(function ($v) {
-            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
-                return $q->type == 'sport';
-            }));
 
-            return $v->tournaments->count() > 0;
-        });
+//        return $this->getTournamentGroups()->filter(function ($v) {
+//            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
+//                return $q->type == 'sport';
+//            }));
+//
+//            return $v->tournaments->count() > 0;
+//        });
+
+//        dd('group');
+//
+        $groups = $this->tournamentEventGroupRepository->getEventGroupsWithoutPaginate();
+
+
+        $groups_resources = new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
+
+        $groups_with_tournaments = array();
+
+        foreach($groups_resources as $key => $group) {
+
+            $tournaments = $this->tournamentRepository->getTournamentWithEventGroupCollection($group->id);
+
+            if(count($tournaments) > 0 && $group->type == 'sport') {
+                $groups_with_tournaments[] = $tournaments;
+                $group->setRelation('tournaments', $tournaments);
+            }
+
+        }
+        return $groups_resources;
+
     }
 
     public function getVisibleRacingTournamentGroupsWithTournaments(Carbon $date = null)
     {
-        return $this->getTournamentGroups()->filter(function ($v) {
-            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
-                return $q->type == 'racing';
-            }));
+//        return $this->getTournamentGroups()->filter(function ($v) {
+//            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
+//                return $q->type == 'racing';
+//            }));
+//
+//            return $v->tournaments->count() > 0;
+//        });
 
-            return $v->tournaments->count() > 0;
-        });
+        $groups = $this->tournamentEventGroupRepository->getEventGroupsWithoutPaginate();
+
+
+        $groups_resources = new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
+
+        $groups_with_tournaments = array();
+
+        foreach($groups_resources as $key => $group) {
+
+            $tournaments = $this->tournamentRepository->getTournamentWithEventGroupCollection($group->id);
+
+            if(count($tournaments) > 0 && $group->type == 'race') {
+                $groups_with_tournaments[] = $tournaments;
+                $group->setRelation('tournaments', $tournaments);
+            }
+
+        }
+        return $groups_resources;
     }
 
     public function getByName($name)
