@@ -13,9 +13,10 @@ class CreateMarketGroupTable extends Migration
     public function up()
     {
         Schema::create('tb_market_groups', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('market_group_id');
             $table->string('market_group_name');
             $table->string('market_group_description');
+            $table->bool('market_group_display_flag')->default(0);
             $table->timestamps();
         });
     }
