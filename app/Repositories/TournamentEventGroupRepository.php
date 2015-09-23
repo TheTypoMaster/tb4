@@ -32,7 +32,7 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      */
     public function getEventGroupsWithoutPaginate()
     {
-        return $this->model->all();
+        return $this->model->where('start_date', '>=', Carbon::today())->get();
     }
 
     /**
@@ -95,15 +95,16 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
     public function getRaceEventGroups()
     {
         return $this->model->where('type', 'Race')
-        ->where('start_date', '>=', Carbon::today())
-        ->get();
+            ->where('start_date', '>=', Carbon::today())
+            ->get();
     }
 
     /**
      * get all sport event groups
      * @return mixed
      */
-    public function getSportEventGroups() {
+    public function getSportEventGroups()
+    {
         return $this->model->where('type', 'Sport')
             ->where('start_date', '>=', Carbon::today())
             ->get();
@@ -114,9 +115,11 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      * @param $group_id
      * @return mixed
      */
-    public function getEventGroupType($group_id) {
+    public function getEventGroupType($group_id)
+    {
         $tournament_event_group = $this->model->find($group_id);
 
         return $tournament_event_group->type;
     }
+
 }

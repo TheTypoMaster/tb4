@@ -16,7 +16,8 @@
                     </a>
                     @if($children = array_get($item, 'children') )
                         <span class="fa arrow"></span>
-                        <ul class="nav nav-second-level">
+
+                        <ul class="nav nav-second-level" >
                             @foreach($children as $childItem)
                                 <li>
                                     <a href="{{ array_get($childItem, 'link') ? : '#' }}">
