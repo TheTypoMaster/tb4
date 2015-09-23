@@ -76,6 +76,7 @@ return array(
         array("uri" => "event-groups/remove_event/{group_id}/{event_id}/{group_name}", 'permission' => 'tournaments.view'),
         array("uri" => "event-groups/update/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournaments/get-event-groups-by-type/{typeid}", 'permission' => 'tournaments.view'),
+        array("uri" => "marketordering", 'permission' => 'tournaments.view'),
 
 
     ),
@@ -108,6 +109,7 @@ return array(
         )),
         array("name" => "Reports", "route" => "admin.reports.index", "fa-icon" => "fa-file-text"),
         array("name" => "Event Management", "fa-icon" => "fa-list", "children" => array(
+            array("name" => "Market Ordering",  "url" => "/admin/marketordering"),
             array("name" => "Regions", "route" => "admin.competitionregions.index"),
             array("name" => "Sports", "route" => "admin.sports.index"),
             array("name" => "Base Competitions", "route" => "admin.basecompetitions.index"),
