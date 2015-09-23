@@ -18,7 +18,8 @@ class EventResource extends AbstractEloquentResource {
     protected $attributes = array(
         'id' => 'id',
         'name' => 'name',
-        "display_flag" => "display_flag",
+        'display_flag' => 'display_flag',
+        'start_date' => 'start_date',
     );
 
     protected $loadIfRelationExists = array(
