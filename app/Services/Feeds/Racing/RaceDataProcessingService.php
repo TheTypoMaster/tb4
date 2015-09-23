@@ -461,6 +461,8 @@ class RaceDataProcessingService {
 			$runnerDetails['silk_id'] = array_get($runner, 'SilkCode', '');
             $runnerDetails['win_deductions'] = array_get($runner, 'WinDeductions', 0);
             $runnerDetails['place_deductions'] = array_get($runner, 'PlaceDeductions', 0);
+            $runnerDetails['apn_flucuations'] = array_get($runner, 'apn_flucuations', '');
+            $runnerDetails['topbetta_flucuations'] = array_get($runner, 'topbetta_flucuations', '');
 
 			if (isset($runner['Scratched'])) {
 				($runner['Scratched'] == '1') ?	$runnerDetails['selection_status_id'] = '2' : $runnerDetails['selection_status_id'] = '1';
