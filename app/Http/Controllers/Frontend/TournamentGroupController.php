@@ -37,10 +37,11 @@ class TournamentGroupController extends Controller {
                 $request->get('type', 'racing'),
                 $request->get('date', null)
             );
+
         } catch (\InvalidArgumentException $e) {
             return $this->response->failed($e->getMessage(), 400);
         }
 
-        return $this->response->success($groups->toArray());
+        return array('data' => $groups->toArray(), 'selected_event' => '');
     }
 }

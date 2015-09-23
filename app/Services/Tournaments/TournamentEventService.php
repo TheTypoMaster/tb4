@@ -66,7 +66,7 @@ class TournamentEventService
 
     public function getEventGroups($tournament, $eventId = null)
     {
-//        dd('dd');
+
         $data = array();
         $event_group_id = $tournament->event_group_id;
 
@@ -119,6 +119,7 @@ class TournamentEventService
             $event_list = array();
             foreach ($competitions_resource as $key => &$competition) {
                 $races_with_products = $this->selectionResourceService->getSelectionsForRace($competition->id);
+
                 $competition->setRelation('selections', $races_with_products);
             }
 
