@@ -64,14 +64,15 @@ class TournamentEventService
 //        return array('data' => array($eventGroup), 'selected_event' => $selected);
 //    }
 
-    public function getEventGroups($tournament)
+    public function getEventGroups($tournament, $eventId = null)
     {
+//        dd('dd');
         $data = array();
         $event_group_id = $tournament->event_group_id;
 
         $event_group = $this->tournamentEventGroupRepository->getEventGroup($event_group_id);
-
-        $type = $this->tournamentEventGroupRepository->getEventGroupType($event_group_id);
+        $type = $event_group->type;
+//        $type = $this->tournamentEventGroupRepository->getEventGroupType($event_group_id);
 
         $events = $event_group->events()->get();
 
@@ -92,15 +93,17 @@ class TournamentEventService
         }
 
         $competitions = array();
+        $competitions_id = array();
 
         foreach ($events as $key => $event) {
             $competition = $event->competition()->first();
-            if (!in_array($competition, $competitions)) {
+            if (!in_array($competition->id, $competitions_id)) {
+                $competitions_id[] = $competition->id;
                 $competitions[] = $competition;
             }
         }
-
         if ($type == 'sport') {
+
             $competitions_resource = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($competitions), 'TopBetta\Resources\Sports\CompetitionResource');
 
             $event_list = array();
@@ -109,18 +112,17 @@ class TournamentEventService
                 $competition->setRelation('events', $events_with_markets);
             }
 
-            return array('data' => $competitions_resource->toArray(), 'selected_event' => $selected_event);
+            return array('data' => $competitions_resource, 'selected_event' => $selected_event);
         } else if ($type == 'race') {
 
             $competitions_resource = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($competitions), 'TopBetta\Resources\MeetingResource');
-//            dd($competitions_resource);
             $event_list = array();
             foreach ($competitions_resource as $key => &$competition) {
                 $races_with_products = $this->selectionResourceService->getSelectionsForRace($competition->id);
                 $competition->setRelation('selections', $races_with_products);
             }
 
-            return array('data' => $competitions_resource->toArray(), 'selected_event' => $selected_event);
+            return array('data' => $competitions_resource, 'selected_event' => $selected_event);
         }
 
 
