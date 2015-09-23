@@ -30,6 +30,8 @@ class SelectionResource extends AbstractEloquentResource {
         'placeDeduction'   => 'place_deductions',
         'typeCode'         => 'typeCode',
         'selectionStatus'  => 'selectionstatus.keyword',
+        'apn_flucuations'  => 'apn_flucuations',
+        'topbetta_flucuations' => 'topbetta_flucuations',
     );
 
     protected $types = array(
