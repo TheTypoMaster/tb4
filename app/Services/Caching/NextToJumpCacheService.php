@@ -109,6 +109,8 @@ class NextToJumpCacheService {
      */
     private function _updateNextToJumpCacheObject($nextToJumpArray){
         Log::debug($this->logprefix.'Adding cache object - ', $nextToJumpArray);
+        //updates so trigger socket up
+        \Bus::dispatch(new NextToJumpSocketUpdate($this->formatForPusher($nextToJumpArray)));
         return Cache::tags('topbetta-nexttojump')->forever('topbetta-nexttojump', $nextToJumpArray);
     }
 
@@ -135,12 +137,23 @@ class NextToJumpCacheService {
         // no results no update
         if(!$nextToJumpArray) return false;
 
-        //updates so trigger socket up
-        \Bus::dispatch(new NextToJumpSocketUpdate($nextToJumpArray));
-
         // add the cache object
         return $this->_updateNextToJumpCacheObject($nextToJumpArray);
 
+    }
+
+    private function formatForPusher($data)
+    {
+        foreach ($data as $next) {
+
+            $toGo = \TopBetta\Helpers\TimeHelper::nicetime(strtotime($next['start_date']), 2);
+
+            //convert the date to ISO 8601 format
+            $startDatetime = new \DateTime($next['start_date']);
+            $startDatetime = $startDatetime -> format('c');
+
+            $result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime);
+        }
     }
 
 } 

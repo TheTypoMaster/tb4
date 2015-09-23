@@ -411,7 +411,7 @@ class TournamentService {
 
         //get tournament name and desc
 //        $tournamentData['name'] = $this->generateTournamentAutomatedText('name', $tournamentData);
-        $tournamentData['name'] = $tournament_event_group->name;
+//        $tournamentData['name'] = $tournament_event_group->name;
         $tournamentData['description'] = $this->generateTournamentAutomatedText('description', $tournamentData);
 
         //convert from cents
@@ -452,7 +452,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
+//            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);
@@ -550,7 +550,6 @@ class TournamentService {
             'tournament_labels',
             'tournament_groups',
         )));
-
         //add labels
         if( $labels = array_get($tournamentData, 'tournament_labels') ) {
             $tournament->tournamentlabels()->sync($labels);
@@ -558,7 +557,7 @@ class TournamentService {
 
         //add groups
         if( $groups = array_get($tournamentData, 'tournament_groups') ) {
-            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
+//            $this->tournamentGroupService->addTournamentToGroups($tournament, $groups);
         }
 
         $this->tournamentGroupService->addTournamentToCompetitionGroup($tournament);

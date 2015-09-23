@@ -56,7 +56,7 @@ class MeetingResource extends AbstractEloquentResource {
      */
     public function getStartDate()
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->model->start_date);
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->model->start_date)->toDateTimeString();
     }
 
     public function setNextRaceDate($date)

@@ -98,7 +98,7 @@ class MeetingService {
     {
         $selectedMeeting = $this->getMeetingWithSelections($meetingId, $raceId);
 
-        $meetings = $this->getMeetingsForDate($selectedMeeting['data']->getStartDate()->toDateString());
+        $meetings = $this->getMeetingsForDate($selectedMeeting['data']->getStartDate());
 
         foreach( $meetings as $meeting ) {
             if( $meeting->id == $selectedMeeting['data']->id ) {
@@ -116,7 +116,7 @@ class MeetingService {
         if( ! $date ) {
             $date = Carbon::now();
         } else {
-            $date = Carbon::createFromFormat('Y-m-d', $date);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s', $date);
         }
 
         $collection = $this->meetingResourceService->getMeetingsForDate($date, $type, $withRaces);
