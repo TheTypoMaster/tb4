@@ -9,9 +9,11 @@
 namespace TopBetta\Services\Prices;
 
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 
 class SelectionPricesService {
 
@@ -23,18 +25,29 @@ class SelectionPricesService {
      * @var BetProductRepositoryInterface
      */
     private $betProductRepository;
+    /**
+     * @var SelectionRepositoryInterface
+     */
+    private $selectionRepository;
 
-    public function __construct(SelectionPriceRepositoryInterface $priceRepository, BetProductRepositoryInterface $betProductRepository)
+    public function __construct(SelectionRepositoryInterface $selectionRepository, SelectionPriceRepositoryInterface $priceRepository, BetProductRepositoryInterface $betProductRepository)
     {
         $this->priceRepository = $priceRepository;
         $this->betProductRepository = $betProductRepository;
+        $this->selectionRepository = $selectionRepository;
     }
 
     public function overridePrice($selectionId, $productCode, $amount, $betType, $manual = false)
     {
+        $selection = $this->selectionRepository->getByExternalId($selectionId);
+
         $product = $this->betProductRepository->getProductByCode($productCode);
 
-        $price = $this->priceRepository->getPriceForSelectionByProduct($selectionId, $product->id);
+        $price = $this->priceRepository->getPriceForSelectionByProduct($selection->id, $product->id);
+
+        if (!$price) {
+            throw new ModelNotFoundException("Price not found");
+        }
 
         if ($betType == BetTypeRepositoryInterface::TYPE_WIN) {
             return $this->overrideWinPrice($price, $amount, $manual);

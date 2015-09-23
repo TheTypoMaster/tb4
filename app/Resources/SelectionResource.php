@@ -102,7 +102,7 @@ class SelectionResource extends AbstractEloquentResource {
 
     public function getLastStartsString()
     {
-        if (($form = object_get($this->model, 'form')) && is_string($form)) {
+        if (($form = object_get($this->model, 'last_starts_string')) && is_string($form)) {
             return $form;
         }
 
