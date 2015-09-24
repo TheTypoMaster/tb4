@@ -109,6 +109,7 @@ abstract class CrudResourceController extends Controller {
             $modelCollection = $this->repository->findAllPaginated($relations);
         }
 
+
         //the data array for display
         $data = array(
             "modelName"       => $this->modelName,
@@ -191,7 +192,6 @@ abstract class CrudResourceController extends Controller {
         $search = Input::get('q', '');
 
         $allIcons = Input::get("all_icons", false);
-
         //get the icons
         $icons = $this->iconService->getIcons($allIcons ? null : $this->iconType);
 
