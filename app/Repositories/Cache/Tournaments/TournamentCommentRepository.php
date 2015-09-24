@@ -11,6 +11,7 @@ namespace TopBetta\Repositories\Cache\Tournaments;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Jobs\Pusher\Tournaments\CommentSocketUpdate;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentCommentRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCommentRepository;
@@ -66,8 +67,9 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
 
         $comments->prepend($resource);
 
-        $this->put($key, $comments->toArray(), $this->getCollectionCacheTime($collectionKey, $resource));
+        $this->put($key, $commentsArray = $comments->toArray(), $this->getCollectionCacheTime($collectionKey, $resource));
 
+        \Bus::dispatch(new CommentSocketUpdate($resource->toArray()));
     }
 
     public function insertComments($tournament, $comments)

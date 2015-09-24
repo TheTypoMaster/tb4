@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Auth;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Repositories\Cache\Tournaments\TournamentTicketRepository;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
 use TopBetta\Resources\Tournaments\TicketResource;
 use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
@@ -82,6 +83,21 @@ class TicketsController extends Controller
         return $this->response->success(
             $this->ticketResourceService->nextToJumpTicketsForUser(Auth::user()->id)->toArray()
         );
+    }
+
+    public function getTicketForUserInTournament(Request $request, TournamentTicketRepository $ticketRepository)
+    {
+        if (!$tournament = $request->get('tournament_id')) {
+            return $this->response->failed('No tournament_id specified', 400);
+        }
+
+        $ticket = $ticketRepository->getTicketByUserAndTournament(Auth::user()->id, $tournament);
+
+        if ($ticket) {
+            return $this->response->success($ticket->toArray());
+        }
+
+        return $this->response->failed("No ticket found", 404);
     }
 
     /**

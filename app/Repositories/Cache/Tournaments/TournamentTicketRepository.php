@@ -10,6 +10,8 @@ namespace TopBetta\Repositories\Cache\Tournaments;
 
 
 use Carbon\Carbon;
+use TopBetta\Jobs\Pusher\Tournaments\NextToJumpTicketSocketUpdate;
+use TopBetta\Jobs\Pusher\Tournaments\TicketSocketUpdate;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Cache\Sports\EventRepository;
 use TopBetta\Repositories\Contracts\TournamentTicketRepositoryInterface;
@@ -55,7 +57,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         if ($ticket) {
             $ticket->addAvailableCurrency($currency);
-            $this->put($this->cachePrefix . $userId . '_' . $tournament->id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+            $this->saveTicketResource($ticket);
         } else {
             $ticket = $this->getTicketResourceByUserAndTournament($userId, $tournament->id);
         }
@@ -72,7 +74,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         if ($ticket && $ticket->getPosition() != $position) {
             $ticket->setPosition($position);
-            $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+            $this->saveTicketResource($ticket);
         } else {
             $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
         }
@@ -93,7 +95,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $ticket->setPosition($position);
             $ticket->setTurnedOver($turnedOver);
             $ticket->setBalanceToTurnOver($balanceToTurnover);
-            $this->put($this->cachePrefix . $ticket->user_id . '_' . $ticket->tournament_id, $ticket->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+            $this->saveTicketResource($ticket);
 
         } else {
             $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
@@ -179,9 +181,16 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     public function saveTicket($model)
     {
         $resource = $this->createResource($model);
-        $this->put($this->cachePrefix . $model->user_id . '_'. $model->tournament_id, $resource->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+        $this->put($this->cachePrefix . $model->user_id . '_'. $model->tournament_id, $modelArray = $resource->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+        \Bus::dispatch(new TicketSocketUpdate($modelArray));
         return $resource;
+    }
 
+    public function saveTicketResource($model)
+    {
+        $this->put($this->cachePrefix . $model->user_id . '_'. $model->tournament_id, $modelArray = $model->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+        \Bus::dispatch(new TicketSocketUpdate($modelArray));
+        return $model;
     }
 
     public function storeActiveTickets($user, $tickets)
@@ -216,6 +225,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         if ($updated) {
             $this->put($this->cachePrefix . $model->userId . '_n2j', $tickets, Carbon::now()->addWeek()->diffInMinutes());
+            \Bus::dispatch(new NextToJumpTicketSocketUpdate($model->userId, $tickets));
         }
     }
 
@@ -301,8 +311,9 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         $tickets = new EloquentResourceCollection($tickets, 'TopBetta\Resources\Tournaments\NextToJumpTicketResource');
 
-
         $this->put($this->cachePrefix . $user . '_n2j', $tickets->toArray(), Carbon::now()->addWeek()->diffInMinutes());
+
+        \Bus::dispatch(new NextToJumpTicketSocketUpdate($user, $tickets->toArray()));
 
         return $tickets;
     }
