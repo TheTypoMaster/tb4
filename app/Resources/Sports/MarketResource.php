@@ -25,6 +25,13 @@ class MarketResource extends AbstractEloquentResource {
         'event_id' => 'event_id'
     );
 
+    protected $types = array(
+        "id" => "int",
+        "display_flag" => "int",
+        "market_type_id" => "int",
+        'event_id' => 'int',
+    );
+
     protected $loadIfRelationExists = array(
         "selections" => "selections",
         "markettype.markettypegroup" => "markettypegroup",
