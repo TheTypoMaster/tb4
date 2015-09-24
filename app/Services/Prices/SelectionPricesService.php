@@ -10,6 +10,8 @@ namespace TopBetta\Services\Prices;
 
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
+use TopBetta\Repositories\Cache\RacingSelectionRepository;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\SelectionPriceRepositoryInterface;
@@ -30,7 +32,7 @@ class SelectionPricesService {
      */
     private $selectionRepository;
 
-    public function __construct(SelectionRepositoryInterface $selectionRepository, SelectionPriceRepositoryInterface $priceRepository, BetProductRepositoryInterface $betProductRepository)
+    public function __construct(RacingSelectionRepository $selectionRepository, RacingSelectionPriceRepository $priceRepository, BetProductRepositoryInterface $betProductRepository)
     {
         $this->priceRepository = $priceRepository;
         $this->betProductRepository = $betProductRepository;
@@ -50,12 +52,14 @@ class SelectionPricesService {
         }
 
         if ($betType == BetTypeRepositoryInterface::TYPE_WIN) {
-            return $this->overrideWinPrice($price, $amount, $manual);
+            $price = $this->overrideWinPrice($price, $amount, $manual);
         } else if ($betType == BetTypeRepositoryInterface::TYPE_PLACE) {
-            return $this->overridePlacePrice($price, $amount, $manual);
+            $price = $this->overridePlacePrice($price, $amount, $manual);
         }
 
-        throw new \InvalidArgumentException("Unkown bet type " . $betType);
+        $this->selectionRepository->updatePricesForSelectionInRace($selection->id, $selection->market->event, $price);
+
+        return $price;
     }
 
     public function overrideWinPrice($price, $amount, $manual = false)
