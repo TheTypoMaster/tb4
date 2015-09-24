@@ -7,7 +7,16 @@
  * Project: tb4
  */
 
-class MarketTypeGroupRepositoryInterface
+interface MarketTypeGroupRepositoryInterface
 {
 
+    public function getMarketTypeGroups();
+
+    public function createMarketTypeGroup($marketTypeGroup);
+
+    public function updateMarketTypeGroup($group_id, $data);
+
+    public function deleteMarketTypeGroup($group_id);
+
+    public function getGroupById($group_id);
 }

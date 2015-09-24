@@ -78,6 +78,13 @@ return array(
         array("uri" => "tournaments/get-event-groups-by-type/{typeid}", 'permission' => 'tournaments.view'),
         array("uri" => "marketordering", 'permission' => 'tournaments.view'),
         array("uri" => "market-groups", 'permission' => 'tournaments.view'),
+        array("uri" => "market-groups/create", 'permission' => 'tournaments.view'),
+        array("uri" => "market-groups/store", 'permission' => 'tournaments.view'),
+        array("uri" => "market-groups/edit/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "market-groups/update/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "market-groups/delete/{id}", 'permission' => 'tournaments.view'),
+
+
 
 
     ),
