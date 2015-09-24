@@ -68,4 +68,13 @@ class DbMarketTypeGroupRepository extends BaseEloquentRepository implements Mark
         return $this->model->where('market_type_group_id', $group_id)->first();
 }
 
+    /**
+     * get all market type groups without pagination
+     * @return mixed
+     */
+    public function getMarketTypeGroupsWithoutPaginated() {
+        return $this->model->all();
+
+    }
+
 }

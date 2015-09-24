@@ -57,4 +57,18 @@ Class MarketTypeGroupService {
     public function getGroupById($group_id) {
         return $this->marketTypeGroupRepository->getGroupById($group_id);
     }
+
+    /**
+     * get all market type groups without pagination
+     * @return mixed
+     */
+    public function getMarketTypeGroupList() {
+        $market_type_groups = $this->marketTypeGroupRepository->getMarketTypeGroupsWithoutPaginated();
+        $market_type_group_list = array();
+        foreach($market_type_groups as $group) {
+            $market_type_group_list[$group->market_type_group_id] = $group->market_type_group_name;
+        }
+
+        return $market_type_group_list;
+    }
 }
