@@ -25,14 +25,20 @@ class MarketResource extends AbstractEloquentResource {
     );
 
     protected $loadIfRelationExists = array(
+        "selections" => "selections",
+        "markettype.markettypegroup" => "markettypegroup",
         "races" => "races",     "selections" => "selections",
-
-
+        
     );
 
     public function selections()
     {
         return $this->collection('selections', 'TopBetta\Resources\Sports\SelectionResource', 'selections');
+    }
+
+    public function markettypegroup()
+    {
+        return $this->item('markettypegroup', 'TopBetta\Resources\Sports\MarketTypeGroupResource', 'markettype.markettypegroup');
     }
 
     public function getName()

@@ -23,6 +23,6 @@ class MarketsController extends AbstractResourceController {
     {
         $markets = $marketService->getAllMarketsForEvent($request->get('event_id', 0));
 
-        return $this->apiResponse->success($markets->toArray());
+        return $this->apiResponse->success($markets);
     }
 }
