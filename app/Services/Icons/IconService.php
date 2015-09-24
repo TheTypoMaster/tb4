@@ -31,12 +31,11 @@ class IconService {
 
     public function getIcons($iconType = null)
     {
-        if( ! $iconType ) {
+        if( isset($iconType) ) {
             return $this->iconRepository->findAll();
         }
 
         $iconType = $this->iconTypeRepository->getIconTypeByName($iconType);
-
         return $this->iconRepository->getIconsByType($iconType->id);
     }
 
