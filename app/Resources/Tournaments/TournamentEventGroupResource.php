@@ -14,10 +14,10 @@ class TournamentEventGroupResource extends AbstractEloquentResource {
 
     protected $attributes = array(
         'id' => 'id',
-        'name' => 'group_name',
-        'description' => 'description',
-        'ordering' => 'ordering',
-        'group_icon' => 'tournament_group_icon',
+        'name' => 'name',
+        'type' => 'type',
+        'start_date' => 'start_date',
+        'end_date' => 'end_date',
     );
 
     protected $loadIfRelationExists = array(
