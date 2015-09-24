@@ -156,6 +156,8 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
         $this->put($key, $leaderboard->toArray(), $this->getCollectionCacheKey(self::COLLECTION_TOURNAMENT_LEADERBOARD, $resource));
 
+        return $leaderboard;
+
     }
 
     public function delete($model)
