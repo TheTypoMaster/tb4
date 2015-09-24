@@ -72,15 +72,16 @@ class MeetingResourceService {
         $collection = $this->competitionRepository->getRacingCompetitionsByDate(
             $date,
             $type,
-            $withRaces
+            true
         );
 
         $meetings = new EloquentResourceCollection($collection, $this->meetingResource);
-
-        if ($withRaces) {
-            foreach ($meetings as $meeting) {
+        foreach ($meetings as $meeting) {
+            if ($withRaces) {
                 $this->resultService->loadResultsForRaces($meeting->races);
                 $this->loadTotesForMeeting($meeting);
+            } else {
+                $meeting->without('races');
             }
         }
 

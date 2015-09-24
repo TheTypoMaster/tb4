@@ -96,6 +96,22 @@ class MeetingResource extends AbstractEloquentResource {
         }
     }
 
+    public function loadRelation($name)
+    {
+        parent::loadRelation($name);
+
+        if ($name == 'races') {
+            foreach ($this->relations['races'] as $race) {
+                if ($race->status == EventStatusRepositoryInterface::STATUS_SELLING) {
+                    $this->setNextRaceDate($race->start_date);
+                    $this->setNextRaceNumber($race->number);
+                    break;
+                }
+            }
+        }
+    }
+
+
     public function toArray()
     {
         $array = parent::toArray();
@@ -111,5 +127,12 @@ class MeetingResource extends AbstractEloquentResource {
         }
 
         return $array;
+    }
+
+    public function without($relation)
+    {
+        if (isset($this->relations[$relation])) {
+            unset($this->relations[$relation]);
+        }
     }
 }
