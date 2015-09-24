@@ -68,7 +68,7 @@ class MarketService {
     public function getAllMarketsForEvent($event)
     {
         //get the markets
-        $markets = $this->marketResourceService->getAllMarketsForEvent($event);
+        $markets = $this->marketResourceService->getAllMarketsForEventGrouped($event);
 
         return $markets;
     }
