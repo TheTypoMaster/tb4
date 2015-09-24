@@ -8,6 +8,7 @@ use TopBetta\Services\Caching\SportsDataCacheManager;
 
 class ManageSportsNextToJump extends Command
 {
+    const TOTAL_NEXT_TO_JUMP_EVENTS = 12;
     /**
      * The name and signature of the console command.
      *
@@ -42,7 +43,7 @@ class ManageSportsNextToJump extends Command
         for(;;) {
             $time = time();
 
-            $cacheManager->updateCache();
+            $cacheManager->updateCache(self::TOTAL_NEXT_TO_JUMP_EVENTS);
 
             sleep($this->argument('time') - (time()-$time));
         }

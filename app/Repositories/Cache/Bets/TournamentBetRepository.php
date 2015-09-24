@@ -160,7 +160,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
         $this->put(
             $this->cachePrefix . $user . '_' . $tournament,
             $bets->toArray(),
-            Carbon::createFromFormat('Y-m-d H:i:s', $bets->first()->ticket->tournament->end_date)->addDays(2)->diffInMinutes()
+            $bets->first() ? Carbon::createFromFormat('Y-m-d H:i:s',  $bets->first()->ticket->tournament->end_date)->addDays(2)->diffInMinutes() : Carbon::now()->addDays(2)->diffInMinutes()
         );
     }
 
@@ -290,4 +290,16 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
         return $resource;
     }
+
+    public function getCollection($key, $resource = null)
+    {
+        $collection = \Cache::tags($this->tags)->get($key);
+
+        if ($collection) {
+            return $this->createCollectionFromArray($collection, $resource);
+        }
+
+        return null;
+    }
+
 }

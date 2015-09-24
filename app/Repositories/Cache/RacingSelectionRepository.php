@@ -99,7 +99,7 @@ class RacingSelectionRepository extends CachedResourceRepository
                     }
                 }
 
-                if ($priceKey) {
+                if (!is_null($priceKey)) {
                     $selection['prices'][$priceKey] = $this->createPriceResource($price)->toArray();
                 } else {
                     $selection['prices'][] = $this->createPriceResource($price)->toArray();

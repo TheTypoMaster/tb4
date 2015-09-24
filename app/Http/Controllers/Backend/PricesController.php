@@ -29,7 +29,6 @@ class PricesController extends Controller
 
     public function override(Request $request)
     {
-        \Log::info($request->all());
         try {
             $this->pricesService->overridePrice($request->get('selection_id'), $request->get('product'), $request->get('amount'), $request->get('bet_type'), $request->get('manual', false));
         } catch (\Exception $e) {

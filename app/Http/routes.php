@@ -262,6 +262,12 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     // market type groups
     Route::get('market-groups', 'Admin\MarketTypeGroupController@index');
+    Route::get('market-groups/create', 'Admin\MarketTypeGroupController@create');
+    Route::post('market-groups/store', 'Admin\MarketTypeGroupController@store');
+    Route::get('market-groups/edit/{id}', 'Admin\MarketTypeGroupController@edit');
+    Route::post('market-groups/update/{id}', 'Admin\MarketTypeGroupController@update');
+    Route::get('market-groups/delete/{id}', 'Admin\MarketTypeGroupController@destroy');
+
 
 
     // tournament settings
@@ -391,6 +397,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('comments', 'Frontend\TournamentCommentController@index');
 
     Route::group(array('before' => 'auth'), function() {
+        Route::get('ticket', 'Frontend\TicketsController@getTicketForUserInTournament');
         Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
         Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
         Route::resource('tournament-bets', 'Frontend\TournamentBetsController', array("only" => array('index', 'store')));

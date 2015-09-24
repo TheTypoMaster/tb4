@@ -28,9 +28,9 @@ class SportsDataCacheManager {
         $this->eventRepository = $eventRepository;
     }
 
-    public function updateCache()
+    public function updateCache($n2jLimit = 10)
     {
-        $this->eventRepository->updateNextToJump();
+        $this->eventRepository->updateNextToJump($n2jLimit);
 
     }
 
