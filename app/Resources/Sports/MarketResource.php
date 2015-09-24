@@ -25,7 +25,9 @@ class MarketResource extends AbstractEloquentResource {
     );
 
     protected $loadIfRelationExists = array(
-        "selections" => "selections",
+        "races" => "races",     "selections" => "selections",
+
+
     );
 
     public function selections()
