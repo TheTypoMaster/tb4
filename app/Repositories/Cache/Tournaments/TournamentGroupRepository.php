@@ -48,24 +48,24 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
         $this->tournamentEventGroupRepository = $tournamentEventGroupRepository;
     }
 
+    /**
+     * get sport event groups with nested tournaments
+     * @param Carbon|null $date
+     * @return EloquentResourceCollection
+     */
     public function getVisibleSportTournamentGroupsWithTournaments(Carbon $date = null)
     {
 
-//        return $this->getTournamentGroups()->filter(function ($v) {
-//            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
-//                return $q->type == 'sport';
-//            }));
-//
-//            return $v->tournaments->count() > 0;
-//        });
-
-//        dd('group');
-//
         $groups = $this->tournamentEventGroupRepository->getEventGroupsWithoutPaginate();
+        $group_list = array();
+        foreach($groups as $group) {
+            $tournaments = $this->tournamentRepository->getTournamentWithEventGroupCollection($group->id);
+            if(count($tournaments) > 0 && $group->type == 'sport') {
+                $group_list[] = $group;
+            }
+        }
 
-
-        $groups_resources = new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
-
+        $groups_resources = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($group_list), 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
         $groups_with_tournaments = array();
 
         foreach($groups_resources as $key => $group) {
@@ -78,25 +78,33 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
                 $group->setRelation('tournaments', $tournaments_resource);
             }
 
+            if(count($tournaments) == 0) {
+//                dd('group');
+            }
+
         }
         return $groups_resources;
 
     }
 
+    /**
+     * get race event groups with nested tournaments
+     * @param Carbon|null $date
+     * @return EloquentResourceCollection
+     */
     public function getVisibleRacingTournamentGroupsWithTournaments(Carbon $date = null)
     {
-//        return $this->getTournamentGroups()->filter(function ($v) {
-//            $v->setRelation('tournaments', $v->tournaments->filter(function($q) {
-//                return $q->type == 'racing';
-//            }));
-//
-//            return $v->tournaments->count() > 0;
-//        });
 
         $groups = $this->tournamentEventGroupRepository->getEventGroupsWithoutPaginate();
+        $group_list = array();
+        foreach($groups as $group) {
+            $tournaments = $this->tournamentRepository->getTournamentWithEventGroupCollection($group->id);
+            if(count($tournaments) > 0 && $group->type == 'race') {
+                $group_list[] = $group;
+            }
+        }
 
-
-        $groups_resources = new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
+        $groups_resources = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($group_list), 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
 
         $groups_with_tournaments = array();
 
@@ -112,6 +120,42 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
 
         }
         return $groups_resources;
+    }
+
+    /**
+     * get all event groups with nested tournaments
+     * @param Carbon|null $date
+     * @return EloquentResourceCollection
+     */
+    public function getAllVisibleTournamentGroupsWithTournaments(Carbon $date = null)
+    {
+
+        $groups = $this->tournamentEventGroupRepository->getEventGroupsWithoutPaginate();
+        $group_list = array();
+        foreach($groups as $group) {
+            $tournaments = $this->tournamentRepository->getTournamentWithEventGroupCollection($group->id);
+            if(count($tournaments) > 0) {
+                $group_list[] = $group;
+            }
+        }
+
+        $groups_resources = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($group_list), 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
+
+        $groups_with_tournaments = array();
+
+        foreach($groups_resources as $key => $group) {
+
+            $tournaments = $this->tournamentRepository->getTournamentWithEventGroupCollection($group->id);
+
+            if(count($tournaments) > 0) {
+                $groups_with_tournaments[] = $tournaments;
+                $tournaments_resource = new EloquentResourceCollection($tournaments, 'TopBetta\Resources\Tournaments\TournamentResource');
+                $group->setRelation('tournaments', $tournaments_resource);
+            }
+
+        }
+        return $groups_resources;
+
     }
 
     public function getByName($name)
