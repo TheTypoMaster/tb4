@@ -75,8 +75,8 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
     {
         return $this->model
             ->join('tbdb_tournament', 'tbdb_tournament.id', '=', 'tbdb_tournament_ticket.tournament_id')
-            ->join('tbdb_event_group as eg', 'eg.id', '=', 'tbdb_tournament.event_group_id')
-            ->join('tbdb_event_group_event as ege', 'ege.event_group_id', '=', 'eg.id')
+            ->join('tb_tournament_event_group as eg', 'eg.id', '=', 'tbdb_tournament.event_group_id')
+            ->join('tb_tournament_event_group_event as ege', 'ege.tournament_event_group_id', '=', 'eg.id')
             ->join('tbdb_event as e', 'e.id', '=', 'ege.event_id')
             ->where('user_id', $user)
             ->where('e.start_date', '>=', Carbon::now())

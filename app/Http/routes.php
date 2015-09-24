@@ -391,6 +391,7 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
     Route::get('comments', 'Frontend\TournamentCommentController@index');
 
     Route::group(array('before' => 'auth'), function() {
+        Route::get('ticket', 'Frontend\TicketsController@getTicketForUserInTournament');
         Route::get('active-tickets', 'Frontend\TicketsController@getRecentAndActiveTicketsForUser');
         Route::get('tournaments/tickets/next-to-jump', 'Frontend\TicketsController@nextToJump');
         Route::resource('tournament-bets', 'Frontend\TournamentBetsController', array("only" => array('index', 'store')));
