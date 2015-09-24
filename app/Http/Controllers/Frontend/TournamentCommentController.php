@@ -56,14 +56,13 @@ class TournamentCommentController extends Controller
                     $comments['data'][$key]['username'] = 'TopBetta Admin';
                 }
             }
-            dd($comments);
+
         } catch (\InvalidArgumentException $e) {
             return $this->response->failed($e->getMessage(), 400);
         } catch (\Exception $e) {
             \Log::error(self::LOG_PREFIX . ': ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
             return $this->response->failed("Unknown error");
         }
-
         return $this->response->success($comments['data'], 200, array_except($comments, 'data'));
     }
 

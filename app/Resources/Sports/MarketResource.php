@@ -27,6 +27,8 @@ class MarketResource extends AbstractEloquentResource {
     protected $loadIfRelationExists = array(
         "selections" => "selections",
         "markettype.markettypegroup" => "markettypegroup",
+        "races" => "races",     "selections" => "selections",
+        
     );
 
     public function selections()
