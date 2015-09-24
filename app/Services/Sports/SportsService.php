@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Contracts\SportRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Services\Resources\Cache\Sports\CachedBaseCompetitionResourceService;
+use TopBetta\Services\Resources\Cache\Sports\CachedCompetitionResourceService;
 use TopBetta\Services\Resources\Cache\Sports\CachedSportResourceService;
 
 class SportsService
@@ -34,10 +35,14 @@ class SportsService
      * @var EventService
      */
     private $eventService;
+    /**
+     * @var CachedCompetitionResourceService
+     */
+    private $competitionResourceService;
 
 
     public function __construct(CachedSportResourceService $sportResourceService, CompetitionService $competitionService, CachedBaseCompetitionResourceService $baseCompetitionResourceService, EventService $eventService,
-                                SportRepositoryInterface $sportRepository)
+                                SportRepositoryInterface $sportRepository, CachedCompetitionResourceService $competitionResourceService)
     {
         $this->sportResourceService = $sportResourceService;
         $this->competitionService = $competitionService;
@@ -45,6 +50,7 @@ class SportsService
 
         $this->eventService = $eventService;
         $this->sportRepository = $sportRepository;
+        $this->competitionResourceService = $competitionResourceService;
     }
 
     public function getVisibleSportsWithCompetitions($date = null)
@@ -107,6 +113,11 @@ class SportsService
             if ($baseCompetition = array_get($baseCompetitions->getDictionary(), $baseComp->id)) {
                 $competitions = $baseCompetition->competitions->keyBy('id');
                 $comp = $competitions->get($competition);
+
+                if (!$comp) {
+                    $comp = $this->competitionResourceService->getCompetitionResource($competition);
+                    $competitions->push($comp);
+                }
 
                 $comp->setRelation('events', $this->eventService->getEventsForCompetitionWithFilteredMarkets($comp));
 
