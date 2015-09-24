@@ -87,6 +87,7 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
 
     public function getEventsForCompetition($competitionId)
     {
+
         return $this->model
             ->join('tbdb_event_group_event as ege', 'ege.event_id' , '=', 'tbdb_event.id')
             ->where('ege.event_group_id', $competitionId)
