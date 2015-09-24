@@ -16,7 +16,8 @@ class CreateMarketTypeGroupTable extends Migration
             $table->increments('market_type_group_id');
             $table->string('market_type_group_name');
             $table->string('market_type_group_description');
-            $table->bool('market_type_group_display_flag')->default(0);
+            $table->boolean('market_type_group_display_flag')->default(0);
+            $table->integer('icon_id')->unsigned();
             $table->timestamps();
         });
     }
