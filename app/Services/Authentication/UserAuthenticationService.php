@@ -70,7 +70,7 @@ class UserAuthenticationService {
             ]);
         }
 
-        return $user->load('topbettauser');
+        return $user->setRelation('topbettauser', $user->getModel()->topbettauser);
     }
 
 }
