@@ -15,6 +15,8 @@ class TicketSocketUpdate extends PusherJob {
 
     const CHANNEL_PREFIX = 'tournament_ticket_';
 
+    public $queue = 'user-socket';
+
     public function __construct($data)
     {
         $this->channel = self::CHANNEL_PREFIX . $data['user_id'];
