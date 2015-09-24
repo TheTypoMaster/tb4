@@ -32,7 +32,7 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      */
     public function getEventGroupsWithoutPaginate()
     {
-        return $this->model->where('start_date', '>=', Carbon::today())->get();
+        return $this->model->where('start_date', '>=', Carbon::yesterday())->get();
     }
 
     /**
