@@ -18,6 +18,7 @@ use TopBetta\Repositories\Cache\RacingSelectionPriceRepository;
 use TopBetta\Repositories\Cache\RacingSelectionRepository;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
 use TopBetta\Helpers\RiskManagerAPI;
+use TopBetta\Resources\PriceResource;
 
 class RacePriceProcessingService {
 
@@ -165,11 +166,11 @@ class RacePriceProcessingService {
                 if ($priceModel && $priceModel->fill($priceDetails)->isDirty()) {
                     $priceModel = $this->prices->update($priceModel, $priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                    $updates[$existingRaceDetails['id']][] = $priceModel;
+                    $updates[$existingRaceDetails['id']][] =  array("id" => $priceModel->selection_id, "prices" => (new PriceResource($priceModel))->toArray());
                 } else if (!$priceModel) {
                     $priceModel = $this->prices->create($priceDetails);
                     $this->selections->updatePricesForSelectionInRace($existingSelection->id, $existingRaceDetails, $priceModel);
-                    $updates[$existingRaceDetails['id']][] = $priceModel;
+                    $updates[$existingRaceDetails['id']][] = array("id" => $priceModel->selection_id, "prices" => (new PriceResource($priceModel))->toArray());
                 }
                 $runnerCount++;
 			}
