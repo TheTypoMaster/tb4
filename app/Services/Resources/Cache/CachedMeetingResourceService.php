@@ -11,6 +11,7 @@ namespace TopBetta\Services\Resources\Cache;
 use App;
 use Carbon\Carbon;
 use TopBetta\Repositories\Cache\MeetingRepository;
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Services\Resources\MeetingResourceService;
 
 class CachedMeetingResourceService extends CachedResourceService {
@@ -51,11 +52,19 @@ class CachedMeetingResourceService extends CachedResourceService {
             return $this->resourceService->getMeetingsForDate($date, $type, $withRaces);
         }
 
-        if ($withRaces) {
-            foreach ($meetings as $meeting) {
-
-                $meeting->setRelation('races', $this->raceResourceService->getRacesForMeeting($meeting->id));
+        foreach ($meetings as $meeting) {
+            $races = $this->raceResourceService->getRacesForMeeting($meeting->id);
+            if ($withRaces) {
+                $meeting->setRelation('races', $races);;
                 $this->loadTotesForMeeting($meeting);
+            }
+
+            foreach ($races as $race) {
+                if ($race->status == EventStatusRepositoryInterface::STATUS_SELLING) {
+                    $meeting->setNextRaceDate($race->start_date);
+                    $meeting->setNextRaceNumber($race->number);
+                    break;
+                }
             }
         }
 
@@ -70,9 +79,19 @@ class CachedMeetingResourceService extends CachedResourceService {
             return $this->resourceService->getMeeting($id, $withRaces);
         }
 
+        $races = $this->raceResourceService->getRacesForMeeting($model->id);
+
+        foreach ($races as $race) {
+            if ($race->status == EventStatusRepositoryInterface::STATUS_SELLING) {
+                $model->setNextRaceDate($race->start_date);
+                $model->setNextRaceNumber($race->number);
+                break;
+            }
+        }
+
         if ($withRaces) {
 
-            $model->setRelation('races', $this->raceResourceService->getRacesForMeeting($model->id));
+            $model->setRelation('races', $races);
 
             $this->loadTotesForMeeting($model);
         }
