@@ -11,13 +11,13 @@ use Eloquent;
 
 class MarketTypeGroupModel extends Eloquent
 {
-    protected $table = 'tbdb_market_group';
+    protected $table = 'tb_market_type_groups';
     protected $guarded = array();
 
     /*
      * Relationships
      */
-    public function market_types()
+    public function markettypes()
     {
         return $this->hasMany('TopBetta\Models\MarketTypeModel', 'market_type_group_id', 'market_type_group_id');
     }
