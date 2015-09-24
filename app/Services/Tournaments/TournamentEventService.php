@@ -128,6 +128,7 @@ class TournamentEventService
                 $meeting->setRelation('races', $races_resources);
 
                 foreach($races_resources as &$race) {
+//                    dd($race);
                     $selections_resource = $this->selectionResourceService->getSelectionsForRace($race->id);
 
                     $race->setRelation('selections', $selections_resource);
