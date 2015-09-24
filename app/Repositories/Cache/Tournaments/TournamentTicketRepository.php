@@ -154,7 +154,6 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         } else if ($resource->resulted_flag && array_get($tickets, $resource->id)) {
             unset($tickets[$resource->id]);
         } else if (!$resource->resulted_flag) {
-            $resource->loadRelation('tournament');
             $tickets[$resource->id] = $resource->toArray();
         }
 
@@ -169,7 +168,6 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             if (!$tickets) {
                 return;
             }
-            $resource->loadRelation('tournament');
             $tickets[$resource->id] = $resource->toArray();
 
             $this->put($this->cachePrefix . $resource->user_id . $carbonDate->toDateString(), $tickets, $carbonDate->addDay(2)->diffInMinutes());
@@ -288,6 +286,14 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         if ($tickets) {
             if (!$tickets->first() || $tickets->first()->event_start_date >= Carbon::now()) {
+                foreach ($tickets as $ticket) {
+                    $tournament = $this->tournamentRepository->getTournament($ticket->tournamentId);
+                    if (!$tournament) {
+                        $tournament = $this->tournamentRepository->createResource($this->tournamentRepository->find($ticket->tourmamentId));
+                    }
+
+                    $ticket->setRelation('tournament', $tournament);
+                }
                 return $tickets;
             }
         }
