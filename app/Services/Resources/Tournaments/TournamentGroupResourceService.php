@@ -45,4 +45,15 @@ class TournamentGroupResourceService {
 
         return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
     }
+
+    public function getAllVisibleTournamentGroupsWithTournaments($date = null)
+    {
+        $groups = $this->tournamentGroupRepository->getAllVisibleTournamentGroupsWithTournaments($date);
+
+        if ($groups instanceof EloquentResourceCollection) {
+            return $groups;
+        }
+
+        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
+    }
 }
