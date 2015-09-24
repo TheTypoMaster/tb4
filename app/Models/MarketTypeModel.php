@@ -34,5 +34,9 @@ class MarketTypeModel extends Eloquent
             ->first();
     }
 
+    public function markettypegroup()
+    {
+        return $this->belongsTo('TopBetta\Models\MarketTypeGroupModel', 'market_type_group_id', 'market_type_group_id');
+    }
 
 }

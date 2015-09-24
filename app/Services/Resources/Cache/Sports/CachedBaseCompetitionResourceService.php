@@ -12,6 +12,7 @@ namespace TopBetta\Services\Resources\Cache\Sports;
 use Illuminate\Database\Eloquent\Collection;
 use TopBetta\Repositories\Cache\Sports\BaseCompetitionRepository;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\Sports\BaseCompetitionResource;
 use TopBetta\Services\Resources\Cache\CachedResourceService;
 
 class CachedBaseCompetitionResourceService {
@@ -62,7 +63,13 @@ class CachedBaseCompetitionResourceService {
     {
         $competition = $this->competitionResourceService->getCompetitionResource($competition);
 
-        return $this->baseCompetitionRepository->getBaseCompetition($competition->base_competition_id);
+        $baseComp = $this->baseCompetitionRepository->getBaseCompetition($competition->base_competition_id);
+
+        if (!$baseComp) {
+            return new BaseCompetitionResource($this->baseCompetitionRepository->find($competition->base_competition_id));
+        }
+
+        return $baseComp;
     }
 
 

@@ -13,7 +13,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use TopBetta\Repositories\TournamentEventGroupRepository;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\RaceResource;
 use TopBetta\Services\Racing\MeetingService;
+use TopBetta\Services\Resources\RaceResourceService;
 use TopBetta\Services\Resources\SelectionResourceService;
 use TopBetta\Services\Resources\Sports\MarketResourceService;
 use TopBetta\Services\Sports\CompetitionService;
@@ -36,7 +38,9 @@ class TournamentEventService
                                 TournamentEventGroupRepository $tournamentEventGroupRepository,
                                 MarketResourceService $marketResourceService,
                                 EventService $eventService,
-                                SelectionResourceService $selectionResourceService
+                                SelectionResourceService $selectionResourceService,
+                                RaceResource $raceResource,
+                                RaceResourceService $raceResourceService
     )
     {
         $this->meetingService = $meetingService;
@@ -45,6 +49,8 @@ class TournamentEventService
         $this->marketResourceService = $marketResourceService;
         $this->eventService = $eventService;
         $this->selectionResourceService = $selectionResourceService;
+        $this->raceResource = $raceResource;
+        $this->raceResourceService = $raceResourceService;
     }
 
 //    public function getEventGroups($tournament, $eventId = null)
@@ -66,7 +72,6 @@ class TournamentEventService
 
     public function getEventGroups($tournament, $eventId = null)
     {
-//        dd('dd');
         $data = array();
         $event_group_id = $tournament->event_group_id;
 
@@ -115,14 +120,21 @@ class TournamentEventService
             return array('data' => $competitions_resource, 'selected_event' => $selected_event);
         } else if ($type == 'race') {
 
-            $competitions_resource = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($competitions), 'TopBetta\Resources\MeetingResource');
-            $event_list = array();
-            foreach ($competitions_resource as $key => &$competition) {
-                $races_with_products = $this->selectionResourceService->getSelectionsForRace($competition->id);
-                $competition->setRelation('selections', $races_with_products);
+            $meetings_resource = new EloquentResourceCollection(new \Illuminate\Database\Eloquent\Collection($competitions), 'TopBetta\Resources\MeetingResource');
+
+            foreach ($meetings_resource as $key => &$meeting) {
+
+                $races_resources = $this->raceResourceService->getRacesForMeeting($meeting->id);
+                $meeting->setRelation('races', $races_resources);
+
+                foreach($races_resources as &$race) {
+                    $selections_resource = $this->selectionResourceService->getSelectionsForRace($race->id);
+
+                    $race->setRelation('selections', $selections_resource);
+                }
             }
 
-            return array('data' => $competitions_resource, 'selected_event' => $selected_event);
+            return array('data' => $meetings_resource, 'selected_event' => $selected_event);
         }
 
 

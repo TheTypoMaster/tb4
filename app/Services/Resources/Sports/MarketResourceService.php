@@ -70,4 +70,41 @@ class MarketResourceService {
 
         return $markets;
     }
+
+    public function getAllMarketsForEventGrouped($event)
+    {
+        $markets = $this->marketRepository->getMarketsForEvent($event);
+
+        //get the selections
+        $selections = $this->selectionResourceService->getSelectionsForEvent($event);
+
+        //create the collection
+        $markets = new EloquentResourceCollection($markets, 'TopBetta\Resources\Sports\MarketResource');
+
+        //set the selection relation
+        $markets->setRelations('selections', 'market_id', $selections);
+
+        $marketArray = $markets->toArray();
+
+        $groups = array();
+        // loop on each market
+        foreach($marketArray as $market) {
+            // check if group exists
+            if(!array_key_exists($market['markettypegroup']['id'], $groups)) $groups[$market['markettypegroup']['id']] = $market['markettypegroup'];
+            $index = $market['markettypegroup']['id'];
+            $groups[$index]['markets'][] = $market;
+        }
+
+        // remove market
+        $groupArray = array();
+        foreach($groups as &$group){
+            $marketArray = array();
+            foreach($group['markets'] as &$market) {
+                unset($market['markettypegroup']);
+            }
+            $groupArray[] = $group;
+        }
+        return $groupArray;
+    }
+
 }

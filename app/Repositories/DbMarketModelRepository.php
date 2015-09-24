@@ -48,7 +48,7 @@ class DbMarketModelRepository extends BaseEloquentRepository implements MarketMo
                 ->orderBy(DB::raw("FIELD(m.market_type_id," . implode(",", $types) . ")"));
         }
 
-        return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections'));
+        return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections', 'markettype.markettypegroup'));
     }
 
     public function getMarketsForEvent($event)
@@ -57,7 +57,7 @@ class DbMarketModelRepository extends BaseEloquentRepository implements MarketMo
             ->where('e.id', $event)
             ->groupBy('m.id');
 
-        return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections'));
+        return $this->model->hydrate($builder->get(array('m.*')))->load(array('marketType', 'selections', 'markettype.markettypegroup'));
     }
 
     public function getVisibleMarketsWithSelections()

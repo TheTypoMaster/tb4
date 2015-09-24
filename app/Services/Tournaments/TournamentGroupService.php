@@ -80,10 +80,12 @@ class TournamentGroupService {
 
         switch($type)
         {
-            case 'racing':
+            case 'race':
                 return $this->tournamentGroupResourceService->getVisibleRacingTournamentGroupsWithTournaments($date);
             case 'sport':
                 return $this->tournamentGroupResourceService->getVisibleSportTournamentGroupsWithTournaments($date);
+            case '':
+                return $this->tournamentGroupResourceService->getAllVisibleTournamentGroupsWithTournaments($date);
         }
 
         throw new \InvalidArgumentException("Type " . $type . " is not available");

@@ -32,12 +32,23 @@ class TournamentGroupResourceService {
             return $groups;
         }
 
-        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
+        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentEventGroupResource');
     }
 
     public function getVisibleRacingTournamentGroupsWithTournaments($date = null)
     {
         $groups = $this->tournamentGroupRepository->getVisibleRacingTournamentGroupsWithTournaments($date);
+
+        if ($groups instanceof EloquentResourceCollection) {
+            return $groups;
+        }
+
+        return new EloquentResourceCollection($groups, 'TopBetta\Resources\Tournaments\TournamentGroupResource');
+    }
+
+    public function getAllVisibleTournamentGroupsWithTournaments($date = null)
+    {
+        $groups = $this->tournamentGroupRepository->getAllVisibleTournamentGroupsWithTournaments($date);
 
         if ($groups instanceof EloquentResourceCollection) {
             return $groups;
