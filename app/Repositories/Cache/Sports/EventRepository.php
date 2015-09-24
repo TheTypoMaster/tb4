@@ -95,9 +95,9 @@ class EventRepository extends CachedSportResourceRepository {
         return Cache::tags($this->nextToJumpTags)->get($this->cachePrefix . 'n2j');
     }
 
-    public function updateNextToJump()
+    public function updateNextToJump($limit = 10)
     {
-        $events = $this->repository->getNextToJumpSports();
+        $events = $this->repository->getNextToJumpSports($limit);
 
         Cache::tags($this->nextToJumpTags)->forever($this->cachePrefix . 'n2j', new EloquentResourceCollection($events, $this->nextToJumpResource));
     }
