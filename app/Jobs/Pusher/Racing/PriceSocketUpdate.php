@@ -16,17 +16,6 @@ class PriceSocketUpdate extends RaceSocketUpdate {
 
     protected $event = 'odds_update';
 
-    public function handle(\Pusher $pusher)
-    {
-        $data = array('id' => $this->data['id'], 'selections' => array());
+    public $queue = 'racing-price-socket';
 
-        foreach ($this->data['selections'] as $selection) {
-            $resource = array("id" => $selection->selection_id, "prices" => array((new PriceResource($selection))->toArray()));
-            $data['selections'][] = $resource;
-        }
-
-        $this->data = $data;
-
-        parent::handle($pusher);
-    }
 }
