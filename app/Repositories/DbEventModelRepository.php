@@ -94,4 +94,13 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
             ->with('eventstatus')
             ->get();
     }
+
+    public function getByTournamentEventGroup($eventGroup)
+    {
+        return $this->model
+            ->join('tb_tournament_event_group_event as ege', 'ege.event_id', '=', 'tbdb_event.id')
+            ->where('ege.tournament_event_group_id', $eventGroup)
+            ->with(array('competition', 'eventstatus'))
+            ->get(array('tbdb_event.*'));
+    }
 }
