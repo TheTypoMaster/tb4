@@ -17,7 +17,7 @@ class RaceSocketUpdate extends RacingSocketUpdate {
 
     public function __construct($data)
     {
-        Log::debug('###'.print_r($data, true));
+        //Log::debug('###'.print_r($data, true));
         $this->channel = self::CHANNEL_PREFIX . $data['id'];
         parent::__construct($data);
     }
