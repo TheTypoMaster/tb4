@@ -206,12 +206,10 @@ class MarketRepository extends CachedResourceRepository {
             $markets = $this->getMarketsForEventAsArray($eventId);
 
             if (!$markets) {
-                dd('x');
                 return;
             }
 
             if (!$market = array_get($markets, $selection->market_id)) {
-                dd($markets);
                 return;
             }
 
