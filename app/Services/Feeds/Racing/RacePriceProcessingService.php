@@ -189,7 +189,7 @@ class RacePriceProcessingService {
 
         foreach($updates as $race=>$selections) {
             if (count($selections)) {
-                \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "selections" => $selections)));
+                \Bus::dispatch(new PriceSocketUpdate(array("id" => $race, "product" => $betProduct->id, "selections" => $selections)));
             }
         }
 

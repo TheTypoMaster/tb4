@@ -52,8 +52,20 @@ class TournamentCommentController extends Controller
                 $comment = $this->commentService->getCommentById($comment['id']);
                 $user_id = $comment->user_id;
                 $user = $this->userService->getUser($user_id);
-                if($user->usertype == 'Super Administrator') {
-                    $comments['data'][$key]['username'] = 'TopBetta Admin';
+//                if($user->usertype == 'Super Administrator') {
+//                    $comments['data'][$key]['username'] = 'TopBetta Admin';
+//                }
+
+                if($user->permissions) {
+
+                    if($user->permissions['superuser'] == 1) {
+                        $comments['data'][$key]['username'] = 'TopBetta Admin';
+                    } else {
+                        $comments['data'][$key]['username'] = $user->name;
+                    }
+
+                } else {
+                    $comments['data'][$key]['username'] =  $user->name;
                 }
             }
 

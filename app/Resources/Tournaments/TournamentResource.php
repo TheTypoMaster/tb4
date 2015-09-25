@@ -234,14 +234,37 @@ class TournamentResource extends AbstractEloquentResource {
         }
 
         if (count($this->meetings)) {
-            $array['meetings'] = array_map(function($v) { return $v->toArray(); }, $this->meetings);
+            $array['meetings'] = $this->meetings;
         }
 
         if (count($this->competitions)) {
-            $array['competitions'] = array_map(function($v) { return $v->toArray(); }, $this->competitions);
+            $array['competitions'] = $this->competitions;
         }
 
         return $array;
     }
+
+    /**
+     * @param array $meetings
+     * @return $this
+     */
+    public function setMeetings($meetings)
+    {
+        $this->meetings = $meetings;
+        return $this;
+    }
+
+    /**
+     * @param array $competitions
+     * @return $this
+     */
+    public function setCompetitions($competitions)
+    {
+        $this->competitions = $competitions;
+        return $this;
+    }
+
+
+
 
 }

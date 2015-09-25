@@ -133,12 +133,26 @@ class TournamentCommentService {
             $comment_trans['id'] = $comment->id;
 
 
-            if($user->usertype == 'Super Administrator') {
-                $comment_trans['username'] = 'TopBetta Admin';
+//            if($user->usertype == 'Super Administrator') {
+//                $comment_trans['username'] = 'TopBetta Admin';
+//            } else {
+//                $comment_trans['username'] = $user->name;
+//            }
+
+            if($user->permissions) {
+
+                if($user->permissions['superuser'] == 1) {
+                    $comment_trans['username'] = 'TopBetta Admin';
+                } else {
+                    $comment_trans['username'] = $user->name;
+                }
+
             } else {
                 $comment_trans['username'] = $user->name;
             }
-            $comment_trans['username'] = $user->name;
+
+
+//            $comment_trans['username'] = $user->name;
             $comment_trans['tournament_id'] = $tournament->id;
             $comment_trans['tournament_name'] = $tournament->name;
             $comment_trans['buy_in'] = $tournament->buy_in;

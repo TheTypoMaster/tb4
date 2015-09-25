@@ -59,7 +59,7 @@ class RaceResourceService {
 
     public function getRace($id)
     {
-        $race = $this->eventRepository->find($id);
+        $race = $this->eventRepository->find($id)->load('eventstatus');
 
         $race = new RaceResource($race);
 

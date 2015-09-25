@@ -4,6 +4,7 @@ namespace TopBetta\Services\Tournaments;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\EventStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
 use TopBetta\Repositories\DbSportsRepository;
 use TopBetta\Repositories\TournamentEventGroupRepository;
@@ -194,8 +195,24 @@ class TournamentEventGroupService
      * @param $type_id
      * @return mixed
      */
-    public function getEventGroupsByType($type_id) {
+    public function getEventGroupsByType($type_id)
+    {
         return $this->tournamentEventGroupRepo->getEventGroupsByType($type_id);
+    }
+
+    public function isAbandonned($eventGroup)
+    {
+        $events = $eventGroup->events->load('eventstatus');
+
+        $abandonedEvents = $events->filter(function ($v) {
+            return $v->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_ABANDONED;
+        });
+
+        if ($events->count() / 2 < $abandonedEvents->count()) {
+            return true;
+        }
+
+        return false;
     }
 
 }

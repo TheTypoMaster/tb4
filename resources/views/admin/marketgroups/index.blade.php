@@ -35,7 +35,7 @@
 
 
                 {{-- add pagination --}}
-                {{ $marketTypeGroups->render() }}
+                {!! $marketTypeGroups->render() !!}
             </div>
 
         </div>

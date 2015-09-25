@@ -38,6 +38,16 @@
                 </div>
 
             {!! Form::close() !!}
+
+                @if (count($errors) > 0)
+                    <div class="alert alert-info alert-dismissable col-lg-11">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 {{-- add pagination --}}
 
             </div>
