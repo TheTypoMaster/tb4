@@ -13,7 +13,7 @@ use TopBetta\Jobs\Pusher\PusherJob;
 
 class TournamentSocketUpdate extends PusherJob{
 
-    const CHANNEL_PREFIX = 'tournamentt_';
+    const CHANNEL_PREFIX = 'tournament_';
 
     public $queue = 'tournament-socket';
 
