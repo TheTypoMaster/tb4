@@ -120,6 +120,7 @@ class TournamentCommentService {
         $pagination = array();
         $pagination['total_pages'] = (int)ceil($comments->total() / 15);
         $pagination['current_page'] = $comments->currentPage();
+
         $pagination['has_more_pages'] = $comments->hasMorePages();
         $pagination['previous_page_url'] = $comments->previousPageUrl();
         $pagination['next_page_url'] = $comments->nextPageUrl();
@@ -144,11 +145,11 @@ class TournamentCommentService {
                 if($user->permissions['superuser'] == 1) {
                     $comment_trans['username'] = 'TopBetta Admin';
                 } else {
-                    $comment_trans['username'] = $user->name;
+                    $comment_trans['username'] = $user->username;
                 }
 
             } else {
-                $comment_trans['username'] = $user->name;
+                $comment_trans['username'] = $user->username;
             }
 
 

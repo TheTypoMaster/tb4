@@ -61,11 +61,11 @@ class TournamentCommentController extends Controller
                     if($user->permissions['superuser'] == 1) {
                         $comments['data'][$key]['username'] = 'TopBetta Admin';
                     } else {
-                        $comments['data'][$key]['username'] = $user->name;
+                        $comments['data'][$key]['username'] = $user->username;
                     }
 
                 } else {
-                    $comments['data'][$key]['username'] =  $user->name;
+                    $comments['data'][$key]['username'] =  $user->username;
                 }
             }
 
