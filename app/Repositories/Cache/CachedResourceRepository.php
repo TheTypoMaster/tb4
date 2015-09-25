@@ -170,6 +170,8 @@ abstract class CachedResourceRepository {
 
         $this->addToCollections($resource);
 
+        $this->fireEvents($resource);
+
         return $this;
     }
 
