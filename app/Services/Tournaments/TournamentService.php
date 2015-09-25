@@ -155,13 +155,8 @@ class TournamentService {
 
         $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
 
-        foreach($events['data'] as $event) {
-            if( $event instanceof MeetingResource ) {
-                $tournament->addMeeting($event);
-            } else if ( $event instanceof CompetitionResource ) {
-                $tournament->addCompetition($event);
-            }
-        }
+        $tournament->setMeetings(array_get($events, 'data.meetings', array()));
+        $tournament->setCompetitions(array_get($events, 'data.competitions', array()));
 
         $data = array("data" => $tournament);
 
