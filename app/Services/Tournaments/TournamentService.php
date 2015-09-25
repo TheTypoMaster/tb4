@@ -155,13 +155,8 @@ class TournamentService {
 
         $events = $this->tournamentEventService->getEventGroups($tournament, $eventId);
 
-        foreach($events['data'] as $event) {
-            if( $event instanceof MeetingResource ) {
-                $tournament->addMeeting($event);
-            } else if ( $event instanceof CompetitionResource ) {
-                $tournament->addCompetition($event);
-            }
-        }
+        $tournament->setMeetings(array_get($events, 'data.meetings', array()));
+        $tournament->setCompetitions(array_get($events, 'data.competitions', array()));
 
         $data = array("data" => $tournament);
 
@@ -288,13 +283,14 @@ class TournamentService {
 
     public function refundAbandonedTournamentsForEvent($event)
     {
-        $competition = $this->competitionRepository->getByEvent($event);
+        $event = $this->eventRepository->find($event);
 
-        if ($this->competitionService->isAbandoned($competition)) {
-            $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($competition->id);
-
-            foreach ($tournaments as $tournament) {
-                $this->refundTournament($tournament);
+        foreach ($event->tournamentEventGroups as $eventGroup) {
+            if ($this->tournamentEventGroupService->isAbandonned($eventGroup)) {
+                $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($eventGroup->id);
+                foreach ($tournaments as $tournament) {
+                    $this->refundTournament($tournament);
+                }
             }
         }
     }

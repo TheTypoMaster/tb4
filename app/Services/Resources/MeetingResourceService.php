@@ -111,7 +111,6 @@ class MeetingResourceService {
         $model = new MeetingResource($model);
 
         if ($withRaces) {
-
             $this->resultService->loadResultsForRaces($model->races);
             $this->loadTotesForMeeting($model);
         }
