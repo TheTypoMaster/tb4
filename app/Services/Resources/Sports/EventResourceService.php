@@ -10,6 +10,7 @@ namespace TopBetta\Services\Resources\Sports;
 
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Resources\Sports\EventResource;
 
 class EventResourceService {
 
@@ -26,6 +27,13 @@ class EventResourceService {
     {
         $this->eventRepository = $eventRepository;
         $this->marketResourceService = $marketResourceService;
+    }
+
+    public function getEvent($id)
+    {
+        $event = $this->eventRepository->find($id)->load('eventstatus');
+
+        return new EventResource($event);
     }
 
     public function nextToJump()
