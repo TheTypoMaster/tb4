@@ -12,8 +12,9 @@ use Eloquent;
 class MarketTypeGroupModel extends Eloquent
 {
     protected $table = 'tb_market_type_groups';
-    protected $guarded = array();
+//    protected $guarded = array();
 
+    protected $fillable = ['market_type_group_name', 'market_type_group_description', 'icon_id'];
     /*
      * Relationships
      */

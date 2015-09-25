@@ -109,6 +109,7 @@ abstract class CrudResourceController extends Controller {
             $modelCollection = $this->repository->findAllPaginated($relations);
         }
 
+
         //the data array for display
         $data = array(
             "modelName"       => $this->modelName,
@@ -191,7 +192,6 @@ abstract class CrudResourceController extends Controller {
         $search = Input::get('q', '');
 
         $allIcons = Input::get("all_icons", false);
-
         //get the icons
         $icons = $this->iconService->getIcons($allIcons ? null : $this->iconType);
 
@@ -205,7 +205,7 @@ abstract class CrudResourceController extends Controller {
             'search'      => $search,
             "excludedFields"  => $this->excludedFields,
         );
-
+//        dd($this->repository->find($id)->market_type_group_id);
         return View::make($this->editView, compact('data'));
     }
 
@@ -220,7 +220,7 @@ abstract class CrudResourceController extends Controller {
         //Get the search string for filtering when redirecting
         $search = Input::get("q", '');
 
-        $data = Input::except('q');
+        $data = Input::except('q', '_method', '_token');
         $this->repository->updateWithId($id, array_merge($data, $extraData));
 
         return Redirect::route($this->indexRoute, array($id, "q"=>$search))

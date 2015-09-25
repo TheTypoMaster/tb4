@@ -1,5 +1,6 @@
 <?php namespace TopBetta\Http\Controllers\Admin;
 
+use Illuminate\Support\Facades\App;
 use TopBetta\Http\Controllers\Controller;
 
 use TopBetta\Repositories\Contracts\IconTypeRepositoryInterface;
@@ -38,6 +39,9 @@ class MarketTypeController extends CrudResourceController {
 
     public function index($relations = array(), $extraData = array())
     {
+
+        $relations[] = 'markettypegroup';
+
         $extraData = array(
             "Market Rules" => array(
                 "field" => "market_rules",
@@ -50,11 +54,15 @@ class MarketTypeController extends CrudResourceController {
 
     public function create($extraData = array())
     {
+        $market_type_group_service = App::make('TopBetta\Services\Markets\MarketTypeGroupService');
+        $market_type_group_list = $market_type_group_service->getMarketTypeGroupList();
         $extraData = array(
             "Market Rules" => array(
                 "field" => "market_rules",
-                "type" => "text"
-            )
+                "type" => "text",
+                "market_type_group_list" => $market_type_group_list
+
+            ),
         );
 
         return parent::create($extraData);
@@ -62,10 +70,13 @@ class MarketTypeController extends CrudResourceController {
 
     public function edit($id, $extraData = array())
     {
+        $market_type_group_service = App::make('TopBetta\Services\Markets\MarketTypeGroupService');
+        $market_type_group_list = $market_type_group_service->getMarketTypeGroupList();
         $extraData = array(
             "Market Rules" => array(
                 "field" => "market_rules",
-                "type" => "text"
+                "type" => "text",
+                "market_type_group_list" => $market_type_group_list
             )
         );
 
