@@ -19,7 +19,7 @@ class PriceSocketUpdate extends RaceSocketUpdate {
 
     protected $event = 'odds_update';
 
-   //  public $queue = 'racing-price-socket';
+    public $queue = '';
 
     public function __construct($data)
     {
