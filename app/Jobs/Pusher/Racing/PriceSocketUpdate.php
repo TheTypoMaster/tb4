@@ -8,14 +8,24 @@
 
 namespace TopBetta\Jobs\Pusher\Racing;
 
+use Log;
 
 use TopBetta\Resources\PriceResource;
 use TopBetta\Resources\SelectionResource;
 
 class PriceSocketUpdate extends RaceSocketUpdate {
 
+    const TUBE_PREFIX = 'racing-price-socket-';
+
     protected $event = 'odds_update';
 
-    public $queue = 'racing-price-socket';
+   //  public $queue = 'racing-price-socket';
+
+    public function __construct($data)
+    {
+
+        $this->queue = self::TUBE_PREFIX . $data['product'];
+
+    }
 
 }

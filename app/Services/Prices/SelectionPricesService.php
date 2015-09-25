@@ -61,7 +61,7 @@ class SelectionPricesService {
 
         $this->selectionRepository->updatePricesForSelectionInRace($selection->id, $selection->market->event, $price);
 
-        \Bus::dispatch(new PriceSocketUpdate(array("id" => $selection->market->event->id, "selections" => array("id" => $selection->id, "prices" => (new PriceResource($price))->toArray()))));
+        \Bus::dispatch(new PriceSocketUpdate(array("id" => $selection->market->event->id, "product" => $product->id, "selections" => array("id" => $selection->id, "prices" => (new PriceResource($price))->toArray()))));
 
         return $price;
     }
