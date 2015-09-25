@@ -19,13 +19,13 @@ class PriceSocketUpdate extends RaceSocketUpdate {
 
     protected $event = 'odds_update';
 
-   //  public $queue = 'racing-price-socket';
+    public $queue = '';
 
     public function __construct($data)
     {
-
+        // Log::debug('### '. print_r($data,true));
         $this->queue = self::TUBE_PREFIX . $data['product'];
-
+        parent::__construct($data);
     }
 
 }
