@@ -48,4 +48,9 @@ class EventModel extends Eloquent {
         return $this->hasMany('TopBetta\Models\EventTeamPlayerModel', 'event_id');
     }
 
+    public function tournamentEventGroups()
+    {
+        return $this->belongsToMany('TopBetta\Models\TournamentEventGroupModel', 'tb_tournament_event_group_event', 'event_id', 'tournament_event_group_id');
+    }
+
 }

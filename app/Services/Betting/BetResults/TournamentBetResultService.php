@@ -154,7 +154,7 @@ class TournamentBetResultService {
             $bet->updated_date = Carbon::now();
         }
 
-        $bet->save();
+        $this->betRepositoryInterface->update($bet, $bet->toArray());
 
         return $bet;
     }

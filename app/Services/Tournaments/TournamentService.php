@@ -288,13 +288,14 @@ class TournamentService {
 
     public function refundAbandonedTournamentsForEvent($event)
     {
-        $competition = $this->competitionRepository->getByEvent($event);
+        $event = $this->eventRepository->find($event);
 
-        if ($this->competitionService->isAbandoned($competition)) {
-            $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($competition->id);
-
-            foreach ($tournaments as $tournament) {
-                $this->refundTournament($tournament);
+        foreach ($event->tournamentEventGroups as $eventGroup) {
+            if ($this->tournamentEventGroupService->isAbandonned($eventGroup)) {
+                $tournaments = $this->tournamentRepository->getUnresultedTournamentsByCompetition($eventGroup->id);
+                foreach ($tournaments as $tournament) {
+                    $this->refundTournament($tournament);
+                }
             }
         }
     }
