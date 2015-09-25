@@ -23,7 +23,7 @@ class PriceSocketUpdate extends RaceSocketUpdate {
 
     public function __construct($data)
     {
-        Log::debug('### ', print_r($data,true));
+        Log::debug('### '. print_r($data,true));
         $this->queue = self::TUBE_PREFIX . $data['product'];
         parent::__construct($data);
     }
