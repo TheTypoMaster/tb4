@@ -207,7 +207,7 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
      * @return mixed
      */
     public function getTournamentList() {
-        $tournament_list = $this->model->fromToday()->get();
+        $tournament_list = $this->model->get();
         return $tournament_list;
     }
 

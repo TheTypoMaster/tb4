@@ -44,6 +44,7 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
 
     public function getCommentsForTournament($tournament, $limit = 50)
     {
+
         $comments = $this->getCollection($this->cachePrefix . $tournament);
 
         if (!$comments->count()) {
@@ -100,5 +101,22 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
 
         throw new \InvalidArgumentException("Invalid collection key " . $collectionKey);
     }
+
+    public function makeCacheResource($model) {
+
+        if($model->visible) {
+            parent::makeCacheResource($model);
+        }else {
+            $this->removeFromCache($model);
+        }
+        return $model;
+    }
+
+    public function removeFromCache($model) {
+
+        $comments = $this->getCollection($this->cachePrefix.$model->tournament_id);
+        $comments->forget($model->id);
+        $this->put($this->cachePrefix.$model->tourmanet_id, $comments->toArray(), Carbon::createFromFormat('Y-m-d H:i:s', $model->tournament->end_date)->addDays(2)->diffInMinutes());
+}
 
 }
