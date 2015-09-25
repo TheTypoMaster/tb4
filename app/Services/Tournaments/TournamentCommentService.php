@@ -145,11 +145,11 @@ class TournamentCommentService {
                 if($user->permissions['superuser'] == 1) {
                     $comment_trans['username'] = 'TopBetta Admin';
                 } else {
-                    $comment_trans['username'] = $user->name;
+                    $comment_trans['username'] = $user->username;
                 }
 
             } else {
-                $comment_trans['username'] = $user->name;
+                $comment_trans['username'] = $user->username;
             }
 
 
