@@ -93,14 +93,14 @@ class MarketRepository extends CachedResourceRepository {
 
     public function storeMarketsForEvent($markets, $event)
     {
-        $marketResources = new EloquentResourceCollection($markets, $this->resourceClass);
+        $marketResources = new EloquentResourceCollection($markets->keyBy('id'), $this->resourceClass);
 
         $marketResources = $marketResources->filter(function ($v) {
             $v->setRelation('selections', $v->selections->filter(function ($q) {
                 return $this->canStoreSelection($q);
             }));
 
-            return $this->canStoreMarket($v) && $v->selections->count();
+            return $this->canStoreMarket($v) && count($v->selections);
         });
 
         if ($marketResources->first()) {
@@ -206,14 +206,21 @@ class MarketRepository extends CachedResourceRepository {
             $markets = $this->getMarketsForEventAsArray($eventId);
 
             if (!$markets) {
+                dd('x');
                 return;
             }
 
             if (!$market = array_get($markets, $selection->market_id)) {
+                dd($markets);
                 return;
             }
 
-            unset($market['selections'][$selection->id]);
+            foreach ($market['selections'] as $key => $existingSelection) {
+                if ($existingSelection['id'] == $selection->id) {
+                    unset($market['selections'][$key]);
+                    break;
+                }
+            }
 
             if(!count($market['selections'])) {
                 unset($markets[$marketModel->id]);
