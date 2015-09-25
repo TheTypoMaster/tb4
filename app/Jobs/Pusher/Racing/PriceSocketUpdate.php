@@ -25,7 +25,7 @@ class PriceSocketUpdate extends RaceSocketUpdate {
     {
 
         $this->queue = self::TUBE_PREFIX . $data['product'];
-
+        parent::__construct($data);
     }
 
 }
