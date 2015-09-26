@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Input;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\TournamentCommentModel;
+use TopBetta\Repositories\Contracts\TournamentCommentRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentCommentService;
 use Sentry;
 use TopBetta\Services\Tournaments\TournamentService;
@@ -17,9 +18,10 @@ use TopBetta\Services\Tournaments\TournamentService;
 class TournamentCommentsController extends Controller
 {
 
-    public function __construct(TournamentCommentService $commentService, TournamentService $tournamentService) {
+    public function __construct(TournamentCommentService $commentService, TournamentService $tournamentService, TournamentCommentRepositoryInterface $tournamentCommentRepository) {
         $this->commentService = $commentService;
         $this->tournamentService = $tournamentService;
+        $this->tournamentCommentRepository = $tournamentCommentRepository;
     }
     /**
      * Display a listing of the resource.
@@ -32,7 +34,6 @@ class TournamentCommentsController extends Controller
         $comments = $comments_with_pagination['comment_list'];
         $pagination = $comments_with_pagination['pagination'];
         $tournament_list = $this->tournamentService->getTournamentsFromToday();
-//        dd($comments);
         return view('admin.tournaments.comments.index')->with(['comments' => $comments,
                                                                'tournament_list' => $tournament_list,
                                                                'pagination' => $pagination]);
@@ -57,13 +58,11 @@ class TournamentCommentsController extends Controller
     public function store()
     {
         $comment = new TournamentCommentModel();
-        $comment::create(['tournament_id' => Input::get('tournament'),
-                          'user_id' => Auth::user()->id,
-                          'comment' => Input::get('new_comment'),
-                          'created_date' => Carbon::now(),
-                          'visible' => 1]);
-
-        //get tournament list
+        $this->tournamentCommentRepository->create(['tournament_id' => Input::get('tournament'),
+            'user_id' => Auth::user()->id,
+            'comment' => Input::get('new_comment'),
+            'created_date' => Carbon::now(),
+            'visible' => 1]);
 
 
         return redirect()->action('Admin\TournamentCommentsController@index');
@@ -102,13 +101,14 @@ class TournamentCommentsController extends Controller
     {
         //
         $comment = TournamentCommentModel::findOrFail($id);
+        $visible = '';
         if($comment->visible == 0) {
-            $comment->visible = 1;
+            $visible = 1;
         } else if($comment->visible == 1) {
-            $comment->visible = 0;
+            $visible = 0;
         }
 
-        $comment->update();
+        $this->tournamentCommentRepository->update($comment,['visible' => $visible]);
 
         return redirect()->action('Admin\TournamentCommentsController@index');
     }
@@ -122,7 +122,7 @@ class TournamentCommentsController extends Controller
     public function destroy($id)
     {
         $comment = TournamentCommentModel::findOrFail($id);
-        $comment->delete();
+        $this->tournamentCommentRepository->delete($comment);
 
         return redirect()->action('Admin\TournamentCommentsController@index');
     }

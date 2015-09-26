@@ -44,6 +44,15 @@ class TournamentBetResource extends BetResource
         'date'            => 'start_date',
     );
 
+    public function paid()
+    {
+        if (! is_null($this->model->paid)) {
+            return $this->model->paid;
+        }
+
+        return  ! is_null($this->model->win_amount) ? $this->model->win_amount : 0;
+    }
+
 
     public function __isset($name)
     {

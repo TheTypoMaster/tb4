@@ -61,10 +61,6 @@ class TournamentEventGroupController extends Controller
      */
     public function store(Request $request)
     {
-//        $tournamentEventGroupModel = TournamentEventGroupModel::create(['name' => Input::get('event_group_name')]);
-
-//         dd(Input::get('event_group_id'));
-
         //if event_group_id is empty, create new event_group, otherwise use the already created event group for
         //continuing add new events
         if (Input::get('event_group_id') == '') {
@@ -89,9 +85,6 @@ class TournamentEventGroupController extends Controller
             $new_created_event_group->update();
 
         }
-
-
-
 
         $selected_events = Input::get('events');
 

@@ -24,6 +24,7 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
     {
         return $this->model
             ->where('tournament_id', $tournament)
+            ->where('visible', 1)
             ->orderBy('created_at', 'DESC')
             ->with('user')
             ->paginate($limit);

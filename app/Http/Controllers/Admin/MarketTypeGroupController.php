@@ -2,6 +2,7 @@
 
 namespace TopBetta\Http\Controllers\Admin;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Input;
@@ -44,6 +45,12 @@ class MarketTypeGroupController extends Controller
      */
     public function store(Request $request)
     {
+
+
+        $this->validate($request, [
+            'market_type_group_name' => 'required|max:255'
+        ]);
+
         $groups = array('market_type_group_name' => Input::get('market_type_group_name'),
                         'market_type_group_description' => Input::get('market_type_group_description'),
                         'icon_id' => Input::get('icon_id'));

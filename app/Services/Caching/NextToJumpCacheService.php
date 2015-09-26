@@ -144,6 +144,7 @@ class NextToJumpCacheService {
 
     private function formatForPusher($data)
     {
+        $result = array();
         foreach ($data as $next) {
 
             $toGo = \TopBetta\Helpers\TimeHelper::nicetime(strtotime($next['start_date']), 2);
@@ -154,6 +155,8 @@ class NextToJumpCacheService {
 
             $result[] = array('id' => (int)$next['id'], 'type' => $next['type_code'], 'meeting_id' => (int)$next['meeting_id'], 'meeting_name' => $next['name'], 'state' => $next['state'], 'race_number' => (int)$next['number'], 'to_go' => $toGo, 'start_datetime' => $startDatetime);
         }
+
+        return $result;
     }
 
 } 

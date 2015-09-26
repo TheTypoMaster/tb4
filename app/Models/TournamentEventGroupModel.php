@@ -14,4 +14,9 @@ class TournamentEventGroupModel extends Model
     {
         return $this->belongsToMany('TopBetta\Models\EventModel', 'tb_tournament_event_group_event', 'tournament_event_group_id', 'event_id');
     }
+
+    public function tournaments()
+    {
+        return $this->hasMany('TopBetta\Models\TournamentModel', 'event_group_id');
+    }
 }

@@ -78,4 +78,16 @@ class EventService {
 
         return $events;
     }
+
+    public function getEventWithFilteredMarkets($event, $competition,  $types = null)
+    {
+        if( ! $types ) {
+            $types = $this->marketOrderingService->getMarketTypeIds($competition->base_competition_id);
+        }
+
+        //get events
+        $events = $this->eventResourceService->getEventWithFilteredMarkets($event, $types);
+
+        return $events;
+    }
 }
