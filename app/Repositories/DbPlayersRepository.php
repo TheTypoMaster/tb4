@@ -79,4 +79,9 @@ class DbPlayersRepository extends BaseEloquentRepository implements PlayersRepos
             ->first();
     }
 
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_player_id', $id)->first();
+    }
+
 }
