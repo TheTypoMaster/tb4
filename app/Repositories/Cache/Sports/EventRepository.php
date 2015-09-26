@@ -35,8 +35,6 @@ class EventRepository extends CachedSportResourceRepository {
 
     protected $parentCollectionKey = self::COLLECTION_COMPETITION_EVENTS;
 
-    protected $storeIndividualResource = false;
-
 
     /**
      * @var
@@ -72,6 +70,11 @@ class EventRepository extends CachedSportResourceRepository {
         return \Cache::tags($this->tags)->get($this->cachePrefix . $id);
     }
 
+    public function getEvent($id)
+    {
+        return $this->get($this->cachePrefix . $id);
+    }
+
     public function addTeamsToModel($model, $teams)
     {
         $changes = $this->repository->addTeamsToModel($model, $teams);
@@ -79,13 +82,6 @@ class EventRepository extends CachedSportResourceRepository {
         if (count($changes)) {
             $this->makeCacheResource($model->load('teams'));
         }
-
-        return $model;
-    }
-
-    public function makeCacheResource($model)
-    {
-        $this->updateVisibleResource($model);
 
         return $model;
     }

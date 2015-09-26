@@ -2,24 +2,24 @@
 /**
  * Created by PhpStorm.
  * User: Thomas Muir
- * Date: 21/09/2015
- * Time: 2:53 PM
+ * Date: 25/09/2015
+ * Time: 5:54 PM
  */
 
-namespace TopBetta\Jobs\Pusher\Racing;
+namespace TopBetta\Jobs\Pusher\Tournaments;
 
-use Log;
+
 use TopBetta\Jobs\Pusher\PusherJob;
 
-class RaceSocketUpdate extends RacingSocketUpdate {
+class TournamentSocketUpdate extends PusherJob{
 
-    const CHANNEL_PREFIX = 'race_';
+    const CHANNEL_PREFIX = 'tournament_';
+
+    public $queue = 'tournament-socket';
 
     public function __construct($data)
     {
-       // Log::debug('###'.print_r($data, true));
         $this->channel = self::CHANNEL_PREFIX . $data['id'];
         parent::__construct($data);
     }
-
 }

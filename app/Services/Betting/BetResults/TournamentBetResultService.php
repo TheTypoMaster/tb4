@@ -136,25 +136,26 @@ class TournamentBetResultService {
         //calculate win amount
         $amount = $this->calculateBetWin($bet, $dividend);
 
+        $data = array();
         //If win amount update the bet record
         if( $amount ) {
             Log::info("WINNING BET " . $bet->id . " AMOUNT " . $amount/100);
-            $bet->win_amount = $amount;
+            $data['win_amount'] = $amount;
         }
 
         //set the bet to resulted if it is winning or event is paying
         if( ! $interim || $amount ) {
             $this->leaderboardService->increaseCurrencyForUserTournament($bet->ticket->user_id, $bet->ticket->tournament_id, $amount - $bet->bet_amount);
-            $bet->resulted_flag = true;
-            $bet->bet_result_status_id = $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PAID)->id;
+            $data['resulted_flag'] = true;
+            $data['bet_result_status_id'] = $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PAID)->id;
         }
 
         //set updated date
         if( $bet->isDirty() ) {
-            $bet->updated_date = Carbon::now();
+            $data['updated_date'] = Carbon::now();
         }
 
-        $bet->save();
+        $this->betRepositoryInterface->updateWithId($bet->id, $data);
 
         return $bet;
     }

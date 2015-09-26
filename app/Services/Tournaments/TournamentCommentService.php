@@ -120,6 +120,7 @@ class TournamentCommentService {
         $pagination = array();
         $pagination['total_pages'] = (int)ceil($comments->total() / 15);
         $pagination['current_page'] = $comments->currentPage();
+
         $pagination['has_more_pages'] = $comments->hasMorePages();
         $pagination['previous_page_url'] = $comments->previousPageUrl();
         $pagination['next_page_url'] = $comments->nextPageUrl();
@@ -133,12 +134,26 @@ class TournamentCommentService {
             $comment_trans['id'] = $comment->id;
 
 
-            if($user->usertype == 'Super Administrator') {
-                $comment_trans['username'] = 'TopBetta Admin';
+//            if($user->usertype == 'Super Administrator') {
+//                $comment_trans['username'] = 'TopBetta Admin';
+//            } else {
+//                $comment_trans['username'] = $user->name;
+//            }
+
+            if($user->permissions) {
+
+                if($user->permissions['superuser'] == 1) {
+                    $comment_trans['username'] = 'TopBetta Admin';
+                } else {
+                    $comment_trans['username'] = $user->username;
+                }
+
             } else {
-                $comment_trans['username'] = $user->name;
+                $comment_trans['username'] = $user->username;
             }
-            $comment_trans['username'] = $user->name;
+
+
+//            $comment_trans['username'] = $user->name;
             $comment_trans['tournament_id'] = $tournament->id;
             $comment_trans['tournament_name'] = $tournament->name;
             $comment_trans['buy_in'] = $tournament->buy_in;

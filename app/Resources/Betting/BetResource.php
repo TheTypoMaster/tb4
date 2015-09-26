@@ -67,6 +67,10 @@ class BetResource extends AbstractEloquentResource {
 
     public function paid()
     {
+        if ($this->model->paid){
+            return $this->model->paid;
+        }
+
         return  ! is_null($this->model->won_amount) ? $this->model->won_amount : 0;
     }
 

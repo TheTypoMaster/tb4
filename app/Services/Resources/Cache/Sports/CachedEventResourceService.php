@@ -77,4 +77,17 @@ class CachedEventResourceService extends CachedResourceService {
         return $events;
     }
 
+    public function getEventWithFilteredMarkets($eventId, $types)
+    {
+        $event = $this->eventRepository->getEvent($eventId);
+
+        if (!$event) {
+            $event = $this->resourceService->getEvent($eventId);
+        }
+
+        $event->setRelation('markets', $this->marketRepository->getFilteredMarketsForEvent($event->id, $types));
+
+        return $event;
+    }
+
 }
