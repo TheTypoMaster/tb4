@@ -63,8 +63,8 @@ class PlayerProcessor extends AbstractFeedProcessor {
         
         $playerData = array(
             "serena_player_id" => $externalId,
-            "name" => array_get($data, "FirstName", "") . " " . array_get($data, "LastName", ""),
-            "short_name" => array_get($data, "Name", ""),            
+            "name" => array_get($data, "player_first_name", "") . " " . array_get($data, "player_last_name", ""),
+            "short_name" => array_get($data, "player_name", ""),
         );
 
         if ($player = $this->modelContainer->getPlayer($externalId)) {
@@ -72,9 +72,9 @@ class PlayerProcessor extends AbstractFeedProcessor {
         } else if ($player = $this->playerRepository->getBySerenaId($externalId)) {
             $player = $this->playerRepository->update($player, $playerData);
         } else if ($player = $this->playerRepository->findByExternalId(array_get($data, 'player_id_bg'))) {
-            $player = $this->playerRepository->updte($player, $playerData);
+            $player = $this->playerRepository->update($player, $playerData);
         } else {
-            $player = $this->playerRepository->create($playerData);
+            $player = $this->playerRepository->createAndReturnModel($playerData);
         }
 
         $this->modelContainer->addPlayer($player, $externalId);

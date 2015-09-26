@@ -79,6 +79,6 @@ class SportsFeedService {
 
         $this->teamProcessor->processArray(array_get($data, 'TeamList', array()));
 
-        $this->teamProcessor->processArray(array_get($data, 'PlayerList', array()));
+        $this->playerProcessor->processArray(array_get($data, 'PlayerList', array()));
     }
 }
