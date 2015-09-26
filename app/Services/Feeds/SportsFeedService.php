@@ -11,8 +11,10 @@ namespace TopBetta\Services\Feeds;
 use TopBetta\Services\Caching\SportsDataCacheManager;
 use TopBetta\Services\Feeds\Processors\GameListProcessor;
 use TopBetta\Services\Feeds\Processors\MarketListProcessor;
+use TopBetta\Services\Feeds\Processors\PlayerProcessor;
 use TopBetta\Services\Feeds\Processors\ResultListProcessor;
 use TopBetta\Services\Feeds\Processors\SelectionListProcessor;
+use TopBetta\Services\Feeds\Processors\TeamProcessor;
 
 class SportsFeedService {
 
@@ -32,11 +34,19 @@ class SportsFeedService {
      * @var ResultListProcessor
      */
     private $resultListProcessor;
+    /**
+     * @var TeamProcessor
+     */
+    private $teamProcessor;
+    /**
+     * @var PlayerProcessor
+     */
+    private $playerProcessor;
 
     public function __construct(GameListProcessor $gameListProcessor,
                                 MarketListProcessor $marketListProcessor,
                                 SelectionListProcessor $selectionListProcessor,
-                                ResultListProcessor $resultListProcessor)
+                                ResultListProcessor $resultListProcessor, TeamProcessor $teamProcessor, PlayerProcessor $playerProcessor)
     {
         $container = new SportsCollectionContainer;
         $this->gameListProcessor = $gameListProcessor;
@@ -47,6 +57,10 @@ class SportsFeedService {
         $this->selectionListProcessor->setModelContainer($container);
         $this->resultListProcessor = $resultListProcessor;
         $this->resultListProcessor->setModelContainer($container);
+        $this->teamProcessor = $teamProcessor;
+        $this->teamProcessor->setModelContainer($container);
+        $this->playerProcessor = $playerProcessor;
+        $this->playerProcessor->setModelContainer($container);
     }
 
     /**
@@ -62,5 +76,9 @@ class SportsFeedService {
         $this->selectionListProcessor->processArray(array_get($data, 'SelectionList', array()));
 
         $this->resultListProcessor->processArray(array_get($data, 'ResultList', array()));
+
+        $this->teamProcessor->processArray(array_get($data, 'TeamList', array()));
+
+        $this->teamProcessor->processArray(array_get($data, 'PlayerList', array()));
     }
 }

@@ -49,4 +49,9 @@ class DbTeamRepository extends BaseEloquentRepository implements TeamRepositoryI
             ->where('external_team_id', $externalId)
             ->first();
     }
+
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_team_id', $id)->first();
+    }
 }
