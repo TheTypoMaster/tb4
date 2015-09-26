@@ -9,7 +9,9 @@
 namespace TopBetta\Repositories\Cache;
 
 use Carbon\Carbon;
+use TopBetta\Jobs\Pusher\Racing\MeetingSocketUpdate;
 use TopBetta\Jobs\Pusher\Racing\RaceSocketUpdate;
+use TopBetta\Jobs\Pusher\Tournaments\TournamentSocketUpdate;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
 use TopBetta\Resources\SmallRaceResource;
 
@@ -173,6 +175,24 @@ class RaceRepository extends CachedResourceRepository {
 
     protected function fireEvents($resource)
     {
-        \Bus::dispatch(new RaceSocketUpdate($resource->toArray()));
+        $resourceArray = $resource->toArray();
+        
+        \Bus::dispatch(new RaceSocketUpdate($resourceArray));
+
+        //push to meetings socket
+        if ($comp = $resource->getModel()->competition->first()) {
+            \Bus::dispatch(new MeetingSocketUpdate(array("id" => $resource->getModel()->competition->first()->id, "races" => array($resourceArray))));
+
+            if ($eventGroups = $resource->getModel()->tournamentEventGroups) {
+
+                foreach ($eventGroups as $eventGroup) {
+                    foreach ($eventGroup->tournaments as $tournament) {
+                        \Bus::dispatch(new TournamentSocketUpdate(array("id" => $tournament->id, "meetings" => array(array("id" => $comp->id, "races" => array($resourceArray))))));
+                    }
+                }
+            }
+        }
+
+
     }
 }
