@@ -46,13 +46,16 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
     {
         $comments = $this->getCollection($this->cachePrefix . $tournament);
 
-        if (!$comments->count()) {
-            return $this->repository->getCommentsForTournament($tournament, $limit);
+        if (!$comments) {
+            $comments = $this->repository->getAllVisibleTournamentComments($tournament);
+            $this->insertComments($comments->first()->tournament, $comments);
+            $comments = new EloquentResourceCollection($comments, $this->resourceClass);
         }
 
         $page = \Request::get('page', 0);
 
         return PaginatedEloquentResourceCollection::makeFromEloquentResourceCollection($comments, $limit, $page);
+
     }
 
     public function addToCollection($resource, $collectionKey, $resourceClass = null)
@@ -99,6 +102,21 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
         }
 
         throw new \InvalidArgumentException("Invalid collection key " . $collectionKey);
+    }
+
+    /**
+     * @param $key
+     * @return EloquentResourceCollection
+     */
+    public function getCollection($key, $resource = null)
+    {
+        $collection = \Cache::tags($this->tags)->get($key);
+
+        if ($collection) {
+            return $this->createCollectionFromArray($collection, $resource);
+        }
+
+        return null;
     }
 
 }

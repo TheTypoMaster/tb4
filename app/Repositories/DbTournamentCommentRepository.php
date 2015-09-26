@@ -29,6 +29,16 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
             ->paginate($limit);
     }
 
+    public function getAllVisibleTournamentComments($tournament)
+    {
+        return $this->model
+            ->where('tournament_id', $tournament)
+            ->where('visible', true)
+            ->orderBy('created_at', 'Desc')
+            ->with('user')
+            ->get();
+    }
+
     /**
      * get all the comments in database
      * @return \Illuminate\Database\Eloquent\Collection|static[]

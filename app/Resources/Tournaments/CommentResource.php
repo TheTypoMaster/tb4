@@ -18,6 +18,7 @@ class CommentResource extends AbstractEloquentResource
     protected $attributes = array(
         'id'           => 'id',
         'username'     => 'username',
+        'user_id'      => 'user_id',
         'tournamentId' => 'tournament_id',
         'comment'      => 'comment',
         'date'         => 'date',
