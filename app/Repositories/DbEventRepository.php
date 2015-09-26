@@ -172,7 +172,24 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
 
     public function addTeamsToModel($event, array $teams)
     {
-        return $event->teams()->sync($teams);
+
+        $currentTeams = $event->teams;
+
+        $toAdd = array_diff(array_keys($teams), $currentTeams->lists('id')->all());
+
+        $toAddTeams = array();
+
+        foreach ($teams as $key=>$team) {
+            if (in_array($key, $toAdd)) {
+                $toAddTeams[$key] = $team;
+            }
+        }
+
+        if (!count($toAddTeams)) {
+            return $event;
+        }
+
+        return $event->teams()->attach($toAddTeams);
     }
 
 
@@ -292,6 +309,11 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
             ->whereIn('id', $events)
             ->whereIn('event_status_id', $statuses)
             ->get();
+    }
+
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_event_id', $id)->first();
     }
 
 }
