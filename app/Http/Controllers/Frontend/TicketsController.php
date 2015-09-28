@@ -18,6 +18,7 @@ use TopBetta\Services\Response\ApiResponse;
 use TopBetta\Services\Tournaments\Betting\Exceptions\TournamentBetLimitExceededException;
 use TopBetta\Services\Tournaments\Exceptions\TournamentBuyInException;
 use TopBetta\Services\Tournaments\Exceptions\TournamentEntryException;
+use TopBetta\Services\Tournaments\TournamentBuyInService;
 use TopBetta\Services\Tournaments\TournamentService;
 use TopBetta\Services\Tournaments\TournamentTicketService;
 
@@ -39,13 +40,22 @@ class TicketsController extends Controller
      * @var TournamentService
      */
     private $tournamentService;
+    /**
+     * @var TournamentBuyInService
+     */
+    private $buyInService;
 
-    public function __construct(TournamentTicketService $ticketService, TicketResourceService $ticketResourceService, TournamentService $tournamentService, ApiResponse $response)
+    public function __construct(TournamentTicketService $ticketService,
+                                TicketResourceService $ticketResourceService,
+                                TournamentService $tournamentService,
+                                TournamentBuyInService $buyInService,
+                                ApiResponse $response)
     {
         $this->ticketResourceService = $ticketResourceService;
         $this->response = $response;
         $this->ticketService = $ticketService;
         $this->tournamentService = $tournamentService;
+        $this->buyInService = $buyInService;
     }
 
     /**
@@ -158,36 +168,55 @@ class TicketsController extends Controller
         return $this->response->success($ticket->toArray());
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
+    public function rebuy(Request $request)
     {
-        //
+        if (!$ticketId = $request->get('ticket_id')) {
+            return $this->response->failed("No ticket specified", 400);
+        }
+
+        try{
+            if( ! $this->buyInService->ticketBelongsToUser($ticketId, Auth::user()->id) ) {
+                return $this->response->failed("Tournament ticket does not belong to current user", 401);
+            }
+
+            $ticket = $this->buyInService->rebuyIntoTournament($ticketId);
+
+        } catch (TournamentBuyInException $e) {
+            return $this->response->failed($e->getMessage(), 400);
+        } catch (\Exception $e) {
+            \Log::error("TicketsController(rebuy): " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown error occurred");
+        }
+
+        //unload tournament
+        $ticket->tournament = null;
+
+        return $this->response->success((new TicketResource($ticket))->toArray());
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id)
+    public function topup(Request $request)
     {
-        //
-    }
+        if (!$ticketId = $request->get('ticket_id')) {
+            return $this->response->failed("No ticket specified", 400);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
+        try{
+            if( ! $this->buyInService->ticketBelongsToUser($ticketId, Auth::user()->id) ) {
+                return $this->response->failed("Tournament ticket does not belong to current user", 401);
+            }
+
+            $ticket = $this->buyInService->topupTournament($ticketId);
+            $ticket->tournament = null;
+        } catch (TournamentBuyInException $e) {
+            return $this->response->failed($e->getMessage(), 400);
+        } catch (\Exception $e) {
+            \Log::error("TicketsController(topup): " . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            return $this->response->failed("Unknown error occurred");
+        }
+
+        //unload tournament
+        $ticket->tournament = null;
+
+        return $this->response->success((new TicketResource($ticket))->toArray());
     }
 }

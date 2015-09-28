@@ -74,6 +74,24 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this->model->user->username;
     }
 
+    public function rebuys()
+    {
+        if ($this->model->rebuys) {
+            return $this->model->rebuys;
+        }
+
+        return $this->model->ticket->rebuy_count;
+    }
+
+    public function topups()
+    {
+        if ($this->model->topups) {
+            return $this->model->topups;
+        }
+
+        return $this->model->ticket->topup_count;
+    }
+
     /**
      * Compare currency and qualifed with leaderboard record
      * @param LeaderboardResource $leaderboardResource
