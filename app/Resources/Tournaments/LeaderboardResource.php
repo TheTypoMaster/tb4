@@ -53,6 +53,11 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this;
     }
 
+    public function user_id()
+    {
+        return $this->userId;
+    }
+
     /**
      * @return string
      */
