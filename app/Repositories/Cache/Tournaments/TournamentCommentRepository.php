@@ -15,6 +15,7 @@ use TopBetta\Jobs\Pusher\Tournaments\CommentSocketUpdate;
 use TopBetta\Repositories\Cache\CachedResourceRepository;
 use TopBetta\Repositories\Contracts\TournamentCommentRepositoryInterface;
 use TopBetta\Repositories\DbTournamentCommentRepository;
+use TopBetta\Repositories\DbTournamentRepository;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\PaginatedEloquentResourceCollection;
 
@@ -35,11 +36,16 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
     protected $collectionKeys = array(
         self::COLLECTION_TOURNAMENT_COMMENT
     );
+    /**
+     * @var DbTournamentRepository
+     */
+    private $tournamentRepository;
 
 
-    public function __construct(DbTournamentCommentRepository $repository)
+    public function __construct(DbTournamentCommentRepository $repository, DbTournamentRepository $tournamentRepository)
     {
         $this->repository = $repository;
+        $this->tournamentRepository = $tournamentRepository;
     }
 
     public function getCommentsForTournament($tournament, $limit = 50)
@@ -48,7 +54,8 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
 
         if (!$comments) {
             $comments = $this->repository->getAllVisibleTournamentComments($tournament);
-            $this->insertComments($comments->first()->tournament, $comments);
+
+            $this->insertComments($this->tournamentRepository->find($tournament), $comments);
             $comments = new EloquentResourceCollection($comments, $this->resourceClass);
         }
 
