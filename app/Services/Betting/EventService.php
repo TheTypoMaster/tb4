@@ -14,7 +14,7 @@ use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 
 class EventService {
 
-    private static $eventClosedStatuses = array(
+    public static $eventClosedStatuses = array(
         EventStatusRepositoryInterface::STATUS_INTERIM,
         EventStatusRepositoryInterface::STATUS_PAID,
         EventStatusRepositoryInterface::STATUS_PAYING,

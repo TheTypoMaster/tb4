@@ -28,6 +28,7 @@ class TournamentBetResource extends BetResource
         "marketType"      => "market_type",
         "eventId"         => "event_id",
         "eventName"       => "event_name",
+        "eventStatus"     => "event_status",
         'selectionString' => 'selection_string',
         'competitionId'   => 'competition_id',
         'competitionName' => 'competition_name',

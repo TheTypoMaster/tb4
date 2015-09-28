@@ -411,8 +411,8 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::post('comments', 'Frontend\TournamentCommentController@store');
 
         //tournament rebuys and topups
-        Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
-        Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
+        Route::post('tournaments/tickets/rebuy', 'Frontend\TicketsController@rebuy');
+        Route::post('tournaments/tickets/topup', 'Frontend\TicketsController@topup');
     });
 
 

@@ -53,6 +53,11 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this;
     }
 
+    public function user_id()
+    {
+        return $this->userId;
+    }
+
     /**
      * @return string
      */
@@ -63,6 +68,41 @@ class LeaderboardResource extends AbstractEloquentResource {
         }
 
         return $this->position;
+    }
+
+    public function getUsername()
+    {
+        if ($this->model->username) {
+            return $this->model->username;
+        }
+
+        return $this->model->user->username;
+    }
+
+    public function rebuys()
+    {
+        if (isset($this->model->rebuys)) {
+            return $this->model->rebuys;
+        }
+
+        if ($this->model->ticket) {
+            return $this->model->ticket->rebuy_count;
+        }
+
+        return 0;
+    }
+
+    public function topups()
+    {
+        if (isset($this->model->topups)) {
+            return $this->model->topups;
+        }
+
+        if ($this->model->ticket) {
+            return $this->model->ticket->topup_count;
+        }
+
+        return 0;
     }
 
     /**
