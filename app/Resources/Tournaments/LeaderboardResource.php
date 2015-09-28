@@ -65,6 +65,15 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this->position;
     }
 
+    public function getUsername()
+    {
+        if ($this->model->username) {
+            return $this->model->username;
+        }
+
+        return $this->model->user->username;
+    }
+
     public function rebuys()
     {
         if ($this->model->rebuys) {
