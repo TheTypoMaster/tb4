@@ -199,7 +199,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
                 if ($record->compare($leaderboardRecord) > 0 && !$inserted) {
 
-                    if ($previousRecord && $previousRecord->compare($leaderboardRecord) == 0) {
+                    if ($previousRecord && $previousRecord->compare($record) == 0) {
                         $positionCount++;
                     } else {
                         $position += $positionCount;
