@@ -333,6 +333,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
             ->where('sport_id', $sportId)
             ->where('start_date', '>=', Carbon::today())
             ->where('display_flag', 1)
+            ->orderBy('start_date', 'ASC')
             ->get();
         return $event_groups;
     }
@@ -358,6 +359,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     public function getEventGroupByRaceType($type_code) {
         return $this->model->where('type_code', $type_code)
                            ->where('start_date', '>=', Carbon::today())
+                           ->orderBy('start_date', 'ASC')
                            ->get();
     }
 
