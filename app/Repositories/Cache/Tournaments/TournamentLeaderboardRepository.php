@@ -149,7 +149,8 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         $leaderboard = $this->getCollection($key);
 
         if (!$leaderboard) {
-            $leaderboard = new EloquentResourceCollection($this->getTournamentLeaderboardCollection($resource->tournament_id, null), $this->resourceClass);
+            \Log::debug("TournamentLeaderboardRepository(addToCollection): Leaderboard not found tournament " . $resource->tournament_id);
+            $leaderboard = new EloquentResourceCollection($this->repository->getFullTournamentLeaderboardCollection($resource->tournament_id), $this->resourceClass);
         }
 
         $leaderboard = $this->insertLeaderboardRecord($resource, $leaderboard);
@@ -298,5 +299,20 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
     protected function createCollectionFromArray($array, $resource = null)
     {
         return EloquentResourceCollection::createFromArray($array, $resource ? : $this->resourceClass);
+    }
+
+    /**
+     * @param $key
+     * @return EloquentResourceCollection
+     */
+    public function getCollection($key, $resource = null)
+    {
+        $collection = \Cache::tags($this->tags)->get($key);
+
+        if ($collection) {
+            return $this->createCollectionFromArray($collection, $resource);
+        }
+
+        return null;
     }
 }

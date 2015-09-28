@@ -20,4 +20,9 @@ class TournamentLeaderboardModel extends Eloquent{
         return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('TopBetta\Models\UserModel', 'user_id');
+    }
+
 } 
