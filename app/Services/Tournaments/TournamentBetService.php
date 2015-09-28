@@ -64,7 +64,7 @@ class TournamentBetService {
 
     public function getBetsForUserInTournamentWhereEventClosed($user, $tournament)
     {
-        $statuses = $this->eventService->getClosedEventStatusIds();
+        $statuses = EventService::$eventClosedStatuses;
 
         return $this->betResourceService->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
     }
