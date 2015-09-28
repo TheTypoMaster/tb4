@@ -118,7 +118,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
     public function getDateTicketsArray($user, $date)
     {
-        return \Cache::tags($this->tags)->get($this->cacheForever . $user . '_' . $date);
+        return \Cache::tags($this->tags)->get($this->cachePrefix . $user . '_' . $date);
     }
 
     public function getActiveTickets($user)
@@ -151,7 +151,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     {
         $tickets = $this->getActiveTicketsArray($resource->user_id);
 
-        if (!$tickets) {
+        if (is_null($tickets)) {
             return;
         } else if ($resource->resulted_flag && array_get($tickets, $resource->id)) {
             unset($tickets[$resource->id]);
@@ -165,14 +165,15 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     public function updateDateTickets($date, $resource)
     {
         if (($carbonDate = Carbon::createFromFormat('Y-m-d H:i:s', $date)) > Carbon::now()->startOfDay()->subDays(2)) {
-            $tickets = $this->getDateTicketsArray($resource->user_id, $date);
+            $tickets = $this->getDateTicketsArray($resource->user_id, $carbonDate->toDateString());
 
-            if (!$tickets) {
+            if (is_null($tickets)) {
                 return;
             }
             $tickets[$resource->id] = $resource->toArray();
 
-            $this->put($this->cachePrefix . $resource->user_id . $carbonDate->toDateString(), $tickets, $carbonDate->addDay(2)->diffInMinutes());
+
+            $this->put($this->cachePrefix . $resource->user_id . '_' . $carbonDate->toDateString(), $tickets, $carbonDate->addDays(2)->diffInMinutes());
         }
     }
 
