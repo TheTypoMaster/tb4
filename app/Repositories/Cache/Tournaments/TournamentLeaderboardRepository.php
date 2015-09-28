@@ -52,7 +52,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
         $leaderboard = $this->getCollection($this->cachePrefix . $tournament);
 
         if (!$leaderboard) {
-            return new PaginatedEloquentResourceCollection($this->repository->getTournamentLeaderboardPaginated($tournament, $limit), $this->resourceClass);
+            return $this->repository->getTournamentLeaderboardPaginated($tournament, $limit);
         }
 
         $page = \Request::get('page', 0);
@@ -155,7 +155,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
         $leaderboard = $this->insertLeaderboardRecord($resource, $leaderboard);
 
-        $this->put($key, $leaderboard->toArray(), $this->getCollectionCacheKey(self::COLLECTION_TOURNAMENT_LEADERBOARD, $resource));
+        $this->put($key, $leaderboard->toArray(), $this->getCollectionCacheTime(self::COLLECTION_TOURNAMENT_LEADERBOARD, $resource));
 
         return $leaderboard;
 
