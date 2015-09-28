@@ -462,8 +462,8 @@ class RaceDataProcessingService {
             $runnerDetails['win_deductions'] = array_get($runner, 'WinDeductions', 0);
             $runnerDetails['place_deductions'] = array_get($runner, 'PlaceDeductions', 0);
 
-            if(isset($runner['apn_flucuations'])) $runnerDetails['apn_flucuations'] = $runner['apn_flucuations'];
-            if(isset($runner['topbetta_flucuations'])) $runnerDetails['topbetta_flucuations'] = $runner['topbetta_flucuations'];
+            if(isset($runner['apn_fluctuations'])) $runnerDetails['apn_flucuations'] = $runner['apn_flucuations'];
+            if(isset($runner['topbetta_fluctuations'])) $runnerDetails['topbetta_flucuations'] = $runner['topbetta_flucuations'];
 
 //            $runnerDetails['apn_flucuations'] = array_get($runner, 'apn_flucuations', '');
 //            $runnerDetails['topbetta_flucuations'] = array_get($runner, 'topbetta_flucuations', '');
