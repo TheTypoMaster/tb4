@@ -95,10 +95,8 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
 
         if ($bets && $bets->count()) {
 
-            $events = $this->eventRepository->getEventsWithStatusIn($bets->unique('event_id')->lists('eventId')->all(), $eventStatuses)->lists('id')->all();
-
-            $bets = $bets->filter(function($v) use ($events) {
-                return in_array($v->eventId, $events);
+            $bets = $bets->filter(function($v) use ($eventStatuses) {
+                return in_array($v->eventStatus, $eventStatuses);
             });
 
             $bets = $bets->map(function ($v) {
@@ -182,10 +180,13 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             return $bets;
         }
 
-        $bets = $this->repository->getBetsForUserInTournamentWhereEventStatusIn($user, $tournament, $statuses);
+        $bets = $this->repository->getBetsForUserTournament($user, $tournament);
 
-        //set bets to be an emoty collection for this user
-        $this->storeTournamentBets($user, $tournament, new EloquentResourceCollection(new Collection(), $this->resourceClass));
+        $this->storeTournamentBets($user, $tournament, $bets);
+
+        $bets = $bets->filter(function($v) use ($statuses) {
+            return in_array($v->event_status, $statuses);
+        });
 
         return $bets;
     }
@@ -244,6 +245,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             'marketId'         => $bet->selection->first()->market->id,
             'eventId'          => $bet->selection->first()->market->event->id,
             'eventName'        => $bet->selection->first()->market->event->name,
+            'eventStatus'       => $bet->selection->first()->market->event->eventstatus->keyword,
             'competitionId'    => $bet->selection->first()->market->event->competition->first()->id,
             'competitionName'  => $bet->selection->first()->market->event->competition->first()->name,
             'betType'          => $bet->type->name,
@@ -276,12 +278,12 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
     {
         if ($resource->status == BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED && !$resource->isExotic() && !$resource->isFixed()) {
             if ($resource->betType == BetTypeRepositoryInterface::TYPE_WIN) {
-                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selection_id, $resource->product_id);
+                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selectionId, $resource->productId);
                 if ($price) {
                     $resource->win_odds = $price->win_odds;
                 }
             } else if ($resource->betType == BetTypeRepositoryInterface::TYPE_PLACE) {
-                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selection_id, $resource->product_id);
+                $price = $this->racingSelectionPriceRepository->getPriceForSelectionByProduct($resource->selectionId, $resource->productId);
                 if ($price) {
                     $resource->place_odds = $price->place_odds;
                 }
@@ -295,7 +297,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
     {
         $collection = \Cache::tags($this->tags)->get($key);
 
-        if ($collection) {
+        if (!is_null($collection)) {
             return $this->createCollectionFromArray($collection, $resource);
         }
 

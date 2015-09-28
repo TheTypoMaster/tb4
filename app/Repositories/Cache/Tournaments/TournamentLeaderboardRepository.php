@@ -155,6 +155,7 @@ class TournamentLeaderboardRepository extends CachedResourceRepository implement
 
         $leaderboard = $this->insertLeaderboardRecord($resource, $leaderboard);
 
+        \Log::debug("TournamentLeaderboardRepository(addToCollection): Putting tournament {$resource->tournament_id} leaderboard in cache for " . $this->getCollectionCacheTime(self::COLLECTION_TOURNAMENT_LEADERBOARD, $resource) . print_r($leaderboard->toArray(), true));
         $this->put($key, $leaderboard->toArray(), $this->getCollectionCacheTime(self::COLLECTION_TOURNAMENT_LEADERBOARD, $resource));
 
         return $leaderboard;

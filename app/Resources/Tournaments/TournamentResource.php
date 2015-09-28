@@ -210,10 +210,9 @@ class TournamentResource extends AbstractEloquentResource {
 
         $tournamentEventGroupRepository = \App::make('TopBetta\Repositories\TournamentEventGroupRepository');
         $event_group = $tournamentEventGroupRepository->getEventGroup($this->model->event_group_id);
-        $this->setType($event_group->type);
-
-//        $this->setType($this->model->eventGroup->sport_id > 3 ? 'sport' : 'racing');
-
+        if ($event_group) {
+            $this->setType($event_group->type);
+        }
 
         $this->setPrizeFormat($this->model->prizeFormat->name);
         
