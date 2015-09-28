@@ -44,6 +44,9 @@
 
                 <div class="form-group">
                     {!! Form::label('event_groups', 'Event Groups: ') !!}
+                        <input type="text"  id="search" class="" placeholder="Keyword..." style="margin-left: 20px;"><span id="search_button" class=""><button class="btn btn-default" type="button">Search</button></span>
+                    {{--<a><span id="search_label" style="margin-left: 20px;">Search </span></a>--}}
+                    {{--<input type="text" name="search", id="search", class="hidden">--}}
                     {!! Form::select('event_groups', [], [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
                 </div>
 
@@ -59,6 +62,7 @@
                 {!! Form::input('hidden', 'event_group_id', $default_group_id, array()) !!}
 
                 {!! Form::close() !!}
+
             </div>
 
             <div class="row" style="margin-left: 20px; margin-top: 40px; width: 60%;">
@@ -107,8 +111,10 @@
         $(document).ready(function () {
             $('#events').select2({
                 placeholder: 'select'
-            });
 
+        });
+
+            var event_group_data = '';
 
             function createSelectOptions(json) {
                 var html = $();
@@ -119,7 +125,7 @@
 //                    ('<option></option>').text(value.name).val(value.id));
 //                }
                     html = html.add($
-                    ('<option></option>').text('(#' + value.id + ') ' + value.name).val(value.id));
+                    ('<option></option>').text('(#' + value.id + ') ' + value.name + ' ------Start at: ' + value.start_date).val(value.id));
                 });
 
                 return html;
@@ -147,6 +153,7 @@
 
                 $.get('/admin/get-event-groups/' + sport)
                         .done(function (data) {
+                            event_group_data = data;
                             $('#event_groups').html(createSelectOptions(data));
                             $('#event_groups').change();
                             $('#events').empty();
@@ -164,9 +171,33 @@
                             $('#events').html(createSelectOptionsForEvents(data));
 
                             $('#events').select2({
-                                placeholder: '--Select events--'
+                                placeholder: '--Select events--',
+                                closeOnSelect: false,
+                                multiple: true
                             });
                         });
+            });
+
+            $('#search_label').click(function() {
+                $('#search').removeClass('hidden');
+            });
+
+            $('#search_button').click(function() {
+
+                    var search_list = new Array();
+                    for(var i=0; i<event_group_data.length; i++) {
+                        var search_value = $('#search').val();
+                        if(event_group_data[i].name.toLowerCase().indexOf(search_value.toLowerCase()) >= 0) {
+
+                            search_list.push(event_group_data[i]);
+
+                        }
+
+                    }
+
+                $('#event_groups').empty();
+                $('#event_groups').html(createSelectOptions(search_list));
+                $('#event_groups').change();
             });
         });
 
