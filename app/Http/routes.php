@@ -250,6 +250,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('event-groups/remove_event/{group_id}/{event_id}/{group_name}', 'Admin\TournamentEventGroupController@removeEventFromGroup');
     Route::post('event-groups/update/{id}', 'Admin\TournamentEventGroupController@store');
 
+
     //tournament comments routes
     Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
     Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
