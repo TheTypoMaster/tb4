@@ -107,7 +107,7 @@ class TournamentCommentController extends Controller
             return $this->response->failed("Unknown error");
         }
 
-        $pusher = \App::make('Pusher');
+        $pusher = \App::make('pusher');
         $pusher->trigger('comment_channel', 'add_comment', []);
 
         return $this->response->success((new CommentResource($comment))->toArray());
