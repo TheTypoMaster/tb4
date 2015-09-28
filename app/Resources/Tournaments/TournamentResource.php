@@ -44,6 +44,8 @@ class TournamentResource extends AbstractEloquentResource {
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
         'tournamentPrizeFormat' => 'tournament_prize_format',
+        'tournamentPrizeShortName' => 'prizeFormat.short_name',
+        'tournamentPrizeIcon' => 'prizeFormat.icon',
         'tournamentType'       => 'tournament_type',
         'tournamentMixed'       => 'tournament_mixed',
         'type'                  => 'type',
