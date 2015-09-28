@@ -49,8 +49,7 @@ class TournamentCommentController extends Controller
 
             //change user name to be TopBetta Admin if the user is a super user
             foreach($comments['data'] as $key => $comment) {
-                $comment = $this->commentService->getCommentById($comment['id']);
-                $user_id = $comment->user_id;
+                $user_id = $comment['user_id'];
                 $user = $this->userService->getUser($user_id);
 //                if($user->usertype == 'Super Administrator') {
 //                    $comments['data'][$key]['username'] = 'TopBetta Admin';

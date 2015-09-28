@@ -65,6 +65,15 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this->position;
     }
 
+    public function getUsername()
+    {
+        if ($this->model->username) {
+            return $this->model->username;
+        }
+
+        return $this->model->user->username;
+    }
+
     /**
      * Compare currency and qualifed with leaderboard record
      * @param LeaderboardResource $leaderboardResource

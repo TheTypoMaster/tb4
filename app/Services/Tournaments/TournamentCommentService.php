@@ -92,6 +92,7 @@ class TournamentCommentService {
             "tournament_id" => $tournament->id,
             "user_id" => $user->id,
             "comment" => $comment,
+            "visible" => true,
         ));
 
         return $this->commentRepository->find($comment['id']);

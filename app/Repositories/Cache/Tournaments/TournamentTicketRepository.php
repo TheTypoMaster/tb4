@@ -79,7 +79,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
         }
 
-        if ($ticket->getPosition() != $position) {
+        if ($ticket && $ticket->getPosition() != $position) {
             $this->updateActiveTickets($ticket);
             $this->updateDateTickets($ticket->tournament->end_date, $ticket);
             $this->updateNextToJump($ticket);
@@ -195,14 +195,14 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
     {
         $ticketResources = new EloquentResourceCollection($tickets, $this->resourceClass);
 
-        $this->put($this->cachePrefix . $user . '_active', $ticketResources->toArray(), Carbon::now()->addMonth()->diffInMinutes());
+        $this->put($this->cachePrefix . $user . '_active', $ticketResources->keyBy('id')->toKeyedArray(), Carbon::now()->addMonth()->diffInMinutes());
     }
 
     public function storeDateTickets($user, $date, $tickets)
     {
         $ticketResources = new EloquentResourceCollection($tickets, $this->resourceClass);
 
-        $this->put($this->cachePrefix . $user . '_' . $date, $ticketResources->toArray(), Carbon::createFromFormat('Y-m-d', $date)->addDays(2)->diffInMinutes());
+        $this->put($this->cachePrefix . $user . '_' . $date, $ticketResources->keyBy('id')->toKeyedArray(), Carbon::createFromFormat('Y-m-d', $date)->addDays(2)->diffInMinutes());
     }
 
     public function updateNextToJump($model)
