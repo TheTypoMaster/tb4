@@ -79,7 +79,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
         }
 
-        if ($ticket->getPosition() != $position) {
+        if ($ticket && $ticket->getPosition() != $position) {
             $this->updateActiveTickets($ticket);
             $this->updateDateTickets($ticket->tournament->end_date, $ticket);
             $this->updateNextToJump($ticket);

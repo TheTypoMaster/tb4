@@ -45,8 +45,7 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getAllComments() {
-        return $this->model->paginate(15);
-//        return $this->model->all();
+        return $this->model->orderBy('created_at', 'DESC')->paginate(15);
     }
 
     /**

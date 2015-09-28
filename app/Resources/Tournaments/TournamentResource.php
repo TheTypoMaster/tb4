@@ -44,6 +44,8 @@ class TournamentResource extends AbstractEloquentResource {
         'tournamentSponsor'     => 'tournament_sponsor_name',
         'tournamentSponsorLogo' => 'tournament_sponsor_logo',
         'tournamentPrizeFormat' => 'tournament_prize_format',
+        'tournamentPrizeShortName' => 'prizeFormat.short_name',
+        'tournamentPrizeIcon' => 'prizeFormat.icon',
         'tournamentType'       => 'tournament_type',
         'tournamentMixed'       => 'tournament_mixed',
         'type'                  => 'type',
@@ -208,10 +210,9 @@ class TournamentResource extends AbstractEloquentResource {
 
         $tournamentEventGroupRepository = \App::make('TopBetta\Repositories\TournamentEventGroupRepository');
         $event_group = $tournamentEventGroupRepository->getEventGroup($this->model->event_group_id);
-        $this->setType($event_group->type);
-
-//        $this->setType($this->model->eventGroup->sport_id > 3 ? 'sport' : 'racing');
-
+        if ($event_group) {
+            $this->setType($event_group->type);
+        }
 
         $this->setPrizeFormat($this->model->prizeFormat->name);
         

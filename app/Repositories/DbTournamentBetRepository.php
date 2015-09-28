@@ -36,13 +36,16 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->join('tbdb_selection', 'tbdb_tournament_bet_selection.selection_id', '=', 'tbdb_selection.id')
             ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
             ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_market.event_id')
+            ->join('tbdb_event_status', 'tbdb_event_status.id', '=', 'tbdb_event.event_status_id')
             ->where('tbdb_tournament_ticket.user_id', $user)
             ->where('tbdb_tournament_ticket.tournament_id', $tournament)
-            ->whereIn('tbdb_event.event_status_id', $eventStatuses)
+            ->whereIn('tbdb_event_status.keyword', $eventStatuses)
             ->groupBy('tbdb_tournament_bet.id')
             ->with('betType', 'selections', 'selections.market.event.competition.sport', 'selections.market.markettype', 'selections.result', 'selections.price')
             ->get(array("tbdb_tournament_bet.*"));
     }
+
+
 
     public function getBetResourcesForUserInTournamentWhereEventStatusIn($user, $tournament, $eventStatuses)
     {
@@ -50,7 +53,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->join('tbdb_tournament_ticket', 'tbdb_tournament_ticket.id', '=', 'tb.tournament_ticket_id')
             ->where('tbdb_tournament_ticket.tournament_id', $tournament)
             ->where('tbdb_tournament_ticket.user_id', $user)
-            ->whereIn('e.event_status_id', $eventStatuses)
+            ->whereIn('tbdb_event_status.keyword', $eventStatuses)
             ->get(array("tbdb_tournament_bet.*"));
     }
 
@@ -156,6 +159,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
             ->join('tbdb_market as m', 'm.id', '=', 's.market_id')
             ->join('tbdb_market_type as mt', 'mt.id', '=', 'm.market_type_id')
             ->join('tbdb_event as e', 'e.id', '=', 'm.event_id')
+            ->join('tbdb_event_status', 'tbdb_event_status.id', '=', 'e.event_status_id')
             ->join('tbdb_event_group_event as ege', 'ege.event_id', '=', 'e.id')
             ->join('tbdb_event_group as eg', 'eg.id', '=', 'ege.event_group_id')
             ->leftJoin('tbdb_bet_product as bp', 'bp.id', '=', 'tb.bet_product_id')
@@ -166,7 +170,7 @@ class DbTournamentBetRepository extends BaseEloquentRepository implements Tourna
                 'e.id as event_id', 'e.name as event_name', 'eg.id as competition_id', 'eg.name as competition_name', 'brs.name as status',
                 'bt.name as bet_type', 'e.start_date as start_date', 'eg.type_code as event_type', 'sp.win_odds as win_odds', 'sp.place_odds as place_odds',
                 'sr.win_dividend', 'sr.place_dividend', 's.number as selection_number', 'bp.is_fixed_odds as fixed',
-                'ppm.provider_product_name', 'bp.id as product_id', 'e.event_status_id as event_status_id', 'tb.tournament_ticket_id'
+                'ppm.provider_product_name', 'bp.id as product_id', 'e.event_status_id as event_status_id', 'tb.tournament_ticket_id', 'tbdb_event_status.keyword as event_status'
             ));
     }
 
