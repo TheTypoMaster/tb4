@@ -8,6 +8,7 @@ use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Models\TournamentEventGroupModel;
 use TopBetta\Services\Betting\EventService;
+use TopBetta\Services\Racing\MeetingService;
 use TopBetta\Services\Sports\SportsService;
 use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
@@ -18,13 +19,15 @@ class TournamentEventGroupController extends Controller
 
     public function __construct(TournamentEventGroupService $tournamentEventGroupService, TournamentEventGroupEventService $tournamentEventGroupEventService,
                                 EventService $eventService,
-                                SportsService $sportService)
+                                SportsService $sportService,
+                                MeetingService $meetingService)
     {
 
         $this->tournamentEventGroupService = $tournamentEventGroupService;
         $this->tournamentEventGroupEventService = $tournamentEventGroupEventService;
         $this->eventService = $eventService;
         $this->sportService = $sportService;
+        $this->meetingService = $meetingService;
     }
 
     /**
@@ -35,6 +38,7 @@ class TournamentEventGroupController extends Controller
     public function index()
     {
         $event_groups = $this->tournamentEventGroupService->getAllEventGroups();
+
         return view('admin.tournaments.event-groups.index')->with(['event_groups' => $event_groups]);
     }
 
@@ -142,6 +146,7 @@ class TournamentEventGroupController extends Controller
             //get all events that belong to this event group, send them to template
             $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
         }
+
         return redirect()->action('Admin\TournamentEventGroupController@keepAdding', ['event_group_name' => $event_group_params['name'],
             'event_group_id' => $event_group_id]);
     }
@@ -270,6 +275,15 @@ class TournamentEventGroupController extends Controller
                                                                     'event_group_name' => $group_name,
                                                                     'event_group_id' => $group_id,
                                                                     'event_list' => $event_list]);
+    }
+
+
+    /**
+     * get all meetings
+     * @return mixed
+     */
+    public function getAllMeetings() {
+        return $this->meetingService->getAllMeetings();
     }
 
 }

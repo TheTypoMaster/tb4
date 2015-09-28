@@ -249,6 +249,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('event-groups/keepadding/{group_name}/{group_id}', 'Admin\TournamentEventGroupController@keepAdding');
     Route::get('event-groups/remove_event/{group_id}/{event_id}/{group_name}', 'Admin\TournamentEventGroupController@removeEventFromGroup');
     Route::post('event-groups/update/{id}', 'Admin\TournamentEventGroupController@store');
+    Route::get('get-meetings', 'Admin\TournamentEventGroupController@getAllMeetings');
 
 
     //tournament comments routes

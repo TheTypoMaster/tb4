@@ -41,16 +41,29 @@
                     {!! Form::select('sports', $sport_list, [], array('id' => 'sports', 'class' => 'form-control', 'placeholder' => '--Select a sport--')) !!}
                 </div>
 
-
-                <div class="form-group">
+                <a id="select_future_meeting">Select Future Meeting</a>
+                <div class="form-group" id="event_group_form">
                     {!! Form::label('event_groups', 'Event Groups: ') !!}
                         <input type="text"  id="search" class="" placeholder="Keyword..." style="margin-left: 20px;"><span id="search_button" class=""><button class="btn btn-default" type="button">Search</button></span>
+
                     {{--<a><span id="search_label" style="margin-left: 20px;">Search </span></a>--}}
                     {{--<input type="text" name="search", id="search", class="hidden">--}}
                     {!! Form::select('event_groups', [], [], array('id' => 'event_groups', 'class' => 'form-control', 'placeholder' => '--Select an event group--')) !!}
                 </div>
 
-                <div class="form-group">
+                <div class="form-group hidden" id="meeting_form">
+                    {!! Form::label('meeting', 'Future Meeting ') !!}
+
+                    <input type="text"  id="search_meeting" class="" placeholder="Keyword..." style="margin-left: 20px;"><span id="search_meeting_button" class=""><button class="btn btn-default" type="button">Search</button></span>
+                    {!! Form::select('meeting', [], [], array('id' => 'meeting', 'class' => 'form-control')) !!}
+                </div>
+
+                <div class="form-group hidden" id="meeting_date">
+                    {!! Form::label('meeting_date', 'Future Meeting Start') !!}
+                    {!! Form::input('date', 'meeting_date', \Carbon\Carbon::now()->format('Y-m-d'), array('class' => 'form-control')) !!}
+                </div>
+
+                <div class="form-group" id="events-form">
                     {!! Form::label('events', 'Events ') !!}
                     {!! Form::select('events[]', [], [], array('id' => 'events', 'class' => 'select2 form-control', 'placeholder' => '--Select events--', 'multiple')) !!}
                 </div>
@@ -114,7 +127,9 @@
 
         });
 
+
             var event_group_data = '';
+            var meetings = '';
 
             function createSelectOptions(json) {
                 var html = $();
@@ -147,6 +162,29 @@
 
                 return html;
             }
+
+            function createSelectOptionsForMeetings(json) {
+                var html = $();
+
+                $.each(json, function (index, value) {
+//                if ($.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
+//                    html = html.add($
+//                    ('<option></option>').text(value.name).val(value.id));
+//                }
+                    html = html.add($
+                    ('<option></option>').text('(#' + value.id + ') ' + value.name).val(value.id));
+                });
+
+                return html;
+            }
+
+            //get all meetings
+            $.get('/admin/get-meetings')
+                    .done(function(data) {
+                        $('#meeting').html(createSelectOptionsForMeetings(data));
+                        $('#meeting').change();
+                        meetings = data;
+                    });
 
             $('#sports').change(function () {
                 var sport = $('#sports').val();
@@ -199,6 +237,41 @@
                 $('#event_groups').html(createSelectOptions(search_list));
                 $('#event_groups').change();
             });
+
+            $('#select_future_meeting').click(function() {
+
+                $('#meeting_form').toggleClass('hidden');
+                $('#event_group_form').toggleClass('hidden');
+                $('#events-form').toggleClass('hidden');
+                $('#meeting_date').toggleClass('hidden');
+
+                if($('#select_future_meeting').text() == 'Select Future Meeting') {
+                    $('#select_future_meeting').text('Select Existing Meeting');
+                } else {
+                    $('#select_future_meeting').text('Select Future Meeting');
+                }
+
+
+            });
+
+            $('#search_meeting_button').click(function() {
+
+                var search_list = new Array();
+                for(var i=0; i<meetings.length; i++) {
+                    var search_value = $('#search_meeting').val();
+                    if(meetings[i].name.toLowerCase().indexOf(search_value.toLowerCase()) >= 0) {
+
+                        search_list.push(meetings[i]);
+
+                    }
+
+                }
+
+                $('#meeting').empty();
+                $('#meeting').html(createSelectOptionsForMeetings(search_list));
+                $('#meeting').change();
+            });
+
         });
 
     </script>

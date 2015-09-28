@@ -89,6 +89,7 @@ return array(
         array("uri" => "prize-format/update/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/edit/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/update/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "get-meetings", 'permission' => 'tournaments.view'),
 
 
 
