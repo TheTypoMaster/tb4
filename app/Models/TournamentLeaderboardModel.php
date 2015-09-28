@@ -20,4 +20,9 @@ class TournamentLeaderboardModel extends Eloquent{
         return $this->belongsTo('TopBetta\Models\TournamentModel', 'tournament_id');
     }
 
+    public function ticket()
+    {
+        return $this->hasOne('TopBetta\Models\TournamentTicketModel', 'tournament_id', 'tournament_id')
+            ->where('user_id', $this->user_id);
+    }
 } 
