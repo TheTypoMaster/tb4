@@ -7,7 +7,9 @@
 
             </div>
 
-            <div class="row">
+            <div class="row" style="margin-left: 20px; margin-right: 20px;">
+                {!! Form::label('auto_fresh', 'Auto Fresh') !!}
+                {!! Form::checkbox('auto_fresh', 0, array('id'=>'auto_fresh')) !!}
                 <div class="pull-right" style="margin-right: 60px; margin-bottom: 20px;">
                     {!! Form::label('tournament_id', 'Tournament ID.: ') !!}
                     {!! Form::input('text', 'tournament_id', '') !!}
@@ -97,9 +99,17 @@
         </div>
     </div>
 
-
+    <script src="//js.pusher.com/3.0/pusher.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
+            var pusher = new Pusher('e1d1133cc53cd20b56ef');
+            var channel = pusher.subscribe('comment_channel');
+            channel.bind('add_comment', function() {
+                if($('#auto_fresh').is(':checked')) {
+                    location.reload();
+                }
+            })
 
             $('#submit').click(function () {
                 var tournament_id = $('#tournament_id').val();

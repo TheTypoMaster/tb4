@@ -268,6 +268,11 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::post('market-groups/update/{id}', 'Admin\MarketTypeGroupController@update');
     Route::get('market-groups/delete/{id}', 'Admin\MarketTypeGroupController@destroy');
 
+    //prize format
+    Route::get('prize-format', 'Admin\PrizeFormatController@index');
+    Route::get('prize-format/edit/{id}', 'Admin\PrizeFormatController@edit');
+    Route::post('prize-format/update/{id}', 'Admin\PrizeFormatController@update');
+
 
 
     // tournament settings

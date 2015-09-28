@@ -104,7 +104,7 @@ class TournamentCommentRepository extends CachedResourceRepository implements To
         throw new \InvalidArgumentException("Invalid collection key " . $collectionKey);
     }
 
-    /**
+    /**\
      * @param $key
      * @return EloquentResourceCollection
      */
