@@ -44,7 +44,7 @@ class LeaderboardResource extends AbstractEloquentResource {
             return $this->model->qualified;
         }
 
-        return $this->model->turned_over >= $this->model->balance_to_turnover;
+        return $this->model->turned_over >= $this->model->balance_to_turnover && $this->currency > 0;
     }
 
     public function setPosition($position)
