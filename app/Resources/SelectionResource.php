@@ -31,7 +31,7 @@ class SelectionResource extends AbstractEloquentResource {
         'typeCode'         => 'typeCode',
         'selectionStatus'  => 'selectionstatus.keyword',
         'apn_fluctuations'  => 'apn_fluctuations',
-        'topbetta_flucutations' => 'topbetta_fluctuations',
+        'topbetta_fluctuations' => 'topbetta_fluctuations',
     );
 
     protected $types = array(
