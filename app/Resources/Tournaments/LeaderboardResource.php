@@ -81,20 +81,28 @@ class LeaderboardResource extends AbstractEloquentResource {
 
     public function rebuys()
     {
-        if ($this->model->rebuys) {
+        if (isset($this->model->rebuys)) {
             return $this->model->rebuys;
         }
 
-        return $this->model->ticket->rebuy_count;
+        if ($this->model->ticket) {
+            return $this->model->ticket->rebuy_count;
+        }
+
+        return 0;
     }
 
     public function topups()
     {
-        if ($this->model->topups) {
+        if (isset($this->model->topups)) {
             return $this->model->topups;
         }
 
-        return $this->model->ticket->topup_count;
+        if ($this->model->ticket) {
+            return $this->model->ticket->topup_count;
+        }
+
+        return 0;
     }
 
     /**
