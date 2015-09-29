@@ -7,17 +7,40 @@
                 <h2>Comments</h2>
             </div>
 
+            @if(count($query) > 0)
+                <?php
+                $flag = '1';
+                $tournament_id_search = $query['tournament_id'];
+                $username_search = $query['username'];
+                    if($query['visibility'] != null) {
+                        $visibility_search = true;
+                    } else {
+                        $visibility_search = null;
+                    }
+                ?>
+            @else
+                <?php
+                $flag = '';
+                $tournament_id_search = '';
+                $username_search = '';
+                $visibility_search = null;
+                ?>
+            @endif
+
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
                 {!! Form::label('auto_fresh', 'Auto Fresh') !!}
                 {!! Form::checkbox('auto_fresh', 0, array('id'=>'auto_fresh')) !!}
                 <div class="pull-right" style="margin-right: 60px; margin-bottom: 20px;">
+                    {!! Form::open(['url' => 'admin/tournament-comments', 'method' => 'get']) !!}
                     {!! Form::label('tournament_id', 'Tournament ID.: ') !!}
-                    {!! Form::input('text', 'tournament_id', '') !!}
+                    {!! Form::input('text', 'tournament_id', $tournament_id_search) !!}
                     {!! Form::label('username', 'Username: ', '') !!}
-                    {!! Form::input('text', 'username', '') !!}
+                    {!! Form::input('text', 'username', $username_search) !!}
                     {!! Form::label('visible', 'Visible Only: ') !!}
-                    {!! Form::checkbox('visible', 0, false) !!}
-                    {!! Form::input('button', 'submit', 'Filter', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
+                    {!! Form::checkbox('visible', 0, $visibility_search) !!}
+                    {!! Form::input('hidden', 'flag', '1') !!}
+                    {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+                    {!! Form::close() !!}
                 </div>
             </div>
             <div class="row">
@@ -86,22 +109,22 @@
                     <nav>
                         <ul class="pagination">
                             <li>
-                                <a href="{{URL::to($pagination['previous_page_url'])}}" aria-label="Previous">
+                                <a href="{{URL::to($pagination['previous_page_url'] . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search)}}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
                             @for($i=1; $i<=$pagination['total_pages']; $i++)
                                 @if($pagination['current_page'] == $i)
 
-                                    <li class="active">{!! link_to('admin/tournament-comments?page=' . $i, $i, array()) !!}</li>
+                                    <li class="active">{!! link_to('admin/tournament-comments?page=' . $i . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search, $i, array()) !!}</li>
                                 @else
-                                    <li>{!! link_to('admin/tournament-comments?page=' . $i, $i, array()) !!}</li>
+                                    <li>{!! link_to('admin/tournament-comments?page=' . $i . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search, $i, array()) !!}</li>
                                 @endif
                             @endfor
 
                             @if($pagination['has_more_pages'])
                                 <li>
-                                    <a href="{{URL::to($pagination['next_page_url'])}}" aria-label="Next">
+                                    <a href="{{URL::to($pagination['next_page_url'] . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search)}}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -125,30 +148,30 @@
                 }
             })
 
-            $('#submit').click(function () {
-                var tournament_id = $('#tournament_id').val();
-                var username = $('#username').val();
-                var visible_only = $('#visible').is(':checked');
-                $('.list').show();
-                if (username) {
-                    $('.list').filter(function (index) {
-                        return $(this).find('.username').text().toLowerCase().indexOf(username.toLowerCase()) < 0;
-//                        return $(this).find('.username').text() != username;
-                    }).hide();
-                }
-
-                if (tournament_id) {
-                    $('.list').filter(function (index) {
-                        return $(this).find('.tournament_id').text() != tournament_id;
-                    }).hide();
-                }
-
-                if (visible_only) {
-                    $('.list').filter(function (index) {
-                        return $(this).find('.visible').text() != 'Yes';
-                    }).hide();
-                }
-            });
+//            $('#submit').click(function () {
+//                var tournament_id = $('#tournament_id').val();
+//                var username = $('#username').val();
+//                var visible_only = $('#visible').is(':checked');
+//                $('.list').show();
+//                if (username) {
+//                    $('.list').filter(function (index) {
+//                        return $(this).find('.username').text().toLowerCase().indexOf(username.toLowerCase()) < 0;
+////                        return $(this).find('.username').text() != username;
+//                    }).hide();
+//                }
+//
+//                if (tournament_id) {
+//                    $('.list').filter(function (index) {
+//                        return $(this).find('.tournament_id').text() != tournament_id;
+//                    }).hide();
+//                }
+//
+//                if (visible_only) {
+//                    $('.list').filter(function (index) {
+//                        return $(this).find('.visible').text() != 'Yes';
+//                    }).hide();
+//                }
+//            });
         });
     </script>
 @stop
