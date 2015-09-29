@@ -87,7 +87,8 @@ class TournamentCommentsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $comment = $this->commentService->getCommentById($id);
+        return view('admin.tournaments.comments.edit')->with('comment', $comment);
     }
 
     /**
@@ -109,6 +110,14 @@ class TournamentCommentsController extends Controller
         }
 
         $this->tournamentCommentRepository->update($comment,['visible' => $visible]);
+
+        return redirect()->action('Admin\TournamentCommentsController@index');
+    }
+
+    public function updateComment(Request $request, $id)
+    {
+        $comment = $this->commentService->getCommentById($id);
+        $this->tournamentCommentRepository->update($comment,['comment' => Input::get('comment')]);
 
         return redirect()->action('Admin\TournamentCommentsController@index');
     }

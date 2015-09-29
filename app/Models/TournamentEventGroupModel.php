@@ -8,7 +8,7 @@ class TournamentEventGroupModel extends Model
 {
     protected $table = 'tb_tournament_event_group';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'type', 'event_group_id', 'start_date', 'end_date'];
 
     public function events()
     {
