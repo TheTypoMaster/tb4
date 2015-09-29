@@ -249,6 +249,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('event-groups/keepadding/{group_name}/{group_id}', 'Admin\TournamentEventGroupController@keepAdding');
     Route::get('event-groups/remove_event/{group_id}/{event_id}/{group_name}', 'Admin\TournamentEventGroupController@removeEventFromGroup');
     Route::post('event-groups/update/{id}', 'Admin\TournamentEventGroupController@store');
+    Route::get('get-meetings', 'Admin\TournamentEventGroupController@getAllMeetings');
 
 
     //tournament comments routes
@@ -256,6 +257,8 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
     Route::post('tournament-comments/store', 'Admin\TournamentCommentsController@store');
     Route::get('tournament-comments/block/{id}', 'Admin\TournamentCommentsController@update');
+    Route::get('tournament-comments/edit/{id}', 'Admin\TournamentCommentsController@edit');
+    Route::post('tournament-comments/update/{id}', 'Admin\TournamentCommentsController@updateComment');
 
 
     //tournament groups

@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="row page-header">
-
+                <h2>Comments</h2>
             </div>
 
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
@@ -44,6 +44,7 @@
                         <th>Comment</th>
                         {{--<th>Delete</th>--}}
                         <th>Block</th>
+                        <th>Edit</th>
                     </tr>
                     @foreach($comments as $key => $comment)
                         <tr class="list">
@@ -63,6 +64,7 @@
                             <td>{{$comment['comment']}}</td>
                             {{--<td>{!! link_to('admin/tournament-comments/delete/'.$comment['id'], 'Delete', array('class' =>'btn btn-primary')) !!}</td>--}}
                             <td>{!! link_to('admin/tournament-comments/block/'.$comment['id'], 'Change', array('class' =>'btn btn-primary')) !!}</td>
+                            <td>{!! link_to('admin/tournament-comments/edit/'.$comment['id'], 'Edit', array('class' =>'btn btn-primary')) !!}</td>
                         </tr>
                     @endforeach
                 </table>

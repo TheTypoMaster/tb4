@@ -11,6 +11,7 @@ namespace TopBetta\Services\Racing;
 use App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use TopBetta\Repositories\DbMeetingVenueRepository;
 use TopBetta\Resources\EloquentResourceCollection;
 use TopBetta\Resources\MeetingResource;
 use TopBetta\Resources\RaceResource;
@@ -47,7 +48,8 @@ class MeetingService {
     public function __construct(RaceResourceService $raceResourceService,
                                 CachedSelectionResourceService $selectionResourceService,
                                 RaceResultService $resultService,
-                                BetService $betService)
+                                BetService $betService,
+                                DbMeetingVenueRepository $meetingRepository)
     {
         //set the meeting resource service to use
         $this->setMeetingResourceService();
@@ -55,6 +57,7 @@ class MeetingService {
         $this->selectionResourceService = $selectionResourceService;
         $this->resultService = $resultService;
         $this->betService = $betService;
+        $this->meetingRepository = $meetingRepository;
     }
 
     public function getSmallMeetingsWithRaces($date = null)
@@ -185,6 +188,15 @@ class MeetingService {
         }
 
         return array("data" => $meetings, "selected_race" => $selectionsSet);
+    }
+
+    /**
+     * get all meetings to array
+     * @return mixed
+     */
+    public function getAllMeetings() {
+        $meetings = $this->meetingRepository->findAll();
+        return $meetings;
     }
 
 }
