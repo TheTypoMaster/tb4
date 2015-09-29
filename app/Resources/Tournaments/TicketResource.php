@@ -22,6 +22,7 @@ class TicketResource extends AbstractEloquentResource {
         'topups' => 'topup_count',
         'turnedOver' => 'turnedOver',
         'balanceToTurnover' => 'balanceToTurnover',
+        'rebuyAvailable' => 'rebuyAvailable',
     );
 
     protected $types = array(
@@ -133,6 +134,19 @@ class TicketResource extends AbstractEloquentResource {
     {
         $this->model->balance_to_turnover = $balance;
         return $this;
+    }
+
+    public function rebuyAvailable()
+    {
+        if ($this->model->rebuyAvailable) {
+            return $this->model->rebuyAvailable;
+        }
+
+        if ($this->model->leaderboard) {
+            return $this->model->leaderboard->currency == 0 && $this->model->tournament->rebuys > $this->model->rebuy_count;
+        }
+
+        return false;
     }
 
     public function toArray()

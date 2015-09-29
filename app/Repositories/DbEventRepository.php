@@ -306,9 +306,10 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     public function getEventsWithStatusIn($events, $statuses)
     {
         return $this->model
-            ->whereIn('id', $events)
-            ->whereIn('event_status_id', $statuses)
-            ->get();
+            ->join('tbdb_event_status', 'tbdb_event_status.id', '=','tbdb_event.event_status_id')
+            ->whereIn('tbdb_event.id', $events)
+            ->whereIn('keyword', $statuses)
+            ->get(array('tbdb_event.*'));
     }
 
     public function getBySerenaId($id)

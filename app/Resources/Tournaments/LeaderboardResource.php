@@ -38,13 +38,24 @@ class LeaderboardResource extends AbstractEloquentResource {
 
     private $position = '-';
 
+    public static function createResourceFromArray($array, $resource = null)
+    {
+        $resource = parent::createResourceFromArray($array);
+
+        if ($position = $resource->getModel()->position) {
+            $resource->setPosition($position);
+        }
+
+        return $resource;
+    }
+
     public function qualified()
     {
         if (isset($this->model->qualified)) {
             return $this->model->qualified;
         }
 
-        return $this->model->turned_over >= $this->model->balance_to_turnover;
+        return $this->model->turned_over >= $this->model->balance_to_turnover && $this->currency > 0;
     }
 
     public function setPosition($position)
@@ -63,10 +74,6 @@ class LeaderboardResource extends AbstractEloquentResource {
      */
     public function getPosition()
     {
-        if ($this->model->position) {
-            return $this->model->position;
-        }
-
         return $this->position;
     }
 
