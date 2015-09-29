@@ -83,9 +83,11 @@ abstract class CachedSportResourceRepository extends CachedResourceRepository {
     public function removeVisibleResource($model)
     {
         if ($parent = $this->getParentResource($model)) {
+
             $resources = $this->getParentResourceCollection($parent->id);
 
             if($resources && $resource = $resources->get($model->id)) {
+
                 $resources->forget($model->id);
 
                 if (!$resources->count()) {

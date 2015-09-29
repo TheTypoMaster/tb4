@@ -84,6 +84,13 @@ return array(
         array("uri" => "market-groups/edit/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "market-groups/update/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "market-groups/delete/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "prize-format", 'permission' => 'tournaments.view'),
+        array("uri" => "prize-format/edit/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "prize-format/update/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "tournament-comments/edit/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "tournament-comments/update/{id}", 'permission' => 'tournaments.view'),
+        array("uri" => "get-meetings", 'permission' => 'tournaments.view'),
+
 
 
 
@@ -115,6 +122,7 @@ return array(
             array("name" => "Tournament Comments", "fa-icon" => "fa-comment", "url" => "/admin/tournament-comments"),
             array("name" => "Tournament Groups", "fa-icon" => "fa-cubes", "url" => "/admin/tournament-groups"),
             array("name" => "Tournament Event Groups", "fa-icon" => "fa-cubes", "url" => "/admin/event-groups"),
+            array("name" => "Tournament Prize Format", "fa-icon" => "fa-cubes", "url" => "/admin/prize-format"),
         )),
         array("name" => "Reports", "route" => "admin.reports.index", "fa-icon" => "fa-file-text"),
         array("name" => "Event Management", "fa-icon" => "fa-list", "children" => array(

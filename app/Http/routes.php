@@ -240,6 +240,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     //tournament event groups
     Route::get('event-groups', 'Admin\TournamentEventGroupController@index');
+    Route::post('event-groups', 'Admin\TournamentEventGroupController@index');
     Route::get('event-groups/create', 'Admin\TournamentEventGroupController@create');
     Route::post('event-groups/store', 'Admin\TournamentEventGroupController@store');
     Route::get('event-groups/edit/{id}', 'Admin\TournamentEventGroupController@edit');
@@ -249,12 +250,17 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('event-groups/keepadding/{group_name}/{group_id}', 'Admin\TournamentEventGroupController@keepAdding');
     Route::get('event-groups/remove_event/{group_id}/{event_id}/{group_name}', 'Admin\TournamentEventGroupController@removeEventFromGroup');
     Route::post('event-groups/update/{id}', 'Admin\TournamentEventGroupController@store');
+    Route::get('get-meetings', 'Admin\TournamentEventGroupController@getAllMeetings');
+
 
     //tournament comments routes
     Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
+    Route::post('tournament-comments', 'Admin\TournamentCommentsController@index');
     Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
     Route::post('tournament-comments/store', 'Admin\TournamentCommentsController@store');
     Route::get('tournament-comments/block/{id}', 'Admin\TournamentCommentsController@update');
+    Route::get('tournament-comments/edit/{id}', 'Admin\TournamentCommentsController@edit');
+    Route::post('tournament-comments/update/{id}', 'Admin\TournamentCommentsController@updateComment');
 
 
     //tournament groups
@@ -267,6 +273,11 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
     Route::get('market-groups/edit/{id}', 'Admin\MarketTypeGroupController@edit');
     Route::post('market-groups/update/{id}', 'Admin\MarketTypeGroupController@update');
     Route::get('market-groups/delete/{id}', 'Admin\MarketTypeGroupController@destroy');
+
+    //prize format
+    Route::get('prize-format', 'Admin\PrizeFormatController@index');
+    Route::get('prize-format/edit/{id}', 'Admin\PrizeFormatController@edit');
+    Route::post('prize-format/update/{id}', 'Admin\PrizeFormatController@update');
 
 
 
@@ -405,8 +416,8 @@ Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(
         Route::post('comments', 'Frontend\TournamentCommentController@store');
 
         //tournament rebuys and topups
-        Route::post('tournaments/tickets/{ticketId}/rebuy', 'Frontend\FrontTournamentsTicketsController@rebuy');
-        Route::post('tournaments/tickets/{ticketId}/topup', 'Frontend\FrontTournamentsTicketsController@topup');
+        Route::post('tournaments/tickets/rebuy', 'Frontend\TicketsController@rebuy');
+        Route::post('tournaments/tickets/topup', 'Frontend\TicketsController@topup');
     });
 
 

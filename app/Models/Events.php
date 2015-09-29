@@ -29,7 +29,7 @@ class Events extends Eloquent {
     }
 
     public function competition(){
-        return $this->belongsToMany('\TopBetta\Models\SportsComps', 'tbdb_event_group_event', 'event_id', 'event_group_id');
+        return $this->belongsToMany('\TopBetta\Models\CompetitionModel', 'tbdb_event_group_event', 'event_id', 'event_group_id');
     }
 
     public function resultPrices()

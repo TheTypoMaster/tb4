@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Tournaments;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Resources\MeetingResource;
@@ -165,6 +166,16 @@ class TournamentService {
         }
 
         return $data;
+    }
+
+    public function storeTournamentTickets($user, $tournaments)
+    {
+        $tickets = new Collection();
+        foreach ($tournaments as $tournament) {
+            $tickets->push($this->storeTournamentTicket($user, $tournament));
+        }
+
+        return $tickets;
     }
 
     public function storeTournamentTicket($user, $tournamentId)

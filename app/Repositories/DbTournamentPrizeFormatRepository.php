@@ -18,4 +18,21 @@ class DbTournamentPrizeFormatRepository extends BaseEloquentRepository implement
     {
         $this->model = $model;
     }
+
+    /**
+     * get all prize formats
+     * @return mixed
+     */
+    public function getPrizeFormatList() {
+        return $this->model->paginate();
+    }
+
+    public function getPrizeFormatByID($id) {
+        return $this->model->find($id);
+    }
+
+    public function update($id, $data) {
+        $prize_model = $this->model->find($id);
+        $prize_model->update($data);
+    }
 }

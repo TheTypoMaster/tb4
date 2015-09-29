@@ -38,13 +38,24 @@ class LeaderboardResource extends AbstractEloquentResource {
 
     private $position = '-';
 
+    public static function createResourceFromArray($array, $resource = null)
+    {
+        $resource = parent::createResourceFromArray($array);
+
+        if ($position = $resource->getModel()->position) {
+            $resource->setPosition($position);
+        }
+
+        return $resource;
+    }
+
     public function qualified()
     {
         if (isset($this->model->qualified)) {
             return $this->model->qualified;
         }
 
-        return $this->model->turned_over >= $this->model->balance_to_turnover;
+        return $this->model->turned_over >= $this->model->balance_to_turnover && $this->currency > 0;
     }
 
     public function setPosition($position)
@@ -53,16 +64,52 @@ class LeaderboardResource extends AbstractEloquentResource {
         return $this;
     }
 
+    public function user_id()
+    {
+        return $this->userId;
+    }
+
     /**
      * @return string
      */
     public function getPosition()
     {
-        if ($this->model->position) {
-            return $this->model->position;
+        return $this->position;
+    }
+
+    public function getUsername()
+    {
+        if ($this->model->username) {
+            return $this->model->username;
         }
 
-        return $this->position;
+        return $this->model->user->username;
+    }
+
+    public function rebuys()
+    {
+        if (isset($this->model->rebuys)) {
+            return $this->model->rebuys;
+        }
+
+        if ($this->model->ticket) {
+            return $this->model->ticket->rebuy_count;
+        }
+
+        return 0;
+    }
+
+    public function topups()
+    {
+        if (isset($this->model->topups)) {
+            return $this->model->topups;
+        }
+
+        if ($this->model->ticket) {
+            return $this->model->ticket->topup_count;
+        }
+
+        return 0;
     }
 
     /**

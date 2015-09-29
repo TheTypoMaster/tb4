@@ -157,8 +157,9 @@ class TournamentResulter {
      */
     public function payFreeCreditResult(TournamentResult $result)
     {
-        $transaction =$this->freeCreditTransactionService->increaseBalance(
+        $transaction =$this->freeCreditTransactionService->increaseFreeCreditBalance(
             $result->getTicket()->user->id,
+            -1,
             $result->getTotalFreeCreditAmount(),
             FreeCreditTransactionTypeRepositoryInterface::TRANSACTION_TYPE_WIN
         );
@@ -174,7 +175,7 @@ class TournamentResulter {
      */
     public function payTournamentTicketResult(TournamentResult $result)
     {
-        $this->tournamentService->createTicketAndLeaderboardForUser(
+        $this->tournamentService->createTicketAndLeaderboardRecordForUser(
             $result->getJackpotTicket(),
             $result->getTicket()->user
         );

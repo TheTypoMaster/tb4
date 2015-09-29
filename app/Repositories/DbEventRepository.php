@@ -237,6 +237,20 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
         return $this->model->hydrate($model);
     }
 
+    public function getVisibleEventsBetween($from, $to)
+    {
+        $builder = $this->getVisibleSportsEventBuilder();
+
+        $model = $builder
+            ->where('e.start_date', '>=', $from)
+            ->where('e.start_date', '<=', $to)
+            ->groupBy('e.id')
+            ->orderBy('e.start_date')
+            ->get(array('e.*'));
+
+        return $this->model->hydrate($model);
+    }
+
     public function getEventsForCompetition($competitionId)
     {
         $builder = $this->getVisibleSportsEventBuilder();
@@ -306,9 +320,10 @@ class DbEventRepository extends BaseEloquentRepository implements EventRepositor
     public function getEventsWithStatusIn($events, $statuses)
     {
         return $this->model
-            ->whereIn('id', $events)
-            ->whereIn('event_status_id', $statuses)
-            ->get();
+            ->join('tbdb_event_status', 'tbdb_event_status.id', '=','tbdb_event.event_status_id')
+            ->whereIn('tbdb_event.id', $events)
+            ->whereIn('keyword', $statuses)
+            ->get(array('tbdb_event.*'));
     }
 
     public function getBySerenaId($id)

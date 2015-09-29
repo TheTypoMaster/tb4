@@ -13,8 +13,8 @@ class AddOddsFieldsToTbdbSelectionTable extends Migration
     public function up()
     {
         Schema::table('tbdb_selection', function (Blueprint $table) {
-            $table->string('apn_flucuations');
-            $table->string('topbetta_flucuations');
+            $table->string('apn_fluctuations');
+            $table->string('topbetta_fluctuations');
         });
     }
 
@@ -26,8 +26,8 @@ class AddOddsFieldsToTbdbSelectionTable extends Migration
     public function down()
     {
         Schema::table('tbdb_selection', function (Blueprint $table) {
-            $table->dropcolumn('apn_flucuations');
-            $table->dropcolumn('topbetta_flucuations');
+            $table->dropcolumn('apn_fluctuations');
+            $table->dropcolumn('topbetta_fluctuations');
         });
     }
 }
