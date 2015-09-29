@@ -2,6 +2,7 @@
 
 namespace TopBetta\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
@@ -12,6 +13,7 @@ use TopBetta\Services\Racing\MeetingService;
 use TopBetta\Services\Sports\SportsService;
 use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
+use TopBetta\Services\Events\CompetitionService;
 use Input;
 
 class TournamentEventGroupController extends Controller
@@ -20,7 +22,8 @@ class TournamentEventGroupController extends Controller
     public function __construct(TournamentEventGroupService $tournamentEventGroupService, TournamentEventGroupEventService $tournamentEventGroupEventService,
                                 EventService $eventService,
                                 SportsService $sportService,
-                                MeetingService $meetingService)
+                                MeetingService $meetingService,
+                                CompetitionService $competitionService)
     {
 
         $this->tournamentEventGroupService = $tournamentEventGroupService;
@@ -28,6 +31,7 @@ class TournamentEventGroupController extends Controller
         $this->eventService = $eventService;
         $this->sportService = $sportService;
         $this->meetingService = $meetingService;
+        $this->competitionService = $competitionService;
     }
 
     /**
@@ -65,90 +69,118 @@ class TournamentEventGroupController extends Controller
      */
     public function store(Request $request)
     {
-        //if event_group_id is empty, create new event_group, otherwise use the already created event group for
-        //continuing add new events
-        if (Input::get('event_group_id') == '') {
-            $event_group_params = array('name' => Input::get('event_group_name'));
-            $event_group = $this->tournamentEventGroupService->createEventGroup($event_group_params);
-            $event_group_id = $event_group['id'];
-            $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
-            $start_time = '';
-            $end_time = '';
 
-        } else {
-            $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID(Input::get('event_group_id'));
-
-            $event_group_id = Input::get('event_group_id');
-            $event_group_params = array('name' => Input::get('event_group_name'));
-            $start_time = $new_created_event_group->start_date;
-            $end_time = $new_created_event_group->end_date;
-
-            //edit the tournament event group name
-            $new_group_name = Input::get('event_group_name');
-            $new_created_event_group->name = $new_group_name;
-            $new_created_event_group->update();
-
-        }
-
-        $selected_events = Input::get('events');
-
-        //if no event selected, just update tournament event group name
-        if(Input::get('events') == '') {
-            $selected_events = array();
-        }
-
-        $items = array();
-        $items['id'] = $event_group_id;
-
-        //get the earliest start day from all events as event group start date
-
-        foreach ($selected_events as $key => $selected_event) {
-
-            $items[] = $selected_event;
-            $event_start_time = $this->eventService->getEventByID($selected_event)->start_date;
-
-            if ($key == 0 && $start_time == '') {
-                $start_time = $event_start_time;
-                $end_time = $event_start_time;
+        //check if the form is for existing meeting or future meeting
+        if(Input::get('flag') == 'existing_meeting') {
+            dd('existing');
+            //if event_group_id is empty, create new event_group, otherwise use the already created event group for
+            //continuing add new events
+            if (Input::get('event_group_id') == '') {
+                $event_group_params = array('name' => Input::get('event_group_name'));
+                $event_group = $this->tournamentEventGroupService->createEventGroup($event_group_params);
+                $event_group_id = $event_group['id'];
+                $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
+                $start_time = '';
+                $end_time = '';
 
             } else {
-                //set event group start date as the earliest event start date
-                if ($event_start_time < $start_time) {
+                $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID(Input::get('event_group_id'));
 
+                $event_group_id = Input::get('event_group_id');
+                $event_group_params = array('name' => Input::get('event_group_name'));
+                $start_time = $new_created_event_group->start_date;
+                $end_time = $new_created_event_group->end_date;
+
+                //edit the tournament event group name
+                $new_group_name = Input::get('event_group_name');
+                $new_created_event_group->name = $new_group_name;
+                $new_created_event_group->update();
+
+            }
+
+            $selected_events = Input::get('events');
+
+            //if no event selected, just update tournament event group name
+            if (Input::get('events') == '') {
+                $selected_events = array();
+            }
+
+            $items = array();
+            $items['id'] = $event_group_id;
+
+            //get the earliest start day from all events as event group start date
+
+            foreach ($selected_events as $key => $selected_event) {
+
+                $items[] = $selected_event;
+                $event_start_time = $this->eventService->getEventByID($selected_event)->start_date;
+
+                if ($key == 0 && $start_time == '') {
                     $start_time = $event_start_time;
-                }
-
-                //set event group end date as the latest event start date
-                if ($event_start_time > $end_time) {
                     $end_time = $event_start_time;
+
+                } else {
+                    //set event group start date as the earliest event start date
+                    if ($event_start_time < $start_time) {
+
+                        $start_time = $event_start_time;
+                    }
+
+                    //set event group end date as the latest event start date
+                    if ($event_start_time > $end_time) {
+                        $end_time = $event_start_time;
+                    }
+                }
+
+                //get event group type
+                if ($key == 0) {
+                    $group_type = $this->tournamentEventGroupService->getEventGroupTypeByEvent($selected_event);
                 }
             }
 
-            //get event group type
-            if($key == 0) {
-                $group_type = $this->tournamentEventGroupService->getEventGroupTypeByEvent($selected_event);
-            }
-        }
 
-
-        //get the earliest created event group by id to set the event group start date, and the latest event start date as
-        //event group end date
+            //get the earliest created event group by id to set the event group start date, and the latest event start date as
+            //event group end date
 //        $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
-        $new_created_event_group->start_date = $start_time;
-        $new_created_event_group->end_date = $end_time;
-        $new_created_event_group->type = $group_type;
-        $new_created_event_group->update();
+            $new_created_event_group->start_date = $start_time;
+            $new_created_event_group->end_date = $end_time;
+            $new_created_event_group->type = $group_type;
+            $new_created_event_group->update();
 
 
-        //if no events selected, do not create new events
-        if(Input::get('events') != '') {
+            //if no events selected, do not create new events
+            if (Input::get('events') != '') {
 
-            //get all events that belong to this event group, send them to template
-            $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
+                //get all events that belong to this event group, send them to template
+                $new_event_group_events = $this->tournamentEventGroupEventService->createEventGroupEvent($items);
+            }
+
+            return redirect()->action('Admin\TournamentEventGroupController@keepAdding', ['event_group_name' => $event_group_params['name'],
+                'event_group_id' => $event_group_id]);
+        } else {
+            $event_group_name = Input::get('event_group_name');
+            $sport_id = Input::get('sports');
+            $venue_id = Input::get('meeting');
+            $start_date = Input::get('meeting_date');
+            $start_date = Carbon::createFromFormat('Y-m-d', $start_date);
+//            dd(Carbon::now());
+            if($sport_id == 1) {
+                $tournament_competition_id = 31;
+            } else if ($sport_id == 2) {
+                $tournament_competition_id = 32;
+            } else if ($sport_id == 3) {
+                $tournament_competition_id = 33;
+            }
+
+            $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $tournament_competition_id, $venue_id, $start_date);
+            $competition_id = $competition['id'];
+
+            $data = array('name' => Input::get('event_group_name'), 'type' => 'race', 'event_group_id' => $competition_id, 'start_date' => $start_date, 'end_date' => $start_date);
+            $event_group = $this->tournamentEventGroupService->createEventGroup($data);
+
+
+            return redirect()->action('Admin\TournamentEventGroupController@index');
         }
-
-        return redirect()->action('Admin\TournamentEventGroupController@keepAdding', ['event_group_name' => $event_group_params['name'],
-            'event_group_id' => $event_group_id]);
     }
 
     /**

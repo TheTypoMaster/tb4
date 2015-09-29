@@ -63,6 +63,9 @@
                     {!! Form::input('date', 'meeting_date', \Carbon\Carbon::now()->format('Y-m-d'), array('class' => 'form-control')) !!}
                 </div>
 
+                {{-- the flag is used for controller to process different kinds of data --}}
+                {!! Form::input('hidden', 'flag', 'existing_meeting', array('id' => 'flag')) !!}
+
                 <div class="form-group" id="events-form">
                     {!! Form::label('events', 'Events ') !!}
                     {!! Form::select('events[]', [], [], array('id' => 'events', 'class' => 'select2 form-control', 'placeholder' => '--Select events--', 'multiple')) !!}
@@ -244,6 +247,13 @@
                 $('#event_group_form').toggleClass('hidden');
                 $('#events-form').toggleClass('hidden');
                 $('#meeting_date').toggleClass('hidden');
+
+                //change flag
+                if($('#events-form').hasClass('hidden')) {
+                    $('#flag').val('future_meeting');
+                } else {
+                    $('$flag').val('existing_meeting');
+                }
 
                 if($('#select_future_meeting').text() == 'Select Future Meeting') {
                     $('#select_future_meeting').text('Select Existing Meeting');
