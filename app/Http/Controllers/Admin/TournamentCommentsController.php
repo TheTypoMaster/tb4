@@ -3,7 +3,7 @@
 namespace TopBetta\Http\Controllers\Admin;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\TournamentCommentRepositoryInterface;
 use TopBetta\Services\Tournaments\TournamentCommentService;
 use Sentry;
 use TopBetta\Services\Tournaments\TournamentService;
+use Request;
 
 class TournamentCommentsController extends Controller
 {
@@ -28,9 +29,19 @@ class TournamentCommentsController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index($tournament_id = null, $username = null, $visibility = null)
     {
-        $comments_with_pagination = $this->commentService->getAllComments();
+        if(Request::isMethod('post')) {
+
+            //get search query
+            $tournament_id = Input::get('tournament_id');
+            $username = Input::get('username');
+            $visibility = Input::get('visible');
+            $comments_with_pagination = $this->commentService->searchComments($tournament_id, $username, $visibility);
+
+        } else {
+            $comments_with_pagination = $this->commentService->getAllComments();
+        }
         $comments = $comments_with_pagination['comment_list'];
         $pagination = $comments_with_pagination['pagination'];
         $tournament_list = $this->tournamentService->getTournamentsFromToday();

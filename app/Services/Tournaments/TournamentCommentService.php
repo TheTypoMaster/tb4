@@ -179,4 +179,53 @@ class TournamentCommentService {
     public function getCommentById($comment_id) {
         return $this->commentRepository->getCommentById($comment_id);
     }
+
+    public function searchComments($tournament_id, $username, $visibility) {
+        $comments = $this->commentRepository->searchComments($tournament_id, $username, $visibility);
+        $pagination = array();
+        $pagination['total_pages'] = (int)ceil($comments->total() / 15);
+        $pagination['current_page'] = $comments->currentPage();
+
+        $pagination['has_more_pages'] = $comments->hasMorePages();
+        $pagination['previous_page_url'] = $comments->previousPageUrl();
+        $pagination['next_page_url'] = $comments->nextPageUrl();
+
+        $comment_list = array();
+        foreach($comments as $comment) {
+            $comment_trans = array();
+//            $user = UserModel::where('id', $comment->user_id)->first();
+            $user = $this->userService->getUser($comment->user_id);
+            $tournament = TournamentModel::where('id', $comment->tournament_id)->first();
+            $comment_trans['id'] = $comment->id;
+
+
+            if($user->permissions) {
+
+                if($user->permissions['superuser'] == 1) {
+                    $comment_trans['username'] = 'TopBetta Admin';
+                } else {
+                    $comment_trans['username'] = $user->username;
+                }
+
+            } else {
+                $comment_trans['username'] = $user->username;
+            }
+
+
+//            $comment_trans['username'] = $user->name;
+            $comment_trans['tournament_id'] = $tournament->id;
+            $comment_trans['tournament_name'] = $tournament->name;
+            $comment_trans['buy_in'] = $tournament->buy_in;
+            $comment_trans['entry_fee'] = $tournament->entry_fee;
+            $comment_trans['created_date'] = $comment->created_date;
+            $comment_trans['visible'] = $comment->visible;
+            $comment_trans['comment'] = $comment->comment;
+            array_push($comment_list, $comment_trans);
+        }
+
+        $comments_with_pagination = array();
+        $comments_with_pagination['comment_list'] = $comment_list;
+        $comments_with_pagination['pagination'] = $pagination;
+        return $comments_with_pagination;
+}
 }

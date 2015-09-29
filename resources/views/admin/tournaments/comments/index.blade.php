@@ -11,13 +11,15 @@
                 {!! Form::label('auto_fresh', 'Auto Fresh') !!}
                 {!! Form::checkbox('auto_fresh', 0, array('id'=>'auto_fresh')) !!}
                 <div class="pull-right" style="margin-right: 60px; margin-bottom: 20px;">
+                    {!! Form::open(['url' => 'admin/tournament-comments']) !!}
                     {!! Form::label('tournament_id', 'Tournament ID.: ') !!}
                     {!! Form::input('text', 'tournament_id', '') !!}
                     {!! Form::label('username', 'Username: ', '') !!}
                     {!! Form::input('text', 'username', '') !!}
                     {!! Form::label('visible', 'Visible Only: ') !!}
                     {!! Form::checkbox('visible', 0, false) !!}
-                    {!! Form::input('button', 'submit', 'Filter', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
+                    {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+                    {!! Form::close() !!}
                 </div>
             </div>
             <div class="row">
@@ -125,30 +127,30 @@
                 }
             })
 
-            $('#submit').click(function () {
-                var tournament_id = $('#tournament_id').val();
-                var username = $('#username').val();
-                var visible_only = $('#visible').is(':checked');
-                $('.list').show();
-                if (username) {
-                    $('.list').filter(function (index) {
-                        return $(this).find('.username').text().toLowerCase().indexOf(username.toLowerCase()) < 0;
-//                        return $(this).find('.username').text() != username;
-                    }).hide();
-                }
-
-                if (tournament_id) {
-                    $('.list').filter(function (index) {
-                        return $(this).find('.tournament_id').text() != tournament_id;
-                    }).hide();
-                }
-
-                if (visible_only) {
-                    $('.list').filter(function (index) {
-                        return $(this).find('.visible').text() != 'Yes';
-                    }).hide();
-                }
-            });
+//            $('#submit').click(function () {
+//                var tournament_id = $('#tournament_id').val();
+//                var username = $('#username').val();
+//                var visible_only = $('#visible').is(':checked');
+//                $('.list').show();
+//                if (username) {
+//                    $('.list').filter(function (index) {
+//                        return $(this).find('.username').text().toLowerCase().indexOf(username.toLowerCase()) < 0;
+////                        return $(this).find('.username').text() != username;
+//                    }).hide();
+//                }
+//
+//                if (tournament_id) {
+//                    $('.list').filter(function (index) {
+//                        return $(this).find('.tournament_id').text() != tournament_id;
+//                    }).hide();
+//                }
+//
+//                if (visible_only) {
+//                    $('.list').filter(function (index) {
+//                        return $(this).find('.visible').text() != 'Yes';
+//                    }).hide();
+//                }
+//            });
         });
     </script>
 @stop
