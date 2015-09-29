@@ -81,10 +81,14 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository implement
 
         if($qualified){
             $qualified = 1;
-            $query->where('tbdb_tournament_leaderboard.turned_over', '>=', 'tbdb_tournament_leaderboard.balance_to_turnover');
+            $query->whereRaw('tbdb_tournament_leaderboard.turned_over >= tbdb_tournament_leaderboard.balance_to_turnover')
+                ->whereRaw('tbdb_tournament_leaderboard.currency > 0');
         }else{
             $qualified = 0;
-            $query->where('tbdb_tournament_leaderboard.turned_over', '<', 'tbdb_tournament_leaderboard.balance_to_turnover');
+            $query->where( function ($q) {
+                $q->whereRaw('tbdb_tournament_leaderboard.turned_over', '<', 'tbdb_tournament_leaderboard.balance_to_turnover')
+                    ->orWhere('tbdb_tournament_leaderboard.currency', '=', '0');
+            });
         }
 
         $tournamentLeaderboard = $query->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
