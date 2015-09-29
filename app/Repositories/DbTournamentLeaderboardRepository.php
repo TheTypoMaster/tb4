@@ -47,7 +47,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository implement
             ->groupBy('tbdb_tournament_leaderboard.id');
 
         $tournamentLeaderboard = $query->orderBy('qualified', 'DESC')->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
-            ->select(DB::raw('tbdb_tournament_leaderboard.id as id, tbdb_users.id as user_id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, turned_over >= balance_to_turnover as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups, tbdb_tournament_leaderboard.balance_to_turnover as balance_to_turnover'))
+            ->select(DB::raw('tbdb_tournament_leaderboard.id as id, tbdb_users.id as user_id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, (turned_over >= balance_to_turnover AND currency > 0) as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups, tbdb_tournament_leaderboard.balance_to_turnover as balance_to_turnover'))
             ->paginate($limit);
 
         return $tournamentLeaderboard;
@@ -64,7 +64,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository implement
             ->groupBy('tbdb_tournament_leaderboard.id');
 
         $tournamentLeaderboard = $query->orderBy('qualified', 'DESC')->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
-            ->select(DB::raw('tbdb_tournament_leaderboard.id as id, tbdb_users.id as user_id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, turned_over >= balance_to_turnover as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups, tbdb_tournament_leaderboard.balance_to_turnover as balance_to_turnover'))
+            ->select(DB::raw('tbdb_tournament_leaderboard.id as id, tbdb_users.id as user_id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, (turned_over >= balance_to_turnover AND currency > 0) as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups, tbdb_tournament_leaderboard.balance_to_turnover as balance_to_turnover'))
             ->get();
 
         return $tournamentLeaderboard;
@@ -107,7 +107,7 @@ class DbTournamentLeaderboardRepository extends BaseEloquentRepository implement
 
 
         $tournamentLeaderboard = $query->orderBy('qualified', 'DESC')->orderBy('tbdb_tournament_leaderboard.currency', 'DESC')
-            ->select(DB::raw('tbdb_tournament_leaderboard.id as id, tbdb_users.id as user_id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, (turned_over >= balance_to_turnover)  as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups, tbdb_tournament_leaderboard.balance_to_turnover as balance_to_turnover'))
+            ->select(DB::raw('tbdb_tournament_leaderboard.id as id, tbdb_users.id as user_id, tbdb_users.username as username, tbdb_tournament_leaderboard.currency as currency, (turned_over >= balance_to_turnover AND currency > 0) as qualified, tbdb_tournament_leaderboard.turned_over as turned_over, tbdb_tournament.start_currency as start_currency, tbdb_tournament.rebuy_currency as rebuy_currency, tbdb_tournament.topup_currency as topup_currency, tbdb_tournament_ticket.rebuy_count as rebuys, tbdb_tournament_ticket.topup_count as topups, tbdb_tournament_leaderboard.balance_to_turnover as balance_to_turnover'))
             ->get();
 
         return $tournamentLeaderboard;
