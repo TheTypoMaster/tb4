@@ -38,6 +38,17 @@ class LeaderboardResource extends AbstractEloquentResource {
 
     private $position = '-';
 
+    public static function createResourceFromArray($array, $resource = null)
+    {
+        $resource = parent::createResourceFromArray($array);
+
+        if ($position = $resource->getModel()->position) {
+            $resource->setPosition($position);
+        }
+
+        return $resource;
+    }
+
     public function qualified()
     {
         if (isset($this->model->qualified)) {
@@ -63,10 +74,6 @@ class LeaderboardResource extends AbstractEloquentResource {
      */
     public function getPosition()
     {
-        if ($this->model->position) {
-            return $this->model->position;
-        }
-
         return $this->position;
     }
 
