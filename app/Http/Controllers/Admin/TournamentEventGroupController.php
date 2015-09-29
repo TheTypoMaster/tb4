@@ -42,14 +42,16 @@ class TournamentEventGroupController extends Controller
      */
     public function index()
     {
-        if(Request::isMethod('post')) {
+        if(Input::get('flag')) {
             $q = Input::get('search_username');
+            $query = array('flag' => '1', 'search_username' => $q);
             $event_groups = $this->tournamentEventGroupService->searchEventGroups($q);
         } else {
+            $query = array();
             $event_groups = $this->tournamentEventGroupService->getAllEventGroups();
         }
 
-        return view('admin.tournaments.event-groups.index')->with(['event_groups' => $event_groups]);
+        return view('admin.tournaments.event-groups.index')->with(['event_groups' => $event_groups, 'query' => $query]);
     }
 
     /**
