@@ -23,7 +23,10 @@ $(function() {
 
 //Select 2 for controls
 $(function(){
-   $('.select2').select2();
+   $('.select2').select2(
+       {closeOnSelect: false}
+   );
+
 });
 
 //confirmation for deleting resources

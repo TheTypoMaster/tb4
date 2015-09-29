@@ -6,6 +6,8 @@
  * Time: 11:15 AM
  */
 
+use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Cache\Sports\EventRepository;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetResultStatusRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
@@ -37,19 +39,36 @@ class EventService {
      * @var TournamentBetRepositoryInterface
      */
     private $tournamentBetRepository;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
+    /**
+     * @var EventRepository
+     */
+    private $cacheEventRepository;
 
     /**
      * @param EventStatusRepositoryInterface $eventStatusRepository
      * @param EventRepositoryInterface $eventRepository
      * @param BetRepositoryInterface $betRepository
      * @param TournamentBetRepositoryInterface $tournamentBetRepository
+     * @param RaceRepository $raceRepository
+     * @param EventRepository $cacheEventRepository
      */
-    public function __construct(EventStatusRepositoryInterface $eventStatusRepository, EventRepositoryInterface $eventRepository, BetRepositoryInterface $betRepository, TournamentBetRepositoryInterface $tournamentBetRepository)
+    public function __construct(EventStatusRepositoryInterface $eventStatusRepository,
+                                EventRepositoryInterface $eventRepository,
+                                BetRepositoryInterface $betRepository,
+                                TournamentBetRepositoryInterface $tournamentBetRepository,
+                                RaceRepository $raceRepository,
+                                EventRepository $cacheEventRepository)
     {
         $this->eventStatusRepository = $eventStatusRepository;
         $this->eventRepository = $eventRepository;
         $this->betRepository = $betRepository;
         $this->tournamentBetRepository = $tournamentBetRepository;
+        $this->raceRepository = $raceRepository;
+        $this->cacheEventRepository = $cacheEventRepository;
     }
 
     public function isSelectionEventAvailableForBetting($selection)
@@ -89,7 +108,13 @@ class EventService {
 
     public function setEventPaid($event)
     {
-        return $this->eventRepository->updateWithId($event->id, array(
+        $repository = $this->cacheEventRepository;
+
+        if ($event->competition->first()->sport_id <= 3) {
+            $repository = $this->raceRepository;
+        }
+
+        return $repository->updateWithId($event->id, array(
             "paid_flag" => true,
             "event_status_id" => $this->eventStatusRepository->getByName(EventStatusRepositoryInterface::STATUS_PAID)->id,
         ));

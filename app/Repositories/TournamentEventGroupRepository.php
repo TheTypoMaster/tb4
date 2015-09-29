@@ -20,7 +20,20 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
      */
     public function getAllEventGroup()
     {
-        return $this->model->paginate();
+        return $this->model->orderBy('start_date', 'DESC')
+                           ->paginate();
+    }
+
+    /**
+     * search event groups by name
+     * @param $q
+     * @return mixed
+     */
+    public function searchEventGroups($q) {
+
+        return $this->model->where('name', 'like', '%'.$q.'%')
+                           ->orderBy('start_date', 'DESC')
+                           ->paginate();
     }
 
     /**
