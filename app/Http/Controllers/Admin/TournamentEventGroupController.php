@@ -3,7 +3,7 @@
 namespace TopBetta\Http\Controllers\Admin;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
@@ -15,6 +15,7 @@ use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
 use TopBetta\Services\Events\CompetitionService;
 use Input;
+use Request;
 
 class TournamentEventGroupController extends Controller
 {
@@ -41,7 +42,12 @@ class TournamentEventGroupController extends Controller
      */
     public function index()
     {
-        $event_groups = $this->tournamentEventGroupService->getAllEventGroups();
+        if(Request::isMethod('post')) {
+            $q = Input::get('search_username');
+            $event_groups = $this->tournamentEventGroupService->searchEventGroups($q);
+        } else {
+            $event_groups = $this->tournamentEventGroupService->getAllEventGroups();
+        }
 
         return view('admin.tournaments.event-groups.index')->with(['event_groups' => $event_groups]);
     }

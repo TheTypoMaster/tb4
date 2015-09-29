@@ -46,6 +46,7 @@
                     {!! Form::select('races', ['1' => 'galloping', '2' => 'harness', '3' => 'greyhounds'], [], array('id' => 'races', 'class' => 'form-control')) !!}
                 </div>
 
+
                 <a id="select_future_meeting">Select Future Meeting</a>
 
                 <div class="form-group" id="event_group_form">
