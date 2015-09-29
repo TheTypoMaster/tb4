@@ -29,17 +29,19 @@ class TournamentCommentsController extends Controller
      *
      * @return Response
      */
-    public function index($tournament_id = null, $username = null, $visibility = null)
+    public function index()
     {
-        if(Request::isMethod('post')) {
+        if(Input::get('flag')) {
 
             //get search query
             $tournament_id = Input::get('tournament_id');
             $username = Input::get('username');
             $visibility = Input::get('visible');
+            $query = array('flag' => '1', 'tournament_id' => $tournament_id, 'username' => $username, 'visibility' => $visibility);
             $comments_with_pagination = $this->commentService->searchComments($tournament_id, $username, $visibility);
 
         } else {
+            $query = array();
             $comments_with_pagination = $this->commentService->getAllComments();
         }
         $comments = $comments_with_pagination['comment_list'];
@@ -47,7 +49,8 @@ class TournamentCommentsController extends Controller
         $tournament_list = $this->tournamentService->getTournamentsFromToday();
         return view('admin.tournaments.comments.index')->with(['comments' => $comments,
                                                                'tournament_list' => $tournament_list,
-                                                               'pagination' => $pagination]);
+                                                               'pagination' => $pagination,
+                                                               'query' => $query]);
     }
 
     /**
