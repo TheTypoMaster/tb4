@@ -36,12 +36,18 @@
                     {!! Form::input('text', 'event_group_name', $default_group_name, array('class' => 'form-control')) !!}
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="sport_form">
                     {!! Form::label('sports', 'Sports: ') !!}
                     {!! Form::select('sports', $sport_list, [], array('id' => 'sports', 'class' => 'form-control', 'placeholder' => '--Select a sport--')) !!}
                 </div>
 
+                <div class="form-group hidden" id="race_form">
+                    {!! Form::label('races', 'Race: ') !!}
+                    {!! Form::select('races', ['1' => 'galloping', '2' => 'harness', '3' => 'greyhounds'], [], array('id' => 'races', 'class' => 'form-control')) !!}
+                </div>
+
                 <a id="select_future_meeting">Select Future Meeting</a>
+
                 <div class="form-group" id="event_group_form">
                     {!! Form::label('event_groups', 'Event Groups: ') !!}
                         <input type="text"  id="search" class="" placeholder="Keyword..." style="margin-left: 20px;"><span id="search_button" class=""><button class="btn btn-default" type="button">Search</button></span>
@@ -248,6 +254,10 @@
                 $('#event_group_form').toggleClass('hidden');
                 $('#events-form').toggleClass('hidden');
                 $('#meeting_date').toggleClass('hidden');
+                $('#sport_form').toggleClass('hidden');
+                $('#race_form').toggleClass('hidden');
+
+
 
                 //change flag
                 if($('#events-form').hasClass('hidden')) {

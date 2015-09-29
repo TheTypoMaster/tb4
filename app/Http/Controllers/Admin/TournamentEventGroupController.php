@@ -159,7 +159,7 @@ class TournamentEventGroupController extends Controller
                 'event_group_id' => $event_group_id]);
         } else {
             $event_group_name = Input::get('event_group_name');
-            $sport_id = Input::get('sports');
+            $sport_id = Input::get('races');
             $venue_id = Input::get('meeting');
             $start_date = Input::get('meeting_date');
             $start_date = Carbon::createFromFormat('Y-m-d H:i', $start_date);
