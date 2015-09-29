@@ -40,10 +40,12 @@ class ManageSportsNextToJump extends Command
      */
     public function handle(SportsDataCacheManager $cacheManager)
     {
+        $time = time();
         for(;;) {
+            $lastUpdated = $time;
             $time = time();
 
-            $cacheManager->updateCache(self::TOTAL_NEXT_TO_JUMP_EVENTS);
+            $cacheManager->updateCache(date('Y-m-d H:i:s', $lastUpdated), self::TOTAL_NEXT_TO_JUMP_EVENTS);
 
             sleep($this->argument('time') - (time()-$time));
         }
