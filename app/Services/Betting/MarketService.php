@@ -71,6 +71,11 @@ class MarketService {
         return false;
     }
 
+    public function isMarketOpen($market)
+    {
+        return $market->market_status == 'O';
+    }
+
     public function isMarketPaying($market)
     {
         return $market->market_status == 'R' || $market->market_status == 'C';
