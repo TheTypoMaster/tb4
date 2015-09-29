@@ -47,7 +47,8 @@ class RiskRacingWinPlaceBetService extends AbstractRiskBetService {
                 'BetType' => $this->betTypeMapper->getBetTypeShort($bet->type->name),
                 'PriceType' => $bet->productProviderMatch ? $bet->productProviderMatch->provider_product_name : null,
                 'Selection' => $bet->selection->first()->external_selection_id,
-                'Position' => $bet->betselection->first()->position
+                'Position' => $bet->betselection->first()->position,
+                'FixedOdds' => $bet->betselection->first()->fixed_odds,
             )
         );
 
