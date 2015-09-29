@@ -255,6 +255,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     //tournament comments routes
     Route::get('tournament-comments', 'Admin\TournamentCommentsController@index');
+    Route::post('tournament-comments', 'Admin\TournamentCommentsController@index');
     Route::get('tournament-comments/delete/{id}', 'Admin\TournamentCommentsController@destroy');
     Route::post('tournament-comments/store', 'Admin\TournamentCommentsController@store');
     Route::get('tournament-comments/block/{id}', 'Admin\TournamentCommentsController@update');

@@ -11,10 +11,22 @@
 
             </div>
 
+            @if(count($query) > 0)
+                <?php
+                    $flag = '1';
+                    $search_username = $query['search_username'];
+                ?>
+                @else
+                <?php
+                $flag = '';
+                $search_username = '';
+                ?>
+                @endif
             <div class="row pull-right" style="margin-left: 20px; margin-right: 20px;">
-                {!! Form::open(['url' => 'admin/event-groups']) !!}
+                {!! Form::open(['url' => 'admin/event-groups', 'method' => 'GET']) !!}
                 {!! Form::label('search_username', 'Search by name: ') !!}
-                {!! Form::input('text', 'search_username', '', array('id' => 'search_username', 'placeholder' => 'keywords...')) !!}
+                {!! Form::input('text', 'search_username', $search_username, array('id' => 'search_username', 'placeholder' => 'keywords...')) !!}
+                {!! Form::input('hidden', 'flag', '1', array()) !!}
                 {!! Form::submit('Search') !!}
                 {!! Form::close() !!}
             </div>
@@ -42,7 +54,7 @@
                 </table>
 
                 {{-- add pagination --}}
-                {!! $event_groups->render() !!}
+                {!! $event_groups->appends(array('flag' => $flag, 'search_username' => $search_username))->render()!!}
 
             </div>
 
