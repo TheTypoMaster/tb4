@@ -162,7 +162,7 @@ class TournamentEventGroupController extends Controller
             $sport_id = Input::get('sports');
             $venue_id = Input::get('meeting');
             $start_date = Input::get('meeting_date');
-            $start_date = Carbon::createFromFormat('Y-m-d', $start_date);
+            $start_date = Carbon::createFromFormat('Y-m-d H:i', $start_date);
 //            dd(Carbon::now());
             if($sport_id == 1) {
                 $tournament_competition_id = 31;

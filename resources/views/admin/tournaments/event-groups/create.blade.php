@@ -60,7 +60,8 @@
 
                 <div class="form-group hidden" id="meeting_date">
                     {!! Form::label('meeting_date', 'Future Meeting Start') !!}
-                    {!! Form::input('date', 'meeting_date', \Carbon\Carbon::now()->format('Y-m-d'), array('class' => 'form-control')) !!}
+                    {{--{!! Form::input('date', 'meeting_date', \Carbon\Carbon::now()->format('Y-m-d'), array('class' => 'form-control')) !!}--}}
+                    {!! Form::datetime('meeting_date', null, array("class"=>"event-date datepicker")) !!}
                 </div>
 
                 {{-- the flag is used for controller to process different kinds of data --}}
@@ -284,6 +285,10 @@
 
         });
 
+    </script>
+
+    <script type="text/javascript">
+        $(".datepicker").datetimepicker({format: 'YYYY-MM-DD HH:mm'});
     </script>
 
 @stop
