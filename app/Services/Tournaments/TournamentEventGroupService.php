@@ -215,4 +215,13 @@ class TournamentEventGroupService
         return false;
     }
 
+    /**
+     * search event groups by name
+     * @param $q
+     * @return mixed
+     */
+    public function searchEventGroups($q) {
+        return $this->tournamentEventGroupRepo->searchEventGroups($q);
+    }
+
 }

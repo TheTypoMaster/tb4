@@ -240,6 +240,7 @@ Route::group(array('prefix' => 'admin', 'before' => 'auth.admin', 'after' => 'to
 
     //tournament event groups
     Route::get('event-groups', 'Admin\TournamentEventGroupController@index');
+    Route::post('event-groups', 'Admin\TournamentEventGroupController@index');
     Route::get('event-groups/create', 'Admin\TournamentEventGroupController@create');
     Route::post('event-groups/store', 'Admin\TournamentEventGroupController@store');
     Route::get('event-groups/edit/{id}', 'Admin\TournamentEventGroupController@edit');

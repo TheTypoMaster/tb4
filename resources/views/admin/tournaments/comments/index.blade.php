@@ -43,7 +43,7 @@
                         <th>Visible</th>
                         <th>Comment</th>
                         {{--<th>Delete</th>--}}
-                        <th>Block</th>
+                        <th>Status</th>
                         <th>Edit</th>
                     </tr>
                     @foreach($comments as $key => $comment)
@@ -56,14 +56,26 @@
                             <td class="entry_fee">{{$comment['entry_fee']}}</td>
                             <td class="created_date">{{$comment['created_date']}}</td>
                             @if($comment['visible'] == 0)
-                                <td class="visible">No</td>
+                                <td class="visible">
+                                    {!! link_to('admin/tournament-comments/block/'.$comment['id'], 'Show', array('class' =>'btn btn-danger')) !!}
+                                </td>
 
                             @else
-                                <td class="visible">Yes</td>
+                                <td class="visible">
+                                    {!! link_to('admin/tournament-comments/block/'.$comment['id'], 'Block', array('class' =>'btn btn-primary')) !!}
+                                </td>
                             @endif
                             <td>{{$comment['comment']}}</td>
                             {{--<td>{!! link_to('admin/tournament-comments/delete/'.$comment['id'], 'Delete', array('class' =>'btn btn-primary')) !!}</td>--}}
-                            <td>{!! link_to('admin/tournament-comments/block/'.$comment['id'], 'Change', array('class' =>'btn btn-primary')) !!}</td>
+                            @if($comment['visible'] == 0)
+                                <td class="visible">
+                                    <b>Blocked</b>
+                                </td>
+                            @else
+                                <td class="visible">
+
+                                </td>
+                            @endif
                             <td>{!! link_to('admin/tournament-comments/edit/'.$comment['id'], 'Edit', array('class' =>'btn btn-primary')) !!}</td>
                         </tr>
                     @endforeach
