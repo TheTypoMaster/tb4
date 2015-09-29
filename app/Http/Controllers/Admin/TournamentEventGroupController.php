@@ -72,7 +72,7 @@ class TournamentEventGroupController extends Controller
 
         //check if the form is for existing meeting or future meeting
         if(Input::get('flag') == 'existing_meeting') {
-            dd('existing');
+
             //if event_group_id is empty, create new event_group, otherwise use the already created event group for
             //continuing add new events
             if (Input::get('event_group_id') == '') {
