@@ -7,17 +7,37 @@
                 <h2>Comments</h2>
             </div>
 
+            @if(count($query) > 0)
+                <?php
+                $flag = '1';
+                $tournament_id_search = $query['tournament_id'];
+                $username_search = $query['username'];
+                    if($query['visibility'] != null) {
+                        $visibility_search = true;
+                    } else {
+                        $visibility_search = null;
+                    }
+                ?>
+            @else
+                <?php
+                $flag = '';
+                $tournament_id_search = '';
+                $username_search = '';
+                $visibility_search = null;
+                ?>
+            @endif
+
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
                 {!! Form::label('auto_fresh', 'Auto Fresh') !!}
                 {!! Form::checkbox('auto_fresh', 0, array('id'=>'auto_fresh')) !!}
                 <div class="pull-right" style="margin-right: 60px; margin-bottom: 20px;">
                     {!! Form::open(['url' => 'admin/tournament-comments', 'method' => 'get']) !!}
                     {!! Form::label('tournament_id', 'Tournament ID.: ') !!}
-                    {!! Form::input('text', 'tournament_id', '') !!}
+                    {!! Form::input('text', 'tournament_id', $tournament_id_search) !!}
                     {!! Form::label('username', 'Username: ', '') !!}
-                    {!! Form::input('text', 'username', '') !!}
+                    {!! Form::input('text', 'username', $username_search) !!}
                     {!! Form::label('visible', 'Visible Only: ') !!}
-                    {!! Form::checkbox('visible', 0, false) !!}
+                    {!! Form::checkbox('visible', 0, $visibility_search) !!}
                     {!! Form::input('hidden', 'flag', '1') !!}
                     {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
                     {!! Form::close() !!}
@@ -85,41 +105,26 @@
                 </table>
 
                 {{--pagination--}}
-                @if(count($query) > 0)
-                    <?php
-                        $flag = '1';
-                        $tournament_id = $query['tournament_id'];
-                        $username = $query['username'];
-                        $visibility = $query['visibility'];
-                    ?>
-                    @else
-                    <?php
-                    $flag = '0';
-                    $tournament_id = '';
-                    $username = '';
-                    $visibility = '';
-                    ?>
-                    @endif
                 @if($pagination['total_pages'] >1)
                     <nav>
                         <ul class="pagination">
                             <li>
-                                <a href="{{URL::to($pagination['previous_page_url'] . '&flag=' . $flag . '&tournament_id=' . $tournament_id . '&username=' . $username . '&visibility=' . $visibility)}}" aria-label="Previous">
+                                <a href="{{URL::to($pagination['previous_page_url'] . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search)}}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
                             @for($i=1; $i<=$pagination['total_pages']; $i++)
                                 @if($pagination['current_page'] == $i)
 
-                                    <li class="active">{!! link_to('admin/tournament-comments?page=' . $i . '&flag=' . $flag . '&tournament_id=' . $tournament_id . '&username=' . $username . '&visibility=' . $visibility, $i, array()) !!}</li>
+                                    <li class="active">{!! link_to('admin/tournament-comments?page=' . $i . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search, $i, array()) !!}</li>
                                 @else
-                                    <li>{!! link_to('admin/tournament-comments?page=' . $i . '&flag=' . $flag . '&tournament_id=' . $tournament_id . '&username=' . $username . '&visibility=' . $visibility, $i, array()) !!}</li>
+                                    <li>{!! link_to('admin/tournament-comments?page=' . $i . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search, $i, array()) !!}</li>
                                 @endif
                             @endfor
 
                             @if($pagination['has_more_pages'])
                                 <li>
-                                    <a href="{{URL::to($pagination['next_page_url'] . '&flag=' . $flag . '&tournament_id=' . $tournament_id . '&username=' . $username . '&visibility=' . $visibility)}}" aria-label="Next">
+                                    <a href="{{URL::to($pagination['next_page_url'] . '&flag=' . $flag . '&tournament_id=' . $tournament_id_search . '&username=' . $username_search . '&visible=' . $visibility_search)}}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>

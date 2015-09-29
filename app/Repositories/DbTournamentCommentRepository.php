@@ -67,24 +67,29 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
      */
     public function searchComments($tournament_id, $username, $visibility) {
 
-        $query = $this->model;
-        if($tournament_id != null) {
-            $query = $query->where('tournament_id', $tournament_id);
-        }
-        if($username != null) {
-//            dd('search');
-            $query = $query->from('tbdb_tournament_comment')
-                  ->leftJoin('tbdb_users', 'tbdb_tournament_comment.user_id', '=', 'tbdb_users.id')
-                  ->where('tbdb_users.username', 'like', '%'.$username.'%');
+
+        if($tournament_id == null && $username == null && $visibility == null) {
+            $comments = $this->getAllComments();
+        } else {
+            $query = $this->model;
+            if($tournament_id != null) {
+                $query = $query->where('tournament_id', $tournament_id);
+            }
+            if($username != null) {
+
+                $query = $query->from('tbdb_tournament_comment')
+                    ->leftJoin('tbdb_users', 'tbdb_tournament_comment.user_id', '=', 'tbdb_users.id')
+                    ->where('tbdb_users.username', 'like', '%'.$username.'%');
 //                  ->select(array('tbdb_tournament_comment.*', 'tbdb_users.name as user_name'));
 
+            }
+            if($visibility != null) {
+                $query = $query->where('visible', '1');
+            }
+
+            $comments = $query->orderBy('tbdb_tournament_comment.created_at', 'DESC')->paginate();
         }
-        if($visibility != null) {
-            $query = $query->where('visible', '1');
-        }
-        $comments = $query->paginate();
-//        dd($comments);
+
         return $comments;
-//        return $query->paginate();
     }
 }
