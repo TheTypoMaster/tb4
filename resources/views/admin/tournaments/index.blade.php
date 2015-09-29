@@ -8,7 +8,7 @@
                 {!! link_to_route('admin.tournaments.create', 'Create', array(), array('class' => 'btn btn-info')) !!}
             </h2>
             <h2 class="col-lg-4 pull-right">
-			{!! Form::open(array('method' => 'GET')) !!}
+			{!! Form::open(['url' => 'search-event-groups']) !!}
 			<div class="input-group custom-search-form">
 				{!! Form::text('q', $search, array("class" => "form-control", "placeholder" => "Search (id,name)...")) !!}
 				<span class="input-group-btn">
