@@ -114,7 +114,7 @@ class TournamentCommentsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
         $comment = TournamentCommentModel::findOrFail($id);
         $visible = '';
         if($comment->visible == 0) {
