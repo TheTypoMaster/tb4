@@ -15,7 +15,8 @@ use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
 use TopBetta\Services\Events\CompetitionService;
 use Input;
-use Request;
+//use Request;
+use Illuminate\Http\Request;
 
 class TournamentEventGroupController extends Controller
 {
@@ -80,6 +81,9 @@ class TournamentEventGroupController extends Controller
 
         //check if the form is for existing meeting or future meeting
         if(Input::get('flag') == 'existing_meeting') {
+
+            $this->validate($request, ['event_group_name' => 'required|max:255',
+                                       'events' => 'required']);
 
             //if event_group_id is empty, create new event_group, otherwise use the already created event group for
             //continuing add new events
@@ -166,6 +170,10 @@ class TournamentEventGroupController extends Controller
             return redirect()->action('Admin\TournamentEventGroupController@keepAdding', ['event_group_name' => $event_group_params['name'],
                 'event_group_id' => $event_group_id]);
         } else {
+
+            $this->validate($request, ['event_group_name' => 'required|max:255',
+                                       'meeting_date' => 'required']);
+
             $event_group_name = Input::get('event_group_name');
             $sport_id = Input::get('races');
             $venue_id = Input::get('meeting');

@@ -128,6 +128,16 @@
 
             </div>
 
+            @if (count($errors) > 0)
+                <div class="alert alert-info alert-dismissable col-lg-11">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
         </div>
     </div>
 
@@ -264,7 +274,7 @@
                 if($('#events-form').hasClass('hidden')) {
                     $('#flag').val('future_meeting');
                 } else {
-                    $('$flag').val('existing_meeting');
+                    $('#flag').val('existing_meeting');
                 }
 
                 if($('#select_future_meeting').text() == 'Select Future Meeting') {
