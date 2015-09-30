@@ -5,7 +5,9 @@ use TopBetta\Http\Controllers\Backend\RiskRaceStatusController;
 
 use Illuminate\Support\Facades\Input;
 use TopBetta\Repositories\Cache\RaceRepository;
+use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
+use TopBetta\Repositories\Contracts\SelectionRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\BetResultService;
 use TopBetta\Services\Racing\RaceResultService;
 
@@ -32,18 +34,23 @@ class RiskResultsController extends Controller
      * @var EventRepositoryInterface
      */
     private $eventRepository;
+    /**
+     * @var SelectionRepositoryInterface
+     */
+    private $selectionRepository;
 
     public function __construct(BetResultService $betResultService,
                                 RiskRaceStatusController $riskRaceStatusController,
                                 RaceRepository $raceRepository,
                                 RaceResultService $resultService,
-                                EventRepositoryInterface $eventRepository )
+                                EventRepositoryInterface $eventRepository, SelectionRepositoryInterface $selectionRepository )
     {
         $this->betResultService = $betResultService;
         $this->riskRaceStatusController = $riskRaceStatusController;
         $this->raceRepository = $raceRepository;
         $this->resultService = $resultService;
         $this->eventRepository = $eventRepository;
+        $this->selectionRepository = $selectionRepository;
     }
 
     /**
@@ -58,18 +65,15 @@ class RiskResultsController extends Controller
             $input = Input::json()->all();
         }
 
-        if (!isset($input['race_id']) || !\TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])->first()) {
+        if (!isset($input['race_id']) || !($race = $this->eventRepository->getEventModelFromExternalId($input['race_id']))) {
             return array("success" => false, "error" => "Problem updating results for race " . $input['race_id']);
         }
 
-        $errors = $this->updateRaceResults($input, $input['race_id']);
+        $errors = $this->updateRaceResults($input, $race);
 
-        $eventId = \TopBetta\Models\RaceEvent::where('external_event_id', $input['race_id'])->pluck('id');
-
-        $eventModel = $this->eventRepository->find($eventId);
         //update results in cache
-        $this->raceRepository->makeCacheResource($eventModel);
-        $race = $this->raceRepository->getRace($eventModel->id);
+        $this->raceRepository->makeCacheResource($race);
+        $race = $this->raceRepository->getRace($race->id);
         $this->resultService->loadResultForRace($race, true);
         $this->raceRepository->save($race);
 
@@ -79,36 +83,26 @@ class RiskResultsController extends Controller
         return array("success" => true, "result" => "Results updated for race " . $input['race_id']);
     }
 
-    private function updateRaceResults(array $raceResults, $raceId)
+    private function updateRaceResults(array $raceResults, $race)
     {
         // delete all results records for this event
-        \TopBetta\Models\RaceResult::deleteResultsForRaceId($raceId);
-        \TopBetta\Models\RaceResult::deleteExoticResultsForRaceId($raceId);
-
         $errors = array();
 
         foreach ($raceResults as $key => $raceResult) {
 
             switch ($key) {
                 case 'exotics':
-                    if (!static::saveExoticResults($raceResult, $raceId)) {
-                        $errors[] = "Problem saving exotic results";
-                    }
-
+                    $this->saveExoticResults($raceResult, $race);
                     break;
 
                 case 'positions':
-                    if (!static::savePositionResults($raceResult, $raceId)) {
-                        $errors[] = "Problem saving place results";
-                    }
-
+                    $this->savePositionResults($raceResult, $race);
                     break;
 
                 case 'race_status':
-                    if (!$this->riskRaceStatusController->updateRaceStatus($raceResult, $raceId)) {
+                    if (!$this->riskRaceStatusController->updateRaceStatus($raceResult, $race)) {
                         $errors[] = "Problem updating race status";
                     }
-
                     break;
 
                 default:
@@ -119,62 +113,50 @@ class RiskResultsController extends Controller
         return $errors;
     }
 
-    private static function saveExoticResults($raceResult, $raceId)
+    private function saveExoticResults($raceResult, $race)
     {
-        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
+        $normalizedResults = array();
 
-        if (!$event) {
-            return false;
-        }
-
-        $updateData = array('quinella_dividend' => array(),
-            'exacta_dividend' => array(),
-            'trifecta_dividend' => array(),
-            'firstfour_dividend' => array());
-
-        // loop over each exotic type and build our result, this handles dead heats as well
         foreach ($raceResult as $result) {
-            $updateData[$result['name'] . '_dividend'][$result['selections']] = $result['dividend'];
+            $normalizedResults[] = array(
+                'bet_type' => $result['name'],
+                'result_string' => $result['selections'],
+                'dividend' => $result['dividend'],
+            );
         }
-		
-		// we need to store the exotics results as serialized array
-		array_walk($updateData, function(&$item, $key) {
-			$item = serialize($item);
-		});
-
-        return $event->update($updateData);
+        return $this->resultService->storeDefaultExoticResults($race, $normalizedResults);
     }
 
-    private static function savePositionResults($raceResult, $raceId)
+    private function savePositionResults($raceResult, $race)
     {
-        $success = 0;
+        $normalizedResults = array();
 
-        // loop over each position and save it separately
+        // loop over each position and format for saving
         foreach ($raceResult as $result) {
+            $resultData = array(
+                'selection' => $this->selectionRepository->getSelectionByExternalId($result['selection_id']),
+                'position' => $result['position']
+            );
 
-            $runner = \TopBetta\Models\RaceSelection::getByEventIdAndRunnerNumber($raceId, $result['number']);
-
-            if (count($runner)) {
-
-                $resultData = array('selection_id' => $runner[0]->id,
-                    'position' => $result['position']
+            if ($result['position'] == 1) {
+                $normalizedWinResult = array(
+                    'bet_type' => BetTypeRepositoryInterface::TYPE_WIN,
+                    'dividend' => $result['win_dividend'],
                 );
 
-                if ($result['position'] == 1) {
-                    $resultData['win_dividend'] = $result['win_dividend'];
-                    $resultData['place_dividend'] = $result['place_dividend'];
-                } else {
-                    $resultData['place_dividend'] = $result['place_dividend'];
-                }
-
-                if (\TopBetta\Models\RaceResult::create($resultData)) {
-                    $success++;
-                }
+                $normalizedResults[] = array_merge($resultData, $normalizedWinResult);
             }
+
+            $normalizedPlaceResult = array(
+                'bet_type' => BetTypeRepositoryInterface::TYPE_PLACE,
+                'dividend' => $result['place_dividend'],
+            );
+
+            $normalizedResults[] = array_merge($resultData, $normalizedPlaceResult);
+
         }
 
-        // did we at least update 1 record
-        return ($success > 0) ? true : false;
+        return $this->resultService->storeDefaultPositionResults($race, $normalizedResults);
     }
 
 }
