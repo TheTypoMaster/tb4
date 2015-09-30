@@ -65,6 +65,40 @@ class CompetitionService {
         ));
     }
 
+
+    /**
+     * update competition from meeting venue
+     * @param $competition_id
+     * @param $sportId
+     * @param $tournamentCompetitionId
+     * @param $venueId
+     * @param $startDate
+     * @return mixed
+     * @throws \Exception
+     */
+    public function updateCompetitionFromMeetingVenue($competition_id, $type_code, $sportId, $tournamentCompetitionId, $venueId, $startDate) {
+
+        $sport = $this->sportRepository->find($sportId);
+
+        $venue = $this->meetingVenueRepository->find($venueId);
+
+        $typeCode = SportService::getRacingCode($sport);
+
+        $competition = $this->getCompetitionById($competition_id);
+
+        $competition->name = strtoupper($venue->name);
+        $competition->tournament_competition_id = $tournamentCompetitionId;
+        $competition->start_date = $startDate;
+        $competition->type_code = $type_code;
+        $competition->meeting_code = strtoupper(str_replace(" ", "", $venue->name)) . '-' . $typeCode . '-' . $startDate->toDateString();
+
+        $competition->update();
+
+        return $competition;
+
+
+    }
+
     public function isAbandoned($competition)
     {
         $events = $competition->events()->get()->load('eventstatus');
@@ -78,5 +112,14 @@ class CompetitionService {
         }
 
         return false;
+    }
+
+    /**
+     * get competition by id
+     * @param $id
+     * @return mixed
+     */
+    public function getCompetitionById($id) {
+        return $this->competitionRepository->getEventGroupByGroupId($id);
     }
 }
