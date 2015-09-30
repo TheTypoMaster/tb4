@@ -138,8 +138,8 @@ class TicketResource extends AbstractEloquentResource {
 
     public function rebuyAvailable()
     {
-        if ($this->model->rebuyAvailable) {
-            return $this->model->rebuyAvailable;
+        if (!is_null($this->model->rebuy_available)) {
+            return $this->model->rebuy_available;
         }
 
         if ($this->model->leaderboard) {
