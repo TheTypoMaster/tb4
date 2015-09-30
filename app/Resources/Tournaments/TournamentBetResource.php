@@ -48,6 +48,25 @@ class TournamentBetResource extends BetResource
         'tournamentTicketId' => 'tournament_ticket_id',
     );
 
+    protected $types = array(
+        "id"              => "int",
+        "amount"          => "int",
+        "selectionId"     => "int",
+        "marketId"        => "int",
+        "eventId"         => "int",
+        "competitionId"   => "int",
+        "paid"            => "int",
+        "percentage"      => "float",
+        "selectionNumber" => "int",
+        "odds"            => "float",
+        "dividend"        => "float",
+        "boxedFlag"       => "bool",
+        "isFixed"         => "bool",
+        "tournamentId"    => "int",
+        "tournamentTicketId" => "int",
+    );
+
+
     public function paid()
     {
         if (! is_null($this->model->paid)) {
