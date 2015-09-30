@@ -25,4 +25,5 @@
     </li>
     <li class="{{($active != 'user-permissions') ?: 'active' }}">{!! link_to_route('admin.user-permissions.edit', 'Permissions', array($user->id), array()) !!}
     </li>
+	<li class="{{($active != 'user-activity') ?: 'active' }}"><a href="{{ URL::to('admin/user-activity/list/'.$user->id) }}">Activity</a>
 </ul>
