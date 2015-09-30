@@ -44,15 +44,15 @@ class MarketListProcessor extends AbstractFeedProcessor {
     public function process($data)
     {
         //make sure game and market ids exists
-        if( ! ($eventId = array_get($data, 'GameId', false)) || ! ($marketId = array_get($data, 'MarketId', false)) ||  ! ($marketTypeId = array_get($data, 'BetType', false)) ) {
-            Log::error($this->logprefix."No GameId or MarketId specified");
+        if( ! ($eventId = array_get($data, 'event_id', false)) || ! ($marketId = array_get($data, 'market_id', false)) ||  ! ($marketTypeId = array_get($data, 'market_type_id', false)) ) {
+            Log::error($this->logprefix."No event_id or market_id specified");
             return 0;
         }
 
-        $eventId = array_get($data, 'GameId', false);
+        $eventId = array_get($data, 'event_id', false);
         //get the event
         if (! $event = $this->modelContainer->getEvent($eventId)) {
-            if ( ! $event = $this->eventRepository->getEventModelFromExternalId($eventId) ) {
+            if ((! $event = $this->eventRepository->getBySerenaId($eventId)) && (!array_get($data, 'GameId') ||  (! $event = $this->eventRepository->getEventModelFromExternalId(array_get($data, 'GameId')))) ) {
                 Log::error($this->logprefix."Event not found, external id: " . $eventId);
                 return 0;
             }
@@ -63,8 +63,8 @@ class MarketListProcessor extends AbstractFeedProcessor {
 
         //process market type
         $marketType = null;
-        if( $marketTypeName = array_get($data, 'MarketTypeName', null) ) {
-            $marketType = $this->processMarketType($marketTypeId, $marketTypeName, array_get($data, 'Period', null));
+        if( $marketTypeName = array_get($data, 'market_type_name', null) ) {
+            $marketType = $this->processMarketType($marketTypeId, array_get($data, 'BetType'), $marketTypeName, array_get($data, 'Period', null));
         }
 
         //process market
@@ -72,11 +72,11 @@ class MarketListProcessor extends AbstractFeedProcessor {
         if( $marketType ) {
             $market = $this->processMarket($marketType['id'], $event, $data);
             $market->markettype = $marketType;
-            $this->modelContainer->addMarket($market, $market->external_market_id);
+            $this->modelContainer->addMarket($market, $market->serena_market_id);
         }
 
         if($marketTypeName && $market){
-            Log::debug($this->logprefix."Market/Type - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", MarketTypeName: ".$data['MarketTypeName'].", MarketName: " . $data['MarketName'] . ", MarketStatus ".array_get($data, 'MarketStatus', ''));
+            Log::debug($this->logprefix."Market/Type - GameId: " . $data['event_id'].", MarketId: ".$data['market_id'].", MarketTypeName: ".$data['market_type_name'].", MarketName: " . $data['market_name'] . ", MarketStatus ".array_get($data, 'market_status', ''));
         }
 
         if( $market ) {
@@ -86,7 +86,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
         return 0;
     }
 
-    private function processMarketType($marketTypeId, $marketTypeName, $period)
+    private function processMarketType($marketTypeId, $marketTypeIdBg, $marketTypeName, $period)
     {
         //add the period to the market type name
         if( $period ) {
@@ -97,15 +97,19 @@ class MarketListProcessor extends AbstractFeedProcessor {
 
         //market type data
         $data = array(
-            "external_bet_type_id" => $marketTypeId,
+            "serena_market_type_id" => $marketTypeId,
             "name" => $marketTypeName,
             "status_flag" => 1,
         );
 
         if ($marketType = $this->modelContainer->getMarketType($marketTypeId)) {
             $marketType = $this->marketTypeRepository->update($marketType, $data);
+        } else if ($marketType = $this->marketTypeRepository->getBySerenaId($marketTypeId)) {
+            $marketType = $this->marketTypeRepository->update($marketType, $data);
+        } else if ($marketTypeIdBg && ($marketType = $this->marketTypeRepository->getByExternalId($marketTypeIdBg))) {
+            $marketType = $this->marketTypeRepository->update($marketType, $data);
         } else {
-            $marketType = $this->marketTypeRepository->updateOrCreate($data, 'name');
+            $marketType = $this->marketTypeRepository->create($data);
         }
 
         $this->modelContainer->addMarketType($marketType, $marketTypeId);
@@ -120,24 +124,28 @@ class MarketListProcessor extends AbstractFeedProcessor {
         //market data
         $marketData = array(
             "market_type_id" => $marketType,
-            "external_market_id" => $data['MarketId'],
+            "serena_market_id" => $data['market_id'],
             "external_event_id" => $data['GameId'],
             "event_id" => $event->id,
             "period" => array_get($data, 'Period', null),
-            "market_status" => array_get($data, 'MarketStatus', ''),
-            "name" => array_get($data, "MarketName"),
+            "market_status" => array_get($data, 'market_status', ''),
+            "name" => array_get($data, "market_name"),
         );
 
         $marketData = array_merge($marketData, $this->processExtraMarketData($data));
 
-        if ($market = $this->modelContainer->getMarket($data['MarketId'])) {
+        if ($market = $this->modelContainer->getMarket($data['market_id'])) {
+            $market = $this->marketRepository->update($market, $marketData);
+        } else if ($market = $this->marketRepository->getBySerenaId($data['market_id'])) {
+            $market = $this->marketRepository->update($market, $marketData);
+        } else if (array_get($data, 'MarketId') && array_get($data, 'GameId') && ($market = $this->marketRepository->getMarketModelByExternalIds($data['MarketId'], $data['GameId']))) {
             $market = $this->marketRepository->update($market, $marketData);
         } else {
-            $market = $this->marketRepository->updateOrCreate($marketData, 'external_market_id');
+            $market = $this->marketRepository->create($marketData);
         }
 
         $market->event = $event;
-        $this->modelContainer->addMarket($market, $data['MarketId']);
+        $this->modelContainer->addMarket($market, $data['market_id']);
 
         return $market;
     }

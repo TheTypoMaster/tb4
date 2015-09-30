@@ -190,7 +190,7 @@ class GameListProcessor extends AbstractFeedProcessor {
         }
 
         $externalEventGroupId = $this->makeCompositeCompetitionId('CompetitionId', 'SeasonId', 'RoundId', $data);
-        $serenaEventGroupId = $this->makeCompetitionId('league_id', 'season_id', 'round_id', $data);
+        $serenaEventGroupId = $this->makeCompositeCompetitionId('league_id', 'season_id', 'round_id', $data);
 
 
         //update start and close times
@@ -265,7 +265,7 @@ class GameListProcessor extends AbstractFeedProcessor {
     {
         Log::info($this->logprefix. "Processing Event: $name");
 
-        $data = array("name" => $name, "serenal_event_id" => $externalId, "event_status_id" => 1);
+        $data = array("name" => $name, "serena_event_id" => $externalId, "event_status_id" => 1);
 
         //set the start date
         if( $time ) {
@@ -277,7 +277,7 @@ class GameListProcessor extends AbstractFeedProcessor {
             $event = $this->eventRepository->update($event, $data);
         } else if ($event = $this->eventRepository->getBySerenaId($externalId)) {
             $event = $this->eventRepository->update($event, $data);
-        } else if ($event = $this->eventRepository->getByExternalid($externalIdBg)) {
+        } else if ($event = $this->eventRepository->getEventModelFromExternalId($externalIdBg)) {
             $event = $this->eventRepository->update($event, $data);
         } else {
             $event = $this->eventRepository->create($data);

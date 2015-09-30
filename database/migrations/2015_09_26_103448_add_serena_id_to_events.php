@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddSerenaIdToEventTable extends Migration
+class AddSerenaIdToEvents extends Migration
 {
     /**
      * Run the migrations.
