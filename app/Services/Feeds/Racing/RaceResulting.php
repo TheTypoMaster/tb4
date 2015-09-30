@@ -98,7 +98,7 @@ class RaceResulting {
         foreach ($currentResults as $result) {
             //hacky way to find if result exists in $results since we have no external id
             if (!in_array(
-                array("Selection" => $result->selection->name, "PlaceNo" => $result->position),
+                array("Selection" => $result->selection->number, "PlaceNo" => $result->position),
                 array_map(function ($v) {return array('Selection' => $v['Selection'], 'PlaceNo' => $v['PlaceNo']);}, $results)
             )) {
                 $toDelete[] = $result->id;

@@ -369,6 +369,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
      * @return mixed
      */
     public function getEventGroupByGroupId($group_id) {
+
         return $this->model->find($group_id);
     }
 
