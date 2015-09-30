@@ -72,7 +72,7 @@ class TournamentGroupService {
      * @param string $date
      * @return \TopBetta\Resources\EloquentResourceCollection
      */
-    public function getGroupsWithTournaments($type = 'racing', $date = null)
+    public function getGroupsWithTournaments($type = '', $date = null)
     {
         if( ! is_null($date) ) {
             $date = Carbon::createFromFormat('Y-m-d', $date);

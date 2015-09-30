@@ -10,8 +10,4 @@ class TournamentEventGroupEventModel extends Model
 
     protected $fillable = ['tournament_event_group_id', 'event_id'];
 
-//    public function events()
-//    {
-//        return $this->belongsToMany('TopBetta\Models\EventModel', 'tb_tournament_event_group_event', 'tournament_event_group_id', 'event_id');
-//    }
 }

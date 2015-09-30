@@ -35,4 +35,6 @@ interface BetTypeRepositoryInterface
 
 
     public function getBetTypeByName($name);
+
+    public function getBetTypes($names);
 }

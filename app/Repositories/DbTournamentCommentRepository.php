@@ -79,7 +79,8 @@ class DbTournamentCommentRepository extends BaseEloquentRepository implements To
 
                 $query = $query->from('tbdb_tournament_comment')
                     ->leftJoin('tbdb_users', 'tbdb_tournament_comment.user_id', '=', 'tbdb_users.id')
-                    ->where('tbdb_users.username', 'like', '%'.$username.'%');
+                    ->where('tbdb_users.username', 'like', '%'.$username.'%')
+                    ->select(array('tbdb_tournament_comment.*'));
 //                  ->select(array('tbdb_tournament_comment.*', 'tbdb_users.name as user_name'));
 
             }

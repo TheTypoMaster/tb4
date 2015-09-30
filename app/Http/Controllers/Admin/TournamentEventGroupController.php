@@ -15,7 +15,8 @@ use TopBetta\Services\Tournaments\TournamentEventGroupEventService;
 use TopBetta\Services\Tournaments\TournamentEventGroupService;
 use TopBetta\Services\Events\CompetitionService;
 use Input;
-use Request;
+//use Request;
+use Illuminate\Http\Request;
 
 class TournamentEventGroupController extends Controller
 {
@@ -80,6 +81,9 @@ class TournamentEventGroupController extends Controller
 
         //check if the form is for existing meeting or future meeting
         if(Input::get('flag') == 'existing_meeting') {
+
+            $this->validate($request, ['event_group_name' => 'required|max:255',
+                                       'events' => 'required']);
 
             //if event_group_id is empty, create new event_group, otherwise use the already created event group for
             //continuing add new events
@@ -166,6 +170,10 @@ class TournamentEventGroupController extends Controller
             return redirect()->action('Admin\TournamentEventGroupController@keepAdding', ['event_group_name' => $event_group_params['name'],
                 'event_group_id' => $event_group_id]);
         } else {
+
+            $this->validate($request, ['event_group_name' => 'required|max:255',
+                                       'meeting_date' => 'required']);
+
             $event_group_name = Input::get('event_group_name');
             $sport_id = Input::get('races');
             $venue_id = Input::get('meeting');
@@ -174,17 +182,39 @@ class TournamentEventGroupController extends Controller
 //            dd(Carbon::now());
             if($sport_id == 1) {
                 $tournament_competition_id = 31;
+                $type_code = 'R';
             } else if ($sport_id == 2) {
                 $tournament_competition_id = 32;
+                $type_code = 'H';
             } else if ($sport_id == 3) {
                 $tournament_competition_id = 33;
+                $type_code = 'G';
             }
 
-            $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $tournament_competition_id, $venue_id, $start_date);
-            $competition_id = $competition['id'];
+            //if event_group_id exists, the form comes from edit page, otherwise the form comes from create page
+            if(Input::get('event_group_id')) {
+                $event_group = $this->tournamentEventGroupService->getEventGroupByID(Input::get('event_group_id'));
+                $event_group->name = $event_group_name;
+                $event_group->update();
 
-            $data = array('name' => Input::get('event_group_name'), 'type' => 'race', 'event_group_id' => $competition_id, 'start_date' => $start_date, 'end_date' => $start_date);
-            $event_group = $this->tournamentEventGroupService->createEventGroup($data);
+                $competition_id = Input::get('competition_id');
+                $competition = $this->competitionService->updateCompetitionFromMeetingVenue($competition_id, $type_code, $sport_id, $tournament_competition_id, $venue_id, $start_date);
+
+//                $competition = $this->competitionService->getCompetitionById(Input::get('competition_id'));
+////                $competition->venue_id = $venue_id;
+//                $competition->start_date = $start_date->toDateString();
+//                $competition->tournament_competition_id = $tournament_competition_id;
+//                $competition->type_code = $type_code;
+//                $competition->update();
+
+//                $competition_id = Input::get('event_group_id');
+            } else {
+                $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $type_code, $tournament_competition_id, $venue_id, $start_date);
+                $competition_id = $competition['id'];
+
+                $data = array('name' => Input::get('event_group_name'), 'type' => 'race', 'event_group_id' => $competition_id, 'start_date' => $start_date, 'end_date' => $start_date);
+                $event_group = $this->tournamentEventGroupService->createEventGroup($data);
+            }
 
 
             return redirect()->action('Admin\TournamentEventGroupController@index');
@@ -214,11 +244,21 @@ class TournamentEventGroupController extends Controller
         $sports = $this->sportService->getAllSports();
         $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($id);
 
+        $future_meeting_id = '';
+        $flag = 'existing_meeting';
+        //if event group has event group id, then it is future meeting
+        if($event_group->event_group_id) {
+            $flag = 'future_meeting';
+            $future_meeting_id = $event_group->event_group_id;
+        }
+
         return view('admin.tournaments.event-groups.edit')->with(['event_group' => $event_group,
                                                                   'sport_list' => $sports,
                                                                   'event_list' => $event_list,
                                                                   'event_group_id' => $id,
-                                                                  'event_group_name' => $event_group->name]);
+                                                                  'event_group_name' => $event_group->name,
+                                                                  'flag' => $flag,
+                                                                  'future_meeting_id' => $future_meeting_id]);
     }
 
     /**

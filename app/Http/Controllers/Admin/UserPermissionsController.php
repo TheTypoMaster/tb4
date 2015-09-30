@@ -78,6 +78,7 @@ class UserPermissionsController extends Controller {
 	 */
 	public function edit($id)
 	{
+
 	   $user = Sentry::findUserById($id);
 
         $groups = $this->groupsRepository->findAll();

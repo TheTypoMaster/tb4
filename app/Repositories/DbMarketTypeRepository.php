@@ -106,4 +106,14 @@ class DbMarketTypeRepository extends BaseEloquentRepository implements MarketTyp
 
         return $this->model->hydrate($builder->get(array('mt.*', 'eg.id as competition_id')))->load('icon');
     }
+
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_market_type_id', $id)->first();
+    }
+
+    public function getByExternalId($id)
+    {
+        return $this->model->where('external_bet_type_id', $id)->first();
+    }
 }
