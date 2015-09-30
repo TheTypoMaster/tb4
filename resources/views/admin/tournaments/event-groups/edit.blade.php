@@ -142,7 +142,7 @@
 //                }
 
                     html = html.add($
-                    ('<option></option>').text(value.name).val(value.id));
+                    ('<option></option>').text('(#' + value.id + ') ' + value.name + ' ------Start at: ' + value.start_date).val(value.id));
                 });
 
                 return html;
@@ -159,7 +159,7 @@
                     }
 
                     html = html.add($
-                    ('<option></option>').text('(#' + value.id + '' + race_number + ') ' + value.name + ' '+value.start_date).val(value.id));
+                    ('<option></option>').text('(#' + value.id + '' + race_number + ') ' + value.name + ' ------Start at: ' + value.start_date).val(value.id));
                 });
 
                 return html;
