@@ -14,6 +14,7 @@ use TopBetta\Resources\Betting\BetResource;
 
 class TournamentBetResource extends BetResource
 {
+    protected static $modelClass = 'TopBetta\Models\TournamentBetModel';
 
     protected $attributes = array(
         "id"              => "id",
@@ -43,7 +44,8 @@ class TournamentBetResource extends BetResource
         'percentage'      => 'percentage',
         'eventType'       => 'eventType',
         'date'            => 'start_date',
-        'tournament_id'   => 'tournament_id',
+        'tournamentId'    => 'tournamentId',
+        'tournamentTicketId' => 'tournament_ticket_id',
     );
 
     public function paid()
@@ -53,6 +55,15 @@ class TournamentBetResource extends BetResource
         }
 
         return  ! is_null($this->model->win_amount) ? $this->model->win_amount : 0;
+    }
+
+    public function getTournamentId()
+    {
+        if ($this->model->tournament_id) {
+            return $this->model->tournament_id;
+        }
+
+        return $this->model->ticket->tournament_id;
     }
 
 
