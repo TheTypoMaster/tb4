@@ -371,4 +371,9 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     public function getEventGroupByGroupId($group_id) {
         return $this->model->find($group_id);
     }
+
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_event_group_id', $id)->first();
+    }
 }
