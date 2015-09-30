@@ -129,7 +129,6 @@ class TournamentGroupRepository extends CachedResourceRepository implements Tour
      */
     public function getAllVisibleTournamentGroupsWithTournaments(Carbon $date = null)
     {
-
         $groups = $this->tournamentEventGroupRepository->getEventGroupsWithoutPaginate();
         $group_list = array();
         foreach($groups as $group) {

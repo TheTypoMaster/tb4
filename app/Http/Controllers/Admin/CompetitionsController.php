@@ -65,6 +65,7 @@ class CompetitionsController extends CrudResourceController
      */
 	public function index($relations = array(), $extraData = array())
 	{
+
 		$extraData = array(
             "Base Competition" => array(
                 'field' => 'baseCompetition.name',

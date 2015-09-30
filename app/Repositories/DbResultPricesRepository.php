@@ -80,4 +80,13 @@ class DbResultPricesRepository extends BaseEloquentRepository implements ResultP
             ->where('event_id', $event)
             ->get(array('tb_result_prices.*', 'tbdb_selection.*', 'tbdb_bet_type.name as bet_type', 'tbdb_selection_result.position', 'tbdb_selection.id as selection_id'));
     }
+
+    public function deletePricesForEventBetTypeAndProduct($event, $betType, $product)
+    {
+        return $this->model
+            ->where('event_id', $event)
+            ->where('bet_type_id', $betType)
+            ->where('product_id', $product)
+            ->delete();
+    }
 }

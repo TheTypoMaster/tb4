@@ -90,6 +90,7 @@ return array(
         array("uri" => "tournament-comments/edit/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "tournament-comments/update/{id}", 'permission' => 'tournaments.view'),
         array("uri" => "get-meetings", 'permission' => 'tournaments.view'),
+        array("uri" => "user-activity/list/{id}", 'permission' => 'tournaments.view'),
 
 
 

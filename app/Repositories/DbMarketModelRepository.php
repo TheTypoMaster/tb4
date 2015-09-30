@@ -84,4 +84,9 @@ class DbMarketModelRepository extends BaseEloquentRepository implements MarketMo
             ->where('external_event_id', $externalEventId)
             ->first();
     }
+
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_market_id', $id)->first();
+    }
 }

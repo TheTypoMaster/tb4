@@ -138,15 +138,22 @@ class TicketResource extends AbstractEloquentResource {
 
     public function rebuyAvailable()
     {
-        if ($this->model->rebuyAvailable) {
-            return $this->model->rebuyAvailable;
+        if (!is_null($this->model->rebuy_available)) {
+            return $this->model->rebuy_available;
         }
 
         if ($this->model->leaderboard) {
-            return $this->model->leaderboard->currency == 0 && $this->model->tournament->rebuys > $this->model->rebuy_count;
+            return $this->model->leaderboard->currency == 0 && $this->model->tournament['rebuys'] > $this->model->rebuy_count;
         }
 
         return false;
+    }
+
+    public function loadRebuyAvailable()
+    {
+        if ($this->model->leaderboard) {
+            $this->model->rebuy_available = $this->model->leaderboard->currency == 0 && $this->model->tournament->rebuys > $this->model->rebuy_count;
+        }
     }
 
     public function toArray()
