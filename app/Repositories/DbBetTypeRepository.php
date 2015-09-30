@@ -25,4 +25,9 @@ class DbBetTypeRepository extends BaseEloquentRepository implements BetTypeRepos
         return $this->model->where('name', $name)->first();
     }
 
+    public function getBetTypes($names)
+    {
+        return $this->model->whereIn('name', $names)->get();
+    }
+
 }

@@ -69,18 +69,21 @@ class RiskRaceStatusController extends Controller
         return \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->update(array('override_start' => $enabled));
     }
 
-    public function updateRaceStatus($status, $raceId)
+    public function updateRaceStatus($status, $race)
     {
         $eventStatus = \TopBetta\Models\RaceEventStatus::where('keyword', $status)->value('id');
-        $event = \TopBetta\Models\RaceEvent::where('external_event_id', $raceId)->first();
-        if ($eventStatus && $event) {
 
-            $this->raceRepository->updateWithId($raceId, array("event_status_id" => $eventStatus), 'external_event_id');
+        if ($eventStatus && $race) {
+
+            $this->raceRepository->updateWithId($race->id, array("event_status_id" => $eventStatus));
 
             if ($eventStatus == 6 || $eventStatus == 2 || $eventStatus == 3) {
                 // result bets for race status of interim, paying or abandoned
                 //\TopBetta\Facades\BetResultRepo::resultAllBetsForEvent($raceId);
-                Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $event->id), Config::get('betresulting.queue'));
+                foreach ($race->competition->first()->products as $product) {
+                    Queue::push('TopBetta\Services\Betting\EventBetResultingQueueService', array('event_id' => $race->id, 'product_id' => $product->id), Config::get('betresulting.queue'));
+                }
+
             }			
 
             return true;
