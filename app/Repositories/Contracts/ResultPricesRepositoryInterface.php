@@ -20,4 +20,6 @@ interface ResultPricesRepositoryInterface
     public function getResultsForEvent($event);
 
     public function getPricesByProductEventAndBetType($product, $event, $betType);
+
+    public function deletePricesForEventBetTypeAndProduct($event, $betType, $product);
 }
