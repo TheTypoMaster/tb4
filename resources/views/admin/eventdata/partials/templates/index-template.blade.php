@@ -34,7 +34,7 @@
                     @foreach($extraFields as $header=>$field)
                         <th>{{ $header }}</th>
                     @endforeach
-                    <th>Group</th>
+                    {{--<th>Group</th>--}}
                     <th>Created</th>
                     <th>Updated</th>
                     <th colspan="1">Action</th>
@@ -67,7 +67,7 @@
                                 @endif
                             </td>
                         @endforeach
-                        <td>{{ $model->markettypegroup->market_type_group_name }}</td>
+                        {{--<td>{{ $model->markettypegroup->market_type_group_name }}</td>--}}
                         <td>{{ $model->created_at }}</td>
                         <td>{{ $model->updated_at }}</td>
                         <td>
