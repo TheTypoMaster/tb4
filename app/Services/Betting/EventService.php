@@ -6,6 +6,7 @@
  * Time: 11:15 AM
  */
 
+use Carbon\Carbon;
 use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Cache\Sports\EventRepository;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
@@ -99,6 +100,11 @@ class EventService {
     public function isEventInterim($event)
     {
         return $event->eventstatus->keyword == EventStatusRepositoryInterface::STATUS_INTERIM;
+    }
+
+    public function eventPastStartTime($event)
+    {
+        return $event->start_date <= Carbon::now();
     }
 
     public function getClosedEventStatusIds()
