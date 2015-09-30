@@ -143,10 +143,17 @@ class TicketResource extends AbstractEloquentResource {
         }
 
         if ($this->model->leaderboard) {
-            return $this->model->leaderboard->currency == 0 && $this->model->tournament->rebuys > $this->model->rebuy_count;
+            return $this->model->leaderboard->currency == 0 && $this->model->tournament['rebuys'] > $this->model->rebuy_count;
         }
 
         return false;
+    }
+
+    public function loadRebuyAvailable()
+    {
+        if ($this->model->leaderboard) {
+            $this->model->rebuy_available = $this->model->leaderboard->currency == 0 && $this->model->tournament->rebuys > $this->model->rebuy_count;
+        }
     }
 
     public function toArray()

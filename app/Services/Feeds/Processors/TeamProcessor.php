@@ -70,11 +70,11 @@ class TeamProcessor extends AbstractFeedProcessor {
             $teamModel = $this->teamRepository->update($teamModel, $data);
         } else {
             if ($teamModel = $this->teamRepository->getBySerenaId($teamId)) {
-                $this->teamRepository->update($teamModel, $data);
+                $teamModel = $this->teamRepository->update($teamModel, $data);
             } else if ($teamModel = $this->teamRepository->findByExternalId(array_get($team, 'team_id_bg'))) {
-                $this->teamRepository->update($teamModel, $data);
+                $teamModel = $this->teamRepository->update($teamModel, $data);
             } else {
-                $this->teamRepository->create($data);
+                $teamModel = $this->teamRepository->create($data);
             }
         }
 

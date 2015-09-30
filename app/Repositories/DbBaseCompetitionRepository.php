@@ -29,4 +29,14 @@ class DbBaseCompetitionRepository extends BaseEloquentRepository implements Base
             ->get();
     }
 
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_base_competition_id', $id)->first();
+    }
+
+    public function getByExternalId($id)
+    {
+        return $this->model->where('external_base_competition_id', $id)->first();
+    }
+
 }
