@@ -32,6 +32,7 @@ use TopBetta\Repositories\Contracts\DataValueRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Repositories\Contracts\LastStartRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
 
 
 use TopBetta\Services\Caching\NextToJumpCacheService;
@@ -75,6 +76,8 @@ class RaceDataProcessingService {
 
     private $riskhelper;
 
+    private $tournamenteventgroups;
+
     public function __construct(RaceRepository $events,
                                 RacingSelectionRepository $selections,
 								RacingSelectionPriceRepository $prices,
@@ -94,7 +97,8 @@ class RaceDataProcessingService {
                                 RunnerRepositoryInterface $runnerRepository,
                                 ProductProviderMatchRepositoryInterface $productProviderMatchRepository,
                                 BetTypeMapper $betTypeMapper,
-                                RiskManagerAPI $riskhelper){
+                                RiskManagerAPI $riskhelper,
+                                TournamentEventGroupRepositoryInterface $tournamenteventgroups){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -109,6 +113,7 @@ class RaceDataProcessingService {
 		$this->laststarts = $laststarts;
 		$this->prices = $prices;
 		$this->betproduct = $betproduct;
+		$this->tournamenteventgroups = $tournamenteventgroups;
 
 		$this->logprefix = 'RaceDataProcessingService: ';
         $this->tournamentBetService = $tournamentBetService;
@@ -220,11 +225,24 @@ class RaceDataProcessingService {
 				if ($defaultTrack) $meetingDetails['track'] = $defaultTrack;
 			}
 
-			$competition = $this->competitions->updateOrCreate($meetingDetails, 'meeting_code');
+			$competition = $this->competitions->updateOrCreateLaravel(array('meeting_code' => $meetingDetails['meeting_code']), $meetingDetails);
 
             $this->attachDefaultProducts($competition);
 
-			Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
+            Log::info($this->logprefix. 'Meeting Saved - '.$meetingDetails['external_event_group_id']);
+
+			/*
+			 * Add tournament event group record
+			 */
+            $tournamentGroupDetails = array('name' => $meeting['Name'],
+                                            'type' => 'race',
+                                            'event_group_id' => $competition['id']
+                                            );
+
+            $tournamentEventGroup = $this->tournamenteventgroups->updateOrCreateLaravel(array('event_group_id' => $tournamentGroupDetails['event_group_id']), $tournamentGroupDetails);
+
+
+
 		}
 
 		return "Meeting(s) Processed";
@@ -398,6 +416,24 @@ class RaceDataProcessingService {
             $competitionModel = $this->competitions->getMeeting($existingMeetingDetails['id']);
             $this->events->addModelToCompetition($event, $competitionModel);
 
+            /*
+             * Add pivot tables records to link races to tournament event group
+             */
+            $tournamentEventGroup = $this->tournamenteventgroups->getTournamentEventGroupByEventGroupId($existingMeetingDetails['id']);
+            if($tournamentEventGroup){
+                $tournamentEventGroup->events()->attach($eventId);
+
+                // if it's race 1 store the jump time as tourn start date.
+                if ($tournamentEventGroup->start_date == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
+                    $tournamentEventGroup->start_date = $race['JumpTime'];
+                } else {
+                    if ($race['JumpTime'] > $tournamentEventGroup->end_date) {
+                        $tournamentEventGroup->end_date = $race['JumpTime'];
+                    }
+                }
+
+                $tournamentEventGroup->save();
+            }
 
 			// if this event was abandoned - result bets
 			if ($raceDetails['event_status_id'] == 3) {

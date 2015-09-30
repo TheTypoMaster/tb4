@@ -237,5 +237,18 @@ class BaseEloquentRepository {
         return $this->model->where($column, $value)->first();
     }
 
+    /**
+     * Added in Laravel 4.2 !
+     *
+     * @param array $attributes
+     * @param array $values
+     * @return mixed
+     */
+    public function updateOrCreateLaravel(array $attributes, array $values = array())
+    {
+        //return;
+        return $this->model->updateOrCreate($attributes, $values);
+    }
+
 
 } 

@@ -132,4 +132,8 @@ class TournamentEventGroupRepository extends BaseEloquentRepository implements T
         return $tournament_event_group->type;
     }
 
+    public function getTournamentEventGroupByEventGroupId($id)
+    {
+        return $this->model->where('event_group_id', $id)->first();
+    }
 }
