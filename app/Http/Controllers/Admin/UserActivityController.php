@@ -5,10 +5,12 @@ use Response;
 use Input;
 use File;
 use TopBetta\Http\Controllers\Controller;
+use TopBetta\Services\UserAccount\UserActivityService;
 use View;
 use Carbon\Carbon;
 use TopBetta\Services\Exceptions\InvalidFormatException;
 use TopBetta\Services\UserAccount\UserReportService;
+use Cartalyst\Sentry\Facades\Laravel\Sentry;
 
 
 class UserActivityController extends Controller {
@@ -18,9 +20,11 @@ class UserActivityController extends Controller {
      */
     private $userReportService;
 
-    public function __construct(UserReportService $userReportService)
+    public function __construct(UserReportService $userReportService,
+                                UserActivityService $userActivityService)
     {
         $this->userReportService = $userReportService;
+        $this->userActivityService = $userActivityService;
     }
 
 	/**
@@ -106,6 +110,23 @@ class UserActivityController extends Controller {
 
         return Redirect::route('admin.user-activity.index')
             ->with(array('flash_message' => "error occurred while trying to download file"));
+    }
+
+
+    /**
+     * get list of user activity
+     * @param $user_id
+     * @return mixed
+     */
+    public function listUserActivity($user_id) {
+
+        $activity_list = $this->userActivityService->listUserActivity($user_id);
+//        dd($activity_list);
+        $user = Sentry::findUserById($user_id);
+        return view('admin.users.activity.index')->with(['activity_list' => $activity_list,
+                                                         'user' => $user,
+                                                         'active' => 'user-activity']);
+
     }
 
 	/**
