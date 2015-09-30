@@ -67,13 +67,13 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
     public function process($data)
     {
-        if ( ! ($eventId = array_get($data, 'GameId', null)) || ! ($marketId = array_get($data, 'MarketId', null))) {
+        if ( ! ($eventId = array_get($data, 'event_id', null)) || ! ($marketId = array_get($data, 'market_id', null))) {
             Log::error($this->logprefix."No EventId or MarketId");
             return 0;
         }
 
         if ( ! $event = $this->modelContainer->getEvent($eventId)) {
-            if (!($event = $this->eventRepository->getEventModelFromExternalId($eventId))) {
+            if ((!$event = $this->eventRepository->getBySerenaId($eventId)) && (!array_get($data, 'GameId') || (!$event = $this->eventRepository->getEventModelFromExternalId($data['GameId']))) ){
                 Log::error($this->logprefix . "Event $eventId does not exist");
                 return 0;
             }
@@ -83,7 +83,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
 
         //get the market
         if ( ! $market = $this->modelContainer->getMarket($marketId)) {
-            if (! ($market = $this->marketRepository->getMarketModelByExternalIds($marketId, $eventId)) ) {
+            if ((!$market = $this->marketRepository->getBySerenaId($marketId)) && (!array_get($data, 'GameId') || !array_get($data, 'MarketId') || (!$market = $this->marketRepository->getMarketModelByExternalIds($data['MarketId'], $data['GameId'])) )) {
                 Log::error($this->logprefix."Market $marketId does not exist");
                 return 0;
             }
@@ -93,7 +93,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         }
 
 
-        Log::debug($this->logprefix."Selection/Price - GameId: " . $data['GameId'].", MarketId: ".$data['MarketId'].", SelectionNo: ".$data['SelectionNo'].", Odds ".$data['Odds'].", Line: " .$data['Line']);
+        Log::debug($this->logprefix."Selection/Price - GameId: " . $data['event_id'].", MarketId: ".$data['market_id'].", SelectionNo: ".$data['selection_id'].", Odds ".$data['selection_odds'].", Line: " .$data['selection_line']);
 
         //process selection
         $selection = $this->processSelection($market['id'], $data);
@@ -124,36 +124,41 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         //selection data
         $selectionData = array(
             "market_id" => $marketId,
-            "external_selection_id" => $data['SelectionNo'],
-            "external_event_id" => $data['GameId'],
-            "external_market_id" => $data['MarketId'],
-            "home_away" => array_get($data, 'HomeAway', null),
+            "serena_selection_id" => $data['selection_id'],
+            "external_selection_id" => array_get($data, 'SelectionNo'),
+            "external_event_id" => array_get($data, 'GameId'),
+            "external_market_id" => array_get($data, 'MarketId'),
+            "home_away" => array_get($data, 'selection_home_away', null),
         );
 
-        if( $selectionName = array_get($data, 'Selection', null) ) {
+        if( $selectionName = array_get($data, 'selection_name', null) ) {
             $selectionData['name'] = $selectionName;
         }
 
         //selection status
-        if( $selectionStatus = array_get($data, 'Status', null) ) {
+        if( $selectionStatus = array_get($data, 'selection_trading_status', null) ) {
             if($selectionStatus == 'S') { $selectionData['selection_status_id'] = 4; }
             else if ($selectionStatus == 'T') { $selectionData['selection_status_id'] = 1; }
         }
 
         //check if selection already exists
-        if ($selection = $this->selectionRepository->getModelByExternalIds($data['SelectionNo'], $data['MarketId'], $data['GameId']) ) {
+        if ($selection = $this->selectionRepository->getBySerenaId($data['selection_id'])) {
+            $this->selectionRepository->update($selection, $selectionData);
+        }
+        if (array_get($data, 'SelectionNo') && array_get($data, 'MarketId') && array_get($data, 'GameId') && ($selection = $this->selectionRepository->getModelByExternalIds($data['SelectionNo'], $data['MarketId'], $data['GameId']))) {
             $this->selectionRepository->update($selection, $selectionData);
         } else {
             //create it otherwise
             $selection = $this->selectionRepository->create($selectionData);
         }
 
-        if( $competitorId = array_get($data, 'CompetitorId', null) ) {
+        if( $competitorId = array_get($data, 'selection_type_id', null) ) {
 
-            if (($competitor = $this->modelContainer->getTeam($competitorId)) || ($competitor = $this->modelContainer->getPlayer($competitorId))) {
+
+            if ((array_get($data, 'selection_type_name') == 'team' && $competitor = $this->modelContainer->getTeam($competitorId)) || ((array_get($data, 'selection_type_name') == 'player' && $competitor = $this->modelContainer->getPlayer($competitorId)))) {
                 $this->competitorService->addCompetitorModelToSelection($selection, $competitor);
             } else {
-                $competitor = $this->competitorService->addCompetitorToSelection($selection['id'], $competitorId);
+                $competitor = $this->competitorService->addCompetitorToSelection($selection['id'], $competitorId, array_get($data, 'CompetitorId'), array_get($data, 'selection_type_name'));
                 $this->competitors['CompetitorId'] = $competitor;
             }
 

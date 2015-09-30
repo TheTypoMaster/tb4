@@ -35,14 +35,18 @@ class DbTournamentTicketRepository extends BaseEloquentRepository implements Tou
             ->first()->toArray();
     }
 
-    public function getTicketByUserAndTournament($userId, $tournamentId)
+    public function getTicketByUserAndTournament($userId, $tournamentId, $withTicket = true)
     {
-        return $this
+        $model = $this
             ->model
             ->where('user_id', $userId)
-            ->where('tournament_id', $tournamentId)
-            ->with('tournament')
-            ->first();
+            ->where('tournament_id', $tournamentId);
+
+        if ($withTicket) {
+            $model->with('tournament');
+        }
+
+        return $model->first();
     }
 
     public function getLimitedFreeTicketsForUserBetween($userId, $start, $end)
