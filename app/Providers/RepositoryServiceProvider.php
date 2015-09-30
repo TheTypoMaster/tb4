@@ -341,6 +341,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface',
             'TopBetta\Repositories\TournamentEventGroupRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\UserActivityRepositoryInterface',
+            'TopBetta\Repositories\UserActivityRepository'
+        );
     }
 
 } 

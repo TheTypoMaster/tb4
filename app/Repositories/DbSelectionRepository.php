@@ -285,4 +285,9 @@ class DbSelectionRepository extends BaseEloquentRepository implements SelectionR
     {
         return $this->model->where('external_selection_id', $id)->first();
     }
+
+    public function getBySerenaId($id)
+    {
+        return $this->model->where('serena_selection_id', $id)->first();
+    }
 }

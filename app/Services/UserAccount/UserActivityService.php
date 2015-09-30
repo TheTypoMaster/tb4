@@ -9,7 +9,14 @@
 namespace TopBetta\Services\UserAccount;
 
 
+use TopBetta\Repositories\Contracts\UserActivityRepositoryInterface;
+
 class UserActivityService {
+
+    public function __construct(UserActivityRepositoryInterface $userActivityRepository) {
+
+        $this->userActivityRepository = $userActivityRepository;
+    }
 
     public function userTransactionHistory($user)
     {
@@ -134,5 +141,14 @@ class UserActivityService {
         }
 
         return $transactionData;
+    }
+
+    /**
+     * get list of user activity
+     * @param $user_id
+     * @return mixed
+     */
+    public function listUserActivity($user_id) {
+        return $this->userActivityRepository->listUserActivity($user_id);
     }
 }

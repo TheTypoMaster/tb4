@@ -34,7 +34,7 @@ class TournamentGroupController extends Controller {
     {
         try{
             $groups = $this->tournamentGroupService->getGroupsWithTournaments(
-                $request->get('type', 'race'),
+                $request->get('type', ''),
                 $request->get('date', null)
             );
 

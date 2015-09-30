@@ -46,9 +46,19 @@ class CompetitorService {
         return $competitor;
     }
 
-    public function addCompetitorToSelection($selectionId, $competitorId)
+    public function addCompetitorToSelection($selectionId, $competitorId, $extCompetitorId, $competitorType)
     {
-        $competitor = $this->getCompetitorByExternalId($competitorId);
+        $competitor = null;
+
+        if ($competitorType == 'team') {
+            $competitor = $this->teamRepository->getBySerenaId($competitorId);
+        } else if ($competitorType == 'player') {
+            $competitor = $this->playersRepository->getBySerenaId($competitorId);
+        }
+
+        if (! $competitor) {
+            $competitor = $this->getCompetitorByExternalId($competitorId);
+        }
 
         if( $competitor && ! in_array($selectionId, $competitor->selections->lists('id')->all()) ) {
             $competitor->selections()->attach(array($selectionId));

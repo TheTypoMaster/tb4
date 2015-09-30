@@ -74,6 +74,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         if ($ticket && $ticket->getPosition() != $position) {
             $ticket->setPosition($position);
+            $ticket->loadRebuyAvailable();
             $this->saveTicketResource($ticket);
         } else {
             $ticket = $this->getTicketResourceByUserAndTournament($user, $tournament);
@@ -81,7 +82,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
 
         if ($ticket && $ticket->getPosition() != $position) {
             $this->updateActiveTickets($ticket);
-            $this->updateDateTickets($ticket->tournament->end_date, $ticket);
+            $this->updateDateTickets($ticket->getModel()->tournament->end_date, $ticket);
             $this->updateNextToJump($ticket);
         }
 
@@ -95,6 +96,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             $ticket->setPosition($position);
             $ticket->setTurnedOver($turnedOver);
             $ticket->setBalanceToTurnOver($balanceToTurnover);
+            $ticket->loadRebuyAvailable();
             $this->saveTicketResource($ticket);
 
         } else {
@@ -102,7 +104,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         }
 
         $this->updateActiveTickets($ticket);
-        $this->updateDateTickets($ticket->tournament->end_date, $ticket);
+        $this->updateDateTickets($ticket->tournament->getModel()->end_date, $ticket);
         $this->updateNextToJump($ticket);
     }
 
@@ -266,7 +268,7 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
             return $ticket;
         }
 
-        $ticket = $this->repository->getTicketByUserAndTournament($userId, $tournamentId);
+        $ticket = $this->repository->getTicketByUserAndTournament($userId, $tournamentId, false);
 
         if ($ticket) {
             return $this->saveTicket($ticket);
