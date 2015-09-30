@@ -32,7 +32,7 @@ use TopBetta\Repositories\Contracts\DataValueRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentRepositoryInterface;
 use TopBetta\Repositories\Contracts\LastStartRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetProductRepositoryInterface;
-use TopBetta\Repositories\Contracts\TournamentEventGroupEventRepositoryInterface;
+use TopBetta\Repositories\Contracts\TournamentEventGroupRepositoryInterface;
 
 
 use TopBetta\Services\Caching\NextToJumpCacheService;
@@ -98,7 +98,7 @@ class RaceDataProcessingService {
                                 ProductProviderMatchRepositoryInterface $productProviderMatchRepository,
                                 BetTypeMapper $betTypeMapper,
                                 RiskManagerAPI $riskhelper,
-                                TournamentEventGroupEventRepositoryInterface $tournamenteventgroups){
+                                TournamentEventGroupRepositoryInterface $tournamenteventgroups){
         $this->events = $events;
         $this->selections = $selections;
         $this->results = $results;
@@ -180,18 +180,18 @@ class RaceDataProcessingService {
 			$meetingDetails['name'] = $meeting['Name'];
 			$meetingDetails['external_event_group_id'] = $meeting['Id'];
 			$meetingDetails['type_code'] = $meeting['RaceType'];
-//			switch ($meeting['RaceType']) {
-//				case "R":
-//					$meetingDetails['tournament_competition_id'] = '31';
-//					break;
-//				case "T":
-//					$meetingDetails['type_code'] = 'H';
-//					$meetingDetails['tournament_competition_id'] = '32';
-//					break;
-//				case "G":
-//					$meetingDetails['tournament_competition_id'] = '33';
-//					break;
-//			}
+			switch ($meeting['RaceType']) {
+				case "R":
+					$meetingDetails['tournament_competition_id'] = '31';
+					break;
+				case "T":
+					$meetingDetails['type_code'] = 'H';
+					$meetingDetails['tournament_competition_id'] = '32';
+					break;
+				case "G":
+					$meetingDetails['tournament_competition_id'] = '33';
+					break;
+			}
 			$meetingDetails['meeting_code'] = str_replace(" ", "", strtoupper($meeting['Name']) . "-" . $meetingDetails['type_code'] . "-" . substr($meeting['Date'], 0, 10));
 			$existingMeeting = $this->competitions->getMeetingFromCode($meetingDetails['meeting_code']);
 
@@ -225,7 +225,7 @@ class RaceDataProcessingService {
 				if ($defaultTrack) $meetingDetails['track'] = $defaultTrack;
 			}
 
-			$competition = $this->competitions->updateOrCreateLaravel('meeting_code', $meetingDetails);
+			$competition = $this->competitions->updateOrCreateLaravel(array('meeting_code' => $meetingDetails['meeting_code']), $meetingDetails);
 
             $this->attachDefaultProducts($competition);
 
@@ -239,7 +239,7 @@ class RaceDataProcessingService {
                                             'event_group_id' => $competition['id']
                                             );
 
-            $tournamentEventGroup = $this->tournamenteventgroups->updateOrCreateLaravel('event_group_id', $tournamentGroupDetails);
+            $tournamentEventGroup = $this->tournamenteventgroups->updateOrCreateLaravel(array('event_group_id' => $tournamentGroupDetails['event_group_id']), $tournamentGroupDetails);
 
 
 
@@ -343,16 +343,6 @@ class RaceDataProcessingService {
 				$this->tournaments->updateOrCreate($tournament, 'id');
 			}
 
-            /*
-            * Update tb_tournament_event_group start time on auto created tournament groups
-             * - no need to worry about the tournamrnt start and end data above as they are not created yet
-             *
-            */
-
-
-
-
-
             //set available products
             $loadedProducts = $this->productProviderMatchRepository->findAll()->keyBy('provider_product_name');
             $availableProducts = array();
@@ -426,6 +416,24 @@ class RaceDataProcessingService {
             $competitionModel = $this->competitions->getMeeting($existingMeetingDetails['id']);
             $this->events->addModelToCompetition($event, $competitionModel);
 
+            /*
+             * Add pivot tables records to link races to tournament event group
+             */
+            $tournamentEventGroup = $this->tournamenteventgroups->getTournamentEventGroupByEventGroupId($existingMeetingDetails['id']);
+            if($tournamentEventGroup){
+                $tournamentEventGroup->events()->attach($eventId);
+
+                // if it's race 1 store the jump time as tourn start date.
+                if ($tournamentEventGroup->start_date == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
+                    $tournamentEventGroup->start_date = $race['JumpTime'];
+                } else {
+                    if ($race['JumpTime'] > $tournamentEventGroup->end_date) {
+                        $tournamentEventGroup->end_date = $race['JumpTime'];
+                    }
+                }
+
+                $tournamentEventGroup->save();
+            }
 
 			// if this event was abandoned - result bets
 			if ($raceDetails['event_status_id'] == 3) {
