@@ -125,6 +125,7 @@ class SelectionListProcessor extends AbstractFeedProcessor {
         $selectionData = array(
             "market_id" => $marketId,
             "serena_selection_id" => $data['selection_id'],
+            "external_selection_id" => array_get($data, 'SelectionNo'),
             "external_event_id" => array_get($data, 'GameId'),
             "external_market_id" => array_get($data, 'MarketId'),
             "home_away" => array_get($data, 'selection_home_away', null),

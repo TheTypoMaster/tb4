@@ -126,6 +126,7 @@ class MarketListProcessor extends AbstractFeedProcessor {
             "market_type_id" => $marketType,
             "serena_market_id" => $data['market_id'],
             "external_event_id" => $data['GameId'],
+            "external_market_id" => array_get($data, 'MarketId'),
             "event_id" => $event->id,
             "period" => array_get($data, 'Period', null),
             "market_status" => array_get($data, 'market_status', ''),

@@ -106,7 +106,7 @@ class GameListProcessor extends AbstractFeedProcessor {
         }
 
         //process event
-        $event = $this->processEvent($externalId, array_get($data, 'EventId'), array_get($data, 'event_name', null), array_get($data, 'event_start_time'), $competition);
+        $event = $this->processEvent($externalId, array_get($data, 'GameId'), array_get($data, 'event_name', null), array_get($data, 'event_start_time'), $competition);
 
         //process teams
         $this->teamProcessor->setModelContainer($this->modelContainer)->setEvent($event);
@@ -265,7 +265,7 @@ class GameListProcessor extends AbstractFeedProcessor {
     {
         Log::info($this->logprefix. "Processing Event: $name");
 
-        $data = array("name" => $name, "serena_event_id" => $externalId, "event_status_id" => 1);
+        $data = array("name" => $name, "serena_event_id" => $externalId, "event_status_id" => 1, "external_event_id" => $externalIdBg);
 
         //set the start date
         if( $time ) {
