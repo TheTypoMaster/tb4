@@ -43,6 +43,7 @@ class TournamentBetResource extends BetResource
         'percentage'      => 'percentage',
         'eventType'       => 'eventType',
         'date'            => 'start_date',
+        'tournament_id'   => 'tournament_id',
     );
 
     public function paid()
