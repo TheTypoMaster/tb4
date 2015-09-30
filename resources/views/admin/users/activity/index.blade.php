@@ -10,6 +10,7 @@
             <div class="row" style="margin-left: 20px; margin-right: 20px;">
                 <table class="table">
                     <tr>
+                        <th>ID</th>
                         <th>Action</th>
                         <th>Description</th>
                         <th>Details</th>
@@ -18,6 +19,7 @@
 
                     @foreach($activity_list as $key => $activity)
                         <tr>
+                            <td>{{ $activity->id }}</td>
                             <td>{{ $activity->action }}</td>
                             <td>{{ $activity->description }}</td>
                             <td>{{ $activity->details }}</td>
@@ -25,6 +27,8 @@
                         </tr>
                     @endforeach
                 </table>
+
+                {!! $activity_list->render() !!}
             </div>
         </div>
     </div>
