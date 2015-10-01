@@ -58,4 +58,27 @@ class RiskCompetitionController extends Controller {
         return $competitionArray;
     }
 
+    public function enableFixedOdds($competition)
+    {
+
+        try {
+            $competition = $this->competitionService->enableFixedOdds($competition);
+        } catch (\Exception $e) {
+            return $this->apiResponse->failed($e->getMessage());
+        }
+
+        return $this->apiResponse->success($this->formatCompetitionPayload($competition));
+    }
+
+    public function disableFixedOdds($competition)
+    {
+        try {
+            $competition = $this->competitionService->disableFixedOdds($competition);
+        } catch (\Exception $e) {
+            return $this->apiResponse->failed($e->getMessage());
+        }
+
+        return $this->apiResponse->success($this->formatCompetitionPayload($competition));
+    }
+
 }

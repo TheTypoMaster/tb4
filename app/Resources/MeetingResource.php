@@ -28,6 +28,7 @@ class MeetingResource extends AbstractEloquentResource {
         "railPosition"  => 'rail_position',
         "nextRaceDate"  => "nextRaceDate",
         "nextRaceNumber" => "nextRaceNumber",
+        "fixed_odds_enabled" => "fixed_odds_enabled",
     );
 
 
