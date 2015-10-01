@@ -42,6 +42,14 @@ class TournamentTicketRepository extends CachedResourceRepository implements Tou
         $this->tournamentRepository = $tournamentRepository;
     }
 
+    public function forgetTicketsForUserTournament($tournament, $userId)
+    {
+        \Cache::tags($this->tags)->forget($this->cachePrefix . $userId . '_' . $tournament->id);
+        \Cache::tags($this->tags)->forget($this->cachePrefix . $userId . '_active');
+        \Cache::tags($this->tags)->forget($this->cachePrefix . $userId . '_n2j');
+        \Cache::tags($this->tags)->forget($this->cachePrefix . $userId . '_' . Carbon::createFromFormat('Y-m-d H:i:s', $tournament->end_date)->toDateString());
+    }
+
     public function create($data)
     {
         $model = parent::create($data);

@@ -72,7 +72,6 @@ class TournamentTicketService {
             $end = Carbon::now()->{ 'endOf' . ucfirst($period) }();
         }
 
-
         $tickets = $this->tournamentTicketRepository->getLimitedFreeTicketsForUserBetween($user->id, $start, $end);
 
         return $tickets;
@@ -134,6 +133,8 @@ class TournamentTicketService {
         }
 
         $this->refundTicket($ticket);
+
+        $this->tournamentTicketRepository->forgetTicketsForUserTournament($tournament, $userId);
 
         return $ticket->delete();
     }
