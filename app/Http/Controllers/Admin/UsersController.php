@@ -10,6 +10,7 @@ use TopBetta\Repositories\Contracts\UserTopBettaRepositoryInterface;
 use TopBetta\Repositories\UserRepo;
 use TopBetta\Models\UserModel;
 use Request;
+use TopBetta\Services\Country\CountryService;
 use TopBetta\Services\Email\Exceptions\EmailRequestException;
 use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Validation\Exceptions\ValidationException;
@@ -33,13 +34,15 @@ class UsersController extends Controller
      */
     private $emailService;
 
-    public function __construct(UserModel $user, UserRepositoryInterface $userRepo, BetModel $bet, UserTopBettaRepositoryInterface $topbettaUserRepository, ThirdPartyEmailServiceInterface $emailService)
+    public function __construct(UserModel $user, UserRepositoryInterface $userRepo, BetModel $bet, UserTopBettaRepositoryInterface $topbettaUserRepository, ThirdPartyEmailServiceInterface $emailService,
+								CountryService $countryService)
 	{
 		$this->user = $user;
 		$this->bet = $bet;
 		$this->userRepo = $userRepo;
         $this->topbettaUserRepository = $topbettaUserRepository;
         $this->emailService = $emailService;
+		$this->countryService = $countryService;
     }
 
 	/**
@@ -55,6 +58,7 @@ class UsersController extends Controller
 		} else {
 			$users = $this->userRepo->findAllPaginated(array('topbettaUser'));
 		}
+
 
 		return View::make('admin.users.index')
 						->with(compact('users','search'));
@@ -101,13 +105,14 @@ class UsersController extends Controller
 	{
 		$user = $this->user->find($id);
 		$topbetta_user_record = $user->topbettauser()->first();
+		$country_list = $this->countryService->getCountryList();
 
 		if (is_null($user)) {
 			// TODO: flash message user not found
 			return Redirect::route('admin.users.index');
 		}
 
-		return View::make('admin.users.edit', compact('user', 'topbetta_user_record'))
+		return View::make('admin.users.edit', compact('user', 'topbetta_user_record', 'country_list'))
 						->with('active', 'profile');
 	}
 
@@ -133,11 +138,17 @@ class UsersController extends Controller
                 ->with('flash_message', 'email already exists');
         }
 
-        $this->userRepo->updateWithId($userId, array(
-            "name"     => Input::get('name'),
+        $data = array(  "name"     => Input::get('name'),
             "username" => Input::get('username'),
-            "email"    => Input::get('email')
-        ));
+            "email"    => Input::get('email'));
+
+        if(Input::get('password')) {
+            $data['password'] = md5(Input::get('password'));
+        }
+
+        $this->userRepo->updateWithId($userId, $data);
+
+
 
         $this->topbettaUserRepository->updateWithId($user->topbettauser->id, array(
             "first_name" => Input::get('first-name'),
@@ -150,7 +161,14 @@ class UsersController extends Controller
 			"account_name" => Input::get('bank_account_name'),
 			"bank_name" => Input::get('Bank_name'),
 			"source" => Input::get('source'),
-			"self_exclusion_date" => Input::get('exclusion_date')
+			"self_exclusion_date" => Input::get('exclusion_date'),
+			"street" => Input::get('street'),
+			"city" => Input::get('suburb'),
+			"state" => Input::get('state'),
+			"country" => Input::get('country'),
+			"postcode" => Input::get('postcode'),
+			"heard_about" => Input::get('heard_about_us'),
+			"bet_limit" => Input::get('bet_limit')
         ));
 
         try {
