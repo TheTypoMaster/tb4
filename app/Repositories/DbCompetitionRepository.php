@@ -125,6 +125,14 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competition;
     }
 
+
+    public function getCompetitionsWithFixedOddsEnabled()
+    {
+        $competitions = $this->model->where('fixed_odds_enabled', 1)->get();
+
+        return $competitions;
+    }
+
     public function getCompetitionByExternalId($externalId)
     {
         return $this->model->where('external_event_group_id', $externalId)->first();
