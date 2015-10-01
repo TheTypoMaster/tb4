@@ -21,6 +21,11 @@
             </div>
 
             <div class="form-group">
+                {!! Form::label("status", $user->block ? "Active the user" : 'Inactive the user') !!}
+                {!! Form::checkbox('status', 1, '') !!}
+            </div>
+
+            <div class="form-group">
                 {!! Form::submit("Save", array("class" => "form-control btn btn-primary")) !!}
             </div>
 
