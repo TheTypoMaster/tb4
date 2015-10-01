@@ -1,7 +1,7 @@
 <?php namespace TopBetta\Models;
 
-class DataTypes extends \Eloquent {
-    protected $table = 'tbdb_data_types';
+class CountryModel extends \Eloquent {
+    protected $table = 'tbdb_user_country';
     protected $guarded = array();
 
     public static $rules = array();
