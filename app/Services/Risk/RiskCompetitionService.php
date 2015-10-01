@@ -56,7 +56,7 @@ class RiskCompetitionService {
     }
 
 
-    public function enableixedOdds($competitionId)
+    public function enableFixedOdds($competitionId)
     {
         return $this->setDisplayFlagForCompetition($competitionId, 1);
     }
