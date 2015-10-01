@@ -63,11 +63,11 @@ class CachedRaceResourceService extends CachedResourceService {
 
     public function getRaceWithSelections($raceId)
     {
-       // $race = $this->raceRepository->getRace($raceId);
+        $race = $this->raceRepository->getRace($raceId);
 
-       // if (!$race) {
+        if (!$race) {
             return $this->resourceService->getRaceWithSelections($raceId);
-      //  }
+        }
 
         $race->setSelections($this->selectionResourceService->getSelectionsForRace($race->id));
 
