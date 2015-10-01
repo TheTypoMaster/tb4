@@ -18,7 +18,7 @@ class RiskManagerAPI
             'ReferenceId' => $betResultData->id,
             'Status' => BetResultStatus::where('id', $betResultData->bet_result_status_id)->value('name'),
             'Amount' => $amount,
-            'ResultDate' => \Carbon\Carbon::now()
+            'ResultDate' => \Carbon\Carbon::now()->toDateTimeString(),
         );
 
         $betResultJSON = json_encode($bet);
