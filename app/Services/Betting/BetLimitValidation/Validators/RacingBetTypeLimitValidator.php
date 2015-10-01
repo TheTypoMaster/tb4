@@ -25,7 +25,7 @@ class RacingBetTypeLimitValidator extends AbstractBetLimitValidator implements B
         $limit = $this->getBetLimitAmount($betData['user'], $betData['bet_type']);
 
         //get current bets on selections
-        $currentBets = $this->betRepository->getBetsForSelectionsByBetType($betData['user'], $betData['selections'], $betData['bet_type']->id);
+        $currentBets = $this->betRepository->getBetsForSelectionsByBetType($betData['user'], array_pluck($betData['selections'], 'selection.id'), $betData['bet_type']->id);
 
         $selections = array_pluck($betData['selections'], 'selection');
 

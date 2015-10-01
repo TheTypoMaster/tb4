@@ -15,6 +15,8 @@ class TodaysRacingSocketUpdate extends RacingSocketUpdate {
 
     const CHANNEL_SMALL_MEETINGS = 'meeting_races';
 
+    public $queue = 'todays-racing-socket';
+
     public function __construct($data)
     {
         parent::__construct($data);

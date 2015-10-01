@@ -29,6 +29,7 @@ class MeetingResource extends AbstractEloquentResource {
         "nextRaceDate"  => "nextRaceDate",
         "nextRaceNumber" => "nextRaceNumber",
         "ordering" => "ordering",
+        "fixed_odds_enabled" => "fixed_odds_enabled",
     );
 
 

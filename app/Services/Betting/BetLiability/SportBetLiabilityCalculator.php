@@ -13,9 +13,9 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 
 class SportBetLiabilityCalculator extends AbstractLiabilityCalculator {
 
-    protected function getSelectionPrice($selection)
+    protected function getSelectionPrice($selection, $product)
     {
-        return $selection['dividend'];
+        return $selection['win_dividend'];
     }
 
     protected function getBetLiability($bet)

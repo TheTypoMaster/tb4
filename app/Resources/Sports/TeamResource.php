@@ -20,6 +20,7 @@ class TeamResource extends AbstractEloquentResource {
         'name' => 'name',
         'icon' => 'icon',
         "display_flag" => "display_flag",
+        "position" => "position",
     );
 
     public function icon()
@@ -39,10 +40,6 @@ class TeamResource extends AbstractEloquentResource {
     public function toArray()
     {
         $array = parent::toArray();
-
-        if ($position = $this->getPositition()) {
-            $array['position'] = $position;
-        }
 
         return $array;
     }

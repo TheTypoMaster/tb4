@@ -12,6 +12,7 @@ use Lang;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetLimitService;
+use TopBetta\Services\Betting\BetLimitValidation\BetLimitValidationService;
 use TopBetta\Services\Betting\BetProduct\BetProductValidator;
 use TopBetta\Services\Betting\BetSelection\ExoticRacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
@@ -25,7 +26,7 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
 
     protected $product;
 
-    public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitService $betLimitService, RiskExoticBetService $riskBetService)
+    public function __construct(ExoticRacingBetSelectionService $betSelectionService,  BetTransactionService $betTransactionService, BetRepositoryInterface $betRepository, BetTypeRepositoryInterface $betTypeRepository, BetLimitValidationService $betLimitService, RiskExoticBetService $riskBetService)
     {
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitService, $riskBetService);
     }
@@ -45,22 +46,17 @@ class RacingExoticBetPlacementService extends AbstractBetPlacementService {
     {
         $exoticBetLibrary = ExoticBetLibraryFactory::make($betType, $amount, $this->betSelectionService->formatSelectionsForExoticLibrary($selections));
 
-        $result = $this->betLimitService->getExoticBetLimitsExceeded(
-            $user,
-            $amount,
-            $exoticBetLibrary->getFlexiPercentage(),
-            $selections,
-            $this->betTypeRepository->getBetTypeByName($betType)->id
+        $betLimitData = array(
+            'amount' => $amount,
+            'user' => $user->id,
+            'bet_type' => $this->betTypeRepository->getBetTypeByName($betType),
+            'event' => $selections[0]['selection']->market->event_id,
+            'selections' => $selections,
+            'percentage' => $exoticBetLibrary->getFlexiPercentage(),
         );
 
-        if( count($result) ) {
+        $this->betLimitService->validateBet($betLimitData);
 
-            $resultArray = array();
-            $resultArray['flexiLimit'] = array_get($result, 'percentage', null);
-            $resultArray['betValueLimit'] = array_get($result, 'amount', null);
-
-            throw new BetLimitExceededException($resultArray);
-        }
     }
 
     /**

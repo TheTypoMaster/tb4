@@ -124,6 +124,13 @@ class MeetingResourceService {
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
+        if(!$meeting->model->fixed_odds_enabled){
+            $products = $products->filter(function ($v) {
+
+                return !$v->is_fixed_odds == '1';
+            });
+        }
+
         foreach ($meeting->races as $race) {
 
             $race->setProducts($products);

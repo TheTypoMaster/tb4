@@ -103,6 +103,28 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $competition;
     }
 
+
+    public function getFixedOddsEventsForCompetition($competitionId)
+    {
+        //return $this->model->find($competitionId)->events()->where("display_flag", "=", "1")->get();
+        return $this->model->where('external_event_group_id', $competitionId)
+            ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
+            ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
+            ->where("tbdb_event.fixed_odds_enabled", "=", "1")
+            ->get();
+    }
+
+    public function setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag)
+    {
+        $competition = $this->model->where('external_event_group_id', $competitionId)->first();
+
+        $competition->fixed_odds_enabled = $fixedOddsFlag;
+
+        $competition->save();
+
+        return $competition;
+    }
+
     public function getCompetitionByExternalId($externalId)
     {
         return $this->model->where('external_event_group_id', $externalId)->first();
