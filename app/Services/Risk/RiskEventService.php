@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Risk;
 
+use Log;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
