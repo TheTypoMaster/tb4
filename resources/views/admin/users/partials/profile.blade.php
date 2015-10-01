@@ -12,24 +12,7 @@
         {!! Form::label('email', 'Email:') !!}
         {!! Form::email('email', null, array('class' => 'form-control', 'placeholder' => 'Email')) !!}
     </div>
-</div>
 
-<div class='col-lg-6'>
-    <div class="form-group">
-        {!! Form::label('first-name', 'First Name:') !!}
-        {!! Form::text('first-name', $user->topbettaUser->first_name, array('class' => 'form-control', 'placeholder' => 'First Name')) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::label('last-name', 'Last Name:') !!}
-        {!! Form::text('last-name', $user->topbettaUser->last_name, array('class' => 'form-control', 'placeholder' => 'Last Name')) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::label('mobile', 'Mobile:') !!}
-        {!! Form::text('mobile', $user->topbettaUser->msisdn, array('class' => 'form-control', 'placeholder' => 'Mobile')) !!}
-    </div>
-</div>
-
-<div class="col-lg-6">
     <div class="form-group">
         {!! Form::label("identity_verified", 'Check this once the identity of a user has been verified') !!}
         {!! Form::checkbox('identity_verified', 1, '') !!}
@@ -77,10 +60,30 @@
         {!! Form::label('exclusion_date', 'Exclusion Date') !!}
         {!! Form::input('date', 'exclusion_date', $exclusion_date->format('Y-m-d'), array('class' => 'form-control', 'placeholder' => 'Mobile')) !!}
     </div>
-
 </div>
 
-<div class="col-lg-6">
+<div class='col-lg-6'>
+    <div class="form-group">
+        {!! Form::label('first-name', 'First Name') !!}
+        {!! Form::text('first-name', $user->topbettaUser->first_name, array('class' => 'form-control', 'placeholder' => 'First Name')) !!}
+    </div>
+    <div class="form-group">
+        {!! Form::label('last-name', 'Last Name') !!}
+        {!! Form::text('last-name', $user->topbettaUser->last_name, array('class' => 'form-control', 'placeholder' => 'Last Name')) !!}
+    </div>
+    <div class="form-group">
+        {!! Form::label("reset_password", 'Reset Password') !!}
+        {!! Form::checkbox('reset_password', 1, '') !!}
+    </div>
+    <div class="form-group" id="password">
+        {!! Form::label('password', 'Password') !!}
+        {!! Form::text('password', '', array('class' => 'form-control', 'placeholder' => 'Password')) !!}
+    </div>
+    <div class="form-group">
+        {!! Form::label('mobile', 'Mobile') !!}
+        {!! Form::text('mobile', $user->topbettaUser->msisdn, array('class' => 'form-control', 'placeholder' => 'Mobile')) !!}
+    </div>
+
     <div class="form-group">
         {!! Form::label('street', 'Street Address') !!}
         {!! Form::text('street', $topbetta_user_record->street, array('class' => 'form-control', 'placeholder' => 'Source')) !!}
@@ -119,6 +122,7 @@
     </div>
 </div>
 
+
 <div class="col-lg-12">
     <div class="form-group">
         {!! Form::submit('Update', array('class' => 'btn btn-info')) !!}
@@ -136,6 +140,7 @@
 
         $('#doc_type').hide();
         $('#doc_id').hide();
+        $('#password').hide();
 
         $('#identity_verified').click(function () {
             if ($('#identity_verified').is(':checked')) {
@@ -144,6 +149,14 @@
             } else {
                 $('#doc_type').hide();
                 $('#doc_id').hide();
+            }
+        });
+
+        $('#reset_password').click(function() {
+            if($('#reset_password').is(':checked')) {
+                $('#password').show();
+            } else {
+                $('#password').hide();
             }
         });
 

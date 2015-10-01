@@ -138,11 +138,17 @@ class UsersController extends Controller
                 ->with('flash_message', 'email already exists');
         }
 
-        $this->userRepo->updateWithId($userId, array(
-            "name"     => Input::get('name'),
+        $data = array(  "name"     => Input::get('name'),
             "username" => Input::get('username'),
-            "email"    => Input::get('email')
-        ));
+            "email"    => Input::get('email'));
+
+        if(Input::get('password')) {
+            $data['password'] = md5(Input::get('password'));
+        }
+
+        $this->userRepo->updateWithId($userId, $data);
+
+
 
         $this->topbettaUserRepository->updateWithId($user->topbettauser->id, array(
             "first_name" => Input::get('first-name'),
@@ -162,7 +168,7 @@ class UsersController extends Controller
 			"country" => Input::get('country'),
 			"postcode" => Input::get('postcode'),
 			"heard_about" => Input::get('heard_about_us'),
-			"bet_limit" => INput::get('bet_limit')
+			"bet_limit" => Input::get('bet_limit')
         ));
 
         try {
