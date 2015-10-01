@@ -193,7 +193,7 @@ class BetResultService {
         $this->setBetResulted($bet);
 
         //send bet to risk
-        \TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
+        \TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet, $amount);
 
         //send bet to dashboard
         if( $transaction ) {

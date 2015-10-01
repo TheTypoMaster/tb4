@@ -7,7 +7,7 @@ use Log;
 class RiskManagerAPI
 {
 
-    public static function sendBetResult($betResultData)
+    public static function sendBetResult($betResultData, $amount = 0)
     {
         // we only want to send to risk manager for production
 //         if (app()->environment() != Config::get('riskmanager.productionHost')) {
@@ -17,7 +17,7 @@ class RiskManagerAPI
         $bet = array(
             'ReferenceId' => $betResultData->id,
             'Status' => BetResultStatus::where('id', $betResultData->bet_result_status_id)->value('name'),
-            'Amount' => $betResultData->resultAmount,
+            'Amount' => $amount,
             'ResultDate' => \Carbon\Carbon::now()
         );
 
