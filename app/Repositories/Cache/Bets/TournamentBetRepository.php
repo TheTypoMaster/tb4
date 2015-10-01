@@ -267,6 +267,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             'productCode'      => $bet->product ? $bet->product->productProviderMatch ? $bet->product->productProviderMatch->provider_product_name : null : null,
             'event_status_id'    => $bet->selection->first()->market->event->event_status_id,
             'tournament_ticket_id' => $bet->tournament_ticket_id,
+            'tournament_id'     => $bet->ticket->tournament_id,
         );
 
         if (($bet->type->name == BetTypeRepositoryInterface::TYPE_WIN || $bet->type->name == BetTypeRepositoryInterface::TYPE_PLACE) && $bet->selection->first()->result) {
