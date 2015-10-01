@@ -109,6 +109,8 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             $this->addToDateBets($resource->getModel(), $model->user_id);
 
             $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
+
+            $this->fireEvents($resource);
         }
 
         return $model;
