@@ -100,7 +100,19 @@ class UserPermissionsController extends Controller {
 
         $groups = Input::get("groups", array());
 
+		$status = Input::get('status');
+
         $user = Sentry::findUserById($id);
+
+		$current_status = $user->block;
+
+		if($status == '1') {
+			if($current_status == '0') {
+				$user->block = '1';
+			} else if($current_status == '1') {
+				$user->block = '0';
+			}
+		}
 
         $user->permissions = $permissions;
 
