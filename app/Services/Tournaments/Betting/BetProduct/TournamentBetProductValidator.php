@@ -26,7 +26,9 @@ class TournamentBetProductValidator extends BetProductValidator {
     {
         $this->competition = $competition;
 
-        $this->userProducts = $this->competition->products;
+        $this->userProducts = $this->competition->products->filter(function ($v) {
+            return !$v->is_fixed_odds;
+        });
 
         return $this;
     }
