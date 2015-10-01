@@ -16,6 +16,8 @@ class MeetingSocketUpdate extends RacingSocketUpdate {
 
     const CHANNEL_PREFIX = 'meeting_';
 
+    public $queue = 'meeting-socket';
+
     public function __construct($data)
     {
         $this->channel = self::CHANNEL_PREFIX . $data['id'];

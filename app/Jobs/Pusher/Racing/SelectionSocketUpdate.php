@@ -15,6 +15,8 @@ class SelectionSocketUpdate extends RaceSocketUpdate {
 
     protected $event = 'selection_update';
 
+    public $queue = 'selection-socket';
+
     public function handle(\Pusher $pusher)
     {
         $data = array("id" => $this->data['id'], "selections" => array());
