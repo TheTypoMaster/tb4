@@ -35,12 +35,12 @@
         {!! Form::checkbox('identity_verified', 1, '') !!}
     </div>
 
-    <div class="form-group">
+    <div class="form-group" id="doc_type">
         {!! Form::label('doc_type', 'Primary Doc Type') !!}
         {!! Form::select('doc_type', [0 => 'Birth Certificate', 1 => 'Citizenship Certificate', 2 => 'Passport', 3 => 'Driver\'s License', 4 => 'Veda'], $topbetta_user_record->identity_doc, array('class' => 'form-control', 'placeholder' => 'select')) !!}
     </div>
 
-    <div class="form-group">
+    <div class="form-group" id="doc_id">
         {!! Form::label('doc_id', 'Primary Doc ID') !!}
         {!! Form::text('doc_id', $topbetta_user_record->identity_doc_id, array('class' => 'form-control', 'placeholder' => 'Primary Doc ID')) !!}
     </div>
@@ -112,6 +112,11 @@
         {!! Form::select('heard_about_us', ['Australia\'s Top Punter' => 'Australia\'s Top Punter', 'Friend' => 'Friend', 'Word of Mouth' => 'Word of Mouth', 'Advertisement' => 'Advertisement', 'TV Advertisement' => 'TV Advertisement', 'Radio Advertisement' => 'Radio Advertisement', 'Internet' => 'Internet',
         'Promotion' => 'Promotion', 'Other' => 'Other'], $topbetta_user_record->heard_about, array('class' => 'form-control', 'placeholder' => 'Select')) !!}
     </div>
+
+    <div class="form-group">
+        {!! Form::label('bet_limit', 'Bet Limit') !!}
+        {!! Form::input('text', 'bet_limit', $topbetta_user_record->bet_limit, array('class' => 'form-control', 'placeholder' => 'Select')) !!}
+    </div>
 </div>
 
 <div class="col-lg-12">
@@ -125,3 +130,22 @@
         {{ implode('', $errors->all('<li class="error">:message</li>')) }}
     </ul>
 @endif
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#doc_type').hide();
+        $('#doc_id').hide();
+
+        $('#identity_verified').click(function () {
+            if ($('#identity_verified').is(':checked')) {
+                $('#doc_type').show();
+                $('#doc_id').show();
+            } else {
+                $('#doc_type').hide();
+                $('#doc_id').hide();
+            }
+        });
+
+    });
+</script>

@@ -161,7 +161,8 @@ class UsersController extends Controller
 			"state" => Input::get('state'),
 			"country" => Input::get('country'),
 			"postcode" => Input::get('postcode'),
-			"heard_about" => Input::get('heard_about_us')
+			"heard_about" => Input::get('heard_about_us'),
+			"bet_limit" => INput::get('bet_limit')
         ));
 
         try {
