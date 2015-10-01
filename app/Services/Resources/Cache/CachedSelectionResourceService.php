@@ -30,7 +30,7 @@ class CachedSelectionResourceService extends CachedResourceService {
     {
         $selections = $this->selectionRepository->getSelectionsForRace($race);
 
-        if (!$selections) {
+        if (!$selections || !$selections->count()) {
             return $this->resourceService->getSelectionsForRace($race);
         }
 
