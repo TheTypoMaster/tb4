@@ -81,4 +81,15 @@ class RiskCompetitionController extends Controller {
         return $this->apiResponse->success($this->formatCompetitionPayload($competition));
     }
 
+    public function disableAllFixedOdds()
+    {
+        try {
+            $this->competitionService->disableAllFixedOdds();
+        } catch (\Exception $e) {
+            return $this->apiResponse->failed($e->getMessage());
+        }
+
+        return $this->apiResponse->success(array('Done'));
+    }
+
 }
