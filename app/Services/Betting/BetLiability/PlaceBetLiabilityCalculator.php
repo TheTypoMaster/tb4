@@ -11,9 +11,13 @@ namespace TopBetta\Services\Betting\BetLiability;
 
 class PlaceBetLiabilityCalculator extends AbstractLiabilityCalculator {
 
-    public function getSelectionPrice($selection)
+    public function getSelectionPrice($selection, $product)
     {
-        return object_get($selection['selection']->price, 'place_odds', 0);
+        if ($product->is_fixed_odds) {
+            return $selection['place_dividend'];
+        }
+
+        return object_get($selection['selection']->productPrice($product->id), 'place_odds', 0);
     }
 
     public function getMaxWinners($market)
@@ -29,6 +33,6 @@ class PlaceBetLiabilityCalculator extends AbstractLiabilityCalculator {
 
     public function getBetLiability($bet)
     {
-        return $bet->bet_amount * object_get($bet->selection->first()->price, 'place_odds', 0) - $bet->bet_freebet_amount;
+        return $bet->bet_amount * object_get($bet->selection->first()->productPrice($bet->bet_product_id), 'place_odds', 0) - $bet->bet_freebet_amount;
     }
 }

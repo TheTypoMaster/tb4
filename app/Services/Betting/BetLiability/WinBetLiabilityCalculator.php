@@ -11,9 +11,12 @@ namespace TopBetta\Services\Betting\BetLiability;
 
 class WinBetLiabilityCalculator extends AbstractLiabilityCalculator implements LiabilityCalculator {
 
-    public function getSelectionPrice($selection)
+    public function getSelectionPrice($selection, $product)
     {
-        return object_get($selection['selection']->price, 'win_odds', 0);
+        if ($product->is_fixed_odds) {
+            return $selection['win_dividend'];
+        }
+        return object_get($selection['selection']->productPrice($product->id), 'win_odds', 0);
     }
 
     public function getMaxWinners($market)
@@ -23,6 +26,6 @@ class WinBetLiabilityCalculator extends AbstractLiabilityCalculator implements L
 
     public function getBetLiability($bet)
     {
-        return $bet->bet_amount * object_get($bet->selection->first()->price, 'win_odds', 0) - $bet->bet_freebet_amount;
+        return $bet->bet_amount * object_get($bet->selection->first()->productPrice($bet->bet_product_id), 'win_odds', 0) - $bet->bet_freebet_amount;
     }
 }
