@@ -60,7 +60,7 @@ class DbSelectionResultRepository extends BaseEloquentRepository implements Sele
             ->join('tbdb_market', 'tbdb_market.id', '=', 'tbdb_selection.market_id')
             ->where('event_id', $eventId)
             ->orderBy('position')
-            ->get(array('tbdb_selection_result.*'));
+            ->get(array('tbdb_selection_result.*', 'tbdb_selection.name', 'tbdb_selection.number'));
     }
 
     public function getResultsForEventByPosition($eventId, $position)
