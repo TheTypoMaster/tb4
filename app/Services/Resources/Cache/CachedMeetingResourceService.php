@@ -73,11 +73,11 @@ class CachedMeetingResourceService extends CachedResourceService {
 
     public function getMeeting($id, $withRaces = false)
     {
-        $model = $this->meetingRepository->getMeeting($id);
+      //  $model = $this->meetingRepository->getMeeting($id);
 
-        if (!$model) {
+     //   if (!$model) {
             return $this->resourceService->getMeeting($id, $withRaces);
-        }
+     //   }
 
         $races = $this->raceResourceService->getRacesForMeeting($model->id);
 

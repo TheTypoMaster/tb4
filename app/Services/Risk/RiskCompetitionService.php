@@ -55,4 +55,20 @@ class RiskCompetitionService {
         return $competition;
     }
 
+    private function setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag)
+    {
+        $competition = $this->competitionRepository->setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag);
+
+        //get events explicitly using get() as events seems to be already be an attribute on Eloquent Models
+        //$events = $competition->events()->get();
+        $events = $this->competitionRepository->getFixedOddsEventsForCompetition($competitionId);
+
+        foreach($events as $event)
+        {
+            $this->eventRepository->setFixedOddsFlagForEvent($event->external_event_id, $fixedOddsFlag);
+        }
+
+        return $competition;
+    }
+
 }

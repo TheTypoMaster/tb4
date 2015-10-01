@@ -49,9 +49,14 @@ Route::group(array('prefix' => '/api/backend/v1', 'before' => 'basic.once'), fun
 
     Route::put('risk-show-event/{event}', 'Backend\RiskEventsController@showEvent');
     Route::put('risk-hide-event/{event}', 'Backend\RiskEventsController@hideEvent');
-
     Route::put('risk-show-competition/{competition}', 'Backend\RiskCompetitionController@showCompetition');
     Route::put('risk-hide-competition/{competition}', 'Backend\RiskCompetitionController@hideCompetition');
+
+    // Fixed Odds
+    Route::put('risk-enable-fixed-event/{event}', 'Backend\RiskEventsController@enableFixedOdds');
+    Route::put('risk-disable-fixed-event/{event}', 'Backend\RiskEventsController@disableFixedOdds');
+    Route::put('risk-enable-fixed-competition/{competition}', 'Backend\RiskCompetitionController@enableFixedOdds');
+    Route::put('risk-disable-fixed-competition/{competition}', 'Backend\RiskCompetitionController@disableFixedOdds');
 
     Route::post('meeting-products', 'Backend\ProductController@setMeetingProducts');
     Route::post('user-products', 'Backend\ProductController@setUserProducts');
