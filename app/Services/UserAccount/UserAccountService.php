@@ -12,6 +12,7 @@ use TopBetta\Services\Email\ThirdPartyEmailServiceInterface;
 use TopBetta\Services\Exceptions\InvalidFormatException;
 use TopBetta\Services\UserAccount\Exceptions\AccountExistsException;
 use TopBetta\Services\Validation\TournamentUserValidator;
+use TopBetta\Services\Validation\UserFullValidator;
 use Validator;
 use Hash;
 use Mail;
@@ -50,6 +51,10 @@ class UserAccountService {
      * @var UserAuditService
      */
     private $auditService;
+    /**
+     * @var UserFullValidator
+     */
+    private $fullValidator;
 
 
     /**
@@ -63,13 +68,14 @@ class UserAccountService {
                          UserRepositoryInterface $basicUser,
                          UserTopbettaRepositoryInterface $fullUser,
                          ThirdPartyEmailServiceInterface $emailService,
-                         UserAuditService $auditService)
+                         UserAuditService $auditService, UserFullValidator $fullValidator)
     {
         $this->basicUser = $basicUser;
         $this->fullUser = $fullUser;
         $this->betsource = $betsource;
         $this->emailService = $emailService;
         $this->auditService = $auditService;
+        $this->fullValidator = $fullValidator;
     }
 
 
@@ -82,6 +88,12 @@ class UserAccountService {
      */
     public function createTopbettaUserAccount($input)
     {
+        //auto activate the user
+        $input['auto_activate'] = true;
+
+        //validate full user before doin anything else
+        $this->fullValidator->validate($input, $this->fullValidator->rules);
+
         // create the basic user record
         $basic = $this->createBasicAccount($input);
 

@@ -8,6 +8,7 @@
 
 namespace TopBetta\Services\Risk;
 
+use Log;
 
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
@@ -49,6 +50,30 @@ class RiskEventService {
         if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
             $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
         }
+
+        return $event;
+    }
+
+    public function enableFixedOdds($eventId)
+    {
+        $event = $this->eventRepository->setFixedOddsFlagForEvent($eventId, 1);
+
+        $this->competitionRepository->setFixedOddsFlagForCompetition($event->competition->first()->external_event_group_id, 1);
+
+        //reload the competition to save the changes
+        $event->load('competition');
+
+        return $event;
+    }
+
+    public function disableFixedOdds($eventId)
+    {
+        $event = $this->eventRepository->setFixedOddsFlagForEvent($eventId, 0);
+
+ //       $competitionId = $event->competition->first()->external_event_id;
+  //      if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
+   //         $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
+  //      }
 
         return $event;
     }

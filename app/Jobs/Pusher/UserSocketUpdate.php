@@ -13,7 +13,7 @@ class UserSocketUpdate extends PusherJob {
 
     public $queue = 'user-socket';
 
-    const CHANNEL_PREFIX = 'user_';
+    const CHANNEL_PREFIX = 'private-user_';
 
     public function __construct($data)
     {

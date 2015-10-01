@@ -109,6 +109,8 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
             $this->addToDateBets($resource->getModel(), $model->user_id);
 
             $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
+
+            $this->fireEvents($resource);
         }
 
         return $model;
@@ -174,25 +176,24 @@ class BetRepository extends CachedResourceRepository implements BetRepositoryInt
 
     public function makeAndGetBetResource($model)
     {
-        if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
 
-            $resource = $this->createResource(new BetModel($this->buildResourceArrayFromModel($model)));
-            $resource = $this->attachOdds($resource);
+        $resource = $this->createResource(new BetModel($this->buildResourceArrayFromModel($model)));
+        $resource = $this->attachOdds($resource);
 
-            if ($model->status->name == BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
-                $this->addToActiveBets($resource->getModel(), $model->user_id);
-            }
-
-            $this->addToDateBets($resource->getModel(), $model->user_id);
-
-            $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
-
-            $this->fireEvents($resource);
-
-            return $resource;
+        if ($model->status->name == BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED) {
+            $this->addToActiveBets($resource->getModel(), $model->user_id);
         }
 
-        return null;
+        if ( $model->event->start_date >= Carbon::now()->startOfDay()) {
+            $this->addToDateBets($resource->getModel(), $model->user_id);
+        }
+
+        $this->addToEventBets($resource->event_id, $model->user_id,  $resource->getModel());
+
+        $this->fireEvents($resource);
+
+        return $resource;
+
     }
 
     public function storeActiveBetsCollection($user, $bets)

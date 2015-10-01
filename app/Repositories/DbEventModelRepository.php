@@ -34,6 +34,21 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
         return $event;
     }
 
+    public function setFixedOddsFlagForEvent($eventId, $fixedOddsFlag)
+    {
+        // $event = $this->model->findOrFail($eventId);
+
+        $event = $this->model->where('external_event_id', $eventId)->first();
+
+        if(!$event) Throw new ModelNotFoundException;
+
+        $event->fixed_odds_enabled = $fixedOddsFlag;
+
+        $event->save();
+
+        return $event;
+    }
+
     public function getAllSportEvents($paged = false)
     {
         $model = $this->model

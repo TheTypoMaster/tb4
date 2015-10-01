@@ -23,4 +23,9 @@ class DbMeetingVenueRepository extends BaseEloquentRepository implements Meeting
     {
         return $this->model->orderBy('name')->get();
     }
+
+    public function getByName($name)
+    {
+        return $this->model->where('name', $name)->first();
+    }
 }

@@ -28,6 +28,8 @@ class MeetingResource extends AbstractEloquentResource {
         "railPosition"  => 'rail_position',
         "nextRaceDate"  => "nextRaceDate",
         "nextRaceNumber" => "nextRaceNumber",
+        "ordering" => "ordering",
+        "fixed_odds_enabled" => "fixed_odds_enabled",
     );
 
 
@@ -49,6 +51,17 @@ class MeetingResource extends AbstractEloquentResource {
     public function setRaces($races)
     {
         $this->relations['races'] = $races;
+    }
+
+    public function setOrdering($ordering)
+    {
+        $this->model->ordering = $ordering;
+        return $this;
+    }
+
+    public function getOrdering()
+    {
+        return $this->model->ordering ? : 0;
     }
 
     /**
@@ -133,6 +146,19 @@ class MeetingResource extends AbstractEloquentResource {
     {
         if (isset($this->relations[$relation])) {
             unset($this->relations[$relation]);
+        }
+    }
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        //set custom ordering for the meeting
+        $repository = \App::make('TopBetta\Repositories\DbMeetingVenueRepository');
+        $venue = $repository->getByName($this->model->name);
+
+        if ($venue) {
+            $this->setOrdering($venue->ordering);
         }
     }
 }

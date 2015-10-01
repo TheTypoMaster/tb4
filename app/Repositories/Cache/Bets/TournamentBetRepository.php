@@ -118,6 +118,8 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             $resource = $this->attachOdds($resource);
 
             $this->addBetToTournamentCollection($model->ticket->user_id, $model->ticket->tournament, $resource->getModel());
+
+            $this->fireEvents($resource);
         }
 
         return $model;
@@ -131,6 +133,8 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             $resource = $this->attachOdds($resource);
 
             $this->addBetToTournamentCollection($model->ticket->user_id, $model->ticket->tournament, $resource->getModel());
+
+            $this->fireEvents($resource);
 
             return $resource;
         }

@@ -11,6 +11,8 @@ interface EventModelRepositoryInterface
 {
     public function setDisplayFlagForEvent($eventId, $displayFlag);
 
+    public function setFixedOddsFlagForEvent($eventId, $fixedOddsFlag);
+
     public function getAllSportEvents($paged = false);
 
     public function searchSportEvents($term, $paged = false);
