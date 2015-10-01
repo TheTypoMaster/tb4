@@ -67,6 +67,9 @@ class RiskCompetitionService {
     }
 
 
+    /*
+     * If a competition's fixed odds are turned on or off then all the events are also set the same
+     */
     private function setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag)
     {
         $competition = $this->competitionRepository->setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag);
