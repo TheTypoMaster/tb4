@@ -15,6 +15,7 @@ class BetTypeModel extends Eloquent {
     protected $table = 'tbdb_bet_type';
     protected $guarded = array();
 
+
     public function isExotic()
     {
         return in_array($this->name, array(
