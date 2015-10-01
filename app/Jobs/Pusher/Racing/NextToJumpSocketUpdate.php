@@ -12,4 +12,6 @@ namespace TopBetta\Jobs\Pusher\Racing;
 class NextToJumpSocketUpdate extends RacingSocketUpdate {
 
     protected $channel = 'racing_n2j';
+
+    public $queue = 'racing-n2j';
 }

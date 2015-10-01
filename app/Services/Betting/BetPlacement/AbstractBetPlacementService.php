@@ -14,6 +14,7 @@ use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Accounting\UserAccountBalanceService;
 use TopBetta\Services\Betting\BetLimitService;
+use TopBetta\Services\Betting\BetLimitValidation\BetLimitValidationService;
 use TopBetta\Services\Betting\BetSelection\AbstractBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
@@ -57,7 +58,7 @@ abstract class AbstractBetPlacementService {
                                 BetTransactionService $betTransactionService,
                                 BetRepositoryInterface $betRepository,
                                 BetTypeRepositoryInterface $betTypeRepository,
-                                BetLimitService $betLimitService,
+                                BetLimitValidationService $betLimitService,
                                 AbstractRiskBetService $riskBetService)
     {
         $this->betRepository = $betRepository;

@@ -102,6 +102,13 @@ class RaceResourceService {
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
+        if(!$race->model->fixed_odds_enabled){
+            $products = $products->filter(function ($v) {
+
+                return !$v->is_fixed_odds == '1';
+            });
+        }
+
         $race->setProducts($products);
     }
 

@@ -93,7 +93,7 @@ abstract class AbstractLiabilityCalculator implements LiabilityCalculator {
         //calculate the liability for the current bet
         foreach ($selections as $selection) {
             $marketLiabilities->put($selection['selection']->id, $marketLiabilities->get($selection['selection']->id, 0) +
-                (int)($betData['amount'] * $this->getSelectionPrice($selection)));
+                (int)($betData['amount'] * $this->getSelectionPrice($selection, $betData['product'])));
         }
 
         //get the max liability for the bet selections
@@ -154,7 +154,7 @@ abstract class AbstractLiabilityCalculator implements LiabilityCalculator {
         return $this->bets->filter(function ($v) use ($market) { return $v->selection->first()->market_id == $market->id; });
     }
 
-    abstract protected function getSelectionPrice($selection);
+    abstract protected function getSelectionPrice($selection, $product);
 
     abstract protected function getBetLiability($bet);
 

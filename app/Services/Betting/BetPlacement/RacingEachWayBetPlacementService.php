@@ -11,6 +11,7 @@ namespace TopBetta\Services\Betting\BetPlacement;
 use TopBetta\Repositories\Contracts\BetRepositoryInterface;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetLimitService;
+use TopBetta\Services\Betting\BetLimitValidation\BetLimitValidationService;
 use TopBetta\Services\Betting\BetProduct\BetProductValidator;
 use TopBetta\Services\Betting\BetSelection\RacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
@@ -30,7 +31,7 @@ class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementServic
                                 BetTransactionService $betTransactionService,
                                 BetRepositoryInterface $betRepository,
                                 BetTypeRepositoryInterface $betTypeRepository,
-                                BetLimitService $betLimitService,
+                                BetLimitValidationService $betLimitService,
                                 RiskRacingWinPlaceBetService $riskBetService)
     {
         parent::__construct($betSelectionService, $betTransactionService, $betRepository, $betTypeRepository, $betLimitService, $riskBetService);
@@ -69,20 +70,17 @@ class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementServic
      */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
-        foreach($selections as $selection) {
-            //check limits for both win and place
-            foreach(array(BetTypeRepositoryInterface::TYPE_WIN, BetTypeRepositoryInterface::TYPE_PLACE) as $type) {
-                $exceedLimit = $this->betLimitService->getWinPlaceBetLimitExceeded(
-                    $user,
-                    $amount,
-                    $selection['selection'],
-                    $this->betTypeRepository->getBetTypeByName($type)->id
-                );
+        //check limits for both win and place
+        foreach(array(BetTypeRepositoryInterface::TYPE_WIN, BetTypeRepositoryInterface::TYPE_PLACE) as $type) {
+            $betLimitData = array(
+                'amount' => $amount,
+                'user' => $user->id,
+                'bet_type' => $this->betTypeRepository->getBetTypeByName($type),
+                'selections' => $selections,
+                'product' => $this->{$type.'Product'},
+            );
 
-                if ($exceedLimit) {
-                    throw new BetLimitExceededException(array('betValueLimit' => $exceedLimit), $selection);
-                }
-            }
+            $this->betLimitService->validateBet($betLimitData);
         }
     }
 

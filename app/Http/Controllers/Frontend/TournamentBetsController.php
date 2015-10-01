@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use TopBetta\Http\Requests;
 use TopBetta\Http\Controllers\Controller;
 use TopBetta\Resources\EloquentResourceCollection;
+use TopBetta\Services\Betting\BetProduct\Exceptions\ProductNotAvailableException;
 use TopBetta\Services\Betting\Exceptions\BetPlacementException;
 use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Resources\Tournaments\TournamentBetResourceService;
@@ -88,6 +89,8 @@ class TournamentBetsController extends Controller
             return $this->response->failed(array($e->getMessage(), "selection" => $e->getSelection() ? $e->getSelection()->name : null) );
         } catch ( TournamentBetLimitExceededException $e ) {
             return $this->response->failed($e->getMessage());
+        } catch (ProductNotAvailableException $e) {
+            return $this->response->failed($e->getMessage(), 400);
         } catch ( \Exception $e ) {
             \Log::error($e->getMessage());
             \Log::error($e->getTraceAsString());
