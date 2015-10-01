@@ -94,7 +94,7 @@ class PopulateSportsCache extends Command
 
                         $this->eventRepository->makeCacheResource($event);
 
-                        $markets = $event->markets->load(array('selections', 'selections.price', 'selections.result', 'selections.team', 'selections.player'));
+                        $markets = $event->markets->load(array('selections', 'selections.price', 'selections.result', 'selections.team', 'selections.player', 'markettype.markettypegroup'));
                         $this->marketRepository->storeMarketsForEvent($markets, $event);
                      }
                 }
