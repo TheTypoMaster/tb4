@@ -15,18 +15,18 @@
 				<div class="col-lg-12">
 					<div class="well well-sm">
 						<span><b>Account Balance:</b> ${{ number_format($user->accountTransactions()->sum('amount') / 100, 2) }}</span>
-					</div>	
-				</div>				
+					</div>
+				</div>
 			</div>
 			<div class="tab-pane fade" id="free-credit-transactions-tab">
 				<h4>Free Credit/Tournament Transactions</h4>
 				<div class="col-lg-12">
 					<div class="well well-sm">
 						<span><b>Free Credit Balance:</b> ${{ number_format($user->freeCreditTransactions()->sum('amount') / 100, 2) }}</span>
-					</div>	
-				</div>				
+					</div>
+				</div>
 			</div>
-		</div>		
+		</div>
 
 	</div>
 	<!-- /.col-lg-12 -->

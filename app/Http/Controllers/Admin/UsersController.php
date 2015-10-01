@@ -100,13 +100,14 @@ class UsersController extends Controller
 	public function edit($id)
 	{
 		$user = $this->user->find($id);
+		$topbetta_user_record = $user->topbettauser()->first();
 
 		if (is_null($user)) {
 			// TODO: flash message user not found
 			return Redirect::route('admin.users.index');
 		}
 
-		return View::make('admin.users.edit', compact('user'))
+		return View::make('admin.users.edit', compact('user', 'topbetta_user_record'))
 						->with('active', 'profile');
 	}
 
@@ -142,6 +143,14 @@ class UsersController extends Controller
             "first_name" => Input::get('first-name'),
             "last_name"  => Input::get('last-name'),
             "msisdn"     => Input::get('mobile'),
+			"identity_doc"   => Input::get('doc_type'),
+		    "identity_doc_id" => Input::get('doc_id'),
+		    "bsb_number"  => Input::get('bsb_number'),
+			"bank_account_number" => Input::get('bank_account_number'),
+			"account_name" => Input::get('bank_account_name'),
+			"bank_name" => Input::get('Bank_name'),
+			"source" => Input::get('source'),
+			"self_exclusion_date" => Input::get('exclusion_date')
         ));
 
         try {
