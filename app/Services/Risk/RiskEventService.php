@@ -55,9 +55,9 @@ class RiskEventService {
 
     public function enableFixedOdds($eventId)
     {
-        $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 1);
+        $event = $this->eventRepository->setFixedOddsFlagForEvent($eventId, 1);
 
-        $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->external_event_group_id, 1);
+      //  $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->external_event_group_id, 1);
 
         //reload the competition to save the changes
         $event->load('competition');
@@ -67,12 +67,12 @@ class RiskEventService {
 
     public function disableFixedOdds($eventId)
     {
-        $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 0);
+        $event = $this->eventRepository->setFixedOddsFlagForEvent($eventId, 0);
 
-        $competitionId = $event->competition->first()->external_event_id;
-        if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
-            $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
-        }
+ //       $competitionId = $event->competition->first()->external_event_id;
+  //      if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
+   //         $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
+  //      }
 
         return $event;
     }
