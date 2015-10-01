@@ -12,15 +12,18 @@ namespace TopBetta\Resources;
 class SmallMeetingResource extends MeetingResource {
 
     protected $attributes = array(
-        "id"            => 'id',
-        "name"          => 'name',
-        "state"         => 'state',
-        "track"         => 'track',
-        "weather"       => 'weather',
-        "type"          => 'type_code',
-        'startDate'     => 'start_date',
-        "nextRaceDate"  => "nextRaceDate",
+        "id"             => 'id',
+        "name"           => 'name',
+        "state"          => 'state',
+        "track"          => 'track',
+        "weather"        => 'weather',
+        "type"           => 'type_code',
+        'startDate'      => 'start_date',
+        "grade"          => 'meeting_grade',
+        "country"       => "country",
+        "nextRaceDate"   => "nextRaceDate",
         "nextRaceNumber" => "nextRaceNumber",
+        "ordering"      => "ordering",
     );
 
     /**
