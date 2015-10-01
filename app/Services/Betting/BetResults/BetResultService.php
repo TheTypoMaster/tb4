@@ -190,10 +190,10 @@ class BetResultService {
         }
 
         //set the bet to resulted state
-        $this->setBetResulted($bet);
+        $bet = $this->setBetResulted($bet);
 
         //send bet to risk
-        \TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet);
+        \TopBetta\Helpers\RiskManagerAPI::sendBetResult($bet, $amount);
 
         //send bet to dashboard
         if( $transaction ) {
@@ -254,7 +254,7 @@ class BetResultService {
     public function setBetResulted($bet)
     {
         //set resulted flag and update status
-        return $this->betRepository->updateWithId($bet->id, array(
+        return $this->betRepository->updateWithIdAndReturnModel($bet->id, array(
             'bet_result_status_id' => $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PAID)->id,
             'resulted_flag' => true
         ));

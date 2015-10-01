@@ -62,4 +62,10 @@ class MarketResource extends AbstractEloquentResource {
 
         $this->relations['selections'] = $selections->values();
     }
+
+    public function initialize()
+    {
+        $this->model->load('markettype.markettypegroup');
+        parent::initialize();
+    }
 }
