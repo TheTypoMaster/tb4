@@ -362,6 +362,9 @@ Route::group(array('prefix' => '/api/v1', 'after' => 'topbetta_secure_links'), f
  **********************************************************************************************************************/
 Route::group(array('prefix' => '/api/v2', 'before' => 'not.excluded'), function(){
 
+    // --- PUSHER AUTH ---
+    Route::post('pusher/auth', 'Frontend\PusherAuthenticationController@authenticate');
+
     // --- RACING ROUTES ---
     Route::resource('meetings', 'Frontend\MeetingsController', array("only" => array('index', 'show')));
     Route::get('combined/meetings/races', 'Frontend\MeetingsController@getMeetingsWithRaces');
