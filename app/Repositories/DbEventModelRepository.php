@@ -42,7 +42,7 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
 
         if(!$event) Throw new ModelNotFoundException;
 
-        $event->fix_odds_enabled = $fixedOddsFlag;
+        $event->fixed_odds_enabled = $fixedOddsFlag;
 
         $event->save();
 
