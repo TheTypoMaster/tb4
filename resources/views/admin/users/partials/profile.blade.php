@@ -20,7 +20,7 @@
 
     <div class="form-group" id="doc_type">
         {!! Form::label('doc_type', 'Primary Doc Type') !!}
-        {!! Form::select('doc_type', [0 => 'Birth Certificate', 1 => 'Citizenship Certificate', 2 => 'Passport', 3 => 'Driver\'s License', 4 => 'Veda'], $topbetta_user_record->identity_doc, array('class' => 'form-control', 'placeholder' => 'select')) !!}
+        {!! Form::select('doc_type', ['birth' => 'Birth Certificate', 'citizenship' => 'Citizenship Certificate', 'passport' => 'Passport', 'driver' => 'Driver\'s License', 'veda' => 'Veda'], $topbetta_user_record->identity_doc, array('class' => 'form-control', 'placeholder' => 'select')) !!}
     </div>
 
     <div class="form-group" id="doc_id">
