@@ -27,7 +27,59 @@
 		{!! Form::label('mobile', 'Mobile:') !!}
 		{!! Form::text('mobile', $user->topbettaUser->msisdn, array('class' => 'form-control', 'placeholder' => 'Mobile')) !!}
 	</div>				
-</div>	
+</div>
+
+<div class="col-lg-6">
+	<div class="form-group">
+		{!! Form::label("identity_verified", 'Check this once the identity of a user has been verified') !!}
+		{!! Form::checkbox('identity_verified', 1, '') !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('doc_type', 'Primary Doc Type') !!}
+		{!! Form::select('doc_type', [0 => 'Birth Certificate', 1 => 'Citizenship Certificate', 2 => 'Passport', 3 => 'Driver\'s License', 4 => 'Veda'], $topbetta_user_record->identity_doc, array('class' => 'form-control', 'placeholder' => 'select')) !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('doc_id', 'Primary Doc ID') !!}
+		{!! Form::text('doc_id', $topbetta_user_record->identity_doc_id, array('class' => 'form-control', 'placeholder' => 'Primary Doc ID')) !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('bsb_number', 'BSB Number') !!}
+		{!! Form::text('bsb_number', $topbetta_user_record->bsb_number, array('class' => 'form-control', 'placeholder' => 'BSB Number')) !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('bank_account_number', 'Bank Account Number') !!}
+		{!! Form::text('bank_account_number', $topbetta_user_record->bank_account_number, array('class' => 'form-control', 'placeholder' => 'Bank Account Number')) !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('bank_account_name', 'Account Name') !!}
+		{!! Form::text('bank_account_name', $topbetta_user_record->account_name, array('class' => 'form-control', 'placeholder' => 'Account Name')) !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('Bank_name', 'Bank Name') !!}
+		{!! Form::text('Bank_name', $topbetta_user_record->bank_name, array('class' => 'form-control', 'placeholder' => 'Bank Name')) !!}
+	</div>
+
+	<div class="form-group">
+		{!! Form::label('source', 'Source') !!}
+		{!! Form::text('source', $topbetta_user_record->source, array('class' => 'form-control', 'placeholder' => 'Source')) !!}
+	</div>
+
+	<?php
+		$exclusion_date = \Carbon\Carbon::parse($topbetta_user_record->self_exclusion_date);
+	?>
+	<div class="form-group">
+		{!! Form::label('exclusion_date', 'Exclusion Date') !!}
+		{!! Form::input('date', 'exclusion_date', $exclusion_date->format('Y-m-d'), array('class' => 'form-control', 'placeholder' => 'Mobile')) !!}
+	</div>
+
+</div>
+
 <div class="col-lg-12">
 	<div class="form-group">
 		{!! Form::submit('Update', array('class' => 'btn btn-info')) !!}		

@@ -91,7 +91,7 @@ class TournamentBetsController extends Controller
         } catch ( \Exception $e ) {
             \Log::error($e->getMessage());
             \Log::error($e->getTraceAsString());
-            return $this->response->failed($e->getMessage());
+            return $this->response->failed("Unknown error");
         }
 
         return $this->response->success(

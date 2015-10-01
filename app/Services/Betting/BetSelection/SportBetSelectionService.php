@@ -37,7 +37,7 @@ class SportBetSelectionService extends AbstractBetSelectionService {
             throw new BetSelectionException($selection, 'Market is not open for betting');
         }
 
-        if ( ! $this->eventService->eventPastStartTime($selection->market->event) ) {
+        if ($this->eventService->eventPastStartTime($selection->market->event) ) {
             throw new BetSelectionException($selection, 'Event is past start time');
         }
 

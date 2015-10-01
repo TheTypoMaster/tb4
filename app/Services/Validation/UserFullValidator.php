@@ -30,7 +30,7 @@ class UserFullValidator extends Validator {
         'dob_month' => 'max:2',
         'dob_year' => 'max:4',
         'msisdn' => 'numeric|max:15',
-        'phone_number' => 'numeric|max:15',
+        'phone_number' => 'numeric|max:999999999999999',
         'promo_code' => 'alphadash|max:100',
         'heard_about' => 'alphadash|max:200',
         'heard_about_info' => 'alphadash|max:200',
