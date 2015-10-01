@@ -245,7 +245,7 @@ class TournamentBetRepository extends CachedResourceRepository implements Tourna
             'freeCreditAmount' => $bet->bet_freebet_amount,
             'selection_id'      => $bet->selection->first()->id,
             'selection_name'    => $bet->selection->first()->name,
-            'selectionString'  => $bet->selection_string,
+            'selection_string'  => $bet->selection_string,
             'selection_number'  => $bet->selection->first()->number,
             'market_name'       => $bet->selection->first()->market->name,
             'market_id'         => $bet->selection->first()->market->id,
