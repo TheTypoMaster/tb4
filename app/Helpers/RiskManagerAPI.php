@@ -158,4 +158,27 @@ class RiskManagerAPI
 
     }
 
+    public function sendRunnerScratchedStatus($runnerScratched)
+    {
+        $responseJSON = CurlRequestHelper::curlRequest(Config::get('riskmanager.RISK_FEED_API'),
+            Config::get('riskmanager.RISK_RACE_DATA_URI'),
+            'POST',
+            json_encode($runnerScratched));
+
+        $response = json_decode($responseJSON);
+
+        if (!$response) {
+            return false;
+        }
+
+        Log::debug('RiskManagerAPI (sendRunnerScratchedStatus): Response - '.print_r($response,true));
+        if ($response->http_status_code == 200) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+
+    }
 }
