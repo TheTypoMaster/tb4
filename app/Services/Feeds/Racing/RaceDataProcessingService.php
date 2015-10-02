@@ -512,7 +512,7 @@ class RaceDataProcessingService {
                     $this->events->updateOrCreate($existingRaceDetails, 'external_event_id');
 
                     // notify risk
-                    $this->riskhelper->sendRunnerScratchedStatus(array('RunnerScratched' => $existingRaceDetails['external_event_id']));
+                    $this->riskhelper->sendRunnerScratchedStatus(array('RunnerScratched' => $runnerDetails));
 
                 }else{
                     $runnerDetails['selection_status_id'] = '1';
