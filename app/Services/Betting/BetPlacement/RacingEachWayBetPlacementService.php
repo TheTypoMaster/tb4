@@ -13,6 +13,7 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Services\Betting\BetLimitService;
 use TopBetta\Services\Betting\BetLimitValidation\BetLimitValidationService;
 use TopBetta\Services\Betting\BetProduct\BetProductValidator;
+use TopBetta\Services\Betting\BetProduct\FixedOddsProductValidator;
 use TopBetta\Services\Betting\BetSelection\RacingBetSelectionService;
 use TopBetta\Services\Betting\BetTransaction\BetTransactionService;
 use TopBetta\Services\Betting\Exceptions\BetLimitExceededException;
@@ -95,12 +96,18 @@ class RacingEachWayBetPlacementService extends SingleSelectionBetPlacementServic
     {
         parent::validateBet($user, $amount, $type, $selections);
 
-        $meetings = array_unique(array_map(function ($v) {
-            return $v->market->event->competition->first();
+        $races = array_unique(array_map(function ($v) {
+            return $v->market->event;
         }, array_pluck($selections, 'selection')));
 
-        foreach ($meetings as $meeting) {
-            $validator = BetProductValidator::make($meeting);
+        $validators = array();
+
+        foreach ($races as $race) {
+            if (!$validator = array_get($validators, $race->competition->first()->id)) {
+                $validator = FixedOddsProductValidator::make($race->competition->first());
+            }
+
+            $validator->setRace($race);
             $validator->validateProduct($this->winProduct, BetTypeRepositoryInterface::TYPE_WIN);
             $validator->validateProduct($this->placeProduct, BetTypeRepositoryInterface::TYPE_PLACE);
         }
