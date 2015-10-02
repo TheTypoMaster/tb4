@@ -172,6 +172,21 @@ class TournamentEventGroupService
     }
 
     /**
+     * get sport id by event id
+     * @param $event_id
+     * @return mixed
+     */
+    public function getSportIdByEvnetId($event_id) {
+        //get event model
+        $event = $this->eventRepository->getEventByEventID($event_id);
+        $event_group = $event->competition()->first();
+
+        $sport_id = $event_group->sport_id;
+
+        return $sport_id;
+    }
+
+    /**
      * check if the tournament event group is race or not
      * @param $group_id
      * @return string

@@ -25,19 +25,19 @@ class TournamentsRepo
 	public function search($search)
 	{
 		return $this->tournament
-						->orderBy('start_date', 'desc')
-						->where('name', 'LIKE', "%$search%")
-						->orWhere('id', 'LIKE', "%$search%")
-						->with('parentTournament', 'eventGroup', 'sport')
-						->paginate();
+			->orderBy('start_date', 'desc')
+			->where('name', 'LIKE', "%$search%")
+			->orWhere('id', 'LIKE', "%$search%")
+			->with('parentTournament', 'eventGroup', 'sport')
+			->paginate();
 	}
 
 	public function allTournaments()
 	{
 		return $this->tournament
-						->orderBy('start_date', 'desc')
-						->with('parentTournament', 'eventGroup', 'sport')
-						->paginate();
+			->orderBy('start_date', 'desc')
+			->with('parentTournament', 'eventGroup', 'sport')
+			->paginate();
 	}
 
 }
