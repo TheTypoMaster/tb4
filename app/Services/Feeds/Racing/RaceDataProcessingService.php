@@ -327,7 +327,7 @@ class RaceDataProcessingService {
 			}
 
 			// update tournament start times if required
-			$tournamentsOnMeeting = $this->tournaments->getTournamentWithEventGroup($existingMeetingDetails['id']);
+			$tournamentsOnMeeting = $this->tournaments->getTournamentEventGroupWithEventGroup($existingMeetingDetails['id']);
 			foreach ($tournamentsOnMeeting as $tournament) {
 				// if it's race 1 store the jump time as tourn start date.
 				if ($existingMeetingDetails['start_date'] == '0000-00-00 00:00:00' || $race['JumpTime'] < $existingMeetingDetails['start_date']) {
@@ -512,7 +512,7 @@ class RaceDataProcessingService {
                     $this->events->updateOrCreate($existingRaceDetails, 'external_event_id');
 
                     // notify risk
-                    $this->riskhelper->sendRunnerScratchedStatus(array('RunnerScratched' => $existingRaceDetails['external_event_id']));
+                    $this->riskhelper->sendRunnerScratchedStatus(array('RunnerScratched' => $runnerDetails['external_selection_id']));
 
                 }else{
                     $runnerDetails['selection_status_id'] = '1';

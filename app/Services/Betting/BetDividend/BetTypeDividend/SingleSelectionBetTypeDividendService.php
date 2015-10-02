@@ -49,7 +49,7 @@ class SingleSelectionBetTypeDividendService extends AbstractBetTypeDividendServi
             return 0;
         }
 
-        $deductions = $this->selectionService->totalDeduction($bet->selection->first()->market_id, $bet->type->name);
+        $deductions = $this->selectionService->totalDeductionsForBet($bet);
 
         //hack for tournament fixed odds stored differently
         $odds = $bet->betselection->first()->fixed_odds ? : $bet->fixed_odds;

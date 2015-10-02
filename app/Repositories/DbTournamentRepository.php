@@ -39,6 +39,14 @@ class DbTournamentRepository extends BaseEloquentRepository implements Tournamen
 		return $tournaments->toArray();
 	}
 
+    public function getTournamentEventGroupWithEventGroup($eventGroupId){
+        $tournaments = $this->model->join('tb_tournament_event_group', 'tb_tournament_event_group.id', '=', 'tbdb_tournament.event_group_id')
+                                ->where('tb_tournament_event_group.event_group_id', $eventGroupId)->get();
+        if(!$tournaments) return null;
+        return $tournaments->toArray();
+    }
+
+
     public function getTournamentWithEventGroupCollection($eventGroupId){
         $tournaments = $this->model->where('event_group_id', $eventGroupId)->get();
         return $tournaments;
