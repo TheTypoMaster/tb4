@@ -98,11 +98,10 @@ class RiskCompetitionService {
      */
     private function disableFixedOddsForAllCompetitions()
     {
-        $competitions = $this->competitionRepository->getCompetitionsWithFixedOddsEnabled();
+        $this->competitionRepository->turnOffFixedOddsOnAllCompetitions();
 
-        foreach($competitions as $competition){
-            $this->disableFixedOdds($competition->id);
-        }
+        return $this->eventRepository->turnOffFixedOddsOnAllEvents();
+
     }
 
     /**
