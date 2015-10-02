@@ -10,6 +10,8 @@ namespace TopBetta\Services\Risk;
 
 use Log;
 
+use TopBetta\Repositories\Cache\MeetingRepository;
+use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 
@@ -23,18 +25,28 @@ class RiskEventService {
      * @var CompetitionRepositoryInterface
      */
     private $competitionRepository;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
+    /**
+     * @var MeetingRepository
+     */
+    private $meetingRepository;
 
-    public function __construct(EventModelRepositoryInterface $eventRepository, CompetitionRepositoryInterface $competitionRepository)
+    public function __construct(EventModelRepositoryInterface $eventRepository, CompetitionRepositoryInterface $competitionRepository, RaceRepository $raceRepository, MeetingRepository $meetingRepository)
     {
         $this->eventRepository = $eventRepository;
         $this->competitionRepository = $competitionRepository;
+        $this->raceRepository = $raceRepository;
+        $this->meetingRepository = $meetingRepository;
     }
 
     public function showEvent($eventId)
     {
-        $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 1);
+        $event = $this->raceRepository->updateWithId($eventId, array("display_flag" => true), "external_event_id");
 
-        $this->competitionRepository->setDisplayFlagForCompetition($event->competition->first()->external_event_group_id, 1);
+        $this->meetingRepository->update($event->competition->first(), array("display_flag" => true));
 
         //reload the competition to save the changes
         $event->load('competition');
@@ -44,11 +56,11 @@ class RiskEventService {
 
     public function hideEvent($eventId)
     {
-        $event = $this->eventRepository->setDisplayFlagForEvent($eventId, 0);
+        $event = $this->raceRepository->updateWithId($eventId, array("display_flag" => false), "external_event_id");
 
         $competitionId = $event->competition->first()->external_event_id;
         if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
-            $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
+            $this->meetingRepository->update($event->competition->first(), array("display_flag" => false));
         }
 
         return $event;
@@ -56,9 +68,9 @@ class RiskEventService {
 
     public function enableFixedOdds($eventId)
     {
-        $event = $this->eventRepository->setFixedOddsFlagForEvent($eventId, 1);
+        $event = $this->raceRepository->updateWithId($eventId, array("fixed_odds_enabled" => true), "external_event_id");
 
-        $this->competitionRepository->setFixedOddsFlagForCompetition($event->competition->first()->external_event_group_id, 1);
+        $this->meetingRepository->update($event->competition->first(), array("fixed_odds_enabled" => true));
 
         //reload the competition to save the changes
         $event->load('competition');
@@ -68,7 +80,7 @@ class RiskEventService {
 
     public function disableFixedOdds($eventId)
     {
-        $event = $this->eventRepository->setFixedOddsFlagForEvent($eventId, 0);
+        $event = $this->raceRepository->updateWithId($eventId, array("fixed_odds_enabled" => false), "external_event_id");
 
  //       $competitionId = $event->competition->first()->external_event_id;
   //      if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
