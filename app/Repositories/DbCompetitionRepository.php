@@ -126,8 +126,8 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
     }
 
     public function turnOffFixedOddsOnAllCompetitions(){
-        return $this->model->where('fixed_odds_enabled', 1)
-                        ->update(array('fixed_odds_enabled' => 0));
+        return $this->model->where('fixed_odds_enabled', '=', '1')
+                        ->update(array('fixed_odds_enabled' => '0'));
     }
 
     public function getCompetitionsWithFixedOddsEnabled()
