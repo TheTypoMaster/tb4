@@ -82,10 +82,10 @@ class RiskEventService {
     {
         $event = $this->raceRepository->updateWithId($eventId, array("fixed_odds_enabled" => false), "external_event_id");
 
- //       $competitionId = $event->competition->first()->external_event_id;
-  //      if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
-   //         $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
-  //      }
+        //       $competitionId = $event->competition->first()->external_event_id;
+        //      if( ! count( $this->competitionRepository->getDisplayedEventsForCompetition($competitionId) ) ) {
+        //         $this->competitionRepository->setDisplayFlagForCompetition($competitionId, 0);
+        //      }
 
         return $event;
     }
