@@ -161,10 +161,10 @@ class SelectionService {
     {
         $deductionsField = $this->getDeductionField($bet->type->name);
 
-        $selections = $this->selectionRepository->getSelectionsByMarket($bet);
+        $selections = $this->selectionRepository->getSelectionsByMarket($bet->selection->first()->market_id);
 
-        $selections = $this->selectionRepository->filter(function ($v) use ($bet) {
-             return $v->scratching_time && $v->scratchin_time >= $bet->created_at;
+        $selections = $selections->filter(function ($v) use ($bet) {
+             return $v->scratching_time && $v->scratching_time >= $bet->created_at;
         });
 
         $deductions = 0;
