@@ -231,7 +231,7 @@ class TournamentEventGroupController extends Controller
 
 //                $competition_id = Input::get('event_group_id');
             } else {
-                $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $type_code, $tournament_competition_id, $venue_id, $start_date);
+                $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $tournament_competition_id, $venue_id, $start_date);
                 $competition_id = $competition['id'];
 
                 $data = array('name' => Input::get('event_group_name'), 'type' => 'race', 'event_group_id' => $competition_id, 'start_date' => $start_date, 'end_date' => $start_date);

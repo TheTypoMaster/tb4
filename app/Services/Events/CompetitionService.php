@@ -82,7 +82,7 @@ class CompetitionService {
 
         $venue = $this->meetingVenueRepository->find($venueId);
 
-        $typeCode = SportService::getRacingCode($sport);
+//        $typeCode = SportService::getRacingCode($sport);
 
         $competition = $this->getCompetitionById($competition_id);
 
@@ -90,7 +90,7 @@ class CompetitionService {
         $competition->tournament_competition_id = $tournamentCompetitionId;
         $competition->start_date = $startDate;
         $competition->type_code = $type_code;
-        $competition->meeting_code = strtoupper(str_replace(" ", "", $venue->name)) . '-' . $typeCode . '-' . $startDate->toDateString();
+        $competition->meeting_code = strtoupper(str_replace(" ", "", $venue->name)) . '-' . $type_code . '-' . $startDate->toDateString();
 
         $competition->update();
 
