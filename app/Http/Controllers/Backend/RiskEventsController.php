@@ -68,7 +68,7 @@ class RiskEventsController extends Controller {
     public function disableFixedOdds($event)
     {
         try {
-            $event = $this->eventService->enableFixedOdds($event);
+            $event = $this->eventService->disableFixedOdds($event);
         } catch (\Exception $e) {
             return $this->apiResponse->failed($e->getMessage());
         }
