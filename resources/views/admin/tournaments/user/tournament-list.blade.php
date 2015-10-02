@@ -31,7 +31,7 @@
 			<td>{{ ($tournament['tournament']->tod_flag) ? 'Y' : 'N' }}</td>
 			<td>{{ (isset($tournament['tournament']->parentTournament)) ? $tournament['tournament']->parentTournament->name : '-' }}</td>
 			<td>{{ ($tournament['tournament']->eventGroup) ? $tournament['tournament']->eventGroup->name : 'n/a' }}</td>
-			<td>{{ $tournament['tournament']->tournamentEventGroup->name }}</td>
+			<td>{{ $tournament['tournament']->getSportNames($tournament['tournament']->id) }}</td>
 			<td>{{ $tournament['tournament']->start_date }}</td>
 			<td>{{ $tournament['tournament']->end_date }}</td>
 			<td>{{ (!empty($tournament['tournament']->jackpot_flag) && $tournament['tournament']->parent_tournament_id > 0) ? 'Ticket' : 'Cash' }} (${{ number_format($tournament['tournament']->calculateTournamentPrizePool($tournament['tournament']->id) / 100, 2) }})</td>

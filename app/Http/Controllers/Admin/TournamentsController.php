@@ -174,17 +174,6 @@ class TournamentsController extends Controller
             }
         }
 
-        //get event groups
-//        $eventGroups = array("Select Event Group");
-//        if($competitionId = Input::old('competition_id')) {
-//            $eventGroupsCollection = $this->competitionRepository->getFutureEventGroupsByTournamentCompetition($competitionId);
-//
-//            if($eventGroupsCollection) {
-//                $eventGroups += $eventGroupsCollection->map(function($q) {
-//                    return array("id" => $q->id, 'name' => $q->name . ' - ' . $q->start_date);
-//                })->lists('name', 'id')->all();
-//            }
-//        }
 
         $eventGroups = $this->tournamentEventGroupService->getAllEventGroupsToArray();
 

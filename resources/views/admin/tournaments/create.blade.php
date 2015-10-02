@@ -319,7 +319,7 @@
 
             $.each(json, function (index, value) {
                 if ($.inArray(value.name, ['Select Competition', 'Select Sport', 'Select Event']) < 0) {
-                    html = html.add($('<option></option>').text(value.name).val(value.id));
+                    html = html.add($('<option></option>').text(value.name + ' ------Start at: ' + value.start_date).val(value.id));
                 }
             });
 
@@ -347,7 +347,7 @@
         });
 
         $('#event_group_id').change(function() {
-            $('#name').val($('#event_group_id option:selected').text());
+            $('#name').val($('#event_group_id option:selected').text().split('------')[0]);
             if($('#name').val() != '') {
                 $('.name').removeClass('hidden');
             }

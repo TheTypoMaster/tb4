@@ -35,8 +35,16 @@ class Tournament extends \Eloquent {
 		return $this->belongsTo('TopBetta\Models\TournamentEventGroupModel', 'event_group_id', 'id');
 	}
 
-	public function getSportNames() {
+	public function getSportNames($tournament_id) {
+		$tournament = Tournament::find($tournament_id);
+		$tournament_event_group = $tournament->tournamentEventGroup;
+		$sports = $tournament_event_group->sports;
 
+		$sport_names = '';
+		foreach($sports as $key => $sport) {
+			$sport_names .= $sport->name . ', ';
+		}
+		return $sport_names;
 	}
 
 	static public function getTournamentWithEventGroup($eventGroupId){
