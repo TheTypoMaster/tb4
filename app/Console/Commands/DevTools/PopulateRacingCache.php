@@ -66,7 +66,7 @@ class PopulateRacingCache extends Command
      */
     public function handle()
     {
-        $meetings = \TopBetta\Models\CompetitionModel::where('start_date', '>=', Carbon::now()->subDays(2))->where('sport_id', '<=', 3)->where('type_code', $this->argument('type_code'))->get();
+        $meetings = \TopBetta\Models\CompetitionModel::where('start_date', '>=', Carbon::now()->subDays(2))->where('sport_id', '<=', 3)->where('type_code', $this->argument('type_code'))->where('display_flag', true)->get();
 
         foreach ($meetings as $meeting) {
             $this->meetingRepository->makeCacheResource($meeting);

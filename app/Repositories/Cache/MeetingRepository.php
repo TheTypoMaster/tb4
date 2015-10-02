@@ -64,24 +64,57 @@ class MeetingRepository extends CachedResourceRepository {
 
     public function makeCacheResource($model)
     {
-        $model = parent::makeCacheResource($model);
+        if ($model->display_flag) {
 
-        if ($model->start_date) {
-            $resource = $this->createSmallMeeting($model);
+            $model = parent::makeCacheResource($model);
 
-            $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+            if ($model->start_date) {
+                $resource = $this->createSmallMeeting($model);
 
-            if ($meetings && $meeting = $meetings->get($model->id)) {
-                $resource->setRelation('races', $meeting->races);
+                $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+
+                if ($meetings && $meeting = $meetings->get($model->id)) {
+                    $resource->setRelation('races', $meeting->races);
+                }
+
+                \Bus::dispatch(new TodaysRacingSocketUpdate($resource->toArray()));
+
+                \Log::debug("MeetingRepository (makeCacheResource): Adding small meetings " . $model->start_date . " count " . $meetings->count());
+                $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
             }
-
-            event(new TodaysRacingSocketUpdate($resource->toArray()));
-
-            \Log::debug("MeetingRepository (makeCacheResource): Adding small meetings " . $model->start_date . " count " . $meetings->count());
-            $this->addToCollection($resource, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
+        } else {
+            $this->removeCacheResource($model);
         }
 
         return $model;
+    }
+
+    public function removeCacheResource($model)
+    {
+        \Cache::tags($this->tags)->forget($this->cachePrefix . $model->id);
+
+        //remove from collections
+        foreach ($this->collectionKeys as $collectionKey) {
+            $collection = $this->getCollection($this->getCollectionCacheKey($collectionKey, $model));
+            $collection->forget($model->id);
+
+            if ($collection->count()) {
+                $this->put($this->getCollectionCacheKey($collectionKey, $model), $collection->toArray(), $this->getCollectionCacheTime($collectionKey, $collection->first()));
+            } else {
+                \Cache::tags($this->tags)->forget($this->getCollectionCacheKey($collectionKey, $model));
+            }
+
+        }
+
+        //remove from small meetings
+        $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $model->start_date));
+        $meetings->forget($model->id);
+
+        if ($meetings->count()) {
+            $this->put($this->getCollectionCacheKey(self::COLLECTION_SMALL_MEETINGS_RACES_DATE, $meetings->first()), $meetings->toARray(), $this->getCollectionCacheTime(self::COLLECTION_SMALL_MEETINGS_RACES_DATE, $meetings->first()));
+        } else {
+            \Cache::tags($this->tags)->forget($this->getCollectionCacheKey(self::COLLECTION_SMALL_MEETINGS_RACES_DATE, $model));
+        }
     }
 
     public function addSmallRace($resource, $meetingModel)
@@ -99,6 +132,30 @@ class MeetingRepository extends CachedResourceRepository {
                 $meeting->setRelation('races', $races->values());
 
                 $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
+            }
+        }
+    }
+
+    public function removeSmallRace($resource, $meetingModel)
+    {
+        if ($meetingModel->start_date) {
+            $meetings = $this->getSmallMeetingsCollection(Carbon::createFromFormat('Y-m-d H:i:s', $meetingModel->start_date));
+
+            //check meeting exists
+            if ($meetings && $meeting = $meetings->get($meetingModel->id)) {
+
+                $races = $meeting->races->keyBy('id');
+
+                $races->forget($resource->id);
+
+                if ($races->count()) {
+                    $meeting->setRelation('races', $races->values());
+                } else {
+                    $meetings->forget($meetingModel->id);
+                }
+
+                $this->addToCollection($meeting, self::COLLECTION_SMALL_MEETINGS_RACES_DATE, 'TopBetta\Resources\SmallMeetingResource');
+
             }
         }
     }

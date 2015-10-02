@@ -71,24 +71,36 @@ class TournamentBetResultService {
      */
     public function resultAllBetsForEvent($event, $product)
     {
-        $interim = $this->eventService->isEventInterim($event);
+        //get bets to result
+        if ($event->competition->first()->sport_id > 3) {
+            //get all tournament bets
+            $bets = $this->betRepositoryInterface->getBetsForEventByStatus(
+                $event->id,
+                BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED
+            );
 
-        $betType = null;
-        //bet type is interim so only get win bets
-        if( $interim ) {
-            $betType = $this->betTypeRepository->getBetTypeByName(BetTypeRepositoryInterface::TYPE_WIN);
-        } else if ( ! $this->eventService->isEventPaying($event) ) {
-            //not paying and not interim so bad state
-            throw new \Exception("Event in invalid state");
+            $interim = false;
+        } else {
+            $interim = $this->eventService->isEventInterim($event);
+
+            $betType = null;
+            //bet type is interim so only get win bets
+            if( $interim ) {
+                $betType = $this->betTypeRepository->getBetTypeByName(BetTypeRepositoryInterface::TYPE_WIN);
+            } else if ( ! $this->eventService->isEventPaying($event) ) {
+                //not paying and not interim so bad state
+                throw new \Exception("Event in invalid state");
+            }
+
+            //get all tournament bets
+            $bets = $this->betRepositoryInterface->getBetsForEventByStatusIn(
+                $event->id,
+                $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                $product->id,
+                $betType ? $betType->id : null
+            );
+
         }
-
-        //get all tournament bets
-        $bets = $this->betRepositoryInterface->getBetsForEventByStatusIn(
-            $event->id,
-            $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
-            $product->id,
-            $betType ? $betType->id : null
-        );
 
         //result all bets
         return $this->resultBets($bets, $interim);

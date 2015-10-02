@@ -66,29 +66,57 @@ class RaceRepository extends CachedResourceRepository {
     public function makeCacheResource($model)
     {
         if ($model->competition->first()) {
-            $model = parent::makeCacheResource($model);
+            if ($model->display_flag) {
+                $model = parent::makeCacheResource($model);
 
-            $resource = $this->createSmallRaceResource($model);
+                $resource = $this->createSmallRaceResource($model);
 
-            $this->meetingRepository->addSmallRace($resource, $model->competition->first());
+                $this->meetingRepository->addSmallRace($resource, $model->competition->first());
+            } else {
+                $this->removeCacheResource($model);
+
+                $this->meetingRepository->removeSmallRace($model, $model->competition->first());
+            }
         }
 
         return $model;
     }
 
+    public function removeCacheResource($model)
+    {
+        $resource = $this->createResource($model);
+
+        \Cache::tags($this->tags)->forget($this->cachePrefix . $model->id);
+
+        //remove from collections
+        foreach ($this->collectionKeys as $collectionKey) {
+            $collection = $this->getCollection($this->getCollectionCacheKey($collectionKey, $resource));
+            $collection->forget($model->id);
+
+            if ($collection->count()) {
+                \Cache::tags($this->tags)->put($this->getCollectionCacheKey($collectionKey, $resource), $collection->toArray(), $this->getCollectionCacheTime($collectionKey, $collection->first()));
+            } else {
+                \Cache::tags($this->tags)->forget($this->getCollectionCacheKey($collectionKey, $resource));
+            }
+
+        }
+    }
+
     public function save($resource)
     {
-        parent::save($resource);
+        if ($resource->display_flag) {
+            parent::save($resource);
 
-        $model = $resource->getModel();
+            $model = $resource->getModel();
 
-        if ($model->competition->first()) {
-            $smallResource = $this->createSmallRaceResource($model);
+            if ($model->competition->first()) {
+                $smallResource = $this->createSmallRaceResource($model);
 
-            $this->meetingRepository->addSmallRace($smallResource, $model->competition->first());
+                $this->meetingRepository->addSmallRace($smallResource, $model->competition->first());
+            }
+
+            return $this;
         }
-
-        return $this;
     }
 
     public function put($key, $model, $time)
