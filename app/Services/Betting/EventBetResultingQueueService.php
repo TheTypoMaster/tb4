@@ -91,16 +91,25 @@ class EventBetResultingQueueService {
 
     public function fire($job, $data)
     {
-        if( (! $eventId = array_get($data, 'event_id', null)) || ! ($productId = array_get($data, 'product_id')) ) {
-            Log::error("Either event or product id was not specified");
+        if( (! $eventId = array_get($data, 'event_id', null)) ) {
+            Log::error("Event id was not specified");
             return false;
         }
 
-
         $event = $this->eventRepositoryInterface->find($eventId)->load('resultPrices.betType');
-        $product = $this->betProductRepository->find($productId);
 
-        Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . $product->id);
+        $productId = null;
+        if ($event->competition->first()->sport_id <= 3 && ! ($productId = array_get($data, 'product_id'))) {
+            Log::error("Product id was not specified");
+            return false;
+        }
+
+        $product = null;
+        if ($productId) {
+            $product = $this->betProductRepository->find($productId);
+        }
+
+        Log::info("RESULTING BETS FOR EVENT " . $event->id . " PRODUCT " . ($product ? $product->id : 0));
         $result = $this->betResultService->resultBetsForEvent($event, $product);
 
         $tournamentResult = $this->tournamentBetResultService->resultAllBetsForEvent($event, $product);

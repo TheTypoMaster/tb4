@@ -118,7 +118,15 @@ class BetResultService {
     public function resultBetsForEvent($event, $product)
     {
         //get bets to result
-        if ( $this->eventService->isEventInterim($event) ) {
+        if ($event->competition->first()->sport_id > 3) {
+            $bets = $this->betRepository->getBetsForEventByStatus(
+                $event->id,
+                array(
+                    $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_UNRESULTED)->id,
+                    $this->betResultStatusRepository->getByName(BetResultStatusRepositoryInterface::RESULT_STATUS_PARTIALLY_REFUNDED)->id,
+                )
+            );
+        } else if ( $this->eventService->isEventInterim($event) ) {
             $bets = $this->betRepository->getBetsForEventByStatusAndProduct(
                 $event->id,
                 array(
