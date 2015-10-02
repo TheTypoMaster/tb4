@@ -86,7 +86,7 @@ class TournamentBetsController extends Controller
         } catch ( BetPlacementException $e ) {
             return $this->response->failed($e->getMessage());
         } catch ( BetSelectionException $e ) {
-            return $this->response->failed(array($e->getMessage(), "selection" => $e->getSelection() ? $e->getSelection()->name : null) );
+            return $this->response->failed(array($e->getMessage(), "selection" => $e->getSelection() ? $e->getSelection()->name : null), 400);
         } catch ( TournamentBetLimitExceededException $e ) {
             return $this->response->failed($e->getMessage());
         } catch (ProductNotAvailableException $e) {
