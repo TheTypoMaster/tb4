@@ -9,6 +9,7 @@
 namespace TopBetta\Services\Betting;
 
 
+use TopBetta\Models\BetModel;
 use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventRepositoryInterface;
@@ -150,6 +151,28 @@ class SelectionService {
         }
 
         throw new \InvalidArgumentException("SelectionService: Invalid deduction type " . $betType);
+    }
+
+    /**
+     * @param $bet BetModel
+     * @return int
+     */
+    public function totalDeductionsForBet($bet)
+    {
+        $deductionsField = $this->getDeductionField($bet->type->name);
+
+        $selections = $this->selectionRepository->getSelectionsByMarket($bet->selection->first()->market_id);
+
+        $selections = $selections->filter(function ($v) use ($bet) {
+             return $v->scratching_time && $v->scratching_time >= $bet->created_at;
+        });
+
+        $deductions = 0;
+        foreach ($selections as $selection) {
+            $deductions += $selection->{$deductionsField};
+        }
+
+        return min(100, $deductions);
     }
 
 

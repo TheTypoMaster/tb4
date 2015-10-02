@@ -124,16 +124,20 @@ class MeetingResourceService {
 
         $products = new EloquentResourceCollection($products, 'TopBetta\Resources\ProductResource');
 
-        if(!$meeting->model->fixed_odds_enabled){
-            $products = $products->filter(function ($v) {
+        $filteredProducts = $products->filter(function ($v) {
+            return !$v->is_fixed_odds;
+        });
 
-                return !$v->is_fixed_odds == '1';
-            });
+        if(!$meeting->model->fixed_odds_enabled){
+            $products = $filteredProducts;
         }
 
         foreach ($meeting->races as $race) {
-
-            $race->setProducts($products);
+            if ($race->fixed_odds_enabled) {
+                $race->setProducts($products);
+            } else {
+                $race->setProducts($filteredProducts);
+            }
         }
 
         return $meeting;

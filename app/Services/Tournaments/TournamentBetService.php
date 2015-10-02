@@ -15,6 +15,7 @@ use TopBetta\Repositories\Contracts\BetTypeRepositoryInterface;
 use TopBetta\Repositories\Contracts\TournamentBetRepositoryInterface;
 use TopBetta\Services\Betting\BetResults\TournamentBetResultService;
 use TopBetta\Services\Betting\EventService;
+use TopBetta\Services\Betting\Exceptions\BetSelectionException;
 use TopBetta\Services\Betting\Factories\BetPlacementFactory;
 use TopBetta\Services\Resources\Tournaments\TournamentBetResourceService;
 use TopBetta\Services\Tournaments\Betting\Factories\TournamentBetPlacementFactory;
@@ -101,6 +102,10 @@ class TournamentBetService {
         //validate bet
         $validator = new TournamentBetValidator();
         $validator->validateForCreation($bet);
+
+        if (!isset($bet['selections']) || !count($bet['selections'])) {
+            throw new BetSelectionException(null, "No Selections Specified");
+        }
 
         $ticket = $this->ticketService->getAndValidateTicketForAuthUser($bet['ticket_id']);
 

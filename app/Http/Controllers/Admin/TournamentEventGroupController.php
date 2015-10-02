@@ -17,6 +17,7 @@ use TopBetta\Services\Events\CompetitionService;
 use Input;
 //use Request;
 use Illuminate\Http\Request;
+use TopBetta\Services\Tournaments\TournamentEventGroupSportService;
 
 class TournamentEventGroupController extends Controller
 {
@@ -25,7 +26,8 @@ class TournamentEventGroupController extends Controller
                                 EventService $eventService,
                                 SportsService $sportService,
                                 MeetingService $meetingService,
-                                CompetitionService $competitionService)
+                                CompetitionService $competitionService,
+                                TournamentEventGroupSportService $tournamentEventGroupSportService)
     {
 
         $this->tournamentEventGroupService = $tournamentEventGroupService;
@@ -34,6 +36,7 @@ class TournamentEventGroupController extends Controller
         $this->sportService = $sportService;
         $this->meetingService = $meetingService;
         $this->competitionService = $competitionService;
+        $this->tournamentEventGroupSportService = $tournamentEventGroupSportService;
     }
 
     /**
@@ -89,11 +92,18 @@ class TournamentEventGroupController extends Controller
             //continuing add new events
             if (Input::get('event_group_id') == '') {
                 $event_group_params = array('name' => Input::get('event_group_name'));
-                $event_group = $this->tournamentEventGroupService->createEventGroup($event_group_params);
+                $event_group = $this->tournamentEventGroupService->createEventGroup($event_group_params); //$event_group->sports()->attach()
                 $event_group_id = $event_group['id'];
                 $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
                 $start_time = '';
                 $end_time = '';
+
+                //create relationship between tournament event group and sport
+                $sport_id = Input::get('sports');
+//                $tour_event_group_sport_data = array('tournament_event_group_id' => $event_group_id, 'sport_id' => $sport_id);
+                $tour_event_group_sport = $new_created_event_group->sports()->attach($sport_id);
+//                $tour_event_group_sport = $this->tournamentEventGroupSportService->createTourEventGroupSport($tour_event_group_sport_data);
+
 
             } else {
                 $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID(Input::get('event_group_id'));
@@ -107,6 +117,18 @@ class TournamentEventGroupController extends Controller
                 $new_group_name = Input::get('event_group_name');
                 $new_created_event_group->name = $new_group_name;
                 $new_created_event_group->update();
+
+                //create data array for getting relationship from pivot table
+                $sport_id = Input::get('sports');
+                $tour_event_group_sport_data = array('tournament_event_group_id' => $new_created_event_group->id, 'sport_id' => $sport_id);
+
+                //check if the relationship in pivot table, if not, create a new one
+                $tour_event_group_sport = $this->tournamentEventGroupSportService->getTourEventGroupSport($tour_event_group_sport_data);
+                if($tour_event_group_sport == null) {
+
+                    //create relationship between tournament event group and sport
+                    $tour_event_group_sport = $new_created_event_group->sports()->attach($sport_id);
+                }
 
             }
 
@@ -209,11 +231,18 @@ class TournamentEventGroupController extends Controller
 
 //                $competition_id = Input::get('event_group_id');
             } else {
-                $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $type_code, $tournament_competition_id, $venue_id, $start_date);
+                $competition = $this->competitionService->createCompetitionFromMeetingVenue($sport_id, $tournament_competition_id, $venue_id, $start_date);
                 $competition_id = $competition['id'];
 
                 $data = array('name' => Input::get('event_group_name'), 'type' => 'race', 'event_group_id' => $competition_id, 'start_date' => $start_date, 'end_date' => $start_date);
                 $event_group = $this->tournamentEventGroupService->createEventGroup($data);
+                $event_group_id = $event_group['id'];
+                $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
+                //create relationship between tournament event group and sport
+                $sport_id = Input::get('sports');
+//                $tour_event_group_sport_data = array('tournament_event_group_id' => $event_group_id, 'sport_id' => $sport_id);
+                $tour_event_group_sport = $new_created_event_group->sports()->attach($sport_id);
+//                $tour_event_group_sport = $this->tournamentEventGroupSportService->createTourEventGroupSport($tour_event_group_sport_data);
             }
 
 
@@ -284,6 +313,7 @@ class TournamentEventGroupController extends Controller
         $tournament_event_group = $this->tournamentEventGroupService->getEventGroupByID($group_id);
         $tournament_event_group->delete();
         $this->tournamentEventGroupEventService->removeAllEventsFromGroup($group_id);
+
         return redirect()->action('Admin\TournamentEventGroupController@index');
     }
 
@@ -341,19 +371,43 @@ class TournamentEventGroupController extends Controller
      * @param $group_name
      * @return $this
      */
-    public function removeEventFromGroup($group_id, $event_id, $group_name) {
+    public function removeEventFromGroup($tour_event_group_id, $event_id, $group_name) {
 
-        $this->tournamentEventGroupEventService->removeEventFromGroup($group_id, $event_id);
+        $this->tournamentEventGroupEventService->removeEventFromGroup($tour_event_group_id, $event_id);
 
 //        $events = $this->eventService->getAllEventsFromToday();
 
         $sports = $this->sportService->getAllSports();
 
-        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($group_id);
+        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($tour_event_group_id);
+
+        //delete relationship between tournament event group and sport
+        //get sport id by event id
+        $sport_id = $this->tournamentEventGroupService->getSportIdByEvnetId($event_id);
+        //get all events in current tournament event group
+        $tour_event_group = $this->tournamentEventGroupService->getEventGroupByID($tour_event_group_id);
+        $events = $tour_event_group->events;
+
+        //check each evnet's sport id, if there is not any sport id equals the $sport_id that was got, remove the
+        // sport relationship with the tournament event group in the tournament_event_group_sport table
+        $has_same_sport_id = false;
+        foreach($events as $key => $event) {
+            $event_sport_id = $this->tournamentEventGroupService->getSportIdByEvnetId($event->id);
+            if($event_sport_id == $sport_id) {
+                $has_same_sport_id = true;
+                break;
+            }
+        }
+
+        //if no event has the same sport id, then remove the relationship in pivot table,
+        // if has the same sport id, keep the relationship
+        if($has_same_sport_id == false) {
+            $tour_event_group->sports()->detach($sport_id);
+        }
 
         return view('admin.tournaments.event-groups.create')->with(['sport_list' => $sports,
                                                                     'event_group_name' => $group_name,
-                                                                    'event_group_id' => $group_id,
+                                                                    'event_group_id' => $tour_event_group_id,
                                                                     'event_list' => $event_list]);
     }
 

@@ -349,6 +349,10 @@ class RepositoryServiceProvider extends ServiceProvider {
             'TopBetta\Repositories\Contracts\CountryRepositoryInterface',
             'TopBetta\Repositories\CountryRepository'
         );
+        $this->app->bind(
+            'TopBetta\Repositories\Contracts\TournamentEventGroupSportRepositoryInterface',
+            'TopBetta\Repositories\TournamentEventGroupSportRepository'
+        );
     }
 
 } 
