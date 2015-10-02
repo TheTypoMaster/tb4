@@ -35,6 +35,17 @@ class TournamentEventGroupSportRepository extends BaseEloquentRepository impleme
     }
 
     /**
+     * get tournament event group sport relationship
+     * @param $data
+     * @return mixed
+     */
+    public function getTourEventGroupSport($data) {
+        return $this->tournamentEventGroupSportModel->where('tournament_event_group_id', $data['tournament_event_group_id'])
+            ->where('sport_id', $data['sport_id'])
+            ->first();
+    }
+
+    /**
      * get sports id by tournament event group id
      * @param $tour_event_group_id
      * @return mixed

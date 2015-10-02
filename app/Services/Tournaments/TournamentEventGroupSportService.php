@@ -22,4 +22,13 @@ class TournamentEventGroupSportService
         return $this->tournamentEventGroupSportRepository->createTourEventGroupSport($data);
     }
 
+    /**
+     * get tournament event group sport relation
+     * @param $data
+     * @return mixed
+     */
+    public function getTourEventGroupSport($data) {
+        return $this->tournamentEventGroupSportRepository->getTourEventGroupSport($data);
+    }
+
 }
