@@ -18,6 +18,11 @@ class DbEventModelRepository extends BaseEloquentRepository implements EventMode
         $this->model = $event;
     }
 
+    public function turnOffFixedOddsOnAllEvents(){
+        return $this->model->where('fixed_odds_enabled', 1)
+            ->update('fixed_odds_enabled', 0);
+    }
+
 
     public function setDisplayFlagForEvent($eventId, $displayFlag)
     {
