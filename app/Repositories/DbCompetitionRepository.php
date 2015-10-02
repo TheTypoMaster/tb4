@@ -110,7 +110,7 @@ class DbCompetitionRepository extends BaseEloquentRepository implements Competit
         return $this->model->where('external_event_group_id', $competitionId)
             ->join('tbdb_event_group_event', 'tbdb_event_group.id', '=', 'tbdb_event_group_event.event_group_id')
             ->join('tbdb_event', 'tbdb_event.id', '=', 'tbdb_event_group_event.event_id')
-            ->where("tbdb_event.fixed_odds_enabled", "=", "1")
+           // ->where("tbdb_event.fixed_odds_enabled", "=", "1")
             ->get();
     }
 
