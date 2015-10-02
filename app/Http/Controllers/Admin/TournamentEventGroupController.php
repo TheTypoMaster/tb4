@@ -370,22 +370,43 @@ class TournamentEventGroupController extends Controller
      * @param $group_name
      * @return $this
      */
-    public function removeEventFromGroup($group_id, $event_id, $group_name) {
+    public function removeEventFromGroup($tour_event_group_id, $event_id, $group_name) {
 
-        $this->tournamentEventGroupEventService->removeEventFromGroup($group_id, $event_id);
+        $this->tournamentEventGroupEventService->removeEventFromGroup($tour_event_group_id, $event_id);
 
 //        $events = $this->eventService->getAllEventsFromToday();
 
         $sports = $this->sportService->getAllSports();
 
-        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($group_id);
+        $event_list = $this->tournamentEventGroupService->getEventsByTournamentEventGroupToArray($tour_event_group_id);
 
         //delete relationship between tournament event group and sport
-//        $this->tournamentEventGroupSportService->
+        //get sport id by event id
+        $sport_id = $this->tournamentEventGroupService->getSportIdByEvnetId($event_id);
+        //get all events in current tournament event group
+        $tour_event_group = $this->tournamentEventGroupService->getEventGroupByID($tour_event_group_id);
+        $events = $tour_event_group->events;
+
+        //check each evnet's sport id, if there is not any sport id equals the $sport_id that was got, remove the
+        // sport relationship with the tournament event group in the tournament_event_group_sport table
+        $has_same_sport_id = false;
+        foreach($events as $key => $event) {
+            $event_sport_id = $this->tournamentEventGroupService->getSportIdByEvnetId($event->id);
+            if($event_sport_id == $sport_id) {
+                $has_same_sport_id = true;
+                break;
+            }
+        }
+
+        //if no event has the same sport id, then remove the relationship in pivot table,
+        // if has the same sport id, keep the relationship
+        if($has_same_sport_id == false) {
+            $tour_event_group->sports()->detach($sport_id);
+        }
 
         return view('admin.tournaments.event-groups.create')->with(['sport_list' => $sports,
                                                                     'event_group_name' => $group_name,
-                                                                    'event_group_id' => $group_id,
+                                                                    'event_group_id' => $tour_event_group_id,
                                                                     'event_list' => $event_list]);
     }
 
