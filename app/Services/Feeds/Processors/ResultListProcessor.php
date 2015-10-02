@@ -81,7 +81,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
         $this->processMarketStatus($marketStatus, $market['id']);
 
         //process result
-        return $this->processResults($data, $marketStatus, $eventId, $marketId);
+        return $this->processResults($data, $marketStatus, $eventId, $marketId, $market);
 
     }
 
@@ -90,7 +90,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
         return $this->marketRepository->updateWithId($marketId, array("market_status" => $marketStatus));
     }
 
-    private function processResults($data, $marketStatus, $eventId, $marketId)
+    private function processResults($data, $marketStatus, $eventId, $marketId, $market)
     {
         Log::info($this->logprefix."Processing result for event $eventId market $marketId");
 
@@ -106,7 +106,7 @@ class ResultListProcessor extends AbstractFeedProcessor {
                 $result = $this->processSelectionResult($data, $eventId, $marketId);
 
                 //result bets
-                $this->betResultRepository->resultAllSportBetsForMarket($marketId);
+                \Queue::push('TopBetta\Services\Betting\MarketBetResultingQueueService', array('market_id' => $market['id']), \Config::get('betresulting.queue'));
 
             } else if ($scoreType == 'S') {
                 $result = $this->processScore($data, $eventId);

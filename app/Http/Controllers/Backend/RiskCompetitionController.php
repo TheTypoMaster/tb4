@@ -89,7 +89,7 @@ class RiskCompetitionController extends Controller {
             return $this->apiResponse->failed($e->getMessage());
         }
 
-        return $this->apiResponse->success(array('Done'));
+        return $this->apiResponse->success('OK');
     }
 
 }

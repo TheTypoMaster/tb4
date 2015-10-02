@@ -29,6 +29,10 @@ class SportBetPlacementService extends SingleSelectionBetPlacementService {
      */
     public function checkBetLimit($user, $amount, $betType, $selections)
     {
+        foreach ($selections as &$selection) {
+            $selection['event'] = $selection['selection']->market->event_id;
+        }
+
         $betLimitData = array(
             'amount' => $amount,
             'user' => $user->id,

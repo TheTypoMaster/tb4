@@ -500,12 +500,28 @@ class RaceDataProcessingService {
 
             if(isset($runner['apn_fluctuations'])) $runnerDetails['apn_fluctuations'] = $runner['apn_fluctuations'];
             if(isset($runner['topbetta_fluctuations'])) $runnerDetails['topbetta_fluctuations'] = $runner['topbetta_fluctuations'];
+            if(isset($runner['selection_scratched_time'])) $runnerDetails['scratching_time'] = $runner['selection_scratched_time'];
 
-			if (isset($runner['Scratched'])) {
-				($runner['Scratched'] == '1') ?	$runnerDetails['selection_status_id'] = '2' : $runnerDetails['selection_status_id'] = '1';
-			}else{
-				$runnerDetails['selection_status_id'] = '1';
-			}
+            if (isset($runner['Scratched'])) {
+
+                if($runner['Scratched'] == '1'){
+                    $runnerDetails['selection_status_id'] = '2';
+
+                    // disable fixed odds betting on race
+                    $existingRaceDetails['fixed_odds_enabled'] = 0;
+                    $this->events->updateOrCreate($existingRaceDetails, 'external_event_id');
+
+                    // notify risk
+                    $this->riskhelper->sendRunnerScratchedStatus(array('RunnerScratched' => $existingRaceDetails['external_event_id']));
+
+                }else{
+                    $runnerDetails['selection_status_id'] = '1';
+                }
+
+            }else{
+                $runnerDetails['selection_status_id'] = '1';
+            }
+
 
 			// check if market exists and create a market for this selection/event if not
 			$existingMarketDetails = $this->markets->getMarketDetailByEventIdAndMarket($existingRaceDetails['id'], 110);

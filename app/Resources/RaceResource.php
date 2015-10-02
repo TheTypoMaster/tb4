@@ -35,6 +35,7 @@ class RaceResource extends AbstractEloquentResource {
         "displayedResults"  => "displayedResults",
         "displayedExoticResults" => "displayedExoticResults",
         "fixed_odds_enabled" => "fixed_odds_enabled",
+        "display_flag"       => "display_flag",
     );
 
     protected $loadIfRelationExists = array(
