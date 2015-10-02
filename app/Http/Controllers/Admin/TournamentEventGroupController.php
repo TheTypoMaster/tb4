@@ -236,11 +236,12 @@ class TournamentEventGroupController extends Controller
 
                 $data = array('name' => Input::get('event_group_name'), 'type' => 'race', 'event_group_id' => $competition_id, 'start_date' => $start_date, 'end_date' => $start_date);
                 $event_group = $this->tournamentEventGroupService->createEventGroup($data);
-
+                $event_group_id = $event_group['id'];
+                $new_created_event_group = $this->tournamentEventGroupService->getEventGroupByID($event_group_id);
                 //create relationship between tournament event group and sport
                 $sport_id = Input::get('sports');
 //                $tour_event_group_sport_data = array('tournament_event_group_id' => $event_group_id, 'sport_id' => $sport_id);
-                $tour_event_group_sport = $event_group->sports()->attach($sport_id);
+                $tour_event_group_sport = $new_created_event_group->sports()->attach($sport_id);
 //                $tour_event_group_sport = $this->tournamentEventGroupSportService->createTourEventGroupSport($tour_event_group_sport_data);
             }
 
