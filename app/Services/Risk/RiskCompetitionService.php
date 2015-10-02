@@ -9,6 +9,8 @@
 namespace TopBetta\Services\Risk;
 
 
+use TopBetta\Repositories\Cache\MeetingRepository;
+use TopBetta\Repositories\Cache\RaceRepository;
 use TopBetta\Repositories\Contracts\CompetitionRepositoryInterface;
 use TopBetta\Repositories\Contracts\EventModelRepositoryInterface;
 
@@ -21,11 +23,21 @@ class RiskCompetitionService {
      * @var CompetitionRepositoryInterface
      */
     private $competitionRepository;
+    /**
+     * @var MeetingRepository
+     */
+    private $meetingRepository;
+    /**
+     * @var RaceRepository
+     */
+    private $raceRepository;
 
-    public function __construct(EventModelRepositoryInterface $eventRepository, CompetitionRepositoryInterface $competitionRepository)
+    public function __construct(EventModelRepositoryInterface $eventRepository, CompetitionRepositoryInterface $competitionRepository, MeetingRepository $meetingRepository, RaceRepository $raceRepository)
     {
         $this->eventRepository = $eventRepository;
         $this->competitionRepository = $competitionRepository;
+        $this->meetingRepository = $meetingRepository;
+        $this->raceRepository = $raceRepository;
     }
 
     /**
@@ -60,15 +72,14 @@ class RiskCompetitionService {
      */
     private function setDisplayFlagForCompetition($competitionId, $displayFlag)
     {
-        $competition = $this->competitionRepository->setDisplayFlagForCompetition($competitionId, $displayFlag);
+        $competition = $this->meetingRepository->updateWithId($competitionId, array("display_flag" => $displayFlag), 'external_event_group_id');
 
         //get events explicitly using get() as events seems to be already be an attribute on Eloquent Models
         //$events = $competition->events()->get();
         $events = $this->competitionRepository->getDisplayedEventsForCompetition($competitionId);
 
-        foreach($events as $event)
-        {
-            $this->eventRepository->setDisplayFlagForEvent($event->external_event_id, $displayFlag);
+        foreach ($events as $event) {
+            $this->raceRepository->updateWithId($event->id, array("display_flag" => $displayFlag));
         }
 
         return $competition;
@@ -87,10 +98,11 @@ class RiskCompetitionService {
      */
     private function disableFixedOddsForAllCompetitions()
     {
-        $this->competitionRepository->turnOffFixedOddsOnAllCompetitions();
+        $competitions = $this->competitionRepository->getCompetitionsWithFixedOddsEnabled();
 
-        return $this->eventRepository->turnOffFixedOddsOnAllEvents();
-
+        foreach($competitions as $competition){
+            $this->disableFixedOdds($competition->id);
+        }
     }
 
     /**
@@ -125,7 +137,7 @@ class RiskCompetitionService {
      */
     private function setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag)
     {
-        $competition = $this->competitionRepository->setFixedOddsFlagForCompetition($competitionId, $fixedOddsFlag);
+        $competition = $this->meetingRepository->updateWithId($competitionId, array("fixed_odds_enabled" => $fixedOddsFlag), 'external_event_group_id');
 
         //get events explicitly using get() as events seems to be already be an attribute on Eloquent Models
         //$events = $competition->events()->get();
@@ -133,7 +145,7 @@ class RiskCompetitionService {
 
         foreach($events as $event)
         {
-            $this->eventRepository->setFixedOddsFlagForEvent($event->external_event_id, $fixedOddsFlag);
+            $this->raceRepository->updateWithId($event->external_event_id, array("fixed_odds_enabled" => $fixedOddsFlag), "external_event_id");
         }
 
         return $competition;
